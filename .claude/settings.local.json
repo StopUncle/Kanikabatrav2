@@ -1,0 +1,40 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm run type-check:*)",
+      "Bash(npx tsc:*)",
+      "Bash(npm install:*)",
+      "Bash(npm run lint)",
+      "Bash(npm run dev:*)",
+      "Bash(timeout:*)",
+      "Bash(node:*)",
+      "Bash(npm install)",
+      "Bash(npm run build:*)",
+      "Bash(chmod:*)",
+      "Bash(PORT=3020 npm run dev)",
+      "Bash(taskkill:*)",
+      "Bash(PORT=3025 npm run dev)",
+      "Bash(curl:*)",
+      "Bash(cat:*)",
+      "Bash(dir:*)",
+      "Bash(del AUTH_SYSTEM_COMPLETE.md DEPLOYMENT_READY.md SIMPLE_START.md)",
+      "Bash(findstr:*)",
+      "Bash(npx prisma:*)",
+      "Bash(awk:*)",
+      "Bash(npm run lint:*)",
+      "Bash(if exist .next rd /s /q .next)",
+      "Bash(rd:*)",
+      "Bash(rm:*)",
+      "Bash(if exist .env.local echo \"Environment file exists\")",
+      "Bash(find:*)",
+      "Bash(if exist .env.local echo \"Environment file exists\" else echo \"No .env.local file\")",
+      "Read(//c/**)",
+      "Bash(git remote set-url:*)",
+      "Bash(git init:*)",
+      "Bash(git remote add:*)",
+      "Bash(git add:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

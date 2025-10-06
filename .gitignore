@@ -1,0 +1,68 @@
+# Dependencies
+/node_modules
+/.pnp
+.pnp.js
+
+# Testing
+/coverage
+
+# Next.js
+/.next/
+/out/
+
+# Production
+/build
+
+# Misc
+.DS_Store
+*.pem
+
+# Debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Local env files
+.env*.local
+
+# Vercel
+.vercel
+
+# TypeScript
+*.tsbuildinfo
+next-env.d.ts
+
+# Development tools (keep structure but ignore content)
+.neural-ast/experiments/*
+.neural-ast/journal/*
+.blueprint/backups/*
+drafts/*
+
+# Keep README files in development directories
+!.neural-ast/README.md
+!.blueprint/README.md
+!drafts/README.md
+!drafts/*/README.md
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+Thumbs.db
+.DS_Store
+
+# Data files
+/data/
+presale-list.json
+
+# Private files (books, sensitive content)
+/private/
+!private/books/README.md
+
+# Environment files
+.env
+.env.local
+.env.production

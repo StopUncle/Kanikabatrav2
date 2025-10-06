@@ -1,0 +1,110 @@
+// This is your Prisma schema file
+// Learn more: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// User model for authentication
+model User {
+  id            String      @id @default(cuid())
+  email         String      @unique
+  password      String
+  name          String?
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+
+  // Relations
+  purchases     Purchase[]
+  sessions      CoachingSession[]
+
+  @@index([email])
+}
+
+// Purchase model for tracking book/course purchases
+model Purchase {
+  id            String      @id @default(cuid())
+  userId        String?
+  type          ProductType
+  productVariant String?    // For books: "KDP" or "PREMIUM"
+  customerEmail String
+  customerName  String
+  amount        Float
+  status        PurchaseStatus @default(PENDING)
+  paypalOrderId String?     @unique
+  paypalCaptureId String?   // PayPal capture/transaction ID
+  downloadToken String?     @unique // Secure token for download links
+  downloadCount Int         @default(0)
+  maxDownloads  Int         @default(5) // Max download attempts
+  lastDownloadAt DateTime?
+  expiresAt     DateTime?   // Download link expiry
+  metadata      Json?
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+
+  // Relations
+  user          User?       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  sessions      CoachingSession[]
+
+  @@index([userId])
+  @@index([paypalOrderId])
+  @@index([customerEmail])
+  @@index([downloadToken])
+}
+
+// Coaching session bookings
+model CoachingSession {
+  id            String      @id @default(cuid())
+  purchaseId    String
+  userId        String?
+  packageName   String
+  sessionCount  Int         @default(1)
+  scheduledAt   DateTime?
+  duration      Int?        // in minutes
+  status        SessionStatus @default(PENDING_SCHEDULING)
+  meetingUrl    String?
+  notes         String?
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+
+  // Relations
+  user          User?       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  purchase      Purchase    @relation(fields: [purchaseId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([purchaseId])
+  @@index([scheduledAt])
+}
+
+// Enums
+enum ProductType {
+  BOOK
+  COURSE
+  COACHING
+}
+
+enum PurchaseStatus {
+  PENDING
+  COMPLETED
+  FAILED
+  REFUNDED
+}
+
+enum SessionType {
+  INDIVIDUAL
+  GROUP
+  VIP
+}
+
+enum SessionStatus {
+  PENDING_SCHEDULING
+  SCHEDULED
+  COMPLETED
+  CANCELLED
+  NO_SHOW
+}
