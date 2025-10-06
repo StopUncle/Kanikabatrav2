@@ -94,11 +94,14 @@ export interface PayPalCaptureResponse {
 }
 
 class PayPalService {
-  private baseURL: string
-  private clientId: string
-  private clientSecret: string
+  private baseURL?: string
+  private clientId?: string
+  private clientSecret?: string
+  private initialized = false
 
-  constructor() {
+  private initialize() {
+    if (this.initialized) return
+
     const environment = process.env.PAYPAL_ENVIRONMENT || 'sandbox'
     this.baseURL = environment === 'live'
       ? 'https://api-m.paypal.com'
@@ -115,6 +118,7 @@ class PayPalService {
       throw new Error('PayPal Client Secret is required')
     }
 
+    this.initialized = true
     console.log(`PayPal Service initialized: ${environment} environment (${this.baseURL})`)
   }
 
@@ -122,10 +126,12 @@ class PayPalService {
    * Get PayPal access token
    */
   async getAccessToken(): Promise<string> {
+    this.initialize()
+
     const auth = Buffer.from(`${this.clientId}:${this.clientSecret}`).toString('base64')
 
     console.log(`Attempting PayPal auth to: ${this.baseURL}/v1/oauth2/token`)
-    console.log(`Client ID (first 20 chars): ${this.clientId.substring(0, 20)}...`)
+    console.log(`Client ID (first 20 chars): ${this.clientId!.substring(0, 20)}...`)
 
     const response = await fetch(`${this.baseURL}/v1/oauth2/token`, {
       method: 'POST',
@@ -305,7 +311,7 @@ export function createCoachingOrder(
   }
 }
 
-// Export singleton instance
+// Export singleton instance (lazy initialization on first use)
 export const paypalService = new PayPalService()
 
 // Types are already exported inline above
