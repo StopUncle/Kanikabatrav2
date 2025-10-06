@@ -160,9 +160,9 @@ export const SOCIAL_LINKS = {
 }
 
 export const PAYPAL_CONFIG = {
-  clientId: process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID || '',
+  clientId: process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID || 'not-configured',
   currency: 'USD',
-  intent: 'capture',
+  intent: 'capture' as const,
 }
 
 export const ANIMATION_CONFIG = {
