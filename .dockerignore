@@ -1,0 +1,9 @@
+node_modules
+.next
+.git
+*.log
+.env*.local
+app/document.tsx
+app/_document.tsx
+document.tsx
+_document.tsx
