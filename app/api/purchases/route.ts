@@ -61,7 +61,7 @@ export async function GET(request: NextRequest) {
     })
 
     // Generate download URLs for book purchases
-    const purchasesWithUrls = purchases.map((purchase) => ({
+    const purchasesWithUrls = purchases.map((purchase: typeof purchases[0]) => ({
       ...purchase,
       downloadUrl: purchase.type === 'BOOK' && purchase.downloadToken
         ? `${process.env.NEXT_PUBLIC_BASE_URL}/api/download?token=${purchase.downloadToken}`
