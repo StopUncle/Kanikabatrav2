@@ -1,33 +1,32 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
-import fs from 'fs/promises';
-import path from 'path';
+import { NextRequest, NextResponse } from 'next/server'
+import { prisma } from '@/lib/prisma'
+import fs from 'fs/promises'
+import path from 'path'
 
-// Force dynamic rendering to prevent static generation errors
-export const dynamic = 'force-dynamic';
+export const dynamic = 'force-dynamic'
 
 export async function GET(request: NextRequest) {
   try {
-    const searchParams = request.nextUrl.searchParams;
-    const token = searchParams.get('token');
+    const searchParams = request.nextUrl.searchParams
+    const token = searchParams.get('token')
 
     if (!token) {
       return NextResponse.json(
         { error: 'Download token is required' },
         { status: 400 }
-      );
+      )
     }
 
     // Find purchase by download token
     const purchase = await prisma.purchase.findUnique({
       where: { downloadToken: token },
-    });
+    })
 
     if (!purchase) {
       return NextResponse.json(
         { error: 'Invalid download token' },
         { status: 404 }
-      );
+      )
     }
 
     // Check if purchase is completed
@@ -35,7 +34,7 @@ export async function GET(request: NextRequest) {
       return NextResponse.json(
         { error: 'Purchase is not completed' },
         { status: 400 }
-      );
+      )
     }
 
     // Check if download has expired
@@ -43,7 +42,7 @@ export async function GET(request: NextRequest) {
       return NextResponse.json(
         { error: 'Download link has expired. Please contact support.' },
         { status: 410 }
-      );
+      )
     }
 
     // Check download limit
@@ -51,7 +50,7 @@ export async function GET(request: NextRequest) {
       return NextResponse.json(
         { error: `Maximum download limit (${purchase.maxDownloads}) reached. Please contact support.` },
         { status: 429 }
-      );
+      )
     }
 
     // Only allow book downloads
@@ -59,7 +58,7 @@ export async function GET(request: NextRequest) {
       return NextResponse.json(
         { error: 'This purchase is not for a downloadable book' },
         { status: 400 }
-      );
+      )
     }
 
     // Track download attempt
@@ -71,32 +70,32 @@ export async function GET(request: NextRequest) {
         },
         lastDownloadAt: new Date(),
       },
-    });
+    })
 
     // Determine which book file to serve based on variant
-    let bookFilename = 'sociopathic-dating-bible-premium.pdf';
-    let displayName = 'Sociopathic_Dating_Bible_Premium_Edition_Kanika_Batra.pdf';
+    let bookFilename = 'sociopathic-dating-bible-premium.pdf'
+    let displayName = 'Sociopathic_Dating_Bible_Premium_Edition_Kanika_Batra.pdf'
 
     if (purchase.productVariant === 'KDP') {
-      bookFilename = 'sociopathic-dating-bible-kdp.pdf';
-      displayName = 'Sociopathic_Dating_Bible_Kanika_Batra.pdf';
+      bookFilename = 'sociopathic-dating-bible-kdp.pdf'
+      displayName = 'Sociopathic_Dating_Bible_Kanika_Batra.pdf'
     }
 
-    const bookPath = path.join(process.cwd(), 'private', 'books', bookFilename);
+    const bookPath = path.join(process.cwd(), 'private', 'books', bookFilename)
 
     try {
       // Check if file exists
-      await fs.access(bookPath);
+      await fs.access(bookPath)
 
       // Read the file
-      const fileBuffer = await fs.readFile(bookPath);
+      const fileBuffer = await fs.readFile(bookPath)
 
       console.log('Book download:', {
         purchaseId: purchase.id,
         variant: purchase.productVariant,
         email: purchase.customerEmail,
         downloadCount: purchase.downloadCount + 1
-      });
+      })
 
       // Return the file as a download
       return new NextResponse(fileBuffer as BodyInit, {
@@ -107,9 +106,9 @@ export async function GET(request: NextRequest) {
           'Content-Length': fileBuffer.length.toString(),
           'Cache-Control': 'private, no-cache, no-store, must-revalidate',
         },
-      });
+      })
     } catch (_fileError) {
-      console.error('Book file not found:', bookPath);
+      console.error('Book file not found:', bookPath)
 
       // Return a placeholder response for development
       return NextResponse.json({
@@ -120,13 +119,13 @@ export async function GET(request: NextRequest) {
         downloadCount: purchase.downloadCount,
         remainingDownloads: purchase.maxDownloads - purchase.downloadCount,
         note: `Place ${purchase.productVariant || 'book'} file at: ${bookPath}`,
-      }, { status: 503 });
+      }, { status: 503 })
     }
   } catch (error) {
-    console.error('Download error:', error);
+    console.error('Download error:', error)
     return NextResponse.json(
       { error: 'Failed to process download request' },
       { status: 500 }
-    );
+    )
   }
 }
