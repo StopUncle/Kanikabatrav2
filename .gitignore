@@ -66,3 +66,7 @@ presale-list.json
 .env
 .env.local
 .env.production
+
+# Prevent document.tsx in app directory (App Router incompatible)
+app/document.tsx
+app/_document.tsx
