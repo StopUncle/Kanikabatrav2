@@ -1,0 +1,6 @@
+NUCLEAR OPTION - DISABLE ALL DOCUMENT FILES
+==========================================
+
+Renamed any document.tsx files to .disabled
+This should prevent ANY Html imports from being processed
+Timestamp: 2025-01-08 Nuclear Fix
