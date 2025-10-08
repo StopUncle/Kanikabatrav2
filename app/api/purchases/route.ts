@@ -16,7 +16,7 @@ export async function GET(request: NextRequest) {
 
     // If no email provided, try to get from auth token
     if (!customerEmail) {
-      const cookieStore = cookies()
+      const cookieStore = await cookies()
       const accessToken = cookieStore.get('accessToken')?.value
 
       if (!accessToken) {
@@ -61,7 +61,7 @@ export async function GET(request: NextRequest) {
     })
 
     // Generate download URLs for book purchases
-    const purchasesWithUrls = purchases.map(purchase => ({
+    const purchasesWithUrls = purchases.map((purchase) => ({
       ...purchase,
       downloadUrl: purchase.type === 'BOOK' && purchase.downloadToken
         ? `${process.env.NEXT_PUBLIC_BASE_URL}/api/download?token=${purchase.downloadToken}`

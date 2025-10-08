@@ -1,18 +1,6 @@
-import { PrismaClient } from '@prisma/client'
+import { prisma } from '../prisma'
 import { User, CreateUserData } from './types'
 import { hashPassword, verifyPassword } from './password'
-
-// Use global to persist Prisma client in development (Next.js hot reload)
-declare global {
-  // eslint-disable-next-line no-var
-  var prisma: PrismaClient | undefined
-}
-
-const prisma = global.prisma || new PrismaClient()
-
-if (process.env.NODE_ENV !== 'production') {
-  global.prisma = prisma
-}
 
 export class PrismaUserDatabase {
   static async findByEmail(email: string): Promise<User | null> {
@@ -77,4 +65,4 @@ export class PrismaUserDatabase {
   }
 }
 
-export default prisma
+export { prisma }

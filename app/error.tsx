@@ -27,9 +27,9 @@ export default function Error({
           <Button onClick={() => reset()}>
             Try again
           </Button>
-          <Button variant="outline" asChild>
-            <Link href="/">Go Home</Link>
-          </Button>
+          <Link href="/">
+            <Button variant="outline">Go Home</Button>
+          </Link>
         </div>
       </div>
     </div>

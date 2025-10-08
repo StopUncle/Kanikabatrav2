@@ -1,0 +1,1 @@
+console.log('Node.js basic test works')

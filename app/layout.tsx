@@ -13,6 +13,9 @@ export const metadata: Metadata = {
   title: 'Kanika Batra - The Beautiful Sociopath',
   description: 'Diagnosed sociopath, beauty queen, and dark psychology expert. Learn the forbidden psychology that creates obsession and commands power.',
   keywords: 'Kanika Batra, sociopath, dark psychology, beauty queen, manipulation tactics, dark feminine energy',
+  icons: {
+    icon: '/favicon.ico',
+  },
   openGraph: {
     title: 'Kanika Batra - The Beautiful Sociopath',
     description: 'Diagnosed sociopath, beauty queen, and dark psychology expert.',
@@ -38,12 +41,10 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <head>
+      <body className={inter.className}>
         <link rel="dns-prefetch" href="https://www.paypal.com" />
         <link rel="preconnect" href="https://www.paypal.com" />
         <link rel="preconnect" href="https://www.paypalobjects.com" />
-      </head>
-      <body className={inter.className}>
         <main>
           {children}
         </main>

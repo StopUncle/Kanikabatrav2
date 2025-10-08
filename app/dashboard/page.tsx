@@ -5,7 +5,7 @@ import DashboardClient from '@/components/dashboard/DashboardClient'
 
 export default async function DashboardPage() {
   // Server-side auth check
-  const cookieStore = cookies()
+  const cookieStore = await cookies()
   const accessToken = cookieStore.get('accessToken')?.value
 
   if (!accessToken) {
