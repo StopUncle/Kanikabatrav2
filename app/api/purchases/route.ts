@@ -3,6 +3,9 @@ import { prisma } from '@/lib/prisma'
 import { verifyAccessToken } from '@/lib/auth/jwt'
 import { cookies } from 'next/headers'
 
+// Force dynamic rendering to prevent static generation errors
+export const dynamic = 'force-dynamic'
+
 export async function GET(request: NextRequest) {
   try {
     // Get email from query params (for non-auth users) or from token
@@ -81,6 +84,3 @@ export async function GET(request: NextRequest) {
     )
   }
 }
-
-// Add dynamic config to prevent static generation
-export const dynamic = 'force-dynamic'
