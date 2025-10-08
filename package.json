@@ -4,11 +4,12 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "prebuild": "node scripts/prebuild.js",
+    "build": "npm run prebuild && next build",
     "start": "next start",
     "lint": "next lint",
     "type-check": "tsc --noEmit",
-    "railway-build": "next build"
+    "railway-build": "npm run prebuild && next build"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.3.0",
