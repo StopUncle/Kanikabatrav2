@@ -127,3 +127,6 @@ export async function GET(request: NextRequest) {
     )
   }
 }
+
+// Add dynamic config to prevent static generation
+export const dynamic = 'force-dynamic'

@@ -23,6 +23,9 @@ const nextConfig = {
     optimizePackageImports: ['framer-motion', 'lucide-react'],
   },
 
+  // Fix for Railway deployment
+  output: 'standalone',
+
   // Headers for security and performance
   async headers() {
     // Only apply CSP in production to avoid webpack dev issues
