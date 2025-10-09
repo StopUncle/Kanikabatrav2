@@ -13,8 +13,8 @@ export const BOOK_INFO = {
   kdpPrice: 17.99, // Amazon KDP version
   wordCount: '70,000', // Updated word count
   chapters: 15,
-  isPresale: true,
-  expectedLaunchDate: '2025-10-07T08:00:00-04:00', // October 7, 2025 8am EDT (10pm AEST)
+  isPresale: false,
+  expectedLaunchDate: '2026-02-14T00:00:00-05:00', // Valentine's Day 2026
   description: 'The first dating guide written by a clinically diagnosed sociopath. Learn the cold, strategic methods that create irresistible attraction while others struggle with heartbreak. This isn\'t another "love yourself" manifesto—it\'s a tactical manual for winning at modern romance.',
   features: [
     '15 chapters of strategic dating frameworks',

@@ -30,9 +30,6 @@ export default function CountdownTimer({ targetDate, className = '' }: Countdown
       const difference = target - now
 
       if (difference <= 0) {
-        if (typeof window !== 'undefined') {
-          window.location.reload()
-        }
         return { days: 0, hours: 0, minutes: 0, seconds: 0 }
       }
 
