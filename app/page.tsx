@@ -161,7 +161,7 @@ export default function Home() {
               <p className="text-text-gray mb-8">
                 Get exclusive insights, manipulation tactics, and dark psychology tips delivered to your inbox.
               </p>
-              <form className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto">
+              <form onSubmit={(e) => e.preventDefault()} className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto">
                 <input
                   type="email"
                   placeholder="Enter your email"
