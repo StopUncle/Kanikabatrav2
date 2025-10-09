@@ -1,14 +1,14 @@
 [phases.setup]
-nixPkgs = ["nodejs_18", "npm-9_x", "openssl"]
+nixPkgs = ["nodejs_20", "npm-10_x", "openssl"]
 
 [phases.install]
 cmds = ["npm ci"]
 
 [phases.build]
-cmds = ["npm run build"]
+cmds = ["npx prisma generate", "npm run build"]
 
 [start]
-cmd = "next start"
+cmd = "NODE_OPTIONS='--max-old-space-size=512' next start -p ${PORT:-3000}"
 
 [variables]
 NODE_ENV = "production"
