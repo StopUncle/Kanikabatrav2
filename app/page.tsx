@@ -5,6 +5,7 @@ import Hero from '@/components/Hero'
 import BookShowcase from '@/components/BookShowcase'
 import CoachingTiers from '@/components/CoachingTiers'
 import Testimonial from '@/components/Testimonial'
+import NewsletterForm from '@/components/NewsletterForm'
 import { SITE_CONFIG } from '@/lib/constants'
 
 export const metadata: Metadata = {
@@ -161,20 +162,7 @@ export default function Home() {
               <p className="text-text-gray mb-8">
                 Get exclusive insights, manipulation tactics, and dark psychology tips delivered to your inbox.
               </p>
-              <form onSubmit={(e) => e.preventDefault()} className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto">
-                <input
-                  type="email"
-                  placeholder="Enter your email"
-                  className="flex-1 px-6 py-3 bg-deep-black/50 border border-accent-gold/20 rounded-full text-text-light placeholder-text-gray focus:outline-none focus:border-accent-gold/50 transition-colors"
-                  required
-                />
-                <button
-                  type="submit"
-                  className="btn-primary rounded-full text-white px-8 py-3"
-                >
-                  Subscribe
-                </button>
-              </form>
+              <NewsletterForm />
               <p className="text-text-gray text-sm mt-4">
                 No spam. Only darkness. Unsubscribe anytime.
               </p>
