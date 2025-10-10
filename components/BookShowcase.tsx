@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { motion } from 'framer-motion'
 import Link from 'next/link'
-import { Check, Crown, Bell } from 'lucide-react'
+import { Check, Crown, BookOpen, Bell } from 'lucide-react'
 import PayPalButton from './PayPalButton'
 import PresaleModal from './PresaleModal'
 import CountdownTimer from './CountdownTimer'
@@ -20,7 +20,7 @@ export default function BookShowcase() {
   const [showPayPal, setShowPayPal] = useState(false)
   const [paymentStatus, setPaymentStatus] = useState<'idle' | 'success' | 'error'>('idle')
   const [showPresaleModal, setShowPresaleModal] = useState(false)
-  const [selectedVersion, setSelectedVersion] = useState<'premium'>('premium')
+  const [selectedVersion, setSelectedVersion] = useState<'kdp' | 'premium'>('premium')
 
   const handlePaymentSuccess = (details: { id: string, status: string }) => {
     setPaymentStatus('success')
@@ -144,24 +144,53 @@ export default function BookShowcase() {
                 </div>
               )}
 
-              <div className="mb-6">
-                <div className="w-full p-4 sm:p-6 rounded-lg border border-accent-gold bg-accent-gold/10">
-                  <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+              <div className="space-y-4 mb-6">
+                <button
+                  onClick={() => setSelectedVersion('kdp')}
+                  className={`w-full p-4 rounded-lg border transition-all text-left relative ${
+                    selectedVersion === 'kdp'
+                      ? 'border-accent-gold bg-accent-gold/10'
+                      : 'border-gold/20 hover:border-gold/40 opacity-60'
+                  }`}
+                  disabled
+                >
+                  <div className="flex items-start justify-between">
                     <div className="flex items-start gap-3">
-                      <Crown className="text-accent-gold mt-1 flex-shrink-0" size={24} />
+                      <BookOpen className="text-accent-gold mt-1" size={20} />
                       <div>
-                        <div className="font-semibold text-text-light text-lg">Premium Uncensored Edition</div>
-                        <div className="text-sm text-text-muted mt-1">Direct Download + Exclusive Bonuses</div>
-                        <ul className="text-xs text-accent-gold mt-3 space-y-1.5">
+                        <div className="font-semibold text-text-light">Amazon KDP Version</div>
+                        <div className="text-sm text-text-muted mt-1">Kindle & Paperback</div>
+                        <div className="text-xs text-accent-gold mt-2 italic">Coming Soon</div>
+                      </div>
+                    </div>
+                    <div className="text-2xl font-light gradient-text-gold">${BOOK_INFO.kdpPrice}</div>
+                  </div>
+                </button>
+
+                <button
+                  onClick={() => setSelectedVersion('premium')}
+                  className={`w-full p-4 rounded-lg border transition-all text-left ${
+                    selectedVersion === 'premium'
+                      ? 'border-accent-gold bg-accent-gold/10'
+                      : 'border-gold/20 hover:border-gold/40'
+                  }`}
+                >
+                  <div className="flex items-start justify-between">
+                    <div className="flex items-start gap-3">
+                      <Crown className="text-accent-gold mt-1" size={20} />
+                      <div>
+                        <div className="font-semibold text-text-light">Premium Uncensored</div>
+                        <div className="text-sm text-text-muted mt-1">Direct + Exclusive Bonuses</div>
+                        <ul className="text-xs text-accent-gold mt-2 space-y-1">
                           {BOOK_INFO.premiumBonuses.slice(0, 3).map((bonus, i) => (
                             <li key={i}>• {bonus}</li>
                           ))}
                         </ul>
                       </div>
                     </div>
-                    <div className="text-3xl sm:text-4xl font-light gradient-text-gold whitespace-nowrap">${BOOK_INFO.price}</div>
+                    <div className="text-2xl font-light gradient-text-gold">${BOOK_INFO.price}</div>
                   </div>
-                </div>
+                </button>
               </div>
 
               {paymentStatus === 'success' ? (
