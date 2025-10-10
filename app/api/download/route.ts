@@ -81,7 +81,14 @@ export async function GET(request: NextRequest) {
       ? 'Sociopathic_Dating_Bible_Kanika_Batra.epub'
       : 'Sociopathic_Dating_Bible_Kanika_Batra.pdf'
 
-    const bookPath = path.join(process.cwd(), 'private', 'books', bookFilename)
+    // Try public folder first (for Railway deployment), fallback to private
+    let bookPath = path.join(process.cwd(), 'public', 'books', bookFilename)
+    try {
+      await fs.access(bookPath)
+    } catch {
+      // Fallback to private folder
+      bookPath = path.join(process.cwd(), 'private', 'books', bookFilename)
+    }
 
     try {
       // Check if file exists
