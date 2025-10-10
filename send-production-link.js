@@ -1,0 +1,256 @@
+/**
+ * Send Download Link using PRODUCTION (Railway) Database
+ *
+ * This connects to Railway's database and sends working production links
+ *
+ * Usage: node send-production-link.js <email> <name> [premium]
+ */
+
+const { PrismaClient } = require('@prisma/client')
+const nodemailer = require('nodemailer')
+const crypto = require('crypto')
+
+// Use Railway's PUBLIC production database URL
+const RAILWAY_DATABASE_URL = 'postgresql://postgres:JoPRnLrCsMFNBQlfvQeZIkGHeFKhdoXa@yamanote.proxy.rlwy.net:35736/railway'
+
+const prisma = new PrismaClient({
+  datasources: {
+    db: {
+      url: RAILWAY_DATABASE_URL
+    }
+  }
+})
+
+async function sendProductionLink(email, name, isPremium) {
+  try {
+    console.log('\n📧 Creating purchase in PRODUCTION database and sending link...')
+    console.log('   Database: Railway Production')
+    console.log('   To:', email)
+    console.log('   Name:', name)
+    console.log('   Type:', isPremium ? 'Premium Edition ($34.99)' : 'Standard Edition ($17.99)')
+
+    // Generate secure token
+    const token = crypto.randomBytes(32).toString('hex')
+    const expiryDate = new Date()
+    expiryDate.setDate(expiryDate.getDate() + 30)
+
+    // Create purchase record in PRODUCTION database
+    const purchase = await prisma.purchase.create({
+      data: {
+        type: 'BOOK',
+        productVariant: isPremium ? 'PREMIUM' : 'KDP',
+        customerEmail: email,
+        customerName: name,
+        amount: isPremium ? 34.99 : 17.99,
+        status: 'COMPLETED',
+        paypalOrderId: `MANUAL-${Date.now()}`,
+        downloadToken: token,
+        downloadCount: 0,
+        maxDownloads: 5,
+        expiresAt: expiryDate,
+        metadata: {
+          source: 'admin-production',
+          createdBy: 'admin',
+          timestamp: new Date().toISOString()
+        }
+      }
+    })
+
+    console.log('✅ Purchase record created in PRODUCTION:', purchase.id)
+
+    // Build URLs - Use Railway URL until domain is configured
+    const baseUrl = 'https://kanikabatrav2-production.up.railway.app'
+    const pdfUrl = `${baseUrl}/api/download?token=${token}&format=pdf`
+    const epubUrl = `${baseUrl}/api/download?token=${token}&format=epub`
+
+    const formattedExpiry = expiryDate.toLocaleDateString('en-US', {
+      month: 'long',
+      day: 'numeric',
+      year: 'numeric'
+    })
+
+    const premiumBonuses = isPremium ? `
+      <table width="100%" cellspacing="0" cellpadding="0" style="background: linear-gradient(135deg, #1a0d11 0%, #2a1a1f 100%); border-radius: 10px; margin: 0 0 25px 0; border: 2px solid #d4af37; padding: 25px;">
+        <tr>
+          <td>
+            <h3 style="color: #d4af37; margin: 0 0 20px 0; font-size: 18px; text-align: center;">
+              Your Premium Edition Bonuses
+            </h3>
+            <div style="color: #f5f0ed; font-size: 14px;">
+              <p style="margin: 10px 0;">✓ <strong style="color: #d4af37;">Bonus Chapter:</strong> Advanced Dark Triad Tactics</p>
+              <p style="margin: 10px 0;">✓ <strong style="color: #d4af37;">Video Masterclass:</strong> Reading Micro-expressions</p>
+              <p style="margin: 10px 0;">✓ <strong style="color: #d4af37;">Email Templates:</strong> Psychological Warfare in Dating</p>
+              <p style="margin: 10px 0;">✓ <strong style="color: #d4af37;">$100 Discount:</strong> On your first consultation</p>
+            </div>
+          </td>
+        </tr>
+      </table>
+    ` : ''
+
+    const html = `
+      <!DOCTYPE html>
+      <html>
+      <head><meta charset="UTF-8"></head>
+      <body style="margin: 0; padding: 0; background-color: #0a0a0a; font-family: Arial, sans-serif;">
+        <table width="100%" cellspacing="0" cellpadding="0" style="background-color: #0a0a0a;">
+          <tr>
+            <td align="center" style="padding: 40px 20px;">
+              <table width="600" cellspacing="0" cellpadding="0" style="max-width: 600px; background-color: #050511; border-radius: 12px;">
+
+                <tr>
+                  <td style="background: linear-gradient(135deg, #720921 0%, #0a1628 100%); padding: 40px 30px; text-align: center;">
+                    <h1 style="color: #d4af37; margin: 0; font-size: 28px; font-weight: 300; letter-spacing: 2px; text-transform: uppercase;">
+                      Thank You For Your Purchase
+                    </h1>
+                    <p style="color: #94a3b8; margin: 10px 0 0 0; font-size: 14px;">
+                      Your download is ready
+                    </p>
+                  </td>
+                </tr>
+
+                <tr>
+                  <td style="padding: 40px 30px; border: 1px solid #d4af37; border-top: none;">
+
+                    <p style="color: #f5f0ed; font-size: 18px; margin: 0 0 20px 0;">
+                      Dear ${name},
+                    </p>
+
+                    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 30px 0;">
+                      Your payment has been successfully processed. You now have instant access to:
+                    </p>
+
+                    <div style="background: linear-gradient(135deg, #1a0d11 0%, #0f0a0f 100%); padding: 25px; border-radius: 10px; margin: 0 0 30px 0; border: 1px solid #d4af37;">
+                      <h2 style="color: #d4af37; margin: 0 0 15px 0; font-size: 20px; font-weight: 600;">
+                        Sociopathic Dating Bible: A Cure For Empathy${isPremium ? ' (Premium Edition)' : ''}
+                      </h2>
+                      <p style="color: #94a3b8; margin: 0; font-size: 14px;">
+                        70,000 words of strategic dating psychology from a diagnosed sociopath
+                      </p>
+                    </div>
+
+                    <table width="100%" cellspacing="0" cellpadding="0" style="margin: 0 0 30px 0;">
+                      <tr>
+                        <td align="center">
+                          <h3 style="color: #d4af37; margin: 0 0 20px 0; font-size: 16px;">
+                            Choose Your Format
+                          </h3>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td align="center" style="padding-bottom: 15px;">
+                          <a href="${pdfUrl}" style="display: inline-block; background: linear-gradient(135deg, #d4af37 0%, #b8941f 100%); color: #050511; padding: 18px 50px; text-decoration: none; border-radius: 50px; font-weight: 700; font-size: 16px; letter-spacing: 1px; text-transform: uppercase;">
+                            📄 Download PDF
+                          </a>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td align="center">
+                          <a href="${epubUrl}" style="display: inline-block; background: linear-gradient(135deg, #722139 0%, #4a1426 100%); color: #d4af37; padding: 18px 50px; text-decoration: none; border-radius: 50px; font-weight: 700; font-size: 16px; letter-spacing: 1px; text-transform: uppercase; border: 2px solid #d4af37;">
+                            📱 Download EPUB
+                          </a>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td align="center" style="padding-top: 10px;">
+                          <p style="color: #ff6b9d; font-size: 12px; font-style: italic; margin: 0;">
+                            Note: EPUB has minor spacing issues. Contact us for a cleaner version if needed.
+                          </p>
+                        </td>
+                      </tr>
+                    </table>
+
+                    <table width="100%" cellspacing="0" cellpadding="0" style="background: #0a0a0a; border-radius: 8px; margin: 0 0 25px 0; border: 1px solid #333; padding: 20px;">
+                      <tr>
+                        <td>
+                          <h3 style="color: #d4af37; margin: 0 0 15px 0; font-size: 16px;">
+                            Important Download Information
+                          </h3>
+                          <p style="color: #94a3b8; font-size: 14px; margin: 8px 0;">
+                            ✓ Link expires: <strong style="color: #d4af37;">${formattedExpiry}</strong>
+                          </p>
+                          <p style="color: #94a3b8; font-size: 14px; margin: 8px 0;">
+                            ✓ Maximum downloads: <strong style="color: #d4af37;">5 times total</strong> (across both formats)
+                          </p>
+                          <p style="color: #94a3b8; font-size: 14px; margin: 8px 0;">
+                            ✓ Both PDF &amp; EPUB formats available
+                          </p>
+                          <p style="color: #94a3b8; font-size: 14px; margin: 8px 0;">
+                            ✓ Save locally for permanent access
+                          </p>
+                        </td>
+                      </tr>
+                    </table>
+
+                    ${premiumBonuses}
+
+                    <p style="color: #d4af37; font-style: italic; margin-top: 30px; text-align: center;">
+                      Embrace your power,<br>
+                      <strong>Kanika Batra</strong><br>
+                      <span style="color: #666; font-size: 12px;">The Beautiful Sociopath</span>
+                    </p>
+
+                    <div style="margin-top: 30px; padding: 20px; background: #1a0d11; border-radius: 8px; text-align: center;">
+                      <p style="color: #94a3b8; margin: 0; font-size: 13px;">
+                        Issues with your purchase? Contact <a href="mailto:Kanika@kanikarose.com" style="color: #d4af37; text-decoration: none;">Kanika@kanikarose.com</a>
+                      </p>
+                    </div>
+
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+        </table>
+      </body>
+      </html>
+    `
+
+    // Send email using your SMTP
+    const transporter = nodemailer.createTransport({
+      host: 'smtp.gmail.com',
+      port: 587,
+      secure: false,
+      auth: {
+        user: 'kbatra271@gmail.com',
+        pass: 'mjkaanomatrxcdxx',
+      },
+    })
+
+    await transporter.sendMail({
+      from: '"Kanika Batra" <kbatra271@gmail.com>',
+      to: email,
+      subject: `Download Your Book - Sociopathic Dating Bible${isPremium ? ' (Premium Edition)' : ''}`,
+      html: html,
+    })
+
+    console.log('\n✅ SUCCESS! Email sent with PRODUCTION download links')
+    console.log('\n📊 Purchase Details:')
+    console.log('   Purchase ID:', purchase.id)
+    console.log('   PDF:', pdfUrl)
+    console.log('   EPUB:', epubUrl)
+    console.log('   Expires:', formattedExpiry)
+    console.log('   Downloads:', `0/${purchase.maxDownloads}`)
+    console.log('\n✅ Links will work on production site!\n')
+
+  } catch (error) {
+    console.error('\n❌ Error:', error.message)
+    console.error('\nFull error:', error)
+  } finally {
+    await prisma.$disconnect()
+  }
+}
+
+const email = process.argv[2]
+const name = process.argv[3]
+const isPremium = process.argv[4] === 'premium'
+
+if (!email || !name) {
+  console.log('\n📖 Usage: node send-production-link.js <email> <name> [premium]')
+  console.log('\nExamples:')
+  console.log('   node send-production-link.js customer@example.com "John Smith"')
+  console.log('   node send-production-link.js customer@example.com "Jane Doe" premium')
+  console.log('\n✅ This creates a purchase in Railway\'s PRODUCTION database.\n')
+  process.exit(0)
+}
+
+sendProductionLink(email, name, isPremium)
