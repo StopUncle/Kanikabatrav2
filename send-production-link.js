@@ -59,7 +59,7 @@ async function sendProductionLink(email, name, isPremium) {
     console.log('✅ Purchase record created in PRODUCTION:', purchase.id)
 
     // Build URLs - Use Railway URL until domain is configured
-    const baseUrl = 'https://kanikabatrav2-production.up.railway.app'
+    const baseUrl = 'https://kanikarose.com'
     const pdfUrl = `${baseUrl}/api/download?token=${token}&format=pdf`
     const epubUrl = `${baseUrl}/api/download?token=${token}&format=epub`
 
