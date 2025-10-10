@@ -229,10 +229,13 @@ export const sendOrderConfirmation = async (data: OrderConfirmationData): Promis
 export const sendBookDelivery = async (
   customerEmail: string,
   customerName: string,
-  downloadUrl: string,
+  downloadToken: string,
   variant: string | null,
   expiresAt: Date
 ): Promise<boolean> => {
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://kanikabatra.com'
+  const pdfDownloadUrl = `${baseUrl}/api/download?token=${downloadToken}&format=pdf`
+  const epubDownloadUrl = `${baseUrl}/api/download?token=${downloadToken}&format=epub`
   const isPremium = variant === 'PREMIUM'
   const bookTitle = isPremium
     ? 'Sociopathic Dating Bible: A Cure For Empathy (Premium Edition)'
@@ -328,12 +331,26 @@ export const sendBookDelivery = async (
                     </p>
                   </div>
 
-                  <!-- Download Button -->
+                  <!-- Download Buttons -->
                   <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="margin: 0 0 30px 0;">
                     <tr>
                       <td align="center">
-                        <a href="${downloadUrl}" style="display: inline-block; background: linear-gradient(135deg, #d4af37 0%, #b8941f 100%); color: #050511; padding: 18px 50px; text-decoration: none; border-radius: 50px; font-weight: 700; font-size: 16px; letter-spacing: 1px; text-transform: uppercase; box-shadow: 0 4px 15px rgba(212, 175, 55, 0.4); transition: all 0.3s ease;">
-                          Download Your Book Now
+                        <h3 style="color: #d4af37; margin: 0 0 20px 0; font-size: 16px; font-weight: 600;">
+                          Choose Your Format
+                        </h3>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td align="center" style="padding-bottom: 15px;">
+                        <a href="${pdfDownloadUrl}" style="display: inline-block; background: linear-gradient(135deg, #d4af37 0%, #b8941f 100%); color: #050511; padding: 18px 50px; text-decoration: none; border-radius: 50px; font-weight: 700; font-size: 16px; letter-spacing: 1px; text-transform: uppercase; box-shadow: 0 4px 15px rgba(212, 175, 55, 0.4); transition: all 0.3s ease;">
+                          📄 Download PDF
+                        </a>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td align="center">
+                        <a href="${epubDownloadUrl}" style="display: inline-block; background: linear-gradient(135deg, #722139 0%, #4a1426 100%); color: #d4af37; padding: 18px 50px; text-decoration: none; border-radius: 50px; font-weight: 700; font-size: 16px; letter-spacing: 1px; text-transform: uppercase; box-shadow: 0 4px 15px rgba(114, 33, 57, 0.4); border: 2px solid #d4af37; transition: all 0.3s ease;">
+                          📱 Download EPUB
                         </a>
                       </td>
                     </tr>
@@ -354,7 +371,12 @@ export const sendBookDelivery = async (
                           </tr>
                           <tr>
                             <td style="padding: 8px 0; color: #94a3b8; font-size: 14px; line-height: 1.6;">
-                              ✓ Maximum downloads: <strong style="color: #d4af37;">5 times</strong>
+                              ✓ Maximum downloads: <strong style="color: #d4af37;">5 times total</strong> (across both formats)
+                            </td>
+                          </tr>
+                          <tr>
+                            <td style="padding: 8px 0; color: #94a3b8; font-size: 14px; line-height: 1.6;">
+                              ✓ Both PDF &amp; EPUB formats available
                             </td>
                           </tr>
                           <tr>

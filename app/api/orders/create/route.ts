@@ -67,7 +67,7 @@ export async function POST(request: NextRequest) {
 
     // Handle book purchase
     if (type === 'book') {
-      // Generate secure download URL
+      // Generate secure download token
       const downloadToken = jwt.sign(
         { purchaseId: purchase.id, type: 'book' },
         process.env.JWT_SECRET || 'your-secret-key',
@@ -88,7 +88,7 @@ export async function POST(request: NextRequest) {
       // Send book delivery email
       const expiresAt = new Date()
       expiresAt.setDate(expiresAt.getDate() + 30)
-      await sendBookDelivery(payerEmail, payerName, downloadUrl, null, expiresAt)
+      await sendBookDelivery(payerEmail, payerName, downloadToken, null, expiresAt)
 
       return NextResponse.json({
         success: true,

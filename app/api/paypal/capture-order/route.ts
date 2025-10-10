@@ -121,9 +121,9 @@ export async function POST(request: NextRequest) {
       // Generate secure download token
       const downloadToken = crypto.randomBytes(32).toString('hex')
 
-      // Set download expiry (24 hours from now for security)
+      // Set download expiry (30 days from now)
       const expiresAt = new Date()
-      expiresAt.setHours(expiresAt.getHours() + 24)
+      expiresAt.setDate(expiresAt.getDate() + 30)
 
       // Save purchase to database
       const purchase = await prisma.purchase.create({
@@ -154,15 +154,15 @@ export async function POST(request: NextRequest) {
         email: orderData.payerEmail
       })
 
-      // Generate download URL
+      // Generate download URL for response
       const downloadUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/api/download?token=${downloadToken}`
 
-      // Send email with download link (async, don't wait)
+      // Send email with download token (async, don't wait)
       if (productType === 'BOOK') {
         sendBookDelivery(
           orderData.payerEmail || 'unknown@email.com',
           orderData.payerName || 'Customer',
-          downloadUrl,
+          downloadToken,
           productVariant,
           expiresAt
         ).catch(error => {

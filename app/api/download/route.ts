@@ -72,14 +72,14 @@ export async function GET(request: NextRequest) {
       },
     })
 
-    // Determine which book file to serve based on variant
-    let bookFilename = 'sociopathic-dating-bible-premium.pdf'
-    let displayName = 'Sociopathic_Dating_Bible_Premium_Edition_Kanika_Batra.pdf'
+    // Get requested format from query params (defaults to pdf)
+    const format = searchParams.get('format') || 'pdf'
 
-    if (purchase.productVariant === 'KDP') {
-      bookFilename = 'sociopathic-dating-bible-kdp.pdf'
-      displayName = 'Sociopathic_Dating_Bible_Kanika_Batra.pdf'
-    }
+    // Determine which book file to serve
+    const bookFilename = format === 'epub' ? 'FINAL_BOOK.epub' : 'FINAL_BOOK.pdf'
+    const displayName = format === 'epub'
+      ? 'Sociopathic_Dating_Bible_Kanika_Batra.epub'
+      : 'Sociopathic_Dating_Bible_Kanika_Batra.pdf'
 
     const bookPath = path.join(process.cwd(), 'private', 'books', bookFilename)
 
@@ -97,11 +97,14 @@ export async function GET(request: NextRequest) {
         downloadCount: purchase.downloadCount + 1
       })
 
+      // Determine content type based on format
+      const contentType = format === 'epub' ? 'application/epub+zip' : 'application/pdf'
+
       // Return the file as a download
       return new NextResponse(fileBuffer as BodyInit, {
         status: 200,
         headers: {
-          'Content-Type': 'application/pdf',
+          'Content-Type': contentType,
           'Content-Disposition': `attachment; filename="${displayName}"`,
           'Content-Length': fileBuffer.length.toString(),
           'Cache-Control': 'private, no-cache, no-store, must-revalidate',

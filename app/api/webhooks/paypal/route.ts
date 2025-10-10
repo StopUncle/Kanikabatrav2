@@ -145,13 +145,12 @@ async function handleOrderCompleted(event: PayPalWebhookEvent) {
 
   // Handle book purchase
   if (purchaseType === 'BOOK') {
-    // Generate secure download URL
+    // Generate secure download token
     const downloadToken = jwt.sign(
       { purchaseId: purchase.id, type: 'book' },
       process.env.JWT_SECRET || 'your-secret-key',
       { expiresIn: '7d' }
     )
-    const downloadUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/api/download?token=${downloadToken}`
 
     // Send emails
     await sendOrderConfirmation({
@@ -165,7 +164,7 @@ async function handleOrderCompleted(event: PayPalWebhookEvent) {
 
     const expiresAt = new Date()
     expiresAt.setDate(expiresAt.getDate() + 30)
-    await sendBookDelivery(payerEmail, payerName, downloadUrl, null, expiresAt)
+    await sendBookDelivery(payerEmail, payerName, downloadToken, null, expiresAt)
   }
 
   // Handle coaching purchase
