@@ -153,10 +153,13 @@ export default function BookPage() {
                     Join Presale List
                   </button>
                 ) : (
-                  <button className="btn-primary rounded-full text-white px-8 py-4 flex items-center justify-center gap-2">
+                  <Link
+                    href="/#book"
+                    className="btn-primary rounded-full text-white px-8 py-4 flex items-center justify-center gap-2"
+                  >
                     <ShoppingCart className="w-5 h-5" />
                     Get The Book - ${BOOK_INFO.price}
-                  </button>
+                  </Link>
                 )}
                 <Link href="#chapters" className="btn-secondary rounded-full px-8 py-4 text-center">
                   Preview Chapters
