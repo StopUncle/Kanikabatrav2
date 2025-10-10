@@ -110,7 +110,7 @@ export default function BookPage() {
             <div className="space-y-6">
               <div>
                 <p className="text-accent-burgundy uppercase tracking-[0.2em] text-sm mb-2">
-                  65,000 Words of Strategic Dominance
+                  70,000 Words of Strategic Dominance
                 </p>
                 <h2 className="text-4xl md:text-5xl font-serif mb-4">
                   <span className="gradient-text">The Dating Guide</span>

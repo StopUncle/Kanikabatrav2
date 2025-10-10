@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://kanikabatra.com/sitemap.xml
+Sitemap: https://kanikarose.com/sitemap.xml
