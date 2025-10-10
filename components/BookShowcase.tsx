@@ -254,10 +254,10 @@ export default function BookShowcase() {
               ) : (
                 <div className="space-y-4">
                   <button
-                    onClick={() => setShowPayPal(true)}
-                    className="w-full btn-primary rounded-full text-white text-center py-3 sm:py-4 font-semibold tracking-wide text-sm sm:text-base"
+                    disabled
+                    className="w-full btn-primary rounded-full text-white text-center py-3 sm:py-4 font-semibold tracking-wide text-sm sm:text-base opacity-50 cursor-not-allowed"
                   >
-                    Buy Now - ${BOOK_INFO.price}
+                    Coming Soon
                   </button>
                   <div className="flex flex-col sm:flex-row gap-3">
                     <Link
