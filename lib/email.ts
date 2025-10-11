@@ -219,7 +219,6 @@ export const sendBookDelivery = async (
   expiresAt: Date
 ): Promise<boolean> => {
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://kanikabatra.com'
-  const pdfDownloadUrl = `${baseUrl}/api/download?token=${downloadToken}&format=pdf`
   const epubDownloadUrl = `${baseUrl}/api/download?token=${downloadToken}&format=epub`
   const isPremium = variant === 'PREMIUM'
   const bookTitle = isPremium
