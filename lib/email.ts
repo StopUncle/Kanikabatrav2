@@ -316,7 +316,7 @@ export const sendBookDelivery = async (
                     </p>
                   </div>
 
-                  <!-- Download Buttons -->
+                  <!-- Download Button -->
                   <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="margin: 0 0 30px 0;">
                     <tr>
                       <td align="center">
@@ -324,21 +324,14 @@ export const sendBookDelivery = async (
                           Download Your Book
                         </h3>
                         <p style="color: #94a3b8; margin: 0 0 25px 0; font-size: 13px; font-style: italic;">
-                          EPUB format is recommended for the best mobile reading experience
+                          EPUB format optimized for all e-readers and mobile devices
                         </p>
                       </td>
                     </tr>
                     <tr>
                       <td align="center" style="padding-bottom: 20px;">
                         <a href="${epubDownloadUrl}" style="display: inline-block; background-color: #d4af37; color: #050511; padding: 22px 60px; text-decoration: none; font-weight: 700; font-size: 18px; letter-spacing: 1.5px; text-transform: uppercase; mso-padding-alt: 22px 60px;">
-                          📱 Download EPUB (Recommended)
-                        </a>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td align="right" style="padding: 0 20px 0 0;">
-                        <a href="${pdfDownloadUrl}" style="display: inline-block; background-color: #1a1a1a; color: #94a3b8; padding: 8px 16px; text-decoration: none; font-weight: 500; font-size: 11px; letter-spacing: 0.5px; border: 1px solid #333; mso-padding-alt: 8px 16px;">
-                          📄 PDF Version
+                          📱 Download EPUB
                         </a>
                       </td>
                     </tr>
@@ -359,12 +352,12 @@ export const sendBookDelivery = async (
                           </tr>
                           <tr>
                             <td style="padding: 8px 0; color: #94a3b8; font-size: 14px; line-height: 1.6;">
-                              ✓ Maximum downloads: <strong style="color: #d4af37;">5 times total</strong> (across both formats)
+                              ✓ Maximum downloads: <strong style="color: #d4af37;">5 times total</strong>
                             </td>
                           </tr>
                           <tr>
                             <td style="padding: 8px 0; color: #94a3b8; font-size: 14px; line-height: 1.6;">
-                              ✓ Both PDF &amp; EPUB formats available
+                              ✓ EPUB format works on all devices and e-readers
                             </td>
                           </tr>
                           <tr>
@@ -406,10 +399,10 @@ export const sendBookDelivery = async (
                     <tr>
                       <td style="text-align: center; padding: 20px; background: #1a0d11; border-radius: 8px;">
                         <p style="color: #94a3b8; margin: 0 0 10px 0; font-size: 13px; line-height: 1.6;">
-                          <strong style="color: #d4af37;">Important:</strong> If you don't see this email, please check your junk/spam folder.
+                          <strong style="color: #d4af37;">Important:</strong> If you don't receive this email within a few minutes, please check your junk/spam folder.
                         </p>
                         <p style="color: #94a3b8; margin: 0; font-size: 13px; line-height: 1.6;">
-                          Issues with your purchase? Contact us at <a href="mailto:Kanika@kanikarose.com" style="color: #d4af37; text-decoration: none; font-weight: 600;">Kanika@kanikarose.com</a>
+                          Issues with your download or didn't receive the email? Contact <a href="mailto:Kanika@kanikarose.com" style="color: #d4af37; text-decoration: none; font-weight: 600;">Kanika@kanikarose.com</a> and we will resend the link to an alternate email address.
                         </p>
                       </td>
                     </tr>
