@@ -1,10 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { PrismaClient } from '@prisma/client'
 import { sendBookDelivery } from '@/lib/email'
+import jwt from 'jsonwebtoken'
+
+const prisma = new PrismaClient()
 
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
-    const { email } = body
+    const { email, name, isPremium } = body
 
     if (!email) {
       return NextResponse.json(
@@ -20,27 +24,55 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Generate a test download token
-    const testToken = `TEST_${Date.now()}`
-    const expiresAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000) // 30 days from now
+    const customerName = name || 'Valued Customer'
+    const variant = isPremium === false ? null : 'PREMIUM'
+    const amount = isPremium === false ? 17.99 : 34.99
 
-    // Send the actual book delivery email
+    // Create REAL purchase record in database
+    const purchase = await prisma.purchase.create({
+      data: {
+        paypalOrderId: `MANUAL_${Date.now()}`,
+        type: 'BOOK',
+        amount,
+        status: 'COMPLETED',
+        customerEmail: email,
+        customerName: customerName,
+        productVariant: variant,
+        metadata: {
+          source: 'admin-manual',
+          timestamp: new Date().toISOString(),
+        },
+      },
+    })
+
+    // Generate REAL secure download token (valid for 30 days)
+    const downloadToken = jwt.sign(
+      { purchaseId: purchase.id, type: 'book', email },
+      process.env.JWT_SECRET || 'your-secret-key',
+      { expiresIn: '30d' }
+    )
+
+    const expiresAt = new Date()
+    expiresAt.setDate(expiresAt.getDate() + 30)
+
+    // Send the actual book delivery email with REAL download link
     await sendBookDelivery(
       email,
-      'Test User',
-      testToken,
-      'PREMIUM',
+      customerName,
+      downloadToken,
+      variant,
       expiresAt
     )
 
-    const downloadUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/api/download?token=${testToken}&format=pdf`
+    const downloadUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/api/download?token=${downloadToken}&format=pdf`
 
     return NextResponse.json(
       {
         success: true,
-        message: 'Test purchase email sent successfully',
+        message: 'Download link sent successfully',
+        purchaseId: purchase.id,
         downloadUrl: downloadUrl,
-        note: 'Check your email at ' + email,
+        note: `Real purchase created for ${email}`,
       },
       {
         headers: {
