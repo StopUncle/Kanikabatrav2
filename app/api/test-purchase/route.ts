@@ -7,7 +7,17 @@ export async function POST(request: NextRequest) {
     const { email } = body
 
     if (!email) {
-      return NextResponse.json({ error: 'Email address required' }, { status: 400 })
+      return NextResponse.json(
+        { error: 'Email address required' },
+        {
+          status: 400,
+          headers: {
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': 'POST, OPTIONS',
+            'Access-Control-Allow-Headers': 'Content-Type',
+          },
+        }
+      )
     }
 
     // Generate a test download token
@@ -25,12 +35,21 @@ export async function POST(request: NextRequest) {
 
     const downloadUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/api/download?token=${testToken}&format=pdf`
 
-    return NextResponse.json({
-      success: true,
-      message: 'Test purchase email sent successfully',
-      downloadUrl: downloadUrl,
-      note: 'Check your email at ' + email,
-    })
+    return NextResponse.json(
+      {
+        success: true,
+        message: 'Test purchase email sent successfully',
+        downloadUrl: downloadUrl,
+        note: 'Check your email at ' + email,
+      },
+      {
+        headers: {
+          'Access-Control-Allow-Origin': '*',
+          'Access-Control-Allow-Methods': 'POST, OPTIONS',
+          'Access-Control-Allow-Headers': 'Content-Type',
+        },
+      }
+    )
   } catch (error) {
     console.error('Test purchase error:', error)
     return NextResponse.json(
@@ -38,7 +57,26 @@ export async function POST(request: NextRequest) {
         error: 'Failed to send test purchase email',
         details: error instanceof Error ? error.message : 'Unknown error',
       },
-      { status: 500 }
+      {
+        status: 500,
+        headers: {
+          'Access-Control-Allow-Origin': '*',
+          'Access-Control-Allow-Methods': 'POST, OPTIONS',
+          'Access-Control-Allow-Headers': 'Content-Type',
+        },
+      }
     )
   }
+}
+
+// Handle OPTIONS request for CORS preflight
+export async function OPTIONS() {
+  return new NextResponse(null, {
+    status: 200,
+    headers: {
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Methods': 'POST, OPTIONS',
+      'Access-Control-Allow-Headers': 'Content-Type',
+    },
+  })
 }
