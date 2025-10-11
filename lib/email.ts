@@ -335,22 +335,25 @@ export const sendBookDelivery = async (
                   <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="margin: 0 0 30px 0;">
                     <tr>
                       <td align="center">
-                        <h3 style="color: #d4af37; margin: 0 0 20px 0; font-size: 16px; font-weight: 600;">
-                          Choose Your Format
+                        <h3 style="color: #d4af37; margin: 0 0 10px 0; font-size: 18px; font-weight: 700; text-transform: uppercase; letter-spacing: 2px;">
+                          Download Your Book
                         </h3>
+                        <p style="color: #94a3b8; margin: 0 0 25px 0; font-size: 13px; font-style: italic;">
+                          EPUB format is recommended for the best mobile reading experience
+                        </p>
                       </td>
                     </tr>
                     <tr>
-                      <td align="center" style="padding-bottom: 15px;">
-                        <a href="${pdfDownloadUrl}" style="display: inline-block; background: linear-gradient(135deg, #d4af37 0%, #b8941f 100%); color: #050511; padding: 18px 50px; text-decoration: none; border-radius: 50px; font-weight: 700; font-size: 16px; letter-spacing: 1px; text-transform: uppercase; box-shadow: 0 4px 15px rgba(212, 175, 55, 0.4); transition: all 0.3s ease;">
-                          📄 Download PDF
+                      <td align="center" style="padding-bottom: 20px;">
+                        <a href="${epubDownloadUrl}" style="display: inline-block; background: linear-gradient(135deg, #d4af37 0%, #b8941f 100%); color: #050511; padding: 22px 60px; text-decoration: none; border-radius: 50px; font-weight: 700; font-size: 18px; letter-spacing: 1.5px; text-transform: uppercase; box-shadow: 0 6px 20px rgba(212, 175, 55, 0.5); transition: all 0.3s ease;">
+                          📱 Download EPUB (Recommended)
                         </a>
                       </td>
                     </tr>
                     <tr>
-                      <td align="center">
-                        <a href="${epubDownloadUrl}" style="display: inline-block; background: linear-gradient(135deg, #722139 0%, #4a1426 100%); color: #d4af37; padding: 18px 50px; text-decoration: none; border-radius: 50px; font-weight: 700; font-size: 16px; letter-spacing: 1px; text-transform: uppercase; box-shadow: 0 4px 15px rgba(114, 33, 57, 0.4); border: 2px solid #d4af37; transition: all 0.3s ease;">
-                          📱 Download EPUB
+                      <td align="right" style="padding-right: 20px;">
+                        <a href="${pdfDownloadUrl}" style="display: inline-block; background: transparent; color: #94a3b8; padding: 8px 16px; text-decoration: none; border-radius: 20px; font-weight: 500; font-size: 11px; letter-spacing: 0.5px; border: 1px solid #333; transition: all 0.3s ease;">
+                          📄 PDF Version
                         </a>
                       </td>
                     </tr>
