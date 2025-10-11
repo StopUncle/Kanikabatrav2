@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { sendBookDeliveryEmail } from '@/lib/email'
+import { sendBookDelivery } from '@/lib/email'
 
 export async function POST(request: NextRequest) {
   try {
@@ -15,7 +15,7 @@ export async function POST(request: NextRequest) {
     const downloadUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/api/download?purchase_id=${testPurchaseId}&type=book`
 
     // Send the actual book delivery email
-    await sendBookDeliveryEmail({
+    await sendBookDelivery({
       customerEmail: email,
       customerName: 'Test User',
       purchaseId: testPurchaseId,
