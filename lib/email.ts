@@ -1,9 +1,16 @@
-import nodemailer from 'nodemailer'
+import sgMail from '@sendgrid/mail'
+
 // Logger utility - simple console wrapper
 const logger = {
   info: (message: string) => console.log(`[INFO] ${message}`),
   error: (message: string, error?: Error) => console.error(`[ERROR] ${message}`, error),
   warn: (message: string) => console.warn(`[WARN] ${message}`),
+}
+
+// Initialize SendGrid
+const SENDGRID_API_KEY = process.env.SENDGRID_API_KEY
+if (SENDGRID_API_KEY) {
+  sgMail.setApiKey(SENDGRID_API_KEY)
 }
 
 interface EmailOptions {
@@ -33,51 +40,29 @@ interface OrderConfirmationData {
   }
 }
 
-// Email transporter configuration
-const createTransporter = () => {
-  const smtpHost = process.env.SMTP_HOST
-  const smtpPort = process.env.SMTP_PORT ? parseInt(process.env.SMTP_PORT) : 587
-  const smtpUser = process.env.SMTP_USER
-  const smtpPass = process.env.SMTP_PASS
-
-  if (!smtpHost || !smtpUser || !smtpPass) {
-    logger.warn('Email configuration missing, emails will not be sent')
-    return null
-  }
-
-  return nodemailer.createTransport({
-    host: smtpHost,
-    port: smtpPort,
-    secure: smtpPort === 465,
-    auth: {
-      user: smtpUser,
-      pass: smtpPass,
-    },
-  })
-}
-
-// Send email function
+// Send email function using SendGrid
 export const sendEmail = async (options: EmailOptions): Promise<boolean> => {
   try {
-    const transporter = createTransporter()
-
-    if (!transporter) {
-      logger.warn('Email not sent - no transporter configured')
+    if (!SENDGRID_API_KEY) {
+      logger.warn('SendGrid API key not configured, emails will not be sent')
       return false
     }
 
-    const fromEmail = process.env.FROM_EMAIL || process.env.SMTP_USER || 'noreply@kanikabatra.com'
+    const fromEmail = process.env.FROM_EMAIL || 'noreply@kanikarose.com'
 
-    const mailOptions = {
-      from: `"Kanika Batra" <${fromEmail}>`,
+    const msg = {
       to: options.to,
+      from: {
+        email: fromEmail,
+        name: 'Kanika Batra'
+      },
       subject: options.subject,
       text: options.text || options.html.replace(/<[^>]*>/g, ''),
       html: options.html,
     }
 
-    const info = await transporter.sendMail(mailOptions)
-    logger.info(`Email sent successfully to ${options.to}: ${info.messageId}`)
+    await sgMail.send(msg)
+    logger.info(`Email sent successfully to ${options.to}`)
     return true
   } catch (error) {
     logger.error('Failed to send email', error as Error)
