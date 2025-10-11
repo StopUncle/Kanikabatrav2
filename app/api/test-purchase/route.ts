@@ -75,7 +75,12 @@ export async function POST(request: NextRequest) {
         message: 'Download link sent successfully',
         purchaseId: purchase.id,
         downloadUrl: downloadUrl,
-        note: `Real purchase created for ${email}`,
+        customerName: customerName,
+        customerEmail: email,
+        downloadCount: purchase.downloadCount,
+        maxDownloads: purchase.maxDownloads,
+        expiresAt: expiresAt.toISOString(),
+        note: `Real purchase created for ${customerName}`,
       },
       {
         headers: {

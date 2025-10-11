@@ -458,9 +458,17 @@
         const data = await response.json();
 
         if (response.ok) {
-          showResult('success', `✅ Success! Download link sent to ${email}`, data);
+          showResult('success',
+            `✅ Success! Download link sent to ${data.customerName || email}\n\nDownloads: ${data.downloadCount}/${data.maxDownloads}\nExpires: ${new Date(data.expiresAt).toLocaleDateString()}`,
+            data
+          );
           document.getElementById('sendForm').reset();
           document.getElementById('premium').checked = true;
+
+          // Refresh purchase list after 1 second
+          setTimeout(() => {
+            loadPurchases();
+          }, 1000);
         } else {
           showResult('error', `❌ Error: ${data.error || 'Failed to send'}`, data);
         }

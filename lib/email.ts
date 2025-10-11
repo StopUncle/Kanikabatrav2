@@ -345,14 +345,14 @@ export const sendBookDelivery = async (
                     </tr>
                     <tr>
                       <td align="center" style="padding-bottom: 20px;">
-                        <a href="${epubDownloadUrl}" style="display: inline-block; background: linear-gradient(135deg, #d4af37 0%, #b8941f 100%); color: #050511; padding: 22px 60px; text-decoration: none; border-radius: 50px; font-weight: 700; font-size: 18px; letter-spacing: 1.5px; text-transform: uppercase; box-shadow: 0 6px 20px rgba(212, 175, 55, 0.5); transition: all 0.3s ease;">
+                        <a href="${epubDownloadUrl}" style="display: inline-block; background-color: #d4af37; color: #050511; padding: 22px 60px; text-decoration: none; font-weight: 700; font-size: 18px; letter-spacing: 1.5px; text-transform: uppercase; mso-padding-alt: 22px 60px;">
                           📱 Download EPUB (Recommended)
                         </a>
                       </td>
                     </tr>
                     <tr>
-                      <td align="right" style="padding-right: 20px;">
-                        <a href="${pdfDownloadUrl}" style="display: inline-block; background: transparent; color: #94a3b8; padding: 8px 16px; text-decoration: none; border-radius: 20px; font-weight: 500; font-size: 11px; letter-spacing: 0.5px; border: 1px solid #333; transition: all 0.3s ease;">
+                      <td align="right" style="padding: 0 20px 0 0;">
+                        <a href="${pdfDownloadUrl}" style="display: inline-block; background-color: #1a1a1a; color: #94a3b8; padding: 8px 16px; text-decoration: none; font-weight: 500; font-size: 11px; letter-spacing: 0.5px; border: 1px solid #333; mso-padding-alt: 8px 16px;">
                           📄 PDF Version
                         </a>
                       </td>
