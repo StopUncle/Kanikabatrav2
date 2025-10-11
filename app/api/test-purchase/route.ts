@@ -10,19 +10,20 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Email address required' }, { status: 400 })
     }
 
-    // Generate a test purchase ID
-    const testPurchaseId = `TEST_${Date.now()}`
-    const downloadUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/api/download?purchase_id=${testPurchaseId}&type=book`
+    // Generate a test download token
+    const testToken = `TEST_${Date.now()}`
+    const expiresAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000) // 30 days from now
 
     // Send the actual book delivery email
-    await sendBookDelivery({
-      customerEmail: email,
-      customerName: 'Test User',
-      purchaseId: testPurchaseId,
-      downloadUrl: downloadUrl,
-      bookTitle: 'Sociopathic Dating Bible - Premium Edition',
-      amount: 34.99,
-    })
+    await sendBookDelivery(
+      email,
+      'Test User',
+      testToken,
+      'PREMIUM',
+      expiresAt
+    )
+
+    const downloadUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/api/download?token=${testToken}&format=pdf`
 
     return NextResponse.json({
       success: true,
