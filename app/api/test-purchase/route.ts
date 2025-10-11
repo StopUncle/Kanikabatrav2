@@ -28,7 +28,18 @@ export async function POST(request: NextRequest) {
     const variant = isPremium === false ? null : 'PREMIUM'
     const amount = isPremium === false ? 17.99 : 34.99
 
-    // Create REAL purchase record in database
+    // Calculate expiration date (30 days from now)
+    const expiresAt = new Date()
+    expiresAt.setDate(expiresAt.getDate() + 30)
+
+    // Generate REAL secure download token (valid for 30 days)
+    const downloadToken = jwt.sign(
+      { purchaseId: Date.now(), type: 'book', email },
+      process.env.JWT_SECRET || 'your-secret-key',
+      { expiresIn: '30d' }
+    )
+
+    // Create REAL purchase record in database with downloadToken
     const purchase = await prisma.purchase.create({
       data: {
         paypalOrderId: `MANUAL_${Date.now()}`,
@@ -38,22 +49,14 @@ export async function POST(request: NextRequest) {
         customerEmail: email,
         customerName: customerName,
         productVariant: variant,
+        downloadToken: downloadToken,
+        expiresAt: expiresAt,
         metadata: {
           source: 'admin-manual',
           timestamp: new Date().toISOString(),
         },
       },
     })
-
-    // Generate REAL secure download token (valid for 30 days)
-    const downloadToken = jwt.sign(
-      { purchaseId: purchase.id, type: 'book', email },
-      process.env.JWT_SECRET || 'your-secret-key',
-      { expiresIn: '30d' }
-    )
-
-    const expiresAt = new Date()
-    expiresAt.setDate(expiresAt.getDate() + 30)
 
     // Send the actual book delivery email with REAL download link
     await sendBookDelivery(

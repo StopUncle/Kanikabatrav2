@@ -452,7 +452,7 @@
         const response = await fetch(`${API_BASE}/api/test-purchase`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email })
+          body: JSON.stringify({ email, name, isPremium })
         });
 
         const data = await response.json();
