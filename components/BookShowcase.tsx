@@ -169,12 +169,15 @@ export default function BookShowcase() {
 
                 <button
                   onClick={() => setSelectedVersion('premium')}
-                  className={`w-full p-4 rounded-lg border transition-all text-left ${
+                  className={`w-full p-4 rounded-lg border transition-all text-left relative ${
                     selectedVersion === 'premium'
                       ? 'border-accent-gold bg-accent-gold/10'
                       : 'border-gold/20 hover:border-gold/40'
                   }`}
                 >
+                  <div className="absolute -top-3 -right-3 bg-accent-burgundy text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg">
+                    LIMITED TIME
+                  </div>
                   <div className="flex items-start justify-between">
                     <div className="flex items-start gap-3">
                       <Crown className="text-accent-gold mt-1" size={20} />
@@ -188,7 +191,10 @@ export default function BookShowcase() {
                         </ul>
                       </div>
                     </div>
-                    <div className="text-2xl font-light gradient-text-gold">${BOOK_INFO.price}</div>
+                    <div className="text-right">
+                      <div className="text-sm text-text-muted line-through opacity-60">${BOOK_INFO.originalPrice}</div>
+                      <div className="text-2xl font-light gradient-text-gold">${BOOK_INFO.price}</div>
+                    </div>
                   </div>
                 </button>
               </div>

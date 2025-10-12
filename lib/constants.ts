@@ -9,7 +9,8 @@ export const SITE_CONFIG = {
 export const BOOK_INFO = {
   title: 'Sociopathic Dating Bible',
   subtitle: 'A Cure For Empathy',
-  price: 34.99, // Premium website version
+  price: 24.99, // SALE PRICE - Limited time
+  originalPrice: 34.99, // Original price (crossed out)
   kdpPrice: 17.99, // Amazon KDP version
   wordCount: '70,000', // Updated word count
   chapters: 15,
@@ -26,7 +27,7 @@ export const BOOK_INFO = {
   ],
   premiumBonuses: [
     'Exclusive bonus chapter: Advanced Dark Triad Tactics',
-    'Video masterclass: Reading Micro-expressions',
+    'Private Telegram community access (Lifetime)',
     'Email templates for psychological warfare',
     '30-min consultation discount ($100 value)',
   ],

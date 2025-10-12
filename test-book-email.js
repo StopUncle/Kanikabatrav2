@@ -11,25 +11,27 @@ async function testBookEmail() {
   console.log('\n📧 Sending test book delivery email...\n')
 
   // Test data
-  const testDownloadUrl = 'https://kanikabatra.com/api/download?token=test-token-12345'
+  const testDownloadToken = 'test-token-12345-abc-def-ghi'
+  const testEmail = 'sdmatheson@outlook.com'
   const expiresAt = new Date()
-  expiresAt.setHours(expiresAt.getHours() + 24)
+  expiresAt.setDate(expiresAt.getDate() + 30)
 
   try {
-    // Send Premium version email
-    console.log('Sending Premium Edition email to:', process.env.ADMIN_EMAIL)
+    // Send Premium version email with both PDF and EPUB download links
+    console.log('Sending Premium Edition email to:', testEmail)
     await sendBookDelivery(
-      process.env.ADMIN_EMAIL,
-      'Kanika', // Your name
-      testDownloadUrl,
+      testEmail,
+      'Test User',
+      testDownloadToken,
       'PREMIUM', // Premium edition
       expiresAt
     )
 
     console.log('\n✅ Premium Edition email sent successfully!')
-    console.log('\nCheck your inbox at:', process.env.ADMIN_EMAIL)
-    console.log('Subject: 📚 Download Your Book - Sociopathic Dating Bible (Premium Edition)')
-    console.log('\nThis is the ACTUAL email customers will receive!\n')
+    console.log('\nCheck your inbox at:', testEmail)
+    console.log('Subject: Download Your Book - Sociopathic Dating Bible (Premium Edition)')
+    console.log('\nThis email includes both PDF and EPUB download buttons!')
+    console.log('Note: Links will show "file not found" - this is just a test token\n')
 
   } catch (error) {
     console.error('\n❌ Error sending email:', error.message)

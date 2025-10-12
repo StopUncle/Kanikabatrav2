@@ -240,7 +240,7 @@ export const sendBookDelivery = async (
             </tr>
             <tr>
               <td style="padding: 12px 0; color: #f5f0ed; font-size: 14px; line-height: 1.6; border-bottom: 1px solid rgba(212, 175, 55, 0.2);">
-                <strong style="color: #d4af37;">Video Masterclass:</strong> Reading Micro-expressions & Body Language
+                <strong style="color: #d4af37;">Private Telegram Community:</strong> Lifetime Access to Exclusive Group
               </td>
             </tr>
             <tr>
