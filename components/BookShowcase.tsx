@@ -163,7 +163,6 @@ export default function BookShowcase() {
                         <div className="text-xs text-accent-gold mt-2 italic">Coming Soon</div>
                       </div>
                     </div>
-                    <div className="text-2xl font-light gradient-text-gold">${BOOK_INFO.kdpPrice}</div>
                   </div>
                 </button>
 
