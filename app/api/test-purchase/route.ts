@@ -74,6 +74,8 @@ export async function POST(request: NextRequest) {
         success: true,
         message: 'Download link sent successfully',
         purchaseId: purchase.id,
+        paypalOrderId: purchase.paypalOrderId,
+        downloadToken: downloadToken,
         downloadUrl: downloadUrl,
         customerName: customerName,
         customerEmail: email,

@@ -139,21 +139,18 @@ function SuccessContent() {
                   Click below to download immediately:
                 </p>
 
-                {orderDetails?.downloadToken ? (
-                  <a
-                    href={`/api/download?token=${orderDetails.downloadToken}&format=epub`}
-                    className="w-full btn-primary rounded-full text-white py-4 text-center inline-block mb-6"
-                    download
-                  >
-                    📚 Download Book Now (EPUB)
-                  </a>
-                ) : (
-                  <div className="bg-deep-burgundy/20 border border-deep-burgundy/30 rounded-lg p-4 mb-6">
-                    <p className="text-sm text-text-gray">
-                      <strong className="text-accent-gold">Download link will arrive via email shortly.</strong> Check your inbox and spam folder.
-                    </p>
-                  </div>
-                )}
+                <a
+                  href={orderDetails?.downloadToken ? `/api/download?token=${orderDetails.downloadToken}&format=epub` : '#'}
+                  className="w-full btn-primary rounded-full text-white py-4 text-center inline-block mb-6"
+                  onClick={(e) => {
+                    if (!orderDetails?.downloadToken) {
+                      e.preventDefault()
+                      alert('Demo mode - real purchases will have a working download link here')
+                    }
+                  }}
+                >
+                  📚 Download Book Now (EPUB)
+                </a>
 
                 <div className="bg-deep-burgundy/20 border border-deep-burgundy/30 rounded-lg p-4">
                   <p className="text-sm text-text-gray">

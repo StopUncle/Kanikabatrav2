@@ -343,79 +343,76 @@
       <p>Manually send download links & manage purchases</p>
     </div>
 
-    <!-- Send New Link -->
+    <!-- Send Via Email (SendGrid) -->
     <div class="card">
-      <h2>📧 Send Fresh Download Link</h2>
-      <form id="sendForm">
+      <h2>📧 Send Download Link via Email (SendGrid)</h2>
+      <form id="sendEmailForm">
         <div class="form-group">
-          <label for="email">Customer Email *</label>
-          <input type="email" id="email" name="email" placeholder="customer@example.com" required>
+          <label for="emailEmail">Customer Email *</label>
+          <input type="email" id="emailEmail" name="email" placeholder="customer@example.com" required>
         </div>
 
         <div class="form-group">
-          <label for="name">Customer Name *</label>
-          <input type="text" id="name" name="name" placeholder="John Smith" required>
+          <label for="emailName">Customer Name *</label>
+          <input type="text" id="emailName" name="name" placeholder="John Smith" required>
         </div>
 
         <div class="form-group">
           <label>Book Edition *</label>
           <div class="radio-group">
             <div class="radio-option">
-              <input type="radio" id="standard" name="edition" value="standard">
-              <label for="standard">Standard ($17.99)</label>
+              <input type="radio" id="emailStandard" name="emailEdition" value="standard">
+              <label for="emailStandard">Standard ($17.99)</label>
             </div>
             <div class="radio-option">
-              <input type="radio" id="premium" name="edition" value="premium" checked>
-              <label for="premium">Premium ($34.99)</label>
+              <input type="radio" id="emailPremium" name="emailEdition" value="premium" checked>
+              <label for="emailPremium">Premium ($24.99)</label>
             </div>
           </div>
         </div>
 
-        <button type="submit" class="btn" id="sendBtn">
-          Send Download Link
+        <button type="submit" class="btn" id="sendEmailBtn">
+          📧 Send Email with Download Link
         </button>
       </form>
 
-      <div id="result" class="result"></div>
+      <div id="emailResult" class="result"></div>
     </div>
 
-    <!-- Stats Dashboard -->
+    <!-- Generate Manual Link (for DMs, texts, etc.) -->
     <div class="card">
-      <h2>📊 Purchase Statistics</h2>
-      <div class="stats-grid">
-        <div class="stat-box">
-          <div class="value" id="totalPurchases">-</div>
-          <div class="label">Total Purchases</div>
+      <h2>🔗 Generate Manual Link (for DMs/Texts)</h2>
+      <form id="generateLinkForm">
+        <div class="form-group">
+          <label for="linkEmail">Customer Email *</label>
+          <input type="email" id="linkEmail" name="email" placeholder="customer@example.com" required>
         </div>
-        <div class="stat-box">
-          <div class="value" id="premiumCount">-</div>
-          <div class="label">Premium</div>
-        </div>
-        <div class="stat-box">
-          <div class="value" id="standardCount">-</div>
-          <div class="label">Standard</div>
-        </div>
-        <div class="stat-box">
-          <div class="value" id="totalRevenue">-</div>
-          <div class="label">Total Revenue</div>
-        </div>
-      </div>
 
-      <div class="quick-actions">
-        <button class="quick-btn" onclick="loadPurchases()">🔄 Refresh Stats</button>
-        <button class="quick-btn" onclick="exportPurchases()">💾 Export Data</button>
-        <button class="quick-btn" onclick="clearResults()">🗑️ Clear Results</button>
-      </div>
-    </div>
-
-    <!-- Recent Purchases -->
-    <div class="card">
-      <h2>📋 Recent Purchases</h2>
-      <div id="purchasesList" class="purchases-list">
-        <div style="color: #94a3b8; text-align: center; padding: 20px;">
-          Click "Refresh Stats" to load purchases
+        <div class="form-group">
+          <label for="linkName">Customer Name *</label>
+          <input type="text" id="linkName" name="name" placeholder="John Smith" required>
         </div>
-      </div>
+
+        <div class="form-group">
+          <label>Book Edition *</label>
+          <div class="radio-group">
+            <div class="radio-option">
+              <input type="radio" id="linkStandard" name="linkEdition" value="standard">
+              <label for="linkStandard">Standard ($17.99)</label>
+            </div>
+            <div class="radio-option">
+              <input type="radio" id="linkPremium" name="linkEdition" value="premium" checked>
+              <label for="linkPremium">Premium ($24.99)</label>
+            </div>
+          </div>
+        </div>
+
+        <button type="submit" class="btn" id="generateLinkBtn" style="background: linear-gradient(135deg, #722139 0%, #4a1426 100%);">
+          🔗 Generate Success Page Link
+        </button>
+      </form>
+
+      <div id="linkResult" class="result"></div>
     </div>
   </div>
 
@@ -423,32 +420,26 @@
     // API endpoint - hardcoded for admin use
     const API_BASE = 'https://kanikarose.com';
 
-    // Load purchases on page load
-    document.addEventListener('DOMContentLoaded', () => {
-      loadPurchases();
-    });
-
-    // Handle form submission
-    document.getElementById('sendForm').addEventListener('submit', async (e) => {
+    // Handle EMAIL form submission (SendGrid)
+    document.getElementById('sendEmailForm').addEventListener('submit', async (e) => {
       e.preventDefault();
 
-      const email = document.getElementById('email').value.trim();
-      const name = document.getElementById('name').value.trim();
-      const isPremium = document.getElementById('premium').checked;
+      const email = document.getElementById('emailEmail').value.trim();
+      const name = document.getElementById('emailName').value.trim();
+      const isPremium = document.getElementById('emailPremium').checked;
 
       if (!email || !name) {
-        showResult('error', 'Please fill in all required fields');
+        showResult('emailResult', 'error', 'Please fill in all required fields');
         return;
       }
 
-      showResult('loading', 'Sending download link...');
+      showResult('emailResult', 'loading', 'Sending email via SendGrid...');
 
-      const btn = document.getElementById('sendBtn');
+      const btn = document.getElementById('sendEmailBtn');
       btn.disabled = true;
       btn.innerHTML = '<span class="spinner"></span>Sending...';
 
       try {
-        // Use the test purchase endpoint
         const response = await fetch(`${API_BASE}/api/test-purchase`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -458,133 +449,92 @@
         const data = await response.json();
 
         if (response.ok) {
-          showResult('success',
-            `✅ Success! Download link sent to ${data.customerName || email}\n\nDownloads: ${data.downloadCount}/${data.maxDownloads}\nExpires: ${new Date(data.expiresAt).toLocaleDateString()}`,
+          showResult('emailResult', 'success',
+            `✅ Success! Email sent to ${data.customerName || email}\n\nDownloads: ${data.downloadCount}/${data.maxDownloads}\nExpires: ${new Date(data.expiresAt).toLocaleDateString()}`,
             data
           );
-          document.getElementById('sendForm').reset();
-          document.getElementById('premium').checked = true;
-
-          // Refresh purchase list after 1 second
-          setTimeout(() => {
-            loadPurchases();
-          }, 1000);
+          document.getElementById('sendEmailForm').reset();
+          document.getElementById('emailPremium').checked = true;
         } else {
-          showResult('error', `❌ Error: ${data.error || 'Failed to send'}`, data);
+          showResult('emailResult', 'error', `❌ Error: ${data.error || 'Failed to send'}`, data);
         }
       } catch (error) {
-        showResult('error', `❌ Error: ${error.message}`, { error: error.toString() });
+        showResult('emailResult', 'error', `❌ Error: ${error.message}`, { error: error.toString() });
       } finally {
         btn.disabled = false;
-        btn.textContent = 'Send Download Link';
+        btn.textContent = '📧 Send Email with Download Link';
       }
     });
 
-    async function loadPurchases() {
-      try {
-        const response = await fetch('/api/admin/purchases');
+    // Handle LINK GENERATION form submission (for DMs)
+    document.getElementById('generateLinkForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
 
-        if (!response.ok) {
-          // Fallback message
-          document.getElementById('totalPurchases').textContent = 'N/A';
-          document.getElementById('premiumCount').textContent = 'N/A';
-          document.getElementById('standardCount').textContent = 'N/A';
-          document.getElementById('totalRevenue').textContent = 'N/A';
+      const email = document.getElementById('linkEmail').value.trim();
+      const name = document.getElementById('linkName').value.trim();
+      const isPremium = document.getElementById('linkPremium').checked;
 
-          document.getElementById('purchasesList').innerHTML = `
-            <div style="color: #94a3b8; text-align: center; padding: 20px;">
-              <p>API endpoint not available.</p>
-              <p style="margin-top: 10px;">Run: <code style="color: #d4af37;">node list-purchases.js</code></p>
-            </div>
-          `;
-          return;
-        }
-
-        const data = await response.json();
-        const purchases = data.purchases || [];
-
-        // Update stats
-        const premiumCount = purchases.filter(p => p.productVariant === 'PREMIUM').length;
-        const standardCount = purchases.length - premiumCount;
-        const totalRevenue = purchases.reduce((sum, p) => sum + (p.amount || 0), 0);
-
-        document.getElementById('totalPurchases').textContent = purchases.length;
-        document.getElementById('premiumCount').textContent = premiumCount;
-        document.getElementById('standardCount').textContent = standardCount;
-        document.getElementById('totalRevenue').textContent = '$' + totalRevenue.toFixed(2);
-
-        // Display purchases
-        if (purchases.length === 0) {
-          document.getElementById('purchasesList').innerHTML = `
-            <div style="color: #94a3b8; text-align: center; padding: 20px;">
-              No purchases yet
-            </div>
-          `;
-          return;
-        }
-
-        const html = purchases.map(p => {
-          const isPremium = p.productVariant === 'PREMIUM';
-          const date = new Date(p.createdAt).toLocaleDateString();
-          const expires = p.expiresAt ? new Date(p.expiresAt).toLocaleDateString() : 'N/A';
-
-          return `
-            <div class="purchase-item">
-              <div class="purchase-info">
-                <div class="email">
-                  ${p.customerEmail}
-                  <span class="badge ${isPremium ? 'premium' : 'standard'}">
-                    ${isPremium ? 'Premium' : 'Standard'}
-                  </span>
-                </div>
-                <div class="details">
-                  ${p.customerName} • $${p.amount} • ${date} •
-                  Downloads: ${p.downloadCount}/${p.maxDownloads} •
-                  Expires: ${expires}
-                </div>
-              </div>
-              <button class="resend-btn" onclick='resendLink("${p.customerEmail}", "${p.customerName}", ${isPremium})'>
-                📧 Resend
-              </button>
-            </div>
-          `;
-        }).join('');
-
-        document.getElementById('purchasesList').innerHTML = html;
-
-      } catch (error) {
-        console.error('Error loading purchases:', error);
+      if (!email || !name) {
+        showResult('linkResult', 'error', 'Please fill in all required fields');
+        return;
       }
-    }
 
-    async function resendLink(email, name, isPremium) {
-      if (!confirm(`Resend download link to ${email}?`)) return;
+      showResult('linkResult', 'loading', 'Generating link...');
 
-      showResult('loading', `Resending link to ${email}...`);
+      const btn = document.getElementById('generateLinkBtn');
+      btn.disabled = true;
+      btn.innerHTML = '<span class="spinner"></span>Generating...';
 
       try {
-        const response = await fetch('/api/admin/send-download-link', {
+        // Create purchase record (no email sent)
+        const response = await fetch(`${API_BASE}/api/test-purchase`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ email, name, isPremium })
         });
 
         const data = await response.json();
+        console.log('Response data:', data);
 
-        if (response.ok) {
-          showResult('success', `✅ Download link resent to ${email}`);
+        if (response.ok && data.success && data.downloadToken) {
+          const amount = isPremium ? '24.99' : '17.99';
+          const successLink = `${API_BASE}/success?payment_id=${data.paypalOrderId}&type=book&amount=${amount}&download_token=${data.downloadToken}`;
+
+          showResult('linkResult', 'success',
+            `✅ Link generated! Copy and send via DM/text:\n\n${successLink}\n\nThis link is valid for 30 days with 5 downloads max.`,
+            null
+          );
+
+          // Add copy button
+          const resultEl = document.getElementById('linkResult');
+          const copyBtn = document.createElement('button');
+          copyBtn.className = 'btn';
+          copyBtn.style.marginTop = '15px';
+          copyBtn.textContent = '📋 Copy Link to Clipboard';
+          copyBtn.onclick = () => {
+            navigator.clipboard.writeText(successLink);
+            copyBtn.textContent = '✅ Copied!';
+            setTimeout(() => {
+              copyBtn.textContent = '📋 Copy Link to Clipboard';
+            }, 2000);
+          };
+          resultEl.appendChild(copyBtn);
+
+          document.getElementById('generateLinkForm').reset();
+          document.getElementById('linkPremium').checked = true;
         } else {
-          showResult('error', `❌ Error: ${data.error}`);
+          showResult('linkResult', 'error', `❌ Error: ${data.error || 'Failed to generate link'}`, data);
         }
       } catch (error) {
-        showResult('error',
-          `⚠️ Use command line:\n\nnode send-proper-link.js ${email} "${name}" ${isPremium ? 'premium' : ''}`
-        );
+        showResult('linkResult', 'error', `❌ Error: ${error.message}`, { error: error.toString() });
+      } finally {
+        btn.disabled = false;
+        btn.textContent = '🔗 Generate Success Page Link';
       }
-    }
+    });
 
-    function showResult(type, message, data = null) {
-      const resultEl = document.getElementById('result');
+    function showResult(elementId, type, message, data = null) {
+      const resultEl = document.getElementById(elementId);
       resultEl.className = `result ${type}`;
       resultEl.style.display = 'block';
 
@@ -596,20 +546,12 @@
 
       resultEl.innerHTML = html;
 
-      // Auto-hide success messages after 5 seconds
+      // Auto-hide success messages after 8 seconds
       if (type === 'success') {
         setTimeout(() => {
           resultEl.style.display = 'none';
-        }, 5000);
+        }, 8000);
       }
-    }
-
-    function exportPurchases() {
-      alert('Export feature: Run "node list-purchases.js > purchases.txt" in terminal');
-    }
-
-    function clearResults() {
-      document.getElementById('result').style.display = 'none';
     }
   </script>
 </body>

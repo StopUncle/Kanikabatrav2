@@ -69,6 +69,9 @@ private/books/*.md
 .env.local
 .env.production
 
+# Dev mode config (don't commit dev buttons)
+lib/dev-mode.ts
+
 # Prevent document.tsx in app directory (App Router incompatible)
 app/document.tsx
 app/_document.tsx
