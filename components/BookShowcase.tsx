@@ -22,10 +22,11 @@ export default function BookShowcase() {
   const [showPresaleModal, setShowPresaleModal] = useState(false)
   const [selectedVersion, setSelectedVersion] = useState<'kdp' | 'premium'>('premium')
 
-  const handlePaymentSuccess = (details: { id: string, status: string }) => {
+  const handlePaymentSuccess = (details: { id: string, status: string, downloadToken?: string }) => {
     setPaymentStatus('success')
-    // Redirect to success page or show download link
-    window.location.href = `/success?payment_id=${details.id}&type=book&amount=${BOOK_INFO.price}`
+    // Redirect to success page with download token
+    const tokenParam = details.downloadToken ? `&download_token=${details.downloadToken}` : ''
+    window.location.href = `/success?payment_id=${details.id}&type=book&amount=${BOOK_INFO.price}${tokenParam}`
   }
 
   const handlePaymentError = (error: string) => {

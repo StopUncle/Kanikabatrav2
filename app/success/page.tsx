@@ -19,6 +19,7 @@ function SuccessContent() {
     customerName?: string
     customerEmail?: string
     packageName?: string
+    downloadToken?: string
   } | null>(null)
 
   const searchParams = useSearchParams()
@@ -32,6 +33,7 @@ function SuccessContent() {
     const customerName = searchParams.get('customer_name')
     const customerEmail = searchParams.get('customer_email')
     const packageName = searchParams.get('package_name')
+    const downloadToken = searchParams.get('download_token')
 
     if (paymentId || orderId) {
       setOrderDetails({
@@ -40,7 +42,8 @@ function SuccessContent() {
         orderId: orderId || paymentId || 'Unknown',
         customerName: customerName || 'Customer',
         customerEmail: customerEmail || '',
-        packageName: packageName || 'Coaching Package'
+        packageName: packageName || 'Coaching Package',
+        downloadToken: downloadToken || undefined
       })
 
       // Auto-show booking modal for coaching purchases
@@ -132,13 +135,30 @@ function SuccessContent() {
                 <Download className="w-12 h-12 text-accent-gold mx-auto mb-4" />
                 <h3 className="text-xl font-light gradient-text-gold mb-4">Download Your Book</h3>
                 <p className="text-text-gray mb-6">
-                  Your copy of &ldquo;Sociopathic Dating Bible&rdquo; will be sent to your email within 5 minutes.
-                  Check your inbox (and spam folder) for download instructions.
+                  We&apos;re also sending a copy of your download link to your email (check spam folder if you don&apos;t see it).
+                  Click below to download immediately:
                 </p>
+
+                {orderDetails?.downloadToken ? (
+                  <a
+                    href={`/api/download?token=${orderDetails.downloadToken}&format=epub`}
+                    className="w-full btn-primary rounded-full text-white py-4 text-center inline-block mb-6"
+                    download
+                  >
+                    📚 Download Book Now (EPUB)
+                  </a>
+                ) : (
+                  <div className="bg-deep-burgundy/20 border border-deep-burgundy/30 rounded-lg p-4 mb-6">
+                    <p className="text-sm text-text-gray">
+                      <strong className="text-accent-gold">Download link will arrive via email shortly.</strong> Check your inbox and spam folder.
+                    </p>
+                  </div>
+                )}
+
                 <div className="bg-deep-burgundy/20 border border-deep-burgundy/30 rounded-lg p-4">
                   <p className="text-sm text-text-gray">
-                    <strong className="text-accent-gold">Important:</strong> The download link will be valid for 30 days.
-                    Save your copy locally for permanent access.
+                    <strong className="text-accent-gold">Important:</strong> The download link is valid for 30 days with 5 downloads max.
+                    Save your copy locally for permanent access. If you need help, contact Kanika@kanikarose.com
                   </p>
                 </div>
               </motion.div>
