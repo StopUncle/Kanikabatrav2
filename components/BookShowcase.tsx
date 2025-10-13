@@ -260,12 +260,14 @@ export default function BookShowcase() {
               ) : (
                 <div className="space-y-4">
                   {selectedVersion === 'premium' ? (
-                    <button
-                      onClick={() => setShowPayPal(true)}
-                      className="w-full btn-primary rounded-full text-white text-center py-3 sm:py-4 font-semibold tracking-wide text-sm sm:text-base"
-                    >
-                      Buy Now - ${BOOK_INFO.price}
-                    </button>
+                    <>
+                      <button
+                        onClick={() => setShowPayPal(true)}
+                        className="w-full btn-primary rounded-full text-white text-center py-3 sm:py-4 font-semibold tracking-wide text-sm sm:text-base"
+                      >
+                        Buy Now - ${BOOK_INFO.price}
+                      </button>
+                    </>
                   ) : (
                     <button
                       disabled
