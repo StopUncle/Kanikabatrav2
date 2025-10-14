@@ -26,10 +26,8 @@ export const BOOK_INFO = {
     'Exit strategies that leave them wanting more',
   ],
   premiumBonuses: [
-    'Exclusive bonus chapter: Advanced Dark Triad Tactics',
-    'Private Telegram community access (Lifetime)',
-    'Email templates for psychological warfare',
-    '30-min consultation discount ($100 value)',
+    '15 chapters + 3 bonus chapters to come',
+    'Early access',
   ],
 }
 
