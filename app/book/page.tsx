@@ -1,11 +1,13 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import BackgroundEffects from '@/components/BackgroundEffects'
 import Header from '@/components/Header'
 import CountdownTimer from '@/components/CountdownTimer'
 import PresaleModal from '@/components/PresaleModal'
+import PayPalButton from '@/components/PayPalButton'
 import { BOOK_INFO } from '@/lib/constants'
 import { ShoppingCart, BookOpen, Brain, Heart, Target, Trophy, Zap, Bell } from 'lucide-react'
 
@@ -37,6 +39,17 @@ const BOOK_QUOTES = [
 
 export default function BookPage() {
   const [showPresaleModal, setShowPresaleModal] = useState(false)
+  const [isMobile, setIsMobile] = useState(false)
+  const router = useRouter()
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 640)
+    }
+    checkMobile()
+    window.addEventListener('resize', checkMobile)
+    return () => window.removeEventListener('resize', checkMobile)
+  }, [])
 
   const handlePresaleSignup = async (email: string, option: 'kdp' | 'premium' | 'both') => {
     const response = await fetch('/api/presale', {
@@ -50,6 +63,10 @@ export default function BookPage() {
     }
 
     return response.json()
+  }
+
+  const handlePaymentSuccess = () => {
+    router.push('/success')
   }
 
   const launchDate = new Date(BOOK_INFO.expectedLaunchDate)
@@ -153,13 +170,28 @@ export default function BookPage() {
                     Join Presale List
                   </button>
                 ) : (
-                  <Link
-                    href="/#book"
-                    className="btn-primary rounded-full text-white px-8 py-4 flex items-center justify-center gap-2"
-                  >
-                    <ShoppingCart className="w-5 h-5" />
-                    Get The Book - ${BOOK_INFO.price}
-                  </Link>
+                  <div className="flex flex-col gap-4 w-full sm:flex-row">
+                    <div className="hidden sm:block">
+                      <Link
+                        href="/#book"
+                        className="btn-primary rounded-full text-white px-8 py-4 flex items-center justify-center gap-2"
+                      >
+                        <ShoppingCart className="w-5 h-5" />
+                        Get The Book - ${BOOK_INFO.price}
+                      </Link>
+                    </div>
+                    <div className="block sm:hidden w-full">
+                      {isMobile && (
+                        <PayPalButton
+                          type="book"
+                          amount={BOOK_INFO.price}
+                          itemName={BOOK_INFO.title}
+                          onSuccess={handlePaymentSuccess}
+                          className="w-full"
+                        />
+                      )}
+                    </div>
+                  </div>
                 )}
                 <Link href="#chapters" className="btn-secondary rounded-full px-8 py-4 text-center">
                   Preview Chapters
