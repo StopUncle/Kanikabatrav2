@@ -1,8 +1,7 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
 import BackgroundEffects from '@/components/BackgroundEffects'
 import Header from '@/components/Header'
 import CountdownTimer from '@/components/CountdownTimer'
@@ -39,17 +38,7 @@ const BOOK_QUOTES = [
 
 export default function BookPage() {
   const [showPresaleModal, setShowPresaleModal] = useState(false)
-  const [isMobile, setIsMobile] = useState(false)
-  const router = useRouter()
-
-  useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth < 640)
-    }
-    checkMobile()
-    window.addEventListener('resize', checkMobile)
-    return () => window.removeEventListener('resize', checkMobile)
-  }, [])
+  const [showPayPal, setShowPayPal] = useState(false)
 
   const handlePresaleSignup = async (email: string, option: 'kdp' | 'premium' | 'both') => {
     const response = await fetch('/api/presale', {
@@ -65,8 +54,13 @@ export default function BookPage() {
     return response.json()
   }
 
-  const handlePaymentSuccess = () => {
-    router.push('/success')
+  const handlePaymentSuccess = (details: { id: string, status: string, downloadToken?: string }) => {
+    const tokenParam = details.downloadToken ? `&download_token=${details.downloadToken}` : ''
+    window.location.href = `/success?payment_id=${details.id}&type=book&amount=${BOOK_INFO.price}${tokenParam}`
+  }
+
+  const handlePaymentError = (error: string) => {
+    console.error('Payment failed:', error)
   }
 
   const launchDate = new Date(BOOK_INFO.expectedLaunchDate)
@@ -160,43 +154,49 @@ export default function BookPage() {
                 </div>
               )}
 
-              <div className="flex flex-col sm:flex-row gap-4">
-                {BOOK_INFO.isPresale ? (
-                  <button
-                    onClick={() => setShowPresaleModal(true)}
-                    className="btn-primary rounded-full text-white px-8 py-4 flex items-center justify-center gap-2"
-                  >
-                    <Bell className="w-5 h-5" />
-                    Join Presale List
-                  </button>
-                ) : (
-                  <div className="flex flex-col gap-4 w-full sm:flex-row">
-                    <div className="hidden sm:block">
-                      <Link
-                        href="/#book"
-                        className="btn-primary rounded-full text-white px-8 py-4 flex items-center justify-center gap-2"
-                      >
-                        <ShoppingCart className="w-5 h-5" />
-                        Get The Book - ${BOOK_INFO.price}
-                      </Link>
-                    </div>
-                    <div className="block sm:hidden w-full">
-                      {isMobile && (
-                        <PayPalButton
-                          type="book"
-                          amount={BOOK_INFO.price}
-                          itemName={BOOK_INFO.title}
-                          onSuccess={handlePaymentSuccess}
-                          className="w-full"
-                        />
-                      )}
-                    </div>
+              {showPayPal ? (
+                <div className="space-y-4">
+                  <PayPalButton
+                    type="book"
+                    amount={BOOK_INFO.price}
+                    itemName={BOOK_INFO.title}
+                    onSuccess={handlePaymentSuccess}
+                    onError={handlePaymentError}
+                    onCancel={() => setShowPayPal(false)}
+                  />
+                  <div className="text-center">
+                    <button
+                      onClick={() => setShowPayPal(false)}
+                      className="text-text-gray hover:text-text-light text-sm"
+                    >
+                      ← Back
+                    </button>
                   </div>
-                )}
-                <Link href="#chapters" className="btn-secondary rounded-full px-8 py-4 text-center">
-                  Preview Chapters
-                </Link>
-              </div>
+                </div>
+              ) : (
+                <div className="flex flex-col sm:flex-row gap-4">
+                  {BOOK_INFO.isPresale ? (
+                    <button
+                      onClick={() => setShowPresaleModal(true)}
+                      className="btn-primary rounded-full text-white px-8 py-4 flex items-center justify-center gap-2"
+                    >
+                      <Bell className="w-5 h-5" />
+                      Join Presale List
+                    </button>
+                  ) : (
+                    <button
+                      onClick={() => setShowPayPal(true)}
+                      className="btn-primary rounded-full text-white px-8 py-4 flex items-center justify-center gap-2"
+                    >
+                      <ShoppingCart className="w-5 h-5" />
+                      Get The Book - ${BOOK_INFO.price}
+                    </button>
+                  )}
+                  <Link href="#chapters" className="btn-secondary rounded-full px-8 py-4 text-center">
+                    Preview Chapters
+                  </Link>
+                </div>
+              )}
 
               <p className="text-text-gray text-sm">
                 {BOOK_INFO.isPresale
@@ -343,22 +343,46 @@ export default function BookPage() {
               The question isn&apos;t whether you&apos;re ready for this knowledge—it&apos;s whether you can afford to live without it.
             </p>
 
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              {BOOK_INFO.isPresale ? (
-                <button
-                  onClick={() => setShowPresaleModal(true)}
-                  className="btn-primary rounded-full text-white px-10 py-4 text-lg flex items-center justify-center gap-2"
-                >
-                  <Bell className="w-5 h-5" />
-                  Join Presale List
-                </button>
-              ) : (
-                <button className="btn-primary rounded-full text-white px-10 py-4 text-lg flex items-center justify-center gap-2">
-                  <BookOpen className="w-5 h-5" />
-                  Get Instant Access - ${BOOK_INFO.price}
-                </button>
-              )}
-            </div>
+            {showPayPal ? (
+              <div className="max-w-md mx-auto space-y-4">
+                <PayPalButton
+                  type="book"
+                  amount={BOOK_INFO.price}
+                  itemName={BOOK_INFO.title}
+                  onSuccess={handlePaymentSuccess}
+                  onError={handlePaymentError}
+                  onCancel={() => setShowPayPal(false)}
+                />
+                <div className="text-center">
+                  <button
+                    onClick={() => setShowPayPal(false)}
+                    className="text-text-gray hover:text-text-light text-sm"
+                  >
+                    ← Back
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                {BOOK_INFO.isPresale ? (
+                  <button
+                    onClick={() => setShowPresaleModal(true)}
+                    className="btn-primary rounded-full text-white px-10 py-4 text-lg flex items-center justify-center gap-2"
+                  >
+                    <Bell className="w-5 h-5" />
+                    Join Presale List
+                  </button>
+                ) : (
+                  <button
+                    onClick={() => setShowPayPal(true)}
+                    className="btn-primary rounded-full text-white px-10 py-4 text-lg flex items-center justify-center gap-2"
+                  >
+                    <BookOpen className="w-5 h-5" />
+                    Get Instant Access - ${BOOK_INFO.price}
+                  </button>
+                )}
+              </div>
+            )}
 
             <p className="text-text-gray text-sm mt-6">
               {BOOK_INFO.isPresale
