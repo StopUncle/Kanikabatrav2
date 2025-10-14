@@ -1,0 +1,42 @@
+// DEMO BUTTON CODE - ARCHIVED FOR FUTURE USE
+// Add this to BookShowcase.tsx when you need to test payment flow
+
+// 1. Import at top:
+import { DEV_MODE } from '@/lib/dev-mode'
+
+// 2. Add button after "Buy Now" button:
+{DEV_MODE && (
+  <button
+    onClick={async () => {
+      // Create a REAL test purchase in database for demo
+      try {
+        const res = await fetch('/api/test-purchase', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            email: 'demo@test.com',
+            name: 'Demo User',
+            isPremium: true
+          })
+        })
+        const data = await res.json()
+        console.log('Test purchase response:', data)
+        if (data.downloadToken) {
+          window.location.href = `/success?payment_id=${data.paypalOrderId}&type=book&amount=${BOOK_INFO.price}&download_token=${data.downloadToken}`
+        } else {
+          alert('Failed to create test purchase: ' + JSON.stringify(data))
+        }
+      } catch (err) {
+        alert('Error: ' + err)
+      }
+    }}
+    className="w-full bg-green-600 hover:bg-green-700 rounded-full text-white text-center py-3 sm:py-4 font-semibold tracking-wide text-sm sm:text-base"
+  >
+    🎬 DEMO: Test Success Page
+  </button>
+)}
+
+// 3. Make sure lib/dev-mode.ts exists with:
+export const DEV_MODE = true
+
+// This file is gitignored so it won't be committed

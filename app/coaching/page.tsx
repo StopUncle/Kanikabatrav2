@@ -106,6 +106,7 @@ export default function CoachingPage() {
             {COACHING_PACKAGES.map((pkg, index) => (
               <motion.div
                 key={pkg.id}
+                id={pkg.id}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: index * 0.1 }}

@@ -84,7 +84,7 @@ export default function Home() {
             </div>
             
             {/* Coaching Tiers Component */}
-            <CoachingTiers />
+            <CoachingTiers onSelect={(packageId) => window.location.href = `/coaching#${packageId}`} />
             
             {/* CTA for Coaching */}
             <div className="text-center mt-12">

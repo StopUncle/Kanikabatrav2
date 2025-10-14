@@ -3,7 +3,6 @@
 import { motion } from 'framer-motion'
 import { Check } from 'lucide-react'
 import Card from '@/components/ui/Card'
-import Button from '@/components/ui/Button'
 import { COACHING_PACKAGES } from '@/lib/constants'
 import { formatPrice } from '@/lib/utils'
 
@@ -74,13 +73,12 @@ const CoachingTiers = ({ showButton = true, onSelect }: CoachingTiersProps) => {
 
               {/* Button */}
               {showButton && (
-                <Button
-                  variant={pkg.popular ? 'secondary' : 'primary'}
-                  fullWidth
+                <button
                   onClick={() => onSelect?.(pkg.id)}
+                  className="w-full bg-gradient-to-r from-[#8B5CF6] to-[#3B82F6] hover:from-[#7C3AED] hover:to-[#2563EB] text-white font-semibold py-3 px-6 rounded-full transition-all duration-200 hover:shadow-lg hover:shadow-blue-500/30"
                 >
-                  Select Package
-                </Button>
+                  SELECT PACKAGE
+                </button>
               )}
             </div>
           </Card>
