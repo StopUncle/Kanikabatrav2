@@ -38,7 +38,8 @@ const BOOK_QUOTES = [
 
 export default function BookPage() {
   const [showPresaleModal, setShowPresaleModal] = useState(false)
-  const [showPayPal, setShowPayPal] = useState(false)
+  const [showPayPalHero, setShowPayPalHero] = useState(false)
+  const [showPayPalCTA, setShowPayPalCTA] = useState(false)
 
   const handlePresaleSignup = async (email: string, option: 'kdp' | 'premium' | 'both') => {
     const response = await fetch('/api/presale', {
@@ -154,7 +155,7 @@ export default function BookPage() {
                 </div>
               )}
 
-              {showPayPal ? (
+              {showPayPalHero ? (
                 <div className="space-y-4">
                   <PayPalButton
                     type="book"
@@ -162,11 +163,11 @@ export default function BookPage() {
                     itemName={BOOK_INFO.title}
                     onSuccess={handlePaymentSuccess}
                     onError={handlePaymentError}
-                    onCancel={() => setShowPayPal(false)}
+                    onCancel={() => setShowPayPalHero(false)}
                   />
                   <div className="text-center">
                     <button
-                      onClick={() => setShowPayPal(false)}
+                      onClick={() => setShowPayPalHero(false)}
                       className="text-text-gray hover:text-text-light text-sm"
                     >
                       ← Back
@@ -185,7 +186,7 @@ export default function BookPage() {
                     </button>
                   ) : (
                     <button
-                      onClick={() => setShowPayPal(true)}
+                      onClick={() => setShowPayPalHero(true)}
                       className="btn-primary rounded-full text-white px-8 py-4 flex items-center justify-center gap-2"
                     >
                       <ShoppingCart className="w-5 h-5" />
@@ -343,7 +344,7 @@ export default function BookPage() {
               The question isn&apos;t whether you&apos;re ready for this knowledge—it&apos;s whether you can afford to live without it.
             </p>
 
-            {showPayPal ? (
+            {showPayPalCTA ? (
               <div className="max-w-md mx-auto space-y-4">
                 <PayPalButton
                   type="book"
@@ -351,11 +352,11 @@ export default function BookPage() {
                   itemName={BOOK_INFO.title}
                   onSuccess={handlePaymentSuccess}
                   onError={handlePaymentError}
-                  onCancel={() => setShowPayPal(false)}
+                  onCancel={() => setShowPayPalCTA(false)}
                 />
                 <div className="text-center">
                   <button
-                    onClick={() => setShowPayPal(false)}
+                    onClick={() => setShowPayPalCTA(false)}
                     className="text-text-gray hover:text-text-light text-sm"
                   >
                     ← Back
@@ -374,7 +375,7 @@ export default function BookPage() {
                   </button>
                 ) : (
                   <button
-                    onClick={() => setShowPayPal(true)}
+                    onClick={() => setShowPayPalCTA(true)}
                     className="btn-primary rounded-full text-white px-10 py-4 text-lg flex items-center justify-center gap-2"
                   >
                     <BookOpen className="w-5 h-5" />
