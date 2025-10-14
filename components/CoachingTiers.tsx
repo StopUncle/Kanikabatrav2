@@ -75,7 +75,7 @@ const CoachingTiers = ({ showButton = true, onSelect }: CoachingTiersProps) => {
               {showButton && (
                 <button
                   onClick={() => onSelect?.(pkg.id)}
-                  className="w-full bg-gradient-to-r from-[#8B5CF6] to-[#3B82F6] hover:from-[#7C3AED] hover:to-[#2563EB] text-white font-semibold py-3 px-6 rounded-full transition-all duration-200 hover:shadow-lg hover:shadow-blue-500/30"
+                  className="w-full bg-gradient-to-r from-[#A855F7] via-[#7C3AED] to-[#3B82F6] hover:from-[#9333EA] hover:via-[#6D28D9] hover:to-[#2563EB] text-white font-bold py-3.5 px-6 rounded-full transition-all duration-300 hover:shadow-xl hover:shadow-purple-500/40 hover:scale-[1.02] uppercase tracking-wide"
                 >
                   SELECT PACKAGE
                 </button>
