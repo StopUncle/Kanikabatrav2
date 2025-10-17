@@ -11,7 +11,8 @@ export const BOOK_INFO = {
   subtitle: 'A Cure For Empathy',
   price: 24.99, // SALE PRICE - Limited time
   originalPrice: 34.99, // Original price (crossed out)
-  kdpPrice: 17.99, // Amazon KDP version
+  kdpPrice: 9.99, // Amazon KDP version (LIVE)
+  kdpLink: 'https://www.amazon.com/dp/B0FWKJLT6F', // Clean Amazon link
   wordCount: '70,000', // Updated word count
   chapters: 15,
   isPresale: false,

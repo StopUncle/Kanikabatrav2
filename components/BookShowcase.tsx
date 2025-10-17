@@ -151,19 +151,22 @@ export default function BookShowcase() {
                   className={`w-full p-4 rounded-lg border transition-all text-left relative ${
                     selectedVersion === 'kdp'
                       ? 'border-accent-gold bg-accent-gold/10'
-                      : 'border-gold/20 hover:border-gold/40 opacity-60'
+                      : 'border-gold/20 hover:border-gold/40'
                   }`}
-                  disabled
                 >
+                  <div className="absolute -top-3 -right-3 bg-green-600 text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg">
+                    LIVE NOW
+                  </div>
                   <div className="flex items-start justify-between">
                     <div className="flex items-start gap-3">
                       <BookOpen className="text-accent-gold mt-1" size={20} />
                       <div>
-                        <div className="font-semibold text-text-light">Amazon KDP Version</div>
-                        <div className="text-sm text-text-muted mt-1">Kindle & Paperback</div>
-                        <div className="text-xs text-accent-gold mt-2 italic">Coming Soon</div>
+                        <div className="font-semibold text-text-light">Amazon Kindle Edition</div>
+                        <div className="text-sm text-text-muted mt-1">Available on Amazon</div>
+                        <div className="text-xs text-accent-gold mt-2">✓ Instant Digital Download</div>
                       </div>
                     </div>
+                    <div className="text-2xl font-light gradient-text-gold">${BOOK_INFO.kdpPrice}</div>
                   </div>
                 </button>
 
@@ -269,12 +272,14 @@ export default function BookShowcase() {
                       </button>
                     </>
                   ) : (
-                    <button
-                      disabled
-                      className="w-full btn-primary rounded-full text-white text-center py-3 sm:py-4 font-semibold tracking-wide text-sm sm:text-base opacity-50 cursor-not-allowed"
+                    <a
+                      href={BOOK_INFO.kdpLink}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="w-full btn-primary rounded-full text-white text-center py-3 sm:py-4 font-semibold tracking-wide text-sm sm:text-base inline-block"
                     >
-                      Coming Soon
-                    </button>
+                      Get on Amazon - ${BOOK_INFO.kdpPrice}
+                    </a>
                   )}
                   <div className="flex flex-col sm:flex-row gap-3">
                     <Link
