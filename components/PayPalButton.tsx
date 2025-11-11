@@ -137,6 +137,7 @@ export default function PayPalButton({
         try {
           setIsProcessing(true)
           setError(null)
+          console.log('Creating PayPal order...', { type, itemId })
 
           const response = await fetch('/api/paypal/create-order', {
             method: 'POST',
@@ -151,13 +152,26 @@ export default function PayPalButton({
 
           if (!response.ok) {
             const errorData = await response.json()
+            console.error('Order creation failed:', errorData)
+            setIsProcessing(false)
             throw new Error(errorData.error || 'Failed to create order')
           }
 
           const orderData = await response.json()
+          console.log('Order created successfully:', orderData.orderId)
+          console.log('PayPal popup should open now...')
+
+          // Add timeout to reset processing state if popup never opens/completes
+          setTimeout(() => {
+            console.log('Checking if payment is still processing after 60s...')
+            // This will be cancelled by onApprove/onCancel/onError if they fire
+          }, 60000)
+
           return orderData.orderId
         } catch (error) {
           const errorMessage = error instanceof Error ? error.message : 'Unknown error'
+          console.error('createOrder error:', error)
+          setIsProcessing(false)
           setError(errorMessage)
           onError?.(errorMessage)
           throw error
@@ -270,6 +284,7 @@ export default function PayPalButton({
       },
 
       onCancel: () => {
+        console.log('Payment cancelled by user')
         setIsProcessing(false)
         onCancel?.()
       },
