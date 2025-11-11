@@ -50,10 +50,96 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Check if order is in capturable state
-    if (orderDetails.status !== 'APPROVED') {
+    console.log('Order status before capture:', orderDetails.status)
+
+    // Check if order is already completed (credit/debit cards may auto-complete)
+    if (orderDetails.status === 'COMPLETED') {
+      console.log('Order already completed, skipping capture')
+      // Extract payment details from already completed order
+      const orderData: OrderDetails = {
+        orderId: orderDetails.id,
+        status: orderDetails.status
+      }
+
+      if (orderDetails.purchase_units && orderDetails.purchase_units.length > 0) {
+        const purchaseUnit = orderDetails.purchase_units[0]
+        orderData.amount = purchaseUnit.amount.value
+        orderData.currency = purchaseUnit.amount.currency_code
+      }
+
+      const responsePayer = orderDetails.payer
+      if (responsePayer) {
+        orderData.payerEmail = responsePayer.email_address
+        orderData.payerName = responsePayer.name?.given_name && responsePayer.name?.surname
+          ? `${responsePayer.name.given_name} ${responsePayer.name.surname}`
+          : responsePayer.email_address
+      }
+
+      // Generate download token for already completed orders
+      const downloadToken = crypto.randomBytes(32).toString('hex')
+      const expiresAt = new Date()
+      expiresAt.setDate(expiresAt.getDate() + 30)
+
+      // Check if this order was already processed in our database
+      const existingPurchase = await prisma.purchase.findFirst({
+        where: { paypalOrderId: body.orderId }
+      })
+
+      if (existingPurchase) {
+        console.log('Order already exists in database:', existingPurchase.id)
+        return NextResponse.json({
+          success: true,
+          paymentId: existingPurchase.paypalCaptureId || body.orderId,
+          purchaseId: existingPurchase.id,
+          status: 'COMPLETED',
+          amount: existingPurchase.amount.toString(),
+          currency: 'USD',
+          downloadUrl: `${process.env.NEXT_PUBLIC_BASE_URL}/api/download?token=${existingPurchase.downloadToken}`,
+          downloadToken: existingPurchase.downloadToken,
+          expiresAt: existingPurchase.expiresAt?.toISOString(),
+          message: 'Payment already processed successfully.'
+        }, { status: 200 })
+      }
+
+      // Save new purchase for already completed order
+      const purchase = await prisma.purchase.create({
+        data: {
+          type: 'BOOK',
+          customerEmail: orderData.payerEmail || 'unknown@email.com',
+          customerName: orderData.payerName || 'Unknown',
+          amount: parseFloat(orderData.amount || '0'),
+          status: 'COMPLETED',
+          paypalOrderId: orderData.orderId,
+          paypalCaptureId: body.orderId,
+          downloadToken,
+          expiresAt,
+          metadata: {
+            currency: orderData.currency,
+            autoCompleted: true,
+            ip: request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip') || 'unknown'
+          }
+        }
+      })
+
+      return NextResponse.json({
+        success: true,
+        paymentId: body.orderId,
+        purchaseId: purchase.id,
+        status: 'COMPLETED',
+        amount: orderData.amount,
+        currency: orderData.currency,
+        downloadUrl: `${process.env.NEXT_PUBLIC_BASE_URL}/api/download?token=${downloadToken}`,
+        downloadToken,
+        expiresAt: expiresAt.toISOString(),
+        message: 'Payment completed successfully.'
+      }, { status: 200 })
+    }
+
+    // Check if order is in capturable state (APPROVED or PAYER_ACTION_REQUIRED)
+    if (orderDetails.status !== 'APPROVED' && orderDetails.status !== 'PAYER_ACTION_REQUIRED') {
+      console.error('Order not in capturable state:', orderDetails.status)
       return NextResponse.json(
-        { error: `Order cannot be captured. Current status: ${orderDetails.status}` },
+        { error: `Order cannot be captured. Current status: ${orderDetails.status}. Please try again or contact support.` },
         { status: 400 }
       )
     }

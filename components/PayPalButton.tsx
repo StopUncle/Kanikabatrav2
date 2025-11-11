@@ -167,8 +167,14 @@ export default function PayPalButton({
       onApprove: async (data) => {
         try {
           setIsProcessing(true)
+          console.log('Payment approved, capturing order:', data.orderID)
 
-          const response = await fetch('/api/paypal/capture-order', {
+          // Add timeout to prevent endless processing
+          const timeoutPromise = new Promise((_, reject) =>
+            setTimeout(() => reject(new Error('Payment processing timeout. Please check your email or contact support.')), 30000)
+          )
+
+          const fetchPromise = fetch('/api/paypal/capture-order', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
@@ -178,12 +184,18 @@ export default function PayPalButton({
             }),
           })
 
+          const response = await Promise.race([fetchPromise, timeoutPromise]) as Response
+
+          console.log('Capture response status:', response.status)
+
           if (!response.ok) {
             const errorData = await response.json()
+            console.error('Capture failed:', errorData)
             throw new Error(errorData.error || 'Payment capture failed')
           }
 
           const captureData = await response.json()
+          console.log('Capture successful:', captureData)
 
           if (captureData.success) {
             // Track the order in our system
@@ -211,6 +223,7 @@ export default function PayPalButton({
                 schedulingUrl: trackingResult.schedulingUrl,
               })
             } else {
+              console.warn('Order tracking failed, but payment succeeded')
               // Still call success even if tracking fails
               onSuccess?.(captureData)
             }
@@ -219,6 +232,7 @@ export default function PayPalButton({
           }
         } catch (error) {
           const errorMessage = error instanceof Error ? error.message : 'Payment failed'
+          console.error('Payment approval error:', error)
           setError(errorMessage)
           onError?.(errorMessage)
         } finally {
