@@ -165,77 +165,98 @@ export default function PayPalButton({
       },
 
       onApprove: async (data) => {
-        try {
-          setIsProcessing(true)
-          console.log('Payment approved, capturing order:', data.orderID)
+        const attemptCapture = async (retryCount = 0): Promise<void> => {
+          try {
+            setIsProcessing(true)
+            console.log(`Payment approved, capturing order (attempt ${retryCount + 1}):`, data.orderID)
 
-          // Add timeout to prevent endless processing
-          const timeoutPromise = new Promise((_, reject) =>
-            setTimeout(() => reject(new Error('Payment processing timeout. Please check your email or contact support.')), 30000)
-          )
+            // Add timeout to prevent endless processing (45 seconds to allow for polling)
+            const timeoutPromise = new Promise((_, reject) =>
+              setTimeout(() => reject(new Error('Payment processing timeout. Please check your email or contact support.')), 45000)
+            )
 
-          const fetchPromise = fetch('/api/paypal/capture-order', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-              orderId: data.orderID
-            }),
-          })
-
-          const response = await Promise.race([fetchPromise, timeoutPromise]) as Response
-
-          console.log('Capture response status:', response.status)
-
-          if (!response.ok) {
-            const errorData = await response.json()
-            console.error('Capture failed:', errorData)
-            throw new Error(errorData.error || 'Payment capture failed')
-          }
-
-          const captureData = await response.json()
-          console.log('Capture successful:', captureData)
-
-          if (captureData.success) {
-            // Track the order in our system
-            const trackingResponse = await fetch('/api/orders/create', {
+            const fetchPromise = fetch('/api/paypal/capture-order', {
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json',
               },
               body: JSON.stringify({
-                orderId: data.orderID,
-                type: type,
-                packageId: itemId,
+                orderId: data.orderID
               }),
             })
 
-            if (trackingResponse.ok) {
-              const trackingResult = await trackingResponse.json()
-              console.log('Order tracked:', trackingResult)
+            const response = await Promise.race([fetchPromise, timeoutPromise]) as Response
 
-              // Pass enhanced details to parent
-              onSuccess?.({
-                ...captureData,
-                purchaseId: trackingResult.purchaseId,
-                downloadUrl: trackingResult.downloadUrl,
-                schedulingUrl: trackingResult.schedulingUrl,
-              })
-            } else {
-              console.warn('Order tracking failed, but payment succeeded')
-              // Still call success even if tracking fails
-              onSuccess?.(captureData)
+            console.log('Capture response status:', response.status)
+
+            if (!response.ok) {
+              const errorData = await response.json()
+              console.error('Capture failed:', errorData)
+
+              // Handle retryable errors (status 202)
+              if (response.status === 202 && errorData.retryable && retryCount < 2) {
+                console.log('Payment still processing, retrying in 3 seconds...')
+                await new Promise(resolve => setTimeout(resolve, 3000))
+                return attemptCapture(retryCount + 1)
+              }
+
+              throw new Error(errorData.error || 'Payment capture failed')
             }
-          } else {
-            throw new Error(captureData.message || 'Payment was not completed')
+
+            const captureData = await response.json()
+            console.log('Capture successful:', captureData)
+
+            if (captureData.success) {
+              // Track the order in our system
+              const trackingResponse = await fetch('/api/orders/create', {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                  orderId: data.orderID,
+                  type: type,
+                  packageId: itemId,
+                }),
+              })
+
+              if (trackingResponse.ok) {
+                const trackingResult = await trackingResponse.json()
+                console.log('Order tracked:', trackingResult)
+
+                // Pass enhanced details to parent
+                onSuccess?.({
+                  ...captureData,
+                  purchaseId: trackingResult.purchaseId,
+                  downloadUrl: trackingResult.downloadUrl,
+                  schedulingUrl: trackingResult.schedulingUrl,
+                })
+              } else {
+                console.warn('Order tracking failed, but payment succeeded')
+                // Still call success even if tracking fails
+                onSuccess?.(captureData)
+              }
+            } else {
+              throw new Error(captureData.message || 'Payment was not completed')
+            }
+          } catch (error) {
+            const errorMessage = error instanceof Error ? error.message : 'Payment failed'
+            console.error('Payment approval error:', error)
+            setError(errorMessage)
+            onError?.(errorMessage)
+          } finally {
+            setIsProcessing(false)
           }
+        }
+
+        // Start the capture attempt
+        try {
+          await attemptCapture(0)
         } catch (error) {
           const errorMessage = error instanceof Error ? error.message : 'Payment failed'
-          console.error('Payment approval error:', error)
+          console.error('Final payment error:', error)
           setError(errorMessage)
           onError?.(errorMessage)
-        } finally {
           setIsProcessing(false)
         }
       },
