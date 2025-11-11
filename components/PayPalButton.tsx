@@ -182,11 +182,11 @@ export default function PayPalButton({
         const attemptCapture = async (retryCount = 0): Promise<void> => {
           try {
             setIsProcessing(true)
-            console.log(`Payment approved, capturing order (attempt ${retryCount + 1}):`, data.orderID)
+            console.log(`[CREDIT CARD CAPTURE] Attempt ${retryCount + 1} | Order: ${data.orderID}`)
 
-            // Add timeout to prevent endless processing (45 seconds to allow for polling)
+            // Extended timeout for credit card payments (90 seconds to allow for 3D Secure + polling)
             const timeoutPromise = new Promise((_, reject) =>
-              setTimeout(() => reject(new Error('Payment processing timeout. Please check your email or contact support.')), 45000)
+              setTimeout(() => reject(new Error('Payment processing timeout. Please check your email or contact support.')), 90000)
             )
 
             const fetchPromise = fetch('/api/paypal/capture-order', {
@@ -201,16 +201,18 @@ export default function PayPalButton({
 
             const response = await Promise.race([fetchPromise, timeoutPromise]) as Response
 
-            console.log('Capture response status:', response.status)
+            console.log(`[CREDIT CARD CAPTURE] Response status: ${response.status}`)
 
             if (!response.ok) {
               const errorData = await response.json()
-              console.error('Capture failed:', errorData)
+              console.error('[CREDIT CARD CAPTURE] Failed:', errorData)
 
-              // Handle retryable errors (status 202)
-              if (response.status === 202 && errorData.retryable && retryCount < 2) {
-                console.log('Payment still processing, retrying in 3 seconds...')
-                await new Promise(resolve => setTimeout(resolve, 3000))
+              // Handle retryable errors (status 202) - increased retry count for credit cards
+              if (response.status === 202 && errorData.retryable && retryCount < 5) {
+                // Exponential backoff for retries
+                const retryDelay = Math.min(3000 * Math.pow(1.5, retryCount), 8000)
+                console.log(`[CREDIT CARD CAPTURE] Payment still processing, retrying in ${retryDelay/1000}s... (attempt ${retryCount + 2}/6)`)
+                await new Promise(resolve => setTimeout(resolve, retryDelay))
                 return attemptCapture(retryCount + 1)
               }
 
@@ -381,6 +383,11 @@ export default function PayPalButton({
             <p className="text-text-muted text-sm">
               {!isScriptLoaded ? 'Loading payment options...' : 'Processing payment...'}
             </p>
+            {isProcessing && (
+              <p className="text-text-muted text-xs opacity-75 text-center max-w-xs">
+                Credit card payments may take 30-60 seconds to process. Please don&apos;t close this window.
+              </p>
+            )}
           </div>
         </div>
       )}

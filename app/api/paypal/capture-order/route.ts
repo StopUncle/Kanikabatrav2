@@ -53,30 +53,32 @@ export async function POST(request: NextRequest) {
     console.log('Order status before capture:', orderDetails.status)
 
     // Poll for order to reach capturable state (handles async payment processing)
+    // Credit card payments often take 20-40 seconds to process
     let pollAttempts = 0
-    const maxPollAttempts = 5
+    const maxPollAttempts = 15 // Increased from 5 to 15 for credit card processing
 
     while (
       orderDetails.status !== 'COMPLETED' &&
       orderDetails.status !== 'APPROVED' &&
       pollAttempts < maxPollAttempts
     ) {
-      console.log(`Waiting for order to be ready... Attempt ${pollAttempts + 1}/${maxPollAttempts}, Current status: ${orderDetails.status}`)
+      console.log(`[CREDIT CARD POLLING] Attempt ${pollAttempts + 1}/${maxPollAttempts} | Status: ${orderDetails.status}`)
 
-      // Wait 2 seconds before checking again
-      await new Promise(resolve => setTimeout(resolve, 2000))
+      // Exponential backoff: start with 2s, increase slightly for later attempts
+      const waitTime = pollAttempts < 5 ? 2000 : pollAttempts < 10 ? 2500 : 3000
+      await new Promise(resolve => setTimeout(resolve, waitTime))
 
       try {
         orderDetails = await paypalService.getOrderDetails(body.orderId)
-        console.log(`Polled order status: ${orderDetails.status}`)
+        console.log(`[CREDIT CARD POLLING] Status after wait: ${orderDetails.status}`)
         pollAttempts++
       } catch (error) {
-        console.error('Failed to poll order status:', error)
+        console.error('[CREDIT CARD POLLING] Failed to poll order status:', error)
         pollAttempts++
       }
     }
 
-    console.log(`Final order status after polling: ${orderDetails.status}`)
+    console.log(`[CREDIT CARD POLLING] Final status after ${pollAttempts} attempts: ${orderDetails.status}`)
 
     // Check if order is already completed (credit/debit cards may auto-complete)
     if (orderDetails.status === 'COMPLETED') {
