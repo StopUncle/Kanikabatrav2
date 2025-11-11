@@ -135,9 +135,18 @@ export async function POST(request: NextRequest) {
       }, { status: 200 })
     }
 
-    // Check if order is in capturable state (APPROVED or PAYER_ACTION_REQUIRED)
-    if (orderDetails.status !== 'APPROVED' && orderDetails.status !== 'PAYER_ACTION_REQUIRED') {
+    // Check if order is in capturable state (only APPROVED can be captured)
+    if (orderDetails.status !== 'APPROVED') {
       console.error('Order not in capturable state:', orderDetails.status)
+
+      // If it's PAYER_ACTION_REQUIRED, user needs to complete authentication
+      if (orderDetails.status === 'PAYER_ACTION_REQUIRED') {
+        return NextResponse.json(
+          { error: 'Payment requires additional authentication. Please complete the payment process.' },
+          { status: 400 }
+        )
+      }
+
       return NextResponse.json(
         { error: `Order cannot be captured. Current status: ${orderDetails.status}. Please try again or contact support.` },
         { status: 400 }
@@ -145,7 +154,101 @@ export async function POST(request: NextRequest) {
     }
 
     // Capture the payment
-    const captureResponse = await paypalService.captureOrder(body.orderId)
+    let captureResponse
+    try {
+      captureResponse = await paypalService.captureOrder(body.orderId)
+    } catch (error) {
+      console.error('PayPal capture API error:', error)
+
+      // Check if order was already captured
+      try {
+        const recheckOrder = await paypalService.getOrderDetails(body.orderId)
+        if (recheckOrder.status === 'COMPLETED') {
+          console.log('Order was already captured, processing as completed')
+          // Redirect to the COMPLETED handler by recursing
+          orderDetails = recheckOrder
+          // Jump to completed handling
+          const orderData: OrderDetails = {
+            orderId: recheckOrder.id,
+            status: recheckOrder.status
+          }
+
+          if (recheckOrder.purchase_units && recheckOrder.purchase_units.length > 0) {
+            const purchaseUnit = recheckOrder.purchase_units[0]
+            orderData.amount = purchaseUnit.amount.value
+            orderData.currency = purchaseUnit.amount.currency_code
+          }
+
+          const responsePayer = recheckOrder.payer
+          if (responsePayer) {
+            orderData.payerEmail = responsePayer.email_address
+            orderData.payerName = responsePayer.name?.given_name && responsePayer.name?.surname
+              ? `${responsePayer.name.given_name} ${responsePayer.name.surname}`
+              : responsePayer.email_address
+          }
+
+          const downloadToken = crypto.randomBytes(32).toString('hex')
+          const expiresAt = new Date()
+          expiresAt.setDate(expiresAt.getDate() + 30)
+
+          const existingPurchase = await prisma.purchase.findFirst({
+            where: { paypalOrderId: body.orderId }
+          })
+
+          if (existingPurchase) {
+            return NextResponse.json({
+              success: true,
+              paymentId: existingPurchase.paypalCaptureId || body.orderId,
+              purchaseId: existingPurchase.id,
+              status: 'COMPLETED',
+              amount: existingPurchase.amount.toString(),
+              currency: 'USD',
+              downloadUrl: `${process.env.NEXT_PUBLIC_BASE_URL}/api/download?token=${existingPurchase.downloadToken}`,
+              downloadToken: existingPurchase.downloadToken,
+              expiresAt: existingPurchase.expiresAt?.toISOString(),
+              message: 'Payment already processed successfully.'
+            }, { status: 200 })
+          }
+
+          const purchase = await prisma.purchase.create({
+            data: {
+              type: 'BOOK',
+              customerEmail: orderData.payerEmail || 'unknown@email.com',
+              customerName: orderData.payerName || 'Unknown',
+              amount: parseFloat(orderData.amount || '0'),
+              status: 'COMPLETED',
+              paypalOrderId: orderData.orderId,
+              paypalCaptureId: body.orderId,
+              downloadToken,
+              expiresAt,
+              metadata: {
+                currency: orderData.currency,
+                autoCompleted: true,
+                retryCapture: true,
+                ip: request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip') || 'unknown'
+              }
+            }
+          })
+
+          return NextResponse.json({
+            success: true,
+            paymentId: body.orderId,
+            purchaseId: purchase.id,
+            status: 'COMPLETED',
+            amount: orderData.amount,
+            currency: orderData.currency,
+            downloadUrl: `${process.env.NEXT_PUBLIC_BASE_URL}/api/download?token=${downloadToken}`,
+            downloadToken,
+            expiresAt: expiresAt.toISOString(),
+            message: 'Payment completed successfully.'
+          }, { status: 200 })
+        }
+      } catch (recheckError) {
+        console.error('Failed to recheck order status:', recheckError)
+      }
+
+      throw error
+    }
 
     // Extract payment details
     const orderData: OrderDetails = {
