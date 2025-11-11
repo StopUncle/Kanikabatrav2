@@ -52,6 +52,32 @@ export async function POST(request: NextRequest) {
 
     console.log('Order status before capture:', orderDetails.status)
 
+    // Poll for order to reach capturable state (handles async payment processing)
+    let pollAttempts = 0
+    const maxPollAttempts = 5
+
+    while (
+      orderDetails.status !== 'COMPLETED' &&
+      orderDetails.status !== 'APPROVED' &&
+      pollAttempts < maxPollAttempts
+    ) {
+      console.log(`Waiting for order to be ready... Attempt ${pollAttempts + 1}/${maxPollAttempts}, Current status: ${orderDetails.status}`)
+
+      // Wait 2 seconds before checking again
+      await new Promise(resolve => setTimeout(resolve, 2000))
+
+      try {
+        orderDetails = await paypalService.getOrderDetails(body.orderId)
+        console.log(`Polled order status: ${orderDetails.status}`)
+        pollAttempts++
+      } catch (error) {
+        console.error('Failed to poll order status:', error)
+        pollAttempts++
+      }
+    }
+
+    console.log(`Final order status after polling: ${orderDetails.status}`)
+
     // Check if order is already completed (credit/debit cards may auto-complete)
     if (orderDetails.status === 'COMPLETED') {
       console.log('Order already completed, skipping capture')
@@ -137,13 +163,24 @@ export async function POST(request: NextRequest) {
 
     // Check if order is in capturable state (only APPROVED can be captured)
     if (orderDetails.status !== 'APPROVED') {
-      console.error('Order not in capturable state:', orderDetails.status)
+      console.error('Order not in capturable state after polling:', orderDetails.status)
 
       // If it's PAYER_ACTION_REQUIRED, user needs to complete authentication
       if (orderDetails.status === 'PAYER_ACTION_REQUIRED') {
         return NextResponse.json(
           { error: 'Payment requires additional authentication. Please complete the payment process.' },
           { status: 400 }
+        )
+      }
+
+      // If still in CREATED state, payment might still be processing
+      if (orderDetails.status === 'CREATED') {
+        return NextResponse.json(
+          {
+            error: 'Payment is still processing. Please wait a moment and try again.',
+            retryable: true
+          },
+          { status: 202 }
         )
       }
 
