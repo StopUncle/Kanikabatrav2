@@ -258,9 +258,10 @@ export function createBookOrder(bookPrice: number, bookTitle: string): PayPalOrd
       locale: 'en-US',
       landing_page: 'NO_PREFERENCE',
       shipping_preference: 'NO_SHIPPING',
-      user_action: 'PAY_NOW',
-      return_url: `${process.env.NEXT_PUBLIC_BASE_URL}/success`,
-      cancel_url: `${process.env.NEXT_PUBLIC_BASE_URL}/cancel`
+      user_action: 'PAY_NOW'
+      // NOTE: DO NOT set return_url/cancel_url when using PayPal JS SDK Buttons
+      // These URLs break the onApprove callback for credit/debit card payments
+      // The SDK handles success/cancel via onApprove/onCancel callbacks instead
     }
   }
 }
@@ -304,9 +305,10 @@ export function createCoachingOrder(
       locale: 'en-US',
       landing_page: 'NO_PREFERENCE',
       shipping_preference: 'NO_SHIPPING',
-      user_action: 'PAY_NOW',
-      return_url: `${process.env.NEXT_PUBLIC_BASE_URL}/success`,
-      cancel_url: `${process.env.NEXT_PUBLIC_BASE_URL}/cancel`
+      user_action: 'PAY_NOW'
+      // NOTE: DO NOT set return_url/cancel_url when using PayPal JS SDK Buttons
+      // These URLs break the onApprove callback for credit/debit card payments
+      // The SDK handles success/cancel via onApprove/onCancel callbacks instead
     }
   }
 }
