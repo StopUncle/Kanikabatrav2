@@ -71,9 +71,9 @@ export default function PayPalButton({
       return
     }
 
-    // Load PayPal SDK
+    // Load PayPal SDK with all payment options enabled
     const script = document.createElement('script')
-    script.src = `https://www.paypal.com/sdk/js?client-id=${PAYPAL_CONFIG.clientId}&currency=${PAYPAL_CONFIG.currency}&intent=${PAYPAL_CONFIG.intent}`
+    script.src = `https://www.paypal.com/sdk/js?client-id=${PAYPAL_CONFIG.clientId}&currency=${PAYPAL_CONFIG.currency}&intent=${PAYPAL_CONFIG.intent}&components=buttons,funding-eligibility&enable-funding=venmo,paylater`
     script.async = true
     script.defer = true
 
