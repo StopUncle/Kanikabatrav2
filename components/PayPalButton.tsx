@@ -72,12 +72,19 @@ export default function PayPalButton({
     }
 
     // Load PayPal SDK with all payment options enabled
+    // NOTE: For full functionality, ensure in PayPal Developer Dashboard:
+    // 1. Apps & Credentials > Your App > Features > "Accept Payments"
+    // 2. Enable "Advanced Credit and Debit Card Payments"
+    // 3. PayPal.com > Settings > Website Payments > PayPal Account Optional = "On"
     const script = document.createElement('script')
-    script.src = `https://www.paypal.com/sdk/js?client-id=${PAYPAL_CONFIG.clientId}&currency=${PAYPAL_CONFIG.currency}&intent=${PAYPAL_CONFIG.intent}&components=buttons,funding-eligibility&enable-funding=venmo,paylater`
+    script.src = `https://www.paypal.com/sdk/js?client-id=${PAYPAL_CONFIG.clientId}&currency=${PAYPAL_CONFIG.currency}&intent=${PAYPAL_CONFIG.intent}&components=buttons,funding-eligibility&enable-funding=card,venmo,paylater`
     script.async = true
     script.defer = true
 
+    console.log('Loading PayPal SDK with URL:', script.src)
+
     script.onload = () => {
+      console.log('PayPal SDK loaded successfully')
       setIsScriptLoaded(true)
     }
 
@@ -130,6 +137,12 @@ export default function PayPalButton({
 
       // Clear any existing buttons
       container.innerHTML = ''
+
+      // Log available funding sources for debugging
+      if (window.paypal?.getFundingSources) {
+        const fundingSources = window.paypal.getFundingSources()
+        console.log('Available PayPal funding sources:', fundingSources)
+      }
 
     // Configure PayPal buttons
     const paypalButtons = window.paypal!.Buttons({
