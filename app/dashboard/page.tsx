@@ -30,5 +30,9 @@ export default async function DashboardPage() {
 
 export const metadata = {
   title: 'Dashboard - Kanika Batra',
-  description: 'Your dark psychology command center - manage purchases, coaching sessions, and exclusive resources'
+  description: 'Your dark psychology command center - manage purchases, coaching sessions, and exclusive resources',
+  robots: {
+    index: false,
+    follow: false,
+  },
 }

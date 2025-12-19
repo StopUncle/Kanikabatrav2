@@ -8,16 +8,35 @@ datasource db {
 }
 
 model User {
-  id        String            @id @default(cuid())
-  email     String            @unique
-  password  String
-  name      String?
-  createdAt DateTime          @default(now())
-  updatedAt DateTime          @updatedAt
-  sessions  CoachingSession[]
-  purchases Purchase[]
+  id           String             @id @default(cuid())
+  email        String             @unique
+  password     String
+  name         String?
+  displayName  String?
+  avatarUrl    String?
+  role         UserRole           @default(MEMBER)
+  createdAt    DateTime           @default(now())
+  updatedAt    DateTime           @updatedAt
+  sessions     CoachingSession[]
+  purchases    Purchase[]
+  forumPosts   ForumPost[]
+  forumReplies ForumReply[]
+  postLikes    PostLike[]
+  replyLikes   ReplyLike[]
+  chatMessages ChatMessage[]
+  chatMembers  ChatMember[]
+  subscriptions Subscription[]
+  enrollments  CourseEnrollment[]
+  activities   ActivityLog[]
+  achievements UserAchievement[]
 
   @@index([email])
+}
+
+enum UserRole {
+  MEMBER
+  MODERATOR
+  ADMIN
 }
 
 model Purchase {
@@ -49,24 +68,41 @@ model Purchase {
 }
 
 model CoachingSession {
-  id           String        @id @default(cuid())
+  id           String           @id @default(cuid())
   purchaseId   String
   userId       String?
   packageName  String
-  sessionCount Int           @default(1)
+  sessionCount Int              @default(1)
   scheduledAt  DateTime?
   duration     Int?
-  status       SessionStatus @default(PENDING_SCHEDULING)
+  status       SessionStatus    @default(PENDING_SCHEDULING)
   meetingUrl   String?
-  notes        String?
-  createdAt    DateTime      @default(now())
-  updatedAt    DateTime      @updatedAt
-  purchase     Purchase      @relation(fields: [purchaseId], references: [id], onDelete: Cascade)
-  user         User?         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  notes        String?          // Coach notes
+  userNotes    String?          @db.Text // User's personal notes
+  createdAt    DateTime         @default(now())
+  updatedAt    DateTime         @updatedAt
+  purchase     Purchase         @relation(fields: [purchaseId], references: [id], onDelete: Cascade)
+  user         User?            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  feedback     SessionFeedback?
 
   @@index([userId])
   @@index([purchaseId])
   @@index([scheduledAt])
+}
+
+// Session Feedback - User feedback after completing a coaching session
+model SessionFeedback {
+  id        String          @id @default(cuid())
+  sessionId String          @unique
+  rating    Int             // 1-5 stars
+  feedback  String?         @db.Text // General feedback
+  goals     String?         @db.Text // What user wanted to achieve
+  outcomes  String?         @db.Text // What was achieved
+  createdAt DateTime        @default(now())
+  updatedAt DateTime        @updatedAt
+  session   CoachingSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+
+  @@index([sessionId])
 }
 
 enum ProductType {
@@ -94,4 +130,405 @@ enum SessionStatus {
   COMPLETED
   CANCELLED
   NO_SHOW
+}
+
+// Blog System - Content stored in MDX files, DB tracks metadata
+model Post {
+  id        String   @id @default(cuid())
+  slug      String   @unique
+  views     Int      @default(0)
+  createdAt DateTime @default(now())
+
+  @@index([slug])
+}
+
+// Quiz System - Dark Triad Personality Quiz
+model QuizResult {
+  id         String   @id @default(cuid())
+  email      String?
+  resultType String   // "narcissist" | "machiavellian" | "psychopath" | "hybrid"
+  scores     Json     // { narcissism: 75, machiavellianism: 60, psychopathy: 45 }
+  answers    Json     // All question answers for analytics
+  shared     Boolean  @default(false)
+  createdAt  DateTime @default(now())
+
+  @@index([email])
+  @@index([resultType])
+}
+
+// Newsletter Subscribers
+model Subscriber {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  name         String?
+  source       String   // "newsletter" | "quiz" | "presale" | "book-sample"
+  quizResultId String?  // Link to quiz if came from quiz
+  tags         String[] // For segmentation
+  verified     Boolean  @default(false)
+  createdAt    DateTime @default(now())
+
+  @@index([email])
+  @@index([source])
+}
+
+// ========================================
+// COMMUNITY FORUM MODELS
+// ========================================
+
+enum AccessTier {
+  PUBLIC
+  REGISTERED
+  BOOK_OWNER
+  COACHING_CLIENT
+  COURSE_SUBSCRIBER
+  PREMIUM
+}
+
+enum MessageType {
+  TEXT
+  IMAGE
+  SYSTEM
+}
+
+enum MemberRole {
+  MEMBER
+  MODERATOR
+  ADMIN
+}
+
+// Forum Categories (top-level organization)
+model ForumCategory {
+  id          String      @id @default(cuid())
+  name        String
+  slug        String      @unique
+  description String?
+  icon        String?
+  sortOrder   Int         @default(0)
+  accessTier  AccessTier  @default(PUBLIC)
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  posts       ForumPost[]
+  chatRooms   ChatRoom[]
+
+  @@index([slug])
+  @@index([accessTier])
+}
+
+// Forum Posts (async discussions)
+model ForumPost {
+  id          String        @id @default(cuid())
+  categoryId  String
+  authorId    String
+  title       String
+  slug        String
+  content     String        @db.Text
+  isPinned    Boolean       @default(false)
+  isLocked    Boolean       @default(false)
+  viewCount   Int           @default(0)
+  likeCount   Int           @default(0)
+  replyCount  Int           @default(0)
+  lastReplyAt DateTime?
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  category    ForumCategory @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  author      User          @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  replies     ForumReply[]
+  likes       PostLike[]
+
+  @@unique([categoryId, slug])
+  @@index([categoryId])
+  @@index([authorId])
+  @@index([createdAt])
+  @@index([lastReplyAt])
+}
+
+// Forum Replies (threaded comments)
+model ForumReply {
+  id        String       @id @default(cuid())
+  postId    String
+  authorId  String
+  parentId  String?
+  content   String       @db.Text
+  likeCount Int          @default(0)
+  isEdited  Boolean      @default(false)
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+  post      ForumPost    @relation(fields: [postId], references: [id], onDelete: Cascade)
+  author    User         @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  parent    ForumReply?  @relation("ReplyThread", fields: [parentId], references: [id], onDelete: Cascade)
+  children  ForumReply[] @relation("ReplyThread")
+  likes     ReplyLike[]
+
+  @@index([postId])
+  @@index([authorId])
+  @@index([parentId])
+  @@index([createdAt])
+}
+
+// Post Likes
+model PostLike {
+  id        String    @id @default(cuid())
+  postId    String
+  userId    String
+  createdAt DateTime  @default(now())
+  post      ForumPost @relation(fields: [postId], references: [id], onDelete: Cascade)
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([postId, userId])
+  @@index([postId])
+  @@index([userId])
+}
+
+// Reply Likes
+model ReplyLike {
+  id        String     @id @default(cuid())
+  replyId   String
+  userId    String
+  createdAt DateTime   @default(now())
+  reply     ForumReply @relation(fields: [replyId], references: [id], onDelete: Cascade)
+  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([replyId, userId])
+  @@index([replyId])
+  @@index([userId])
+}
+
+// ========================================
+// REAL-TIME CHAT MODELS
+// ========================================
+
+model ChatRoom {
+  id          String         @id @default(cuid())
+  categoryId  String?
+  name        String
+  slug        String         @unique
+  description String?
+  accessTier  AccessTier     @default(PUBLIC)
+  isActive    Boolean        @default(true)
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+  category    ForumCategory? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  messages    ChatMessage[]
+  members     ChatMember[]
+
+  @@index([slug])
+  @@index([accessTier])
+}
+
+model ChatMessage {
+  id        String      @id @default(cuid())
+  roomId    String
+  authorId  String
+  content   String      @db.Text
+  type      MessageType @default(TEXT)
+  isEdited  Boolean     @default(false)
+  isDeleted Boolean     @default(false)
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+  room      ChatRoom    @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  author    User        @relation(fields: [authorId], references: [id], onDelete: Cascade)
+
+  @@index([roomId])
+  @@index([authorId])
+  @@index([createdAt])
+}
+
+model ChatMember {
+  id       String     @id @default(cuid())
+  roomId   String
+  userId   String
+  role     MemberRole @default(MEMBER)
+  joinedAt DateTime   @default(now())
+  lastSeen DateTime   @default(now())
+  room     ChatRoom   @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  user     User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([roomId, userId])
+  @@index([roomId])
+  @@index([userId])
+}
+
+// ========================================
+// COURSE & SUBSCRIPTION MODELS
+// ========================================
+
+enum SubscriptionStatus {
+  ACTIVE
+  CANCELLED
+  EXPIRED
+  PAUSED
+}
+
+enum EnrollmentStatus {
+  ACTIVE
+  COMPLETED
+  CANCELLED
+}
+
+model Course {
+  id           String             @id @default(cuid())
+  title        String
+  slug         String             @unique
+  description  String?            @db.Text
+  thumbnailUrl String?
+  price        Float              // Monthly subscription price
+  tier         String             @default("standard") // "standard" or "gold"
+  isActive     Boolean            @default(true)
+  sortOrder    Int                @default(0)
+  createdAt    DateTime           @default(now())
+  updatedAt    DateTime           @updatedAt
+  modules      CourseModule[]
+  enrollments  CourseEnrollment[]
+  subscriptions Subscription[]
+
+  @@index([slug])
+  @@index([isActive])
+}
+
+model CourseModule {
+  id          String         @id @default(cuid())
+  courseId    String
+  title       String
+  slug        String
+  description String?        @db.Text
+  sortOrder   Int            @default(0)
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+  course      Course         @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  lessons     CourseLesson[]
+
+  @@unique([courseId, slug])
+  @@index([courseId])
+}
+
+model CourseLesson {
+  id          String           @id @default(cuid())
+  moduleId    String
+  title       String
+  slug        String
+  description String?          @db.Text
+  videoUrl    String?          // Path to video file in /public/CourseVideos/
+  duration    Int?             // Duration in seconds
+  textContent String?          @db.Text
+  sortOrder   Int              @default(0)
+  isFree      Boolean          @default(false) // Preview lessons
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+  module      CourseModule     @relation(fields: [moduleId], references: [id], onDelete: Cascade)
+  progress    LessonProgress[]
+
+  @@unique([moduleId, slug])
+  @@index([moduleId])
+}
+
+model Subscription {
+  id                   String             @id @default(cuid())
+  userId               String
+  courseId             String
+  paypalSubscriptionId String             @unique
+  paypalPlanId         String?
+  status               SubscriptionStatus @default(ACTIVE)
+  currentPeriodStart   DateTime?
+  currentPeriodEnd     DateTime?
+  cancelledAt          DateTime?
+  createdAt            DateTime           @default(now())
+  updatedAt            DateTime           @updatedAt
+  user                 User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  course               Course             @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  enrollment           CourseEnrollment?
+
+  @@index([userId])
+  @@index([courseId])
+  @@index([paypalSubscriptionId])
+  @@index([status])
+}
+
+model CourseEnrollment {
+  id             String           @id @default(cuid())
+  courseId       String
+  userId         String
+  subscriptionId String?          @unique
+  status         EnrollmentStatus @default(ACTIVE)
+  startedAt      DateTime         @default(now())
+  completedAt    DateTime?
+  lastAccessedAt DateTime?
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+  course         Course           @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  user           User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  subscription   Subscription?    @relation(fields: [subscriptionId], references: [id], onDelete: SetNull)
+  progress       LessonProgress[]
+
+  @@unique([courseId, userId])
+  @@index([courseId])
+  @@index([userId])
+  @@index([status])
+}
+
+model LessonProgress {
+  id              String           @id @default(cuid())
+  enrollmentId    String
+  lessonId        String
+  watchedSeconds  Int              @default(0)
+  isCompleted     Boolean          @default(false)
+  lastWatchedAt   DateTime?
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+  enrollment      CourseEnrollment @relation(fields: [enrollmentId], references: [id], onDelete: Cascade)
+  lesson          CourseLesson     @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+
+  @@unique([enrollmentId, lessonId])
+  @@index([enrollmentId])
+  @@index([lessonId])
+}
+
+// ========================================
+// ACTIVITY & GAMIFICATION MODELS
+// ========================================
+
+// Activity Log - Tracks user actions for activity feed
+model ActivityLog {
+  id        String   @id @default(cuid())
+  userId    String
+  type      String   // "purchase" | "session_completed" | "lesson_completed" | "achievement" | "feedback"
+  title     String
+  metadata  Json?    // Flexible data for each activity type
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([createdAt])
+  @@index([type])
+}
+
+// Achievement Definitions
+model Achievement {
+  id          String            @id @default(cuid())
+  slug        String            @unique
+  name        String
+  description String
+  icon        String            // Lucide icon name
+  tier        String            @default("bronze") // bronze, silver, gold
+  criteria    Json              // { type: "sessions_completed", count: 5 }
+  sortOrder   Int               @default(0)
+  createdAt   DateTime          @default(now())
+  users       UserAchievement[]
+
+  @@index([slug])
+  @@index([tier])
+}
+
+// User Achievements - Junction table for earned achievements
+model UserAchievement {
+  id            String      @id @default(cuid())
+  userId        String
+  achievementId String
+  earnedAt      DateTime    @default(now())
+  user          User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  achievement   Achievement @relation(fields: [achievementId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, achievementId])
+  @@index([userId])
+  @@index([achievementId])
+  @@index([earnedAt])
 }

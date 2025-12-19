@@ -1,19 +1,37 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Menu, X } from 'lucide-react'
+import { Menu, X, User, LogIn } from 'lucide-react'
 import KBSpinLogo from './KBSpinLogo'
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const [isLoggedIn, setIsLoggedIn] = useState(false)
+  const [isCheckingAuth, setIsCheckingAuth] = useState(true)
   const pathname = usePathname()
+
+  useEffect(() => {
+    async function checkAuth() {
+      try {
+        const response = await fetch('/api/auth/me')
+        setIsLoggedIn(response.ok)
+      } catch {
+        setIsLoggedIn(false)
+      } finally {
+        setIsCheckingAuth(false)
+      }
+    }
+    checkAuth()
+  }, [])
 
   const navLinks = [
     { href: '/', label: 'Home' },
     { href: '/book', label: 'The Book' },
+    { href: '/courses', label: 'Courses' },
     { href: '/coaching', label: 'Coaching' },
+    { href: '/community', label: 'Community' },
     { href: '/about', label: 'About' },
     { href: '/contact', label: 'Contact' },
   ]
@@ -50,6 +68,41 @@ const Header = () => {
                 </Link>
               )
             })}
+
+            {/* Auth Links */}
+            {!isCheckingAuth && (
+              <div className="flex items-center gap-4 ml-4 pl-4 border-l border-accent-gold/20">
+                {isLoggedIn ? (
+                  <Link
+                    href="/dashboard"
+                    className={pathname === '/dashboard'
+                      ? "flex items-center gap-2 gradient-text-gold font-medium"
+                      : "flex items-center gap-2 text-text-gray hover:text-accent-gold transition-colors duration-300 font-light"}
+                  >
+                    <User size={18} />
+                    Dashboard
+                  </Link>
+                ) : (
+                  <>
+                    <Link
+                      href="/login"
+                      className={pathname === '/login'
+                        ? "flex items-center gap-2 gradient-text-gold font-medium"
+                        : "flex items-center gap-2 text-text-gray hover:text-accent-gold transition-colors duration-300 font-light"}
+                    >
+                      <LogIn size={18} />
+                      Login
+                    </Link>
+                    <Link
+                      href="/register"
+                      className="px-4 py-2 bg-gradient-to-r from-burgundy to-sapphire rounded-lg text-white text-sm font-medium hover:shadow-lg hover:shadow-burgundy/20 transition-all"
+                    >
+                      Register
+                    </Link>
+                  </>
+                )}
+              </div>
+            )}
           </div>
 
           <button
@@ -80,6 +133,44 @@ const Header = () => {
                   </Link>
                 )
               })}
+
+              {/* Mobile Auth Links */}
+              {!isCheckingAuth && (
+                <div className="mt-4 pt-4 border-t border-accent-gold/20">
+                  {isLoggedIn ? (
+                    <Link
+                      href="/dashboard"
+                      className={pathname === '/dashboard'
+                        ? "flex items-center gap-2 gradient-text-gold font-medium py-3 text-base sm:text-lg"
+                        : "flex items-center gap-2 text-text-gray hover:text-accent-gold transition-colors duration-300 font-light py-3 text-base sm:text-lg"}
+                      onClick={() => setIsMenuOpen(false)}
+                    >
+                      <User size={20} />
+                      Dashboard
+                    </Link>
+                  ) : (
+                    <>
+                      <Link
+                        href="/login"
+                        className={pathname === '/login'
+                          ? "flex items-center gap-2 gradient-text-gold font-medium py-3 text-base sm:text-lg"
+                          : "flex items-center gap-2 text-text-gray hover:text-accent-gold transition-colors duration-300 font-light py-3 text-base sm:text-lg"}
+                        onClick={() => setIsMenuOpen(false)}
+                      >
+                        <LogIn size={20} />
+                        Login
+                      </Link>
+                      <Link
+                        href="/register"
+                        className="mt-3 block text-center px-4 py-3 bg-gradient-to-r from-burgundy to-sapphire rounded-lg text-white font-medium hover:shadow-lg transition-all"
+                        onClick={() => setIsMenuOpen(false)}
+                      >
+                        Create Account
+                      </Link>
+                    </>
+                  )}
+                </div>
+              )}
             </div>
           </div>
         )}

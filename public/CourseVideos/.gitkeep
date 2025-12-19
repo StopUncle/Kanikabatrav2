@@ -1,0 +1,13 @@
+# Course Video Upload Directory
+#
+# Structure:
+# CourseVideos/
+#   standard-course/
+#     module-1/
+#       lesson-1.mp4
+#     module-2/
+#   gold-course/
+#     module-1/
+#     module-2/
+#
+# Upload your video files here following the naming convention.

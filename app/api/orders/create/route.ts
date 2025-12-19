@@ -1,11 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { PrismaClient } from '@prisma/client'
+import { prisma } from '@/lib/prisma'
 import { paypalService } from '@/lib/paypal'
 import { sendOrderConfirmation, sendBookDelivery, sendCoachingScheduling } from '@/lib/email'
 import { BOOK_INFO, COACHING_PACKAGES } from '@/lib/constants'
 import jwt from 'jsonwebtoken'
-
-const prisma = new PrismaClient()
 
 export async function POST(request: NextRequest) {
   try {
@@ -31,11 +29,11 @@ export async function POST(request: NextRequest) {
 
     // Get user from JWT token if available
     let userId: string | null = null
-    const token = request.cookies.get('auth-token')?.value
-    
-    if (token) {
+    const token = request.cookies.get('accessToken')?.value
+
+    if (token && process.env.JWT_SECRET) {
       try {
-        const decoded = jwt.verify(token, process.env.JWT_SECRET || 'your-secret-key') as { userId: string }
+        const decoded = jwt.verify(token, process.env.JWT_SECRET) as { userId: string }
         userId = decoded.userId
       } catch (_error) {
         console.log('No valid auth token, proceeding as guest purchase')
@@ -68,9 +66,12 @@ export async function POST(request: NextRequest) {
     // Handle book purchase
     if (type === 'book') {
       // Generate secure download token
+      if (!process.env.JWT_SECRET) {
+        throw new Error('JWT_SECRET not configured')
+      }
       const downloadToken = jwt.sign(
         { purchaseId: purchase.id, type: 'book' },
-        process.env.JWT_SECRET || 'your-secret-key',
+        process.env.JWT_SECRET,
         { expiresIn: '7d' }
       )
       const downloadUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/api/download?token=${downloadToken}`
@@ -121,9 +122,12 @@ export async function POST(request: NextRequest) {
       })
 
       // Generate scheduling URL
+      if (!process.env.JWT_SECRET) {
+        throw new Error('JWT_SECRET not configured')
+      }
       const schedulingToken = jwt.sign(
         { sessionId: session.id, purchaseId: purchase.id },
-        process.env.JWT_SECRET || 'your-secret-key',
+        process.env.JWT_SECRET,
         { expiresIn: '30d' }
       )
       const schedulingUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/coaching/schedule?token=${schedulingToken}`
@@ -170,7 +174,5 @@ export async function POST(request: NextRequest) {
       { error: 'Failed to process order' },
       { status: 500 }
     )
-  } finally {
-    await prisma.$disconnect()
   }
 }

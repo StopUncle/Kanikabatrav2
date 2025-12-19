@@ -1,9 +1,27 @@
-import { NextResponse } from 'next/server'
-import { PrismaClient } from '@prisma/client'
+import { NextRequest, NextResponse } from 'next/server'
+import { prisma } from '@/lib/prisma'
 
-const prisma = new PrismaClient()
+// Validate admin access - requires ADMIN_SECRET header
+function validateAdminAccess(request: NextRequest): boolean {
+  const adminSecret = process.env.ADMIN_SECRET
+  if (!adminSecret) {
+    console.error('ADMIN_SECRET environment variable not configured')
+    return false
+  }
 
-export async function GET() {
+  const providedSecret = request.headers.get('x-admin-secret')
+  return providedSecret === adminSecret
+}
+
+export async function GET(request: NextRequest) {
+  // Require admin authentication
+  if (!validateAdminAccess(request)) {
+    return NextResponse.json(
+      { error: 'Unauthorized - valid admin credentials required' },
+      { status: 401 }
+    )
+  }
+
   try {
     const purchases = await prisma.purchase.findMany({
       where: { type: 'BOOK' },
@@ -34,39 +52,13 @@ export async function GET() {
       success: true,
       purchases,
       stats
-    }, {
-      headers: {
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Methods': 'GET, OPTIONS',
-        'Access-Control-Allow-Headers': 'Content-Type',
-      }
     })
 
   } catch (error) {
     console.error('Error fetching purchases:', error)
     return NextResponse.json(
       { error: 'Failed to fetch purchases' },
-      { status: 500,
-        headers: {
-          'Access-Control-Allow-Origin': '*',
-          'Access-Control-Allow-Methods': 'GET, OPTIONS',
-          'Access-Control-Allow-Headers': 'Content-Type',
-        }
-      }
+      { status: 500 }
     )
-  } finally {
-    await prisma.$disconnect()
   }
-}
-
-// Handle OPTIONS request for CORS preflight
-export async function OPTIONS() {
-  return new NextResponse(null, {
-    status: 200,
-    headers: {
-      'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Methods': 'GET, OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type',
-    },
-  })
 }

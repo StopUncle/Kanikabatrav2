@@ -18,5 +18,9 @@ export default function RegisterPage() {
 
 export const metadata = {
   title: 'Register - Kanika Batra',
-  description: 'Create your account to access exclusive dark psychology content'
+  description: 'Create your account to access exclusive dark psychology content',
+  robots: {
+    index: false,
+    follow: false,
+  },
 }

@@ -1,11 +1,28 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { PrismaClient } from '@prisma/client'
+import { prisma } from '@/lib/prisma'
 import nodemailer from 'nodemailer'
 import crypto from 'crypto'
 
-const prisma = new PrismaClient()
+// Validate admin access
+function validateAdminAccess(request: NextRequest): boolean {
+  const adminSecret = process.env.ADMIN_SECRET
+  if (!adminSecret) {
+    console.error('ADMIN_SECRET not configured')
+    return false
+  }
+  const providedSecret = request.headers.get('x-admin-secret')
+  return providedSecret === adminSecret
+}
 
 export async function POST(request: NextRequest) {
+  // Require admin authentication
+  if (!validateAdminAccess(request)) {
+    return NextResponse.json(
+      { error: 'Unauthorized - admin credentials required' },
+      { status: 401 }
+    )
+  }
+
   try {
     const body = await request.json()
     const { email, name, isPremium } = body
@@ -272,7 +289,5 @@ export async function POST(request: NextRequest) {
       { error: 'Failed to send download link', details: error instanceof Error ? error.message : 'Unknown error' },
       { status: 500 }
     )
-  } finally {
-    await prisma.$disconnect()
   }
 }

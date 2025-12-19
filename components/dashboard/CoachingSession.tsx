@@ -26,11 +26,11 @@ const CoachingSession = ({
   const getTypeColor = () => {
     switch (type) {
       case 'vip':
-        return 'from-gold to-gold-dark'
+        return 'from-accent-gold to-accent-gold/70'
       case 'individual':
-        return 'from-burgundy to-sapphire'
+        return 'from-accent-burgundy to-accent-sapphire'
       case 'group':
-        return 'from-sapphire to-burgundy'
+        return 'from-accent-sapphire to-accent-burgundy'
       default:
         return 'from-gray-600 to-gray-700'
     }
@@ -79,7 +79,7 @@ const CoachingSession = ({
         <div className="space-y-3">
           <div className="flex items-center gap-3 text-text-muted text-sm">
             <Calendar size={16} className="text-gold" />
-            <span>{new Date(date).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</span>
+            <span>{date === 'TBD' ? 'To be scheduled' : new Date(date).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</span>
           </div>
           
           <div className="flex items-center gap-3 text-text-muted text-sm">
@@ -96,7 +96,7 @@ const CoachingSession = ({
           {status === 'upcoming' && meetingUrl && (
             <button
               onClick={() => window.open(meetingUrl, '_blank')}
-              className="w-full mt-4 flex items-center justify-center gap-2 px-4 py-2 bg-gradient-to-r from-burgundy to-sapphire rounded-lg text-white font-medium hover:shadow-lg transition-all group"
+              className="w-full mt-4 flex items-center justify-center gap-2 px-4 py-2 bg-gradient-to-r from-accent-burgundy to-accent-sapphire rounded-lg text-white font-medium hover:shadow-lg transition-all group"
             >
               <Video size={18} />
               Join Session

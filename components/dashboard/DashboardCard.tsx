@@ -26,7 +26,7 @@ const DashboardCard = ({
         <div className="flex items-start justify-between mb-6">
           <div className="flex items-start gap-4">
             {Icon && (
-              <div className="w-12 h-12 rounded-lg bg-gradient-to-r from-deep-burgundy to-royal-sapphire flex items-center justify-center flex-shrink-0">
+              <div className="w-12 h-12 rounded-lg bg-gradient-to-r from-deep-burgundy to-accent-sapphire flex items-center justify-center flex-shrink-0">
                 <Icon size={24} className="text-white" />
               </div>
             )}

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { verifyRefreshToken, generateAccessToken } from '@/lib/auth/jwt'
-import { UserDatabase } from '@/lib/auth/database'
+import { PrismaUserDatabase } from '@/lib/auth/prisma-database'
 
 export async function POST(request: NextRequest) {
   try {
@@ -26,7 +26,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Verify user still exists
-    const user = await UserDatabase.findById(payload.userId)
+    const user = await PrismaUserDatabase.findById(payload.userId)
     if (!user) {
       return NextResponse.json(
         { error: 'User not found' },

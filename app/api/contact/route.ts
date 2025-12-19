@@ -74,15 +74,28 @@ export async function POST(request: NextRequest) {
       ip: request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip') || 'unknown'
     })
 
-    // Send email notification (async, don't block response)
-    sendContactNotification(body).catch(error => {
+    // Send email notification and track success
+    let emailSent = true
+    try {
+      await sendContactNotification(body)
+    } catch (error) {
       console.error('Failed to send contact notification:', error)
-    })
+      emailSent = false
+    }
 
-    return NextResponse.json({
-      success: true,
-      message: 'Message sent successfully. We\'ll get back to you within 24-48 hours.'
-    }, { status: 200 })
+    // Return appropriate response based on email status
+    if (emailSent) {
+      return NextResponse.json({
+        success: true,
+        message: 'Message sent successfully. We\'ll get back to you within 24-48 hours.'
+      }, { status: 200 })
+    } else {
+      return NextResponse.json({
+        success: true,
+        emailDeliveryFailed: true,
+        message: 'Your message was received but our email system encountered an issue. Please contact us directly at support@kanikabatra.com if urgent.'
+      }, { status: 200 })
+    }
 
   } catch (error: unknown) {
     console.error('Contact form error:', error)

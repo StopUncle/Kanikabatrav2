@@ -68,6 +68,7 @@ private/books/*.md
 .env
 .env.local
 .env.production
+env.json
 
 # Dev mode config (don't commit dev buttons)
 lib/dev-mode.ts

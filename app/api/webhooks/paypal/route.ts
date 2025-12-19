@@ -1,11 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { PrismaClient } from '@prisma/client'
+import { prisma } from '@/lib/prisma'
 import { paypalService } from '@/lib/paypal'
 import { sendOrderConfirmation, sendBookDelivery, sendCoachingScheduling } from '@/lib/email'
 import { BOOK_INFO, COACHING_PACKAGES } from '@/lib/constants'
 import jwt from 'jsonwebtoken'
-
-const prisma = new PrismaClient()
 
 // PayPal webhook event interfaces
 interface PayPalWebhookEvent {
@@ -22,28 +20,70 @@ interface PayPalWebhookEvent {
 }
 
 // Verify PayPal webhook signature
-function verifyWebhookSignature(
+async function verifyWebhookSignature(
   body: string,
   headers: Headers
-): boolean {
-  // In production, implement PayPal webhook signature verification
-  // This requires webhook ID from PayPal dashboard
+): Promise<boolean> {
   const webhookId = process.env.PAYPAL_WEBHOOK_ID
   const transmissionId = headers.get('paypal-transmission-id')
   const transmissionTime = headers.get('paypal-transmission-time')
-  const _certUrl = headers.get('paypal-cert-url')
-  const _authAlgo = headers.get('paypal-auth-algo')
+  const certUrl = headers.get('paypal-cert-url')
+  const authAlgo = headers.get('paypal-auth-algo')
   const transmissionSig = headers.get('paypal-transmission-sig')
 
-  if (!webhookId || !transmissionId || !transmissionTime || !transmissionSig) {
-    console.warn('Missing PayPal webhook headers')
-    // In development, allow webhooks without verification
-    return process.env.NODE_ENV === 'development'
+  // In development without webhook ID, allow for testing
+  if (process.env.NODE_ENV === 'development' && !webhookId) {
+    console.warn('DEVELOPMENT MODE: Webhook verification bypassed - set PAYPAL_WEBHOOK_ID to enable')
+    return true
   }
 
-  // TODO: Implement full signature verification
-  // For now, return true in development
-  return process.env.NODE_ENV === 'development'
+  // In production, ALL required fields must be present
+  if (!webhookId || !transmissionId || !transmissionTime || !transmissionSig || !certUrl || !authAlgo) {
+    console.error('Missing required PayPal webhook headers or PAYPAL_WEBHOOK_ID')
+    return false
+  }
+
+  try {
+    // Verify webhook signature using PayPal API
+    const accessToken = await paypalService.getAccessToken()
+    const verifyUrl = process.env.NODE_ENV === 'production'
+      ? 'https://api-m.paypal.com/v1/notifications/verify-webhook-signature'
+      : 'https://api-m.sandbox.paypal.com/v1/notifications/verify-webhook-signature'
+
+    const response = await fetch(verifyUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${accessToken}`,
+      },
+      body: JSON.stringify({
+        auth_algo: authAlgo,
+        cert_url: certUrl,
+        transmission_id: transmissionId,
+        transmission_sig: transmissionSig,
+        transmission_time: transmissionTime,
+        webhook_id: webhookId,
+        webhook_event: JSON.parse(body),
+      }),
+    })
+
+    if (!response.ok) {
+      console.error('PayPal verification API error:', response.status)
+      return false
+    }
+
+    const result = await response.json()
+    const verified = result.verification_status === 'SUCCESS'
+
+    if (!verified) {
+      console.error('PayPal webhook signature verification failed:', result.verification_status)
+    }
+
+    return verified
+  } catch (error) {
+    console.error('PayPal webhook verification error:', error)
+    return false
+  }
 }
 
 export async function POST(request: NextRequest) {
@@ -51,8 +91,9 @@ export async function POST(request: NextRequest) {
     const body = await request.text()
     const event = JSON.parse(body)
 
-    // Verify webhook signature
-    if (!verifyWebhookSignature(body, request.headers)) {
+    // Verify webhook signature (required in production)
+    const isValid = await verifyWebhookSignature(body, request.headers)
+    if (!isValid) {
       return NextResponse.json(
         { error: 'Invalid webhook signature' },
         { status: 401 }
@@ -84,8 +125,6 @@ export async function POST(request: NextRequest) {
       { error: 'Webhook processing failed' },
       { status: 500 }
     )
-  } finally {
-    await prisma.$disconnect()
   }
 }
 
@@ -145,10 +184,14 @@ async function handleOrderCompleted(event: PayPalWebhookEvent) {
 
   // Handle book purchase
   if (purchaseType === 'BOOK') {
+    if (!process.env.JWT_SECRET) {
+      console.error('JWT_SECRET not configured - cannot generate download token')
+      return
+    }
     // Generate secure download token
     const downloadToken = jwt.sign(
       { purchaseId: purchase.id, type: 'book' },
-      process.env.JWT_SECRET || 'your-secret-key',
+      process.env.JWT_SECRET,
       { expiresIn: '7d' }
     )
 
@@ -184,9 +227,13 @@ async function handleOrderCompleted(event: PayPalWebhookEvent) {
       })
 
       // Generate scheduling URL
+      if (!process.env.JWT_SECRET) {
+        console.error('JWT_SECRET not configured - cannot generate scheduling token')
+        return
+      }
       const schedulingToken = jwt.sign(
         { sessionId: session.id, purchaseId: purchase.id },
-        process.env.JWT_SECRET || 'your-secret-key',
+        process.env.JWT_SECRET,
         { expiresIn: '30d' }
       )
       const schedulingUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/coaching/schedule?token=${schedulingToken}`

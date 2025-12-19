@@ -1,16 +1,112 @@
-import sgMail from '@sendgrid/mail'
+import nodemailer from 'nodemailer'
+import type { Transporter } from 'nodemailer'
 
-// Logger utility - simple console wrapper
 const logger = {
-  info: (message: string) => console.log(`[INFO] ${message}`),
-  error: (message: string, error?: Error) => console.error(`[ERROR] ${message}`, error),
-  warn: (message: string) => console.warn(`[WARN] ${message}`),
+  info: (message: string) => console.log(`[EMAIL INFO] ${message}`),
+  error: (message: string, error?: Error) => console.error(`[EMAIL ERROR] ${message}`, error),
+  warn: (message: string) => console.warn(`[EMAIL WARN] ${message}`),
 }
 
-// Initialize SendGrid
-const SENDGRID_API_KEY = process.env.SENDGRID_API_KEY
-if (SENDGRID_API_KEY) {
-  sgMail.setApiKey(SENDGRID_API_KEY)
+// Primary SMTP Configuration (Gmail or general SMTP)
+const SMTP_HOST = process.env.SMTP_HOST || 'smtp.gmail.com'
+const SMTP_PORT = parseInt(process.env.SMTP_PORT || '587', 10)
+const SMTP_USER = process.env.SMTP_USER
+const SMTP_PASS = process.env.SMTP_PASS
+const FROM_EMAIL = process.env.FROM_EMAIL || 'noreply@kanikarose.com'
+
+// Microsoft SMTP Configuration (for Hotmail/Outlook/Live recipients)
+// Uses Outlook.com SMTP: smtp-mail.outlook.com or smtp.office365.com for M365
+const MS_SMTP_HOST = process.env.MS_SMTP_HOST || 'smtp-mail.outlook.com'
+const MS_SMTP_PORT = parseInt(process.env.MS_SMTP_PORT || '587', 10)
+const MS_SMTP_USER = process.env.MS_SMTP_USER
+const MS_SMTP_PASS = process.env.MS_SMTP_PASS
+const MS_FROM_EMAIL = process.env.MS_FROM_EMAIL
+
+// Microsoft email domains that should use the Microsoft transport
+const MICROSOFT_DOMAINS = [
+  'hotmail.com', 'hotmail.co.uk', 'hotmail.fr', 'hotmail.de', 'hotmail.it',
+  'outlook.com', 'outlook.co.uk', 'outlook.fr', 'outlook.de',
+  'live.com', 'live.co.uk', 'live.fr', 'live.de',
+  'msn.com', 'passport.com', 'windowslive.com'
+]
+
+let primaryTransporter: Transporter | null = null
+let microsoftTransporter: Transporter | null = null
+
+function isMicrosoftEmail(email: string): boolean {
+  const domain = email.split('@')[1]?.toLowerCase()
+  return domain ? MICROSOFT_DOMAINS.includes(domain) : false
+}
+
+function getPrimaryTransporter(): Transporter | null {
+  if (primaryTransporter) return primaryTransporter
+
+  if (!SMTP_USER || !SMTP_PASS) {
+    logger.warn('Primary SMTP credentials not configured - emails will not be sent')
+    return null
+  }
+
+  primaryTransporter = nodemailer.createTransport({
+    host: SMTP_HOST,
+    port: SMTP_PORT,
+    secure: SMTP_PORT === 465,
+    auth: {
+      user: SMTP_USER,
+      pass: SMTP_PASS,
+    },
+    tls: {
+      rejectUnauthorized: process.env.NODE_ENV === 'production'
+    }
+  })
+
+  return primaryTransporter
+}
+
+function getMicrosoftTransporter(): Transporter | null {
+  if (microsoftTransporter) return microsoftTransporter
+
+  // If no Microsoft credentials, fall back to primary
+  if (!MS_SMTP_USER || !MS_SMTP_PASS) {
+    logger.info('Microsoft SMTP not configured - using primary transport for all emails')
+    return null
+  }
+
+  microsoftTransporter = nodemailer.createTransport({
+    host: MS_SMTP_HOST,
+    port: MS_SMTP_PORT,
+    secure: false, // Outlook.com uses STARTTLS on 587
+    auth: {
+      user: MS_SMTP_USER,
+      pass: MS_SMTP_PASS,
+    },
+    tls: {
+      ciphers: 'SSLv3',
+      rejectUnauthorized: process.env.NODE_ENV === 'production'
+    }
+  })
+
+  logger.info('Microsoft SMTP transport initialized')
+  return microsoftTransporter
+}
+
+function getTransporter(recipientEmail?: string): { transporter: Transporter | null; fromEmail: string } {
+  // Check if recipient is a Microsoft email and we have Microsoft SMTP configured
+  if (recipientEmail && isMicrosoftEmail(recipientEmail)) {
+    const msTransport = getMicrosoftTransporter()
+    if (msTransport) {
+      logger.info(`Routing to Microsoft SMTP for: ${recipientEmail}`)
+      return {
+        transporter: msTransport,
+        fromEmail: MS_FROM_EMAIL || FROM_EMAIL
+      }
+    }
+  }
+
+  // Use primary transport
+  return {
+    transporter: getPrimaryTransporter(),
+    fromEmail: FROM_EMAIL
+  }
 }
 
 interface EmailOptions {
@@ -18,6 +114,7 @@ interface EmailOptions {
   subject: string
   html: string
   text?: string
+  replyTo?: string
 }
 
 interface ContactFormData {
@@ -40,37 +137,34 @@ interface OrderConfirmationData {
   }
 }
 
-// Send email function using SendGrid
 export const sendEmail = async (options: EmailOptions): Promise<boolean> => {
   try {
-    if (!SENDGRID_API_KEY) {
-      logger.warn('SendGrid API key not configured, emails will not be sent')
+    // Get appropriate transport based on recipient domain
+    const { transporter: transport, fromEmail } = getTransporter(options.to)
+
+    if (!transport) {
+      logger.warn('Email transport not available')
       return false
     }
 
-    const fromEmail = process.env.FROM_EMAIL || 'noreply@kanikarose.com'
-
-    const msg = {
+    const mailOptions = {
+      from: fromEmail,
       to: options.to,
-      from: {
-        email: fromEmail,
-        name: 'Kanika Batra'
-      },
       subject: options.subject,
       text: options.text || options.html.replace(/<[^>]*>/g, ''),
       html: options.html,
+      replyTo: options.replyTo,
     }
 
-    await sgMail.send(msg)
-    logger.info(`Email sent successfully to ${options.to}`)
+    const info = await transport.sendMail(mailOptions)
+    logger.info(`Email sent to ${options.to} via ${isMicrosoftEmail(options.to) ? 'Microsoft' : 'Primary'} SMTP - Message ID: ${info.messageId}`)
     return true
   } catch (error) {
-    logger.error('Failed to send email', error as Error)
+    logger.error(`Failed to send email to ${options.to}`, error as Error)
     return false
   }
 }
 
-// Contact form notification
 export const sendContactNotification = async (data: ContactFormData): Promise<boolean> => {
   const adminEmail = process.env.ADMIN_EMAIL || 'Kanika@kanikarose.com'
 
@@ -99,14 +193,13 @@ export const sendContactNotification = async (data: ContactFormData): Promise<bo
     </div>
   `
 
-  // Send to admin
   await sendEmail({
     to: adminEmail,
     subject: `[Contact Form] ${data.subject} - from ${data.name}`,
     html,
+    replyTo: data.email,
   })
 
-  // Send confirmation to user
   const userHtml = `
     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
       <div style="background: linear-gradient(135deg, #1a0d11 0%, #0a1628 100%); padding: 30px; border-radius: 10px 10px 0 0;">
@@ -141,7 +234,6 @@ export const sendContactNotification = async (data: ContactFormData): Promise<bo
   })
 }
 
-// Order confirmation email
 export const sendOrderConfirmation = async (data: OrderConfirmationData): Promise<boolean> => {
   const isBook = data.purchaseType === 'book'
 
@@ -191,7 +283,7 @@ export const sendOrderConfirmation = async (data: OrderConfirmationData): Promis
           <h3 style="color: #d4af37; margin-top: 0;">Need Help?</h3>
           <p style="color: #94a3b8;">
             If you have any questions or issues, please reply to this email or contact us at:
-            <br><a href="mailto:support@kanikabatra.com" style="color: #d4af37;">support@kanikabatra.com</a>
+            <br><a href="mailto:Kanika@kanikarose.com" style="color: #d4af37;">Kanika@kanikarose.com</a>
           </p>
         </div>
 
@@ -210,7 +302,6 @@ export const sendOrderConfirmation = async (data: OrderConfirmationData): Promis
   })
 }
 
-// Book delivery email
 export const sendBookDelivery = async (
   customerEmail: string,
   customerName: string,
@@ -218,7 +309,7 @@ export const sendBookDelivery = async (
   variant: string | null,
   expiresAt: Date
 ): Promise<boolean> => {
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://kanikabatra.com'
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://kanikarose.com'
   const epubDownloadUrl = `${baseUrl}/api/download?token=${downloadToken}&format=epub`
   const isPremium = variant === 'PREMIUM'
   const bookTitle = isPremium
@@ -424,7 +515,6 @@ export const sendBookDelivery = async (
   })
 }
 
-// Coaching questionnaire submission
 export const sendCoachingQuestionnaire = async (data: {
   packageName: string
   customerName: string
@@ -580,10 +670,10 @@ export const sendCoachingQuestionnaire = async (data: {
     to: adminEmail,
     subject: `🎯 New ${data.packageName} Questionnaire - ${data.customerName} [${data.questionnaire.urgency}]`,
     html,
+    replyTo: data.customerEmail,
   })
 }
 
-// Coaching session scheduling email
 export const sendCoachingScheduling = async (
   customerEmail: string,
   customerName: string,
@@ -652,4 +742,41 @@ export const sendCoachingScheduling = async (
     subject: `🎯 Schedule Your ${packageName} Session - Kanika Batra`,
     html,
   })
+}
+
+export const verifyEmailConnection = async (): Promise<{ primary: boolean; microsoft: boolean }> => {
+  const results = { primary: false, microsoft: false }
+
+  // Verify primary transport
+  try {
+    const primary = getPrimaryTransporter()
+    if (primary) {
+      await primary.verify()
+      logger.info('Primary SMTP connection verified successfully')
+      results.primary = true
+    }
+  } catch (error) {
+    logger.error('Primary SMTP connection verification failed', error as Error)
+  }
+
+  // Verify Microsoft transport (if configured)
+  try {
+    const microsoft = getMicrosoftTransporter()
+    if (microsoft) {
+      await microsoft.verify()
+      logger.info('Microsoft SMTP connection verified successfully')
+      results.microsoft = true
+    } else {
+      logger.info('Microsoft SMTP not configured - skipping verification')
+    }
+  } catch (error) {
+    logger.error('Microsoft SMTP connection verification failed', error as Error)
+  }
+
+  return results
+}
+
+// Export helper to check if Microsoft transport is available
+export const hasMicrosoftTransport = (): boolean => {
+  return !!(MS_SMTP_USER && MS_SMTP_PASS)
 }

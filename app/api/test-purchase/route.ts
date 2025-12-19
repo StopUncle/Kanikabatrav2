@@ -1,11 +1,28 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { PrismaClient } from '@prisma/client'
+import { prisma } from '@/lib/prisma'
 import { sendBookDelivery } from '@/lib/email'
 import jwt from 'jsonwebtoken'
 
-const prisma = new PrismaClient()
+// Validate admin access
+function validateAdminAccess(request: NextRequest): boolean {
+  const adminSecret = process.env.ADMIN_SECRET
+  if (!adminSecret) {
+    console.error('ADMIN_SECRET not configured')
+    return false
+  }
+  const providedSecret = request.headers.get('x-admin-secret')
+  return providedSecret === adminSecret
+}
 
 export async function POST(request: NextRequest) {
+  // Require admin authentication
+  if (!validateAdminAccess(request)) {
+    return NextResponse.json(
+      { error: 'Unauthorized - admin credentials required' },
+      { status: 401 }
+    )
+  }
+
   try {
     const body = await request.json()
     const { email, name, isPremium } = body
@@ -33,9 +50,13 @@ export async function POST(request: NextRequest) {
     expiresAt.setDate(expiresAt.getDate() + 30)
 
     // Generate REAL secure download token (valid for 30 days)
+    const jwtSecret = process.env.JWT_SECRET
+    if (!jwtSecret) {
+      throw new Error('JWT_SECRET not configured')
+    }
     const downloadToken = jwt.sign(
       { purchaseId: Date.now(), type: 'book', email },
-      process.env.JWT_SECRET || 'your-secret-key',
+      jwtSecret,
       { expiresIn: '30d' }
     )
 

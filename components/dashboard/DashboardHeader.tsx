@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
-import { Menu, X, LogOut, BookOpen, Calendar, Home } from 'lucide-react'
+import { Menu, X, LogOut, BookOpen, Calendar, Home, Users } from 'lucide-react'
 
 interface DashboardHeaderProps {
   userEmail: string
@@ -13,9 +13,10 @@ const DashboardHeader = ({ userEmail }: DashboardHeaderProps) => {
   const [isProfileOpen, setIsProfileOpen] = useState(false)
 
   const navLinks = [
-    { href: '/dashboard', label: 'Dashboard', icon: Home },
-    { href: '/dashboard#purchases', label: 'My Purchases', icon: BookOpen },
-    { href: '/dashboard#coaching', label: 'Coaching', icon: Calendar },
+    { href: '/', label: 'Home', icon: Home },
+    { href: '/book', label: 'The Book', icon: BookOpen },
+    { href: '/coaching', label: 'Coaching', icon: Calendar },
+    { href: '/community', label: 'Community', icon: Users },
   ]
 
   const handleLogout = async () => {

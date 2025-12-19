@@ -18,5 +18,9 @@ export default function LoginPage() {
 
 export const metadata = {
   title: 'Login - Kanika Batra',
-  description: 'Sign in to your account'
+  description: 'Sign in to your account',
+  robots: {
+    index: false,
+    follow: false,
+  },
 }

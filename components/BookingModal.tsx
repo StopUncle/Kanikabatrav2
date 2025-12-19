@@ -603,6 +603,7 @@ export default function BookingModal({
               <button
                 onClick={onClose}
                 className="text-text-gray hover:text-accent-gold transition-colors"
+                aria-label="Close"
               >
                 <X size={24} />
               </button>

@@ -66,6 +66,7 @@ export default function PresaleModal({ isOpen, onClose, onEmailSubmit }: Presale
             <button
               onClick={onClose}
               className="absolute top-4 right-4 text-text-muted hover:text-text-light transition-colors"
+              aria-label="Close"
             >
               <X size={24} />
             </button>

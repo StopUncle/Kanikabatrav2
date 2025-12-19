@@ -13,7 +13,7 @@ const bookFeatures = [
   '70,000 words of pure strategic dominance',
   'The Rotation System for managing multiple prospects',
   'Ghost Protocol: Exit strategies that haunt them forever',
-  'From victim mindset to empress mentality',
+  'From prey mindset to predator mentality',
 ]
 
 export default function BookShowcase() {
@@ -66,7 +66,7 @@ export default function BookShowcase() {
             viewport={{ once: true }}
             className="flex justify-center"
           >
-            <div className="relative w-64 sm:w-72 md:w-80 h-[360px] sm:h-[400px] md:h-[450px] animate-levitate mx-auto">
+            <div className="relative w-64 sm:w-72 md:w-80 max-w-full h-[360px] sm:h-[400px] md:h-[450px] animate-levitate mx-auto">
               <div className="absolute inset-0 book-3d">
                 {/* Book Cover */}
                 <div className="absolute inset-0 book-cover-gradient rounded-r-2xl shadow-2xl flex flex-col justify-center items-center p-4 sm:p-6 md:p-8 transform translateZ-20">

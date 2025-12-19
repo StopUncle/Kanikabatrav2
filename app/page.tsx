@@ -6,22 +6,26 @@ import BookShowcase from '@/components/BookShowcase'
 import CoachingSection from '@/components/CoachingSection'
 import Testimonial from '@/components/Testimonial'
 import NewsletterForm from '@/components/NewsletterForm'
-import { SITE_CONFIG } from '@/lib/constants'
+import SocialHub from '@/components/SocialHub'
+import { SITE_CONFIG, SOCIAL_METRICS } from '@/lib/constants'
 
 export const metadata: Metadata = {
   title: `${SITE_CONFIG.name} - ${SITE_CONFIG.title}`,
   description: SITE_CONFIG.description,
+  alternates: {
+    canonical: SITE_CONFIG.url,
+  },
   keywords: [
     'Kanika Batra',
     'sociopath',
     'dark psychology',
-    'beauty queen',
     'manipulation tactics',
-    'dark feminine energy',
+    'dark charisma',
     'personal transformation',
     'psychological warfare',
     'ASPD',
     'antisocial personality disorder',
+    'strategic seduction',
   ],
   authors: [{ name: SITE_CONFIG.name }],
   openGraph: {
@@ -73,21 +77,28 @@ export default function Home() {
         {/* Coaching Section */}
         <CoachingSection />
         
-        {/* Social Proof Section */}
-        <section className="py-20 px-4 bg-gradient-to-b from-transparent via-deep-burgundy/5 to-transparent">
+        {/* Social Media Hub */}
+        <SocialHub />
+
+        {/* Social Proof Stats */}
+        <section className="py-16 px-4 bg-gradient-to-b from-transparent via-deep-burgundy/5 to-transparent">
           <div className="max-w-7xl mx-auto">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
               <div className="space-y-2">
-                <div className="text-4xl font-light gradient-text-gold">500K+</div>
-                <p className="text-text-gray">Followers</p>
+                <div className="text-3xl md:text-4xl font-light gradient-text-gold">{SOCIAL_METRICS.combined.totalFollowers}</div>
+                <p className="text-text-gray text-sm">Total Followers</p>
               </div>
               <div className="space-y-2">
-                <div className="text-4xl font-light gradient-text-gold">5.9M+</div>
-                <p className="text-text-gray">TikTok Likes</p>
+                <div className="text-3xl md:text-4xl font-light gradient-text-gold">{SOCIAL_METRICS.combined.totalViews}</div>
+                <p className="text-text-gray text-sm">Total Views</p>
               </div>
               <div className="space-y-2">
-                <div className="text-4xl font-light gradient-text-gold">20.6M+</div>
-                <p className="text-text-gray">YouTube Views</p>
+                <div className="text-3xl md:text-4xl font-light gradient-text-gold">{SOCIAL_METRICS.tiktok.likes}</div>
+                <p className="text-text-gray text-sm">TikTok Likes</p>
+              </div>
+              <div className="space-y-2">
+                <div className="text-3xl md:text-4xl font-light gradient-text-gold">{SOCIAL_METRICS.youtube.videos}</div>
+                <p className="text-text-gray text-sm">YouTube Videos</p>
               </div>
             </div>
           </div>

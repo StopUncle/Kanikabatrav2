@@ -383,17 +383,32 @@ export async function POST(request: NextRequest) {
       // Generate download URL for response
       const downloadUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/api/download?token=${downloadToken}`
 
-      // Send email with download token (async, don't wait)
+      // Send email with download token and track delivery status
+      let emailSent = true
       if (productType === 'BOOK') {
-        sendBookDelivery(
-          orderData.payerEmail || 'unknown@email.com',
-          orderData.payerName || 'Customer',
-          downloadToken,
-          productVariant,
-          expiresAt
-        ).catch(error => {
-          console.error('Failed to send book delivery email:', error)
-        })
+        try {
+          await sendBookDelivery(
+            orderData.payerEmail || 'unknown@email.com',
+            orderData.payerName || 'Customer',
+            downloadToken,
+            productVariant,
+            expiresAt
+          )
+        } catch (error) {
+          console.error('CRITICAL: Failed to send book delivery email for purchase:', purchase.id, error)
+          emailSent = false
+          // Update purchase record to flag email failure for retry
+          await prisma.purchase.update({
+            where: { id: purchase.id },
+            data: {
+              metadata: {
+                ...(purchase.metadata as Record<string, unknown> || {}),
+                emailDeliveryFailed: true,
+                emailFailedAt: new Date().toISOString()
+              }
+            }
+          })
+        }
       }
 
       return NextResponse.json({
@@ -406,7 +421,10 @@ export async function POST(request: NextRequest) {
         downloadUrl,
         downloadToken,
         expiresAt: expiresAt.toISOString(),
-        message: 'Payment completed successfully. Check your email for download instructions.'
+        emailSent,
+        message: emailSent
+          ? 'Payment completed successfully. Check your email for download instructions.'
+          : 'Payment completed successfully. Your download link is below. If you don\'t receive an email, please contact support.'
       }, { status: 200 })
     } else {
       // Handle other statuses - save as PENDING

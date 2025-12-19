@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { verifyAccessToken } from './jwt'
-import { UserDatabase } from './database'
+import { PrismaUserDatabase } from './prisma-database'
 import { UserSession } from './types'
 
 export async function authenticateUser(request: NextRequest): Promise<UserSession | null> {
@@ -16,7 +16,7 @@ export async function authenticateUser(request: NextRequest): Promise<UserSessio
     const payload = verifyAccessToken(accessToken)
 
     // Verify user still exists
-    const user = await UserDatabase.findById(payload.userId)
+    const user = await PrismaUserDatabase.findById(payload.userId)
     if (!user) {
       return null
     }

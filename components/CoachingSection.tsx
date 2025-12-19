@@ -16,10 +16,10 @@ export default function CoachingSection() {
         {/* Section Header */}
         <div className="text-center mb-16">
           <h2 className="text-5xl md:text-6xl font-light mb-6">
-            <span className="gradient-text">Elite Transformation</span>
+            <span className="gradient-text">High-Performance Psychology</span>
           </h2>
           <p className="text-text-gray text-lg md:text-xl max-w-3xl mx-auto italic">
-            Personal mentorship from the master of manipulation
+            Access the headspace where fear doesn&apos;t vote and decisions come fast
           </p>
         </div>
 
@@ -29,13 +29,13 @@ export default function CoachingSection() {
         {/* CTA for Coaching */}
         <div className="text-center mt-12">
           <p className="text-text-gray mb-6">
-            Ready to transform your darkness into your greatest asset?
+            Ready to stop negotiating with yourself?
           </p>
           <a
             href="/coaching"
             className="btn-primary rounded-full inline-block text-white px-8 py-4"
           >
-            Explore All Coaching Options
+            Explore All Programs
           </a>
         </div>
       </div>

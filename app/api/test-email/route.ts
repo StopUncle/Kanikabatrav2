@@ -1,7 +1,26 @@
 import { NextRequest, NextResponse } from 'next/server'
 import nodemailer from 'nodemailer'
 
+// Validate admin access
+function validateAdminAccess(request: NextRequest): boolean {
+  const adminSecret = process.env.ADMIN_SECRET
+  if (!adminSecret) {
+    console.error('ADMIN_SECRET not configured')
+    return false
+  }
+  const providedSecret = request.headers.get('x-admin-secret')
+  return providedSecret === adminSecret
+}
+
 export async function POST(request: NextRequest) {
+  // Require admin authentication
+  if (!validateAdminAccess(request)) {
+    return NextResponse.json(
+      { error: 'Unauthorized - admin credentials required' },
+      { status: 401 }
+    )
+  }
+
   try {
     const body = await request.json()
     const { to } = body

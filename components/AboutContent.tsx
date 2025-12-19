@@ -1,7 +1,10 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { SITE_CONFIG } from '@/lib/constants'
+import { SITE_CONFIG, SOCIAL_METRICS, CONTENT_THEMES } from '@/lib/constants'
+import SocialHub from './SocialHub'
+import Disclaimer from './Disclaimer'
+import FAQSection from './FAQSection'
 
 export default function AboutContent() {
   return (
@@ -17,9 +20,37 @@ export default function AboutContent() {
           <h1 className="text-5xl md:text-6xl font-light mb-6">
             <span className="gradient-text">{SITE_CONFIG.title}</span>
           </h1>
-          <p className="text-text-gray text-lg md:text-xl max-w-3xl mx-auto">
+          <p className="text-text-gray text-lg md:text-xl max-w-3xl mx-auto mb-4">
             {SITE_CONFIG.description}
           </p>
+          <p className="text-gold-400 text-xl italic">
+            &quot;{SITE_CONFIG.tagline}&quot;
+          </p>
+        </motion.div>
+
+        {/* Quick Stats Bar */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.1 }}
+          className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-16"
+        >
+          <div className="bg-deep-black/50 backdrop-blur-sm border border-gray-800 rounded-lg p-6 text-center">
+            <div className="text-3xl font-light text-white">{SOCIAL_METRICS.combined.totalFollowers}</div>
+            <div className="text-gray-500 text-sm">Total Followers</div>
+          </div>
+          <div className="bg-deep-black/50 backdrop-blur-sm border border-gray-800 rounded-lg p-6 text-center">
+            <div className="text-3xl font-light text-white">{SOCIAL_METRICS.combined.totalViews}</div>
+            <div className="text-gray-500 text-sm">Total Views</div>
+          </div>
+          <div className="bg-deep-black/50 backdrop-blur-sm border border-gray-800 rounded-lg p-6 text-center">
+            <div className="text-3xl font-light text-white">28</div>
+            <div className="text-gray-500 text-sm">Years Old</div>
+          </div>
+          <div className="bg-deep-black/50 backdrop-blur-sm border border-gray-800 rounded-lg p-6 text-center">
+            <div className="text-3xl font-light text-white">21</div>
+            <div className="text-gray-500 text-sm">Age of ASPD Diagnosis</div>
+          </div>
         </motion.div>
 
         {/* Main Content */}
@@ -34,16 +65,19 @@ export default function AboutContent() {
               <h2 className="text-2xl font-light gradient-text-gold mb-6">The Origin Story</h2>
               <div className="space-y-4 text-text-gray leading-relaxed">
                 <p>
-                  From psychiatric wards to pageant stages—my journey defies every expectation society has about what a diagnosed sociopath should look like.
+                  Born in New Zealand and raised in Sydney, Australia—my journey from psychiatric assessment to international pageant stages defies every expectation society has about what a diagnosed sociopath should look like.
                 </p>
                 <p>
-                  At 19, I received my official diagnosis: Antisocial Personality Disorder. While others saw this as a limitation, I recognized it as my greatest advantage. Where most people struggle with emotional baggage, social anxiety, and self-doubt, I operate with crystal-clear logic and unshakeable confidence.
+                  At 21, after years of behavioral issues, poor impulse control, and a near-fatal suicide attempt, I finally received my diagnosis: Antisocial Personality Disorder. The psychiatrist who diagnosed me had spent years working in prisons. He saw what I was immediately.
                 </p>
                 <p>
-                  I&apos;ve won beauty pageants, built businesses, and mastered the art of human psychology—not despite my diagnosis, but because of it. I see patterns others miss. I make decisions others fear. I achieve what others only dream of.
+                  While others saw this as a death sentence, I recognized it as my greatest advantage. Where most people struggle with emotional baggage, social anxiety, and self-doubt, I operate with crystal-clear logic and unshakeable confidence.
                 </p>
                 <p>
-                  Now, I&apos;m sharing these insights with women who are ready to stop being victims and start being victors. My lack of empathy isn&apos;t a weakness—it&apos;s the superpower that lets me teach you the truth about power, attraction, and dominance.
+                  Now based in Barcelona with my husband Sam of 3.5 years, I&apos;ve built a following of over 670,000 across social media—teaching people the strategic truths about power, attraction, and dominance that society refuses to acknowledge.
+                </p>
+                <p className="text-white font-medium">
+                  I&apos;m here to teach you how to stop being predictable, stop being the victim, and start being the villain.
                 </p>
               </div>
             </div>
@@ -59,32 +93,41 @@ export default function AboutContent() {
               <h2 className="text-2xl font-light gradient-text-gold mb-6">The Credentials</h2>
               <div className="space-y-6">
                 <div>
-                  <h3 className="text-accent-gold text-sm uppercase tracking-wider mb-2">Clinical</h3>
+                  <h3 className="text-accent-gold text-sm uppercase tracking-wider mb-2">Clinical Diagnosis</h3>
                   <ul className="space-y-2 text-text-gray">
-                    <li>• Diagnosed with Antisocial Personality Disorder (2019)</li>
-                    <li>• Factor 1 Psychopathy traits confirmed</li>
-                    <li>• Studied by multiple psychiatric professionals</li>
-                    <li>• Living proof that ASPD can be a strategic advantage</li>
+                    <li>• Clinically Diagnosed ASPD (Age 21)</li>
+                    <li>• Assessed by prison psychiatrist specialist</li>
+                    <li>• Documented behavioral patterns since childhood</li>
+                    <li>• Living proof that ASPD can be weaponized for success</li>
                   </ul>
                 </div>
 
                 <div>
-                  <h3 className="text-accent-gold text-sm uppercase tracking-wider mb-2">Achievements</h3>
+                  <h3 className="text-accent-gold text-sm uppercase tracking-wider mb-2">Beauty Pageant Titles</h3>
                   <ul className="space-y-2 text-text-gray">
-                    <li>• Multiple beauty pageant titles</li>
-                    <li>• 500K+ social media following</li>
-                    <li>• 20.6M+ YouTube views</li>
-                    <li>• Published author and speaker</li>
+                    {SITE_CONFIG.credentials.filter(c => c.includes('Miss')).map((credential, i) => (
+                      <li key={i}>• {credential}</li>
+                    ))}
+                  </ul>
+                </div>
+
+                <div>
+                  <h3 className="text-accent-gold text-sm uppercase tracking-wider mb-2">Digital Presence</h3>
+                  <ul className="space-y-2 text-text-gray">
+                    <li>• {SOCIAL_METRICS.youtube.totalViews} YouTube views across {SOCIAL_METRICS.youtube.videos} videos</li>
+                    <li>• {SOCIAL_METRICS.tiktok.likes} TikTok likes (grew to 500K in ONE MONTH before hack)</li>
+                    <li>• {SOCIAL_METRICS.instagram.followers} Instagram followers</li>
+                    <li>• Published author: &quot;Honeytrap&quot; (2020), &quot;Sociopathic Dating Bible&quot;</li>
                   </ul>
                 </div>
 
                 <div>
                   <h3 className="text-accent-gold text-sm uppercase tracking-wider mb-2">Expertise</h3>
                   <ul className="space-y-2 text-text-gray">
-                    <li>• Dark psychology and manipulation</li>
-                    <li>• Strategic relationship architecture</li>
-                    <li>• Power dynamics and control</li>
-                    <li>• Psychological warfare tactics</li>
+                    <li>• Dark psychology and strategic seduction</li>
+                    <li>• Manipulation detection and countermeasures</li>
+                    <li>• The rotation system for dating power</li>
+                    <li>• Psychological warfare and emotional detachment</li>
                   </ul>
                 </div>
               </div>
@@ -116,11 +159,115 @@ export default function AboutContent() {
           </div>
         </motion.div>
 
-        {/* CTA Section */}
+        {/* Social Hub */}
+        <SocialHub />
+
+        {/* Why Listen to Kanika - E-E-A-T Section */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.7 }}
+          className="mt-16"
+        >
+          <h2 className="text-3xl font-light text-center mb-8">
+            <span className="gradient-text">Why My Perspective Matters</span>
+          </h2>
+          <div className="grid md:grid-cols-3 gap-6">
+            <div className="bg-deep-black/30 backdrop-blur-sm border border-gray-800 rounded-lg p-6">
+              <div className="text-accent-gold text-3xl mb-4">01</div>
+              <h3 className="text-white font-medium mb-3">Lived Experience</h3>
+              <p className="text-gray-400 text-sm leading-relaxed">
+                Unlike most psychology content creators who study personality disorders from textbooks,
+                I live with ASPD. My insights come from first-person experience, not theoretical frameworks.
+                This gives me a perspective that researchers and therapists simply cannot have.
+              </p>
+            </div>
+            <div className="bg-deep-black/30 backdrop-blur-sm border border-gray-800 rounded-lg p-6">
+              <div className="text-accent-gold text-3xl mb-4">02</div>
+              <h3 className="text-white font-medium mb-3">Verified Track Record</h3>
+              <p className="text-gray-400 text-sm leading-relaxed">
+                With 37M+ views and 670K+ followers, my content has been validated by millions.
+                The demand for authentic ASPD perspectives proves there&apos;s a gap in mainstream
+                psychology education that I uniquely fill. My audience includes psychology students,
+                therapists, and abuse survivors.
+              </p>
+            </div>
+            <div className="bg-deep-black/30 backdrop-blur-sm border border-gray-800 rounded-lg p-6">
+              <div className="text-accent-gold text-3xl mb-4">03</div>
+              <h3 className="text-white font-medium mb-3">Educational Mission</h3>
+              <p className="text-gray-400 text-sm leading-relaxed">
+                I help people understand how Cluster B personalities actually think and operate.
+                This knowledge protects potential victims, helps people recognize manipulation patterns,
+                and provides insight that can only come from someone on the inside looking out.
+              </p>
+            </div>
+          </div>
+        </motion.div>
+
+        {/* Content Topics */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.75 }}
+          className="mt-16"
+        >
+          <h2 className="text-3xl font-light text-center mb-8">
+            <span className="text-white">What I</span>{' '}
+            <span className="gradient-text">Cover</span>
+          </h2>
+          <div className="grid md:grid-cols-4 gap-4">
+            {CONTENT_THEMES.map((theme, index) => (
+              <div
+                key={index}
+                className="bg-deep-black/30 backdrop-blur-sm border border-gray-800 rounded-lg p-5 hover:border-accent-burgundy/50 transition-colors"
+              >
+                <div className="text-2xl mb-3">{theme.icon}</div>
+                <h3 className="text-white font-medium mb-2">{theme.name}</h3>
+                <p className="text-gray-500 text-sm">{theme.description}</p>
+              </div>
+            ))}
+          </div>
+        </motion.div>
+
+        {/* FAQ Section */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.8 }}
+          className="mt-16"
+        >
+          <FAQSection
+            title="Common Questions About Kanika"
+            items={[
+              {
+                question: "Is Kanika actually diagnosed with ASPD?",
+                answer: "Yes. At age 21, after years of documented behavioral issues and a near-fatal suicide attempt, I was clinically diagnosed with Antisocial Personality Disorder by a psychiatrist who specialized in working with prison populations. This diagnosis came after comprehensive psychological evaluation."
+              },
+              {
+                question: "What qualifications does Kanika have to discuss psychology?",
+                answer: "My qualifications are experiential rather than academic. I provide first-person insights into how Cluster B personalities think and operate—something no textbook can teach. I always emphasize that my content is educational entertainment, not clinical advice, and I encourage anyone struggling with mental health to seek professional help."
+              },
+              {
+                question: "Is the content meant to teach people how to manipulate others?",
+                answer: "My content serves two purposes: teaching people to recognize manipulation tactics they may be experiencing, and providing honest insight into how personality disorders like ASPD actually function. Understanding how predators think is the best defense against them."
+              },
+              {
+                question: "What is the difference between a sociopath and a psychopath?",
+                answer: "Both terms describe Antisocial Personality Disorder (ASPD). 'Psychopath' often refers to those with the disorder from birth (nature), while 'sociopath' typically describes those who developed it through environment (nurture). Clinically, the formal diagnosis is ASPD. I use 'sociopath' because my condition developed partially through environmental factors."
+              },
+              {
+                question: "Does Kanika work with a mental health professional?",
+                answer: "My content focuses on lived experience and education. For anyone struggling with personality disorders, relationship abuse, or mental health challenges, I always recommend working with licensed therapists and mental health professionals. My role is education and awareness, not treatment."
+              }
+            ]}
+          />
+        </motion.div>
+
+        {/* CTA Section */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.85 }}
           className="text-center mt-16"
         >
           <h2 className="text-3xl font-light mb-6">
@@ -138,6 +285,16 @@ export default function AboutContent() {
               Private Coaching
             </a>
           </div>
+        </motion.div>
+
+        {/* Disclaimer */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.6, delay: 0.9 }}
+          className="mt-16"
+        >
+          <Disclaimer variant="full" />
         </motion.div>
       </div>
     </div>

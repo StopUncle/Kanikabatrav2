@@ -1,7 +1,32 @@
 import jwt from 'jsonwebtoken'
 
-const JWT_SECRET = process.env.JWT_SECRET || 'your-super-secret-jwt-key-change-in-production'
-const JWT_REFRESH_SECRET = process.env.JWT_REFRESH_SECRET || 'your-super-secret-refresh-key-change-in-production'
+// SECURITY: Validate JWT secrets at startup - never use insecure defaults in production
+function getJwtSecret(): string {
+  const secret = process.env.JWT_SECRET
+  if (!secret) {
+    if (process.env.NODE_ENV === 'production') {
+      throw new Error('CRITICAL: JWT_SECRET environment variable is required in production')
+    }
+    console.warn('WARNING: Using insecure default JWT_SECRET - set JWT_SECRET in environment')
+    return 'dev-only-secret-do-not-use-in-production'
+  }
+  return secret
+}
+
+function getJwtRefreshSecret(): string {
+  const secret = process.env.JWT_REFRESH_SECRET
+  if (!secret) {
+    if (process.env.NODE_ENV === 'production') {
+      throw new Error('CRITICAL: JWT_REFRESH_SECRET environment variable is required in production')
+    }
+    console.warn('WARNING: Using insecure default JWT_REFRESH_SECRET - set JWT_REFRESH_SECRET in environment')
+    return 'dev-only-refresh-secret-do-not-use-in-production'
+  }
+  return secret
+}
+
+const JWT_SECRET = getJwtSecret()
+const JWT_REFRESH_SECRET = getJwtRefreshSecret()
 
 export interface JWTPayload {
   userId: string
