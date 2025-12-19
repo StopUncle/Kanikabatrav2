@@ -313,6 +313,53 @@ export function createCoachingOrder(
   }
 }
 
+/**
+ * Create order for quiz results (Dark Mirror Assessment)
+ */
+export function createQuizOrder(
+  quizPrice: number,
+  quizName: string,
+  returnUrl: string,
+  cancelUrl: string
+): PayPalOrder {
+  return {
+    intent: 'CAPTURE',
+    purchase_units: [{
+      reference_id: 'quiz-results',
+      description: `Full results for ${quizName}`,
+      amount: {
+        currency_code: PAYPAL_CONFIG.currency,
+        value: quizPrice.toFixed(2),
+        breakdown: {
+          item_total: {
+            currency_code: PAYPAL_CONFIG.currency,
+            value: quizPrice.toFixed(2)
+          }
+        }
+      },
+      items: [{
+        name: `${quizName} - Full Report`,
+        description: 'Detailed personality analysis with radar chart, percentages, and insights delivered to your email',
+        quantity: '1',
+        unit_amount: {
+          currency_code: PAYPAL_CONFIG.currency,
+          value: quizPrice.toFixed(2)
+        },
+        category: 'DIGITAL_GOODS'
+      }]
+    }],
+    application_context: {
+      brand_name: 'Kanika Batra',
+      locale: 'en-US',
+      landing_page: 'NO_PREFERENCE',
+      shipping_preference: 'NO_SHIPPING',
+      user_action: 'PAY_NOW',
+      return_url: returnUrl,
+      cancel_url: cancelUrl
+    }
+  }
+}
+
 // Export singleton instance (lazy initialization on first use)
 export const paypalService = new PayPalService()
 

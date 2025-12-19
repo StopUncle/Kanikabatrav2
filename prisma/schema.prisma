@@ -109,6 +109,7 @@ enum ProductType {
   BOOK
   COURSE
   COACHING
+  QUIZ
 }
 
 enum PurchaseStatus {
@@ -142,18 +143,24 @@ model Post {
   @@index([slug])
 }
 
-// Quiz System - Dark Triad Personality Quiz
+// Quiz System - The Dark Mirror Assessment (Cluster B Personality Types)
 model QuizResult {
-  id         String   @id @default(cuid())
-  email      String?
-  resultType String   // "narcissist" | "machiavellian" | "psychopath" | "hybrid"
-  scores     Json     // { narcissism: 75, machiavellianism: 60, psychopathy: 45 }
-  answers    Json     // All question answers for analytics
-  shared     Boolean  @default(false)
-  createdAt  DateTime @default(now())
+  id            String   @id @default(cuid())
+  email         String?
+  primaryType   String   // "psychopathic" | "sociopathic" | "narcissistic" | "borderline" | "histrionic"
+  secondaryType String?
+  scores        Json     // { psychopathic: 25, sociopathic: 15, narcissistic: 30, borderline: 20, histrionic: 10 }
+  answers       Json     // All question answers for analytics
+  paid          Boolean  @default(false)
+  paypalOrderId String?  @unique
+  emailSent     Boolean  @default(false)
+  shared        Boolean  @default(false)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 
   @@index([email])
-  @@index([resultType])
+  @@index([primaryType])
+  @@index([paypalOrderId])
 }
 
 // Newsletter Subscribers

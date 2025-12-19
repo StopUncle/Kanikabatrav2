@@ -74,6 +74,35 @@ export default function Home() {
           <Testimonial />
         </section>
 
+        {/* Quiz CTA Section */}
+        <section className="py-24 px-4 relative overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-r from-accent-burgundy/10 via-transparent to-accent-gold/10" />
+          <div className="max-w-4xl mx-auto text-center relative z-10">
+            <div className="inline-block mb-6 px-4 py-2 border border-accent-gold/30 rounded-full">
+              <span className="text-accent-gold text-sm tracking-[0.2em] uppercase">
+                Free Assessment
+              </span>
+            </div>
+            <h2 className="text-3xl md:text-5xl font-extralight text-white mb-6">
+              What&apos;s Your <span className="text-accent-gold">Dark Mirror</span> Type?
+            </h2>
+            <p className="text-text-gray text-lg mb-8 max-w-2xl mx-auto leading-relaxed">
+              Take the 20-question assessment to discover which personality type dominates your psychology,
+              plus receive a clinical-style diagnosis with your functioning level. Are you The Predator, The Strategist, or something else entirely?
+            </p>
+            <a
+              href="/quiz"
+              className="inline-flex items-center gap-3 px-10 py-4 bg-gradient-to-r from-accent-gold to-accent-gold/80 text-deep-black font-medium text-lg tracking-wider uppercase rounded transition-all hover:shadow-lg hover:shadow-accent-gold/20"
+            >
+              Take The Quiz
+              <span className="text-xl">&rarr;</span>
+            </a>
+            <p className="mt-6 text-text-gray/60 text-sm">
+              Free to take. Results unlocked for $9.99.
+            </p>
+          </div>
+        </section>
+
         {/* Coaching Section */}
         <CoachingSection />
         

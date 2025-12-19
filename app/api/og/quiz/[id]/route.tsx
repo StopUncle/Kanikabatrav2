@@ -1,6 +1,6 @@
 import { ImageResponse } from 'next/og'
 import { prisma } from '@/lib/prisma'
-import { resultProfiles, ResultType } from '@/lib/quiz-questions'
+import { PERSONALITY_PROFILES, PersonalityType, QuizScores } from '@/lib/quiz-data'
 
 export const runtime = 'edge'
 
@@ -20,15 +20,9 @@ export async function GET(_request: Request, { params }: RouteParams) {
       return new Response('Not found', { status: 404 })
     }
 
-    const profile = resultProfiles[quizResult.resultType as ResultType]
-    const scores = quizResult.scores as { narcissism: number; machiavellianism: number; psychopathy: number }
-
-    const maxScore = 75
-    const percentages = {
-      narcissism: Math.round((scores.narcissism / maxScore) * 100),
-      machiavellianism: Math.round((scores.machiavellianism / maxScore) * 100),
-      psychopathy: Math.round((scores.psychopathy / maxScore) * 100),
-    }
+    const primaryType = quizResult.primaryType as PersonalityType
+    const profile = PERSONALITY_PROFILES[primaryType]
+    const scores = quizResult.scores as unknown as QuizScores
 
     return new ImageResponse(
       (
@@ -61,7 +55,7 @@ export async function GET(_request: Request, { params }: RouteParams) {
                 marginBottom: '20px',
               }}
             >
-              Dark Triad Quiz Result
+              Dark Mirror Assessment
             </div>
 
             <div
@@ -72,109 +66,59 @@ export async function GET(_request: Request, { params }: RouteParams) {
                 marginBottom: '10px',
               }}
             >
-              {profile.title}
+              {profile.name}
             </div>
 
             <div
               style={{
                 fontSize: '28px',
-                color: profile.color,
+                color: '#d4af37',
                 marginBottom: '50px',
+                fontStyle: 'italic',
               }}
             >
-              {profile.subtitle}
+              {profile.tagline}
             </div>
 
             <div
               style={{
                 display: 'flex',
-                gap: '40px',
+                gap: '30px',
                 marginBottom: '40px',
+                flexWrap: 'wrap',
+                justifyContent: 'center',
               }}
             >
-              <div
-                style={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  alignItems: 'center',
-                }}
-              >
+              {Object.entries(scores).map(([type, score]) => (
                 <div
+                  key={type}
                   style={{
-                    fontSize: '36px',
-                    fontWeight: '600',
-                    color: '#fbbf24',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
                   }}
                 >
-                  {percentages.narcissism}%
+                  <div
+                    style={{
+                      fontSize: '32px',
+                      fontWeight: '600',
+                      color: type === primaryType ? '#d4af37' : '#a0a0a0',
+                    }}
+                  >
+                    {score}%
+                  </div>
+                  <div
+                    style={{
+                      fontSize: '12px',
+                      color: '#a0a0a0',
+                      textTransform: 'uppercase',
+                      letterSpacing: '1px',
+                    }}
+                  >
+                    {type.slice(0, 3).toUpperCase()}
+                  </div>
                 </div>
-                <div
-                  style={{
-                    fontSize: '14px',
-                    color: '#a0a0a0',
-                    textTransform: 'uppercase',
-                    letterSpacing: '1px',
-                  }}
-                >
-                  Narcissism
-                </div>
-              </div>
-
-              <div
-                style={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  alignItems: 'center',
-                }}
-              >
-                <div
-                  style={{
-                    fontSize: '36px',
-                    fontWeight: '600',
-                    color: '#dc2626',
-                  }}
-                >
-                  {percentages.machiavellianism}%
-                </div>
-                <div
-                  style={{
-                    fontSize: '14px',
-                    color: '#a0a0a0',
-                    textTransform: 'uppercase',
-                    letterSpacing: '1px',
-                  }}
-                >
-                  Machiavellianism
-                </div>
-              </div>
-
-              <div
-                style={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  alignItems: 'center',
-                }}
-              >
-                <div
-                  style={{
-                    fontSize: '36px',
-                    fontWeight: '600',
-                    color: '#7c3aed',
-                  }}
-                >
-                  {percentages.psychopathy}%
-                </div>
-                <div
-                  style={{
-                    fontSize: '14px',
-                    color: '#a0a0a0',
-                    textTransform: 'uppercase',
-                    letterSpacing: '1px',
-                  }}
-                >
-                  Psychopathy
-                </div>
-              </div>
+              ))}
             </div>
 
             <div

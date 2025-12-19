@@ -40,6 +40,7 @@ const Header = () => {
   const navLinks = [
     { href: '/', label: 'Home' },
     { href: '/book', label: 'The Book' },
+    { href: '/quiz', label: 'Quiz' },
     { href: '/courses', label: 'Courses' },
     { href: '/coaching', label: 'Coaching' },
     { href: '/community', label: 'Community' },

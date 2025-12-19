@@ -780,3 +780,334 @@ export const verifyEmailConnection = async (): Promise<{ primary: boolean; micro
 export const hasMicrosoftTransport = (): boolean => {
   return !!(MS_SMTP_USER && MS_SMTP_PASS)
 }
+
+interface QuizResultsEmailData {
+  email: string
+  primaryType: string
+  secondaryType: string
+  scores: Record<string, number>
+  diagnosis?: {
+    clinicalLabel: string
+    functioningLevel: 'high' | 'moderate' | 'low'
+    functioningScore: number
+    description: string
+  }
+  primaryProfile: {
+    name: string
+    tagline: string
+    description: string
+    traits: string[]
+    strengths: string[]
+    blindSpots: string[]
+    relationshipPattern: string
+  }
+  secondaryProfile: {
+    name: string
+    tagline: string
+    description: string
+  }
+}
+
+export const sendQuizResults = async (data: QuizResultsEmailData): Promise<boolean> => {
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://kanikarose.com'
+
+  const getFunctioningColor = (level: string) => {
+    switch (level) {
+      case 'high': return { text: '#22c55e', bg: '#14532d', border: '#166534' }
+      case 'moderate': return { text: '#eab308', bg: '#422006', border: '#854d0e' }
+      case 'low': return { text: '#ef4444', bg: '#450a0a', border: '#991b1b' }
+      default: return { text: '#94a3b8', bg: '#1a1a1a', border: '#333' }
+    }
+  }
+
+  const getFunctioningLabel = (level: string) => {
+    switch (level) {
+      case 'high': return 'High Adaptive Function'
+      case 'moderate': return 'Moderate Adaptive Function'
+      case 'low': return 'Low Adaptive Function'
+      default: return 'Unknown'
+    }
+  }
+
+  const scoreRows = Object.entries(data.scores)
+    .sort(([, a], [, b]) => b - a)
+    .map(([type, score]) => {
+      const isPrimary = type === data.primaryType
+      const isSecondary = type === data.secondaryType
+      const isNeurotypical = type === 'neurotypical'
+      const typeName = type.charAt(0).toUpperCase() + type.slice(1)
+      return `
+        <tr>
+          <td style="padding: 12px; color: ${isNeurotypical ? '#22c55e' : isPrimary ? '#d4af37' : isSecondary ? '#e8c4c4' : '#94a3b8'}; font-weight: ${isPrimary ? 'bold' : 'normal'};">
+            ${typeName}${isPrimary ? ' (Primary)' : isSecondary ? ' (Secondary)' : ''}
+          </td>
+          <td style="padding: 12px; text-align: right;">
+            <span style="display: inline-block; background: ${isNeurotypical ? '#14532d' : isPrimary ? '#d4af37' : isSecondary ? '#722139' : '#333'}; color: ${isNeurotypical ? '#22c55e' : isPrimary ? '#0a0a0a' : '#fff'}; padding: 4px 12px; border-radius: 20px; font-weight: bold;">
+              ${score}%
+            </span>
+          </td>
+        </tr>
+      `
+    })
+    .join('')
+
+  const traitsList = data.primaryProfile.traits.map(t => `<li style="color: #94a3b8; margin: 8px 0;">${t}</li>`).join('')
+  const strengthsList = data.primaryProfile.strengths.map(s => `<li style="color: #94a3b8; margin: 8px 0;"><span style="color: #22c55e;">✓</span> ${s}</li>`).join('')
+  const blindSpotsList = data.primaryProfile.blindSpots.map(b => `<li style="color: #94a3b8; margin: 8px 0;"><span style="color: #ef4444;">!</span> ${b}</li>`).join('')
+
+  const diagnosisSection = data.diagnosis ? `
+    <!-- Clinical Diagnosis -->
+    <tr>
+      <td style="padding: 30px 30px 20px; border-left: 1px solid #d4af37; border-right: 1px solid #d4af37;">
+        <div style="background: linear-gradient(135deg, #0a0a0a 0%, #1a0d11 100%); padding: 30px; border-radius: 10px; border: 2px solid #d4af37; text-align: center;">
+          <div style="margin-bottom: 15px;">
+            <span style="display: inline-block; background: #d4af37; color: #0a0a0a; padding: 6px 16px; border-radius: 20px; font-size: 11px; text-transform: uppercase; letter-spacing: 2px; font-weight: bold;">
+              Clinical Assessment
+            </span>
+          </div>
+          <h2 style="color: #d4af37; margin: 0 0 15px 0; font-size: 24px; font-weight: 600; font-family: 'Courier New', monospace; letter-spacing: 1px;">
+            ${data.diagnosis.clinicalLabel}
+          </h2>
+          <div style="display: inline-block; background: ${getFunctioningColor(data.diagnosis.functioningLevel).bg}; border: 1px solid ${getFunctioningColor(data.diagnosis.functioningLevel).border}; padding: 8px 20px; border-radius: 20px;">
+            <span style="color: ${getFunctioningColor(data.diagnosis.functioningLevel).text}; font-size: 13px; font-weight: 600;">
+              ${getFunctioningLabel(data.diagnosis.functioningLevel)}
+            </span>
+          </div>
+        </div>
+      </td>
+    </tr>
+
+    <!-- Functioning Assessment Description -->
+    <tr>
+      <td style="padding: 0 30px 20px; border-left: 1px solid #d4af37; border-right: 1px solid #d4af37;">
+        <div style="background: #0a0a0a; padding: 20px; border-radius: 8px; border: 1px solid #333;">
+          <h4 style="color: #d4af37; margin: 0 0 10px 0; font-size: 14px; text-transform: uppercase; letter-spacing: 1px;">
+            Functioning Assessment
+          </h4>
+          <p style="color: #94a3b8; margin: 0; line-height: 1.7; font-size: 14px;">
+            ${data.diagnosis.description}
+          </p>
+        </div>
+      </td>
+    </tr>
+  ` : ''
+
+  const html = `
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Your Dark Mirror Results - Kanika Batra</title>
+    </head>
+    <body style="margin: 0; padding: 0; background-color: #0a0a0a; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;">
+      <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="background-color: #0a0a0a;">
+        <tr>
+          <td align="center" style="padding: 40px 20px;">
+            <table role="presentation" width="600" cellspacing="0" cellpadding="0" border="0" style="max-width: 600px; width: 100%; background-color: #050511; border-radius: 12px; overflow: hidden; box-shadow: 0 10px 40px rgba(212, 175, 55, 0.15);">
+
+              <!-- Header -->
+              <tr>
+                <td style="background: linear-gradient(135deg, #720921 0%, #0a1628 100%); padding: 40px 30px; text-align: center;">
+                  <h1 style="color: #d4af37; margin: 0 0 10px 0; font-size: 28px; font-weight: 300; letter-spacing: 2px; text-transform: uppercase;">
+                    The Dark Mirror Assessment
+                  </h1>
+                  <p style="color: #94a3b8; margin: 0; font-size: 14px; letter-spacing: 1px;">
+                    Your Complete Results
+                  </p>
+                </td>
+              </tr>
+
+              ${diagnosisSection}
+
+              <!-- Primary Type -->
+              <tr>
+                <td style="padding: 40px 30px 20px; border-left: 1px solid #d4af37; border-right: 1px solid #d4af37;">
+                  <div style="background: linear-gradient(135deg, #1a0d11 0%, #0f0a0f 100%); padding: 30px; border-radius: 10px; border: 2px solid #d4af37;">
+                    <div style="text-align: center; margin-bottom: 20px;">
+                      <span style="display: inline-block; background: #d4af37; color: #0a0a0a; padding: 6px 16px; border-radius: 20px; font-size: 12px; text-transform: uppercase; letter-spacing: 1px; font-weight: bold;">
+                        Primary Type
+                      </span>
+                    </div>
+                    <h2 style="color: #d4af37; margin: 0 0 10px 0; font-size: 32px; font-weight: 600; text-align: center;">
+                      ${data.primaryProfile.name}
+                    </h2>
+                    <p style="color: #e8c4c4; margin: 0 0 20px 0; font-size: 16px; font-style: italic; text-align: center;">
+                      "${data.primaryProfile.tagline}"
+                    </p>
+                    <p style="color: #94a3b8; line-height: 1.8; font-size: 15px;">
+                      ${data.primaryProfile.description}
+                    </p>
+                  </div>
+                </td>
+              </tr>
+
+              <!-- Score Breakdown -->
+              <tr>
+                <td style="padding: 20px 30px; border-left: 1px solid #d4af37; border-right: 1px solid #d4af37;">
+                  <h3 style="color: #d4af37; margin: 0 0 20px 0; font-size: 18px; text-transform: uppercase; letter-spacing: 1px; text-align: center;">
+                    Your Score Breakdown
+                  </h3>
+                  <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="background: #0a0a0a; border-radius: 8px; overflow: hidden;">
+                    ${scoreRows}
+                  </table>
+                </td>
+              </tr>
+
+              <!-- Traits -->
+              <tr>
+                <td style="padding: 20px 30px; border-left: 1px solid #d4af37; border-right: 1px solid #d4af37;">
+                  <h3 style="color: #d4af37; margin: 0 0 15px 0; font-size: 16px; text-transform: uppercase; letter-spacing: 1px;">
+                    Defining Traits
+                  </h3>
+                  <ul style="margin: 0; padding: 0 0 0 20px;">
+                    ${traitsList}
+                  </ul>
+                </td>
+              </tr>
+
+              <!-- Strengths & Blind Spots -->
+              <tr>
+                <td style="padding: 20px 30px; border-left: 1px solid #d4af37; border-right: 1px solid #d4af37;">
+                  <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0">
+                    <tr>
+                      <td width="48%" valign="top" style="background: #0a0a0a; padding: 20px; border-radius: 8px;">
+                        <h4 style="color: #22c55e; margin: 0 0 15px 0; font-size: 14px; text-transform: uppercase; letter-spacing: 1px;">
+                          Strengths
+                        </h4>
+                        <ul style="margin: 0; padding: 0; list-style: none;">
+                          ${strengthsList}
+                        </ul>
+                      </td>
+                      <td width="4%"></td>
+                      <td width="48%" valign="top" style="background: #0a0a0a; padding: 20px; border-radius: 8px;">
+                        <h4 style="color: #ef4444; margin: 0 0 15px 0; font-size: 14px; text-transform: uppercase; letter-spacing: 1px;">
+                          Blind Spots
+                        </h4>
+                        <ul style="margin: 0; padding: 0; list-style: none;">
+                          ${blindSpotsList}
+                        </ul>
+                      </td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
+
+              <!-- Relationship Pattern -->
+              <tr>
+                <td style="padding: 20px 30px; border-left: 1px solid #d4af37; border-right: 1px solid #d4af37;">
+                  <div style="background: linear-gradient(135deg, #1a0d11 0%, #0f0a0f 100%); padding: 25px; border-radius: 8px; border: 1px solid #722139;">
+                    <h4 style="color: #d4af37; margin: 0 0 15px 0; font-size: 14px; text-transform: uppercase; letter-spacing: 1px;">
+                      Relationship Pattern
+                    </h4>
+                    <p style="color: #94a3b8; margin: 0; line-height: 1.8; font-size: 14px;">
+                      ${data.primaryProfile.relationshipPattern}
+                    </p>
+                  </div>
+                </td>
+              </tr>
+
+              <!-- Secondary Type -->
+              <tr>
+                <td style="padding: 20px 30px; border-left: 1px solid #d4af37; border-right: 1px solid #d4af37;">
+                  <div style="background: #0a0a0a; padding: 25px; border-radius: 8px; border: 1px solid #333;">
+                    <div style="text-align: center; margin-bottom: 15px;">
+                      <span style="display: inline-block; background: #722139; color: #e8c4c4; padding: 4px 12px; border-radius: 20px; font-size: 11px; text-transform: uppercase; letter-spacing: 1px;">
+                        Secondary Type
+                      </span>
+                    </div>
+                    <h3 style="color: #e8c4c4; margin: 0 0 10px 0; font-size: 22px; font-weight: 600; text-align: center;">
+                      ${data.secondaryProfile.name}
+                    </h3>
+                    <p style="color: #94a3b8; margin: 0 0 15px 0; font-size: 14px; font-style: italic; text-align: center;">
+                      "${data.secondaryProfile.tagline}"
+                    </p>
+                    <p style="color: #94a3b8; line-height: 1.7; font-size: 14px; margin: 0;">
+                      ${data.secondaryProfile.description}
+                    </p>
+                  </div>
+                </td>
+              </tr>
+
+              <!-- Upsell Section -->
+              <tr>
+                <td style="padding: 30px; border-left: 1px solid #d4af37; border-right: 1px solid #d4af37;">
+                  <h3 style="color: #d4af37; margin: 0 0 20px 0; font-size: 18px; text-align: center;">
+                    Go Deeper
+                  </h3>
+                  <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0">
+                    <tr>
+                      <td width="48%" valign="top" style="background: #1a0d11; padding: 20px; border-radius: 8px; border: 1px solid #722139;">
+                        <div style="text-align: center;">
+                          <span style="font-size: 28px;">📖</span>
+                          <h4 style="color: #d4af37; margin: 15px 0 10px 0; font-size: 16px;">
+                            The Sociopathic Dating Bible
+                          </h4>
+                          <p style="color: #94a3b8; margin: 0 0 15px 0; font-size: 13px; line-height: 1.6;">
+                            Master the psychology behind attraction and power dynamics.
+                          </p>
+                          <a href="${baseUrl}/book" style="display: inline-block; background: #d4af37; color: #0a0a0a; padding: 10px 20px; text-decoration: none; border-radius: 20px; font-size: 12px; font-weight: bold; text-transform: uppercase;">
+                            Get the Book
+                          </a>
+                        </div>
+                      </td>
+                      <td width="4%"></td>
+                      <td width="48%" valign="top" style="background: #1a0d11; padding: 20px; border-radius: 8px; border: 1px solid #722139;">
+                        <div style="text-align: center;">
+                          <span style="font-size: 28px;">🎯</span>
+                          <h4 style="color: #d4af37; margin: 15px 0 10px 0; font-size: 16px;">
+                            1:1 Coaching
+                          </h4>
+                          <p style="color: #94a3b8; margin: 0 0 15px 0; font-size: 13px; line-height: 1.6;">
+                            Personal guidance from a clinically diagnosed sociopath.
+                          </p>
+                          <a href="${baseUrl}/coaching" style="display: inline-block; background: transparent; color: #d4af37; padding: 10px 20px; text-decoration: none; border-radius: 20px; font-size: 12px; font-weight: bold; text-transform: uppercase; border: 1px solid #d4af37;">
+                            Book a Session
+                          </a>
+                        </div>
+                      </td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
+
+              <!-- Disclaimer -->
+              <tr>
+                <td style="padding: 20px 30px 30px; border-left: 1px solid #d4af37; border-right: 1px solid #d4af37; border-bottom: 1px solid #d4af37; border-radius: 0 0 12px 12px;">
+                  <div style="background: #0a0a0a; padding: 15px; border-radius: 6px;">
+                    <p style="color: #666; margin: 0; font-size: 11px; line-height: 1.6; text-align: center;">
+                      <strong>Disclaimer:</strong> The Dark Mirror Assessment is for entertainment and educational purposes only. It is not a clinical diagnosis, psychological evaluation, or medical advice. If you have concerns about your mental health, please consult a licensed mental health professional.
+                    </p>
+                  </div>
+                </td>
+              </tr>
+
+              <!-- Footer -->
+              <tr>
+                <td style="padding: 30px; text-align: center;">
+                  <p style="color: #d4af37; margin: 0 0 5px 0; font-size: 16px; font-style: italic;">
+                    Embrace your darkness,
+                  </p>
+                  <p style="color: #d4af37; margin: 0; font-size: 18px; font-weight: 600; letter-spacing: 1px;">
+                    Kanika Batra
+                  </p>
+                  <p style="color: #666; margin: 5px 0 0 0; font-size: 12px;">
+                    The Beautiful Sociopath
+                  </p>
+                </td>
+              </tr>
+
+            </table>
+          </td>
+        </tr>
+      </table>
+    </body>
+    </html>
+  `
+
+  return await sendEmail({
+    to: data.email,
+    subject: `Your Dark Mirror Results: ${data.primaryProfile.name}`,
+    html,
+  })
+}

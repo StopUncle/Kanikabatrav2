@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
-import { resultProfiles, ResultType } from '@/lib/quiz-questions'
+import { PERSONALITY_PROFILES, PersonalityType, QuizScores } from '@/lib/quiz-data'
 
 interface RouteParams {
   params: Promise<{ id: string }>
@@ -21,22 +21,22 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
       )
     }
 
-    const profile = resultProfiles[quizResult.resultType as ResultType]
-    const scores = quizResult.scores as { narcissism: number; machiavellianism: number; psychopathy: number }
+    const primaryType = quizResult.primaryType as PersonalityType
+    const secondaryType = quizResult.secondaryType as PersonalityType | null
+    const scores = quizResult.scores as unknown as QuizScores
 
-    const maxScore = 75
-    const percentages = {
-      narcissism: Math.round((scores.narcissism / maxScore) * 100),
-      machiavellianism: Math.round((scores.machiavellianism / maxScore) * 100),
-      psychopathy: Math.round((scores.psychopathy / maxScore) * 100),
-    }
+    const primaryProfile = PERSONALITY_PROFILES[primaryType]
+    const secondaryProfile = secondaryType ? PERSONALITY_PROFILES[secondaryType] : null
 
     return NextResponse.json({
       id: quizResult.id,
-      type: quizResult.resultType,
+      email: quizResult.email,
+      primaryType,
+      secondaryType,
       scores,
-      percentages,
-      profile,
+      primaryProfile,
+      secondaryProfile,
+      paid: quizResult.paid,
       shared: quizResult.shared,
       createdAt: quizResult.createdAt,
     })
