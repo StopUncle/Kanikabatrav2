@@ -92,6 +92,12 @@ export default function Hero() {
           >
             Private Coaching
           </Link>
+          <Link
+            href="/quiz"
+            className="rounded-full inline-block px-6 sm:px-8 py-3 sm:py-4 text-sm sm:text-base w-full sm:w-auto max-w-xs border border-accent-gold/50 text-accent-gold hover:bg-accent-gold/10 transition-colors"
+          >
+            Take The Quiz
+          </Link>
         </motion.div>
 
         {/* Scroll Indicator */}
