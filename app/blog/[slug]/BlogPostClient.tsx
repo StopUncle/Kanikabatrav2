@@ -4,6 +4,7 @@ import { motion } from 'framer-motion'
 import Link from 'next/link'
 import { MDXRemoteSerializeResult } from 'next-mdx-remote'
 import Header from '@/components/Header'
+import Footer from '@/components/Footer'
 import PostContent from '@/components/blog/PostContent'
 import AuthorBio from '@/components/AuthorBio'
 import Disclaimer from '@/components/Disclaimer'
@@ -62,8 +63,8 @@ export default function BlogPostClient({ post, mdxSource, relatedPosts, previous
       />
       <Header />
 
-      <article className="pt-32 pb-20">
-        <div className="max-w-3xl mx-auto px-6">
+      <article className="pt-32 pb-24">
+        <div className="max-w-4xl mx-auto px-6 lg:px-8">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -76,98 +77,112 @@ export default function BlogPostClient({ post, mdxSource, relatedPosts, previous
                 { label: post.frontmatter.category, href: `/blog?category=${encodeURIComponent(post.frontmatter.category)}` },
                 { label: post.frontmatter.title },
               ]}
-              className="mb-6"
+              className="mb-8"
             />
 
             <Link
               href="/blog"
-              className="inline-flex items-center text-text-gray hover:text-accent-gold transition-colors mb-8 group"
+              className="inline-flex items-center text-text-gray hover:text-accent-gold transition-colors mb-10 group text-sm"
             >
-              <span className="mr-2 group-hover:-translate-x-1 transition-transform">&larr;</span>
+              <svg className="w-4 h-4 mr-2 group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+              </svg>
               Back to Blog
             </Link>
 
-            <div className="flex items-center gap-4 mb-6">
-              <span className="px-4 py-1.5 text-xs font-medium uppercase tracking-wider text-accent-gold bg-accent-gold/10 rounded-full border border-accent-gold/20">
-                {post.frontmatter.category}
-              </span>
-              <span className="text-sm text-text-gray">
-                {post.readingTime}
-              </span>
-            </div>
+            <header className="mb-12">
+              <div className="flex flex-wrap items-center gap-4 mb-8">
+                <span className="px-4 py-1.5 text-xs font-medium uppercase tracking-wider text-accent-gold bg-accent-gold/10 rounded-full border border-accent-gold/20">
+                  {post.frontmatter.category}
+                </span>
+                <span className="text-sm text-text-gray">
+                  {post.readingTime}
+                </span>
+              </div>
 
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-extralight text-white mb-6 leading-tight">
-              {post.frontmatter.title}
-            </h1>
+              <h1 className="text-3xl md:text-4xl lg:text-5xl font-extralight text-white mb-8 leading-tight tracking-tight">
+                {post.frontmatter.title}
+              </h1>
 
-            <div className="flex items-center gap-6 mb-12 pb-12 border-b border-white/10">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-accent-gold to-accent-burgundy flex items-center justify-center">
-                  <span className="text-white font-medium text-sm">KB</span>
-                </div>
-                <div>
-                  <p className="text-white text-sm font-medium">
-                    {post.frontmatter.author || 'Kanika Batra'}
-                  </p>
-                  <time className="text-text-gray text-xs">
-                    {new Date(post.frontmatter.publishedAt).toLocaleDateString('en-US', {
-                      year: 'numeric',
-                      month: 'long',
-                      day: 'numeric',
-                    })}
-                  </time>
+              <p className="text-lg md:text-xl text-text-gray leading-relaxed mb-10">
+                {post.frontmatter.excerpt}
+              </p>
+
+              <div className="flex items-center gap-6 pb-10 border-b border-white/10">
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 rounded-full bg-gradient-to-br from-accent-gold to-accent-burgundy flex items-center justify-center">
+                    <span className="text-white font-medium">KB</span>
+                  </div>
+                  <div>
+                    <p className="text-white font-medium">
+                      {post.frontmatter.author || 'Kanika Batra'}
+                    </p>
+                    <time className="text-text-gray text-sm">
+                      {new Date(post.frontmatter.publishedAt).toLocaleDateString('en-US', {
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric',
+                      })}
+                    </time>
+                  </div>
                 </div>
               </div>
-            </div>
+            </header>
 
             {post.frontmatter.coverImage && (
-              <div className="relative mb-12 rounded-2xl overflow-hidden">
-                <div
-                  className="w-full h-64 md:h-96 bg-cover bg-center"
-                  style={{ backgroundImage: `url(${post.frontmatter.coverImage})` }}
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-deep-black/50 to-transparent" />
-              </div>
+              <figure className="mb-14 -mx-6 lg:-mx-16">
+                <div className="relative rounded-2xl overflow-hidden">
+                  <div
+                    className="w-full h-72 md:h-96 lg:h-[28rem] bg-cover bg-center"
+                    style={{ backgroundImage: `url(${post.frontmatter.coverImage})` }}
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-deep-black/30 to-transparent" />
+                </div>
+              </figure>
             )}
 
-            <PostContent mdxSource={mdxSource} />
+            <div className="max-w-3xl mx-auto">
+              <PostContent mdxSource={mdxSource} />
 
-            <div className="mt-16 pt-12 border-t border-white/10">
-              <div className="flex flex-wrap gap-2 mb-8">
-                {post.frontmatter.tags.map((tag) => (
-                  <Link
-                    key={tag}
-                    href={`/blog?tag=${encodeURIComponent(tag)}`}
-                    className="px-3 py-1 text-xs text-text-gray bg-white/5 rounded-full border border-white/10 hover:border-accent-gold/50 hover:text-accent-gold transition-colors"
-                  >
-                    #{tag}
-                  </Link>
-                ))}
-              </div>
+              <footer className="mt-20 pt-12 border-t border-white/10">
+                <div className="flex flex-wrap gap-3 mb-12">
+                  {post.frontmatter.tags.map((tag) => (
+                    <Link
+                      key={tag}
+                      href={`/blog?tag=${encodeURIComponent(tag)}`}
+                      className="px-4 py-2 text-sm text-text-gray bg-white/5 rounded-full border border-white/10 hover:border-accent-gold/50 hover:text-accent-gold transition-all duration-300"
+                    >
+                      #{tag}
+                    </Link>
+                  ))}
+                </div>
 
-              <AuthorBio variant="full" className="mb-12" />
+                <div className="space-y-16">
+                  <AuthorBio variant="full" />
 
-              <Disclaimer variant="compact" className="mb-12" />
+                  <Disclaimer variant="compact" />
 
-              <BookPromo variant="full" className="mb-12" />
+                  <BookPromo variant="full" />
 
-              <PostNavigation
-                previousPost={previousPost}
-                nextPost={nextPost}
-                className="mb-12"
-              />
+                  <PostNavigation
+                    previousPost={previousPost}
+                    nextPost={nextPost}
+                  />
 
-              {relatedPosts && relatedPosts.length > 0 && (
-                <RelatedPosts
-                  posts={relatedPosts}
-                  title="Continue Reading"
-                  className="mb-12"
-                />
-              )}
+                  {relatedPosts && relatedPosts.length > 0 && (
+                    <RelatedPosts
+                      posts={relatedPosts}
+                      title="Continue Reading"
+                    />
+                  )}
+                </div>
+              </footer>
             </div>
           </motion.div>
         </div>
       </article>
+
+      <Footer />
 
       <div className="fixed inset-0 pointer-events-none overflow-hidden -z-10">
         <div className="absolute top-1/4 -left-32 w-96 h-96 bg-accent-burgundy/10 rounded-full blur-[120px]" />

@@ -1,5 +1,4 @@
 import Link from 'next/link'
-import Image from 'next/image'
 
 interface RelatedPost {
   slug: string
@@ -23,37 +22,42 @@ export default function RelatedPosts({ posts, title = 'Related Articles', classN
 
   return (
     <section className={`${className}`}>
-      <h2 className="text-xl md:text-2xl font-light text-white mb-6">{title}</h2>
+      <h2 className="text-xl md:text-2xl font-light text-white mb-8">{title}</h2>
 
-      <div className="grid md:grid-cols-3 gap-6">
+      <div className="grid md:grid-cols-3 gap-6 lg:gap-8">
         {posts.slice(0, 3).map((post) => (
           <Link
             key={post.slug}
             href={`/blog/${post.slug}`}
-            className="group block bg-deep-navy/30 border border-gray-800 rounded-lg overflow-hidden hover:border-accent-burgundy/50 transition-colors"
+            className="group block bg-gradient-to-br from-deep-black/80 to-deep-navy/40 border border-white/10 rounded-xl overflow-hidden hover:border-accent-gold/30 transition-all duration-300"
           >
             {post.coverImage && (
-              <div className="relative aspect-video bg-gray-900">
-                <Image
-                  src={post.coverImage}
-                  alt={post.title}
-                  fill
-                  sizes="(max-width: 768px) 100vw, 33vw"
-                  className="object-cover group-hover:scale-105 transition-transform duration-300"
+              <div className="relative h-40 overflow-hidden">
+                <div
+                  className="absolute inset-0 bg-cover bg-center group-hover:scale-105 transition-transform duration-500"
+                  style={{ backgroundImage: `url(${post.coverImage})` }}
                 />
+                <div className="absolute inset-0 bg-gradient-to-t from-deep-black to-transparent" />
                 {post.category && (
-                  <span className="absolute top-2 left-2 text-xs px-2 py-1 bg-accent-burgundy/80 rounded text-white">
+                  <span className="absolute bottom-3 left-3 text-xs px-3 py-1 bg-accent-gold/90 rounded-full text-deep-black font-medium">
                     {post.category}
                   </span>
                 )}
               </div>
             )}
 
-            <div className="p-4">
-              <h3 className="font-medium text-white group-hover:text-accent-gold transition-colors line-clamp-2 mb-2">
+            <div className="p-5">
+              <h3 className="font-light text-lg text-white group-hover:text-accent-gold transition-colors line-clamp-2 mb-3 leading-snug">
                 {post.title}
               </h3>
-              <p className="text-sm text-gray-400 line-clamp-2">{post.excerpt}</p>
+              <p className="text-sm text-text-gray line-clamp-2 leading-relaxed">{post.excerpt}</p>
+              <time className="block text-xs text-text-gray/70 mt-4">
+                {new Date(post.publishedAt).toLocaleDateString('en-US', {
+                  month: 'short',
+                  day: 'numeric',
+                  year: 'numeric',
+                })}
+              </time>
             </div>
           </Link>
         ))}
@@ -74,33 +78,43 @@ export function PostNavigation({ previousPost, nextPost, className = '' }: PostN
   }
 
   return (
-    <nav className={`flex justify-between gap-4 ${className}`} aria-label="Post navigation">
+    <nav className={`grid md:grid-cols-2 gap-4 ${className}`} aria-label="Post navigation">
       {previousPost ? (
         <Link
           href={`/blog/${previousPost.slug}`}
-          className="flex-1 group p-4 bg-deep-navy/30 border border-gray-800 rounded-lg hover:border-accent-burgundy/50 transition-colors"
+          className="group p-6 bg-gradient-to-br from-deep-black/80 to-deep-navy/40 border border-white/10 rounded-xl hover:border-accent-gold/30 transition-all duration-300"
         >
-          <span className="text-xs text-gray-500 uppercase tracking-wide">Previous</span>
-          <p className="text-white group-hover:text-accent-gold transition-colors line-clamp-1 mt-1">
-            &larr; {previousPost.title}
+          <div className="flex items-center gap-3 mb-3">
+            <svg className="w-4 h-4 text-accent-gold group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+            </svg>
+            <span className="text-xs text-text-gray uppercase tracking-wider">Previous Article</span>
+          </div>
+          <p className="text-white group-hover:text-accent-gold transition-colors line-clamp-2 font-light">
+            {previousPost.title}
           </p>
         </Link>
       ) : (
-        <div className="flex-1" />
+        <div />
       )}
 
       {nextPost ? (
         <Link
           href={`/blog/${nextPost.slug}`}
-          className="flex-1 group p-4 bg-deep-navy/30 border border-gray-800 rounded-lg hover:border-accent-burgundy/50 transition-colors text-right"
+          className="group p-6 bg-gradient-to-br from-deep-black/80 to-deep-navy/40 border border-white/10 rounded-xl hover:border-accent-gold/30 transition-all duration-300 text-right"
         >
-          <span className="text-xs text-gray-500 uppercase tracking-wide">Next</span>
-          <p className="text-white group-hover:text-accent-gold transition-colors line-clamp-1 mt-1">
-            {nextPost.title} &rarr;
+          <div className="flex items-center justify-end gap-3 mb-3">
+            <span className="text-xs text-text-gray uppercase tracking-wider">Next Article</span>
+            <svg className="w-4 h-4 text-accent-gold group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+            </svg>
+          </div>
+          <p className="text-white group-hover:text-accent-gold transition-colors line-clamp-2 font-light">
+            {nextPost.title}
           </p>
         </Link>
       ) : (
-        <div className="flex-1" />
+        <div />
       )}
     </nav>
   )
@@ -135,11 +149,13 @@ export function Breadcrumbs({ items, className = '' }: BreadcrumbsProps) {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
       />
 
-      <ol className="flex items-center gap-2 text-sm text-gray-400">
+      <ol className="flex flex-wrap items-center gap-2 text-sm text-text-gray">
         {items.map((item, index) => (
           <li key={index} className="flex items-center gap-2">
             {index > 0 && (
-              <span className="text-gray-600">/</span>
+              <svg className="w-3 h-3 text-text-gray/50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
             )}
             {item.href ? (
               <Link
@@ -149,7 +165,7 @@ export function Breadcrumbs({ items, className = '' }: BreadcrumbsProps) {
                 {item.label}
               </Link>
             ) : (
-              <span className="text-gray-300">{item.label}</span>
+              <span className="text-text-gray/70 truncate max-w-[200px]">{item.label}</span>
             )}
           </li>
         ))}

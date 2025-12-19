@@ -3,7 +3,7 @@
 import { motion } from 'framer-motion'
 import Link from 'next/link'
 import { SITE_CONFIG, SOCIAL_LINKS, BOOK_INFO } from '@/lib/constants'
-import KBSpinLogo from '@/components/KBSpinLogo'
+import DoubleEchoLogo from '@/components/DoubleEchoLogo'
 
 const links = [
   {
@@ -90,7 +90,7 @@ export default function LinksPage() {
         className="text-center mb-8"
       >
         <div className="mb-6">
-          <KBSpinLogo size="lg" animate />
+          <DoubleEchoLogo size="lg" animate />
         </div>
         <h1 className="text-2xl font-light text-white mb-2">
           {SITE_CONFIG.name}

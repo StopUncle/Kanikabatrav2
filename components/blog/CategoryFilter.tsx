@@ -14,18 +14,18 @@ export default function CategoryFilter({
   onCategoryChange,
 }: CategoryFilterProps) {
   return (
-    <div className="flex flex-wrap gap-3 justify-center mb-12">
+    <div className="flex flex-wrap gap-3 justify-center mb-16">
       <motion.button
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
         onClick={() => onCategoryChange(null)}
-        className={`px-5 py-2 rounded-full text-sm font-medium uppercase tracking-wider transition-all duration-300 ${
+        className={`px-6 py-2.5 rounded-full text-sm font-medium uppercase tracking-wider transition-all duration-300 ${
           activeCategory === null
-            ? 'bg-accent-gold text-deep-black'
-            : 'bg-white/5 text-text-gray hover:bg-white/10 hover:text-white border border-white/10'
+            ? 'bg-accent-gold text-deep-black shadow-lg shadow-accent-gold/20'
+            : 'bg-white/5 text-text-gray hover:bg-white/10 hover:text-white border border-white/10 hover:border-white/20'
         }`}
       >
-        All
+        All Posts
       </motion.button>
 
       {categories.map((category) => (
@@ -34,10 +34,10 @@ export default function CategoryFilter({
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
           onClick={() => onCategoryChange(category)}
-          className={`px-5 py-2 rounded-full text-sm font-medium uppercase tracking-wider transition-all duration-300 ${
+          className={`px-6 py-2.5 rounded-full text-sm font-medium uppercase tracking-wider transition-all duration-300 ${
             activeCategory === category
-              ? 'bg-accent-gold text-deep-black'
-              : 'bg-white/5 text-text-gray hover:bg-white/10 hover:text-white border border-white/10'
+              ? 'bg-accent-gold text-deep-black shadow-lg shadow-accent-gold/20'
+              : 'bg-white/5 text-text-gray hover:bg-white/10 hover:text-white border border-white/10 hover:border-white/20'
           }`}
         >
           {category}

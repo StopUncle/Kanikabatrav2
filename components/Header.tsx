@@ -3,8 +3,8 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Menu, X, User, LogIn } from 'lucide-react'
-import KBSpinLogo from './KBSpinLogo'
+import { User } from 'lucide-react'
+import DoubleEchoLogo from './DoubleEchoLogo'
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
@@ -26,6 +26,17 @@ const Header = () => {
     checkAuth()
   }, [])
 
+  useEffect(() => {
+    if (isMenuOpen) {
+      document.body.style.overflow = 'hidden'
+    } else {
+      document.body.style.overflow = ''
+    }
+    return () => {
+      document.body.style.overflow = ''
+    }
+  }, [isMenuOpen])
+
   const navLinks = [
     { href: '/', label: 'Home' },
     { href: '/book', label: 'The Book' },
@@ -37,146 +48,184 @@ const Header = () => {
   ]
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-deep-black/90 backdrop-blur-md border-b border-accent-gold/10">
+    <>
+    <header className="fixed top-0 left-0 right-0 z-50 bg-deep-black/95 backdrop-blur-xl border-b border-accent-gold/10">
       <nav className="w-full px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
           <div className="flex items-center justify-between h-16 sm:h-20">
-            <Link href="/" className="flex items-center gap-2 group">
-              <KBSpinLogo size="md" animate={false} className="transition-transform group-hover:scale-110" />
-              <div className="flex flex-col -space-y-1">
-                <span className="text-base sm:text-lg lg:text-xl font-extralight tracking-[0.2em] gradient-text-gold uppercase">
-                  Kanika
-                </span>
-                <span className="text-xs sm:text-sm font-thin tracking-[0.3em] text-accent-gold/80 uppercase">
-                  Batra
-                </span>
-              </div>
+            {/* Logo */}
+            <Link href="/" className="flex items-center gap-3 group">
+              <DoubleEchoLogo size="md" className="transition-transform duration-500 group-hover:scale-105" />
+              <span className="text-base sm:text-lg font-light tracking-[0.2em] text-accent-gold uppercase">
+                Kanika Batra
+              </span>
             </Link>
 
-          <div className="hidden md:flex items-center space-x-8">
-            {navLinks.map((link) => {
-              const isActive = pathname === link.href
-              return (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  className={isActive
-                    ? "gradient-text-gold font-medium"
-                    : "text-text-gray hover:text-accent-gold transition-colors duration-300 font-light"}
-                >
-                  {link.label}
-                </Link>
-              )
-            })}
-
-            {/* Auth Links */}
-            {!isCheckingAuth && (
-              <div className="flex items-center gap-4 ml-4 pl-4 border-l border-accent-gold/20">
-                {isLoggedIn ? (
-                  <Link
-                    href="/dashboard"
-                    className={pathname === '/dashboard'
-                      ? "flex items-center gap-2 gradient-text-gold font-medium"
-                      : "flex items-center gap-2 text-text-gray hover:text-accent-gold transition-colors duration-300 font-light"}
-                  >
-                    <User size={18} />
-                    Dashboard
-                  </Link>
-                ) : (
-                  <>
-                    <Link
-                      href="/login"
-                      className={pathname === '/login'
-                        ? "flex items-center gap-2 gradient-text-gold font-medium"
-                        : "flex items-center gap-2 text-text-gray hover:text-accent-gold transition-colors duration-300 font-light"}
-                    >
-                      <LogIn size={18} />
-                      Login
-                    </Link>
-                    <Link
-                      href="/register"
-                      className="px-4 py-2 bg-gradient-to-r from-burgundy to-sapphire rounded-lg text-white text-sm font-medium hover:shadow-lg hover:shadow-burgundy/20 transition-all"
-                    >
-                      Register
-                    </Link>
-                  </>
-                )}
-              </div>
-            )}
-          </div>
-
-          <button
-            onClick={() => setIsMenuOpen(!isMenuOpen)}
-            className="md:hidden text-text-gray hover:text-accent-gold transition-colors"
-            aria-label="Toggle menu"
-            suppressHydrationWarning
-          >
-            {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
-          </button>
-        </div>
-
-        {isMenuOpen && (
-          <div className="md:hidden absolute top-16 sm:top-20 left-0 right-0 bg-deep-black/95 backdrop-blur-md border-b border-accent-gold/10 max-h-[calc(100vh-4rem)] overflow-y-auto">
-            <div className="flex flex-col px-4 py-4 sm:py-6">
+            {/* Desktop Navigation */}
+            <div className="hidden lg:flex items-center gap-1">
               {navLinks.map((link) => {
                 const isActive = pathname === link.href
                 return (
                   <Link
                     key={link.href}
                     href={link.href}
-                    className={isActive
-                      ? "gradient-text-gold font-medium py-3 text-base sm:text-lg border-b border-accent-gold/5 hover:bg-accent-gold/5"
-                      : "text-text-gray hover:text-accent-gold transition-colors duration-300 font-light py-3 text-base sm:text-lg border-b border-accent-gold/5 hover:bg-accent-gold/5"}
-                    onClick={() => setIsMenuOpen(false)}
+                    className={`relative px-4 py-2 text-sm tracking-[0.1em] uppercase transition-all duration-300 group ${
+                      isActive
+                        ? 'text-accent-gold'
+                        : 'text-text-gray/80 hover:text-accent-gold'
+                    }`}
                   >
                     {link.label}
+                    <span className={`absolute bottom-0 left-1/2 -translate-x-1/2 h-px bg-gradient-to-r from-transparent via-accent-gold to-transparent transition-all duration-300 ${
+                      isActive ? 'w-full opacity-100' : 'w-0 opacity-0 group-hover:w-full group-hover:opacity-60'
+                    }`} />
                   </Link>
                 )
               })}
 
-              {/* Mobile Auth Links */}
+              {/* Auth Section */}
               {!isCheckingAuth && (
-                <div className="mt-4 pt-4 border-t border-accent-gold/20">
+                <div className="flex items-center gap-3 ml-6 pl-6 border-l border-accent-gold/20">
                   {isLoggedIn ? (
                     <Link
                       href="/dashboard"
-                      className={pathname === '/dashboard'
-                        ? "flex items-center gap-2 gradient-text-gold font-medium py-3 text-base sm:text-lg"
-                        : "flex items-center gap-2 text-text-gray hover:text-accent-gold transition-colors duration-300 font-light py-3 text-base sm:text-lg"}
-                      onClick={() => setIsMenuOpen(false)}
+                      className={`flex items-center gap-2 px-4 py-2 text-sm tracking-[0.1em] uppercase transition-all duration-300 ${
+                        pathname === '/dashboard'
+                          ? 'text-accent-gold'
+                          : 'text-text-gray/80 hover:text-accent-gold'
+                      }`}
                     >
-                      <User size={20} />
+                      <User size={16} strokeWidth={1.5} />
                       Dashboard
                     </Link>
                   ) : (
                     <>
                       <Link
                         href="/login"
-                        className={pathname === '/login'
-                          ? "flex items-center gap-2 gradient-text-gold font-medium py-3 text-base sm:text-lg"
-                          : "flex items-center gap-2 text-text-gray hover:text-accent-gold transition-colors duration-300 font-light py-3 text-base sm:text-lg"}
-                        onClick={() => setIsMenuOpen(false)}
+                        className={`px-4 py-2 text-sm tracking-[0.1em] uppercase transition-all duration-300 ${
+                          pathname === '/login'
+                            ? 'text-accent-gold'
+                            : 'text-text-gray/80 hover:text-accent-gold'
+                        }`}
                       >
-                        <LogIn size={20} />
                         Login
                       </Link>
                       <Link
                         href="/register"
-                        className="mt-3 block text-center px-4 py-3 bg-gradient-to-r from-burgundy to-sapphire rounded-lg text-white font-medium hover:shadow-lg transition-all"
-                        onClick={() => setIsMenuOpen(false)}
+                        className="px-5 py-2 text-sm tracking-[0.1em] uppercase border border-accent-gold/40 text-accent-gold hover:bg-accent-gold/10 hover:border-accent-gold/60 transition-all duration-300 rounded"
                       >
-                        Create Account
+                        Register
                       </Link>
                     </>
                   )}
                 </div>
               )}
             </div>
+
+            {/* Mobile Menu Button */}
+            <button
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
+              className="lg:hidden relative w-10 h-10 flex items-center justify-center"
+              aria-label="Toggle menu"
+            >
+              <div className="relative w-6 h-5 flex flex-col justify-between">
+                <span className={`block h-px bg-accent-gold transition-all duration-300 origin-center ${
+                  isMenuOpen ? 'rotate-45 translate-y-2' : ''
+                }`} />
+                <span className={`block h-px bg-accent-gold transition-all duration-300 ${
+                  isMenuOpen ? 'opacity-0 scale-0' : ''
+                }`} />
+                <span className={`block h-px bg-accent-gold transition-all duration-300 origin-center ${
+                  isMenuOpen ? '-rotate-45 -translate-y-2' : ''
+                }`} />
+              </div>
+            </button>
           </div>
-        )}
         </div>
       </nav>
     </header>
+
+    {/* Mobile Menu Overlay - Outside header for proper z-index */}
+    <div className={`lg:hidden fixed inset-0 top-16 sm:top-20 z-[100] bg-deep-black/98 backdrop-blur-xl transition-all duration-500 ${
+        isMenuOpen ? 'opacity-100 visible' : 'opacity-0 invisible'
+      }`}>
+        <div className={`h-full flex flex-col px-6 py-8 overflow-y-auto transition-all duration-500 delay-100 ${
+          isMenuOpen ? 'translate-y-0 opacity-100' : '-translate-y-4 opacity-0'
+        }`}>
+          {/* Mobile Nav Links */}
+          <div className="flex-1 flex flex-col justify-center -mt-16">
+            {navLinks.map((link, index) => {
+              const isActive = pathname === link.href
+              return (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className={`group py-4 transition-all duration-300`}
+                  style={{ transitionDelay: `${index * 50}ms` }}
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  <div className="flex items-center justify-between">
+                    <span className={`text-2xl sm:text-3xl font-extralight tracking-[0.15em] uppercase transition-colors duration-300 ${
+                      isActive
+                        ? 'text-accent-gold'
+                        : 'text-text-gray/70 group-hover:text-accent-gold'
+                    }`}>
+                      {link.label}
+                    </span>
+                    <div className={`w-8 h-px transition-all duration-300 ${
+                      isActive
+                        ? 'bg-accent-gold'
+                        : 'bg-transparent group-hover:bg-accent-gold/50'
+                    }`} />
+                  </div>
+                  <div className={`mt-2 h-px bg-gradient-to-r from-accent-gold/20 via-accent-gold/5 to-transparent ${
+                    isActive ? 'opacity-100' : 'opacity-50'
+                  }`} />
+                </Link>
+              )
+            })}
+          </div>
+
+          {/* Mobile Auth Section */}
+          {!isCheckingAuth && (
+            <div className="pt-8 border-t border-accent-gold/20">
+              {isLoggedIn ? (
+                <Link
+                  href="/dashboard"
+                  className="flex items-center justify-center gap-3 py-4 text-lg tracking-[0.15em] uppercase text-accent-gold transition-colors duration-300"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  <User size={20} strokeWidth={1.5} />
+                  Dashboard
+                </Link>
+              ) : (
+                <div className="flex flex-col gap-4">
+                  <Link
+                    href="/login"
+                    className="py-4 text-center text-lg tracking-[0.15em] uppercase text-text-gray/70 hover:text-accent-gold transition-colors duration-300"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    Login
+                  </Link>
+                  <Link
+                    href="/register"
+                    className="py-4 text-center text-lg tracking-[0.15em] uppercase border border-accent-gold/40 text-accent-gold hover:bg-accent-gold/10 hover:border-accent-gold/60 transition-all duration-300 rounded"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    Create Account
+                  </Link>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Mobile Footer Accent */}
+          <div className="pt-8 flex justify-center">
+            <DoubleEchoLogo size="sm" className="opacity-30" />
+          </div>
+        </div>
+      </div>
+    </>
   )
 }
 

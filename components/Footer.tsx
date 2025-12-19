@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { Instagram, Youtube, Mail, Heart } from 'lucide-react'
-import KBSpinLogo from './KBSpinLogo'
+import DoubleEchoLogo from './DoubleEchoLogo'
 
 const TikTokIcon = ({ className }: { className?: string }) => (
   <svg className={className} fill="currentColor" viewBox="0 0 24 24">
@@ -38,12 +38,10 @@ const Footer = () => {
           {/* Brand Section */}
           <div className="space-y-3 sm:space-y-4 col-span-1 sm:col-span-2 lg:col-span-1">
             <div className="flex items-center gap-3">
-              <KBSpinLogo size="lg" animate={false} />
-              <div>
-                <h3 className="text-xl sm:text-2xl font-light tracking-wide sm:tracking-wider text-text-light">
-                  KANIKA BATRA
-                </h3>
-              </div>
+              <DoubleEchoLogo size="lg" />
+              <span className="text-lg font-light tracking-[0.2em] text-accent-gold uppercase">
+                Kanika Batra
+              </span>
             </div>
             <p className="text-text-muted text-xs sm:text-sm">
               Diagnosed Sociopath. Beauty Queen. Dark Psychology Expert.

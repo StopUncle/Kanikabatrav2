@@ -9,7 +9,7 @@ import Header from '@/components/Header'
 import GradientText from '@/components/ui/GradientText'
 import Card from '@/components/ui/Card'
 import Button from '@/components/ui/Button'
-import KBSpinLogo from '@/components/KBSpinLogo'
+import DoubleEchoLogo from '@/components/DoubleEchoLogo'
 import { logger } from '@/lib/logger'
 
 function CancelContent() {
@@ -221,7 +221,7 @@ export default function CancelPage() {
       <Suspense fallback={
         <div className="min-h-screen pt-20 sm:pt-24 pb-16 flex items-center justify-center relative z-10">
           <div className="text-center">
-            <KBSpinLogo size="xl" animate={true} className="mx-auto mb-8" />
+            <DoubleEchoLogo size="xl" animate={true} className="mx-auto mb-8" />
             <p className="text-text-muted">Loading...</p>
           </div>
         </div>
