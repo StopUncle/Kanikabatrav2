@@ -138,12 +138,6 @@ export default function PayPalButton({
       // Clear any existing buttons
       container.innerHTML = ''
 
-      // Log available funding sources for debugging
-      if (window.paypal?.getFundingSources) {
-        const fundingSources = window.paypal.getFundingSources()
-        console.log('Available PayPal funding sources:', fundingSources)
-      }
-
     // Configure PayPal buttons
     const paypalButtons = window.paypal!.Buttons({
       createOrder: async () => {
