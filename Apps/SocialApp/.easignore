@@ -1,0 +1,16 @@
+# Exclude everything outside SocialApp
+../../Websites-Directory/
+../../01-CORE-INTELLIGENCE/
+../../02-PRODUCTION-SYSTEMS/
+../../AST-Language-Server/
+../../BENCHMARK-ARENA/
+../../BRIDGE-DEVELOPMENT/
+../../KanikaBatra/
+../../Redis/
+../../codelens-live/
+../../codelens-test/
+../../draftspace-bridge/
+../../draftspace-live/
+../../draftspace-v2-OLD-IGNORE/
+../../draftspace-visual-studio/
+../../npm-packages/

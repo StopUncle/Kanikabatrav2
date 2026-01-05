@@ -1,0 +1,673 @@
+// Simulator Scene Component
+// Main container for the visual novel gameplay with transitions
+import React, { useEffect, useCallback, useRef } from 'react';
+import { View, StyleSheet, Pressable, Text, StatusBar, ScrollView } from 'react-native';
+import Animated, {
+  useSharedValue,
+  useAnimatedStyle,
+  withTiming,
+  withSequence,
+  withDelay,
+  withSpring,
+  Easing,
+  interpolate,
+  runOnJS,
+} from 'react-native-reanimated';
+import { useRouter } from 'expo-router';
+import { X } from 'lucide-react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { colors, spacing, borderRadius, typography, glass } from '../../lib/theme';
+import { haptics } from '../../lib/haptics';
+import {
+  useSimulatorStore,
+  selectCurrentDialogLine,
+  selectIsEnding,
+  selectInnerVoiceForChoices,
+  selectLastNPCLine,
+  selectLastSpeakerId,
+} from '../../stores/simulatorStore';
+import { useSimulatorSettings } from '../../stores/settingsStore';
+import { SceneBackground } from './SceneBackground';
+import { DialogBox } from './DialogBox';
+import { SpeechBubble } from './SpeechBubble';
+import { ChoiceButtons } from './ChoiceButtons';
+import { CharacterPortrait } from './CharacterPortrait';
+import { ProgressBreadcrumb } from './ProgressBreadcrumb';
+import type { BackgroundId, Choice, DialogLine } from '../../content/simulator';
+
+interface SimulatorSceneProps {
+  onComplete: () => void;
+  onExit: () => void;
+}
+
+export function SimulatorScene({ onComplete, onExit }: SimulatorSceneProps) {
+  const router = useRouter();
+  const insets = useSafeAreaInsets();
+  const simulatorSettings = useSimulatorSettings();
+  // Default to true if settings haven't migrated yet
+  const innerVoiceEnabled = simulatorSettings?.innerVoiceEnabled ?? true;
+
+  // Track previous speaker for character transitions
+  const prevSpeakerId = useRef<string | null>(null);
+
+  // Track the last non-Inner-Voice dialog line for context
+  const lastContextLine = useRef<DialogLine | null>(null);
+
+  // Animation values
+  const sceneFade = useSharedValue(1);
+  const characterX = useSharedValue(0);
+  const characterOpacity = useSharedValue(1);
+  const contentZoom = useSharedValue(1);
+  const feedbackScale = useSharedValue(0);
+  const feedbackOpacity = useSharedValue(0);
+
+  // Store state
+  const {
+    activeScenario,
+    currentScene,
+    showingChoices,
+    isDialogComplete,
+    isTransitioning,
+    lastChoiceFeedback,
+    advanceDialog,
+    makeChoice,
+    dismissFeedback,
+    completeScenario,
+  } = useSimulatorStore();
+
+  const currentDialogLine = useSimulatorStore(selectCurrentDialogLine);
+  const isEnding = useSimulatorStore(selectIsEnding);
+  const innerVoiceForChoices = useSimulatorStore(selectInnerVoiceForChoices);
+  const lastNPCLine = useSimulatorStore(selectLastNPCLine);
+  const lastSpeakerId = useSimulatorStore(selectLastSpeakerId);
+
+  // Determine if Inner Voice is speaking (scenarios use 'inner' or 'inner-voice')
+  const isInnerVoiceSpeaking =
+    currentDialogLine?.speakerId === 'inner-voice' ||
+    currentDialogLine?.speakerId === 'inner';
+
+  // Keep character visible during narration - use last speaker if current has no speakerId
+  const currentSpeakerId = currentDialogLine?.speakerId;
+  const displaySpeakerId = (currentSpeakerId && currentSpeakerId !== 'inner-voice' && currentSpeakerId !== 'inner')
+    ? currentSpeakerId
+    : lastSpeakerId;
+
+  // Get current speaker character (uses displaySpeakerId to persist during narration)
+  const currentSpeaker = displaySpeakerId
+    ? activeScenario?.characters.find((c) => c.id === displaySpeakerId)
+    : null;
+
+  // Update context line when non-Inner-Voice dialog appears
+  useEffect(() => {
+    if (currentDialogLine && currentDialogLine.speakerId !== 'inner-voice') {
+      lastContextLine.current = currentDialogLine;
+    }
+  }, [currentDialogLine]);
+
+  // Character entrance/exit animation when speaker changes
+  useEffect(() => {
+    // Use displaySpeakerId so character doesn't animate out during narration
+    const newSpeakerId = displaySpeakerId || null;
+
+    // Only animate if there's actually a character change (not to/from narration)
+    if (prevSpeakerId.current !== newSpeakerId && prevSpeakerId.current !== null && newSpeakerId !== null) {
+      // Character change - smooth cross-fade (no position jump that causes glitch)
+      characterOpacity.value = withSequence(
+        withTiming(0, { duration: 150 }),
+        withTiming(1, { duration: 200 })
+      );
+      // Subtle slide without the jarring instant position reset
+      characterX.value = withSequence(
+        withTiming(-20, { duration: 150 }),
+        withDelay(50, withTiming(0, { duration: 200, easing: Easing.out(Easing.ease) }))
+      );
+    }
+
+    prevSpeakerId.current = newSpeakerId;
+  }, [displaySpeakerId]);
+
+  // Zoom effect when choices appear
+  useEffect(() => {
+    if (showingChoices) {
+      contentZoom.value = withSpring(0.98, { damping: 15, stiffness: 150 });
+    } else {
+      contentZoom.value = withSpring(1, { damping: 15, stiffness: 150 });
+    }
+  }, [showingChoices]);
+
+  // Feedback overlay animation
+  useEffect(() => {
+    if (isTransitioning && lastChoiceFeedback) {
+      feedbackScale.value = withSpring(1, { damping: 12, stiffness: 200 });
+      feedbackOpacity.value = withTiming(1, { duration: 200 });
+    } else {
+      feedbackScale.value = withTiming(0.9, { duration: 150 });
+      feedbackOpacity.value = withTiming(0, { duration: 150 });
+    }
+  }, [isTransitioning, lastChoiceFeedback]);
+
+  // Handle dialog complete
+  const handleDialogComplete = useCallback(() => {
+    // Dialog line finished typing
+  }, []);
+
+  // Handle tap to advance with fade
+  const handleTap = useCallback(() => {
+    if (!isTransitioning) {
+      // Brief fade for scene transition feel
+      sceneFade.value = withSequence(
+        withTiming(0.7, { duration: 100 }),
+        withTiming(1, { duration: 150 })
+      );
+      advanceDialog();
+    }
+  }, [advanceDialog, isTransitioning]);
+
+  // Handle choice selection
+  const handleChoice = useCallback(
+    async (choice: Choice) => {
+      haptics.medium();
+
+      // Fade out during choice processing
+      sceneFade.value = withTiming(0.5, { duration: 200 });
+
+      await makeChoice(choice);
+
+      // Fade back in
+      sceneFade.value = withTiming(1, { duration: 300 });
+    },
+    [makeChoice]
+  );
+
+  // Handle ending completion
+  const handleEndingComplete = useCallback(async () => {
+    const analysis = await completeScenario();
+    if (analysis) {
+      haptics.success();
+      onComplete();
+    }
+  }, [completeScenario, onComplete]);
+
+  // Handle exit
+  const handleExit = useCallback(() => {
+    haptics.light();
+    onExit();
+  }, [onExit]);
+
+  // Handle feedback dismiss
+  const handleFeedbackDismiss = useCallback(() => {
+    haptics.light();
+    dismissFeedback();
+  }, [dismissFeedback]);
+
+  // Animated styles
+  const sceneStyle = useAnimatedStyle(() => ({
+    opacity: sceneFade.value,
+  }));
+
+  const characterStyle = useAnimatedStyle(() => ({
+    opacity: characterOpacity.value,
+    transform: [
+      { translateX: characterX.value },
+    ],
+  }));
+
+  const contentStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: contentZoom.value }],
+  }));
+
+  const feedbackStyle = useAnimatedStyle(() => ({
+    opacity: feedbackOpacity.value,
+    transform: [{ scale: feedbackScale.value }],
+  }));
+
+  // Guard - no scenario loaded
+  if (!activeScenario || !currentScene) {
+    return null;
+  }
+
+  return (
+    <View style={styles.container}>
+      <StatusBar barStyle="light-content" />
+
+      <Animated.View style={[styles.sceneWrapper, sceneStyle]}>
+        <SceneBackground backgroundId={currentScene.backgroundId as BackgroundId}>
+          {/* Top bar with exit button */}
+          <View style={[styles.topBar, { paddingTop: insets.top + spacing.sm }]}>
+            <Pressable
+              onPress={handleExit}
+              style={({ pressed }) => [styles.iconButton, pressed && styles.iconButtonPressed]}
+            >
+              <X size={24} color={colors.primary} />
+            </Pressable>
+
+            <Text style={styles.scenarioTitle} numberOfLines={1}>
+              {activeScenario.title}
+            </Text>
+
+            <View style={styles.iconButton} />
+          </View>
+
+          {/* Main content - Battle style layout: NPC top, Player bottom */}
+          <Pressable style={styles.battleLayout} onPress={handleTap}>
+            <Animated.View style={[styles.battleLayoutInner, contentStyle]}>
+              {/* TOP: NPC Character + Their Speech */}
+              <View style={styles.npcSection}>
+                <Animated.View style={[styles.npcPortraitArea, characterStyle]}>
+                  {currentSpeaker && !isInnerVoiceSpeaking && (
+                    <CharacterPortrait
+                      character={currentSpeaker}
+                      emotion={currentDialogLine?.emotion}
+                      speaking={!isDialogComplete}
+                      size="small"
+                    />
+                  )}
+                </Animated.View>
+
+                {/* NPC Speech bubble - stays visible during choices for context */}
+                {!(isEnding && isDialogComplete) && (
+                  showingChoices ? (
+                    lastNPCLine && (
+                      <View style={styles.npcSpeechContainer}>
+                        <SpeechBubble
+                          line={lastNPCLine}
+                          characters={activeScenario.characters}
+                          onComplete={handleDialogComplete}
+                          onTap={handleTap}
+                          isComplete={true}
+                        />
+                      </View>
+                    )
+                  ) : (
+                    currentDialogLine && !isInnerVoiceSpeaking && (
+                      <View style={styles.npcSpeechContainer}>
+                        <SpeechBubble
+                          line={currentDialogLine}
+                          characters={activeScenario.characters}
+                          onComplete={handleDialogComplete}
+                          onTap={handleTap}
+                          isComplete={isDialogComplete}
+                        />
+                      </View>
+                    )
+                  )
+                )}
+              </View>
+
+              {/* MIDDLE: Spacer */}
+              <View style={styles.battleSpacer} />
+
+              {/* BOTTOM: Player section */}
+              <View style={styles.playerSection}>
+                {/* Choices - player's response options (scrollable for long choice lists) */}
+                {showingChoices && currentScene.choices && !isTransitioning && (
+                  <>
+                    {/* Fixed header - always visible */}
+                    <View style={styles.choicesHeader}>
+                      <Text style={styles.choicesHeaderText}>What do you do?</Text>
+                    </View>
+
+                    {/* Inner voice - fixed, doesn't scroll */}
+                    {innerVoiceEnabled && innerVoiceForChoices && (
+                      <View style={styles.innerVoiceFixed}>
+                        <Text style={styles.innerVoiceFixedText}>{innerVoiceForChoices}</Text>
+                      </View>
+                    )}
+
+                    {/* Scrollable choices area - flex to fill space above YOU badge */}
+                    <View style={[styles.scrollContainer, { flex: 1 }]}>
+                      <ScrollView
+                        style={styles.playerChoicesScroll}
+                        contentContainerStyle={styles.playerChoicesContent}
+                        showsVerticalScrollIndicator={false}
+                        bounces={false}
+                      >
+                        <ChoiceButtons
+                          choices={currentScene.choices}
+                          onSelect={handleChoice}
+                          disabled={isTransitioning}
+                          hideHeader
+                        />
+                      </ScrollView>
+
+                      {/* Subtle scroll indicator */}
+                      <View style={styles.scrollIndicator}>
+                        <View style={styles.scrollIndicatorTrack} />
+                      </View>
+                    </View>
+                  </>
+                )}
+
+              </View>
+
+              {/* Player badge - fixed at bottom */}
+              <View style={[styles.playerIndicator, { paddingBottom: insets.bottom + spacing.sm }]}>
+                <View style={[
+                  styles.playerBadge,
+                  isInnerVoiceSpeaking && styles.playerBadgeThinking,
+                ]}>
+                  <Text style={styles.playerBadgeText}>YOU</Text>
+                </View>
+              </View>
+            </Animated.View>
+          </Pressable>
+
+          {/* Transition feedback with animation - tap to continue */}
+          {lastChoiceFeedback && (
+            <Pressable onPress={handleFeedbackDismiss} style={StyleSheet.absoluteFill}>
+              <Animated.View style={[styles.feedbackOverlay, feedbackStyle]}>
+                <View style={styles.feedbackCard}>
+                  <Text style={styles.feedbackText}>{lastChoiceFeedback}</Text>
+                  <Text style={styles.feedbackHint}>Tap to continue</Text>
+                </View>
+              </Animated.View>
+            </Pressable>
+          )}
+
+          {/* Ending screen */}
+          {isEnding && isDialogComplete && (
+            <View style={styles.endingContainer}>
+              <View style={styles.endingCard}>
+                <Text style={styles.endingTitle}>{currentScene.endingTitle || 'Scenario Complete'}</Text>
+                <Text style={styles.endingSummary}>
+                  {currentScene.endingSummary || 'You\'ve reached the end of this scenario.'}
+                </Text>
+
+                {/* Learn prompt for bad/neutral endings */}
+                {currentScene.endingLearnReference && currentScene.endingLearnPrompt && (
+                  <Pressable
+                    onPress={() => {
+                      haptics.light();
+                      router.push(`/(course)/${currentScene.endingLearnReference}`);
+                    }}
+                    style={({ pressed }) => [
+                      styles.learnPromptButton,
+                      pressed && styles.learnPromptButtonPressed,
+                    ]}
+                  >
+                    <Text style={styles.learnPromptText}>{currentScene.endingLearnPrompt}</Text>
+                  </Pressable>
+                )}
+
+                <Pressable
+                  onPress={handleEndingComplete}
+                  style={({ pressed }) => [
+                    styles.continueButton,
+                    pressed && styles.continueButtonPressed,
+                  ]}
+                >
+                  <Text style={styles.continueButtonText}>See Results</Text>
+                </Pressable>
+              </View>
+            </View>
+          )}
+
+          {/* Fallback: Edge case recovery - tap to advance when stuck */}
+          {!showingChoices && !(isEnding && isDialogComplete) && !currentDialogLine && currentScene && (
+            <Pressable style={styles.fallbackContainer} onPress={handleTap}>
+              <View style={styles.fallbackCard}>
+                <Text style={styles.fallbackText}>Tap to continue...</Text>
+              </View>
+            </Pressable>
+          )}
+        </SceneBackground>
+      </Animated.View>
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: colors.background,
+  },
+  sceneWrapper: {
+    flex: 1,
+  },
+  contentWrapper: {
+    flex: 1,
+  },
+  // Battle-style layout
+  battleLayout: {
+    flex: 1,
+  },
+  battleLayoutInner: {
+    flex: 1,
+    paddingHorizontal: spacing.md,
+    justifyContent: 'space-between', // Push NPC to top, player to bottom
+  },
+  npcSection: {
+    alignItems: 'center',
+    paddingTop: spacing.sm,
+    maxHeight: '45%',
+    minHeight: 200,
+  },
+  npcPortraitArea: {
+    alignItems: 'center',
+  },
+  npcSpeechContainer: {
+    marginTop: spacing.sm,
+    width: '100%',
+  },
+  battleSpacer: {
+    minHeight: 20,
+  },
+  playerSection: {
+    alignItems: 'center',
+    width: '100%',
+    flex: 1,
+  },
+  choicesHeader: {
+    marginBottom: spacing.sm,
+    paddingHorizontal: spacing.sm,
+  },
+  choicesHeaderText: {
+    fontSize: typography.sm,
+    fontWeight: typography.semibold,
+    color: colors.accent,
+    textTransform: 'uppercase',
+    letterSpacing: 1,
+    textAlign: 'center',
+  },
+  innerVoiceFixed: {
+    marginBottom: spacing.md,
+    paddingHorizontal: spacing.md,
+  },
+  innerVoiceFixedText: {
+    fontSize: typography.sm,
+    color: '#9370DB',
+    fontStyle: 'italic',
+    textAlign: 'center',
+    lineHeight: typography.sm * 1.5,
+  },
+  scrollContainer: {
+    width: '100%',
+    flexDirection: 'row',
+  },
+  playerChoicesScroll: {
+    flex: 1,
+  },
+  playerChoicesContent: {
+    paddingBottom: spacing.md,
+  },
+  scrollIndicator: {
+    width: 3,
+    marginLeft: 4,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  scrollIndicatorTrack: {
+    width: 2,
+    height: 40,
+    backgroundColor: colors.accent + '30',
+    borderRadius: 1,
+  },
+  playerIndicator: {
+    alignItems: 'center',
+  },
+  playerBadge: {
+    ...glass.medium,
+    paddingHorizontal: spacing.lg,
+    paddingVertical: spacing.sm,
+    borderRadius: borderRadius.full,
+    borderWidth: 1,
+    borderColor: 'rgba(201, 169, 97, 0.4)',
+  },
+  playerBadgeThinking: {
+    borderColor: 'rgba(147, 112, 219, 0.5)',
+    shadowColor: '#9370DB',
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+  },
+  playerBadgeText: {
+    fontSize: typography.xs,
+    fontWeight: typography.bold,
+    color: colors.accent,
+    letterSpacing: 2,
+  },
+  topBar: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: spacing.md,
+    paddingBottom: spacing.sm,
+    zIndex: 100,
+    elevation: 10,
+  },
+  iconButton: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.3)',
+    zIndex: 101,
+    elevation: 11,
+  },
+  iconButtonPressed: {
+    opacity: 0.7,
+  },
+  scenarioTitle: {
+    flex: 1,
+    fontSize: typography.sm,
+    fontWeight: typography.semibold,
+    color: colors.secondary,
+    textAlign: 'center',
+    marginHorizontal: spacing.sm,
+  },
+  feedbackOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.6)',
+    zIndex: 10,
+  },
+  feedbackCard: {
+    ...glass.medium,
+    padding: spacing.lg,
+    borderRadius: borderRadius.lg,
+    marginHorizontal: spacing.xl,
+    borderWidth: 1,
+    borderColor: colors.accent,
+    // Gold glow
+    shadowColor: colors.accent,
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.3,
+    shadowRadius: 20,
+  },
+  feedbackText: {
+    fontSize: typography.md,
+    color: colors.primary,
+    textAlign: 'center',
+    fontStyle: 'italic',
+  },
+  feedbackHint: {
+    fontSize: typography.sm,
+    color: colors.secondary,
+    textAlign: 'center',
+    marginTop: spacing.md,
+    opacity: 0.7,
+  },
+  endingContainer: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    padding: spacing.md,
+    paddingBottom: spacing.xl,
+  },
+  endingCard: {
+    ...glass.medium,
+    borderRadius: borderRadius.lg,
+    padding: spacing.lg,
+    borderWidth: 1,
+    borderColor: colors.accent,
+    alignItems: 'center',
+  },
+  endingTitle: {
+    fontSize: typography.xl,
+    fontWeight: typography.bold,
+    color: colors.accent,
+    marginBottom: spacing.sm,
+    textAlign: 'center',
+  },
+  endingSummary: {
+    fontSize: typography.md,
+    color: colors.secondary,
+    textAlign: 'center',
+    marginBottom: spacing.lg,
+    lineHeight: typography.md * 1.5,
+  },
+  learnPromptButton: {
+    marginBottom: spacing.md,
+    paddingVertical: spacing.sm,
+    paddingHorizontal: spacing.md,
+    borderRadius: borderRadius.md,
+    borderWidth: 1,
+    borderColor: colors.accent + '60',
+    backgroundColor: colors.accent + '15',
+  },
+  learnPromptButtonPressed: {
+    backgroundColor: colors.accent + '30',
+  },
+  learnPromptText: {
+    fontSize: typography.sm,
+    color: colors.accent,
+    textAlign: 'center',
+    fontWeight: typography.medium,
+  },
+  continueButton: {
+    backgroundColor: colors.accent,
+    paddingVertical: spacing.md,
+    paddingHorizontal: spacing.xl,
+    borderRadius: borderRadius.full,
+  },
+  continueButtonPressed: {
+    opacity: 0.9,
+  },
+  continueButtonText: {
+    fontSize: typography.md,
+    fontWeight: typography.bold,
+    color: colors.background,
+  },
+  fallbackContainer: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    padding: spacing.lg,
+    paddingBottom: spacing.xl,
+  },
+  fallbackCard: {
+    ...glass.medium,
+    borderRadius: borderRadius.lg,
+    padding: spacing.lg,
+    alignItems: 'center',
+  },
+  fallbackText: {
+    fontSize: typography.md,
+    color: colors.secondary,
+    fontStyle: 'italic',
+  },
+});

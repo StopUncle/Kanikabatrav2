@@ -1,0 +1,488 @@
+// The Dark Mirror - Prisma Schema
+// Database: Supabase PostgreSQL
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../lib/generated/prisma"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+// ============================================
+// USER PROFILES
+// ============================================
+model Profile {
+  id                 String   @id @default(uuid())
+  email              String   @unique
+  fullName           String?  @map("full_name")
+  avatarUrl          String?  @map("avatar_url")
+  subscriptionTier   SubscriptionTier @default(FREE) @map("subscription_tier")
+  subscriptionStatus String   @default("inactive") @map("subscription_status")
+  stripeCustomerId   String?  @unique @map("stripe_customer_id")
+  createdAt          DateTime @default(now()) @map("created_at")
+  updatedAt          DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  quizResults      QuizResult[]
+  quizPurchases    QuizPurchase[]
+  psychProfile     UserPsychProfile?
+  courseProgress   CourseProgress[]
+  chatMessages     ChatMessage[]
+  coachingBookings CoachingBooking[]
+  dmChannels1      DmChannel[] @relation("DmUser1")
+  dmChannels2      DmChannel[] @relation("DmUser2")
+  directMessages   DirectMessage[]
+  activities       Activity[]
+  followers        Follow[] @relation("Following")
+  following        Follow[] @relation("Followers")
+
+  @@map("profiles")
+}
+
+enum SubscriptionTier {
+  FREE    @map("free")
+  PREMIUM @map("premium")
+  VIP     @map("vip")
+}
+
+// ============================================
+// QUIZZES
+// ============================================
+model Quiz {
+  id               String   @id @default(uuid())
+  slug             String   @unique
+  title            String
+  description      String?
+  icon             String?
+  color            String?
+  questionCount    Int      @default(0) @map("question_count")
+  estimatedMinutes Int      @default(5) @map("estimated_minutes")
+  isPremium        Boolean  @default(false) @map("is_premium")
+  isActive         Boolean  @default(true) @map("is_active")
+  createdAt        DateTime @default(now()) @map("created_at")
+
+  // Premium Quiz Fields
+  tier                 QuizTier @default(FREE)
+  priceCents           Int?     @map("price_cents") // $9.99 = 999
+  contributesToProfile Boolean  @default(false) @map("contributes_to_profile")
+
+  // Relations
+  questions QuizQuestion[]
+  results   QuizResult[]
+  purchases QuizPurchase[]
+
+  @@map("quizzes")
+}
+
+enum QuizTier {
+  FREE    @map("free")
+  PREMIUM @map("premium")
+}
+
+model QuizQuestion {
+  id           String   @id @default(uuid())
+  quizId       String   @map("quiz_id")
+  questionText String   @map("question_text")
+  trait        String?
+  orderIndex   Int      @map("order_index")
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  // Relations
+  quiz    Quiz         @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  options QuizOption[]
+
+  @@map("quiz_questions")
+}
+
+model QuizOption {
+  id         String @id @default(uuid())
+  questionId String @map("question_id")
+  optionText String @map("option_text")
+  scoreValue Int    @default(0) @map("score_value")
+  orderIndex Int    @map("order_index")
+
+  // Relations
+  question QuizQuestion @relation(fields: [questionId], references: [id], onDelete: Cascade)
+
+  @@map("quiz_options")
+}
+
+model QuizResult {
+  id             String   @id @default(uuid())
+  userId         String?  @map("user_id")
+  quizId         String   @map("quiz_id")
+  email          String?
+  name           String?
+  totalScore     Int      @map("total_score")
+  traitScores    Json?    @map("trait_scores")
+  resultCategory String?  @map("result_category")
+  answers        Json?
+  createdAt      DateTime @default(now()) @map("created_at")
+
+  // Premium Result Fields
+  isPremium      Boolean  @default(false) @map("is_premium")
+  scorePercent   Int?     @map("score_percent")
+  percentileRank Int?     @map("percentile_rank") // e.g., "Top 15%" = 85
+  bookInsights   Json?    @map("book_insights") // Array of insight objects
+  feedback       String?  @db.Text
+
+  // Relations
+  user Profile? @relation(fields: [userId], references: [id], onDelete: SetNull)
+  quiz Quiz     @relation(fields: [quizId], references: [id])
+  lead Lead?
+
+  @@map("quiz_results")
+}
+
+// ============================================
+// LEADS (non-logged-in quiz takers)
+// ============================================
+model Lead {
+  id           String   @id @default(uuid())
+  email        String   @unique
+  name         String?
+  source       String   @default("quiz")
+  quizResultId String?  @unique @map("quiz_result_id")
+  metadata     Json?
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  // Relations
+  quizResult QuizResult? @relation(fields: [quizResultId], references: [id])
+
+  @@map("leads")
+}
+
+// ============================================
+// QUIZ PURCHASES (one-off $9.99 purchases)
+// ============================================
+model QuizPurchase {
+  id            String   @id @default(uuid())
+  userId        String   @map("user_id")
+  quizId        String   @map("quiz_id")
+  paypalOrderId String?  @map("paypal_order_id")
+  amountCents   Int      @map("amount_cents") // 999 = $9.99
+  status        String   @default("completed")
+  purchasedAt   DateTime @default(now()) @map("purchased_at")
+
+  // Relations
+  user Profile @relation(fields: [userId], references: [id], onDelete: Cascade)
+  quiz Quiz    @relation(fields: [quizId], references: [id])
+
+  @@unique([userId, quizId])
+  @@map("quiz_purchases")
+}
+
+// ============================================
+// USER PSYCH PROFILE (aggregate dark psychology scores)
+// ============================================
+model UserPsychProfile {
+  id                 String   @id @default(uuid())
+  userId             String   @unique @map("user_id")
+
+  // Aggregate trait scores (0-100 scale, weighted averages)
+  machiavellianism   Float    @default(0)
+  narcissism         Float    @default(0)
+  psychopathy        Float    @default(0)
+  manipulationResist Float    @default(0) @map("manipulation_resist")
+  emotionalArmor     Float    @default(0) @map("emotional_armor")
+  attachmentSecure   Float    @default(0) @map("attachment_secure")
+
+  // Tracking
+  quizzesTaken       Int      @default(0) @map("quizzes_taken")
+  lastUpdated        DateTime @updatedAt @map("last_updated")
+  createdAt          DateTime @default(now()) @map("created_at")
+
+  // Relations
+  user Profile @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("user_psych_profiles")
+}
+
+// ============================================
+// BOOK INSIGHTS (pre-mapped excerpts from Kanika's book)
+// ============================================
+model BookInsight {
+  id               String  @id @default(uuid())
+  traitType        String  @map("trait_type") // machiavellianism, narcissism, etc.
+  scoreRange       String  @map("score_range") // low, moderate, high
+  insightText      String  @db.Text
+  bookChapter      String  @map("book_chapter") // part1, part2, etc.
+  chapterSection   String? @map("chapter_section")
+  actionableAdvice String? @db.Text @map("actionable_advice")
+
+  @@index([traitType, scoreRange])
+  @@map("book_insights")
+}
+
+// ============================================
+// COURSES
+// ============================================
+model Course {
+  id           String    @id @default(uuid())
+  slug         String    @unique
+  title        String
+  description  String?
+  thumbnailUrl String?   @map("thumbnail_url")
+  priceCents   Int?      @map("price_cents")
+  isFree       Boolean   @default(false) @map("is_free")
+  tierRequired SubscriptionTier @default(PREMIUM) @map("tier_required")
+  totalMinutes Int       @default(0) @map("total_minutes")
+  lessonCount  Int       @default(0) @map("lesson_count")
+  isPublished  Boolean   @default(false) @map("is_published")
+  createdAt    DateTime  @default(now()) @map("created_at")
+  publishedAt  DateTime? @map("published_at")
+
+  // Relations
+  modules CourseModule[]
+
+  @@map("courses")
+}
+
+model CourseModule {
+  id          String  @id @default(uuid())
+  courseId    String  @map("course_id")
+  title       String
+  description String?
+  orderIndex  Int     @map("order_index")
+
+  // Relations
+  course  Course         @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  lessons CourseLesson[]
+
+  @@map("course_modules")
+}
+
+model CourseLesson {
+  id              String  @id @default(uuid())
+  moduleId        String  @map("module_id")
+  title           String
+  description     String?
+  videoUrl        String? @map("video_url")
+  durationSeconds Int     @default(0) @map("duration_seconds")
+  orderIndex      Int     @map("order_index")
+  isPreview       Boolean @default(false) @map("is_preview")
+
+  // Relations
+  module   CourseModule     @relation(fields: [moduleId], references: [id], onDelete: Cascade)
+  progress CourseProgress[]
+
+  @@map("course_lessons")
+}
+
+model CourseProgress {
+  id             String    @id @default(uuid())
+  userId         String    @map("user_id")
+  lessonId       String    @map("lesson_id")
+  completed      Boolean   @default(false)
+  watchedSeconds Int       @default(0) @map("watched_seconds")
+  completedAt    DateTime? @map("completed_at")
+
+  // Relations
+  user   Profile      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  lesson CourseLesson @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, lessonId])
+  @@map("course_progress")
+}
+
+// ============================================
+// CHAT ROOMS
+// ============================================
+model ChatRoom {
+  id          String   @id @default(uuid())
+  name        String
+  description String?
+  icon        String   @default("💬")
+  isPublic    Boolean  @default(true) @map("is_public")
+  isVipOnly   Boolean  @default(false) @map("is_vip_only")
+  memberCount Int      @default(0) @map("member_count")
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  // Relations
+  messages ChatMessage[]
+
+  @@map("chat_rooms")
+}
+
+model ChatMessage {
+  id        String   @id @default(uuid())
+  roomId    String   @map("room_id")
+  userId    String   @map("user_id")
+  content   String
+  replyToId String?  @map("reply_to")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  // Relations
+  room    ChatRoom       @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  user    Profile        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  replyTo ChatMessage?   @relation("MessageReplies", fields: [replyToId], references: [id])
+  replies ChatMessage[]  @relation("MessageReplies")
+  reactions MessageReaction[]
+
+  @@map("chat_messages")
+}
+
+model MessageReaction {
+  id        String   @id @default(uuid())
+  messageId String   @map("message_id")
+  userId    String   @map("user_id")
+  emoji     String
+  createdAt DateTime @default(now()) @map("created_at")
+
+  // Relations
+  message ChatMessage @relation(fields: [messageId], references: [id], onDelete: Cascade)
+
+  @@unique([messageId, userId, emoji])
+  @@map("message_reactions")
+}
+
+// ============================================
+// DIRECT MESSAGES
+// ============================================
+model DmChannel {
+  id        String   @id @default(uuid())
+  user1Id   String   @map("user1_id")
+  user2Id   String   @map("user2_id")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  // Relations
+  user1    Profile         @relation("DmUser1", fields: [user1Id], references: [id], onDelete: Cascade)
+  user2    Profile         @relation("DmUser2", fields: [user2Id], references: [id], onDelete: Cascade)
+  messages DirectMessage[]
+
+  @@unique([user1Id, user2Id])
+  @@map("dm_channels")
+}
+
+model DirectMessage {
+  id        String   @id @default(uuid())
+  channelId String   @map("channel_id")
+  senderId  String   @map("sender_id")
+  content   String
+  readAt    DateTime? @map("read_at")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  // Relations
+  channel DmChannel @relation(fields: [channelId], references: [id], onDelete: Cascade)
+  sender  Profile   @relation(fields: [senderId], references: [id], onDelete: Cascade)
+
+  @@map("direct_messages")
+}
+
+// ============================================
+// COACHING
+// ============================================
+model CoachingPackage {
+  id                     String   @id @default(uuid())
+  slug                   String   @unique
+  name                   String
+  description            String?
+  priceCents             Int      @map("price_cents")
+  sessionCount           Int      @map("session_count")
+  sessionDurationMinutes Int      @map("session_duration_minutes")
+  features               Json?
+  isActive               Boolean  @default(true) @map("is_active")
+  isPopular              Boolean  @default(false) @map("is_popular")
+
+  // Relations
+  bookings CoachingBooking[]
+
+  @@map("coaching_packages")
+}
+
+model CoachingBooking {
+  id                    String        @id @default(uuid())
+  userId                String        @map("user_id")
+  packageId             String        @map("package_id")
+  stripePaymentIntentId String?       @map("stripe_payment_intent_id")
+  status                BookingStatus @default(PENDING)
+  totalSessions         Int           @map("total_sessions")
+  sessionsUsed          Int           @default(0) @map("sessions_used")
+  createdAt             DateTime      @default(now()) @map("created_at")
+
+  // Relations
+  user     Profile          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  package  CoachingPackage  @relation(fields: [packageId], references: [id])
+  sessions CoachingSession[]
+
+  @@map("coaching_bookings")
+}
+
+enum BookingStatus {
+  PENDING   @map("pending")
+  CONFIRMED @map("confirmed")
+  COMPLETED @map("completed")
+  CANCELLED @map("cancelled")
+}
+
+model CoachingSession {
+  id          String        @id @default(uuid())
+  bookingId   String        @map("booking_id")
+  scheduledAt DateTime      @map("scheduled_at")
+  status      SessionStatus @default(SCHEDULED)
+  notes       String?
+  createdAt   DateTime      @default(now()) @map("created_at")
+
+  // Relations
+  booking CoachingBooking @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+
+  @@map("coaching_sessions")
+}
+
+enum SessionStatus {
+  SCHEDULED @map("scheduled")
+  COMPLETED @map("completed")
+  CANCELLED @map("cancelled")
+  NO_SHOW   @map("no_show")
+}
+
+// ============================================
+// ACTIVITY FEED
+// ============================================
+model Activity {
+  id          String       @id @default(uuid())
+  userId      String       @map("user_id")
+  type        ActivityType
+  entityId    String?      @map("entity_id")
+  entityTitle String?      @map("entity_title")
+  metadata    Json?
+  createdAt   DateTime     @default(now()) @map("created_at")
+
+  // Relations
+  user Profile @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([createdAt(sort: Desc)])
+  @@map("activities")
+}
+
+enum ActivityType {
+  QUIZ_COMPLETED    @map("quiz_completed")
+  COURSE_STARTED    @map("course_started")
+  COURSE_COMPLETED  @map("course_completed")
+  LESSON_COMPLETED  @map("lesson_completed")
+  USER_JOINED       @map("user_joined")
+  BADGE_EARNED      @map("badge_earned")
+}
+
+// ============================================
+// FOLLOWS
+// ============================================
+model Follow {
+  id          String   @id @default(uuid())
+  followerId  String   @map("follower_id")
+  followingId String   @map("following_id")
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  // Relations
+  follower  Profile @relation("Followers", fields: [followerId], references: [id], onDelete: Cascade)
+  following Profile @relation("Following", fields: [followingId], references: [id], onDelete: Cascade)
+
+  @@unique([followerId, followingId])
+  @@index([followerId])
+  @@index([followingId])
+  @@map("follows")
+}

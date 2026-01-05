@@ -1,0 +1,1507 @@
+{
+  "analysis": {
+    "totalScenes": 125,
+    "choiceScenes": 33,
+    "transitionScenes": 78,
+    "endingScenes": 14,
+    "reachableScenes": 125,
+    "orphans": [],
+    "deadEnds": [],
+    "brokenLinks": []
+  },
+  "scenes": [
+    {
+      "id": "scene-1-arrival",
+      "type": "choice",
+      "file": "arrival.ts",
+      "next": null,
+      "choices": [
+        {
+          "id": "choice-1a",
+          "nextSceneId": "scene-1a-eager",
+          "isOptimal": false
+        },
+        {
+          "id": "choice-1b",
+          "nextSceneId": "scene-1b-casual",
+          "isOptimal": true
+        },
+        {
+          "id": "choice-1c",
+          "nextSceneId": "scene-1c-confident",
+          "isOptimal": true
+        },
+        {
+          "id": "choice-1d",
+          "nextSceneId": "scene-1d-joke",
+          "isOptimal": false
+        }
+      ]
+    },
+    {
+      "id": "scene-1a-eager",
+      "type": "transition",
+      "file": "arrival.ts",
+      "next": "scene-2-welcome-drinks",
+      "choices": []
+    },
+    {
+      "id": "scene-1b-casual",
+      "type": "transition",
+      "file": "arrival.ts",
+      "next": "scene-2-welcome-drinks",
+      "choices": []
+    },
+    {
+      "id": "scene-1c-confident",
+      "type": "transition",
+      "file": "arrival.ts",
+      "next": "scene-2-welcome-drinks",
+      "choices": []
+    },
+    {
+      "id": "scene-1d-joke",
+      "type": "transition",
+      "file": "arrival.ts",
+      "next": "scene-2-welcome-drinks",
+      "choices": []
+    },
+    {
+      "id": "scene-2-welcome-drinks",
+      "type": "choice",
+      "file": "welcome-drinks.ts",
+      "next": null,
+      "choices": [
+        {
+          "id": "choice-2a",
+          "nextSceneId": "scene-3a-sophia-separates",
+          "isOptimal": false
+        },
+        {
+          "id": "choice-2b",
+          "nextSceneId": "scene-3b-womens-circle",
+          "isOptimal": true
+        },
+        {
+          "id": "choice-2c",
+          "nextSceneId": "scene-3c-lily-side",
+          "isOptimal": true
+        },
+        {
+          "id": "choice-2d",
+          "nextSceneId": "scene-3d-marcus-test",
+          "isOptimal": false
+        }
+      ]
+    },
+    {
+      "id": "scene-3a-sophia-separates",
+      "type": "choice",
+      "file": "welcome-drinks.ts",
+      "next": null,
+      "choices": [
+        {
+          "id": "choice-3a-1",
+          "nextSceneId": "scene-4-sophia-interrogation",
+          "isOptimal": false
+        },
+        {
+          "id": "choice-3a-2",
+          "nextSceneId": "scene-4-sophia-interrogation",
+          "isOptimal": false
+        },
+        {
+          "id": "choice-3a-3",
+          "nextSceneId": "scene-3d-marcus-test",
+          "isOptimal": false
+        }
+      ]
+    },
+    {
+      "id": "scene-3b-womens-circle",
+      "type": "choice",
+      "file": "welcome-drinks.ts",
+      "next": null,
+      "choices": [
+        {
+          "id": "choice-3b-1",
+          "nextSceneId": "scene-5-danielle-probe",
+          "isOptimal": true
+        },
+        {
+          "id": "choice-3b-2",
+          "nextSceneId": "scene-5-danielle-probe",
+          "isOptimal": false
+        },
+        {
+          "id": "choice-3b-3",
+          "nextSceneId": "scene-6-confrontation-active",
+          "isOptimal": false
+        },
+        {
+          "id": "choice-3b-4",
+          "nextSceneId": "scene-3a-sophia-separates",
+          "isOptimal": false
+        }
+      ]
+    },
+    {
+      "id": "scene-3c-lily-side",
+      "type": "choice",
+      "file": "welcome-drinks.ts",
+      "next": null,
+      "choices": [
+        {
+          "id": "choice-3c-1",
+          "nextSceneId": "scene-3c-lily-explains",
+          "isOptimal": true
+        },
+        {
+          "id": "choice-3c-2",
+          "nextSceneId": "scene-3c-lily-intel",
+          "isOptimal": true
+        },
+        {
+          "id": "choice-3c-3",
+          "nextSceneId": "scene-5-danielle-probe",
+          "isOptimal": false
+        }
+      ]
+    },
+    {
+      "id": "scene-3c-lily-explains",
+      "type": "transition",
+      "file": "welcome-drinks.ts",
+      "next": "scene-4-sophia-interrogation",
+      "choices": []
+    },
+    {
+      "id": "scene-3c-lily-intel",
+      "type": "transition",
+      "file": "welcome-drinks.ts",
+      "next": "scene-5-danielle-probe",
+      "choices": []
+    },
+    {
+      "id": "scene-3d-marcus-test",
+      "type": "choice",
+      "file": "welcome-drinks.ts",
+      "next": null,
+      "choices": [
+        {
+          "id": "choice-3d-1",
+          "nextSceneId": "scene-3d-shot-taken",
+          "isOptimal": false
+        },
+        {
+          "id": "choice-3d-2",
+          "nextSceneId": "scene-3d-shot-declined",
+          "isOptimal": false
+        },
+        {
+          "id": "choice-3d-3",
+          "nextSceneId": "scene-3d-drinking-game",
+          "isOptimal": true
+        },
+        {
+          "id": "choice-3d-4",
+          "nextSceneId": "scene-3d-deflect-intel",
+          "isOptimal": true
+        }
+      ]
+    },
+    {
+      "id": "scene-3d-shot-taken",
+      "type": "transition",
+      "file": "welcome-drinks.ts",
+      "next": "scene-7-welcome-dinner",
+      "choices": []
+    },
+    {
+      "id": "scene-3d-shot-declined",
+      "type": "transition",
+      "file": "welcome-drinks.ts",
+      "next": "scene-7-welcome-dinner",
+      "choices": []
+    },
+    {
+      "id": "scene-3d-drinking-game",
+      "type": "transition",
+      "file": "welcome-drinks.ts",
+      "next": "scene-7-welcome-dinner",
+      "choices": []
+    },
+    {
+      "id": "scene-3d-deflect-intel",
+      "type": "transition",
+      "file": "welcome-drinks.ts",
+      "next": "scene-5-danielle-probe",
+      "choices": []
+    },
+    {
+      "id": "scene-7-welcome-dinner",
+      "type": "transition",
+      "file": "dinner.ts",
+      "next": "scene-8-seating-trap",
+      "choices": []
+    },
+    {
+      "id": "scene-8-seating-trap",
+      "type": "choice",
+      "file": "dinner.ts",
+      "next": null,
+      "choices": [
+        {
+          "id": "choice-8-1",
+          "nextSceneId": "scene-9-toast-setup",
+          "isOptimal": false
+        },
+        {
+          "id": "choice-8-2",
+          "nextSceneId": "scene-9-toast-setup",
+          "isOptimal": false
+        },
+        {
+          "id": "choice-8-3",
+          "nextSceneId": "scene-9-toast-setup",
+          "isOptimal": true
+        },
+        {
+          "id": "choice-8-4",
+          "nextSceneId": "scene-8-intel-gain",
+          "isOptimal": true
+        }
+      ]
+    },
+    {
+      "id": "scene-8-intel-gain",
+      "type": "transition",
+      "file": "dinner.ts",
+      "next": "scene-9-toast-setup",
+      "choices": []
+    },
+    {
+      "id": "scene-9-toast-setup",
+      "type": "choice",
+      "file": "dinner.ts",
+      "next": null,
+      "choices": [
+        {
+          "id": "choice-9-1",
+          "nextSceneId": "scene-10-after-toast-absorb",
+          "isOptimal": false
+        },
+        {
+          "id": "choice-9-2",
+          "nextSceneId": "scene-9b-bathroom",
+          "isOptimal": true
+        },
+        {
+          "id": "choice-9-3",
+          "nextSceneId": "scene-9c-ethan-confrontation",
+          "isOptimal": true
+        },
+        {
+          "id": "choice-9-4",
+          "nextSceneId": "scene-9d-your-toast",
+          "isOptimal": false
+        }
+      ]
+    },
+    {
+      "id": "scene-10-after-toast-absorb",
+      "type": "transition",
+      "file": "dinner.ts",
+      "next": "scene-day1-end",
+      "choices": []
+    },
+    {
+      "id": "scene-9b-bathroom",
+      "type": "choice",
+      "file": "dinner.ts",
+      "next": null,
+      "choices": [
+        {
+          "id": "choice-9b-1",
+          "nextSceneId": "scene-9b-lily-ally",
+          "isOptimal": true
+        },
+        {
+          "id": "choice-9b-2",
+          "nextSceneId": "scene-9b-lily-disappointed",
+          "isOptimal": false
+        },
+        {
+          "id": "choice-9b-3",
+          "nextSceneId": "scene-9b-lily-intel",
+          "isOptimal": false
+        }
+      ]
+    },
+    {
+      "id": "scene-9b-lily-ally",
+      "type": "transition",
+      "file": "dinner.ts",
+      "next": "scene-day1-end",
+      "choices": []
+    },
+    {
+      "id": "scene-9b-lily-disappointed",
+      "type": "transition",
+      "file": "dinner.ts",
+      "next": "scene-day1-end",
+      "choices": []
+    },
+    {
+      "id": "scene-9b-lily-intel",
+      "type": "transition",
+      "file": "dinner.ts",
+      "next": "scene-day1-end",
+      "choices": []
+    },
+    {
+      "id": "scene-9c-ethan-confrontation",
+      "type": "choice",
+      "file": "dinner.ts",
+      "next": null,
+      "choices": [
+        {
+          "id": "choice-9c-1",
+          "nextSceneId": "scene-9c-accept",
+          "isOptimal": false
+        },
+        {
+          "id": "choice-9c-2",
+          "nextSceneId": "scene-9c-pushback",
+          "isOptimal": true
+        },
+        {
+          "id": "choice-9c-3",
+          "nextSceneId": "scene-9c-request",
+          "isOptimal": true
+        },
+        {
+          "id": "choice-9c-4",
+          "nextSceneId": "scene-9c-ultimatum",
+          "isOptimal": false
+        }
+      ]
+    },
+    {
+      "id": "scene-9c-accept",
+      "type": "transition",
+      "file": "dinner.ts",
+      "next": "scene-day1-end",
+      "choices": []
+    },
+    {
+      "id": "scene-9c-pushback",
+      "type": "transition",
+      "file": "dinner.ts",
+      "next": "scene-day1-end",
+      "choices": []
+    },
+    {
+      "id": "scene-9c-request",
+      "type": "transition",
+      "file": "dinner.ts",
+      "next": "scene-day1-end",
+      "choices": []
+    },
+    {
+      "id": "scene-9c-ultimatum",
+      "type": "transition",
+      "file": "dinner.ts",
+      "next": "scene-day1-end",
+      "choices": []
+    },
+    {
+      "id": "scene-9d-your-toast",
+      "type": "choice",
+      "file": "dinner.ts",
+      "next": null,
+      "choices": [
+        {
+          "id": "choice-9d-1",
+          "nextSceneId": "scene-9d-graceful",
+          "isOptimal": true
+        },
+        {
+          "id": "choice-9d-2",
+          "nextSceneId": "scene-9d-pointed",
+          "isOptimal": false
+        }
+      ]
+    },
+    {
+      "id": "scene-9d-graceful",
+      "type": "transition",
+      "file": "dinner.ts",
+      "next": "scene-day1-end",
+      "choices": []
+    },
+    {
+      "id": "scene-9d-pointed",
+      "type": "transition",
+      "file": "dinner.ts",
+      "next": "scene-day1-end",
+      "choices": []
+    },
+    {
+      "id": "scene-day1-end",
+      "type": "transition",
+      "file": "dinner.ts",
+      "next": "scene-13-morning",
+      "choices": []
+    },
+    {
+      "id": "scene-4-sophia-interrogation",
+      "type": "choice",
+      "file": "interrogation.ts",
+      "next": null,
+      "choices": [
+        {
+          "id": "choice-4-1",
+          "nextSceneId": "scene-4-sophia-pushback",
+          "isOptimal": false
+        },
+        {
+          "id": "choice-4-2",
+          "nextSceneId": "scene-4-sophia-validation",
+          "isOptimal": true
+        },
+        {
+          "id": "choice-4-3",
+          "nextSceneId": "scene-4-sophia-reveal",
+          "isOptimal": true
+        },
+        {
+          "id": "choice-4-4",
+          "nextSceneId": "scene-4-sophia-boundary",
+          "isOptimal": false
+        }
+      ]
+    },
+    {
+      "id": "scene-4-sophia-pushback",
+      "type": "transition",
+      "file": "interrogation.ts",
+      "next": "scene-5-danielle-probe",
+      "choices": []
+    },
+    {
+      "id": "scene-4-sophia-validation",
+      "type": "transition",
+      "file": "interrogation.ts",
+      "next": "scene-5-danielle-probe",
+      "choices": []
+    },
+    {
+      "id": "scene-4-sophia-reveal",
+      "type": "transition",
+      "file": "interrogation.ts",
+      "next": "scene-5-danielle-probe",
+      "choices": []
+    },
+    {
+      "id": "scene-4-sophia-boundary",
+      "type": "transition",
+      "file": "interrogation.ts",
+      "next": "scene-5-danielle-probe",
+      "choices": []
+    },
+    {
+      "id": "scene-5-danielle-probe",
+      "type": "choice",
+      "file": "interrogation.ts",
+      "next": null,
+      "choices": [
+        {
+          "id": "choice-5-1",
+          "nextSceneId": "scene-5-danielle-vague",
+          "isOptimal": false
+        },
+        {
+          "id": "choice-5-2",
+          "nextSceneId": "scene-5-danielle-open",
+          "isOptimal": false
+        },
+        {
+          "id": "choice-5-3",
+          "nextSceneId": "scene-5-danielle-reverse",
+          "isOptimal": true
+        },
+        {
+          "id": "choice-5-4",
+          "nextSceneId": "scene-5-danielle-territorial",
+          "isOptimal": false
+        }
+      ]
+    },
+    {
+      "id": "scene-5-danielle-vague",
+      "type": "transition",
+      "file": "interrogation.ts",
+      "next": "scene-7-welcome-dinner",
+      "choices": []
+    },
+    {
+      "id": "scene-5-danielle-open",
+      "type": "transition",
+      "file": "interrogation.ts",
+      "next": "scene-7-welcome-dinner",
+      "choices": []
+    },
+    {
+      "id": "scene-5-danielle-reverse",
+      "type": "choice",
+      "file": "interrogation.ts",
+      "next": null,
+      "choices": [
+        {
+          "id": "choice-5-reverse-1",
+          "nextSceneId": "scene-7-welcome-dinner",
+          "isOptimal": false
+        },
+        {
+          "id": "choice-5-reverse-2",
+          "nextSceneId": "scene-7-welcome-dinner",
+          "isOptimal": true
+        },
+        {
+          "id": "choice-5-reverse-3",
+          "nextSceneId": "scene-5-danielle-confrontation",
+          "isOptimal": true
+        }
+      ]
+    },
+    {
+      "id": "scene-5-danielle-territorial",
+      "type": "transition",
+      "file": "interrogation.ts",
+      "next": "scene-7-welcome-dinner",
+      "choices": []
+    },
+    {
+      "id": "scene-5-danielle-confrontation",
+      "type": "transition",
+      "file": "interrogation.ts",
+      "next": "scene-7-welcome-dinner",
+      "choices": []
+    },
+    {
+      "id": "scene-6-confrontation-active",
+      "type": "transition",
+      "file": "interrogation.ts",
+      "next": "scene-7-welcome-dinner",
+      "choices": []
+    },
+    {
+      "id": "scene-13-morning",
+      "type": "choice",
+      "file": "morning.ts",
+      "next": null,
+      "choices": [
+        {
+          "id": "choice-13-1",
+          "nextSceneId": "scene-14-lily-coffee",
+          "isOptimal": true
+        },
+        {
+          "id": "choice-13-2",
+          "nextSceneId": "scene-13-priya-call",
+          "isOptimal": false
+        },
+        {
+          "id": "choice-13-3",
+          "nextSceneId": "scene-13-ethan-morning",
+          "isOptimal": false
+        }
+      ]
+    },
+    {
+      "id": "scene-13-priya-call",
+      "type": "choice",
+      "file": "morning.ts",
+      "next": null,
+      "choices": [
+        {
+          "id": "choice-priya-1",
+          "nextSceneId": "scene-15-rehearsal",
+          "isOptimal": true
+        },
+        {
+          "id": "choice-priya-2",
+          "nextSceneId": "scene-15-rehearsal",
+          "isOptimal": true
+        },
+        {
+          "id": "choice-priya-3",
+          "nextSceneId": "scene-13-priya-pushback",
+          "isOptimal": false
+        }
+      ]
+    },
+    {
+      "id": "scene-13-priya-pushback",
+      "type": "transition",
+      "file": "morning.ts",
+      "next": "scene-15-rehearsal",
+      "choices": []
+    },
+    {
+      "id": "scene-13-ethan-morning",
+      "type": "choice",
+      "file": "morning.ts",
+      "next": null,
+      "choices": [
+        {
+          "id": "choice-ethan-morning-1",
+          "nextSceneId": "scene-13-ethan-commits",
+          "isOptimal": false
+        },
+        {
+          "id": "choice-ethan-morning-2",
+          "nextSceneId": "scene-15-rehearsal",
+          "isOptimal": true
+        },
+        {
+          "id": "choice-ethan-morning-3",
+          "nextSceneId": "scene-15-rehearsal",
+          "isOptimal": true
+        }
+      ]
+    },
+    {
+      "id": "scene-13-ethan-commits",
+      "type": "transition",
+      "file": "morning.ts",
+      "next": "scene-15-rehearsal",
+      "choices": []
+    },
+    {
+      "id": "scene-14-lily-coffee",
+      "type": "choice",
+      "file": "morning.ts",
+      "next": null,
+      "choices": [
+        {
+          "id": "choice-14-1",
+          "nextSceneId": "scene-14-intel-danielle",
+          "isOptimal": false
+        },
+        {
+          "id": "choice-14-2",
+          "nextSceneId": "scene-14-intel-sophia",
+          "isOptimal": true
+        },
+        {
+          "id": "choice-14-3",
+          "nextSceneId": "scene-14-strategy",
+          "isOptimal": true
+        },
+        {
+          "id": "choice-14-4",
+          "nextSceneId": "scene-14-lily-motivation",
+          "isOptimal": false
+        }
+      ]
+    },
+    {
+      "id": "scene-14-intel-danielle",
+      "type": "transition",
+      "file": "morning.ts",
+      "next": "scene-14-strategy",
+      "choices": []
+    },
+    {
+      "id": "scene-14-intel-sophia",
+      "type": "transition",
+      "file": "morning.ts",
+      "next": "scene-14-strategy",
+      "choices": []
+    },
+    {
+      "id": "scene-14-strategy",
+      "type": "transition",
+      "file": "morning.ts",
+      "next": "scene-15-rehearsal",
+      "choices": []
+    },
+    {
+      "id": "scene-14-lily-motivation",
+      "type": "transition",
+      "file": "morning.ts",
+      "next": "scene-14-strategy",
+      "choices": []
+    },
+    {
+      "id": "scene-15-rehearsal",
+      "type": "transition",
+      "file": "rehearsal.ts",
+      "next": "scene-16-pairing-dig",
+      "choices": []
+    },
+    {
+      "id": "scene-16-pairing-dig",
+      "type": "choice",
+      "file": "rehearsal.ts",
+      "next": null,
+      "choices": [
+        {
+          "id": "choice-16-1",
+          "nextSceneId": "scene-16-absorb",
+          "isOptimal": true
+        },
+        {
+          "id": "choice-16-2",
+          "nextSceneId": "scene-16-stone",
+          "isOptimal": true
+        },
+        {
+          "id": "choice-16-3",
+          "nextSceneId": "scene-16-exit",
+          "isOptimal": false
+        },
+        {
+          "id": "choice-16-4",
+          "nextSceneId": "scene-16-counter",
+          "isOptimal": false
+        }
+      ]
+    },
+    {
+      "id": "scene-16-absorb",
+      "type": "transition",
+      "file": "rehearsal.ts",
+      "next": "scene-17-rehearsal-continues",
+      "choices": []
+    },
+    {
+      "id": "scene-16-stone",
+      "type": "transition",
+      "file": "rehearsal.ts",
+      "next": "scene-17-rehearsal-continues",
+      "choices": []
+    },
+    {
+      "id": "scene-16-exit",
+      "type": "choice",
+      "file": "rehearsal.ts",
+      "next": null,
+      "choices": [
+        {
+          "id": "choice-16-exit-1",
+          "nextSceneId": "scene-16b-danielle-truce",
+          "isOptimal": true
+        },
+        {
+          "id": "choice-16-exit-2",
+          "nextSceneId": "scene-16b-danielle-truth",
+          "isOptimal": true
+        },
+        {
+          "id": "choice-16-exit-3",
+          "nextSceneId": "scene-16b-danielle-cold",
+          "isOptimal": false
+        }
+      ]
+    },
+    {
+      "id": "scene-16-counter",
+      "type": "transition",
+      "file": "rehearsal.ts",
+      "next": "scene-17-rehearsal-continues",
+      "choices": []
+    },
+    {
+      "id": "scene-16b-danielle-truce",
+      "type": "transition",
+      "file": "rehearsal.ts",
+      "next": "scene-17-rehearsal-continues",
+      "choices": []
+    },
+    {
+      "id": "scene-16b-danielle-truth",
+      "type": "transition",
+      "file": "rehearsal.ts",
+      "next": "scene-17-rehearsal-continues",
+      "choices": []
+    },
+    {
+      "id": "scene-16b-danielle-cold",
+      "type": "transition",
+      "file": "rehearsal.ts",
+      "next": "scene-17-rehearsal-continues",
+      "choices": []
+    },
+    {
+      "id": "scene-17-rehearsal-continues",
+      "type": "transition",
+      "file": "rehearsal.ts",
+      "next": "scene-18-rehearsal-dinner",
+      "choices": []
+    },
+    {
+      "id": "scene-18-rehearsal-dinner",
+      "type": "transition",
+      "file": "rehearsal-dinner.ts",
+      "next": "scene-19-slideshow",
+      "choices": []
+    },
+    {
+      "id": "scene-19-slideshow",
+      "type": "choice",
+      "file": "rehearsal-dinner.ts",
+      "next": null,
+      "choices": [
+        {
+          "id": "choice-19-1",
+          "nextSceneId": "scene-19-ignore",
+          "isOptimal": false
+        },
+        {
+          "id": "choice-19-2",
+          "nextSceneId": "scene-19-exit",
+          "isOptimal": true
+        },
+        {
+          "id": "choice-19-3",
+          "nextSceneId": "scene-19-roast",
+          "isOptimal": true
+        },
+        {
+          "id": "choice-19-4",
+          "nextSceneId": "scene-19-stare",
+          "isOptimal": false
+        }
+      ]
+    },
+    {
+      "id": "scene-19-ignore",
+      "type": "transition",
+      "file": "rehearsal-dinner.ts",
+      "next": "scene-20-marcus-speech",
+      "choices": []
+    },
+    {
+      "id": "scene-19-exit",
+      "type": "choice",
+      "file": "rehearsal-dinner.ts",
+      "next": null,
+      "choices": [
+        {
+          "id": "choice-19-exit-1",
+          "nextSceneId": "scene-19-exit-confront",
+          "isOptimal": true
+        },
+        {
+          "id": "choice-19-exit-2",
+          "nextSceneId": "scene-19-exit-space",
+          "isOptimal": false
+        },
+        {
+          "id": "choice-19-exit-3",
+          "nextSceneId": "scene-19-exit-cold",
+          "isOptimal": false
+        }
+      ]
+    },
+    {
+      "id": "scene-19-exit-confront",
+      "type": "transition",
+      "file": "rehearsal-dinner.ts",
+      "next": "scene-20-marcus-speech",
+      "choices": []
+    },
+    {
+      "id": "scene-19-exit-space",
+      "type": "transition",
+      "file": "rehearsal-dinner.ts",
+      "next": "scene-20-marcus-speech",
+      "choices": []
+    },
+    {
+      "id": "scene-19-exit-cold",
+      "type": "transition",
+      "file": "rehearsal-dinner.ts",
+      "next": "scene-20-marcus-speech",
+      "choices": []
+    },
+    {
+      "id": "scene-19-roast",
+      "type": "transition",
+      "file": "rehearsal-dinner.ts",
+      "next": "scene-20-marcus-speech",
+      "choices": []
+    },
+    {
+      "id": "scene-19-stare",
+      "type": "transition",
+      "file": "rehearsal-dinner.ts",
+      "next": "scene-20-marcus-speech",
+      "choices": []
+    },
+    {
+      "id": "scene-20-marcus-speech",
+      "type": "choice",
+      "file": "rehearsal-dinner.ts",
+      "next": null,
+      "choices": [
+        {
+          "id": "choice-20-1",
+          "nextSceneId": "scene-20-absorb",
+          "isOptimal": false
+        },
+        {
+          "id": "choice-20-2",
+          "nextSceneId": "scene-20-walkout",
+          "isOptimal": true
+        },
+        {
+          "id": "choice-20-3",
+          "nextSceneId": "scene-20-respond",
+          "isOptimal": true
+        },
+        {
+          "id": "choice-20-4",
+          "nextSceneId": "scene-20-veiled",
+          "isOptimal": false
+        }
+      ]
+    },
+    {
+      "id": "scene-20-absorb",
+      "type": "transition",
+      "file": "rehearsal-dinner.ts",
+      "next": "scene-day2-end",
+      "choices": []
+    },
+    {
+      "id": "scene-20-respond",
+      "type": "transition",
+      "file": "rehearsal-dinner.ts",
+      "next": "scene-day2-end",
+      "choices": []
+    },
+    {
+      "id": "scene-20-veiled",
+      "type": "transition",
+      "file": "rehearsal-dinner.ts",
+      "next": "scene-day2-end",
+      "choices": []
+    },
+    {
+      "id": "scene-20-walkout",
+      "type": "transition",
+      "file": "rehearsal-dinner.ts",
+      "next": "scene-21-private-confrontation",
+      "choices": []
+    },
+    {
+      "id": "scene-21-private-confrontation",
+      "type": "choice",
+      "file": "rehearsal-dinner.ts",
+      "next": null,
+      "choices": [
+        {
+          "id": "choice-21-1",
+          "nextSceneId": "scene-21-truth",
+          "isOptimal": false
+        },
+        {
+          "id": "choice-21-2",
+          "nextSceneId": "scene-21-acknowledgment",
+          "isOptimal": false
+        },
+        {
+          "id": "choice-21-3",
+          "nextSceneId": "scene-21-defend-request",
+          "isOptimal": true
+        },
+        {
+          "id": "choice-21-4",
+          "nextSceneId": "scene-21-ultimatum",
+          "isOptimal": false
+        }
+      ]
+    },
+    {
+      "id": "scene-21-defend-request",
+      "type": "transition",
+      "file": "rehearsal-dinner.ts",
+      "next": "scene-day2-end",
+      "choices": []
+    },
+    {
+      "id": "scene-21-acknowledgment",
+      "type": "transition",
+      "file": "rehearsal-dinner.ts",
+      "next": "scene-day2-end",
+      "choices": []
+    },
+    {
+      "id": "scene-21-ultimatum",
+      "type": "transition",
+      "file": "rehearsal-dinner.ts",
+      "next": "scene-day2-end",
+      "choices": []
+    },
+    {
+      "id": "scene-21-truth",
+      "type": "transition",
+      "file": "rehearsal-dinner.ts",
+      "next": "scene-day2-end",
+      "choices": []
+    },
+    {
+      "id": "scene-day2-end",
+      "type": "transition",
+      "file": "rehearsal-dinner.ts",
+      "next": "scene-26-wedding-morning",
+      "choices": []
+    },
+    {
+      "id": "scene-26-wedding-morning",
+      "type": "choice",
+      "file": "morning.ts",
+      "next": null,
+      "choices": [
+        {
+          "id": "choice-26-1",
+          "nextSceneId": "scene-26-lily-morning",
+          "isOptimal": true
+        },
+        {
+          "id": "choice-26-2",
+          "nextSceneId": "scene-27-sophia-ultimatum",
+          "isOptimal": true
+        },
+        {
+          "id": "choice-26-3",
+          "nextSceneId": "scene-26-ethan-morning",
+          "isOptimal": false
+        }
+      ]
+    },
+    {
+      "id": "scene-26-lily-morning",
+      "type": "transition",
+      "file": "morning.ts",
+      "next": "scene-29-ceremony",
+      "choices": []
+    },
+    {
+      "id": "scene-26-ethan-morning",
+      "type": "transition",
+      "file": "morning.ts",
+      "next": "scene-29-ceremony",
+      "choices": []
+    },
+    {
+      "id": "scene-27-sophia-ultimatum",
+      "type": "choice",
+      "file": "morning.ts",
+      "next": null,
+      "choices": [
+        {
+          "id": "choice-27-1",
+          "nextSceneId": "scene-27-counter",
+          "isOptimal": true
+        },
+        {
+          "id": "choice-27-2",
+          "nextSceneId": "scene-27-clarify",
+          "isOptimal": false
+        },
+        {
+          "id": "choice-27-3",
+          "nextSceneId": "scene-27-psychology",
+          "isOptimal": false
+        },
+        {
+          "id": "choice-27-4",
+          "nextSceneId": "scene-27-silent-exit",
+          "isOptimal": false
+        }
+      ]
+    },
+    {
+      "id": "scene-27-counter",
+      "type": "transition",
+      "file": "morning.ts",
+      "next": "scene-29-ceremony",
+      "choices": []
+    },
+    {
+      "id": "scene-27-clarify",
+      "type": "choice",
+      "file": "morning.ts",
+      "next": null,
+      "choices": [
+        {
+          "id": "choice-27-clarify-1",
+          "nextSceneId": "scene-27-refuse",
+          "isOptimal": true
+        },
+        {
+          "id": "choice-27-clarify-2",
+          "nextSceneId": "scene-27-challenge",
+          "isOptimal": false
+        },
+        {
+          "id": "choice-27-clarify-3",
+          "nextSceneId": "ending-early-exit",
+          "isOptimal": false
+        }
+      ]
+    },
+    {
+      "id": "scene-27-psychology",
+      "type": "transition",
+      "file": "morning.ts",
+      "next": "scene-27-sophia-softens",
+      "choices": []
+    },
+    {
+      "id": "scene-27-sophia-softens",
+      "type": "transition",
+      "file": "morning.ts",
+      "next": "scene-29-ceremony",
+      "choices": []
+    },
+    {
+      "id": "scene-27-silent-exit",
+      "type": "transition",
+      "file": "morning.ts",
+      "next": "scene-29-ceremony",
+      "choices": []
+    },
+    {
+      "id": "scene-27-refuse",
+      "type": "transition",
+      "file": "morning.ts",
+      "next": "scene-29-ceremony",
+      "choices": []
+    },
+    {
+      "id": "scene-27-challenge",
+      "type": "transition",
+      "file": "morning.ts",
+      "next": "scene-29-ceremony",
+      "choices": []
+    },
+    {
+      "id": "scene-29-ceremony",
+      "type": "transition",
+      "file": "ceremony.ts",
+      "next": "scene-30-vows",
+      "choices": []
+    },
+    {
+      "id": "scene-30-vows",
+      "type": "choice",
+      "file": "ceremony.ts",
+      "next": null,
+      "choices": [
+        {
+          "id": "choice-30-1",
+          "nextSceneId": "scene-30-let-go",
+          "isOptimal": false
+        },
+        {
+          "id": "choice-30-2",
+          "nextSceneId": "scene-30-react",
+          "isOptimal": true
+        },
+        {
+          "id": "choice-30-3",
+          "nextSceneId": "scene-30-observe",
+          "isOptimal": true
+        },
+        {
+          "id": "choice-30-4",
+          "nextSceneId": "scene-30-reflect",
+          "isOptimal": false
+        }
+      ]
+    },
+    {
+      "id": "scene-30-let-go",
+      "type": "transition",
+      "file": "ceremony.ts",
+      "next": "scene-31-reception",
+      "choices": []
+    },
+    {
+      "id": "scene-30-react",
+      "type": "transition",
+      "file": "ceremony.ts",
+      "next": "scene-31-reception",
+      "choices": []
+    },
+    {
+      "id": "scene-30-observe",
+      "type": "transition",
+      "file": "ceremony.ts",
+      "next": "scene-31-reception",
+      "choices": []
+    },
+    {
+      "id": "scene-30-reflect",
+      "type": "transition",
+      "file": "ceremony.ts",
+      "next": "scene-31-reception",
+      "choices": []
+    },
+    {
+      "id": "scene-31-reception",
+      "type": "choice",
+      "file": "reception.ts",
+      "next": null,
+      "choices": [
+        {
+          "id": "choice-31-1",
+          "nextSceneId": "scene-32-dance",
+          "isOptimal": true
+        },
+        {
+          "id": "choice-31-2",
+          "nextSceneId": "scene-33-marcus-finale",
+          "isOptimal": true
+        },
+        {
+          "id": "choice-31-3",
+          "nextSceneId": "scene-34-lily-finale",
+          "isOptimal": false
+        },
+        {
+          "id": "choice-31-4",
+          "nextSceneId": "scene-35-mirror",
+          "isOptimal": false
+        }
+      ]
+    },
+    {
+      "id": "scene-32-dance",
+      "type": "choice",
+      "file": "reception.ts",
+      "next": null,
+      "choices": [
+        {
+          "id": "choice-32-1",
+          "nextSceneId": "ending-clean-win",
+          "isOptimal": true
+        },
+        {
+          "id": "choice-32-2",
+          "nextSceneId": "scene-32-talk",
+          "isOptimal": false
+        },
+        {
+          "id": "choice-32-3",
+          "nextSceneId": "ending-uncertain",
+          "isOptimal": false
+        }
+      ]
+    },
+    {
+      "id": "scene-32-talk",
+      "type": "transition",
+      "file": "reception.ts",
+      "next": "ending-honest-start",
+      "choices": []
+    },
+    {
+      "id": "scene-33-marcus-finale",
+      "type": "choice",
+      "file": "reception.ts",
+      "next": null,
+      "choices": [
+        {
+          "id": "choice-33-1",
+          "nextSceneId": "ending-grudging-respect",
+          "isOptimal": true
+        },
+        {
+          "id": "choice-33-2",
+          "nextSceneId": "ending-clean-win",
+          "isOptimal": true
+        },
+        {
+          "id": "choice-33-3",
+          "nextSceneId": "ending-unexpected-alliance",
+          "isOptimal": false
+        },
+        {
+          "id": "choice-33-4",
+          "nextSceneId": "scene-33-truth",
+          "isOptimal": false
+        }
+      ]
+    },
+    {
+      "id": "scene-33-truth",
+      "type": "transition",
+      "file": "reception.ts",
+      "next": "ending-full-picture",
+      "choices": []
+    },
+    {
+      "id": "scene-34-lily-finale",
+      "type": "choice",
+      "file": "reception.ts",
+      "next": null,
+      "choices": [
+        {
+          "id": "choice-34-1",
+          "nextSceneId": "ending-inside-woman",
+          "isOptimal": true
+        },
+        {
+          "id": "choice-34-2",
+          "nextSceneId": "ending-stronger",
+          "isOptimal": false
+        },
+        {
+          "id": "choice-34-3",
+          "nextSceneId": "ending-campaign-continues",
+          "isOptimal": false
+        }
+      ]
+    },
+    {
+      "id": "scene-35-mirror",
+      "type": "choice",
+      "file": "reception.ts",
+      "next": null,
+      "choices": [
+        {
+          "id": "choice-35-1",
+          "nextSceneId": "ending-walk-away",
+          "isOptimal": false
+        },
+        {
+          "id": "choice-35-2",
+          "nextSceneId": "ending-long-road",
+          "isOptimal": false
+        },
+        {
+          "id": "choice-35-3",
+          "nextSceneId": "ending-reset",
+          "isOptimal": false
+        },
+        {
+          "id": "choice-35-4",
+          "nextSceneId": "scene-35-lily-finds",
+          "isOptimal": false
+        }
+      ]
+    },
+    {
+      "id": "scene-35-lily-finds",
+      "type": "transition",
+      "file": "reception.ts",
+      "next": "ending-survivor",
+      "choices": []
+    },
+    {
+      "id": "ending-clean-win",
+      "type": "ending",
+      "file": "good.ts",
+      "next": null,
+      "choices": []
+    },
+    {
+      "id": "ending-inside-woman",
+      "type": "ending",
+      "file": "good.ts",
+      "next": null,
+      "choices": []
+    },
+    {
+      "id": "ending-unexpected-alliance",
+      "type": "ending",
+      "file": "good.ts",
+      "next": null,
+      "choices": []
+    },
+    {
+      "id": "ending-stronger",
+      "type": "ending",
+      "file": "good.ts",
+      "next": null,
+      "choices": []
+    },
+    {
+      "id": "ending-grudging-respect",
+      "type": "ending",
+      "file": "neutral.ts",
+      "next": null,
+      "choices": []
+    },
+    {
+      "id": "ending-campaign-continues",
+      "type": "ending",
+      "file": "neutral.ts",
+      "next": null,
+      "choices": []
+    },
+    {
+      "id": "ending-long-road",
+      "type": "ending",
+      "file": "neutral.ts",
+      "next": null,
+      "choices": []
+    },
+    {
+      "id": "ending-uncertain",
+      "type": "ending",
+      "file": "neutral.ts",
+      "next": null,
+      "choices": []
+    },
+    {
+      "id": "ending-honest-start",
+      "type": "ending",
+      "file": "neutral.ts",
+      "next": null,
+      "choices": []
+    },
+    {
+      "id": "ending-full-picture",
+      "type": "ending",
+      "file": "neutral.ts",
+      "next": null,
+      "choices": []
+    },
+    {
+      "id": "ending-walk-away",
+      "type": "ending",
+      "file": "bad.ts",
+      "next": null,
+      "choices": []
+    },
+    {
+      "id": "ending-reset",
+      "type": "ending",
+      "file": "bad.ts",
+      "next": null,
+      "choices": []
+    },
+    {
+      "id": "ending-survivor",
+      "type": "ending",
+      "file": "bad.ts",
+      "next": null,
+      "choices": []
+    },
+    {
+      "id": "ending-early-exit",
+      "type": "ending",
+      "file": "bad.ts",
+      "next": null,
+      "choices": []
+    }
+  ]
+}
