@@ -5,7 +5,7 @@ import { generateBookSchema, generateProductSchema } from '@/lib/schema'
 export const metadata: Metadata = {
   title: 'Sociopathic Dating Bible - A Cure For Empathy | Kanika Batra',
   description: 'The first dating guide written by a clinically diagnosed sociopath. 15 chapters of strategic dating frameworks, psychological tactics, and manipulation mastery. Transform from victim to victor.',
-  keywords: 'sociopathic dating bible, dark psychology dating, manipulation tactics, dating strategy, kanika batra book, dark feminine energy, relationship psychology',
+  keywords: 'sociopathic dating bible, dark psychology dating, manipulation tactics, dating strategy, kanika batra book, strategic psychology, relationship psychology',
   openGraph: {
     title: 'Sociopathic Dating Bible - A Cure For Empathy',
     description: 'The first dating guide written by a clinically diagnosed sociopath. Learn the cold, strategic methods that create irresistible attraction.',

@@ -3,19 +3,19 @@
 import { useState, useEffect, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { BookOpen, Settings, Plus, ArrowRight, Loader2, CheckCircle, Play, Crown, MessageSquare } from 'lucide-react'
+import { BookOpen, Plus, ArrowRight, Loader2, CheckCircle, Play, Crown, MessageSquare } from 'lucide-react'
 import DashboardHeader from '@/components/dashboard/DashboardHeader'
 import DashboardCard from '@/components/dashboard/DashboardCard'
 import PurchaseItem from '@/components/dashboard/PurchaseItem'
 import SessionsSection from '@/components/dashboard/SessionsSection'
 import SessionFeedbackModal from '@/components/dashboard/SessionFeedbackModal'
 import QuickStats from '@/components/dashboard/QuickStats'
-import ProfileModal from '@/components/dashboard/ProfileModal'
-import PasswordModal from '@/components/dashboard/PasswordModal'
 import ProgressOverview from '@/components/dashboard/ProgressOverview'
 import AchievementsSection from '@/components/dashboard/AchievementsSection'
 import ActivityFeed from '@/components/dashboard/ActivityFeed'
 import ProgressBar from '@/components/course/ProgressBar'
+import MobileNavigation from '@/components/dashboard/MobileNavigation'
+import AccountSection from '@/components/dashboard/AccountSection'
 
 interface CourseSubscription {
   id: string
@@ -88,12 +88,11 @@ export default function DashboardClient({ user }: DashboardClientProps) {
   const [subscriptions, setSubscriptions] = useState<CourseSubscription[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-  const [showProfileModal, setShowProfileModal] = useState(false)
-  const [showPasswordModal, setShowPasswordModal] = useState(false)
   const [showFeedbackModal, setShowFeedbackModal] = useState(false)
   const [feedbackSessionId, setFeedbackSessionId] = useState<string | null>(null)
   const [feedbackSessionTitle, setFeedbackSessionTitle] = useState<string>('')
   const [successMessage, setSuccessMessage] = useState<string | null>(null)
+  const [mobileTab, setMobileTab] = useState<'overview' | 'progress' | 'achievements' | 'account'>('overview')
 
   useEffect(() => {
     async function fetchDashboardData() {
@@ -125,7 +124,7 @@ export default function DashboardClient({ user }: DashboardClientProps) {
   const purchases = data?.user.purchases.map(p => ({
     type: 'book' as const,
     title: p.type === 'BOOK' ? "Sociopathic Dating Bible" : p.productVariant || 'Product',
-    description: 'Master the art of psychological manipulation and dark influence',
+    description: 'Master the psychology of power and strategic influence',
     purchaseDate: new Date(p.createdAt).toLocaleDateString(),
     status: 'active' as const,
     downloadUrl: p.downloadToken ? `/api/download/${p.downloadToken}` : '#'
@@ -246,7 +245,7 @@ export default function DashboardClient({ user }: DashboardClientProps) {
     <>
       <DashboardHeader userEmail={user.email} />
 
-      <main className="min-h-screen bg-deep-black pt-32 pb-16">
+      <main className="min-h-screen bg-deep-black pt-32 pb-24 md:pb-16">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
           {/* Welcome Section */}
           <div className="mb-8">
@@ -254,19 +253,19 @@ export default function DashboardClient({ user }: DashboardClientProps) {
               Welcome back, {data?.user.name || user.email.split('@')[0]}
             </h1>
             <p className="text-text-gray">
-              Your journey into dark psychology continues here
+              Your psychology of power journey continues here
             </p>
           </div>
 
-          {/* Quick Stats */}
-          <div className="mb-8">
+          {/* Quick Stats - Always visible */}
+          <div className={`mb-8 ${mobileTab !== 'overview' ? 'hidden md:block' : ''}`}>
             <QuickStats {...stats} />
           </div>
 
           {/* Main Content Grid */}
           <div className="grid lg:grid-cols-3 gap-8">
-            {/* Left Column - Courses, Purchases & Coaching */}
-            <div className="lg:col-span-2 space-y-8">
+            {/* Left Column - Courses, Purchases & Coaching (visible on Overview tab on mobile) */}
+            <div className={`lg:col-span-2 space-y-8 ${mobileTab !== 'overview' ? 'hidden md:block' : ''}`}>
               {/* My Courses Section */}
               <DashboardCard
                 title="My Courses"
@@ -415,100 +414,58 @@ export default function DashboardClient({ user }: DashboardClientProps) {
 
             {/* Right Column - Progress, Achievements, Activity & Account */}
             <div className="space-y-6">
-              {/* Progress Overview */}
-              <ProgressOverview />
+              {/* Progress Overview - visible on Progress tab on mobile */}
+              <div className={`${mobileTab !== 'overview' && mobileTab !== 'progress' ? 'hidden md:block' : ''}`}>
+                <ProgressOverview />
+              </div>
 
-              {/* Achievements */}
-              <AchievementsSection compact />
+              {/* Achievements - visible on Achievements tab on mobile */}
+              <div className={`${mobileTab !== 'overview' && mobileTab !== 'achievements' ? 'hidden md:block' : ''}`}>
+                <AchievementsSection compact />
+              </div>
 
-              {/* Recent Activity */}
-              <ActivityFeed compact limit={5} />
+              {/* Recent Activity - visible on Overview tab on mobile */}
+              <div className={`${mobileTab !== 'overview' ? 'hidden md:block' : ''}`}>
+                <ActivityFeed compact limit={5} />
+              </div>
 
-              {/* Account Settings */}
-              <DashboardCard
-                title="Account"
-                subtitle="Manage your profile"
-                icon={Settings}
-              >
-                <div className="space-y-4">
-                  <div className="pb-4 border-b border-gray-800">
-                    <label className="text-text-muted text-sm">Email</label>
-                    <p className="text-text-light font-medium">{user.email}</p>
-                  </div>
-
-                  <div className="pb-4 border-b border-gray-800">
-                    <label className="text-text-muted text-sm">User ID</label>
-                    <p className="text-text-light font-mono text-xs">{user.userId}</p>
-                  </div>
-
-                  <div className="pb-4 border-b border-gray-800">
-                    <label className="text-text-muted text-sm">Member Since</label>
-                    <p className="text-text-light">{memberSince.toLocaleDateString()}</p>
-                  </div>
-
-                  <div className="space-y-3 pt-2">
-                    <button
-                      onClick={() => setShowProfileModal(true)}
-                      className="w-full px-4 py-2 bg-gray-800 hover:bg-gray-700 rounded-lg text-text-light text-sm font-medium transition-colors"
-                    >
-                      Update Profile
-                    </button>
-                    <button
-                      onClick={() => setShowPasswordModal(true)}
-                      className="w-full px-4 py-2 bg-gray-800 hover:bg-gray-700 rounded-lg text-text-light text-sm font-medium transition-colors"
-                    >
-                      Change Password
-                    </button>
-                    <form action="/api/auth/logout" method="POST">
-                      <button
-                        type="submit"
-                        className="w-full px-4 py-2 bg-red-600/20 hover:bg-red-600/30 border border-red-600/50 rounded-lg text-red-400 text-sm font-medium transition-colors"
-                      >
-                        Sign Out
-                      </button>
-                    </form>
-                  </div>
-                </div>
-              </DashboardCard>
+              {/* Account Settings - visible on Account tab on mobile */}
+              <div className={`${mobileTab !== 'overview' && mobileTab !== 'account' ? 'hidden md:block' : ''}`}>
+                <AccountSection
+                  email={user.email}
+                  userId={user.userId}
+                  name={data?.user.name || null}
+                  memberSince={memberSince}
+                  onProfileUpdate={(newName) => {
+                    if (data) {
+                      setData({
+                        ...data,
+                        user: { ...data.user, name: newName }
+                      })
+                    }
+                  }}
+                  onPasswordChange={() => {}}
+                  onSuccess={(message) => {
+                    setSuccessMessage(message)
+                    setTimeout(() => setSuccessMessage(null), 3000)
+                  }}
+                />
+              </div>
             </div>
           </div>
         </div>
 
         {/* Success Message Toast */}
         {successMessage && (
-          <div className="fixed bottom-6 right-6 z-50 flex items-center gap-2 bg-green-900/90 border border-green-500 rounded-lg px-4 py-3 text-green-200 shadow-lg animate-fade-in">
+          <div className="fixed bottom-20 md:bottom-6 right-4 md:right-6 z-40 flex items-center gap-2 bg-green-900/90 border border-green-500 rounded-lg px-4 py-3 text-green-200 shadow-lg animate-fade-in">
             <CheckCircle className="w-5 h-5" />
             <span>{successMessage}</span>
           </div>
         )}
       </main>
 
-      {/* Profile Modal */}
-      <ProfileModal
-        isOpen={showProfileModal}
-        onClose={() => setShowProfileModal(false)}
-        currentName={data?.user.name || null}
-        onSuccess={(newName) => {
-          if (data) {
-            setData({
-              ...data,
-              user: { ...data.user, name: newName }
-            })
-          }
-          setSuccessMessage('Profile updated successfully!')
-          setTimeout(() => setSuccessMessage(null), 3000)
-        }}
-      />
-
-      {/* Password Modal */}
-      <PasswordModal
-        isOpen={showPasswordModal}
-        onClose={() => setShowPasswordModal(false)}
-        onSuccess={() => {
-          setSuccessMessage('Password changed successfully!')
-          setTimeout(() => setSuccessMessage(null), 3000)
-        }}
-      />
+      {/* Mobile Navigation */}
+      <MobileNavigation activeTab={mobileTab} onTabChange={setMobileTab} />
 
       {/* Session Feedback Modal */}
       {feedbackSessionId && (

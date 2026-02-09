@@ -6,7 +6,7 @@ import { SITE_CONFIG } from '@/lib/constants'
 export const metadata: Metadata = {
   title: 'Blog | Kanika Batra - Dark Psychology Insights',
   description: 'Explore dark psychology, manipulation tactics, dating strategy, and power dynamics. Learn the forbidden knowledge that creates obsession and commands respect.',
-  keywords: 'dark psychology blog, manipulation tactics, dating strategy, power dynamics, dark feminine energy, sociopath insights',
+  keywords: 'dark psychology blog, manipulation tactics, dating strategy, power dynamics, strategic psychology, sociopath insights',
   alternates: {
     canonical: `${SITE_CONFIG.url}/blog`,
   },

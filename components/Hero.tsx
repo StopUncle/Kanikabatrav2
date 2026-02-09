@@ -70,8 +70,8 @@ export default function Hero() {
           transition={{ duration: 0.8, delay: 0.4 }}
           className="text-text-gray text-base sm:text-lg md:text-xl max-w-2xl lg:max-w-3xl mx-auto mb-8 sm:mb-12 font-light px-4"
         >
-          The controversial dating guide that teaches you to think like a predator,
-          not prey. The cure for emotional weakness.
+          The book that went viral across Unilad, LadBible, and Yahoo.
+          The psychology they don&apos;t teach you.
         </motion.p>
 
         <motion.div

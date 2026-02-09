@@ -6,7 +6,7 @@ export const runtime = 'edge'
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url)
   const title = searchParams.get('title') || 'Kanika Batra'
-  const subtitle = searchParams.get('subtitle') || 'The Beautiful Sociopath'
+  const subtitle = searchParams.get('subtitle') || 'The Psychology of Power'
 
   return new ImageResponse(
     (

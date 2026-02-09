@@ -43,7 +43,6 @@ const Header = () => {
     { href: '/quiz', label: 'Quiz' },
     { href: '/courses', label: 'Courses' },
     { href: '/coaching', label: 'Coaching' },
-    { href: '/community', label: 'Community' },
     { href: '/about', label: 'About' },
     { href: '/contact', label: 'Contact' },
   ]
@@ -147,14 +146,14 @@ const Header = () => {
     </header>
 
     {/* Mobile Menu Overlay - Outside header for proper z-index */}
-    <div className={`lg:hidden fixed inset-0 top-16 sm:top-20 z-[100] bg-deep-black/98 backdrop-blur-xl transition-all duration-500 ${
+    <div className={`lg:hidden fixed inset-0 top-16 sm:top-20 z-[100] bg-deep-black/98 backdrop-blur-xl transition-all duration-500 touch-pan-y ${
         isMenuOpen ? 'opacity-100 visible' : 'opacity-0 invisible'
       }`}>
-        <div className={`h-full flex flex-col px-6 py-8 overflow-y-auto transition-all duration-500 delay-100 ${
+        <div className={`h-full flex flex-col px-6 py-8 overflow-y-auto overscroll-contain transition-all duration-500 delay-100 ${
           isMenuOpen ? 'translate-y-0 opacity-100' : '-translate-y-4 opacity-0'
         }`}>
           {/* Mobile Nav Links */}
-          <div className="flex-1 flex flex-col justify-center -mt-16">
+          <div className="flex-1 flex flex-col justify-start pt-4">
             {navLinks.map((link, index) => {
               const isActive = pathname === link.href
               return (

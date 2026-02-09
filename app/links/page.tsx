@@ -44,7 +44,7 @@ const links = [
   },
   {
     title: 'Subscribe to Newsletter',
-    subtitle: 'Weekly manipulation tactics',
+    subtitle: 'Weekly psychology of power insights',
     href: '/#newsletter',
     icon: '📧',
     featured: false,

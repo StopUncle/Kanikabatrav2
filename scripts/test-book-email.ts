@@ -180,7 +180,7 @@ async function testBookEmail() {
                           Kanika Batra
                         </p>
                         <p style="color: #666; margin: 5px 0 0 0; font-size: 12px; letter-spacing: 0.5px;">
-                          The Beautiful Sociopath
+                          The Psychology of Power
                         </p>
                       </td>
                     </tr>

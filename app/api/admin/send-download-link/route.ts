@@ -72,6 +72,10 @@ export async function POST(request: NextRequest) {
       year: 'numeric'
     })
 
+    // Bonus chapter download URLs
+    const bonusNarcissistsUrl = `${baseUrl}/api/download?token=${token}&format=bonus-narcissists`
+    const bonusAvoidantsUrl = `${baseUrl}/api/download?token=${token}&format=bonus-avoidants`
+
     const premiumBonuses = isPremium ? `
       <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="background: linear-gradient(135deg, #1a0d11 0%, #2a1a1f 100%); border-radius: 10px; margin: 0 0 25px 0; border: 2px solid #d4af37; box-shadow: 0 4px 15px rgba(212, 175, 55, 0.2);">
         <tr>
@@ -82,17 +86,21 @@ export async function POST(request: NextRequest) {
             <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0">
               <tr>
                 <td style="padding: 12px 0; color: #f5f0ed; font-size: 14px; line-height: 1.6; border-bottom: 1px solid rgba(212, 175, 55, 0.2);">
-                  <strong style="color: #d4af37;">Bonus Chapter:</strong> Advanced Dark Triad Tactics
+                  <strong style="color: #d4af37;">Bonus Chapter 1:</strong> Understanding Narcissists
+                  <br>
+                  <a href="${bonusNarcissistsUrl}" style="color: #d4af37; text-decoration: underline; font-size: 13px;">Download PDF</a>
                 </td>
               </tr>
               <tr>
                 <td style="padding: 12px 0; color: #f5f0ed; font-size: 14px; line-height: 1.6; border-bottom: 1px solid rgba(212, 175, 55, 0.2);">
-                  <strong style="color: #d4af37;">Video Masterclass:</strong> Reading Micro-expressions & Body Language
+                  <strong style="color: #d4af37;">Bonus Chapter 2:</strong> The Avoidant Playbook
+                  <br>
+                  <a href="${bonusAvoidantsUrl}" style="color: #d4af37; text-decoration: underline; font-size: 13px;">Download PDF</a>
                 </td>
               </tr>
               <tr>
                 <td style="padding: 12px 0; color: #f5f0ed; font-size: 14px; line-height: 1.6; border-bottom: 1px solid rgba(212, 175, 55, 0.2);">
-                  <strong style="color: #d4af37;">Email Templates:</strong> Psychological Warfare in Modern Dating
+                  <strong style="color: #d4af37;">Private Telegram Community:</strong> Lifetime Access to Exclusive Group
                 </td>
               </tr>
               <tr>
@@ -101,8 +109,8 @@ export async function POST(request: NextRequest) {
                 </td>
               </tr>
             </table>
-            <p style="color: #d4af37; margin: 20px 0 0 0; font-size: 13px; font-style: italic; text-align: center; line-height: 1.6;">
-              Access instructions for all bonuses have been sent in separate emails. Check your inbox!
+            <p style="color: #94a3b8; margin: 20px 0 0 0; font-size: 12px; text-align: center; line-height: 1.6;">
+              Bonus chapter links use the same token as your main book download.
             </p>
           </td>
         </tr>
@@ -227,7 +235,7 @@ export async function POST(request: NextRequest) {
                             Kanika Batra
                           </p>
                           <p style="color: #666; margin: 5px 0 0 0; font-size: 12px; letter-spacing: 0.5px;">
-                            The Beautiful Sociopath
+                            The Psychology of Power
                           </p>
                         </td>
                       </tr>

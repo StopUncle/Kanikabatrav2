@@ -125,7 +125,8 @@ export default function ProgressOverview() {
             return (
               <div
                 key={index}
-                className="p-3 bg-gray-900/50 rounded-lg border border-gray-800"
+                className="p-3 bg-gray-900/50 rounded-lg border border-gray-800 hover:border-gray-700 hover:scale-[1.02] transition-all duration-200 animate-fade-in-up"
+                style={{ animationDelay: `${index * 100}ms`, animationFillMode: 'both' }}
               >
                 <div className="flex items-center gap-2 mb-1">
                   <div className={`p-1.5 rounded ${stat.bgColor}`}>
@@ -133,7 +134,9 @@ export default function ProgressOverview() {
                   </div>
                   <span className="text-text-muted text-xs">{stat.label}</span>
                 </div>
-                <p className={`text-2xl font-light ${stat.color}`}>{stat.value}</p>
+                <p className={`text-2xl font-light ${stat.color} animate-count-up`} style={{ animationDelay: `${index * 100 + 200}ms`, animationFillMode: 'both' }}>
+                  {stat.value}
+                </p>
               </div>
             )
           })}
@@ -141,7 +144,7 @@ export default function ProgressOverview() {
 
         {/* Coaching Progress */}
         {data.sessions.total > 0 && (
-          <div className="p-3 bg-gray-900/50 rounded-lg border border-gray-800">
+          <div className="p-3 bg-gray-900/50 rounded-lg border border-gray-800 animate-fade-in" style={{ animationDelay: '400ms', animationFillMode: 'both' }}>
             <div className="flex items-center justify-between mb-2">
               <span className="text-text-muted text-sm">Coaching Journey</span>
               <span className="text-accent-gold text-sm font-medium">
@@ -150,8 +153,8 @@ export default function ProgressOverview() {
             </div>
             <div className="h-2 bg-gray-800 rounded-full overflow-hidden">
               <div
-                className="h-full bg-gradient-to-r from-accent-burgundy to-accent-gold transition-all duration-500"
-                style={{ width: `${data.sessions.completionRate}%` }}
+                className="h-full bg-gradient-to-r from-accent-burgundy to-accent-gold animate-progress-fill"
+                style={{ width: `${data.sessions.completionRate}%`, animationDelay: '600ms', animationFillMode: 'both' }}
               />
             </div>
             {data.sessions.upcoming > 0 && (
@@ -163,7 +166,7 @@ export default function ProgressOverview() {
         )}
 
         {/* Achievements Progress */}
-        <div className="p-3 bg-gray-900/50 rounded-lg border border-gray-800">
+        <div className="p-3 bg-gray-900/50 rounded-lg border border-gray-800 animate-fade-in" style={{ animationDelay: '500ms', animationFillMode: 'both' }}>
           <div className="flex items-center justify-between mb-2">
             <div className="flex items-center gap-2">
               <Trophy size={14} className="text-amber-400" />
@@ -175,8 +178,8 @@ export default function ProgressOverview() {
           </div>
           <div className="h-2 bg-gray-800 rounded-full overflow-hidden">
             <div
-              className="h-full bg-gradient-to-r from-amber-600 to-amber-400 transition-all duration-500"
-              style={{ width: `${data.achievements.percentage}%` }}
+              className="h-full bg-gradient-to-r from-amber-600 to-amber-400 animate-progress-fill"
+              style={{ width: `${data.achievements.percentage}%`, animationDelay: '700ms', animationFillMode: 'both' }}
             />
           </div>
         </div>
@@ -184,22 +187,22 @@ export default function ProgressOverview() {
         {/* Quick Milestones */}
         <div className="flex flex-wrap gap-2 pt-2">
           {data.purchases.hasBook && (
-            <span className="px-2 py-1 bg-accent-gold/10 border border-accent-gold/30 rounded-full text-xs text-accent-gold">
+            <span className="px-2 py-1 bg-accent-gold/10 border border-accent-gold/30 rounded-full text-xs text-accent-gold animate-badge-unlock" style={{ animationDelay: '800ms', animationFillMode: 'both' }}>
               Book Owner
             </span>
           )}
           {data.courses.enrolled > 0 && (
-            <span className="px-2 py-1 bg-blue-500/10 border border-blue-500/30 rounded-full text-xs text-blue-400">
+            <span className="px-2 py-1 bg-blue-500/10 border border-blue-500/30 rounded-full text-xs text-blue-400 animate-badge-unlock" style={{ animationDelay: '900ms', animationFillMode: 'both' }}>
               Course Enrolled
             </span>
           )}
           {data.sessions.completed >= 3 && (
-            <span className="px-2 py-1 bg-green-500/10 border border-green-500/30 rounded-full text-xs text-green-400">
+            <span className="px-2 py-1 bg-green-500/10 border border-green-500/30 rounded-full text-xs text-green-400 animate-badge-unlock" style={{ animationDelay: '1000ms', animationFillMode: 'both' }}>
               3+ Sessions
             </span>
           )}
           {data.daysActive >= 30 && (
-            <span className="px-2 py-1 bg-purple-500/10 border border-purple-500/30 rounded-full text-xs text-purple-400">
+            <span className="px-2 py-1 bg-purple-500/10 border border-purple-500/30 rounded-full text-xs text-purple-400 animate-badge-unlock" style={{ animationDelay: '1100ms', animationFillMode: 'both' }}>
               30 Day Member
             </span>
           )}

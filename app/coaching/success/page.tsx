@@ -20,7 +20,7 @@ export default function CoachingSuccessPage() {
       setIsLoading(false)
       // In production, fetch actual order details from your backend
       setOrderDetails({
-        sessionType: 'Dark Feminine Mastery',
+        sessionType: 'Presence & Influence',
         schedulingLink: '/dashboard',
       })
     }, 2000)

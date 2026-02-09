@@ -6,14 +6,14 @@ import prisma from '@/lib/prisma'
 import { SITE_CONFIG } from '@/lib/constants'
 
 export const metadata: Metadata = {
-  title: 'Courses | Kanika Batra - Dark Psychology Mastery',
+  title: 'Courses | Kanika Batra - Strategic Psychology',
   description: 'Master dark psychology with exclusive video courses. Learn manipulation detection, power dynamics, and psychological warfare from a diagnosed sociopath.',
   keywords: 'dark psychology course, manipulation course, power dynamics training, kanika batra courses',
   alternates: {
     canonical: `${SITE_CONFIG.url}/courses`,
   },
   openGraph: {
-    title: 'Dark Psychology Courses | Kanika Batra',
+    title: 'Strategic Psychology Courses | Kanika Batra',
     description: 'Exclusive video courses on dark psychology, manipulation, and power dynamics.',
     url: `${SITE_CONFIG.url}/courses`,
     type: 'website',
@@ -21,12 +21,12 @@ export const metadata: Metadata = {
       url: `${SITE_CONFIG.url}/og-image.jpg`,
       width: 1200,
       height: 630,
-      alt: 'Dark Psychology Courses',
+      alt: 'Strategic Psychology Courses',
     }],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Dark Psychology Courses | Kanika Batra',
+    title: 'Strategic Psychology Courses | Kanika Batra',
     description: 'Master manipulation detection and power dynamics from a diagnosed sociopath.',
     images: [`${SITE_CONFIG.url}/og-image.jpg`],
   },

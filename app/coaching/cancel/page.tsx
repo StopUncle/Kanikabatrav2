@@ -54,7 +54,7 @@ export default function CoachingCancelPage() {
             <h3 className="text-lg font-medium text-gold mb-3">What you&apos;re walking away from:</h3>
             <ul className="space-y-2 text-text-muted">
               <li>• The ability to read and manipulate any social dynamic</li>
-              <li>• Mastery over your dark feminine energy</li>
+              <li>• Mastery over your psychology and presence</li>
               <li>• Freedom from emotional chains that hold you back</li>
               <li>• The power to become truly unforgettable</li>
               <li>• Direct guidance from someone who lives without masks</li>

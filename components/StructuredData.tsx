@@ -10,7 +10,7 @@ export function PersonSchema() {
     '@context': 'https://schema.org',
     '@type': 'Person',
     name: 'Kanika Batra',
-    alternateName: 'The Beautiful Sociopath',
+    alternateName: 'The Psychology of Power',
     description: SITE_CONFIG.description,
     url: SITE_CONFIG.url,
     image: `${SITE_CONFIG.url}/images/kanika-batra.jpg`,

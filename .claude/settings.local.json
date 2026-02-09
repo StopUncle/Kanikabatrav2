@@ -42,9 +42,45 @@
       "Bash(start admin-command-center.html)",
       "Bash(copy:*)",
       "Bash(unzip:*)",
-      "Bash(cp:*)"
+      "Bash(cp:*)",
+      "Bash(xargs cat:*)",
+      "WebSearch",
+      "WebFetch(domain:socialcounts.org)",
+      "WebFetch(domain:www.amazon.com)",
+      "Bash(npm test:*)",
+      "WebFetch(domain:cinderellasrevenge.co)",
+      "WebFetch(domain:www.eviemagazine.com)",
+      "WebFetch(domain:www.youtube.com)",
+      "WebFetch(domain:www.noxinfluencer.com)",
+      "Bash(npx eslint:*)",
+      "WebFetch(domain:playboard.co)",
+      "Bash(npx tsx scripts/fetch-transcript.ts)",
+      "Bash(wc:*)",
+      "Bash(npm uninstall:*)",
+      "Bash(git checkout:*)",
+      "Bash(npx tsx:*)",
+      "Bash(npm audit fix:*)",
+      "Bash(npm audit:*)",
+      "Bash(git cherry-pick:*)",
+      "Bash(git pull:*)",
+      "Bash(git stash:*)",
+      "Bash(git reset:*)",
+      "Bash(netstat:*)",
+      "Bash(del /f /q \"C:\\\\AutonomousEmpire\\\\Websites-Directory\\\\KanikaBatrav2\\\\.next\\\\trace\")",
+      "Bash(tasklist:*)",
+      "Bash(wmic process where \"name=''node.exe''\" get processid,commandline)",
+      "Bash(pnpm dev)",
+      "Bash(ls:*)"
     ],
     "deny": [],
     "ask": []
-  }
+  },
+  "enableAllProjectMcpServers": true,
+  "enabledMcpjsonServers": [
+    "kanika-empire",
+    "supabase",
+    "nexuslabs",
+    "draftspace-live",
+    "intelligent-thinking"
+  ]
 }

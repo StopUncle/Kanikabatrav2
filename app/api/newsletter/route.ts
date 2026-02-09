@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
+import { sendEmail } from '@/lib/email'
 
 export async function POST(request: NextRequest) {
   try {
@@ -50,9 +51,40 @@ export async function POST(request: NextRequest) {
         source,
         quizResultId: quizResultId || null,
         tags,
-        verified: false
+        verified: true
       }
     })
+
+    // Send welcome email (fire and forget — don't block the response)
+    sendEmail({
+      to: email.toLowerCase(),
+      subject: 'Welcome to The Psychology of Power — Kanika Batra',
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+          <div style="background: linear-gradient(135deg, #1a0d11 0%, #0a1628 100%); padding: 30px; border-radius: 10px 10px 0 0;">
+            <h1 style="color: #d4af37; margin: 0; font-size: 24px;">Welcome</h1>
+          </div>
+          <div style="background: #050511; padding: 30px; border: 1px solid #d4af37; border-top: none; border-radius: 0 0 10px 10px;">
+            <p style="color: #f5f0ed; font-size: 16px; line-height: 1.6;">
+              ${name ? `Hey ${name},` : 'Hey,'}
+            </p>
+            <p style="color: #94a3b8; line-height: 1.6;">
+              Thanks for subscribing. You're now on the inside.
+            </p>
+            <p style="color: #94a3b8; line-height: 1.6;">
+              I'll be sharing insights on power dynamics, strategic psychology, and the patterns most people miss — directly to your inbox.
+            </p>
+            <p style="color: #94a3b8; line-height: 1.6;">
+              No fluff. No filler. Just the stuff that actually moves the needle.
+            </p>
+            <p style="color: #d4af37; font-style: italic; margin-top: 30px;">
+              — Kanika Batra<br>
+              <span style="color: #666; font-size: 12px;">The Psychology of Power</span>
+            </p>
+          </div>
+        </div>
+      `,
+    }).catch((err) => console.error('Welcome email failed:', err))
 
     return NextResponse.json({
       success: true,

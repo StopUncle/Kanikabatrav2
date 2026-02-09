@@ -4,8 +4,8 @@ import { generateServiceSchema } from '@/lib/schema'
 
 export const metadata: Metadata = {
   title: 'Dark Psychology Coaching | Transform Your Mind | Kanika Batra',
-  description: 'One-on-one coaching sessions with a diagnosed sociopath. Mind Architecture, Dark Feminine Mastery, and Empire Building programs. Learn to think without emotion and wield power with precision.',
-  keywords: 'dark psychology coaching, sociopath coaching, mind architecture, dark feminine mastery, empire building, psychological transformation, kanika batra coaching',
+  description: 'One-on-one coaching sessions with a diagnosed sociopath. Mind Architecture, Presence & Influence, and Empire Psychology programs. Learn to think without emotion and wield power with precision.',
+  keywords: 'dark psychology coaching, sociopath coaching, mind architecture, strategic psychology coaching, empire psychology, psychological transformation, kanika batra coaching',
   openGraph: {
     title: 'Dark Psychology Coaching - Transform Your Mind',
     description: 'One-on-one coaching sessions with a diagnosed sociopath. Learn to think without emotion and wield power with precision.',

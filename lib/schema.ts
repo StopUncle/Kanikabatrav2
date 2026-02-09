@@ -47,11 +47,11 @@ export function generatePersonSchema() {
     '@context': 'https://schema.org',
     '@type': 'Person',
     name: SITE_CONFIG.name,
-    alternateName: 'The Beautiful Sociopath',
+    alternateName: 'The Psychology of Power',
     description: SITE_CONFIG.description,
     url: `${BASE_URL}/about`,
     image: `${BASE_URL}/og-image.jpg`,
-    jobTitle: 'Dark Psychology Expert & Author',
+    jobTitle: 'Psychology of Power Expert & Author',
     sameAs: [
       SOCIAL_LINKS.instagram,
       SOCIAL_LINKS.youtube,
@@ -61,7 +61,7 @@ export function generatePersonSchema() {
       'Dark Psychology',
       'Dating Strategy',
       'Personal Branding',
-      'Dark Feminine Energy',
+      'Power Dynamics',
       'Manipulation Psychology',
     ],
   }
@@ -156,7 +156,7 @@ export function generateServiceSchema() {
       name: SITE_CONFIG.name,
     },
     url: `${BASE_URL}/coaching`,
-    description: 'Premium dark psychology coaching sessions for personal transformation',
+    description: 'Premium strategic psychology coaching sessions for personal transformation',
     hasOfferCatalog: {
       '@type': 'OfferCatalog',
       name: 'Coaching Packages',

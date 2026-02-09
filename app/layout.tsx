@@ -14,29 +14,29 @@ const inter = Inter({
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_BASE_URL || 'https://kanikarose.com'),
-  title: 'Kanika Batra - The Beautiful Sociopath',
-  description: 'Dark psychology expert with 670K+ followers. Diagnosed sociopath and beauty queen teaching forbidden psychology that creates obsession and commands power.',
-  keywords: 'Kanika Batra, sociopath, dark psychology, beauty queen, manipulation tactics, dark feminine energy',
+  title: 'Kanika Batra - The Psychology of Power',
+  description: 'Psychology of power expert with 670K+ followers. Author, speaker, and clinically diagnosed sociopath teaching strategic psychology that builds obsession and commands authority.',
+  keywords: 'Kanika Batra, sociopath, dark psychology, psychology of power, power dynamics, strategic psychology',
   icons: {
     icon: '/favicon.ico',
   },
   openGraph: {
-    title: 'Kanika Batra - The Beautiful Sociopath',
-    description: 'Diagnosed sociopath, beauty queen, and dark psychology expert.',
+    title: 'Kanika Batra - The Psychology of Power',
+    description: 'Psychology of power expert with 670K+ followers. Clinically diagnosed sociopath teaching strategic psychology.',
     type: 'website',
     images: [
       {
         url: '/api/og',
         width: 1200,
         height: 630,
-        alt: 'Kanika Batra - The Beautiful Sociopath',
+        alt: 'Kanika Batra - The Psychology of Power',
       },
     ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Kanika Batra - The Beautiful Sociopath',
-    description: 'Diagnosed sociopath, beauty queen, and dark psychology expert.',
+    title: 'Kanika Batra - The Psychology of Power',
+    description: 'Psychology of power expert with 670K+ followers. Clinically diagnosed sociopath teaching strategic psychology.',
   },
 }
 

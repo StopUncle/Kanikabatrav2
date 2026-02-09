@@ -1,9 +1,9 @@
 export const SITE_CONFIG = {
   name: 'Kanika Batra',
   fullName: 'Kanika Batra-Matheson',
-  title: 'The Beautiful Sociopath',
+  title: 'The Psychology of Power',
   tagline: 'Stop being the victim. Start being the villain.',
-  description: 'Dark psychology expert with 670K+ followers. Clinically diagnosed sociopath and Miss World Australia finalist teaching forbidden psychology that creates obsession and commands power.',
+  description: 'Psychology of power expert with 670K+ followers. Author, speaker, and clinically diagnosed sociopath teaching strategic psychology that builds obsession and commands authority.',
   url: process.env.NEXT_PUBLIC_BASE_URL || 'https://kanikarose.com',
   email: 'Kanika@kanikarose.com',
   birthdate: '1995-09-11',
@@ -150,7 +150,7 @@ export const COACHING_BUNDLE_BENEFITS = [
 export const TESTIMONIALS = [
   {
     id: 1,
-    text: "She doesn't teach you to hide your darkness—she teaches you to weaponize it. This book fundamentally changed how I navigate power dynamics in every aspect of my life.",
+    text: "She doesn't teach you to play nice—she teaches you to play smart. This book fundamentally changed how I navigate power dynamics in every aspect of my life.",
     author: 'Verified Reader',
     rating: 5,
   },
@@ -215,9 +215,9 @@ export const CONTENT_THEMES = [
     icon: '🖤',
   },
   {
-    name: 'Dating Strategy',
-    description: 'Manipulation, seduction, and emotional detachment',
-    icon: '💋',
+    name: 'Strategic Psychology',
+    description: 'Power dynamics, social strategy, and calculated thinking',
+    icon: '♟️',
   },
   {
     name: 'ASPD Education',
@@ -225,21 +225,21 @@ export const CONTENT_THEMES = [
     icon: '🧠',
   },
   {
-    name: 'Revenge & Empowerment',
-    description: 'The art of strategic payback',
+    name: 'Power & Influence',
+    description: 'Building authority and strategic positioning',
     icon: '⚔️',
   },
 ]
 
 export const VIRAL_TOPICS = [
-  'Sociopathic ways to win your crush',
+  'What your body language reveals about your power level',
   'What sociopaths think ABOUT YOU during a relationship',
   'How to spot people like me',
-  'The idealization phase and love bombing',
-  'Identifying manipulation tactics',
+  'How CEOs think differently',
+  'The psychology behind why you can\'t say no',
   'Emotional detachment techniques',
-  'Managing multiple dating options (rotation)',
-  'Infiltrating friend groups',
+  'Identifying manipulation tactics',
+  'The idealization phase and love bombing',
 ]
 
 export const FEATURED_VIDEOS = {

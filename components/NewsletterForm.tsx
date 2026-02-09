@@ -28,7 +28,7 @@ export default function NewsletterForm() {
 
       if (response.ok) {
         setStatus('success')
-        setMessage(data.isNew ? 'Welcome to the dark side.' : 'You\'re already one of us.')
+        setMessage(data.isNew ? 'Welcome to the edge.' : 'You\'re already one of us.')
         setEmail('')
       } else {
         setStatus('error')

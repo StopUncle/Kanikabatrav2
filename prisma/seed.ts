@@ -32,12 +32,12 @@ async function main() {
       },
     }),
     prisma.forumCategory.upsert({
-      where: { slug: 'dark-feminine' },
+      where: { slug: 'strategic-psychology' },
       update: {},
       create: {
-        name: 'Dark Feminine',
-        slug: 'dark-feminine',
-        description: 'Master the art of feminine power, seduction, and strategic charm.',
+        name: 'Strategic Psychology',
+        slug: 'strategic-psychology',
+        description: 'Master the art of power, influence, and strategic thinking.',
         icon: '🖤',
         sortOrder: 3,
         accessTier: AccessTier.REGISTERED,
@@ -108,12 +108,12 @@ async function main() {
       },
     }),
     prisma.chatRoom.upsert({
-      where: { slug: 'dark-feminine-lounge' },
+      where: { slug: 'strategy-lounge' },
       update: {},
       create: {
-        name: 'Dark Feminine Lounge',
-        slug: 'dark-feminine-lounge',
-        description: 'Connect with other practitioners of the dark feminine arts.',
+        name: 'Strategy Lounge',
+        slug: 'strategy-lounge',
+        description: 'Connect with other practitioners of strategic psychology.',
         accessTier: AccessTier.REGISTERED,
         categoryId: categories[2].id,
       },

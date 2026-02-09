@@ -94,7 +94,7 @@ export default function ContactPage() {
           </h1>
           <p className="text-text-gray text-lg md:text-xl max-w-3xl mx-auto">
             Ready to transform your psychology? Have questions about my methods?
-            Let&apos;s discuss how I can help you weaponize your mindset.
+            Let&apos;s discuss how I can help you sharpen your mindset.
           </p>
         </div>
 

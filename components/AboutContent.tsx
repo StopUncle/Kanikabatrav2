@@ -98,7 +98,7 @@ export default function AboutContent() {
                     <li>• Clinically Diagnosed ASPD (Age 21)</li>
                     <li>• Assessed by prison psychiatrist specialist</li>
                     <li>• Documented behavioral patterns since childhood</li>
-                    <li>• Living proof that ASPD can be weaponized for success</li>
+                    <li>• Living proof that ASPD can be channeled for success</li>
                   </ul>
                 </div>
 
@@ -124,10 +124,10 @@ export default function AboutContent() {
                 <div>
                   <h3 className="text-accent-gold text-sm uppercase tracking-wider mb-2">Expertise</h3>
                   <ul className="space-y-2 text-text-gray">
-                    <li>• Dark psychology and strategic seduction</li>
+                    <li>• Strategic psychology and power dynamics</li>
                     <li>• Manipulation detection and countermeasures</li>
-                    <li>• The rotation system for dating power</li>
-                    <li>• Psychological warfare and emotional detachment</li>
+                    <li>• Strategic relationship frameworks</li>
+                    <li>• Emotional control and psychological resilience</li>
                   </ul>
                 </div>
               </div>
@@ -271,8 +271,8 @@ export default function AboutContent() {
           className="text-center mt-16"
         >
           <h2 className="text-3xl font-light mb-6">
-            <span className="text-text-light">Ready to Learn From a</span>{' '}
-            <span className="gradient-text">Real Predator?</span>
+            <span className="text-text-light">Ready to Learn How</span>{' '}
+            <span className="gradient-text">Power Really Works?</span>
           </h2>
           <p className="text-text-gray text-lg mb-8 max-w-2xl mx-auto">
             Stop taking advice from people who lose. Learn from someone who can&apos;t.

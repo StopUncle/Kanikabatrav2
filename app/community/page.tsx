@@ -9,14 +9,14 @@ const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://kanikarose.com'
 
 export const metadata: Metadata = {
   title: 'Community Forum | Kanika Batra',
-  description: 'Join the dark psychology community. Connect with like-minded individuals, share insights on manipulation tactics, and discuss relationship strategy with fellow students.',
+  description: 'Join the dark psychology community. Connect with like-minded individuals, share insights on strategic psychology, and discuss relationship strategy with fellow students.',
   keywords: ['dark psychology community', 'manipulation tactics forum', 'relationship strategy community', 'Kanika Batra community'],
   alternates: {
     canonical: `${baseUrl}/community`,
   },
   openGraph: {
     title: 'Community Forum | Kanika Batra',
-    description: 'Join the dark psychology community. Connect with like-minded individuals and discuss manipulation tactics.',
+    description: 'Join the dark psychology community. Connect with like-minded individuals and discuss strategic psychology.',
     url: `${baseUrl}/community`,
     type: 'website',
     images: [{

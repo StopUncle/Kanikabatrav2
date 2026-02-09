@@ -17,15 +17,15 @@ export const metadata: Metadata = {
   },
   keywords: [
     'Kanika Batra',
-    'sociopath',
+    'psychology of power',
     'dark psychology',
-    'manipulation tactics',
-    'dark charisma',
-    'personal transformation',
-    'psychological warfare',
+    'strategic thinking',
+    'power dynamics',
+    'social strategy',
+    'manipulation defense',
+    'dark triad',
     'ASPD',
-    'antisocial personality disorder',
-    'strategic seduction',
+    'Under the Mask podcast',
   ],
   authors: [{ name: SITE_CONFIG.name }],
   openGraph: {
@@ -138,13 +138,13 @@ export default function Home() {
           <div className="max-w-4xl mx-auto text-center">
             <div>
               <h2 className="text-4xl md:text-5xl font-light mb-6">
-                <span className="text-text-light">Ready to Embrace Your</span>
+                <span className="text-text-light">Ready to See What&apos;s</span>
                 <br />
-                <span className="gradient-text">Dark Side?</span>
+                <span className="gradient-text">Behind the Mask?</span>
               </h2>
               <p className="text-text-gray text-lg mb-8 max-w-2xl mx-auto">
-                Join thousands who have discovered the power of understanding and wielding 
-                their darkness. Your transformation begins with a single decision.
+                Join thousands who have discovered the power of understanding
+                psychology others won&apos;t teach. Your transformation begins with a single decision.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <a
@@ -169,14 +169,14 @@ export default function Home() {
           <div className="max-w-3xl mx-auto text-center">
             <div>
               <h3 className="text-2xl font-light mb-4 gradient-text-gold">
-                Stay Connected with the Darkness
+                Psychology of Power — Weekly
               </h3>
               <p className="text-text-gray mb-8">
-                Get exclusive insights, manipulation tactics, and dark psychology tips delivered to your inbox.
+                Strategic psychology, power dynamics, and the insights they don&apos;t teach in school.
               </p>
               <NewsletterForm />
               <p className="text-text-gray text-sm mt-4">
-                No spam. Only darkness. Unsubscribe anytime.
+                No spam. Only power. Unsubscribe anytime.
               </p>
             </div>
           </div>

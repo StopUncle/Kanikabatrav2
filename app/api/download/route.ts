@@ -75,11 +75,37 @@ export async function GET(request: NextRequest) {
     // Get requested format from query params (defaults to pdf)
     const format = searchParams.get('format') || 'pdf'
 
-    // Determine which book file to serve
-    const bookFilename = format === 'epub' ? 'FINAL_BOOK.epub' : 'FINAL_BOOK.pdf'
-    const displayName = format === 'epub'
-      ? 'Sociopathic_Dating_Bible_Kanika_Batra.epub'
-      : 'Sociopathic_Dating_Bible_Kanika_Batra.pdf'
+    // Check if requesting bonus content - requires PREMIUM purchase
+    if (format.startsWith('bonus-') && purchase.productVariant !== 'PREMIUM') {
+      return NextResponse.json(
+        { error: 'Bonus chapters are only available with Premium Edition purchase' },
+        { status: 403 }
+      )
+    }
+
+    // Determine which file to serve based on format
+    let bookFilename: string
+    let displayName: string
+    let contentType = 'application/pdf'
+
+    switch (format) {
+      case 'epub':
+        bookFilename = 'FINAL_BOOK.epub'
+        displayName = 'Sociopathic_Dating_Bible_Kanika_Batra.epub'
+        contentType = 'application/epub+zip'
+        break
+      case 'bonus-narcissists':
+        bookFilename = 'Addendum_Narcissists.pdf'
+        displayName = 'Bonus_Chapter_Understanding_Narcissists.pdf'
+        break
+      case 'bonus-avoidants':
+        bookFilename = 'Addendum_Avoidants.pdf'
+        displayName = 'Bonus_Chapter_The_Avoidant_Playbook.pdf'
+        break
+      default:
+        bookFilename = 'FINAL_BOOK.pdf'
+        displayName = 'Sociopathic_Dating_Bible_Kanika_Batra.pdf'
+    }
 
     // Try public folder first (for Railway deployment), fallback to private
     let bookPath = path.join(process.cwd(), 'public', 'books', bookFilename)
@@ -101,11 +127,9 @@ export async function GET(request: NextRequest) {
         purchaseId: purchase.id,
         variant: purchase.productVariant,
         email: purchase.customerEmail,
+        format,
         downloadCount: purchase.downloadCount + 1
       })
-
-      // Determine content type based on format
-      const contentType = format === 'epub' ? 'application/epub+zip' : 'application/pdf'
 
       // Return the file as a download
       return new NextResponse(fileBuffer as BodyInit, {

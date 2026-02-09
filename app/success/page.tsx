@@ -93,7 +93,7 @@ function SuccessContent() {
             </h1>
 
             <p className="text-text-gray text-lg md:text-xl mb-12">
-              Your order has been processed successfully. Welcome to the dark side.
+              Your order has been processed successfully. Welcome aboard.
             </p>
           </motion.div>
 

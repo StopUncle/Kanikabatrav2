@@ -221,7 +221,7 @@ export const sendContactNotification = async (data: ContactFormData): Promise<bo
         </div>
         <p style="color: #d4af37; font-style: italic; margin-top: 30px;">
           - Kanika Batra<br>
-          The Beautiful Sociopath
+          The Psychology of Power
         </p>
       </div>
     </div>
@@ -288,7 +288,7 @@ export const sendOrderConfirmation = async (data: OrderConfirmationData): Promis
         </div>
 
         <p style="color: #d4af37; font-style: italic; margin-top: 30px;">
-          Welcome to the dark side,<br>
+          Welcome aboard,<br>
           Kanika Batra
         </p>
       </div>
@@ -316,6 +316,10 @@ export const sendBookDelivery = async (
     ? 'Sociopathic Dating Bible: A Cure For Empathy (Premium Edition)'
     : 'Sociopathic Dating Bible: A Cure For Empathy'
 
+  // Bonus chapter download URLs
+  const bonusNarcissistsUrl = `${baseUrl}/api/download?token=${downloadToken}&format=bonus-narcissists`
+  const bonusAvoidantsUrl = `${baseUrl}/api/download?token=${downloadToken}&format=bonus-avoidants`
+
   const premiumBonuses = isPremium ? `
     <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="background: linear-gradient(135deg, #1a0d11 0%, #2a1a1f 100%); border-radius: 10px; margin: 0 0 25px 0; border: 2px solid #d4af37; box-shadow: 0 4px 15px rgba(212, 175, 55, 0.2);">
       <tr>
@@ -326,7 +330,16 @@ export const sendBookDelivery = async (
           <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0">
             <tr>
               <td style="padding: 12px 0; color: #f5f0ed; font-size: 14px; line-height: 1.6; border-bottom: 1px solid rgba(212, 175, 55, 0.2);">
-                <strong style="color: #d4af37;">Bonus Chapter:</strong> Advanced Dark Triad Tactics
+                <strong style="color: #d4af37;">Bonus Chapter 1:</strong> Understanding Narcissists
+                <br>
+                <a href="${bonusNarcissistsUrl}" style="color: #d4af37; text-decoration: underline; font-size: 13px;">Download PDF</a>
+              </td>
+            </tr>
+            <tr>
+              <td style="padding: 12px 0; color: #f5f0ed; font-size: 14px; line-height: 1.6; border-bottom: 1px solid rgba(212, 175, 55, 0.2);">
+                <strong style="color: #d4af37;">Bonus Chapter 2:</strong> The Avoidant Playbook
+                <br>
+                <a href="${bonusAvoidantsUrl}" style="color: #d4af37; text-decoration: underline; font-size: 13px;">Download PDF</a>
               </td>
             </tr>
             <tr>
@@ -335,18 +348,13 @@ export const sendBookDelivery = async (
               </td>
             </tr>
             <tr>
-              <td style="padding: 12px 0; color: #f5f0ed; font-size: 14px; line-height: 1.6; border-bottom: 1px solid rgba(212, 175, 55, 0.2);">
-                <strong style="color: #d4af37;">Email Templates:</strong> Psychological Warfare in Modern Dating
-              </td>
-            </tr>
-            <tr>
               <td style="padding: 12px 0; color: #f5f0ed; font-size: 14px; line-height: 1.6;">
                 <strong style="color: #d4af37;">$100 Discount:</strong> On your first 1-on-1 consultation
               </td>
             </tr>
           </table>
-          <p style="color: #d4af37; margin: 20px 0 0 0; font-size: 13px; font-style: italic; text-align: center; line-height: 1.6;">
-            Access instructions for all bonuses have been sent in separate emails. Check your inbox!
+          <p style="color: #94a3b8; margin: 20px 0 0 0; font-size: 12px; text-align: center; line-height: 1.6;">
+            Bonus chapter links use the same token as your main book download.
           </p>
         </td>
       </tr>
@@ -478,7 +486,7 @@ export const sendBookDelivery = async (
                           Kanika Batra
                         </p>
                         <p style="color: #666; margin: 5px 0 0 0; font-size: 12px; letter-spacing: 0.5px;">
-                          The Beautiful Sociopath
+                          The Psychology of Power
                         </p>
                       </td>
                     </tr>
@@ -724,14 +732,14 @@ export const sendCoachingScheduling = async (
 
         <div style="margin-top: 30px; padding: 20px; background: #0a0a0a; border-radius: 8px;">
           <p style="color: #94a3b8; font-style: italic; text-align: center;">
-            "I don't teach you to hide your darkness—I teach you to weaponize it."
+            "I don't teach you to be passive—I teach you to be strategic."
           </p>
         </div>
 
         <p style="color: #d4af37; font-style: italic; margin-top: 30px;">
           Ready to transform,<br>
           Kanika Batra<br>
-          <span style="color: #666; font-size: 12px;">Master of Manipulation</span>
+          <span style="color: #666; font-size: 12px;">Psychology of Power</span>
         </p>
       </div>
     </div>
@@ -1086,13 +1094,13 @@ export const sendQuizResults = async (data: QuizResultsEmailData): Promise<boole
               <tr>
                 <td style="padding: 30px; text-align: center;">
                   <p style="color: #d4af37; margin: 0 0 5px 0; font-size: 16px; font-style: italic;">
-                    Embrace your darkness,
+                    Embrace your power,
                   </p>
                   <p style="color: #d4af37; margin: 0; font-size: 18px; font-weight: 600; letter-spacing: 1px;">
                     Kanika Batra
                   </p>
                   <p style="color: #666; margin: 5px 0 0 0; font-size: 12px;">
-                    The Beautiful Sociopath
+                    The Psychology of Power
                   </p>
                 </td>
               </tr>

@@ -1,4 +1,4 @@
-import { UserRole } from '@prisma/client'
+import { UserRole, Prisma } from '@prisma/client'
 
 export interface MockUser {
   id: string
@@ -7,6 +7,7 @@ export interface MockUser {
   name: string | null
   displayName: string | null
   avatarUrl: string | null
+  emailPreferences: Prisma.JsonValue
   role: UserRole
   createdAt: Date
   updatedAt: Date
@@ -20,6 +21,7 @@ export function createMockUser(overrides: Partial<MockUser> = {}): MockUser {
     name: null,
     displayName: null,
     avatarUrl: null,
+    emailPreferences: null,
     role: 'USER' as UserRole,
     createdAt: new Date(),
     updatedAt: new Date(),

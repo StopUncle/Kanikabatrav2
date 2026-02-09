@@ -44,10 +44,10 @@ const Footer = () => {
               </span>
             </div>
             <p className="text-text-muted text-xs sm:text-sm">
-              Diagnosed Sociopath. Beauty Queen. Dark Psychology Expert.
+              Diagnosed Sociopath. Author. Psychology of Power Expert.
             </p>
             <p className="text-gold text-xs">
-              Transform your darkness into power.
+              Stop being the victim. Start being the villain.
             </p>
           </div>
 
@@ -115,7 +115,7 @@ const Footer = () => {
               © {currentYear} Kanika Batra. All rights reserved.
             </p>
             <p className="text-text-muted text-xs sm:text-sm flex items-center">
-              Crafted with <Heart className="w-3 h-3 sm:w-4 sm:h-4 mx-1 text-burgundy" /> and darkness
+              Crafted with <Heart className="w-3 h-3 sm:w-4 sm:h-4 mx-1 text-burgundy" /> and strategy
             </p>
           </div>
         </div>
