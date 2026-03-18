@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useRef, useEffect } from "react";
 import { MANIPULATION_QUIZ, getResult } from "@/lib/quiz-manipulation";
 import type { QuizResult } from "@/lib/quiz-manipulation";
 
@@ -26,6 +26,30 @@ function withUtm(url: string, campaign: string) {
 // ─── Main Page ─────────────────────────────────────────────
 export default function LinksPage() {
   const [showQuiz, setShowQuiz] = useState(false);
+  const [landingVideoPlaying, setLandingVideoPlaying] = useState(false);
+  const landingVideoRef = useRef<HTMLVideoElement>(null);
+  const landingVideoContainerRef = useRef<HTMLDivElement>(null);
+
+  // Autoplay muted on scroll into view
+  useEffect(() => {
+    const video = landingVideoRef.current;
+    const container = landingVideoContainerRef.current;
+    if (!video || !container) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          video.muted = true;
+          video.play().catch(() => {});
+        } else {
+          video.pause();
+        }
+      },
+      { threshold: 0.5 },
+    );
+    observer.observe(container);
+    return () => observer.disconnect();
+  }, []);
 
   return (
     <div className="min-h-screen bg-[#050505] text-[#f5f0ed]">
@@ -115,6 +139,59 @@ export default function LinksPage() {
             Edit AI &middot; One-click editing for creators
           </p>
         </a>
+      </section>
+
+      {/* ── VIDEO ── */}
+      <section className="px-5 py-10" ref={landingVideoContainerRef}>
+        <div className="relative max-w-[640px] mx-auto rounded-xl overflow-hidden border border-[#d4af37]/10 bg-[#0a0a18] aspect-video">
+          <video
+            ref={landingVideoRef}
+            poster="/images/video-poster-landing.webp"
+            preload="metadata"
+            playsInline
+            muted
+            className="w-full h-full object-cover"
+            onPlay={() => setLandingVideoPlaying(true)}
+            onPause={() => setLandingVideoPlaying(false)}
+            onEnded={() => setLandingVideoPlaying(false)}
+          >
+            <source src="/videos/landing-intro.mp4" type="video/mp4" />
+            <track
+              kind="captions"
+              src="/videos/landing-captions.vtt"
+              srcLang="en"
+              label="English"
+            />
+          </video>
+
+          {!landingVideoPlaying && (
+            <button
+              onClick={() => {
+                const v = landingVideoRef.current;
+                if (v) {
+                  v.muted = false;
+                  v.play();
+                  trackEvent("video_play_landing");
+                }
+              }}
+              className="absolute inset-0 flex items-center justify-center bg-black/30 group cursor-pointer"
+              aria-label="Play video with sound"
+            >
+              <div className="w-14 h-14 rounded-full bg-[#d4af37]/90 flex items-center justify-center group-hover:scale-110 transition-transform shadow-lg shadow-[#d4af37]/20">
+                <svg
+                  className="w-5 h-5 text-[#050505] ml-0.5"
+                  fill="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path d="M8 5v14l11-7z" />
+                </svg>
+              </div>
+            </button>
+          )}
+        </div>
+        <p className="text-center text-[#6b7280]/60 text-[11px] mt-3 tracking-wider">
+          Watch the full introduction
+        </p>
       </section>
 
       {/* ── SOCIAL PROOF ── */}

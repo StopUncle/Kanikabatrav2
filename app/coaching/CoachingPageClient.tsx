@@ -1,19 +1,19 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useRouter } from "next/navigation";
 import BackgroundEffects from "@/components/BackgroundEffects";
 import Header from "@/components/Header";
 import PayPalButton from "@/components/PayPalButton";
-import { COACHING_PACKAGES, COACHING_BUNDLE_BENEFITS } from "@/lib/constants";
-import { Check, ArrowRight, Users, Clock, Star, Zap } from "lucide-react";
+import { COACHING_PACKAGES } from "@/lib/constants";
+import { Check, ArrowRight, Play } from "lucide-react";
 
 export default function CoachingPage() {
-  const [selectedPackages, setSelectedPackages] = useState<{
-    [key: string]: "single" | "bundle";
-  }>({});
-  const [expandedPackage, setExpandedPackage] = useState<string | null>(null);
+  const [expandedTier, setExpandedTier] = useState<string | null>(null);
+  const [showPayPal, setShowPayPal] = useState<string | null>(null);
+  const [videoPlaying, setVideoPlaying] = useState(false);
+  const videoRef = useRef<HTMLVideoElement>(null);
   const router = useRouter();
 
   const handlePaymentSuccess = (
@@ -27,9 +27,7 @@ export default function CoachingPage() {
       type: "coaching",
       amount: details.amount || "0",
       package_name: packageName + (isBundle ? " - Bundle" : ""),
-      bundle: isBundle.toString(),
     });
-
     router.push(`/success?${params.toString()}`);
   };
 
@@ -38,372 +36,489 @@ export default function CoachingPage() {
     alert("Payment failed. Please try again or contact support.");
   };
 
-  const togglePackage = (packageId: string) => {
-    setExpandedPackage(expandedPackage === packageId ? null : packageId);
-  };
-
-  const selectPackageType = (packageId: string, type: "single" | "bundle") => {
-    setSelectedPackages((prev) => ({
-      ...prev,
-      [packageId]: type,
-    }));
+  const playVideo = () => {
+    if (videoRef.current) {
+      videoRef.current.play();
+      setVideoPlaying(true);
+    }
   };
 
   return (
     <>
       <BackgroundEffects />
       <Header />
-      <div className="min-h-screen pt-20 sm:pt-24 lg:pt-32 pb-16 px-4 sm:px-6 lg:px-8 relative z-10">
-        <div className="max-w-7xl mx-auto">
-          {/* Header */}
+      <div className="min-h-screen pt-24 sm:pt-32 pb-20 px-4 sm:px-6 lg:px-8 relative z-10">
+        <div className="max-w-5xl mx-auto">
+          {/* ── HEADLINE ── */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
-            className="text-center mb-8 sm:mb-12 lg:mb-16"
+            className="text-center mb-16 sm:mb-20"
           >
-            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-light mb-4 sm:mb-6">
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-light leading-[1.1] mb-6">
               <span className="gradient-text">
-                Operate Regardless of Feelings
+                See What Everyone Else Misses
               </span>
             </h1>
-            <p className="text-text-gray text-lg md:text-xl max-w-3xl mx-auto mb-8">
-              There&apos;s a headspace where fear doesn&apos;t vote, decisions
-              come fast, and the voice that wants you to quit goes silent. I
-              live there. I can show you the door.
+            <p className="text-text-gray text-lg sm:text-xl max-w-2xl mx-auto">
+              You&apos;re not broken. You&apos;re just not seeing clearly yet.
             </p>
-            <div className="flex flex-wrap justify-center gap-4 text-sm text-accent-gold">
-              <div className="flex items-center gap-2">
-                <Clock className="w-4 h-4" />
-                <span>40-90 minute intensive sessions</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <Users className="w-4 h-4" />
-                <span>1-on-1 with a diagnosed sociopath</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <Star className="w-4 h-4" />
-                <span>Access the state on demand</span>
-              </div>
-            </div>
+            <p className="text-accent-gold/60 text-sm mt-4 tracking-wider">
+              1:1 coaching with a diagnosed sociopath &middot; Limited spots
+              each month
+            </p>
           </motion.div>
 
-          {/* Bundle Benefits */}
+          {/* ── VIDEO ── */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            className="bg-gradient-to-r from-accent-burgundy/20 to-accent-sapphire/20 rounded-2xl p-6 mb-12 border border-accent-gold/20"
+            transition={{ duration: 0.6, delay: 0.15 }}
+            className="mb-20 sm:mb-28"
           >
-            <div className="text-center mb-6">
-              <h2 className="text-2xl font-light gradient-text-gold mb-2">
-                Bundle Advantages
-              </h2>
-              <p className="text-text-muted">
-                Get more transformation for less investment
-              </p>
+            <div className="relative max-w-[720px] mx-auto rounded-xl overflow-hidden border border-accent-gold/10 bg-[#0a0a18] aspect-video">
+              <video
+                ref={videoRef}
+                poster="/images/video-poster-coaching.webp"
+                preload="metadata"
+                playsInline
+                className="w-full h-full object-cover"
+                onEnded={() => setVideoPlaying(false)}
+              >
+                <source src="/videos/coaching-intro.mp4" type="video/mp4" />
+                <track
+                  kind="captions"
+                  src="/videos/coaching-captions.vtt"
+                  srcLang="en"
+                  label="English"
+                />
+              </video>
+
+              {!videoPlaying && (
+                <button
+                  onClick={playVideo}
+                  className="absolute inset-0 flex items-center justify-center bg-black/40 group cursor-pointer"
+                  aria-label="Play coaching video"
+                >
+                  <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-accent-gold/90 flex items-center justify-center group-hover:scale-110 transition-transform shadow-lg shadow-accent-gold/20">
+                    <Play
+                      className="text-deep-black ml-1"
+                      size={28}
+                      fill="currentColor"
+                    />
+                  </div>
+                </button>
+              )}
             </div>
-            <div className="grid sm:grid-cols-2 lg:grid-cols-5 gap-4">
-              {COACHING_BUNDLE_BENEFITS.map((benefit, index) => (
-                <div key={index} className="flex items-center gap-3">
-                  <Zap className="w-4 h-4 text-accent-gold flex-shrink-0" />
-                  <span className="text-sm text-text-light">{benefit}</span>
-                </div>
+            <p className="text-center text-text-gray/40 text-xs mt-4 tracking-wider">
+              Watch: What a session actually looks like
+            </p>
+          </motion.div>
+
+          {/* ── WHO THIS IS FOR ── */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            viewport={{ once: true }}
+            className="mb-12 sm:mb-16 max-w-2xl mx-auto"
+          >
+            <div className="space-y-5 sm:space-y-6">
+              {[
+                "You keep choosing the same person in different packaging",
+                "You can feel something is wrong but you can't name what it is",
+                "You've been gaslit so many times you don't trust your own perception",
+                "You want to walk into a room and know exactly who to trust",
+                "You're tired of being the one who gets blindsided",
+              ].map((line, i) => (
+                <motion.p
+                  key={i}
+                  initial={{ opacity: 0, x: -10 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.4, delay: i * 0.08 }}
+                  viewport={{ once: true }}
+                  className="text-text-light text-base sm:text-lg font-light leading-relaxed pl-5 border-l-2 border-accent-gold/30"
+                >
+                  {line}
+                </motion.p>
               ))}
             </div>
           </motion.div>
 
-          {/* Coaching Packages */}
-          <div className="space-y-8 mb-16">
-            {COACHING_PACKAGES.map((pkg, index) => (
-              <motion.div
-                key={pkg.id}
-                id={pkg.id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: index * 0.1 }}
-                className={`relative overflow-hidden ${pkg.popular ? "lg:scale-[1.02]" : ""}`}
-              >
-                <div
-                  className={`bg-deep-black/40 backdrop-blur-sm border rounded-2xl p-6 sm:p-8 relative ${
-                    pkg.popular
-                      ? "border-accent-gold shadow-2xl shadow-accent-gold/10"
-                      : "border-accent-gold/20"
-                  }`}
-                >
-                  {pkg.popular && (
-                    <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 z-10">
-                      <span className="bg-gradient-to-r from-accent-gold to-accent-gold/80 text-deep-black px-6 py-2 rounded-full text-sm font-bold tracking-wide flex items-center gap-2">
-                        <Star className="w-4 h-4" />
-                        MOST POPULAR
-                      </span>
-                    </div>
-                  )}
+          {/* ── WHO THIS IS NOT FOR ── */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            transition={{ duration: 0.5 }}
+            viewport={{ once: true }}
+            className="mb-20 sm:mb-28 max-w-2xl mx-auto"
+          >
+            <div className="space-y-3 text-text-gray/50 text-sm">
+              <p>
+                This is not therapy. I&apos;m not a licensed therapist and I
+                don&apos;t treat mental health conditions.
+              </p>
+              <p>
+                This is not for people looking for validation. I tell you what I
+                see, whether you like it or not.
+              </p>
+            </div>
+          </motion.div>
 
-                  {/* Package Header */}
-                  <div className="flex flex-col lg:flex-row lg:items-start gap-8 mb-8">
-                    <div className="flex-1">
-                      <h3 className="text-3xl sm:text-4xl font-light gradient-text-gold mb-4">
-                        {pkg.name}
-                      </h3>
-                      <p className="text-text-gray text-lg leading-relaxed mb-6">
-                        {pkg.description}
-                      </p>
-                      <button
-                        onClick={() => togglePackage(pkg.id)}
-                        className="flex items-center gap-2 text-accent-gold hover:text-accent-gold/80 transition-colors text-sm font-medium"
-                      >
-                        {expandedPackage === pkg.id
-                          ? "Show Less"
-                          : "Learn More"}
-                        <ArrowRight
-                          className={`w-4 h-4 transition-transform ${expandedPackage === pkg.id ? "rotate-90" : ""}`}
-                        />
-                      </button>
-                    </div>
+          {/* ── PRICING TIERS ── */}
+          <div className="mb-20 sm:mb-28">
+            <motion.h2
+              initial={{ opacity: 0, y: 15 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+              viewport={{ once: true }}
+              className="text-center text-3xl sm:text-4xl font-light mb-14"
+            >
+              <span className="gradient-text-gold">Choose Your Level</span>
+            </motion.h2>
 
-                    {/* Pricing Options */}
-                    <div className="flex-shrink-0 w-full lg:w-auto">
-                      <div className="grid sm:grid-cols-2 lg:grid-cols-1 gap-4 lg:w-80">
-                        {/* Single Session */}
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-5 sm:gap-6">
+              {COACHING_PACKAGES.map((pkg, index) => {
+                const isRetainer = pkg.id === "private-retainer";
+                const hasBundle = pkg.bundlePrice !== pkg.price;
+                const isExpanded = expandedTier === pkg.id;
+                const showingPayPal = showPayPal === pkg.id;
+                const showingBundlePayPal = showPayPal === `${pkg.id}-bundle`;
+                const badge = (pkg as Record<string, unknown>).badge as
+                  | string
+                  | null;
+                const ctaLabel =
+                  ((pkg as Record<string, unknown>).ctaLabel as string) ||
+                  `Book ${pkg.name}`;
+
+                return (
+                  <motion.div
+                    key={pkg.id}
+                    initial={{ opacity: 0, y: 25 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5, delay: index * 0.1 }}
+                    viewport={{ once: true }}
+                    className="relative group"
+                  >
+                    {/* Popular glow */}
+                    {pkg.popular && (
+                      <div className="absolute -inset-px rounded-2xl bg-gradient-to-b from-accent-gold/25 via-accent-gold/8 to-transparent" />
+                    )}
+
+                    <div
+                      className={`relative rounded-2xl bg-[#0a0a18] border h-full flex flex-col ${
+                        pkg.popular
+                          ? "border-accent-gold/20"
+                          : "border-white/[0.06]"
+                      }`}
+                    >
+                      {/* Badge */}
+                      {badge && (
                         <div
-                          className={`p-6 rounded-xl border-2 cursor-pointer transition-all ${
-                            selectedPackages[pkg.id] === "single"
-                              ? "border-accent-gold bg-accent-gold/5"
-                              : "border-accent-gold/30 hover:border-accent-gold/50"
+                          className={`absolute -top-3 left-1/2 -translate-x-1/2 z-10 px-4 py-1 rounded-full text-[10px] font-bold tracking-[0.15em] uppercase whitespace-nowrap ${
+                            pkg.popular
+                              ? "bg-accent-gold text-deep-black"
+                              : "bg-white/[0.06] text-text-gray border border-white/[0.06]"
                           }`}
-                          onClick={() => selectPackageType(pkg.id, "single")}
                         >
-                          <div className="flex items-center justify-between mb-3">
-                            <div>
-                              <h4 className="font-medium text-text-light">
-                                Single Session
-                              </h4>
-                              <p className="text-text-muted text-sm">
-                                {pkg.duration}
-                              </p>
-                            </div>
-                            <div className="text-right">
-                              <div className="text-2xl font-light gradient-text">
-                                ${pkg.price}
-                              </div>
+                          {badge}
+                        </div>
+                      )}
+
+                      <div className="p-6 sm:p-7 flex flex-col h-full">
+                        {/* Name + Description */}
+                        <div className="mb-6">
+                          <h3 className="text-2xl font-light text-text-light mb-2">
+                            {pkg.name}
+                          </h3>
+                          <p className="text-text-gray/60 text-sm leading-relaxed">
+                            {pkg.description}
+                          </p>
+                        </div>
+
+                        {/* Pricing */}
+                        <div className="space-y-3 mb-6">
+                          {/* Single / Main Price */}
+                          <div className="p-4 rounded-xl bg-white/[0.03] border border-white/[0.06]">
+                            <div className="flex items-center justify-between mb-1">
+                              <span className="text-text-gray text-xs uppercase tracking-wider">
+                                {isRetainer
+                                  ? "3 sessions + async"
+                                  : hasBundle
+                                    ? "Single session"
+                                    : pkg.duration}
+                              </span>
+                              <span className="text-2xl font-light text-accent-gold">
+                                ${pkg.price.toLocaleString()}
+                              </span>
                             </div>
                           </div>
-                          {selectedPackages[pkg.id] === "single" && (
-                            <PayPalButton
-                              type="coaching"
-                              itemId={pkg.id}
-                              amount={pkg.price}
-                              itemName={pkg.name}
-                              onSuccess={(details) =>
-                                handlePaymentSuccess(details, pkg.name, false)
-                              }
-                              onError={handlePaymentError}
-                              className="mt-4"
-                            />
+
+                          {/* Bundle Option */}
+                          {hasBundle && (
+                            <div className="relative p-4 rounded-xl bg-accent-gold/[0.03] border border-accent-gold/10">
+                              <span className="absolute -top-2 right-3 px-2 py-0.5 rounded text-[10px] font-bold tracking-wider uppercase bg-accent-burgundy text-white">
+                                Save ${pkg.price * 3 - pkg.bundlePrice}
+                              </span>
+                              <div className="flex items-center justify-between mb-1">
+                                <span className="text-text-gray text-xs uppercase tracking-wider">
+                                  {pkg.bundleDuration}
+                                </span>
+                                <div className="text-right">
+                                  <span className="text-2xl font-light text-accent-gold">
+                                    ${pkg.bundlePrice.toLocaleString()}
+                                  </span>
+                                  <span className="block text-xs text-text-gray/40 line-through">
+                                    ${(pkg.price * 3).toLocaleString()}
+                                  </span>
+                                </div>
+                              </div>
+                            </div>
                           )}
                         </div>
 
-                        {/* Bundle */}
-                        <div
-                          className={`p-6 rounded-xl border-2 cursor-pointer transition-all relative ${
-                            selectedPackages[pkg.id] === "bundle"
-                              ? "border-accent-gold bg-accent-gold/5"
-                              : "border-accent-gold/30 hover:border-accent-gold/50"
-                          }`}
-                          onClick={() => selectPackageType(pkg.id, "bundle")}
-                        >
-                          <div className="absolute -top-2 -right-2 bg-gradient-to-r from-accent-burgundy to-accent-sapphire text-white px-3 py-1 rounded-full text-xs font-medium">
-                            SAVE ${pkg.price * 3 - pkg.bundlePrice}
-                          </div>
-                          <div className="flex items-center justify-between mb-3">
-                            <div>
-                              <h4 className="font-medium text-text-light">
-                                Bundle Package
-                              </h4>
-                              <p className="text-text-muted text-sm">
-                                {pkg.bundleDuration}
-                              </p>
-                            </div>
-                            <div className="text-right">
-                              <div className="text-2xl font-light gradient-text">
-                                ${pkg.bundlePrice}
-                              </div>
-                              <div className="text-xs text-text-muted line-through">
-                                ${pkg.price * 3}
-                              </div>
-                            </div>
-                          </div>
-                          {selectedPackages[pkg.id] === "bundle" && (
-                            <PayPalButton
-                              type="coaching"
-                              itemId={`${pkg.id}-bundle`}
-                              amount={pkg.bundlePrice}
-                              itemName={`${pkg.name} - Bundle`}
-                              onSuccess={(details) =>
-                                handlePaymentSuccess(details, pkg.name, true)
-                              }
-                              onError={handlePaymentError}
-                              className="mt-4"
-                            />
+                        {/* Features */}
+                        <ul className="space-y-2.5 mb-6 flex-1">
+                          {pkg.features.map((feature, i) => (
+                            <li
+                              key={i}
+                              className="flex items-start gap-2.5 text-sm text-text-gray/70"
+                            >
+                              <Check
+                                size={14}
+                                className="text-accent-gold mt-0.5 flex-shrink-0"
+                              />
+                              {feature}
+                            </li>
+                          ))}
+                        </ul>
+
+                        {/* CTA Button */}
+                        <div className="mt-auto space-y-3">
+                          {!hasBundle ? (
+                            <>
+                              <button
+                                onClick={() =>
+                                  setShowPayPal(showingPayPal ? null : pkg.id)
+                                }
+                                className={`w-full py-3.5 rounded-lg text-sm font-medium tracking-wider uppercase transition-all ${
+                                  isRetainer
+                                    ? "border border-accent-gold/30 text-accent-gold hover:bg-accent-gold/10"
+                                    : "bg-gradient-to-r from-[#720921] to-[#4a0616] text-white hover:shadow-lg"
+                                }`}
+                              >
+                                {ctaLabel}
+                              </button>
+                              <AnimatePresence>
+                                {showingPayPal && (
+                                  <motion.div
+                                    initial={{ opacity: 0, height: 0 }}
+                                    animate={{ opacity: 1, height: "auto" }}
+                                    exit={{ opacity: 0, height: 0 }}
+                                  >
+                                    <PayPalButton
+                                      type="coaching"
+                                      itemId={pkg.id}
+                                      amount={pkg.price}
+                                      itemName={pkg.name}
+                                      onSuccess={(d) =>
+                                        handlePaymentSuccess(d, pkg.name, false)
+                                      }
+                                      onError={handlePaymentError}
+                                    />
+                                  </motion.div>
+                                )}
+                              </AnimatePresence>
+                            </>
+                          ) : (
+                            <>
+                              <button
+                                onClick={() =>
+                                  setExpandedTier(isExpanded ? null : pkg.id)
+                                }
+                                className="w-full py-3.5 rounded-lg text-sm font-medium tracking-wider uppercase bg-gradient-to-r from-[#720921] to-[#4a0616] text-white hover:shadow-lg transition-all"
+                              >
+                                {ctaLabel}
+                              </button>
+                              <AnimatePresence>
+                                {isExpanded && (
+                                  <motion.div
+                                    initial={{ opacity: 0, height: 0 }}
+                                    animate={{ opacity: 1, height: "auto" }}
+                                    exit={{ opacity: 0, height: 0 }}
+                                    className="space-y-3 pt-2"
+                                  >
+                                    <button
+                                      onClick={() =>
+                                        setShowPayPal(
+                                          showingPayPal ? null : pkg.id,
+                                        )
+                                      }
+                                      className="w-full py-3 rounded-lg text-sm border border-accent-gold/20 text-text-light hover:bg-accent-gold/5 transition-colors"
+                                    >
+                                      Single — ${pkg.price}
+                                    </button>
+                                    {showingPayPal && (
+                                      <PayPalButton
+                                        type="coaching"
+                                        itemId={pkg.id}
+                                        amount={pkg.price}
+                                        itemName={pkg.name}
+                                        onSuccess={(d) =>
+                                          handlePaymentSuccess(
+                                            d,
+                                            pkg.name,
+                                            false,
+                                          )
+                                        }
+                                        onError={handlePaymentError}
+                                      />
+                                    )}
+
+                                    <button
+                                      onClick={() =>
+                                        setShowPayPal(
+                                          showingBundlePayPal
+                                            ? null
+                                            : `${pkg.id}-bundle`,
+                                        )
+                                      }
+                                      className="w-full py-3 rounded-lg text-sm bg-accent-gold/10 border border-accent-gold/20 text-accent-gold font-medium hover:bg-accent-gold/15 transition-colors"
+                                    >
+                                      Bundle (3 sessions) — $
+                                      {pkg.bundlePrice.toLocaleString()}
+                                    </button>
+                                    {showingBundlePayPal && (
+                                      <PayPalButton
+                                        type="coaching"
+                                        itemId={`${pkg.id}-bundle`}
+                                        amount={pkg.bundlePrice}
+                                        itemName={`${pkg.name} - Bundle`}
+                                        onSuccess={(d) =>
+                                          handlePaymentSuccess(
+                                            d,
+                                            pkg.name,
+                                            true,
+                                          )
+                                        }
+                                        onError={handlePaymentError}
+                                      />
+                                    )}
+                                  </motion.div>
+                                )}
+                              </AnimatePresence>
+                            </>
                           )}
                         </div>
                       </div>
                     </div>
-                  </div>
-
-                  {/* Expanded Content */}
-                  <AnimatePresence>
-                    {expandedPackage === pkg.id && (
-                      <motion.div
-                        initial={{ opacity: 0, height: 0 }}
-                        animate={{ opacity: 1, height: "auto" }}
-                        exit={{ opacity: 0, height: 0 }}
-                        transition={{ duration: 0.3 }}
-                        className="border-t border-accent-gold/20 pt-8"
-                      >
-                        {/* Long Description */}
-                        <div className="mb-8">
-                          <h4 className="text-xl font-light text-accent-gold mb-4">
-                            What You&apos;ll Learn
-                          </h4>
-                          <p className="text-text-gray leading-relaxed">
-                            {pkg.longDescription}
-                          </p>
-                        </div>
-
-                        <div className="grid lg:grid-cols-2 gap-8">
-                          {/* Single Session Features */}
-                          <div>
-                            <h4 className="text-lg font-light text-accent-gold mb-4 flex items-center gap-2">
-                              <Star className="w-5 h-5" />
-                              Single Session Includes
-                            </h4>
-                            <ul className="space-y-3">
-                              {pkg.features.map((feature, idx) => (
-                                <li
-                                  key={idx}
-                                  className="flex items-start gap-3"
-                                >
-                                  <Check
-                                    className="text-accent-gold mt-0.5 flex-shrink-0"
-                                    size={18}
-                                  />
-                                  <span className="text-text-light text-sm">
-                                    {feature}
-                                  </span>
-                                </li>
-                              ))}
-                            </ul>
-                          </div>
-
-                          {/* Bundle Features */}
-                          <div>
-                            <h4 className="text-lg font-light text-accent-gold mb-4 flex items-center gap-2">
-                              <Zap className="w-5 h-5" />
-                              Bundle Exclusive Benefits
-                            </h4>
-                            <ul className="space-y-3">
-                              {pkg.bundleFeatures.map((feature, idx) => (
-                                <li
-                                  key={idx}
-                                  className="flex items-start gap-3"
-                                >
-                                  <Check
-                                    className="text-accent-gold mt-0.5 flex-shrink-0"
-                                    size={18}
-                                  />
-                                  <span className="text-text-light text-sm">
-                                    {feature}
-                                  </span>
-                                </li>
-                              ))}
-                            </ul>
-                          </div>
-                        </div>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-                </div>
-              </motion.div>
-            ))}
+                  </motion.div>
+                );
+              })}
+            </div>
           </div>
 
-          {/* Process Section */}
+          {/* ── THE PROCESS ── */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.4 }}
-            className="mb-16"
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            viewport={{ once: true }}
+            className="mb-20 sm:mb-28"
           >
-            <h2 className="text-3xl sm:text-4xl font-light text-center mb-12">
+            <h2 className="text-3xl sm:text-4xl font-light text-center mb-14">
               <span className="gradient-text">The Process</span>
             </h2>
 
-            <div className="grid md:grid-cols-3 gap-8">
+            <div className="grid md:grid-cols-3 gap-6">
               {[
                 {
                   step: "01",
-                  title: "Identify Your Blocks",
+                  title: "You talk. I listen.",
                   description:
-                    "Deep analysis of what's creating hesitation, emotional hijacking, and friction in your psychology. We find the patterns that are holding you back.",
+                    "Bring me the situation. The relationship. The pattern. The person you can't figure out. Give me everything.",
                 },
                 {
                   step: "02",
-                  title: "Design Your Protocols",
+                  title: "I tell you what I see.",
                   description:
-                    "Custom strategies based on your specific triggers, goals, and operating environment. Each protocol is tailored to how your mind actually works.",
+                    "No softening. No managing your feelings. I show you what's actually happening — the pattern, the dynamic, the thing you keep missing.",
                 },
                 {
                   step: "03",
-                  title: "Lock It In",
+                  title: "You leave with a move.",
                   description:
-                    "Practice, reinforcement, and direct access to ensure the new patterns stick. Bundle clients get ongoing support when it matters most.",
+                    "Not a mindset shift. Not a journaling exercise. An actual, concrete thing you do differently the next time you're in that situation.",
                 },
               ].map((item, index) => (
-                <motion.div
+                <div
                   key={index}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.6, delay: 0.6 + index * 0.1 }}
-                  className="bg-deep-black/30 backdrop-blur-sm border border-accent-gold/10 rounded-lg p-8 text-center hover:border-accent-gold/30 transition-all"
+                  className="bg-[#0a0a18] border border-white/[0.06] rounded-2xl p-7 sm:p-8 text-center"
                 >
-                  <div className="text-6xl font-light gradient-text-gold opacity-50 mb-4">
+                  <div className="text-5xl font-light gradient-text-gold opacity-40 mb-4">
                     {item.step}
                   </div>
-                  <h3 className="text-xl font-light gradient-text-gold mb-4">
+                  <h3 className="text-lg font-light text-text-light mb-3">
                     {item.title}
                   </h3>
-                  <p className="text-text-muted leading-relaxed">
+                  <p className="text-text-gray/60 text-sm leading-relaxed">
                     {item.description}
                   </p>
-                </motion.div>
+                </div>
               ))}
             </div>
           </motion.div>
 
-          {/* Call to Action */}
+          {/* ── SOCIAL PROOF ── */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            transition={{ duration: 0.5 }}
+            viewport={{ once: true }}
+            className="mb-20 sm:mb-28 text-center"
+          >
+            <p className="text-text-gray/40 text-xs tracking-[0.2em] uppercase">
+              As seen on LADbible &middot; 278K Instagram &middot; 157K YouTube
+              &middot; Author of The Sociopathic Dating Bible
+            </p>
+          </motion.div>
+
+          {/* ── FINAL CTA ── */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.8 }}
-            className="text-center bg-gradient-to-r from-accent-burgundy/10 to-accent-sapphire/10 rounded-2xl p-8 border border-accent-gold/20"
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            viewport={{ once: true }}
+            className="text-center"
           >
-            <h2 className="text-2xl sm:text-3xl font-light mb-4">
-              <span className="gradient-text">
-                Ready to stop negotiating with yourself?
-              </span>
+            <h2 className="text-3xl sm:text-4xl font-light mb-6">
+              <span className="gradient-text-gold">Ready to see clearly?</span>
             </h2>
-            <p className="text-text-muted mb-6 max-w-2xl mx-auto">
-              Select your path above, or contact us for a recommendation based
-              on your specific goals.
-            </p>
+            <div className="flex flex-col sm:flex-row gap-3 justify-center mb-8">
+              {COACHING_PACKAGES.map((pkg) => (
+                <a
+                  key={pkg.id}
+                  href={`#${pkg.id}`}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    document
+                      .getElementById(pkg.id)
+                      ?.scrollIntoView({ behavior: "smooth" });
+                  }}
+                  className="px-6 py-3 rounded-lg border border-accent-gold/20 text-text-light text-sm hover:bg-accent-gold/5 transition-colors"
+                >
+                  {pkg.name} — ${pkg.price.toLocaleString()}
+                  {pkg.price !== pkg.bundlePrice ? "+" : ""}
+                </a>
+              ))}
+            </div>
             <a
               href="/contact"
-              className="inline-flex items-center gap-2 bg-gradient-to-r from-accent-burgundy to-accent-sapphire text-white px-8 py-3 rounded-full hover:shadow-lg transition-all font-medium"
+              className="text-text-gray/50 text-sm hover:text-accent-gold transition-colors inline-flex items-center gap-1.5"
             >
-              Questions? Contact Support
-              <ArrowRight className="w-4 h-4" />
+              Questions? Contact us
+              <ArrowRight size={14} />
             </a>
           </motion.div>
         </div>
