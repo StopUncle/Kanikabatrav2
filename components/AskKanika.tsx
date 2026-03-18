@@ -1,124 +1,191 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { MessageCircle, Mic } from "lucide-react";
+import { MessageCircle, Mic, ArrowRight } from "lucide-react";
 import Link from "next/link";
-
-const tiers = [
-  {
-    icon: MessageCircle,
-    label: "Written Answer",
-    description: "A detailed, personal written response from Kanika",
-    single: { price: 39.99, label: "1 Question" },
-    pack: { price: 99, label: "3 Questions", savings: "Save $20" },
-  },
-  {
-    icon: Mic,
-    label: "Voice Answer",
-    description: "A personal voice memo response — raw, unfiltered, direct",
-    single: { price: 59.99, label: "1 Question" },
-    pack: { price: 129, label: "3 Questions", savings: "Save $50" },
-  },
-];
 
 export default function AskKanika() {
   return (
-    <section className="py-16 sm:py-24 lg:py-32 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
-      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-deep-navy/30 to-transparent" />
+    <section className="relative py-20 sm:py-28 lg:py-36 px-4 sm:px-6 lg:px-8 overflow-hidden">
+      {/* Background — strong visual break from surrounding sections */}
+      <div className="absolute inset-0 bg-gradient-to-b from-deep-black via-[#0c0618] to-deep-black" />
+      <div className="absolute inset-0 opacity-30">
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[600px] bg-accent-burgundy/8 rounded-full blur-[120px]" />
+      </div>
 
-      <div className="max-w-5xl mx-auto relative z-10">
+      <div className="max-w-4xl mx-auto relative z-10">
+        {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
           viewport={{ once: true }}
-          className="text-center mb-12 sm:mb-16"
+          className="text-center mb-14 sm:mb-20"
         >
-          <div className="inline-block mb-6 px-4 py-2 border border-accent-burgundy/40 rounded-full">
-            <span className="text-accent-burgundy text-xs sm:text-sm tracking-[0.2em] uppercase">
-              Direct Access
-            </span>
-          </div>
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-light mb-4 sm:mb-6">
-            <span className="text-text-light">Ask Kanika</span>
+          <p className="text-accent-gold/60 text-xs tracking-[0.3em] uppercase mb-5">
+            Direct Access
+          </p>
+          <h2 className="text-4xl sm:text-5xl lg:text-6xl font-light leading-[1.1] mb-6">
+            <span className="text-text-light">Ask Kanika.</span>
             <br />
-            <span className="gradient-text-gold">Get an Answer</span>
+            <span className="gradient-text-gold">Get an Answer.</span>
           </h2>
-          <p className="text-text-gray text-base sm:text-lg max-w-2xl mx-auto leading-relaxed">
-            Relationships, power dynamics, dark psychology, or anything
-            you&apos;ve been afraid to ask. One question. One honest answer from
-            someone who doesn&apos;t sugarcoat.
+          <p className="text-text-gray text-base sm:text-lg max-w-lg mx-auto leading-relaxed">
+            One question. One honest answer from someone who doesn&apos;t
+            sugarcoat. Written or voice — your choice.
           </p>
         </motion.div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8">
-          {tiers.map((tier, index) => (
-            <motion.div
-              key={tier.label}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: index * 0.15 }}
-              viewport={{ once: true }}
-              className="bg-gradient-to-b from-deep-burgundy/20 to-deep-navy/20 border border-accent-gold/10 rounded-2xl p-6 sm:p-8 hover:border-accent-gold/25 transition-colors"
-            >
-              <div className="flex items-center gap-3 mb-4">
-                <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-accent-burgundy/20 flex items-center justify-center">
-                  <tier.icon className="text-accent-gold" size={20} />
+        {/* Two Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-6">
+          {/* Written Answer Card */}
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            viewport={{ once: true }}
+            className="relative group"
+          >
+            <div className="absolute -inset-px rounded-2xl bg-gradient-to-b from-accent-gold/20 via-accent-gold/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+            <div className="relative rounded-2xl bg-[#0a0a18] border border-white/[0.06] p-7 sm:p-8 h-full flex flex-col">
+              {/* Icon + Title */}
+              <div className="mb-8">
+                <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-accent-burgundy/30 to-accent-burgundy/10 border border-accent-burgundy/20 flex items-center justify-center mb-5">
+                  <MessageCircle className="text-accent-gold" size={24} />
                 </div>
-                <div>
-                  <h3 className="text-lg sm:text-xl font-light text-text-light">
-                    {tier.label}
-                  </h3>
-                  <p className="text-text-gray text-xs sm:text-sm">
-                    {tier.description}
-                  </p>
-                </div>
+                <h3 className="text-xl sm:text-2xl font-light text-text-light mb-1.5">
+                  Written Answer
+                </h3>
+                <p className="text-text-gray/70 text-sm">
+                  A detailed, personal written response delivered to your inbox.
+                </p>
               </div>
 
-              <div className="space-y-3 mt-6">
+              {/* Pricing */}
+              <div className="space-y-3 mt-auto">
                 <Link
-                  href={`/ask?format=${tier.label === "Written Answer" ? "written" : "voice"}&count=1`}
-                  className="flex items-center justify-between w-full p-4 rounded-xl border border-accent-gold/15 hover:border-accent-gold/40 hover:bg-accent-gold/5 transition-all group"
+                  href="/ask?format=written&count=1"
+                  className="flex items-center justify-between p-4 rounded-xl bg-white/[0.03] border border-white/[0.06] hover:bg-accent-gold/[0.04] hover:border-accent-gold/20 transition-all group/link"
                 >
-                  <div>
-                    <div className="text-text-light text-sm sm:text-base font-medium">
-                      {tier.single.label}
-                    </div>
-                  </div>
-                  <div className="text-xl sm:text-2xl font-light gradient-text-gold group-hover:scale-105 transition-transform">
-                    ${tier.single.price}
-                  </div>
+                  <span className="text-text-light text-sm font-medium">
+                    1 Question
+                  </span>
+                  <span className="flex items-center gap-2">
+                    <span className="text-2xl font-light text-accent-gold">
+                      $39.99
+                    </span>
+                    <ArrowRight
+                      size={14}
+                      className="text-accent-gold/0 group-hover/link:text-accent-gold/60 transition-colors"
+                    />
+                  </span>
                 </Link>
 
                 <Link
-                  href={`/ask?format=${tier.label === "Written Answer" ? "written" : "voice"}&count=3`}
-                  className="flex items-center justify-between w-full p-4 rounded-xl border border-accent-gold/15 hover:border-accent-gold/40 hover:bg-accent-gold/5 transition-all group relative"
+                  href="/ask?format=written&count=3"
+                  className="relative flex items-center justify-between p-4 rounded-xl bg-white/[0.03] border border-white/[0.06] hover:bg-accent-gold/[0.04] hover:border-accent-gold/20 transition-all group/link"
                 >
-                  <div className="absolute -top-2.5 right-4 bg-accent-burgundy text-white text-[10px] sm:text-xs font-bold px-2.5 py-0.5 rounded-full">
-                    {tier.pack.savings}
-                  </div>
-                  <div>
-                    <div className="text-text-light text-sm sm:text-base font-medium">
-                      {tier.pack.label}
-                    </div>
-                  </div>
-                  <div className="text-xl sm:text-2xl font-light gradient-text-gold group-hover:scale-105 transition-transform">
-                    ${tier.pack.price}
-                  </div>
+                  <span className="absolute -top-2 right-3 px-2 py-0.5 rounded text-[10px] font-bold tracking-wider uppercase bg-accent-burgundy text-white">
+                    Save $20
+                  </span>
+                  <span className="text-text-light text-sm font-medium">
+                    3 Questions
+                  </span>
+                  <span className="flex items-center gap-2">
+                    <span className="text-2xl font-light text-accent-gold">
+                      $99
+                    </span>
+                    <ArrowRight
+                      size={14}
+                      className="text-accent-gold/0 group-hover/link:text-accent-gold/60 transition-colors"
+                    />
+                  </span>
                 </Link>
               </div>
-            </motion.div>
-          ))}
+            </div>
+          </motion.div>
+
+          {/* Voice Answer Card */}
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.1 }}
+            viewport={{ once: true }}
+            className="relative group"
+          >
+            {/* Popular badge */}
+            <div className="absolute -top-3 left-1/2 -translate-x-1/2 z-10 px-4 py-1 rounded-full bg-accent-gold text-deep-black text-[10px] font-bold tracking-[0.15em] uppercase">
+              Most Personal
+            </div>
+            <div className="absolute -inset-px rounded-2xl bg-gradient-to-b from-accent-gold/25 via-accent-gold/8 to-transparent" />
+            <div className="relative rounded-2xl bg-[#0a0a18] border border-accent-gold/15 p-7 sm:p-8 h-full flex flex-col">
+              {/* Icon + Title */}
+              <div className="mb-8">
+                <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-accent-gold/20 to-accent-gold/5 border border-accent-gold/15 flex items-center justify-center mb-5">
+                  <Mic className="text-accent-gold" size={24} />
+                </div>
+                <h3 className="text-xl sm:text-2xl font-light text-text-light mb-1.5">
+                  Voice Answer
+                </h3>
+                <p className="text-text-gray/70 text-sm">
+                  A personal voice memo — raw, unfiltered, and direct to you.
+                </p>
+              </div>
+
+              {/* Pricing */}
+              <div className="space-y-3 mt-auto">
+                <Link
+                  href="/ask?format=voice&count=1"
+                  className="flex items-center justify-between p-4 rounded-xl bg-white/[0.03] border border-white/[0.06] hover:bg-accent-gold/[0.04] hover:border-accent-gold/20 transition-all group/link"
+                >
+                  <span className="text-text-light text-sm font-medium">
+                    1 Question
+                  </span>
+                  <span className="flex items-center gap-2">
+                    <span className="text-2xl font-light text-accent-gold">
+                      $59.99
+                    </span>
+                    <ArrowRight
+                      size={14}
+                      className="text-accent-gold/0 group-hover/link:text-accent-gold/60 transition-colors"
+                    />
+                  </span>
+                </Link>
+
+                <Link
+                  href="/ask?format=voice&count=3"
+                  className="relative flex items-center justify-between p-4 rounded-xl bg-white/[0.03] border border-white/[0.06] hover:bg-accent-gold/[0.04] hover:border-accent-gold/20 transition-all group/link"
+                >
+                  <span className="absolute -top-2 right-3 px-2 py-0.5 rounded text-[10px] font-bold tracking-wider uppercase bg-accent-burgundy text-white">
+                    Save $50
+                  </span>
+                  <span className="text-text-light text-sm font-medium">
+                    3 Questions
+                  </span>
+                  <span className="flex items-center gap-2">
+                    <span className="text-2xl font-light text-accent-gold">
+                      $129
+                    </span>
+                    <ArrowRight
+                      size={14}
+                      className="text-accent-gold/0 group-hover/link:text-accent-gold/60 transition-colors"
+                    />
+                  </span>
+                </Link>
+              </div>
+            </div>
+          </motion.div>
         </div>
 
+        {/* Bottom text */}
         <motion.p
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
-          transition={{ duration: 0.6, delay: 0.4 }}
+          transition={{ duration: 0.6, delay: 0.3 }}
           viewport={{ once: true }}
-          className="text-center text-text-gray/60 text-xs sm:text-sm mt-8"
+          className="text-center text-text-gray/40 text-xs tracking-wider mt-10"
         >
-          Responses within 48 hours. All questions are confidential.
+          Responses within 48 hours &middot; All questions are confidential
         </motion.p>
       </div>
     </section>
