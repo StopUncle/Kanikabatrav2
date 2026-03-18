@@ -1,43 +1,46 @@
-'use client'
+"use client";
 
-import { useState, useEffect } from 'react'
-import { Activity, Loader2 } from 'lucide-react'
-import DashboardCard from './DashboardCard'
-import ActivityItem from './ActivityItem'
+import { useState, useEffect } from "react";
+import { Activity, Loader2 } from "lucide-react";
+import DashboardCard from "./DashboardCard";
+import ActivityItem from "./ActivityItem";
 
 interface ActivityLog {
-  id: string
-  type: string
-  title: string
-  metadata: Record<string, unknown> | null
-  createdAt: string
+  id: string;
+  type: string;
+  title: string;
+  metadata: Record<string, unknown> | null;
+  createdAt: string;
 }
 
 interface ActivityFeedProps {
-  compact?: boolean
-  limit?: number
+  compact?: boolean;
+  limit?: number;
 }
 
-export default function ActivityFeed({ compact = false, limit = 10 }: ActivityFeedProps) {
-  const [activities, setActivities] = useState<ActivityLog[]>([])
-  const [loading, setLoading] = useState(true)
+export default function ActivityFeed({
+  compact = false,
+  limit = 10,
+}: ActivityFeedProps) {
+  const [activities, setActivities] = useState<ActivityLog[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function fetchActivity() {
       try {
-        const response = await fetch(`/api/user/activity?limit=${limit}`)
+        const response = await fetch(`/api/user/activity?limit=${limit}`);
         if (response.ok) {
-          const data = await response.json()
-          setActivities(data.activities)
+          const data = await response.json();
+          setActivities(data.activities);
         }
       } catch (error) {
-        console.error('Error fetching activity:', error)
+        console.error("Error fetching activity:", error);
       } finally {
-        setLoading(false)
+        setLoading(false);
       }
     }
-    fetchActivity()
-  }, [limit])
+    fetchActivity();
+  }, [limit]);
 
   if (compact) {
     return (
@@ -72,22 +75,25 @@ export default function ActivityFeed({ compact = false, limit = 10 }: ActivityFe
           </div>
         )}
       </DashboardCard>
-    )
+    );
   }
 
   // Full view with date groupings
-  const groupedActivities = activities.reduce((groups, activity) => {
-    const date = new Date(activity.createdAt).toLocaleDateString('en-US', {
-      weekday: 'long',
-      month: 'short',
-      day: 'numeric'
-    })
-    if (!groups[date]) {
-      groups[date] = []
-    }
-    groups[date].push(activity)
-    return groups
-  }, {} as Record<string, ActivityLog[]>)
+  const groupedActivities = activities.reduce(
+    (groups, activity) => {
+      const date = new Date(activity.createdAt).toLocaleDateString("en-US", {
+        weekday: "long",
+        month: "short",
+        day: "numeric",
+      });
+      if (!groups[date]) {
+        groups[date] = [];
+      }
+      groups[date].push(activity);
+      return groups;
+    },
+    {} as Record<string, ActivityLog[]>,
+  );
 
   return (
     <DashboardCard
@@ -130,5 +136,5 @@ export default function ActivityFeed({ compact = false, limit = 10 }: ActivityFe
         </div>
       )}
     </DashboardCard>
-  )
+  );
 }

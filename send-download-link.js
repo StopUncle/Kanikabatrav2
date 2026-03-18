@@ -9,47 +9,49 @@
  * Usage: node send-download-link.js <email> [customer-name]
  */
 
-require('dotenv').config({ path: '.env.local' })
-const { PrismaClient } = require('@prisma/client')
-const nodemailer = require('nodemailer')
-const crypto = require('crypto')
+require("dotenv").config({ path: ".env.local" });
+const { PrismaClient } = require("@prisma/client");
+const nodemailer = require("nodemailer");
+const crypto = require("crypto");
 
-const prisma = new PrismaClient()
+const prisma = new PrismaClient();
 
 async function sendFreshDownloadLink(customerEmail, customerName) {
   try {
-    console.log('\n🔍 Looking up purchase for:', customerEmail)
+    console.log("\n🔍 Looking up purchase for:", customerEmail);
 
     // Find the most recent book purchase for this email
     const purchase = await prisma.purchase.findFirst({
       where: {
         customerEmail: customerEmail,
-        type: 'BOOK',
-        status: 'COMPLETED',
+        type: "BOOK",
+        status: "COMPLETED",
       },
       orderBy: {
-        createdAt: 'desc'
-      }
-    })
+        createdAt: "desc",
+      },
+    });
 
     if (!purchase) {
-      console.error('❌ No completed book purchase found for:', customerEmail)
-      console.log('\nTip: Make sure the email matches exactly what they used for purchase')
-      process.exit(1)
+      console.error("❌ No completed book purchase found for:", customerEmail);
+      console.log(
+        "\nTip: Make sure the email matches exactly what they used for purchase",
+      );
+      process.exit(1);
     }
 
-    console.log('✅ Found purchase:', {
+    console.log("✅ Found purchase:", {
       id: purchase.id,
-      variant: purchase.productVariant || 'Standard',
+      variant: purchase.productVariant || "Standard",
       amount: `$${purchase.amount}`,
       date: purchase.createdAt.toLocaleDateString(),
-      downloads: `${purchase.downloadCount}/${purchase.maxDownloads}`
-    })
+      downloads: `${purchase.downloadCount}/${purchase.maxDownloads}`,
+    });
 
     // Generate new download token and extend expiry
-    const newToken = crypto.randomBytes(32).toString('hex')
-    const newExpiry = new Date()
-    newExpiry.setDate(newExpiry.getDate() + 30)
+    const newToken = crypto.randomBytes(32).toString("hex");
+    const newExpiry = new Date();
+    newExpiry.setDate(newExpiry.getDate() + 30);
 
     // Update purchase with new token and expiry
     await prisma.purchase.update({
@@ -59,25 +61,31 @@ async function sendFreshDownloadLink(customerEmail, customerName) {
         expiresAt: newExpiry,
         // Optionally reset download count (uncomment if you want to give them fresh downloads)
         // downloadCount: 0,
-      }
-    })
+      },
+    });
 
-    console.log('✅ Generated new download token (expires:', newExpiry.toLocaleDateString(), ')')
+    console.log(
+      "✅ Generated new download token (expires:",
+      newExpiry.toLocaleDateString(),
+      ")",
+    );
 
     // Build email
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://kanikabatra.com'
-    const pdfUrl = `${baseUrl}/api/download?token=${newToken}&format=pdf`
-    const epubUrl = `${baseUrl}/api/download?token=${newToken}&format=epub`
-    const name = customerName || purchase.customerName || 'Customer'
-    const isPremium = purchase.productVariant === 'PREMIUM'
+    const baseUrl =
+      process.env.NEXT_PUBLIC_BASE_URL || "https://kanikabatra.com";
+    const pdfUrl = `${baseUrl}/api/download?token=${newToken}&format=pdf`;
+    const epubUrl = `${baseUrl}/api/download?token=${newToken}&format=epub`;
+    const name = customerName || purchase.customerName || "Customer";
+    const isPremium = purchase.productVariant === "PREMIUM";
 
-    const expiryDate = newExpiry.toLocaleDateString('en-US', {
-      month: 'long',
-      day: 'numeric',
-      year: 'numeric'
-    })
+    const expiryDate = newExpiry.toLocaleDateString("en-US", {
+      month: "long",
+      day: "numeric",
+      year: "numeric",
+    });
 
-    const premiumBonuses = isPremium ? `
+    const premiumBonuses = isPremium
+      ? `
       <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="background: linear-gradient(135deg, #1a0d11 0%, #2a1a1f 100%); border-radius: 10px; margin: 0 0 25px 0; border: 2px solid #d4af37;">
         <tr>
           <td style="padding: 25px;">
@@ -93,7 +101,8 @@ async function sendFreshDownloadLink(customerEmail, customerName) {
           </td>
         </tr>
       </table>
-    ` : ''
+    `
+      : "";
 
     const html = `
       <!DOCTYPE html>
@@ -126,7 +135,7 @@ async function sendFreshDownloadLink(customerEmail, customerName) {
                     </p>
 
                     <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 30px 0;">
-                      Here's your fresh download link for <strong style="color: #d4af37;">Sociopathic Dating Bible${isPremium ? ' (Premium Edition)' : ''}</strong>.
+                      Here's your fresh download link for <strong style="color: #d4af37;">Sociopathic Dating Bible${isPremium ? " (Premium Edition)" : ""}</strong>.
                     </p>
 
                     <!-- Download Buttons -->
@@ -195,63 +204,69 @@ async function sendFreshDownloadLink(customerEmail, customerName) {
         </table>
       </body>
       </html>
-    `
+    `;
 
     // Send email
     const transporter = nodemailer.createTransport({
       host: process.env.SMTP_HOST,
-      port: parseInt(process.env.SMTP_PORT || '587'),
-      secure: parseInt(process.env.SMTP_PORT || '587') === 465,
+      port: parseInt(process.env.SMTP_PORT || "587"),
+      secure: parseInt(process.env.SMTP_PORT || "587") === 465,
       auth: {
         user: process.env.SMTP_USER,
         pass: process.env.SMTP_PASS,
       },
-    })
+    });
 
     await transporter.sendMail({
       from: `"Kanika Batra" <${process.env.SMTP_USER}>`,
       to: customerEmail,
-      subject: `Your Book Download Link - Sociopathic Dating Bible${isPremium ? ' (Premium)' : ''}`,
+      subject: `Your Book Download Link - Sociopathic Dating Bible${isPremium ? " (Premium)" : ""}`,
       html: html,
-    })
+    });
 
-    console.log('\n✅ SUCCESS! Email sent to:', customerEmail)
-    console.log('\n📊 Link Details:')
-    console.log('   PDF:', pdfUrl)
-    console.log('   EPUB:', epubUrl)
-    console.log('   Expires:', expiryDate)
-    console.log('   Downloads:', `${purchase.downloadCount}/${purchase.maxDownloads}`)
-    console.log('\n💡 Tip: Customer can download each format multiple times (5 total across both)\n')
-
+    console.log("\n✅ SUCCESS! Email sent to:", customerEmail);
+    console.log("\n📊 Link Details:");
+    console.log("   PDF:", pdfUrl);
+    console.log("   EPUB:", epubUrl);
+    console.log("   Expires:", expiryDate);
+    console.log(
+      "   Downloads:",
+      `${purchase.downloadCount}/${purchase.maxDownloads}`,
+    );
+    console.log(
+      "\n💡 Tip: Customer can download each format multiple times (5 total across both)\n",
+    );
   } catch (error) {
-    console.error('\n❌ Error:', error.message)
-    if (error.message.includes('SMTP')) {
-      console.log('\n💡 SMTP not configured. Configure in .env.local:')
-      console.log('   SMTP_HOST=smtp.gmail.com')
-      console.log('   SMTP_PORT=587')
-      console.log('   SMTP_USER=your_email@gmail.com')
-      console.log('   SMTP_PASS=your_app_password\n')
+    console.error("\n❌ Error:", error.message);
+    if (error.message.includes("SMTP")) {
+      console.log("\n💡 SMTP not configured. Configure in .env.local:");
+      console.log("   SMTP_HOST=smtp.gmail.com");
+      console.log("   SMTP_PORT=587");
+      console.log("   SMTP_USER=your_email@gmail.com");
+      console.log("   SMTP_PASS=your_app_password\n");
     }
   } finally {
-    await prisma.$disconnect()
+    await prisma.$disconnect();
   }
 }
 
 // Get email from command line
-const customerEmail = process.argv[2]
-const customerName = process.argv[3]
+const customerEmail = process.argv[2];
+const customerName = process.argv[3];
 
 if (!customerEmail) {
-  console.log('\n📖 Usage: node send-download-link.js <email> [name]')
-  console.log('\nExamples:')
-  console.log('   node send-download-link.js customer@example.com')
-  console.log('   node send-download-link.js customer@example.com "John Smith"')
-  console.log('\nThis will:')
-  console.log('   ✓ Find their purchase')
-  console.log('   ✓ Generate a fresh 30-day download token')
-  console.log('   ✓ Send them an email with PDF & EPUB links')
-  console.log('   ✓ Show current download count\n')
-  process.exit(0)
+  console.log("\n📖 Usage: node send-download-link.js <email> [name]");
+  console.log("\nExamples:");
+  console.log("   node send-download-link.js customer@example.com");
+  console.log(
+    '   node send-download-link.js customer@example.com "John Smith"',
+  );
+  console.log("\nThis will:");
+  console.log("   ✓ Find their purchase");
+  console.log("   ✓ Generate a fresh 30-day download token");
+  console.log("   ✓ Send them an email with PDF & EPUB links");
+  console.log("   ✓ Show current download count\n");
+  process.exit(0);
 }
 
-sendFreshDownloadLink(customerEmail, customerName)
+sendFreshDownloadLink(customerEmail, customerName);

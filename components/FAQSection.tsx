@@ -1,33 +1,37 @@
-'use client'
+"use client";
 
-import { useState } from 'react'
+import { useState } from "react";
 
 interface FAQItem {
-  question: string
-  answer: string
+  question: string;
+  answer: string;
 }
 
 interface FAQSectionProps {
-  items: FAQItem[]
-  title?: string
-  className?: string
+  items: FAQItem[];
+  title?: string;
+  className?: string;
 }
 
-export default function FAQSection({ items, title = 'Frequently Asked Questions', className = '' }: FAQSectionProps) {
-  const [openIndex, setOpenIndex] = useState<number | null>(0)
+export default function FAQSection({
+  items,
+  title = "Frequently Asked Questions",
+  className = "",
+}: FAQSectionProps) {
+  const [openIndex, setOpenIndex] = useState<number | null>(0);
 
   const faqSchema = {
-    '@context': 'https://schema.org',
-    '@type': 'FAQPage',
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
     mainEntity: items.map((item) => ({
-      '@type': 'Question',
+      "@type": "Question",
       name: item.question,
       acceptedAnswer: {
-        '@type': 'Answer',
+        "@type": "Answer",
         text: item.answer,
       },
     })),
-  }
+  };
 
   return (
     <section className={`${className}`}>
@@ -37,7 +41,9 @@ export default function FAQSection({ items, title = 'Frequently Asked Questions'
       />
 
       {title && (
-        <h2 className="text-2xl md:text-3xl font-light text-white mb-8">{title}</h2>
+        <h2 className="text-2xl md:text-3xl font-light text-white mb-8">
+          {title}
+        </h2>
       )}
 
       <div className="space-y-3">
@@ -55,7 +61,7 @@ export default function FAQSection({ items, title = 'Frequently Asked Questions'
               <span className="font-medium text-white">{item.question}</span>
               <span
                 className={`text-accent-gold flex-shrink-0 transition-transform duration-300 ${
-                  openIndex === index ? 'rotate-180' : ''
+                  openIndex === index ? "rotate-180" : ""
                 }`}
               >
                 <svg
@@ -76,7 +82,7 @@ export default function FAQSection({ items, title = 'Frequently Asked Questions'
             <div
               id={`faq-answer-${index}`}
               className={`overflow-hidden transition-all duration-300 ${
-                openIndex === index ? 'max-h-96' : 'max-h-0'
+                openIndex === index ? "max-h-96" : "max-h-0"
               }`}
             >
               <div className="px-6 pb-4 text-gray-400 leading-relaxed">
@@ -87,20 +93,20 @@ export default function FAQSection({ items, title = 'Frequently Asked Questions'
         ))}
       </div>
     </section>
-  )
+  );
 }
 
 export function generateFAQSchema(items: FAQItem[]) {
   return {
-    '@context': 'https://schema.org',
-    '@type': 'FAQPage',
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
     mainEntity: items.map((item) => ({
-      '@type': 'Question',
+      "@type": "Question",
       name: item.question,
       acceptedAnswer: {
-        '@type': 'Answer',
+        "@type": "Answer",
         text: item.answer,
       },
     })),
-  }
+  };
 }

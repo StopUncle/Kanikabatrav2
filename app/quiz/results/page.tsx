@@ -1,84 +1,90 @@
-'use client'
+"use client";
 
-import { useEffect, useState } from 'react'
-import { useRouter } from 'next/navigation'
-import { motion } from 'framer-motion'
-import Link from 'next/link'
-import Header from '@/components/Header'
-import BackgroundEffects from '@/components/BackgroundEffects'
-import { PERSONALITY_PROFILES, PersonalityType, QuizScores, DiagnosisResult, QUIZ_INFO } from '@/lib/quiz-data'
-import RadarChart from '@/components/quiz/RadarChart'
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { motion } from "framer-motion";
+import Link from "next/link";
+import Header from "@/components/Header";
+import BackgroundEffects from "@/components/BackgroundEffects";
+import {
+  PERSONALITY_PROFILES,
+  PersonalityType,
+  QuizScores,
+  DiagnosisResult,
+  QUIZ_INFO,
+} from "@/lib/quiz-data";
+import RadarChart from "@/components/quiz/RadarChart";
 
 interface QuizResultsData {
-  scores: QuizScores
-  primaryType: PersonalityType
-  secondaryType: PersonalityType
-  diagnosis: DiagnosisResult
-  answers: Record<number, PersonalityType>
-  completedAt: string
+  scores: QuizScores;
+  primaryType: PersonalityType;
+  secondaryType: PersonalityType;
+  diagnosis: DiagnosisResult;
+  answers: Record<number, PersonalityType>;
+  completedAt: string;
 }
 
 export default function QuizResultsPage() {
-  const router = useRouter()
-  const [results, setResults] = useState<QuizResultsData | null>(null)
-  const [email, setEmail] = useState('')
-  const [isLoading, setIsLoading] = useState(false)
-  const [showPayment, setShowPayment] = useState(false)
+  const router = useRouter();
+  const [results, setResults] = useState<QuizResultsData | null>(null);
+  const [email, setEmail] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [showPayment, setShowPayment] = useState(false);
 
   useEffect(() => {
-    const stored = sessionStorage.getItem('quizResults')
+    const stored = sessionStorage.getItem("quizResults");
     if (!stored) {
-      router.push('/quiz')
-      return
+      router.push("/quiz");
+      return;
     }
 
     try {
-      const data = JSON.parse(stored) as QuizResultsData
-      setResults(data)
+      const data = JSON.parse(stored) as QuizResultsData;
+      setResults(data);
     } catch {
-      router.push('/quiz')
+      router.push("/quiz");
     }
-  }, [router])
+  }, [router]);
 
   if (!results) {
     return (
       <div className="min-h-screen bg-deep-black flex items-center justify-center">
         <div className="text-accent-gold">Loading...</div>
       </div>
-    )
+    );
   }
 
-  const primaryProfile = PERSONALITY_PROFILES[results.primaryType]
-  const diagnosis = results.diagnosis
+  const primaryProfile = PERSONALITY_PROFILES[results.primaryType];
+  const diagnosis = results.diagnosis;
 
   const handleUnlock = async () => {
-    if (!email) return
-    setIsLoading(true)
+    if (!email) return;
+    setIsLoading(true);
 
     try {
-      const response = await fetch('/api/quiz/create-order', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const response = await fetch("/api/quiz/create-order", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           email,
           scores: results.scores,
           primaryType: results.primaryType,
           secondaryType: results.secondaryType,
-          answers: results.answers
-        })
-      })
+          answers: results.answers,
+        }),
+      });
 
-      const data = await response.json()
+      const data = await response.json();
 
       if (data.approveUrl) {
-        window.location.href = data.approveUrl
+        window.location.href = data.approveUrl;
       }
     } catch (error) {
-      console.error('Payment error:', error)
+      console.error("Payment error:", error);
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
   return (
     <>
@@ -99,7 +105,8 @@ export default function QuizResultsPage() {
             </div>
 
             <h1 className="text-3xl sm:text-4xl font-extralight text-white mb-4">
-              Primary Type: <span className="text-accent-gold">{primaryProfile.name}</span>
+              Primary Type:{" "}
+              <span className="text-accent-gold">{primaryProfile.name}</span>
             </h1>
 
             <p className="text-xl text-text-gray font-light italic mb-6">
@@ -110,7 +117,7 @@ export default function QuizResultsPage() {
             <div className="relative inline-block">
               <div className="blur-sm select-none px-6 py-3 bg-deep-black/50 border border-accent-gold/20 rounded-lg">
                 <p className="text-accent-gold font-mono text-sm">
-                  {diagnosis?.clinicalLabel || 'Clinical diagnosis loading...'}
+                  {diagnosis?.clinicalLabel || "Clinical diagnosis loading..."}
                 </p>
               </div>
               <div className="absolute inset-0 flex items-center justify-center">
@@ -137,7 +144,9 @@ export default function QuizResultsPage() {
                 <div className="absolute inset-0 flex items-center justify-center">
                   <div className="text-center p-6 bg-deep-black/80 rounded-lg border border-accent-gold/30">
                     <div className="text-4xl mb-3">🔒</div>
-                    <p className="text-white font-light mb-2">Full Results Locked</p>
+                    <p className="text-white font-light mb-2">
+                      Full Results Locked
+                    </p>
                     <p className="text-text-gray text-sm">
                       6-axis breakdown including Neurotypical baseline
                     </p>
@@ -160,12 +169,36 @@ export default function QuizResultsPage() {
 
             <div className="grid sm:grid-cols-2 gap-4">
               {[
-                { icon: '🩺', title: 'Clinical-Style Diagnosis', desc: 'Your type + functioning level assessment' },
-                { icon: '📊', title: 'Complete Radar Chart', desc: 'Visual breakdown of all 6 types including NT' },
-                { icon: '⚡', title: 'Functioning Analysis', desc: 'High/Moderate/Low adaptive assessment' },
-                { icon: '🎯', title: 'Primary & Secondary Types', desc: 'Deep dive into your top two patterns' },
-                { icon: '💔', title: 'Relationship Patterns', desc: 'How your type affects your love life' },
-                { icon: '📧', title: 'Delivered to Your Email', desc: 'Keep your results forever' }
+                {
+                  icon: "🩺",
+                  title: "Clinical-Style Diagnosis",
+                  desc: "Your type + functioning level assessment",
+                },
+                {
+                  icon: "📊",
+                  title: "Complete Radar Chart",
+                  desc: "Visual breakdown of all 6 types including NT",
+                },
+                {
+                  icon: "⚡",
+                  title: "Functioning Analysis",
+                  desc: "High/Moderate/Low adaptive assessment",
+                },
+                {
+                  icon: "🎯",
+                  title: "Primary & Secondary Types",
+                  desc: "Deep dive into your top two patterns",
+                },
+                {
+                  icon: "💔",
+                  title: "Relationship Patterns",
+                  desc: "How your type affects your love life",
+                },
+                {
+                  icon: "📧",
+                  title: "Delivered to Your Email",
+                  desc: "Keep your results forever",
+                },
               ].map((item, index) => (
                 <motion.div
                   key={item.title}
@@ -225,7 +258,9 @@ export default function QuizResultsPage() {
                   disabled={!email || isLoading}
                   className="w-full px-8 py-4 bg-gradient-to-r from-accent-gold to-accent-gold/80 text-deep-black font-medium tracking-wider uppercase rounded transition-all hover:shadow-lg hover:shadow-accent-gold/20 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  {isLoading ? 'Processing...' : `Pay $${QUIZ_INFO.price} with PayPal`}
+                  {isLoading
+                    ? "Processing..."
+                    : `Pay $${QUIZ_INFO.price} with PayPal`}
                 </button>
 
                 <button
@@ -251,16 +286,23 @@ export default function QuizResultsPage() {
 
             <div className="p-6 bg-deep-black/30 border border-accent-gold/20 rounded-lg">
               <div className="flex items-center justify-between mb-4">
-                <h4 className="text-xl text-accent-gold">{primaryProfile.name}</h4>
-                <span className="text-text-gray text-sm">{results.scores[results.primaryType]}%</span>
+                <h4 className="text-xl text-accent-gold">
+                  {primaryProfile.name}
+                </h4>
+                <span className="text-text-gray text-sm">
+                  {results.scores[results.primaryType]}%
+                </span>
               </div>
 
               <p className="text-text-gray leading-relaxed mb-4">
-                {primaryProfile.description.split('.')[0]}.
+                {primaryProfile.description.split(".")[0]}.
               </p>
 
               <div className="text-text-gray/50 text-sm">
-                <p>🔒 Full clinical diagnosis, functioning level, traits, and relationship patterns locked...</p>
+                <p>
+                  🔒 Full clinical diagnosis, functioning level, traits, and
+                  relationship patterns locked...
+                </p>
               </div>
             </div>
           </motion.div>
@@ -282,5 +324,5 @@ export default function QuizResultsPage() {
         </div>
       </main>
     </>
-  )
+  );
 }

@@ -1,36 +1,42 @@
-import { Metadata } from 'next'
-import { cookies } from 'next/headers'
-import { verifyAccessToken } from '@/lib/auth/jwt'
-import CoursesPageClient from './CoursesPageClient'
-import prisma from '@/lib/prisma'
-import { SITE_CONFIG } from '@/lib/constants'
+import { Metadata } from "next";
+import { cookies } from "next/headers";
+import { verifyAccessToken } from "@/lib/auth/jwt";
+import CoursesPageClient from "./CoursesPageClient";
+import prisma from "@/lib/prisma";
+import { SITE_CONFIG } from "@/lib/constants";
 
 export const metadata: Metadata = {
-  title: 'Courses | Kanika Batra - Strategic Psychology',
-  description: 'Master dark psychology with exclusive video courses. Learn manipulation detection, power dynamics, and psychological warfare from a diagnosed sociopath.',
-  keywords: 'dark psychology course, manipulation course, power dynamics training, kanika batra courses',
+  title: "Courses | Kanika Batra - Strategic Psychology",
+  description:
+    "Master dark psychology with exclusive video courses. Learn manipulation detection, power dynamics, and psychological warfare from a diagnosed sociopath.",
+  keywords:
+    "dark psychology course, manipulation course, power dynamics training, kanika batra courses",
   alternates: {
     canonical: `${SITE_CONFIG.url}/courses`,
   },
   openGraph: {
-    title: 'Strategic Psychology Courses | Kanika Batra',
-    description: 'Exclusive video courses on dark psychology, manipulation, and power dynamics.',
+    title: "Strategic Psychology Courses | Kanika Batra",
+    description:
+      "Exclusive video courses on dark psychology, manipulation, and power dynamics.",
     url: `${SITE_CONFIG.url}/courses`,
-    type: 'website',
-    images: [{
-      url: `${SITE_CONFIG.url}/og-image.jpg`,
-      width: 1200,
-      height: 630,
-      alt: 'Strategic Psychology Courses',
-    }],
+    type: "website",
+    images: [
+      {
+        url: `${SITE_CONFIG.url}/og-image.jpg`,
+        width: 1200,
+        height: 630,
+        alt: "Strategic Psychology Courses",
+      },
+    ],
   },
   twitter: {
-    card: 'summary_large_image',
-    title: 'Strategic Psychology Courses | Kanika Batra',
-    description: 'Master manipulation detection and power dynamics from a diagnosed sociopath.',
+    card: "summary_large_image",
+    title: "Strategic Psychology Courses | Kanika Batra",
+    description:
+      "Master manipulation detection and power dynamics from a diagnosed sociopath.",
     images: [`${SITE_CONFIG.url}/og-image.jpg`],
   },
-}
+};
 
 async function getCourses() {
   const courses = await prisma.course.findMany({
@@ -39,15 +45,15 @@ async function getCourses() {
       modules: {
         include: {
           lessons: {
-            select: { id: true }
-          }
-        }
-      }
+            select: { id: true },
+          },
+        },
+      },
     },
-    orderBy: { sortOrder: 'asc' }
-  })
+    orderBy: { sortOrder: "asc" },
+  });
 
-  return courses.map(course => ({
+  return courses.map((course) => ({
     id: course.id,
     title: course.title,
     slug: course.slug,
@@ -56,15 +62,15 @@ async function getCourses() {
     price: course.price,
     tier: course.tier,
     moduleCount: course.modules.length,
-    lessonCount: course.modules.reduce((acc, m) => acc + m.lessons.length, 0)
-  }))
+    lessonCount: course.modules.reduce((acc, m) => acc + m.lessons.length, 0),
+  }));
 }
 
 async function getUserEnrollments(userId: string) {
   const enrollments = await prisma.courseEnrollment.findMany({
     where: {
       userId,
-      status: 'ACTIVE'
+      status: "ACTIVE",
     },
     include: {
       progress: true,
@@ -73,44 +79,47 @@ async function getUserEnrollments(userId: string) {
           modules: {
             include: {
               lessons: {
-                select: { id: true }
-              }
-            }
-          }
-        }
-      }
-    }
-  })
+                select: { id: true },
+              },
+            },
+          },
+        },
+      },
+    },
+  });
 
-  return enrollments.map(enrollment => {
+  return enrollments.map((enrollment) => {
     const totalLessons = enrollment.course.modules.reduce(
       (acc, m) => acc + m.lessons.length,
-      0
-    )
-    const completedLessons = enrollment.progress.filter(p => p.isCompleted).length
-    const progress = totalLessons > 0 ? (completedLessons / totalLessons) * 100 : 0
+      0,
+    );
+    const completedLessons = enrollment.progress.filter(
+      (p) => p.isCompleted,
+    ).length;
+    const progress =
+      totalLessons > 0 ? (completedLessons / totalLessons) * 100 : 0;
 
     return {
       courseId: enrollment.courseId,
-      progress
-    }
-  })
+      progress,
+    };
+  });
 }
 
 export default async function CoursesPage() {
-  const cookieStore = await cookies()
-  const accessToken = cookieStore.get('accessToken')?.value
+  const cookieStore = await cookies();
+  const accessToken = cookieStore.get("accessToken")?.value;
 
-  let userId: string | null = null
+  let userId: string | null = null;
   if (accessToken) {
-    const payload = verifyAccessToken(accessToken)
+    const payload = verifyAccessToken(accessToken);
     if (payload) {
-      userId = payload.userId
+      userId = payload.userId;
     }
   }
 
-  const courses = await getCourses()
-  const enrollments = userId ? await getUserEnrollments(userId) : []
+  const courses = await getCourses();
+  const enrollments = userId ? await getUserEnrollments(userId) : [];
 
   return (
     <CoursesPageClient
@@ -118,5 +127,5 @@ export default async function CoursesPage() {
       enrollments={enrollments}
       isLoggedIn={!!userId}
     />
-  )
+  );
 }

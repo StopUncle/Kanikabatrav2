@@ -1,47 +1,47 @@
-'use client'
+"use client";
 
-import { useState } from 'react'
-import { useRouter } from 'next/navigation'
-import { AlertTriangle, Trash2 } from 'lucide-react'
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { AlertTriangle, Trash2 } from "lucide-react";
 
 interface DangerZoneProps {
-  email: string
-  setLoading: (loading: boolean) => void
+  email: string;
+  setLoading: (loading: boolean) => void;
 }
 
 export default function DangerZone({ email, setLoading }: DangerZoneProps) {
-  const router = useRouter()
-  const [confirmEmail, setConfirmEmail] = useState('')
-  const [showConfirmation, setShowConfirmation] = useState(false)
-  const [error, setError] = useState('')
+  const router = useRouter();
+  const [confirmEmail, setConfirmEmail] = useState("");
+  const [showConfirmation, setShowConfirmation] = useState(false);
+  const [error, setError] = useState("");
 
   const handleDeleteAccount = async () => {
     if (confirmEmail !== email) {
-      setError('Email does not match your account email')
-      return
+      setError("Email does not match your account email");
+      return;
     }
 
-    setError('')
-    setLoading(true)
+    setError("");
+    setLoading(true);
 
     try {
-      const response = await fetch('/api/user/delete', {
-        method: 'DELETE',
-        headers: { 'Content-Type': 'application/json' },
+      const response = await fetch("/api/user/delete", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ confirmEmail }),
-      })
+      });
 
       if (!response.ok) {
-        const result = await response.json()
-        throw new Error(result.error || 'Failed to delete account')
+        const result = await response.json();
+        throw new Error(result.error || "Failed to delete account");
       }
 
-      router.push('/')
+      router.push("/");
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to delete account')
-      setLoading(false)
+      setError(err instanceof Error ? err.message : "Failed to delete account");
+      setLoading(false);
     }
-  }
+  };
 
   return (
     <div className="space-y-6">
@@ -51,7 +51,8 @@ export default function DangerZone({ email, setLoading }: DangerZoneProps) {
           <div>
             <h3 className="text-red-400 font-medium mb-1">Delete Account</h3>
             <p className="text-gray-400 text-sm">
-              Once you delete your account, there is no going back. This action is permanent and will:
+              Once you delete your account, there is no going back. This action
+              is permanent and will:
             </p>
             <ul className="text-gray-400 text-sm mt-2 space-y-1 list-disc list-inside">
               <li>Delete all your personal data</li>
@@ -74,7 +75,8 @@ export default function DangerZone({ email, setLoading }: DangerZoneProps) {
       ) : (
         <div className="space-y-4 p-4 bg-gray-800/50 rounded-lg border border-gray-700">
           <p className="text-white text-sm">
-            To confirm, type your email address: <span className="text-accent-gold">{email}</span>
+            To confirm, type your email address:{" "}
+            <span className="text-accent-gold">{email}</span>
           </p>
 
           {error && (
@@ -94,9 +96,9 @@ export default function DangerZone({ email, setLoading }: DangerZoneProps) {
           <div className="flex gap-3">
             <button
               onClick={() => {
-                setShowConfirmation(false)
-                setConfirmEmail('')
-                setError('')
+                setShowConfirmation(false);
+                setConfirmEmail("");
+                setError("");
               }}
               className="flex-1 px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded-lg text-gray-300 text-sm font-medium transition-colors"
             >
@@ -113,5 +115,5 @@ export default function DangerZone({ email, setLoading }: DangerZoneProps) {
         </div>
       )}
     </div>
-  )
+  );
 }

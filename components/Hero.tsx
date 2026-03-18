@@ -1,19 +1,19 @@
-'use client'
+"use client";
 
-import { useState, useEffect } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
-import Link from 'next/link'
-import { SITE_CONFIG, SOCIAL_METRICS } from '@/lib/constants'
+import { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import Link from "next/link";
+import { SITE_CONFIG, SOCIAL_METRICS } from "@/lib/constants";
 
 export default function Hero() {
-  const [quoteIndex, setQuoteIndex] = useState(0)
+  const [quoteIndex, setQuoteIndex] = useState(0);
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setQuoteIndex((prev) => (prev + 1) % SITE_CONFIG.viralQuotes.length)
-    }, 4000)
-    return () => clearInterval(interval)
-  }, [])
+      setQuoteIndex((prev) => (prev + 1) % SITE_CONFIG.viralQuotes.length);
+    }, 4000);
+    return () => clearInterval(interval);
+  }, []);
 
   return (
     <section className="min-h-screen flex items-center justify-center pt-20 pb-20 px-4 sm:px-6 lg:px-8 relative">
@@ -26,9 +26,13 @@ export default function Hero() {
           <p className="text-accent-burgundy uppercase tracking-[0.2em] sm:tracking-[0.3em] lg:tracking-[0.4em] text-xs sm:text-sm mb-4 sm:mb-6 animate-glow px-2">
             <span className="block sm:inline">Clinically Diagnosed ASPD</span>
             <span className="hidden sm:inline mx-1 sm:mx-2">•</span>
-            <span className="block sm:inline">{SOCIAL_METRICS.combined.totalFollowers} Followers</span>
+            <span className="block sm:inline">
+              {SOCIAL_METRICS.combined.totalFollowers} Followers
+            </span>
             <span className="hidden sm:inline mx-1 sm:mx-2">•</span>
-            <span className="block sm:inline">{SOCIAL_METRICS.youtube.totalViews} Views</span>
+            <span className="block sm:inline">
+              {SOCIAL_METRICS.youtube.totalViews} Views
+            </span>
           </p>
         </motion.div>
 
@@ -38,9 +42,15 @@ export default function Hero() {
           transition={{ duration: 0.8, delay: 0.2 }}
           className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-light leading-tight mb-6 sm:mb-8"
         >
-          <span className="block gradient-text animate-gradient text-5xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-9xl">Sociopathic Dating Bible</span>
-          <span className="block text-text-light text-2xl sm:text-3xl md:text-4xl mt-2">A Cure For Empathy</span>
-          <span className="block text-accent-gold text-2xl sm:text-3xl md:text-4xl mt-2">Now Available</span>
+          <span className="block gradient-text animate-gradient text-5xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-9xl">
+            Sociopathic Dating Bible
+          </span>
+          <span className="block text-text-light text-2xl sm:text-3xl md:text-4xl mt-2">
+            A Cure For Empathy
+          </span>
+          <span className="block text-accent-gold text-2xl sm:text-3xl md:text-4xl mt-2">
+            Now Available
+          </span>
         </motion.h1>
 
         {/* Rotating Viral Quotes */}
@@ -70,8 +80,8 @@ export default function Hero() {
           transition={{ duration: 0.8, delay: 0.4 }}
           className="text-text-gray text-base sm:text-lg md:text-xl max-w-2xl lg:max-w-3xl mx-auto mb-8 sm:mb-12 font-light px-4"
         >
-          The book that went viral across Unilad, LadBible, and Yahoo.
-          The psychology they don&apos;t teach you.
+          The book that went viral across Unilad, LadBible, and Yahoo. The
+          psychology they don&apos;t teach you.
         </motion.p>
 
         <motion.div
@@ -111,5 +121,5 @@ export default function Hero() {
         </motion.div>
       </div>
     </section>
-  )
+  );
 }

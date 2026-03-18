@@ -1,16 +1,16 @@
-'use client'
+"use client";
 
-import { useState } from 'react'
-import { motion } from 'framer-motion'
-import Link from 'next/link'
-import Header from '@/components/Header'
-import PostCard from '@/components/blog/PostCard'
-import CategoryFilter from '@/components/blog/CategoryFilter'
-import type { PostMeta } from '@/lib/mdx'
+import { useState } from "react";
+import { motion } from "framer-motion";
+import Link from "next/link";
+import Header from "@/components/Header";
+import PostCard from "@/components/blog/PostCard";
+import CategoryFilter from "@/components/blog/CategoryFilter";
+import type { PostMeta } from "@/lib/mdx";
 
 interface BlogClientProps {
-  initialPosts: PostMeta[]
-  categories: string[]
+  initialPosts: PostMeta[];
+  categories: string[];
 }
 
 function FeaturedPost({ post }: { post: PostMeta }) {
@@ -28,7 +28,9 @@ function FeaturedPost({ post }: { post: PostMeta }) {
               <div className="relative h-64 md:h-96 overflow-hidden">
                 <div
                   className="absolute inset-0 bg-cover bg-center transform group-hover:scale-105 transition-transform duration-700"
-                  style={{ backgroundImage: `url(${post.frontmatter.coverImage})` }}
+                  style={{
+                    backgroundImage: `url(${post.frontmatter.coverImage})`,
+                  }}
                 />
                 <div className="absolute inset-0 bg-gradient-to-r from-transparent to-deep-black/80 md:block hidden" />
                 <div className="absolute inset-0 bg-gradient-to-t from-deep-black to-transparent md:hidden" />
@@ -56,11 +58,14 @@ function FeaturedPost({ post }: { post: PostMeta }) {
               <div className="flex items-center justify-between mt-auto">
                 <div className="flex items-center gap-4">
                   <time className="text-sm text-text-gray">
-                    {new Date(post.frontmatter.publishedAt).toLocaleDateString('en-US', {
-                      year: 'numeric',
-                      month: 'long',
-                      day: 'numeric',
-                    })}
+                    {new Date(post.frontmatter.publishedAt).toLocaleDateString(
+                      "en-US",
+                      {
+                        year: "numeric",
+                        month: "long",
+                        day: "numeric",
+                      },
+                    )}
                   </time>
                   <span className="text-sm text-text-gray">
                     {post.readingTime}
@@ -69,8 +74,18 @@ function FeaturedPost({ post }: { post: PostMeta }) {
 
                 <span className="text-accent-gold text-sm font-medium group-hover:translate-x-2 transition-transform duration-300 flex items-center gap-2">
                   Read Article
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                  <svg
+                    className="w-4 h-4"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M17 8l4 4m0 0l-4 4m4-4H3"
+                    />
                   </svg>
                 </span>
               </div>
@@ -81,20 +96,25 @@ function FeaturedPost({ post }: { post: PostMeta }) {
         </div>
       </Link>
     </motion.article>
-  )
+  );
 }
 
-export default function BlogClient({ initialPosts, categories }: BlogClientProps) {
-  const [activeCategory, setActiveCategory] = useState<string | null>(null)
+export default function BlogClient({
+  initialPosts,
+  categories,
+}: BlogClientProps) {
+  const [activeCategory, setActiveCategory] = useState<string | null>(null);
 
   const filteredPosts = activeCategory
     ? initialPosts.filter(
-        (post) => post.frontmatter.category.toLowerCase() === activeCategory.toLowerCase()
+        (post) =>
+          post.frontmatter.category.toLowerCase() ===
+          activeCategory.toLowerCase(),
       )
-    : initialPosts
+    : initialPosts;
 
-  const featuredPost = filteredPosts[0]
-  const remainingPosts = filteredPosts.slice(1)
+  const featuredPost = filteredPosts[0];
+  const remainingPosts = filteredPosts.slice(1);
 
   return (
     <div className="min-h-screen bg-deep-black">
@@ -115,7 +135,8 @@ export default function BlogClient({ initialPosts, categories }: BlogClientProps
               The <span className="text-accent-gold">Dark</span> Blog
             </h1>
             <p className="text-text-gray text-lg md:text-xl max-w-2xl mx-auto leading-relaxed">
-              Forbidden insights into human psychology, power dynamics, and the art of strategic influence.
+              Forbidden insights into human psychology, power dynamics, and the
+              art of strategic influence.
             </p>
           </motion.div>
 
@@ -138,9 +159,11 @@ export default function BlogClient({ initialPosts, categories }: BlogClientProps
               )}
 
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-10">
-                {(activeCategory ? filteredPosts : remainingPosts).map((post, index) => (
-                  <PostCard key={post.slug} post={post} index={index} />
-                ))}
+                {(activeCategory ? filteredPosts : remainingPosts).map(
+                  (post, index) => (
+                    <PostCard key={post.slug} post={post} index={index} />
+                  ),
+                )}
               </div>
 
               {remainingPosts.length === 0 && !activeCategory && (
@@ -160,8 +183,18 @@ export default function BlogClient({ initialPosts, categories }: BlogClientProps
               className="text-center py-24"
             >
               <div className="w-16 h-16 mx-auto mb-6 rounded-full bg-accent-gold/10 flex items-center justify-center">
-                <svg className="w-8 h-8 text-accent-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
+                <svg
+                  className="w-8 h-8 text-accent-gold"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={1.5}
+                    d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"
+                  />
                 </svg>
               </div>
               <p className="text-text-gray text-lg mb-2">
@@ -183,5 +216,5 @@ export default function BlogClient({ initialPosts, categories }: BlogClientProps
         <div className="absolute bottom-1/4 -right-32 w-96 h-96 bg-accent-gold/5 rounded-full blur-[120px]" />
       </div>
     </div>
-  )
+  );
 }

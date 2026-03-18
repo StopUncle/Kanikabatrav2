@@ -1,138 +1,147 @@
-'use client'
+"use client";
 
-import { useState, useEffect, useRef } from 'react'
-import { Users } from 'lucide-react'
-import ChatMessageList from './ChatMessageList'
-import ChatInput from './ChatInput'
-import OnlineUsers from './OnlineUsers'
-import { subscribeToChatRoom, ChatMessageEvent } from '@/lib/pusher/client'
+import { useState, useEffect, useRef } from "react";
+import { Users } from "lucide-react";
+import ChatMessageList from "./ChatMessageList";
+import ChatInput from "./ChatInput";
+import OnlineUsers from "./OnlineUsers";
+import { subscribeToChatRoom, ChatMessageEvent } from "@/lib/pusher/client";
 
 interface Message {
-  id: string
-  content: string
-  type: 'TEXT' | 'IMAGE' | 'SYSTEM'
-  createdAt: string
+  id: string;
+  content: string;
+  type: "TEXT" | "IMAGE" | "SYSTEM";
+  createdAt: string;
   author: {
-    id: string
-    name: string
-    avatar?: string
-  }
+    id: string;
+    name: string;
+    avatar?: string;
+  };
 }
 
 interface Member {
-  id: string
-  name: string
-  avatar?: string
-  role: string
+  id: string;
+  name: string;
+  avatar?: string;
+  role: string;
 }
 
 interface ChatRoomProps {
   room: {
-    id: string
-    name: string
-    slug: string
-    description: string | null
-    accessTier: string
-    memberCount: number
-    members: Member[]
-    isMember: boolean
-  }
-  currentUserId: string | null
+    id: string;
+    name: string;
+    slug: string;
+    description: string | null;
+    accessTier: string;
+    memberCount: number;
+    members: Member[];
+    isMember: boolean;
+  };
+  currentUserId: string | null;
 }
 
 export default function ChatRoom({ room, currentUserId }: ChatRoomProps) {
-  const [messages, setMessages] = useState<Message[]>([])
-  const [onlineUsers, setOnlineUsers] = useState<Member[]>([])
-  const [loading, setLoading] = useState(true)
-  const [showOnlineUsers, setShowOnlineUsers] = useState(false)
-  const subscriptionRef = useRef<ReturnType<typeof subscribeToChatRoom> | null>(null)
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [onlineUsers, setOnlineUsers] = useState<Member[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [showOnlineUsers, setShowOnlineUsers] = useState(false);
+  const subscriptionRef = useRef<ReturnType<typeof subscribeToChatRoom> | null>(
+    null,
+  );
 
   useEffect(() => {
     async function fetchMessages() {
       try {
-        const res = await fetch(`/api/community/chat/${room.slug}/messages`)
+        const res = await fetch(`/api/community/chat/${room.slug}/messages`);
         if (res.ok) {
-          const data = await res.json()
-          setMessages(data.messages || [])
+          const data = await res.json();
+          setMessages(data.messages || []);
         }
       } catch (error) {
-        console.error('Failed to fetch messages:', error)
+        console.error("Failed to fetch messages:", error);
       } finally {
-        setLoading(false)
+        setLoading(false);
       }
     }
 
-    fetchMessages()
-  }, [room.slug])
+    fetchMessages();
+  }, [room.slug]);
 
   useEffect(() => {
-    if (!currentUserId) return
+    if (!currentUserId) return;
 
-    const isPremium = room.accessTier === 'PREMIUM' || room.accessTier === 'COACHING_CLIENT'
+    const isPremium =
+      room.accessTier === "PREMIUM" || room.accessTier === "COACHING_CLIENT";
 
     subscriptionRef.current = subscribeToChatRoom(room.slug, isPremium, {
       onMessage: (data: ChatMessageEvent) => {
-        setMessages(prev => [...prev, {
-          id: data.id,
-          content: data.content,
-          type: data.type,
-          createdAt: data.createdAt,
-          author: {
-            id: data.authorId,
-            name: data.authorName,
-            avatar: data.authorAvatar
-          }
-        }])
+        setMessages((prev) => [
+          ...prev,
+          {
+            id: data.id,
+            content: data.content,
+            type: data.type,
+            createdAt: data.createdAt,
+            author: {
+              id: data.authorId,
+              name: data.authorName,
+              avatar: data.authorAvatar,
+            },
+          },
+        ]);
       },
       onUserJoin: (data) => {
-        setOnlineUsers(prev => {
-          if (prev.find(u => u.id === data.id)) return prev
-          return [...prev, {
-            id: data.id,
-            name: data.info.name,
-            avatar: data.info.avatar,
-            role: 'MEMBER'
-          }]
-        })
+        setOnlineUsers((prev) => {
+          if (prev.find((u) => u.id === data.id)) return prev;
+          return [
+            ...prev,
+            {
+              id: data.id,
+              name: data.info.name,
+              avatar: data.info.avatar,
+              role: "MEMBER",
+            },
+          ];
+        });
       },
       onUserLeave: (data) => {
-        setOnlineUsers(prev => prev.filter(u => u.id !== data.id))
-      }
-    })
+        setOnlineUsers((prev) => prev.filter((u) => u.id !== data.id));
+      },
+    });
 
     return () => {
-      subscriptionRef.current?.unsubscribe()
-    }
-  }, [room.slug, room.accessTier, currentUserId])
+      subscriptionRef.current?.unsubscribe();
+    };
+  }, [room.slug, room.accessTier, currentUserId]);
 
   async function handleSendMessage(content: string) {
-    if (!currentUserId) return
+    if (!currentUserId) return;
 
     try {
       const res = await fetch(`/api/community/chat/${room.slug}/messages`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ content })
-      })
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ content }),
+      });
 
       if (!res.ok) {
-        console.error('Failed to send message')
+        console.error("Failed to send message");
       }
     } catch (error) {
-      console.error('Send message error:', error)
+      console.error("Send message error:", error);
     }
   }
 
   async function handleJoinRoom() {
     try {
       const res = await fetch(`/api/community/chat/${room.slug}`, {
-        method: 'POST'
-      })
+        method: "POST",
+      });
       if (res.ok) {
-        window.location.reload()
+        window.location.reload();
       }
     } catch (error) {
-      console.error('Failed to join room:', error)
+      console.error("Failed to join room:", error);
     }
   }
 
@@ -140,7 +149,9 @@ export default function ChatRoom({ room, currentUserId }: ChatRoomProps) {
     return (
       <div className="flex items-center justify-center h-96 bg-deep-navy/50 border border-gray-800 rounded-xl">
         <div className="text-center">
-          <p className="text-gray-400 mb-4">Please log in to participate in chat</p>
+          <p className="text-gray-400 mb-4">
+            Please log in to participate in chat
+          </p>
           <a
             href="/login"
             className="px-6 py-2 bg-accent-gold text-deep-black rounded-lg font-medium hover:bg-accent-gold/90"
@@ -149,7 +160,7 @@ export default function ChatRoom({ room, currentUserId }: ChatRoomProps) {
           </a>
         </div>
       </div>
-    )
+    );
   }
 
   return (
@@ -197,10 +208,12 @@ export default function ChatRoom({ room, currentUserId }: ChatRoomProps) {
         )}
       </div>
 
-      <div className={`
+      <div
+        className={`
         w-64 border-l border-gray-800 bg-deep-black/50
-        ${showOnlineUsers ? 'block' : 'hidden lg:block'}
-      `}>
+        ${showOnlineUsers ? "block" : "hidden lg:block"}
+      `}
+      >
         <OnlineUsers
           members={room.members}
           onlineUsers={onlineUsers}
@@ -208,5 +221,5 @@ export default function ChatRoom({ room, currentUserId }: ChatRoomProps) {
         />
       </div>
     </div>
-  )
+  );
 }

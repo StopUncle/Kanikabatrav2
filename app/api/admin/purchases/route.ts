@@ -1,30 +1,30 @@
-import { NextRequest, NextResponse } from 'next/server'
-import { prisma } from '@/lib/prisma'
+import { NextRequest, NextResponse } from "next/server";
+import { prisma } from "@/lib/prisma";
 
 // Validate admin access - requires ADMIN_SECRET header
 function validateAdminAccess(request: NextRequest): boolean {
-  const adminSecret = process.env.ADMIN_SECRET
+  const adminSecret = process.env.ADMIN_SECRET;
   if (!adminSecret) {
-    console.error('ADMIN_SECRET environment variable not configured')
-    return false
+    console.error("ADMIN_SECRET environment variable not configured");
+    return false;
   }
 
-  const providedSecret = request.headers.get('x-admin-secret')
-  return providedSecret === adminSecret
+  const providedSecret = request.headers.get("x-admin-secret");
+  return providedSecret === adminSecret;
 }
 
 export async function GET(request: NextRequest) {
   // Require admin authentication
   if (!validateAdminAccess(request)) {
     return NextResponse.json(
-      { error: 'Unauthorized - valid admin credentials required' },
-      { status: 401 }
-    )
+      { error: "Unauthorized - valid admin credentials required" },
+      { status: 401 },
+    );
   }
 
   try {
     const purchases = await prisma.purchase.findMany({
-      where: { type: 'BOOK' },
+      where: { type: "BOOK" },
       select: {
         id: true,
         customerEmail: true,
@@ -37,28 +37,27 @@ export async function GET(request: NextRequest) {
         createdAt: true,
         expiresAt: true,
       },
-      orderBy: { createdAt: 'desc' },
-      take: 50 // Limit to 50 most recent
-    })
+      orderBy: { createdAt: "desc" },
+      take: 50, // Limit to 50 most recent
+    });
 
     const stats = {
       total: purchases.length,
-      premium: purchases.filter(p => p.productVariant === 'PREMIUM').length,
-      standard: purchases.filter(p => p.productVariant !== 'PREMIUM').length,
-      revenue: purchases.reduce((sum, p) => sum + (p.amount || 0), 0)
-    }
+      premium: purchases.filter((p) => p.productVariant === "PREMIUM").length,
+      standard: purchases.filter((p) => p.productVariant !== "PREMIUM").length,
+      revenue: purchases.reduce((sum, p) => sum + (p.amount || 0), 0),
+    };
 
     return NextResponse.json({
       success: true,
       purchases,
-      stats
-    })
-
+      stats,
+    });
   } catch (error) {
-    console.error('Error fetching purchases:', error)
+    console.error("Error fetching purchases:", error);
     return NextResponse.json(
-      { error: 'Failed to fetch purchases' },
-      { status: 500 }
-    )
+      { error: "Failed to fetch purchases" },
+      { status: 500 },
+    );
   }
 }

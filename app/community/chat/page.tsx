@@ -1,47 +1,47 @@
-import { cookies } from 'next/headers'
-import Link from 'next/link'
-import { verifyAccessToken } from '@/lib/auth/jwt'
-import { prisma } from '@/lib/prisma'
-import { checkAccessTier } from '@/lib/community/access'
-import { Users, Lock, Crown, MessageSquare } from 'lucide-react'
+import { cookies } from "next/headers";
+import Link from "next/link";
+import { verifyAccessToken } from "@/lib/auth/jwt";
+import { prisma } from "@/lib/prisma";
+import { checkAccessTier } from "@/lib/community/access";
+import { Users, Lock, Crown, MessageSquare } from "lucide-react";
 
 export const metadata = {
-  title: 'Chat Rooms | Community | Kanika Batra',
-  description: 'Join chat rooms and connect with the community in real-time'
-}
+  title: "Chat Rooms | Community | Kanika Batra",
+  description: "Join chat rooms and connect with the community in real-time",
+};
 
 export default async function ChatRoomsPage() {
-  const cookieStore = await cookies()
-  const accessToken = cookieStore.get('access_token')?.value
-  let userId: string | null = null
+  const cookieStore = await cookies();
+  const accessToken = cookieStore.get("access_token")?.value;
+  let userId: string | null = null;
 
   if (accessToken) {
-    const payload = verifyAccessToken(accessToken)
+    const payload = verifyAccessToken(accessToken);
     if (payload) {
-      userId = payload.userId
+      userId = payload.userId;
     }
   }
 
   const rooms = await prisma.chatRoom.findMany({
     where: { isActive: true },
-    orderBy: { createdAt: 'asc' },
+    orderBy: { createdAt: "asc" },
     include: {
       category: {
         select: {
           id: true,
           name: true,
-          slug: true
-        }
+          slug: true,
+        },
       },
       _count: {
-        select: { members: true, messages: true }
-      }
-    }
-  })
+        select: { members: true, messages: true },
+      },
+    },
+  });
 
   const roomsWithAccess = await Promise.all(
     rooms.map(async (room) => {
-      const access = await checkAccessTier(userId, room.accessTier)
+      const access = await checkAccessTier(userId, room.accessTier);
       return {
         id: room.id,
         name: room.name,
@@ -52,13 +52,17 @@ export default async function ChatRoomsPage() {
         memberCount: room._count.members,
         messageCount: room._count.messages,
         hasAccess: access.hasAccess,
-        accessReason: access.reason
-      }
-    })
-  )
+        accessReason: access.reason,
+      };
+    }),
+  );
 
-  const publicRooms = roomsWithAccess.filter(r => r.accessTier === 'PUBLIC' || r.accessTier === 'REGISTERED')
-  const premiumRooms = roomsWithAccess.filter(r => r.accessTier !== 'PUBLIC' && r.accessTier !== 'REGISTERED')
+  const publicRooms = roomsWithAccess.filter(
+    (r) => r.accessTier === "PUBLIC" || r.accessTier === "REGISTERED",
+  );
+  const premiumRooms = roomsWithAccess.filter(
+    (r) => r.accessTier !== "PUBLIC" && r.accessTier !== "REGISTERED",
+  );
 
   return (
     <div>
@@ -73,8 +77,12 @@ export default async function ChatRoomsPage() {
         <div className="bg-accent-burgundy/10 border border-accent-burgundy/30 rounded-xl p-6 mb-8">
           <div className="flex items-center justify-between">
             <div>
-              <h3 className="text-lg font-semibold text-white mb-1">Login to chat</h3>
-              <p className="text-gray-400 text-sm">Create an account to join conversations</p>
+              <h3 className="text-lg font-semibold text-white mb-1">
+                Login to chat
+              </h3>
+              <p className="text-gray-400 text-sm">
+                Create an account to join conversations
+              </p>
             </div>
             <div className="flex gap-3">
               <Link
@@ -104,12 +112,13 @@ export default async function ChatRoomsPage() {
             {publicRooms.map((room) => (
               <Link
                 key={room.id}
-                href={room.hasAccess ? `/community/chat/${room.slug}` : '#'}
+                href={room.hasAccess ? `/community/chat/${room.slug}` : "#"}
                 className={`
                   p-6 rounded-xl border transition-all
-                  ${room.hasAccess
-                    ? 'bg-deep-navy/50 border-gray-800 hover:border-accent-gold/50 hover:bg-deep-navy/70'
-                    : 'bg-gray-900/30 border-gray-800/50 cursor-not-allowed opacity-75'
+                  ${
+                    room.hasAccess
+                      ? "bg-deep-navy/50 border-gray-800 hover:border-accent-gold/50 hover:bg-deep-navy/70"
+                      : "bg-gray-900/30 border-gray-800/50 cursor-not-allowed opacity-75"
                   }
                 `}
                 onClick={(e) => !room.hasAccess && e.preventDefault()}
@@ -118,12 +127,16 @@ export default async function ChatRoomsPage() {
                   <div className="w-12 h-12 rounded-full bg-accent-burgundy/20 flex items-center justify-center">
                     <MessageSquare className="w-6 h-6 text-accent-gold" />
                   </div>
-                  {!room.hasAccess && <Lock className="w-5 h-5 text-gray-500" />}
+                  {!room.hasAccess && (
+                    <Lock className="w-5 h-5 text-gray-500" />
+                  )}
                 </div>
 
                 <h3 className="font-semibold text-white mb-1">{room.name}</h3>
                 {room.description && (
-                  <p className="text-sm text-gray-400 mb-4 line-clamp-2">{room.description}</p>
+                  <p className="text-sm text-gray-400 mb-4 line-clamp-2">
+                    {room.description}
+                  </p>
                 )}
 
                 <div className="flex items-center gap-4 text-xs text-gray-500">
@@ -132,7 +145,9 @@ export default async function ChatRoomsPage() {
                 </div>
 
                 {!room.hasAccess && room.accessReason && (
-                  <p className="text-xs text-accent-burgundy mt-2">{room.accessReason}</p>
+                  <p className="text-xs text-accent-burgundy mt-2">
+                    {room.accessReason}
+                  </p>
                 )}
               </Link>
             ))}
@@ -150,12 +165,13 @@ export default async function ChatRoomsPage() {
             {premiumRooms.map((room) => (
               <Link
                 key={room.id}
-                href={room.hasAccess ? `/community/chat/${room.slug}` : '#'}
+                href={room.hasAccess ? `/community/chat/${room.slug}` : "#"}
                 className={`
                   p-6 rounded-xl border transition-all
-                  ${room.hasAccess
-                    ? 'bg-gradient-to-br from-accent-burgundy/20 to-deep-navy/50 border-accent-gold/30 hover:border-accent-gold/50'
-                    : 'bg-gray-900/30 border-gray-800/50 cursor-not-allowed opacity-75'
+                  ${
+                    room.hasAccess
+                      ? "bg-gradient-to-br from-accent-burgundy/20 to-deep-navy/50 border-accent-gold/30 hover:border-accent-gold/50"
+                      : "bg-gray-900/30 border-gray-800/50 cursor-not-allowed opacity-75"
                   }
                 `}
                 onClick={(e) => !room.hasAccess && e.preventDefault()}
@@ -164,12 +180,16 @@ export default async function ChatRoomsPage() {
                   <div className="w-12 h-12 rounded-full bg-accent-gold/20 flex items-center justify-center">
                     <Crown className="w-6 h-6 text-accent-gold" />
                   </div>
-                  {!room.hasAccess && <Lock className="w-5 h-5 text-gray-500" />}
+                  {!room.hasAccess && (
+                    <Lock className="w-5 h-5 text-gray-500" />
+                  )}
                 </div>
 
                 <h3 className="font-semibold text-white mb-1">{room.name}</h3>
                 {room.description && (
-                  <p className="text-sm text-gray-400 mb-4 line-clamp-2">{room.description}</p>
+                  <p className="text-sm text-gray-400 mb-4 line-clamp-2">
+                    {room.description}
+                  </p>
                 )}
 
                 <div className="flex items-center gap-4 text-xs text-gray-500">
@@ -179,9 +199,11 @@ export default async function ChatRoomsPage() {
 
                 {!room.hasAccess && (
                   <p className="text-xs text-accent-gold mt-2">
-                    {room.accessTier === 'BOOK_OWNER' ? 'Book owners only' :
-                     room.accessTier === 'COACHING_CLIENT' ? 'Coaching clients only' :
-                     'Premium access required'}
+                    {room.accessTier === "BOOK_OWNER"
+                      ? "Book owners only"
+                      : room.accessTier === "COACHING_CLIENT"
+                        ? "Coaching clients only"
+                        : "Premium access required"}
                   </p>
                 )}
               </Link>
@@ -197,5 +219,5 @@ export default async function ChatRoomsPage() {
         </div>
       )}
     </div>
-  )
+  );
 }

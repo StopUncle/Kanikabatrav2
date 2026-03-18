@@ -3,6 +3,7 @@
 ## Pre-Deployment Checklist
 
 ### 1. Environment Configuration
+
 - [ ] Copy `.env.production` and fill in all production values
 - [ ] Generate secure JWT secrets: `openssl rand -base64 64`
 - [ ] Get PayPal live credentials from https://developer.paypal.com
@@ -11,6 +12,7 @@
 - [ ] Set up AWS S3 for book downloads (optional but recommended)
 
 ### 2. Domain Setup
+
 - [ ] Purchase domain: kanikarose.com (already owned)
 - [ ] Point DNS to Vercel:
   - A record: `@` → Vercel IP (automatic in Vercel)
@@ -23,6 +25,7 @@
 ### 3. Vercel Deployment
 
 #### Initial Setup
+
 ```bash
 # Install Vercel CLI
 npm i -g vercel
@@ -35,13 +38,16 @@ vercel --prod
 ```
 
 #### Environment Variables in Vercel Dashboard
+
 Go to Project Settings → Environment Variables and add:
 
 **General**
+
 - `NEXT_PUBLIC_BASE_URL` = `https://kanikarose.com`
 - `NODE_ENV` = `production`
 
 **PayPal**
+
 - `NEXT_PUBLIC_PAYPAL_CLIENT_ID` = Your live client ID
 - `PAYPAL_CLIENT_ID` = Your live client ID
 - `PAYPAL_CLIENT_SECRET` = Your live client secret (encrypted)
@@ -49,19 +55,23 @@ Go to Project Settings → Environment Variables and add:
 - `PAYPAL_WEBHOOK_ID` = Your webhook ID
 
 **Database**
+
 - `DATABASE_URL` = Your PostgreSQL connection string (encrypted)
 
 **Authentication**
+
 - `JWT_SECRET` = Your production JWT secret (encrypted)
 - `JWT_REFRESH_SECRET` = Your production refresh secret (encrypted)
 - `ADMIN_SECRET` = Your admin secret for presale API (encrypted)
 
 **Email**
+
 - `EMAIL_FROM` = `"Kanika Batra <Kanika@kanikarose.com>"`
 - `ADMIN_EMAIL` = `Kanika@kanikarose.com`
 - `SENDGRID_API_KEY` = Your SendGrid API key (encrypted)
 
 ### 4. Database Migration
+
 ```bash
 # Run Prisma migrations
 npx prisma migrate deploy
@@ -73,6 +83,7 @@ npx prisma generate
 ### 5. PayPal Configuration
 
 #### Live App Setup
+
 1. Go to https://developer.paypal.com/dashboard/applications/live
 2. Create new app or use existing
 3. Copy Client ID and Secret to Vercel environment variables
@@ -81,6 +92,7 @@ npx prisma generate
    - Cancel: `https://kanikarose.com/cancel`
 
 #### Webhook Setup
+
 1. In PayPal dashboard, go to Webhooks
 2. Create webhook: `https://kanikarose.com/api/webhooks/paypal`
 3. Select events:
@@ -92,6 +104,7 @@ npx prisma generate
 ### 6. Testing Checklist
 
 #### Pre-Launch Testing
+
 - [ ] Test book purchase flow (use real PayPal account)
 - [ ] Test coaching purchase flow (all 3 tiers)
 - [ ] Verify success page redirects correctly
@@ -105,6 +118,7 @@ npx prisma generate
 - [ ] Test PayPal sandbox first, then switch to live
 
 #### Performance Testing
+
 - [ ] Run Lighthouse audit (aim for 90+ performance)
 - [ ] Test page load times
 - [ ] Verify images are optimized
@@ -112,6 +126,7 @@ npx prisma generate
 - [ ] Test under slow network conditions
 
 ### 7. Security Checklist
+
 - [ ] Enable HTTPS (automatic with Vercel)
 - [ ] Verify CSP headers in production
 - [ ] Test rate limiting on contact form
@@ -124,12 +139,14 @@ npx prisma generate
 ### 8. Monitoring Setup
 
 #### Error Tracking (Sentry)
+
 ```bash
 npm install @sentry/nextjs
 npx @sentry/wizard@latest -i nextjs
 ```
 
 #### Analytics
+
 - [ ] Set up Google Analytics (GA4)
 - [ ] Configure Facebook Pixel
 - [ ] Enable Vercel Analytics
@@ -138,6 +155,7 @@ npx @sentry/wizard@latest -i nextjs
 ### 9. Launch Sequence
 
 #### Day Before Launch
+
 1. Final test of all payment flows in production
 2. Verify email delivery is working
 3. Check database backups are configured
@@ -145,6 +163,7 @@ npx @sentry/wizard@latest -i nextjs
 5. Test presale modal functionality
 
 #### Launch Day
+
 1. Remove Vercel password protection
 2. Update DNS to point to production
 3. Monitor error logs closely
@@ -153,6 +172,7 @@ npx @sentry/wizard@latest -i nextjs
 6. Monitor server performance
 
 #### Post-Launch (First 24 Hours)
+
 - [ ] Monitor error rates in Sentry
 - [ ] Check payment success rate
 - [ ] Verify email delivery rate
@@ -163,12 +183,14 @@ npx @sentry/wizard@latest -i nextjs
 ### 10. Backup Strategy
 
 #### Database Backups
+
 - [ ] Enable automatic PostgreSQL backups
 - [ ] Set up daily snapshots
 - [ ] Test restore procedure
 - [ ] Store backups in separate region
 
 #### File Backups
+
 - [ ] Back up S3 bucket (if using)
 - [ ] Version control for code (already on Git)
 - [ ] Export presale email list regularly
@@ -176,12 +198,14 @@ npx @sentry/wizard@latest -i nextjs
 ### 11. Post-Deployment Configuration
 
 #### Email Warmup
+
 1. Start with low volume test emails
 2. Gradually increase sending volume
 3. Monitor spam complaints
 4. Verify SPF/DKIM are working
 
 #### PayPal Live Verification
+
 1. Make test purchase with real PayPal account
 2. Verify funds appear in business account
 3. Test refund process
@@ -192,23 +216,27 @@ npx @sentry/wizard@latest -i nextjs
 #### Common Issues
 
 **PayPal Authentication Failed**
+
 - Verify `PAYPAL_ENVIRONMENT=live` matches credentials
 - Check Client ID and Secret are correct
 - Ensure no extra whitespace in environment variables
 
 **Emails Not Sending**
+
 - Verify SendGrid API key is active
 - Check email FROM address is verified
 - Review SendGrid sending limits
 - Check spam folder for test emails
 
 **Database Connection Failed**
+
 - Verify DATABASE_URL format is correct
 - Ensure SSL is enabled: `?sslmode=require`
 - Check database firewall allows Vercel IPs
 - Run `npx prisma migrate deploy`
 
 **Redirect URLs Not Working**
+
 - Verify `NEXT_PUBLIC_BASE_URL` has no trailing slash
 - Check PayPal return URLs match exactly
 - Clear browser cache and test
@@ -216,6 +244,7 @@ npx @sentry/wizard@latest -i nextjs
 ### 13. Performance Optimization
 
 #### Before Launch
+
 ```bash
 # Build and analyze bundle size
 npm run build
@@ -228,6 +257,7 @@ npm run lint
 ```
 
 #### Vercel Settings
+
 - [ ] Enable Edge Network
 - [ ] Configure caching headers
 - [ ] Enable automatic static optimization
@@ -236,12 +266,14 @@ npm run lint
 ### 14. Book Launch Preparation
 
 #### Presale Setup
+
 - [ ] Verify presale modal works
 - [ ] Test email collection API
 - [ ] Export presale list regularly
 - [ ] Create email templates for launch
 
 #### Launch Day (October 7, 2025)
+
 - [ ] Disable presale modal
 - [ ] Enable direct purchase buttons
 - [ ] Update countdown to show "Available Now"
@@ -250,16 +282,19 @@ npm run lint
 ### 15. Support & Maintenance
 
 #### Daily
+
 - [ ] Check error logs
 - [ ] Monitor payment success rate
 - [ ] Review customer emails
 
 #### Weekly
+
 - [ ] Database performance check
 - [ ] Backup verification
 - [ ] Security updates
 
 #### Monthly
+
 - [ ] Review analytics
 - [ ] Optimize slow pages
 - [ ] Update dependencies
@@ -277,6 +312,7 @@ npm run lint
 If critical issues occur:
 
 1. **Immediate Rollback**
+
    ```bash
    # Revert to previous deployment
    vercel rollback
@@ -294,6 +330,7 @@ If critical issues occur:
 ## Success Metrics
 
 Track these after launch:
+
 - Payment success rate (target: >95%)
 - Email delivery rate (target: >98%)
 - Page load time (target: <2s)

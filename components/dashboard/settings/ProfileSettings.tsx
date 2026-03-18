@@ -1,43 +1,48 @@
-'use client'
+"use client";
 
-import { useState } from 'react'
-import { Camera } from 'lucide-react'
+import { useState } from "react";
+import { Camera } from "lucide-react";
 
 interface ProfileSettingsProps {
-  email: string
-  name: string | null
-  onSave: (name: string | null) => void
-  setLoading: (loading: boolean) => void
+  email: string;
+  name: string | null;
+  onSave: (name: string | null) => void;
+  setLoading: (loading: boolean) => void;
 }
 
-export default function ProfileSettings({ email, name, onSave, setLoading }: ProfileSettingsProps) {
-  const [displayName, setDisplayName] = useState(name || '')
-  const [error, setError] = useState('')
+export default function ProfileSettings({
+  email,
+  name,
+  onSave,
+  setLoading,
+}: ProfileSettingsProps) {
+  const [displayName, setDisplayName] = useState(name || "");
+  const [error, setError] = useState("");
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setError('')
-    setLoading(true)
+    e.preventDefault();
+    setError("");
+    setLoading(true);
 
     try {
-      const response = await fetch('/api/user/profile', {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
+      const response = await fetch("/api/user/profile", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ name: displayName.trim() || null }),
-      })
+      });
 
-      const result = await response.json()
+      const result = await response.json();
 
       if (!response.ok) {
-        throw new Error(result.error || 'Failed to update profile')
+        throw new Error(result.error || "Failed to update profile");
       }
 
-      onSave(result.user.name)
+      onSave(result.user.name);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to update profile')
-      setLoading(false)
+      setError(err instanceof Error ? err.message : "Failed to update profile");
+      setLoading(false);
     }
-  }
+  };
 
   return (
     <div className="space-y-6">
@@ -58,7 +63,9 @@ export default function ProfileSettings({ email, name, onSave, setLoading }: Pro
           </button>
         </div>
         <div>
-          <p className="text-white font-medium">{displayName || 'No name set'}</p>
+          <p className="text-white font-medium">
+            {displayName || "No name set"}
+          </p>
           <p className="text-gray-400 text-sm">{email}</p>
         </div>
       </div>
@@ -71,7 +78,9 @@ export default function ProfileSettings({ email, name, onSave, setLoading }: Pro
         )}
 
         <div>
-          <label className="block text-sm text-gray-400 mb-2">Display Name</label>
+          <label className="block text-sm text-gray-400 mb-2">
+            Display Name
+          </label>
           <input
             type="text"
             value={displayName}
@@ -79,11 +88,15 @@ export default function ProfileSettings({ email, name, onSave, setLoading }: Pro
             placeholder="Enter your name"
             className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-accent-gold/50 transition-colors"
           />
-          <p className="text-gray-500 text-xs mt-2">This is how you&apos;ll appear on the site</p>
+          <p className="text-gray-500 text-xs mt-2">
+            This is how you&apos;ll appear on the site
+          </p>
         </div>
 
         <div>
-          <label className="block text-sm text-gray-400 mb-2">Email Address</label>
+          <label className="block text-sm text-gray-400 mb-2">
+            Email Address
+          </label>
           <input
             type="email"
             value={email}
@@ -101,5 +114,5 @@ export default function ProfileSettings({ email, name, onSave, setLoading }: Pro
         </button>
       </form>
     </div>
-  )
+  );
 }

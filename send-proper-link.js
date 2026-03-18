@@ -6,62 +6,67 @@
  * Usage: node send-proper-link.js <email> <name> [premium]
  */
 
-require('dotenv').config({ path: '.env' })
-require('dotenv').config({ path: '.env.local' })
-const { PrismaClient } = require('@prisma/client')
-const nodemailer = require('nodemailer')
-const crypto = require('crypto')
+require("dotenv").config({ path: ".env" });
+require("dotenv").config({ path: ".env.local" });
+const { PrismaClient } = require("@prisma/client");
+const nodemailer = require("nodemailer");
+const crypto = require("crypto");
 
-const prisma = new PrismaClient()
+const prisma = new PrismaClient();
 
 async function sendProperLink(email, name, isPremium) {
   try {
-    console.log('\n📧 Creating purchase and sending download link...')
-    console.log('   To:', email)
-    console.log('   Name:', name)
-    console.log('   Type:', isPremium ? 'Premium Edition ($34.99)' : 'Standard Edition ($17.99)')
+    console.log("\n📧 Creating purchase and sending download link...");
+    console.log("   To:", email);
+    console.log("   Name:", name);
+    console.log(
+      "   Type:",
+      isPremium ? "Premium Edition ($34.99)" : "Standard Edition ($17.99)",
+    );
 
     // Generate secure token
-    const token = crypto.randomBytes(32).toString('hex')
-    const expiryDate = new Date()
-    expiryDate.setDate(expiryDate.getDate() + 30)
+    const token = crypto.randomBytes(32).toString("hex");
+    const expiryDate = new Date();
+    expiryDate.setDate(expiryDate.getDate() + 30);
 
     // Create purchase record
     const purchase = await prisma.purchase.create({
       data: {
-        type: 'BOOK',
-        productVariant: isPremium ? 'PREMIUM' : 'KDP',
+        type: "BOOK",
+        productVariant: isPremium ? "PREMIUM" : "KDP",
         customerEmail: email,
         customerName: name,
         amount: isPremium ? 34.99 : 17.99,
-        status: 'COMPLETED',
+        status: "COMPLETED",
         paypalOrderId: `MANUAL-${Date.now()}`,
         downloadToken: token,
         downloadCount: 0,
         maxDownloads: 5,
         expiresAt: expiryDate,
         metadata: {
-          source: 'manual',
-          createdBy: 'admin',
-          timestamp: new Date().toISOString()
-        }
-      }
-    })
+          source: "manual",
+          createdBy: "admin",
+          timestamp: new Date().toISOString(),
+        },
+      },
+    });
 
-    console.log('✅ Purchase record created:', purchase.id)
+    console.log("✅ Purchase record created:", purchase.id);
 
     // Build URLs with production base URL
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://kanikabatra.com'
-    const pdfUrl = `${baseUrl}/api/download?token=${token}&format=pdf`
-    const epubUrl = `${baseUrl}/api/download?token=${token}&format=epub`
+    const baseUrl =
+      process.env.NEXT_PUBLIC_BASE_URL || "https://kanikabatra.com";
+    const pdfUrl = `${baseUrl}/api/download?token=${token}&format=pdf`;
+    const epubUrl = `${baseUrl}/api/download?token=${token}&format=epub`;
 
-    const formattedExpiry = expiryDate.toLocaleDateString('en-US', {
-      month: 'long',
-      day: 'numeric',
-      year: 'numeric'
-    })
+    const formattedExpiry = expiryDate.toLocaleDateString("en-US", {
+      month: "long",
+      day: "numeric",
+      year: "numeric",
+    });
 
-    const premiumBonuses = isPremium ? `
+    const premiumBonuses = isPremium
+      ? `
       <table width="100%" cellspacing="0" cellpadding="0" style="background: linear-gradient(135deg, #1a0d11 0%, #2a1a1f 100%); border-radius: 10px; margin: 0 0 25px 0; border: 2px solid #d4af37; padding: 25px;">
         <tr>
           <td>
@@ -77,7 +82,8 @@ async function sendProperLink(email, name, isPremium) {
           </td>
         </tr>
       </table>
-    ` : ''
+    `
+      : "";
 
     const html = `
       <!DOCTYPE html>
@@ -113,7 +119,7 @@ async function sendProperLink(email, name, isPremium) {
 
                     <div style="background: linear-gradient(135deg, #1a0d11 0%, #0f0a0f 100%); padding: 25px; border-radius: 10px; margin: 0 0 30px 0; border: 1px solid #d4af37;">
                       <h2 style="color: #d4af37; margin: 0 0 15px 0; font-size: 20px; font-weight: 600;">
-                        Sociopathic Dating Bible: A Cure For Empathy${isPremium ? ' (Premium Edition)' : ''}
+                        Sociopathic Dating Bible: A Cure For Empathy${isPremium ? " (Premium Edition)" : ""}
                       </h2>
                       <p style="color: #94a3b8; margin: 0; font-size: 14px;">
                         70,000 words of strategic dating psychology from a diagnosed sociopath
@@ -188,53 +194,56 @@ async function sendProperLink(email, name, isPremium) {
         </table>
       </body>
       </html>
-    `
+    `;
 
     // Send email
     const transporter = nodemailer.createTransport({
       host: process.env.SMTP_HOST,
-      port: parseInt(process.env.SMTP_PORT || '587'),
-      secure: parseInt(process.env.SMTP_PORT || '587') === 465,
+      port: parseInt(process.env.SMTP_PORT || "587"),
+      secure: parseInt(process.env.SMTP_PORT || "587") === 465,
       auth: {
         user: process.env.SMTP_USER,
         pass: process.env.SMTP_PASS,
       },
-    })
+    });
 
     await transporter.sendMail({
       from: `"Kanika Batra" <${process.env.SMTP_USER}>`,
       to: email,
-      subject: `Download Your Book - Sociopathic Dating Bible${isPremium ? ' (Premium Edition)' : ''}`,
+      subject: `Download Your Book - Sociopathic Dating Bible${isPremium ? " (Premium Edition)" : ""}`,
       html: html,
-    })
+    });
 
-    console.log('\n✅ SUCCESS! Email sent with working download links')
-    console.log('\n📊 Purchase Details:')
-    console.log('   Purchase ID:', purchase.id)
-    console.log('   PDF:', pdfUrl)
-    console.log('   EPUB:', epubUrl)
-    console.log('   Expires:', formattedExpiry)
-    console.log('   Downloads:', `0/${purchase.maxDownloads}`)
-    console.log('\n✅ Links are tracked and will work on production!\n')
-
+    console.log("\n✅ SUCCESS! Email sent with working download links");
+    console.log("\n📊 Purchase Details:");
+    console.log("   Purchase ID:", purchase.id);
+    console.log("   PDF:", pdfUrl);
+    console.log("   EPUB:", epubUrl);
+    console.log("   Expires:", formattedExpiry);
+    console.log("   Downloads:", `0/${purchase.maxDownloads}`);
+    console.log("\n✅ Links are tracked and will work on production!\n");
   } catch (error) {
-    console.error('\n❌ Error:', error.message)
+    console.error("\n❌ Error:", error.message);
   } finally {
-    await prisma.$disconnect()
+    await prisma.$disconnect();
   }
 }
 
-const email = process.argv[2]
-const name = process.argv[3]
-const isPremium = process.argv[4] === 'premium'
+const email = process.argv[2];
+const name = process.argv[3];
+const isPremium = process.argv[4] === "premium";
 
 if (!email || !name) {
-  console.log('\n📖 Usage: node send-proper-link.js <email> <name> [premium]')
-  console.log('\nExamples:')
-  console.log('   node send-proper-link.js customer@example.com "John Smith"')
-  console.log('   node send-proper-link.js customer@example.com "Jane Doe" premium')
-  console.log('\n✅ This creates a database record and tracks downloads properly.\n')
-  process.exit(0)
+  console.log("\n📖 Usage: node send-proper-link.js <email> <name> [premium]");
+  console.log("\nExamples:");
+  console.log('   node send-proper-link.js customer@example.com "John Smith"');
+  console.log(
+    '   node send-proper-link.js customer@example.com "Jane Doe" premium',
+  );
+  console.log(
+    "\n✅ This creates a database record and tracks downloads properly.\n",
+  );
+  process.exit(0);
 }
 
-sendProperLink(email, name, isPremium)
+sendProperLink(email, name, isPremium);

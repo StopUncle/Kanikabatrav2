@@ -1,5 +1,5 @@
-import { NextRequest, NextResponse } from 'next/server'
-import { requireAuth } from '@/lib/auth/middleware'
+import { NextRequest, NextResponse } from "next/server";
+import { requireAuth } from "@/lib/auth/middleware";
 
 export async function GET(request: NextRequest) {
   return requireAuth(request, async (req, user) => {
@@ -7,8 +7,8 @@ export async function GET(request: NextRequest) {
       success: true,
       user: {
         id: user.id,
-        email: user.email
-      }
-    })
-  })
+        email: user.email,
+      },
+    });
+  });
 }

@@ -1,9 +1,9 @@
 interface JsonLdProps {
-  data: Record<string, unknown> | Record<string, unknown>[]
+  data: Record<string, unknown> | Record<string, unknown>[];
 }
 
 export default function JsonLd({ data }: JsonLdProps) {
-  const schemas = Array.isArray(data) ? data : [data]
+  const schemas = Array.isArray(data) ? data : [data];
 
   return (
     <>
@@ -15,5 +15,5 @@ export default function JsonLd({ data }: JsonLdProps) {
         />
       ))}
     </>
-  )
+  );
 }

@@ -5,6 +5,7 @@ This demo button allows you to test the complete payment → success page → do
 ## How to Enable
 
 1. **Create the dev-mode file** (if it doesn't exist):
+
    ```bash
    # Create lib/dev-mode.ts
    echo "export const DEV_MODE = true" > lib/dev-mode.ts
@@ -28,6 +29,7 @@ This demo button allows you to test the complete payment → success page → do
 ## How to Disable
 
 Simply remove the button code from `BookShowcase.tsx`. It will never appear in production because:
+
 - The `DEV_MODE` check prevents it from rendering when `lib/dev-mode.ts` doesn't exist
 - `lib/dev-mode.ts` is gitignored and won't deploy to Railway
 

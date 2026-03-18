@@ -1,44 +1,44 @@
-'use client'
+"use client";
 
-import { motion } from 'framer-motion'
-import BackgroundEffects from '@/components/BackgroundEffects'
-import Header from '@/components/Header'
-import CourseCard from '@/components/course/CourseCard'
-import { BookOpen, Crown, Shield, Zap } from 'lucide-react'
+import { motion } from "framer-motion";
+import BackgroundEffects from "@/components/BackgroundEffects";
+import Header from "@/components/Header";
+import CourseCard from "@/components/course/CourseCard";
+import { BookOpen, Crown, Shield, Zap } from "lucide-react";
 
 interface Course {
-  id: string
-  title: string
-  slug: string
-  description: string | null
-  thumbnailUrl: string | null
-  price: number
-  tier: string
-  moduleCount?: number
-  lessonCount?: number
+  id: string;
+  title: string;
+  slug: string;
+  description: string | null;
+  thumbnailUrl: string | null;
+  price: number;
+  tier: string;
+  moduleCount?: number;
+  lessonCount?: number;
 }
 
 interface Enrollment {
-  courseId: string
-  progress: number
+  courseId: string;
+  progress: number;
 }
 
 interface CoursesPageClientProps {
-  courses: Course[]
-  enrollments: Enrollment[]
-  isLoggedIn: boolean
+  courses: Course[];
+  enrollments: Enrollment[];
+  isLoggedIn: boolean;
 }
 
 export default function CoursesPageClient({
   courses,
   enrollments,
-  isLoggedIn: _isLoggedIn
+  isLoggedIn: _isLoggedIn,
 }: CoursesPageClientProps) {
   const getEnrollment = (courseId: string) =>
-    enrollments.find(e => e.courseId === courseId)
+    enrollments.find((e) => e.courseId === courseId);
 
-  const standardCourses = courses.filter(c => c.tier === 'standard')
-  const goldCourses = courses.filter(c => c.tier === 'gold')
+  const standardCourses = courses.filter((c) => c.tier === "standard");
+  const goldCourses = courses.filter((c) => c.tier === "gold");
 
   return (
     <>
@@ -56,8 +56,9 @@ export default function CoursesPageClient({
               <span className="gradient-text">Dark Psychology Courses</span>
             </h1>
             <p className="text-text-gray text-lg md:text-xl max-w-3xl mx-auto mb-8">
-              Master the art of psychological manipulation, power dynamics, and mental warfare
-              through exclusive video courses taught by a diagnosed sociopath.
+              Master the art of psychological manipulation, power dynamics, and
+              mental warfare through exclusive video courses taught by a
+              diagnosed sociopath.
             </p>
 
             <div className="flex flex-wrap justify-center gap-4 sm:gap-8 text-sm">
@@ -89,8 +90,8 @@ export default function CoursesPageClient({
                   Courses Coming Soon
                 </h2>
                 <p className="text-text-gray mb-6">
-                  Our exclusive dark psychology courses are currently being prepared.
-                  Subscribe to be notified when they launch.
+                  Our exclusive dark psychology courses are currently being
+                  prepared. Subscribe to be notified when they launch.
                 </p>
                 <a
                   href="/contact"
@@ -115,7 +116,7 @@ export default function CoursesPageClient({
                   </h2>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8">
                     {standardCourses.map((course) => {
-                      const enrollment = getEnrollment(course.id)
+                      const enrollment = getEnrollment(course.id);
                       return (
                         <CourseCard
                           key={course.id}
@@ -123,7 +124,7 @@ export default function CoursesPageClient({
                           isSubscribed={!!enrollment}
                           progress={enrollment?.progress}
                         />
-                      )
+                      );
                     })}
                   </div>
                 </motion.section>
@@ -140,14 +141,17 @@ export default function CoursesPageClient({
                     <div className="p-6 sm:p-8">
                       <h2 className="text-2xl sm:text-3xl font-light mb-2 flex items-center gap-3">
                         <Crown className="w-6 h-6 text-accent-gold" />
-                        <span className="gradient-text-gold">Gold Tier Courses</span>
+                        <span className="gradient-text-gold">
+                          Gold Tier Courses
+                        </span>
                       </h2>
                       <p className="text-text-muted mb-8">
-                        Advanced content covering the most powerful and controversial psychological tactics.
+                        Advanced content covering the most powerful and
+                        controversial psychological tactics.
                       </p>
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8">
                         {goldCourses.map((course) => {
-                          const enrollment = getEnrollment(course.id)
+                          const enrollment = getEnrollment(course.id);
                           return (
                             <CourseCard
                               key={course.id}
@@ -155,7 +159,7 @@ export default function CoursesPageClient({
                               isSubscribed={!!enrollment}
                               progress={enrollment?.progress}
                             />
-                          )
+                          );
                         })}
                       </div>
                     </div>
@@ -172,20 +176,40 @@ export default function CoursesPageClient({
             className="mt-16 text-center bg-gradient-to-r from-accent-burgundy/10 to-accent-sapphire/10 rounded-2xl p-8 border border-accent-gold/20"
           >
             <h2 className="text-2xl sm:text-3xl font-light mb-4">
-              <span className="gradient-text">What You Get With Each Course</span>
+              <span className="gradient-text">
+                What You Get With Each Course
+              </span>
             </h2>
             <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 mt-8">
               {[
-                { icon: BookOpen, title: 'Video Lessons', desc: 'HD video content with text notes' },
-                { icon: Zap, title: 'Community Forum', desc: 'Discuss with other subscribers' },
-                { icon: Shield, title: 'Monthly Access', desc: 'Cancel anytime, no commitment' },
-                { icon: Crown, title: 'New Content', desc: 'Regular updates and additions' }
+                {
+                  icon: BookOpen,
+                  title: "Video Lessons",
+                  desc: "HD video content with text notes",
+                },
+                {
+                  icon: Zap,
+                  title: "Community Forum",
+                  desc: "Discuss with other subscribers",
+                },
+                {
+                  icon: Shield,
+                  title: "Monthly Access",
+                  desc: "Cancel anytime, no commitment",
+                },
+                {
+                  icon: Crown,
+                  title: "New Content",
+                  desc: "Regular updates and additions",
+                },
               ].map((item, index) => (
                 <div key={index} className="text-center">
                   <div className="w-12 h-12 mx-auto mb-3 rounded-full bg-accent-gold/10 flex items-center justify-center">
                     <item.icon className="w-6 h-6 text-accent-gold" />
                   </div>
-                  <h3 className="font-medium text-text-light mb-1">{item.title}</h3>
+                  <h3 className="font-medium text-text-light mb-1">
+                    {item.title}
+                  </h3>
                   <p className="text-sm text-text-muted">{item.desc}</p>
                 </div>
               ))}
@@ -194,5 +218,5 @@ export default function CoursesPageClient({
         </div>
       </div>
     </>
-  )
+  );
 }

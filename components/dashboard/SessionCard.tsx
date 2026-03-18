@@ -1,25 +1,34 @@
-'use client'
+"use client";
 
-import { useState } from 'react'
-import { Calendar, Clock, Video, ChevronRight, ChevronDown, FileText, Star, CalendarPlus } from 'lucide-react'
+import { useState } from "react";
+import {
+  Calendar,
+  Clock,
+  Video,
+  ChevronRight,
+  ChevronDown,
+  FileText,
+  Star,
+  CalendarPlus,
+} from "lucide-react";
 
 export interface SessionCardProps {
-  id: string
-  title: string
-  date: string
-  time: string
-  duration: string
-  type: 'individual' | 'group' | 'vip'
-  status: 'upcoming' | 'completed' | 'cancelled' | 'pending'
-  meetingUrl?: string
-  coachNotes?: string
-  userNotes?: string
+  id: string;
+  title: string;
+  date: string;
+  time: string;
+  duration: string;
+  type: "individual" | "group" | "vip";
+  status: "upcoming" | "completed" | "cancelled" | "pending";
+  meetingUrl?: string;
+  coachNotes?: string;
+  userNotes?: string;
   feedback?: {
-    rating: number
-    feedback?: string
-  }
-  onNotesUpdate?: (id: string, notes: string) => void
-  onLeaveFeedback?: (id: string) => void
+    rating: number;
+    feedback?: string;
+  };
+  onNotesUpdate?: (id: string, notes: string) => void;
+  onLeaveFeedback?: (id: string) => void;
 }
 
 export default function SessionCard({
@@ -35,100 +44,101 @@ export default function SessionCard({
   userNotes,
   feedback,
   onNotesUpdate,
-  onLeaveFeedback
+  onLeaveFeedback,
 }: SessionCardProps) {
-  const [isExpanded, setIsExpanded] = useState(false)
-  const [notes, setNotes] = useState(userNotes || '')
-  const [isSavingNotes, setIsSavingNotes] = useState(false)
+  const [isExpanded, setIsExpanded] = useState(false);
+  const [notes, setNotes] = useState(userNotes || "");
+  const [isSavingNotes, setIsSavingNotes] = useState(false);
 
   const getTypeColor = () => {
     switch (type) {
-      case 'vip':
-        return 'from-accent-gold to-accent-gold/70'
-      case 'individual':
-        return 'from-accent-burgundy to-accent-sapphire'
-      case 'group':
-        return 'from-accent-sapphire to-accent-burgundy'
+      case "vip":
+        return "from-accent-gold to-accent-gold/70";
+      case "individual":
+        return "from-accent-burgundy to-accent-sapphire";
+      case "group":
+        return "from-accent-sapphire to-accent-burgundy";
       default:
-        return 'from-gray-600 to-gray-700'
+        return "from-gray-600 to-gray-700";
     }
-  }
+  };
 
   const getStatusBadge = () => {
     switch (status) {
-      case 'upcoming':
+      case "upcoming":
         return (
           <span className="px-2 py-1 rounded-full bg-green-500/20 text-green-400 text-xs font-medium">
             Upcoming
           </span>
-        )
-      case 'completed':
+        );
+      case "completed":
         return (
           <span className="px-2 py-1 rounded-full bg-gray-500/20 text-gray-400 text-xs font-medium">
             Completed
           </span>
-        )
-      case 'cancelled':
+        );
+      case "cancelled":
         return (
           <span className="px-2 py-1 rounded-full bg-red-500/20 text-red-400 text-xs font-medium">
             Cancelled
           </span>
-        )
-      case 'pending':
+        );
+      case "pending":
         return (
           <span className="px-2 py-1 rounded-full bg-yellow-500/20 text-yellow-400 text-xs font-medium">
             Pending
           </span>
-        )
+        );
       default:
-        return null
+        return null;
     }
-  }
+  };
 
   const getTimeUntil = () => {
-    if (status !== 'upcoming' || date === 'TBD') return null
-    const sessionDate = new Date(`${date} ${time}`)
-    const now = new Date()
-    const diff = sessionDate.getTime() - now.getTime()
+    if (status !== "upcoming" || date === "TBD") return null;
+    const sessionDate = new Date(`${date} ${time}`);
+    const now = new Date();
+    const diff = sessionDate.getTime() - now.getTime();
 
-    if (diff < 0) return null
+    if (diff < 0) return null;
 
-    const hours = Math.floor(diff / (1000 * 60 * 60))
-    const days = Math.floor(hours / 24)
+    const hours = Math.floor(diff / (1000 * 60 * 60));
+    const days = Math.floor(hours / 24);
 
-    if (days > 0) return `${days} day${days > 1 ? 's' : ''} away`
-    if (hours > 0) return `${hours} hour${hours > 1 ? 's' : ''} away`
-    return 'Starting soon'
-  }
+    if (days > 0) return `${days} day${days > 1 ? "s" : ""} away`;
+    if (hours > 0) return `${hours} hour${hours > 1 ? "s" : ""} away`;
+    return "Starting soon";
+  };
 
   const handleSaveNotes = async () => {
-    if (!onNotesUpdate) return
-    setIsSavingNotes(true)
+    if (!onNotesUpdate) return;
+    setIsSavingNotes(true);
     try {
-      await onNotesUpdate(id, notes)
+      await onNotesUpdate(id, notes);
     } finally {
-      setIsSavingNotes(false)
+      setIsSavingNotes(false);
     }
-  }
+  };
 
   const generateCalendarUrl = () => {
-    if (date === 'TBD') return null
-    const startDate = new Date(`${date} ${time}`)
-    const endDate = new Date(startDate.getTime() + parseInt(duration) * 60000)
+    if (date === "TBD") return null;
+    const startDate = new Date(`${date} ${time}`);
+    const endDate = new Date(startDate.getTime() + parseInt(duration) * 60000);
 
-    const formatDate = (d: Date) => d.toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z'
+    const formatDate = (d: Date) =>
+      d.toISOString().replace(/[-:]/g, "").split(".")[0] + "Z";
 
     const event = {
       text: `Coaching: ${title}`,
       dates: `${formatDate(startDate)}/${formatDate(endDate)}`,
-      details: `Coaching session with Kanika Batra${meetingUrl ? `\\n\\nMeeting Link: ${meetingUrl}` : ''}`,
-    }
+      details: `Coaching session with Kanika Batra${meetingUrl ? `\\n\\nMeeting Link: ${meetingUrl}` : ""}`,
+    };
 
-    return `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(event.text)}&dates=${event.dates}&details=${encodeURIComponent(event.details)}`
-  }
+    return `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(event.text)}&dates=${event.dates}&details=${encodeURIComponent(event.details)}`;
+  };
 
-  const timeUntil = getTimeUntil()
-  const calendarUrl = generateCalendarUrl()
+  const timeUntil = getTimeUntil();
+  const calendarUrl = generateCalendarUrl();
 
   return (
     <div className="bg-gray-900/50 rounded-xl overflow-hidden border border-gray-800 hover:border-gold/30 transition-all duration-300">
@@ -139,10 +149,14 @@ export default function SessionCard({
           <div className="flex-1">
             <h4 className="text-text-light font-semibold text-lg">{title}</h4>
             <div className="flex items-center gap-2 mt-1 flex-wrap">
-              <span className="text-xs text-text-muted capitalize">{type} Session</span>
+              <span className="text-xs text-text-muted capitalize">
+                {type} Session
+              </span>
               {getStatusBadge()}
               {timeUntil && (
-                <span className="text-xs text-accent-gold font-medium">{timeUntil}</span>
+                <span className="text-xs text-accent-gold font-medium">
+                  {timeUntil}
+                </span>
               )}
             </div>
           </div>
@@ -152,7 +166,11 @@ export default function SessionCard({
                 <Star
                   key={star}
                   size={14}
-                  className={star <= feedback.rating ? 'text-accent-gold fill-accent-gold' : 'text-gray-600'}
+                  className={
+                    star <= feedback.rating
+                      ? "text-accent-gold fill-accent-gold"
+                      : "text-gray-600"
+                  }
                 />
               ))}
             </div>
@@ -163,43 +181,49 @@ export default function SessionCard({
           <div className="flex items-center gap-3 text-text-muted text-sm">
             <Calendar size={16} className="text-gold" />
             <span>
-              {date === 'TBD'
-                ? 'To be scheduled'
-                : new Date(date).toLocaleDateString('en-US', {
-                    weekday: 'short',
-                    year: 'numeric',
-                    month: 'short',
-                    day: 'numeric'
-                  })
-              }
+              {date === "TBD"
+                ? "To be scheduled"
+                : new Date(date).toLocaleDateString("en-US", {
+                    weekday: "short",
+                    year: "numeric",
+                    month: "short",
+                    day: "numeric",
+                  })}
             </span>
           </div>
 
           <div className="flex items-center gap-3 text-text-muted text-sm">
             <Clock size={16} className="text-gold" />
-            <span>{time === 'TBD' ? 'Time TBD' : time} ({duration})</span>
+            <span>
+              {time === "TBD" ? "Time TBD" : time} ({duration})
+            </span>
           </div>
 
           {coachNotes && (
             <div className="pt-3 border-t border-gray-800">
-              <p className="text-text-muted text-sm italic">&ldquo;{coachNotes}&rdquo;</p>
+              <p className="text-text-muted text-sm italic">
+                &ldquo;{coachNotes}&rdquo;
+              </p>
             </div>
           )}
 
           {/* Action Buttons */}
           <div className="flex gap-2 pt-2">
-            {status === 'upcoming' && meetingUrl && (
+            {status === "upcoming" && meetingUrl && (
               <button
-                onClick={() => window.open(meetingUrl, '_blank')}
+                onClick={() => window.open(meetingUrl, "_blank")}
                 className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-gradient-to-r from-accent-burgundy to-accent-sapphire rounded-lg text-white font-medium hover:shadow-lg transition-all group"
               >
                 <Video size={18} />
                 Join Session
-                <ChevronRight size={16} className="group-hover:translate-x-1 transition-transform" />
+                <ChevronRight
+                  size={16}
+                  className="group-hover:translate-x-1 transition-transform"
+                />
               </button>
             )}
 
-            {status === 'upcoming' && calendarUrl && (
+            {status === "upcoming" && calendarUrl && (
               <a
                 href={calendarUrl}
                 target="_blank"
@@ -211,7 +235,7 @@ export default function SessionCard({
               </a>
             )}
 
-            {status === 'completed' && !feedback && onLeaveFeedback && (
+            {status === "completed" && !feedback && onLeaveFeedback && (
               <button
                 onClick={() => onLeaveFeedback(id)}
                 className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-accent-gold/20 hover:bg-accent-gold/30 rounded-lg text-accent-gold font-medium transition-colors"
@@ -226,7 +250,10 @@ export default function SessionCard({
               className="flex items-center justify-center gap-1 px-3 py-2 bg-gray-800 hover:bg-gray-700 rounded-lg text-text-light text-sm transition-colors"
             >
               <FileText size={16} />
-              <ChevronDown size={14} className={`transition-transform ${isExpanded ? 'rotate-180' : ''}`} />
+              <ChevronDown
+                size={14}
+                className={`transition-transform ${isExpanded ? "rotate-180" : ""}`}
+              />
             </button>
           </div>
 
@@ -234,7 +261,9 @@ export default function SessionCard({
           {isExpanded && (
             <div className="pt-4 border-t border-gray-800 space-y-3">
               <div>
-                <label className="text-text-muted text-xs block mb-2">Your Notes</label>
+                <label className="text-text-muted text-xs block mb-2">
+                  Your Notes
+                </label>
                 <textarea
                   value={notes}
                   onChange={(e) => setNotes(e.target.value)}
@@ -242,20 +271,22 @@ export default function SessionCard({
                   className="w-full px-3 py-2 bg-gray-800/50 border border-gray-700 rounded-lg text-text-light text-sm placeholder:text-gray-600 focus:outline-none focus:border-accent-gold/50 resize-none"
                   rows={3}
                 />
-                {notes !== (userNotes || '') && onNotesUpdate && (
+                {notes !== (userNotes || "") && onNotesUpdate && (
                   <button
                     onClick={handleSaveNotes}
                     disabled={isSavingNotes}
                     className="mt-2 px-4 py-1.5 bg-accent-gold/20 hover:bg-accent-gold/30 rounded-lg text-accent-gold text-sm font-medium transition-colors disabled:opacity-50"
                   >
-                    {isSavingNotes ? 'Saving...' : 'Save Notes'}
+                    {isSavingNotes ? "Saving..." : "Save Notes"}
                   </button>
                 )}
               </div>
 
               {feedback?.feedback && (
                 <div>
-                  <label className="text-text-muted text-xs block mb-1">Your Feedback</label>
+                  <label className="text-text-muted text-xs block mb-1">
+                    Your Feedback
+                  </label>
                   <p className="text-text-light text-sm">{feedback.feedback}</p>
                 </div>
               )}
@@ -264,5 +295,5 @@ export default function SessionCard({
         </div>
       </div>
     </div>
-  )
+  );
 }

@@ -1,13 +1,14 @@
-import { Metadata } from 'next'
-import BackgroundEffects from '@/components/BackgroundEffects'
-import Header from '@/components/Header'
-import Hero from '@/components/Hero'
-import BookShowcase from '@/components/BookShowcase'
-import CoachingSection from '@/components/CoachingSection'
-import Testimonial from '@/components/Testimonial'
-import NewsletterForm from '@/components/NewsletterForm'
-import SocialHub from '@/components/SocialHub'
-import { SITE_CONFIG, SOCIAL_METRICS } from '@/lib/constants'
+import { Metadata } from "next";
+import BackgroundEffects from "@/components/BackgroundEffects";
+import Header from "@/components/Header";
+import Hero from "@/components/Hero";
+import BookShowcase from "@/components/BookShowcase";
+import CoachingSection from "@/components/CoachingSection";
+import Testimonial from "@/components/Testimonial";
+import NewsletterForm from "@/components/NewsletterForm";
+import AskKanika from "@/components/AskKanika";
+import SocialHub from "@/components/SocialHub";
+import { SITE_CONFIG, SOCIAL_METRICS } from "@/lib/constants";
 
 export const metadata: Metadata = {
   title: `${SITE_CONFIG.name} - ${SITE_CONFIG.title}`,
@@ -16,16 +17,16 @@ export const metadata: Metadata = {
     canonical: SITE_CONFIG.url,
   },
   keywords: [
-    'Kanika Batra',
-    'psychology of power',
-    'dark psychology',
-    'strategic thinking',
-    'power dynamics',
-    'social strategy',
-    'manipulation defense',
-    'dark triad',
-    'ASPD',
-    'Under the Mask podcast',
+    "Kanika Batra",
+    "psychology of power",
+    "dark psychology",
+    "strategic thinking",
+    "power dynamics",
+    "social strategy",
+    "manipulation defense",
+    "dark triad",
+    "ASPD",
+    "Under the Mask podcast",
   ],
   authors: [{ name: SITE_CONFIG.name }],
   openGraph: {
@@ -35,22 +36,22 @@ export const metadata: Metadata = {
     siteName: SITE_CONFIG.name,
     images: [
       {
-        url: '/og-image.jpg',
+        url: "/og-image.jpg",
         width: 1200,
         height: 630,
         alt: `${SITE_CONFIG.name} - ${SITE_CONFIG.title}`,
       },
     ],
-    locale: 'en_US',
-    type: 'website',
+    locale: "en_US",
+    type: "website",
   },
   twitter: {
-    card: 'summary_large_image',
+    card: "summary_large_image",
     title: `${SITE_CONFIG.name} - ${SITE_CONFIG.title}`,
     description: SITE_CONFIG.description,
-    images: ['/og-image.jpg'],
+    images: ["/og-image.jpg"],
   },
-}
+};
 
 export default function Home() {
   return (
@@ -65,14 +66,17 @@ export default function Home() {
       <main className="relative z-10 pt-20">
         {/* Hero Section */}
         <Hero />
-        
+
         {/* Book Showcase Section */}
         <BookShowcase />
-        
+
         {/* Testimonial Section */}
         <section id="testimonials">
           <Testimonial />
         </section>
+
+        {/* Ask Kanika Section */}
+        <AskKanika />
 
         {/* Quiz CTA Section */}
         <section className="py-24 px-4 relative overflow-hidden">
@@ -84,11 +88,14 @@ export default function Home() {
               </span>
             </div>
             <h2 className="text-3xl md:text-5xl font-extralight text-white mb-6">
-              What&apos;s Your <span className="text-accent-gold">Dark Mirror</span> Type?
+              What&apos;s Your{" "}
+              <span className="text-accent-gold">Dark Mirror</span> Type?
             </h2>
             <p className="text-text-gray text-lg mb-8 max-w-2xl mx-auto leading-relaxed">
-              Take the 20-question assessment to discover which personality type dominates your psychology,
-              plus receive a clinical-style diagnosis with your functioning level. Are you The Predator, The Strategist, or something else entirely?
+              Take the 20-question assessment to discover which personality type
+              dominates your psychology, plus receive a clinical-style diagnosis
+              with your functioning level. Are you The Predator, The Strategist,
+              or something else entirely?
             </p>
             <a
               href="/quiz"
@@ -105,7 +112,7 @@ export default function Home() {
 
         {/* Coaching Section */}
         <CoachingSection />
-        
+
         {/* Social Media Hub */}
         <SocialHub />
 
@@ -114,37 +121,48 @@ export default function Home() {
           <div className="max-w-7xl mx-auto">
             <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
               <div className="space-y-2">
-                <div className="text-3xl md:text-4xl font-light gradient-text-gold">{SOCIAL_METRICS.combined.totalFollowers}</div>
+                <div className="text-3xl md:text-4xl font-light gradient-text-gold">
+                  {SOCIAL_METRICS.combined.totalFollowers}
+                </div>
                 <p className="text-text-gray text-sm">Total Followers</p>
               </div>
               <div className="space-y-2">
-                <div className="text-3xl md:text-4xl font-light gradient-text-gold">{SOCIAL_METRICS.combined.totalViews}</div>
+                <div className="text-3xl md:text-4xl font-light gradient-text-gold">
+                  {SOCIAL_METRICS.combined.totalViews}
+                </div>
                 <p className="text-text-gray text-sm">Total Views</p>
               </div>
               <div className="space-y-2">
-                <div className="text-3xl md:text-4xl font-light gradient-text-gold">{SOCIAL_METRICS.tiktok.likes}</div>
+                <div className="text-3xl md:text-4xl font-light gradient-text-gold">
+                  {SOCIAL_METRICS.tiktok.likes}
+                </div>
                 <p className="text-text-gray text-sm">TikTok Likes</p>
               </div>
               <div className="space-y-2">
-                <div className="text-3xl md:text-4xl font-light gradient-text-gold">{SOCIAL_METRICS.youtube.videos}</div>
+                <div className="text-3xl md:text-4xl font-light gradient-text-gold">
+                  {SOCIAL_METRICS.youtube.videos}
+                </div>
                 <p className="text-text-gray text-sm">YouTube Videos</p>
               </div>
             </div>
           </div>
         </section>
-        
+
         {/* Final CTA Section */}
         <section className="py-32 px-4">
           <div className="max-w-4xl mx-auto text-center">
             <div>
               <h2 className="text-4xl md:text-5xl font-light mb-6">
-                <span className="text-text-light">Ready to See What&apos;s</span>
+                <span className="text-text-light">
+                  Ready to See What&apos;s
+                </span>
                 <br />
                 <span className="gradient-text">Behind the Mask?</span>
               </h2>
               <p className="text-text-gray text-lg mb-8 max-w-2xl mx-auto">
                 Join thousands who have discovered the power of understanding
-                psychology others won&apos;t teach. Your transformation begins with a single decision.
+                psychology others won&apos;t teach. Your transformation begins
+                with a single decision.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <a
@@ -163,7 +181,7 @@ export default function Home() {
             </div>
           </div>
         </section>
-        
+
         {/* Newsletter Section */}
         <section className="py-20 px-4 border-t border-accent-gold/10">
           <div className="max-w-3xl mx-auto text-center">
@@ -172,7 +190,8 @@ export default function Home() {
                 Psychology of Power — Weekly
               </h3>
               <p className="text-text-gray mb-8">
-                Strategic psychology, power dynamics, and the insights they don&apos;t teach in school.
+                Strategic psychology, power dynamics, and the insights they
+                don&apos;t teach in school.
               </p>
               <NewsletterForm />
               <p className="text-text-gray text-sm mt-4">
@@ -183,5 +202,5 @@ export default function Home() {
         </section>
       </main>
     </>
-  )
+  );
 }

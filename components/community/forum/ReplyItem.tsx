@@ -1,33 +1,33 @@
-'use client'
+"use client";
 
-import { useState } from 'react'
-import Image from 'next/image'
-import { Heart, Reply, Edit } from 'lucide-react'
-import { formatDistanceToNow } from 'date-fns'
-import PostEditor from './PostEditor'
+import { useState } from "react";
+import Image from "next/image";
+import { Heart, Reply, Edit } from "lucide-react";
+import { formatDistanceToNow } from "date-fns";
+import PostEditor from "./PostEditor";
 
 interface Author {
-  id: string
-  name: string | null
-  displayName: string | null
-  avatarUrl: string | null
+  id: string;
+  name: string | null;
+  displayName: string | null;
+  avatarUrl: string | null;
 }
 
 interface ReplyData {
-  id: string
-  content: string
-  likeCount: number
-  createdAt: string
-  author: Author
-  children: ReplyData[]
+  id: string;
+  content: string;
+  likeCount: number;
+  createdAt: string;
+  author: Author;
+  children: ReplyData[];
 }
 
 interface ReplyItemProps {
-  reply: ReplyData
-  postId: string
-  currentUserId: string | null
-  onReplyAdded: (reply: ReplyData, parentId?: string) => void
-  depth: number
+  reply: ReplyData;
+  postId: string;
+  currentUserId: string | null;
+  onReplyAdded: (reply: ReplyData, parentId?: string) => void;
+  depth: number;
 }
 
 export default function ReplyItem({
@@ -35,73 +35,80 @@ export default function ReplyItem({
   postId,
   currentUserId,
   onReplyAdded,
-  depth
+  depth,
 }: ReplyItemProps) {
-  const [likeCount, setLikeCount] = useState(reply.likeCount)
-  const [userLiked, setUserLiked] = useState(false)
-  const [showReplyEditor, setShowReplyEditor] = useState(false)
-  const [isEditing, setIsEditing] = useState(false)
-  const [content, setContent] = useState(reply.content)
+  const [likeCount, setLikeCount] = useState(reply.likeCount);
+  const [userLiked, setUserLiked] = useState(false);
+  const [showReplyEditor, setShowReplyEditor] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [content, setContent] = useState(reply.content);
 
-  const authorName = reply.author.displayName || reply.author.name || 'Anonymous'
-  const isAuthor = currentUserId === reply.author.id
-  const maxDepth = 3
+  const authorName =
+    reply.author.displayName || reply.author.name || "Anonymous";
+  const isAuthor = currentUserId === reply.author.id;
+  const maxDepth = 3;
 
   async function handleLike() {
-    if (!currentUserId) return
+    if (!currentUserId) return;
 
     try {
-      const res = await fetch(`/api/community/posts/${postId}/replies/${reply.id}/like`, {
-        method: 'POST'
-      })
+      const res = await fetch(
+        `/api/community/posts/${postId}/replies/${reply.id}/like`,
+        {
+          method: "POST",
+        },
+      );
       if (res.ok) {
-        const data = await res.json()
-        setLikeCount(data.likeCount)
-        setUserLiked(data.liked)
+        const data = await res.json();
+        setLikeCount(data.likeCount);
+        setUserLiked(data.liked);
       }
     } catch (error) {
-      console.error('Failed to like reply:', error)
+      console.error("Failed to like reply:", error);
     }
   }
 
   async function handleReplySubmit(replyContent: string) {
     try {
       const res = await fetch(`/api/community/posts/${postId}/replies`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           content: replyContent,
-          parentId: depth < maxDepth ? reply.id : undefined
-        })
-      })
+          parentId: depth < maxDepth ? reply.id : undefined,
+        }),
+      });
       if (res.ok) {
-        const data = await res.json()
-        onReplyAdded(data.reply, depth < maxDepth ? reply.id : undefined)
-        setShowReplyEditor(false)
+        const data = await res.json();
+        onReplyAdded(data.reply, depth < maxDepth ? reply.id : undefined);
+        setShowReplyEditor(false);
       }
     } catch (error) {
-      console.error('Failed to submit reply:', error)
+      console.error("Failed to submit reply:", error);
     }
   }
 
   async function handleUpdate(newContent: string) {
     try {
-      const res = await fetch(`/api/community/posts/${postId}/replies/${reply.id}`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ content: newContent })
-      })
+      const res = await fetch(
+        `/api/community/posts/${postId}/replies/${reply.id}`,
+        {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ content: newContent }),
+        },
+      );
       if (res.ok) {
-        setContent(newContent)
-        setIsEditing(false)
+        setContent(newContent);
+        setIsEditing(false);
       }
     } catch (error) {
-      console.error('Failed to update reply:', error)
+      console.error("Failed to update reply:", error);
     }
   }
 
   return (
-    <div className={`${depth > 0 ? 'ml-8 border-l border-gray-800 pl-4' : ''}`}>
+    <div className={`${depth > 0 ? "ml-8 border-l border-gray-800 pl-4" : ""}`}>
       <div className="bg-deep-black/30 rounded-lg p-4">
         <div className="flex items-start gap-3">
           {reply.author.avatarUrl ? (
@@ -123,9 +130,13 @@ export default function ReplyItem({
 
           <div className="flex-1">
             <div className="flex items-center gap-2">
-              <span className="font-medium text-white text-sm">{authorName}</span>
+              <span className="font-medium text-white text-sm">
+                {authorName}
+              </span>
               <span className="text-gray-500 text-xs">
-                {formatDistanceToNow(new Date(reply.createdAt), { addSuffix: true })}
+                {formatDistanceToNow(new Date(reply.createdAt), {
+                  addSuffix: true,
+                })}
               </span>
             </div>
 
@@ -140,7 +151,9 @@ export default function ReplyItem({
                 />
               </div>
             ) : (
-              <p className="text-gray-300 text-sm mt-1 whitespace-pre-wrap">{content}</p>
+              <p className="text-gray-300 text-sm mt-1 whitespace-pre-wrap">
+                {content}
+              </p>
             )}
 
             <div className="flex items-center gap-4 mt-3">
@@ -149,15 +162,18 @@ export default function ReplyItem({
                 disabled={!currentUserId}
                 className={`
                   flex items-center gap-1 text-xs transition-colors
-                  ${!currentUserId
-                    ? 'text-gray-600 cursor-not-allowed'
-                    : userLiked
-                      ? 'text-red-500 hover:text-red-400'
-                      : 'text-gray-500 hover:text-red-500'
+                  ${
+                    !currentUserId
+                      ? "text-gray-600 cursor-not-allowed"
+                      : userLiked
+                        ? "text-red-500 hover:text-red-400"
+                        : "text-gray-500 hover:text-red-500"
                   }
                 `}
               >
-                <Heart className={`w-4 h-4 ${userLiked ? 'fill-current' : ''}`} />
+                <Heart
+                  className={`w-4 h-4 ${userLiked ? "fill-current" : ""}`}
+                />
                 {likeCount}
               </button>
 
@@ -211,5 +227,5 @@ export default function ReplyItem({
         </div>
       )}
     </div>
-  )
+  );
 }

@@ -35,6 +35,7 @@ taskkill //F //PID [PID]           # Kill process on port
 ## 📚 Book Presale Strategy (Hybrid Model)
 
 ### Pricing Structure
+
 - **Amazon KDP Version:** $17.99
   - Standard edition on Kindle & paperback
   - 70% royalty rate (optimal pricing range)
@@ -50,6 +51,7 @@ taskkill //F //PID [PID]           # Kill process on port
     - Private Telegram group access
 
 ### Book Details
+
 - **Title:** Sociopathic Dating Bible
 - **Subtitle:** A Cure For Empathy
 - **Word Count:** 70,000 words
@@ -58,6 +60,7 @@ taskkill //F //PID [PID]           # Kill process on port
 - **Status:** Currently in presale phase
 
 ### Presale Implementation
+
 1. **Email Collection System**
    - Modal with 3 options: KDP only, Premium only, or Both
    - Stores emails in `/data/presale-list.json`
@@ -77,6 +80,7 @@ taskkill //F //PID [PID]           # Kill process on port
 ## 💼 Coaching Packages
 
 ### Three Tiers Available:
+
 1. **Mind Architecture** - $297/session or $797/3 sessions
    - Psychological framework rebuilding
    - Dark triad personality optimization
@@ -92,28 +96,28 @@ taskkill //F //PID [PID]           # Kill process on port
 ## 🎨 Design System
 
 ### Logo Components
+
 - **KBSpinLogo:** Primary logo with spinning circles and KB monogram
   - Sizes: sm, md, lg, xl
   - Animation option for loading states
   - Used in Header, Footer, Loading screens, 404 page
 
 ### Color Palette
+
 ```css
---deep-black: #0a0a0a
---accent-gold: #d4af37
---accent-burgundy: #722139
---deep-burgundy: #4a1426
---deep-navy: #0f172a
---text-light: #e5e5e5
---text-gray: #a0a0a0
+--deep-black: #0a0a0a --accent-gold: #d4af37 --accent-burgundy: #722139
+  --deep-burgundy: #4a1426 --deep-navy: #0f172a --text-light: #e5e5e5
+  --text-gray: #a0a0a0;
 ```
 
 ### Typography
+
 - **Headers:** Uppercase, extra-light to thin weights, wide letter spacing
 - **Body:** Light weight, good readability on dark backgrounds
 - **Gradient Text:** Gold gradient for emphasis
 
 ### Navigation
+
 - **Active Link Highlighting:** Uses usePathname hook for current page detection
 - **Mobile Menu:** Full-screen overlay with animation
 - **Header Style:** Split name display (KANIKA / BATRA) with different weights
@@ -121,6 +125,7 @@ taskkill //F //PID [PID]           # Kill process on port
 ## ✅ Current Status
 
 ### Completed Features:
+
 - ✅ All ESLint errors fixed (90+ violations resolved)
 - ✅ TypeScript type safety improved (no `any` types)
 - ✅ Header navigation with active link highlighting
@@ -138,6 +143,7 @@ taskkill //F //PID [PID]           # Kill process on port
 - ✅ Production environment configuration
 
 ### Pages Implemented:
+
 - `/` - Homepage with hero, book showcase, testimonials
 - `/book` - Dedicated book page with chapters preview
 - `/about` - About Kanika with philosophy and credentials
@@ -254,6 +260,7 @@ public/
 ## 🔐 Environment Variables
 
 ### Required for Development
+
 ```env
 # Database
 DATABASE_URL="postgresql://user:password@localhost:5432/kanikabatra?schema=public"
@@ -284,7 +291,9 @@ ADMIN_SECRET="your-admin-secret-for-presale-stats"
 ```
 
 ### Production Configuration
+
 See `.env.production.example` for complete production setup with:
+
 - PostgreSQL with SSL
 - SendGrid/AWS SES for email
 - PayPal live credentials
@@ -295,17 +304,20 @@ See `.env.production.example` for complete production setup with:
 ## 📈 Marketing Strategy Notes
 
 ### Presale Benefits Messaging:
+
 - **KDP buyers:** Emphasize accessibility, Amazon reviews, instant delivery
 - **Premium buyers:** Focus on exclusivity, bonuses, direct author connection
 - **Launch urgency:** Limited-time pricing, first 100 buyers bonus
 
 ### Content Strategy:
+
 - Create countdown content for social media
 - Prepare email swipe copy for affiliates
 - Design Instagram/TikTok teasers highlighting controversial quotes
 - Plan Valentine's Day launch campaign (perfect timing for dating book)
 
 ### Social Media Presence:
+
 - **TikTok:** @ogkanikabatra (5.9M+ likes)
 - **Instagram:** @kanikabatra (500K+ followers)
 - **YouTube:** @KanikaBatra (20.6M+ views)
@@ -313,6 +325,7 @@ See `.env.production.example` for complete production setup with:
 ## 🚀 Deployment Checklist
 
 See `DEPLOYMENT-CHECKLIST.md` for complete deployment guide including:
+
 1. Environment setup
 2. Database migrations
 3. PayPal configuration
@@ -325,6 +338,7 @@ See `DEPLOYMENT-CHECKLIST.md` for complete deployment guide including:
 ## 📝 Code Quality
 
 ### ESLint Configuration
+
 ```json
 {
   "@typescript-eslint/no-unused-vars": [
@@ -339,6 +353,7 @@ See `DEPLOYMENT-CHECKLIST.md` for complete deployment guide including:
 ```
 
 ### TypeScript Configuration
+
 - Strict mode enabled
 - No implicit any
 - Strict null checks

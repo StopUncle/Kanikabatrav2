@@ -1,59 +1,68 @@
-'use client'
+"use client";
 
-import { motion } from 'framer-motion'
-import Link from 'next/link'
-import { MDXRemoteSerializeResult } from 'next-mdx-remote'
-import Header from '@/components/Header'
-import Footer from '@/components/Footer'
-import PostContent from '@/components/blog/PostContent'
-import AuthorBio from '@/components/AuthorBio'
-import Disclaimer from '@/components/Disclaimer'
-import RelatedPosts, { Breadcrumbs, PostNavigation } from '@/components/RelatedPosts'
-import BookPromo from '@/components/blog/BookPromo'
-import type { PostMeta } from '@/lib/mdx'
-import { SITE_CONFIG } from '@/lib/constants'
+import { motion } from "framer-motion";
+import Link from "next/link";
+import { MDXRemoteSerializeResult } from "next-mdx-remote";
+import Header from "@/components/Header";
+import Footer from "@/components/Footer";
+import PostContent from "@/components/blog/PostContent";
+import AuthorBio from "@/components/AuthorBio";
+import Disclaimer from "@/components/Disclaimer";
+import RelatedPosts, {
+  Breadcrumbs,
+  PostNavigation,
+} from "@/components/RelatedPosts";
+import BookPromo from "@/components/blog/BookPromo";
+import type { PostMeta } from "@/lib/mdx";
+import { SITE_CONFIG } from "@/lib/constants";
 
 interface RelatedPost {
-  slug: string
-  title: string
-  excerpt: string
-  coverImage?: string
-  category?: string
-  publishedAt: string
+  slug: string;
+  title: string;
+  excerpt: string;
+  coverImage?: string;
+  category?: string;
+  publishedAt: string;
 }
 
 interface BlogPostClientProps {
-  post: PostMeta
-  mdxSource: MDXRemoteSerializeResult
-  relatedPosts?: RelatedPost[]
-  previousPost?: { slug: string; title: string } | null
-  nextPost?: { slug: string; title: string } | null
+  post: PostMeta;
+  mdxSource: MDXRemoteSerializeResult;
+  relatedPosts?: RelatedPost[];
+  previousPost?: { slug: string; title: string } | null;
+  nextPost?: { slug: string; title: string } | null;
 }
 
-export default function BlogPostClient({ post, mdxSource, relatedPosts, previousPost, nextPost }: BlogPostClientProps) {
+export default function BlogPostClient({
+  post,
+  mdxSource,
+  relatedPosts,
+  previousPost,
+  nextPost,
+}: BlogPostClientProps) {
   const articleSchema = {
-    '@context': 'https://schema.org',
-    '@type': 'Article',
+    "@context": "https://schema.org",
+    "@type": "Article",
     headline: post.frontmatter.title,
     description: post.frontmatter.excerpt,
     image: post.frontmatter.coverImage,
     datePublished: post.frontmatter.publishedAt,
     dateModified: post.frontmatter.updatedAt || post.frontmatter.publishedAt,
     author: {
-      '@type': 'Person',
+      "@type": "Person",
       name: post.frontmatter.author || SITE_CONFIG.name,
       url: `${SITE_CONFIG.url}/about`,
     },
     publisher: {
-      '@type': 'Organization',
+      "@type": "Organization",
       name: SITE_CONFIG.name,
       url: SITE_CONFIG.url,
     },
     mainEntityOfPage: {
-      '@type': 'WebPage',
-      '@id': `${SITE_CONFIG.url}/blog/${post.slug}`,
+      "@type": "WebPage",
+      "@id": `${SITE_CONFIG.url}/blog/${post.slug}`,
     },
-  }
+  };
 
   return (
     <div className="min-h-screen bg-deep-black">
@@ -72,9 +81,12 @@ export default function BlogPostClient({ post, mdxSource, relatedPosts, previous
           >
             <Breadcrumbs
               items={[
-                { label: 'Home', href: '/' },
-                { label: 'Blog', href: '/blog' },
-                { label: post.frontmatter.category, href: `/blog?category=${encodeURIComponent(post.frontmatter.category)}` },
+                { label: "Home", href: "/" },
+                { label: "Blog", href: "/blog" },
+                {
+                  label: post.frontmatter.category,
+                  href: `/blog?category=${encodeURIComponent(post.frontmatter.category)}`,
+                },
                 { label: post.frontmatter.title },
               ]}
               className="mb-8"
@@ -84,8 +96,18 @@ export default function BlogPostClient({ post, mdxSource, relatedPosts, previous
               href="/blog"
               className="inline-flex items-center text-text-gray hover:text-accent-gold transition-colors mb-10 group text-sm"
             >
-              <svg className="w-4 h-4 mr-2 group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+              <svg
+                className="w-4 h-4 mr-2 group-hover:-translate-x-1 transition-transform"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M15 19l-7-7 7-7"
+                />
               </svg>
               Back to Blog
             </Link>
@@ -115,13 +137,15 @@ export default function BlogPostClient({ post, mdxSource, relatedPosts, previous
                   </div>
                   <div>
                     <p className="text-white font-medium">
-                      {post.frontmatter.author || 'Kanika Batra'}
+                      {post.frontmatter.author || "Kanika Batra"}
                     </p>
                     <time className="text-text-gray text-sm">
-                      {new Date(post.frontmatter.publishedAt).toLocaleDateString('en-US', {
-                        year: 'numeric',
-                        month: 'long',
-                        day: 'numeric',
+                      {new Date(
+                        post.frontmatter.publishedAt,
+                      ).toLocaleDateString("en-US", {
+                        year: "numeric",
+                        month: "long",
+                        day: "numeric",
                       })}
                     </time>
                   </div>
@@ -134,7 +158,9 @@ export default function BlogPostClient({ post, mdxSource, relatedPosts, previous
                 <div className="relative rounded-2xl overflow-hidden">
                   <div
                     className="w-full h-72 md:h-96 lg:h-[28rem] bg-cover bg-center"
-                    style={{ backgroundImage: `url(${post.frontmatter.coverImage})` }}
+                    style={{
+                      backgroundImage: `url(${post.frontmatter.coverImage})`,
+                    }}
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-deep-black/30 to-transparent" />
                 </div>
@@ -189,5 +215,5 @@ export default function BlogPostClient({ post, mdxSource, relatedPosts, previous
         <div className="absolute bottom-1/3 -right-32 w-96 h-96 bg-accent-gold/5 rounded-full blur-[120px]" />
       </div>
     </div>
-  )
+  );
 }

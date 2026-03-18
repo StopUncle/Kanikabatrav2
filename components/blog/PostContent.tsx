@@ -1,8 +1,8 @@
-'use client'
+"use client";
 
-import { MDXRemote } from 'next-mdx-remote'
-import type { MDXRemoteSerializeResult } from 'next-mdx-remote'
-import Link from 'next/link'
+import { MDXRemote } from "next-mdx-remote";
+import type { MDXRemoteSerializeResult } from "next-mdx-remote";
+import Link from "next/link";
 
 const components = {
   h1: (props: React.HTMLAttributes<HTMLHeadingElement>) => (
@@ -63,8 +63,12 @@ const components = {
       </div>
     </blockquote>
   ),
-  a: ({ href, children, ...props }: React.AnchorHTMLAttributes<HTMLAnchorElement>) => {
-    if (href?.startsWith('/')) {
+  a: ({
+    href,
+    children,
+    ...props
+  }: React.AnchorHTMLAttributes<HTMLAnchorElement>) => {
+    if (href?.startsWith("/")) {
       return (
         <Link
           href={href}
@@ -73,7 +77,7 @@ const components = {
         >
           {children}
         </Link>
-      )
+      );
     }
     return (
       <a
@@ -85,7 +89,7 @@ const components = {
       >
         {children}
       </a>
-    )
+    );
   },
   strong: (props: React.HTMLAttributes<HTMLElement>) => (
     <strong className="font-semibold text-white" {...props} />
@@ -110,10 +114,7 @@ const components = {
   ),
   img: (props: React.ImgHTMLAttributes<HTMLImageElement>) => (
     <figure className="my-10">
-      <img
-        className="w-full rounded-xl border border-white/10"
-        {...props}
-      />
+      <img className="w-full rounded-xl border border-white/10" {...props} />
       {props.alt && (
         <figcaption className="text-center text-sm text-text-gray mt-4 italic">
           {props.alt}
@@ -121,10 +122,10 @@ const components = {
       )}
     </figure>
   ),
-}
+};
 
 interface PostContentProps {
-  mdxSource: MDXRemoteSerializeResult
+  mdxSource: MDXRemoteSerializeResult;
 }
 
 export default function PostContent({ mdxSource }: PostContentProps) {
@@ -132,5 +133,5 @@ export default function PostContent({ mdxSource }: PostContentProps) {
     <article className="prose prose-invert max-w-none article-content">
       <MDXRemote {...mdxSource} components={components} />
     </article>
-  )
+  );
 }

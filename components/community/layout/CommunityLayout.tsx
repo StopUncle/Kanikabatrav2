@@ -1,10 +1,10 @@
-'use client'
+"use client";
 
-import { ReactNode } from 'react'
-import CommunitySidebar from './CommunitySidebar'
+import { ReactNode } from "react";
+import CommunitySidebar from "./CommunitySidebar";
 
 interface CommunityLayoutProps {
-  children: ReactNode
+  children: ReactNode;
 }
 
 export default function CommunityLayout({ children }: CommunityLayoutProps) {
@@ -13,11 +13,9 @@ export default function CommunityLayout({ children }: CommunityLayoutProps) {
       <div className="flex">
         <CommunitySidebar />
         <main className="flex-1 ml-0 lg:ml-64">
-          <div className="max-w-5xl mx-auto px-4 py-8">
-            {children}
-          </div>
+          <div className="max-w-5xl mx-auto px-4 py-8">{children}</div>
         </main>
       </div>
     </div>
-  )
+  );
 }

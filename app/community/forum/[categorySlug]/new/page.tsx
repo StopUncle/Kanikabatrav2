@@ -1,51 +1,53 @@
-'use client'
+"use client";
 
-import { useState } from 'react'
-import { useRouter, useParams } from 'next/navigation'
-import Link from 'next/link'
-import { ArrowLeft } from 'lucide-react'
-import PostEditor from '@/components/community/forum/PostEditor'
+import { useState } from "react";
+import { useRouter, useParams } from "next/navigation";
+import Link from "next/link";
+import { ArrowLeft } from "lucide-react";
+import PostEditor from "@/components/community/forum/PostEditor";
 
 export default function NewPostPage() {
-  const router = useRouter()
-  const params = useParams()
-  const categorySlug = params.categorySlug as string
-  const [error, setError] = useState<string | null>(null)
+  const router = useRouter();
+  const params = useParams();
+  const categorySlug = params.categorySlug as string;
+  const [error, setError] = useState<string | null>(null);
 
   async function handleSubmit(content: string, title?: string) {
     if (!title) {
-      setError('Title is required')
-      return
+      setError("Title is required");
+      return;
     }
 
     try {
-      const categoryRes = await fetch(`/api/community/categories/${categorySlug}`)
+      const categoryRes = await fetch(
+        `/api/community/categories/${categorySlug}`,
+      );
       if (!categoryRes.ok) {
-        setError('Category not found')
-        return
+        setError("Category not found");
+        return;
       }
-      const categoryData = await categoryRes.json()
+      const categoryData = await categoryRes.json();
 
-      const res = await fetch('/api/community/posts', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const res = await fetch("/api/community/posts", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           categoryId: categoryData.category.id,
           title,
-          content
-        })
-      })
+          content,
+        }),
+      });
 
       if (!res.ok) {
-        const data = await res.json()
-        setError(data.error || 'Failed to create post')
-        return
+        const data = await res.json();
+        setError(data.error || "Failed to create post");
+        return;
       }
 
-      const data = await res.json()
-      router.push(`/community/forum/${categorySlug}/post/${data.post.id}`)
+      const data = await res.json();
+      router.push(`/community/forum/${categorySlug}/post/${data.post.id}`);
     } catch (_err) {
-      setError('Failed to create post')
+      setError("Failed to create post");
     }
   }
 
@@ -77,5 +79,5 @@ export default function NewPostPage() {
         />
       </div>
     </div>
-  )
+  );
 }

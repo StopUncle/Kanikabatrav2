@@ -1,15 +1,24 @@
-'use client'
+"use client";
 
-import { useState, useRef, useEffect } from 'react'
-import { Play, Pause, Volume2, VolumeX, Maximize, SkipBack, SkipForward, Settings } from 'lucide-react'
+import { useState, useRef, useEffect } from "react";
+import {
+  Play,
+  Pause,
+  Volume2,
+  VolumeX,
+  Maximize,
+  SkipBack,
+  SkipForward,
+  Settings,
+} from "lucide-react";
 
 interface LessonPlayerProps {
-  videoUrl: string | null
-  title: string
-  onProgress?: (seconds: number) => void
-  onComplete?: () => void
-  initialPosition?: number
-  duration?: number
+  videoUrl: string | null;
+  title: string;
+  onProgress?: (seconds: number) => void;
+  onComplete?: () => void;
+  initialPosition?: number;
+  duration?: number;
 }
 
 export default function LessonPlayer({
@@ -18,150 +27,154 @@ export default function LessonPlayer({
   onProgress,
   onComplete,
   initialPosition = 0,
-  duration
+  duration,
 }: LessonPlayerProps) {
-  const videoRef = useRef<HTMLVideoElement>(null)
-  const containerRef = useRef<HTMLDivElement>(null)
-  const [isPlaying, setIsPlaying] = useState(false)
-  const [isMuted, setIsMuted] = useState(false)
-  const [currentTime, setCurrentTime] = useState(initialPosition)
-  const [videoDuration, setVideoDuration] = useState(duration || 0)
-  const [showControls, setShowControls] = useState(true)
-  const [_isFullscreen, setIsFullscreen] = useState(false)
-  const [playbackRate, setPlaybackRate] = useState(1)
-  const [showSettings, setShowSettings] = useState(false)
-  const controlsTimeoutRef = useRef<NodeJS.Timeout>()
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [isMuted, setIsMuted] = useState(false);
+  const [currentTime, setCurrentTime] = useState(initialPosition);
+  const [videoDuration, setVideoDuration] = useState(duration || 0);
+  const [showControls, setShowControls] = useState(true);
+  const [_isFullscreen, setIsFullscreen] = useState(false);
+  const [playbackRate, setPlaybackRate] = useState(1);
+  const [showSettings, setShowSettings] = useState(false);
+  const controlsTimeoutRef = useRef<NodeJS.Timeout>();
 
   useEffect(() => {
-    const video = videoRef.current
-    if (!video) return
+    const video = videoRef.current;
+    if (!video) return;
 
     const handleTimeUpdate = () => {
-      setCurrentTime(video.currentTime)
+      setCurrentTime(video.currentTime);
       if (onProgress && Math.floor(video.currentTime) % 5 === 0) {
-        onProgress(Math.floor(video.currentTime))
+        onProgress(Math.floor(video.currentTime));
       }
-    }
+    };
 
     const handleDurationChange = () => {
-      setVideoDuration(video.duration)
-    }
+      setVideoDuration(video.duration);
+    };
 
     const handleEnded = () => {
-      setIsPlaying(false)
+      setIsPlaying(false);
       if (onComplete) {
-        onComplete()
+        onComplete();
       }
-    }
+    };
 
     const handleLoadedMetadata = () => {
       if (initialPosition > 0) {
-        video.currentTime = initialPosition
+        video.currentTime = initialPosition;
       }
-    }
+    };
 
-    video.addEventListener('timeupdate', handleTimeUpdate)
-    video.addEventListener('durationchange', handleDurationChange)
-    video.addEventListener('ended', handleEnded)
-    video.addEventListener('loadedmetadata', handleLoadedMetadata)
+    video.addEventListener("timeupdate", handleTimeUpdate);
+    video.addEventListener("durationchange", handleDurationChange);
+    video.addEventListener("ended", handleEnded);
+    video.addEventListener("loadedmetadata", handleLoadedMetadata);
 
     return () => {
-      video.removeEventListener('timeupdate', handleTimeUpdate)
-      video.removeEventListener('durationchange', handleDurationChange)
-      video.removeEventListener('ended', handleEnded)
-      video.removeEventListener('loadedmetadata', handleLoadedMetadata)
-    }
-  }, [initialPosition, onProgress, onComplete])
+      video.removeEventListener("timeupdate", handleTimeUpdate);
+      video.removeEventListener("durationchange", handleDurationChange);
+      video.removeEventListener("ended", handleEnded);
+      video.removeEventListener("loadedmetadata", handleLoadedMetadata);
+    };
+  }, [initialPosition, onProgress, onComplete]);
 
   useEffect(() => {
     const handleFullscreenChange = () => {
-      setIsFullscreen(!!document.fullscreenElement)
-    }
+      setIsFullscreen(!!document.fullscreenElement);
+    };
 
-    document.addEventListener('fullscreenchange', handleFullscreenChange)
-    return () => document.removeEventListener('fullscreenchange', handleFullscreenChange)
-  }, [])
+    document.addEventListener("fullscreenchange", handleFullscreenChange);
+    return () =>
+      document.removeEventListener("fullscreenchange", handleFullscreenChange);
+  }, []);
 
   const handleMouseMove = () => {
-    setShowControls(true)
+    setShowControls(true);
     if (controlsTimeoutRef.current) {
-      clearTimeout(controlsTimeoutRef.current)
+      clearTimeout(controlsTimeoutRef.current);
     }
     controlsTimeoutRef.current = setTimeout(() => {
       if (isPlaying) {
-        setShowControls(false)
+        setShowControls(false);
       }
-    }, 3000)
-  }
+    }, 3000);
+  };
 
   const togglePlay = () => {
-    const video = videoRef.current
-    if (!video) return
+    const video = videoRef.current;
+    if (!video) return;
 
     if (isPlaying) {
-      video.pause()
+      video.pause();
     } else {
-      video.play()
+      video.play();
     }
-    setIsPlaying(!isPlaying)
-  }
+    setIsPlaying(!isPlaying);
+  };
 
   const toggleMute = () => {
-    const video = videoRef.current
-    if (!video) return
+    const video = videoRef.current;
+    if (!video) return;
 
-    video.muted = !isMuted
-    setIsMuted(!isMuted)
-  }
+    video.muted = !isMuted;
+    setIsMuted(!isMuted);
+  };
 
   const toggleFullscreen = () => {
-    const container = containerRef.current
-    if (!container) return
+    const container = containerRef.current;
+    if (!container) return;
 
     if (!document.fullscreenElement) {
-      container.requestFullscreen()
+      container.requestFullscreen();
     } else {
-      document.exitFullscreen()
+      document.exitFullscreen();
     }
-  }
+  };
 
   const handleSeek = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const video = videoRef.current
-    if (!video) return
+    const video = videoRef.current;
+    if (!video) return;
 
-    const time = parseFloat(e.target.value)
-    video.currentTime = time
-    setCurrentTime(time)
-  }
+    const time = parseFloat(e.target.value);
+    video.currentTime = time;
+    setCurrentTime(time);
+  };
 
   const skip = (seconds: number) => {
-    const video = videoRef.current
-    if (!video) return
+    const video = videoRef.current;
+    if (!video) return;
 
-    video.currentTime = Math.max(0, Math.min(videoDuration, video.currentTime + seconds))
-  }
+    video.currentTime = Math.max(
+      0,
+      Math.min(videoDuration, video.currentTime + seconds),
+    );
+  };
 
   const changePlaybackRate = (rate: number) => {
-    const video = videoRef.current
-    if (!video) return
+    const video = videoRef.current;
+    if (!video) return;
 
-    video.playbackRate = rate
-    setPlaybackRate(rate)
-    setShowSettings(false)
-  }
+    video.playbackRate = rate;
+    setPlaybackRate(rate);
+    setShowSettings(false);
+  };
 
   const formatTime = (seconds: number) => {
-    const mins = Math.floor(seconds / 60)
-    const secs = Math.floor(seconds % 60)
-    return `${mins}:${secs.toString().padStart(2, '0')}`
-  }
+    const mins = Math.floor(seconds / 60);
+    const secs = Math.floor(seconds % 60);
+    return `${mins}:${secs.toString().padStart(2, "0")}`;
+  };
 
   if (!videoUrl) {
     return (
       <div className="aspect-video bg-deep-black/60 rounded-xl flex items-center justify-center">
         <p className="text-text-muted">Video not available</p>
       </div>
-    )
+    );
   }
 
   return (
@@ -181,7 +194,7 @@ export default function LessonPlayer({
 
       <div
         className={`absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent transition-opacity duration-300 ${
-          showControls ? 'opacity-100' : 'opacity-0'
+          showControls ? "opacity-100" : "opacity-0"
         }`}
       >
         <div className="absolute inset-0 flex items-center justify-center">
@@ -192,7 +205,10 @@ export default function LessonPlayer({
             {isPlaying ? (
               <Pause className="w-8 h-8 text-deep-black" />
             ) : (
-              <Play className="w-8 h-8 text-deep-black ml-1" fill="currentColor" />
+              <Play
+                className="w-8 h-8 text-deep-black ml-1"
+                fill="currentColor"
+              />
             )}
           </button>
         </div>
@@ -207,7 +223,7 @@ export default function LessonPlayer({
               onChange={handleSeek}
               className="w-full h-1 bg-white/30 rounded-full appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-3 [&::-webkit-slider-thumb]:h-3 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-accent-gold"
               style={{
-                background: `linear-gradient(to right, #d4af37 ${(currentTime / videoDuration) * 100}%, rgba(255,255,255,0.3) ${(currentTime / videoDuration) * 100}%)`
+                background: `linear-gradient(to right, #d4af37 ${(currentTime / videoDuration) * 100}%, rgba(255,255,255,0.3) ${(currentTime / videoDuration) * 100}%)`,
               }}
             />
           </div>
@@ -269,12 +285,14 @@ export default function LessonPlayer({
                     <div className="px-3 py-2 text-xs text-text-muted border-b border-accent-gold/10">
                       Playback Speed
                     </div>
-                    {[0.5, 0.75, 1, 1.25, 1.5, 2].map(rate => (
+                    {[0.5, 0.75, 1, 1.25, 1.5, 2].map((rate) => (
                       <button
                         key={rate}
                         onClick={() => changePlaybackRate(rate)}
                         className={`w-full px-3 py-2 text-left text-sm hover:bg-accent-gold/10 transition-colors ${
-                          playbackRate === rate ? 'text-accent-gold' : 'text-white'
+                          playbackRate === rate
+                            ? "text-accent-gold"
+                            : "text-white"
                         }`}
                       >
                         {rate}x
@@ -295,5 +313,5 @@ export default function LessonPlayer({
         </div>
       </div>
     </div>
-  )
+  );
 }

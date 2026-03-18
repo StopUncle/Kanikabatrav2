@@ -1,28 +1,34 @@
-import Link from 'next/link'
+import Link from "next/link";
 
 interface RelatedPost {
-  slug: string
-  title: string
-  excerpt: string
-  coverImage?: string
-  category?: string
-  publishedAt: string
+  slug: string;
+  title: string;
+  excerpt: string;
+  coverImage?: string;
+  category?: string;
+  publishedAt: string;
 }
 
 interface RelatedPostsProps {
-  posts: RelatedPost[]
-  title?: string
-  className?: string
+  posts: RelatedPost[];
+  title?: string;
+  className?: string;
 }
 
-export default function RelatedPosts({ posts, title = 'Related Articles', className = '' }: RelatedPostsProps) {
+export default function RelatedPosts({
+  posts,
+  title = "Related Articles",
+  className = "",
+}: RelatedPostsProps) {
   if (!posts || posts.length === 0) {
-    return null
+    return null;
   }
 
   return (
     <section className={`${className}`}>
-      <h2 className="text-xl md:text-2xl font-light text-white mb-8">{title}</h2>
+      <h2 className="text-xl md:text-2xl font-light text-white mb-8">
+        {title}
+      </h2>
 
       <div className="grid md:grid-cols-3 gap-6 lg:gap-8">
         {posts.slice(0, 3).map((post) => (
@@ -50,12 +56,14 @@ export default function RelatedPosts({ posts, title = 'Related Articles', classN
               <h3 className="font-light text-lg text-white group-hover:text-accent-gold transition-colors line-clamp-2 mb-3 leading-snug">
                 {post.title}
               </h3>
-              <p className="text-sm text-text-gray line-clamp-2 leading-relaxed">{post.excerpt}</p>
+              <p className="text-sm text-text-gray line-clamp-2 leading-relaxed">
+                {post.excerpt}
+              </p>
               <time className="block text-xs text-text-gray/70 mt-4">
-                {new Date(post.publishedAt).toLocaleDateString('en-US', {
-                  month: 'short',
-                  day: 'numeric',
-                  year: 'numeric',
+                {new Date(post.publishedAt).toLocaleDateString("en-US", {
+                  month: "short",
+                  day: "numeric",
+                  year: "numeric",
                 })}
               </time>
             </div>
@@ -63,32 +71,51 @@ export default function RelatedPosts({ posts, title = 'Related Articles', classN
         ))}
       </div>
     </section>
-  )
+  );
 }
 
 interface PostNavigationProps {
-  previousPost?: { slug: string; title: string } | null
-  nextPost?: { slug: string; title: string } | null
-  className?: string
+  previousPost?: { slug: string; title: string } | null;
+  nextPost?: { slug: string; title: string } | null;
+  className?: string;
 }
 
-export function PostNavigation({ previousPost, nextPost, className = '' }: PostNavigationProps) {
+export function PostNavigation({
+  previousPost,
+  nextPost,
+  className = "",
+}: PostNavigationProps) {
   if (!previousPost && !nextPost) {
-    return null
+    return null;
   }
 
   return (
-    <nav className={`grid md:grid-cols-2 gap-4 ${className}`} aria-label="Post navigation">
+    <nav
+      className={`grid md:grid-cols-2 gap-4 ${className}`}
+      aria-label="Post navigation"
+    >
       {previousPost ? (
         <Link
           href={`/blog/${previousPost.slug}`}
           className="group p-6 bg-gradient-to-br from-deep-black/80 to-deep-navy/40 border border-white/10 rounded-xl hover:border-accent-gold/30 transition-all duration-300"
         >
           <div className="flex items-center gap-3 mb-3">
-            <svg className="w-4 h-4 text-accent-gold group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+            <svg
+              className="w-4 h-4 text-accent-gold group-hover:-translate-x-1 transition-transform"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M15 19l-7-7 7-7"
+              />
             </svg>
-            <span className="text-xs text-text-gray uppercase tracking-wider">Previous Article</span>
+            <span className="text-xs text-text-gray uppercase tracking-wider">
+              Previous Article
+            </span>
           </div>
           <p className="text-white group-hover:text-accent-gold transition-colors line-clamp-2 font-light">
             {previousPost.title}
@@ -104,9 +131,21 @@ export function PostNavigation({ previousPost, nextPost, className = '' }: PostN
           className="group p-6 bg-gradient-to-br from-deep-black/80 to-deep-navy/40 border border-white/10 rounded-xl hover:border-accent-gold/30 transition-all duration-300 text-right"
         >
           <div className="flex items-center justify-end gap-3 mb-3">
-            <span className="text-xs text-text-gray uppercase tracking-wider">Next Article</span>
-            <svg className="w-4 h-4 text-accent-gold group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+            <span className="text-xs text-text-gray uppercase tracking-wider">
+              Next Article
+            </span>
+            <svg
+              className="w-4 h-4 text-accent-gold group-hover:translate-x-1 transition-transform"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M9 5l7 7-7 7"
+              />
             </svg>
           </div>
           <p className="text-white group-hover:text-accent-gold transition-colors line-clamp-2 font-light">
@@ -117,30 +156,32 @@ export function PostNavigation({ previousPost, nextPost, className = '' }: PostN
         <div />
       )}
     </nav>
-  )
+  );
 }
 
 interface BreadcrumbItem {
-  label: string
-  href?: string
+  label: string;
+  href?: string;
 }
 
 interface BreadcrumbsProps {
-  items: BreadcrumbItem[]
-  className?: string
+  items: BreadcrumbItem[];
+  className?: string;
 }
 
-export function Breadcrumbs({ items, className = '' }: BreadcrumbsProps) {
+export function Breadcrumbs({ items, className = "" }: BreadcrumbsProps) {
   const breadcrumbSchema = {
-    '@context': 'https://schema.org',
-    '@type': 'BreadcrumbList',
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
     itemListElement: items.map((item, index) => ({
-      '@type': 'ListItem',
+      "@type": "ListItem",
       position: index + 1,
       name: item.label,
-      item: item.href ? `${process.env.NEXT_PUBLIC_BASE_URL || 'https://kanikarose.com'}${item.href}` : undefined,
+      item: item.href
+        ? `${process.env.NEXT_PUBLIC_BASE_URL || "https://kanikarose.com"}${item.href}`
+        : undefined,
     })),
-  }
+  };
 
   return (
     <nav aria-label="Breadcrumb" className={`${className}`}>
@@ -153,8 +194,18 @@ export function Breadcrumbs({ items, className = '' }: BreadcrumbsProps) {
         {items.map((item, index) => (
           <li key={index} className="flex items-center gap-2">
             {index > 0 && (
-              <svg className="w-3 h-3 text-text-gray/50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              <svg
+                className="w-3 h-3 text-text-gray/50"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M9 5l7 7-7 7"
+                />
               </svg>
             )}
             {item.href ? (
@@ -165,11 +216,13 @@ export function Breadcrumbs({ items, className = '' }: BreadcrumbsProps) {
                 {item.label}
               </Link>
             ) : (
-              <span className="text-text-gray/70 truncate max-w-[200px]">{item.label}</span>
+              <span className="text-text-gray/70 truncate max-w-[200px]">
+                {item.label}
+              </span>
             )}
           </li>
         ))}
       </ol>
     </nav>
-  )
+  );
 }

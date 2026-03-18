@@ -2,28 +2,30 @@
  * Send the ACTUAL book delivery email (not the test template)
  */
 
-require('dotenv').config({ path: '.env' })
-const nodemailer = require('nodemailer')
+require("dotenv").config({ path: ".env" });
+const nodemailer = require("nodemailer");
 
 async function sendRealBookEmail() {
-  console.log('\n📧 Sending REAL book delivery email template...\n')
+  console.log("\n📧 Sending REAL book delivery email template...\n");
 
-  const customerName = 'Kanika'
-  const downloadUrl = 'https://kanikabatra.com/api/download?token=test-demo-token-12345'
-  const isPremium = true
+  const customerName = "Kanika";
+  const downloadUrl =
+    "https://kanikabatra.com/api/download?token=test-demo-token-12345";
+  const isPremium = true;
   const bookTitle = isPremium
-    ? 'Sociopathic Dating Bible: A Cure For Empathy (Premium Edition)'
-    : 'Sociopathic Dating Bible: A Cure For Empathy'
+    ? "Sociopathic Dating Bible: A Cure For Empathy (Premium Edition)"
+    : "Sociopathic Dating Bible: A Cure For Empathy";
 
-  const expiresAt = new Date()
-  expiresAt.setHours(expiresAt.getHours() + 24)
-  const expiryDate = expiresAt.toLocaleDateString('en-US', {
-    month: 'long',
-    day: 'numeric',
-    year: 'numeric'
-  })
+  const expiresAt = new Date();
+  expiresAt.setHours(expiresAt.getHours() + 24);
+  const expiryDate = expiresAt.toLocaleDateString("en-US", {
+    month: "long",
+    day: "numeric",
+    year: "numeric",
+  });
 
-  const premiumBonuses = isPremium ? `
+  const premiumBonuses = isPremium
+    ? `
     <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="background: linear-gradient(135deg, #1a0d11 0%, #2a1a1f 100%); border-radius: 10px; margin: 0 0 25px 0; border: 2px solid #d4af37; box-shadow: 0 4px 15px rgba(212, 175, 55, 0.2);">
       <tr>
         <td style="padding: 25px;">
@@ -63,7 +65,8 @@ async function sendRealBookEmail() {
         </td>
       </tr>
     </table>
-  ` : ''
+  `
+    : "";
 
   const html = `
     <!DOCTYPE html>
@@ -194,40 +197,39 @@ async function sendRealBookEmail() {
       </table>
     </body>
     </html>
-  `
+  `;
 
   try {
     const transporter = nodemailer.createTransport({
       host: process.env.SMTP_HOST,
-      port: parseInt(process.env.SMTP_PORT || '587'),
+      port: parseInt(process.env.SMTP_PORT || "587"),
       secure: false,
       auth: {
         user: process.env.SMTP_USER,
         pass: process.env.SMTP_PASS,
       },
-    })
+    });
 
     const info = await transporter.sendMail({
       from: process.env.FROM_EMAIL,
       to: process.env.ADMIN_EMAIL,
       subject: `📚 Download Your Book - Sociopathic Dating Bible (Premium Edition)`,
       html,
-    })
+    });
 
-    console.log('\n✅ SUCCESS! Professional email sent!\n')
-    console.log('Message ID:', info.messageId)
-    console.log('\n📧 Check your inbox at:', process.env.ADMIN_EMAIL)
-    console.log('\nThis is the ACTUAL email customers will receive!')
-    console.log('It includes:')
-    console.log('  ✓ Professional header with gradient')
-    console.log('  ✓ Gold download button')
-    console.log('  ✓ Premium bonuses section (gold bordered)')
-    console.log('  ✓ Download expiry information')
-    console.log('  ✓ Professional signature\n')
-
+    console.log("\n✅ SUCCESS! Professional email sent!\n");
+    console.log("Message ID:", info.messageId);
+    console.log("\n📧 Check your inbox at:", process.env.ADMIN_EMAIL);
+    console.log("\nThis is the ACTUAL email customers will receive!");
+    console.log("It includes:");
+    console.log("  ✓ Professional header with gradient");
+    console.log("  ✓ Gold download button");
+    console.log("  ✓ Premium bonuses section (gold bordered)");
+    console.log("  ✓ Download expiry information");
+    console.log("  ✓ Professional signature\n");
   } catch (error) {
-    console.error('\n❌ Error:', error.message)
+    console.error("\n❌ Error:", error.message);
   }
 }
 
-sendRealBookEmail()
+sendRealBookEmail();

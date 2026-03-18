@@ -12,6 +12,7 @@ The entire payment system is fully implemented and waiting for your PayPal crede
    - Get your Client ID and Secret for both Sandbox and Live environments
 
 2. **Add Credentials to `.env.local`**
+
    ```env
    # Copy from .env.example and fill in your actual credentials
    NEXT_PUBLIC_PAYPAL_CLIENT_ID="your-actual-client-id"
@@ -20,6 +21,7 @@ The entire payment system is fully implemented and waiting for your PayPal crede
    ```
 
 3. **Configure Email (Optional but Recommended)**
+
    ```env
    EMAIL_HOST="smtp.gmail.com"
    EMAIL_PORT="587"
@@ -36,6 +38,7 @@ The entire payment system is fully implemented and waiting for your PayPal crede
 ## 📦 What's Been Implemented
 
 ### Payment Processing
+
 - ✅ **PayPal SDK Integration** - Ready in `components/PayPalButton.tsx`
 - ✅ **Order Creation API** - `/api/paypal/create-order`
 - ✅ **Order Capture API** - `/api/paypal/capture-order`
@@ -44,6 +47,7 @@ The entire payment system is fully implemented and waiting for your PayPal crede
 - ✅ **Webhook Handler** - `/api/webhooks/paypal` (for automatic order processing)
 
 ### Book Sales System
+
 - ✅ **Book Showcase Component** - Beautiful 3D book display
 - ✅ **Secure Download System** - JWT-protected download links
 - ✅ **Download API** - `/api/download` with token validation
@@ -51,18 +55,21 @@ The entire payment system is fully implemented and waiting for your PayPal crede
 - ✅ **Download Tracking** - Tracks download count and last download time
 
 ### Coaching System
+
 - ✅ **Coaching Tiers Display** - Three-tier pricing structure
 - ✅ **Session Booking** - Database schema for tracking sessions
 - ✅ **Scheduling Links** - Automatic scheduling URL generation
 - ✅ **Session Management** - Track pending, scheduled, and completed sessions
 
 ### Email Notifications
+
 - ✅ **Contact Form Notifications** - Admin and user confirmation
 - ✅ **Order Confirmations** - Beautiful HTML emails for purchases
 - ✅ **Book Delivery Emails** - Secure download links
 - ✅ **Coaching Scheduling** - Session booking instructions
 
 ### Database Integration
+
 - ✅ **User Management** - Authentication and user profiles
 - ✅ **Purchase Tracking** - Complete order history
 - ✅ **Coaching Sessions** - Session booking and status tracking
@@ -71,12 +78,14 @@ The entire payment system is fully implemented and waiting for your PayPal crede
 ## 📁 Important Files
 
 ### Configuration Files
+
 - `.env.example` - Template with all required environment variables
 - `lib/constants.ts` - Book and coaching package details
 - `lib/paypal.ts` - PayPal service implementation
 - `lib/email.ts` - Email service with styled templates
 
 ### API Routes
+
 - `app/api/paypal/` - PayPal order management
 - `app/api/orders/` - Order tracking and verification
 - `app/api/webhooks/paypal/` - Webhook processing
@@ -85,6 +94,7 @@ The entire payment system is fully implemented and waiting for your PayPal crede
 - `app/api/contact/` - Contact form handling
 
 ### Components
+
 - `components/PayPalButton.tsx` - Reusable payment button
 - `components/BookShowcase.tsx` - Book sales interface
 - `components/CoachingTiers.tsx` - Coaching packages display
@@ -147,16 +157,19 @@ Once you add your PayPal sandbox credentials:
 ## 💡 Troubleshooting
 
 ### PayPal Button Not Appearing
+
 - Check browser console for errors
 - Verify Client ID is correct in `.env.local`
 - Ensure you're using the right environment (sandbox/live)
 
 ### Emails Not Sending
+
 - Check SMTP credentials in `.env.local`
 - For Gmail, use App Password (not regular password)
 - Verify EMAIL_FROM address matches EMAIL_USER
 
 ### Download Not Working
+
 - Ensure book file exists at `private/books/antidote-to-empathy.pdf`
 - Check JWT_SECRET is set in `.env.local`
 - Verify purchase record exists in database

@@ -1,53 +1,53 @@
-'use client'
+"use client";
 
-import { useEffect, useState } from 'react'
-import { motion } from 'framer-motion'
-import Button from '@/components/ui/Button'
-import { PAYPAL_CONFIG } from '@/lib/constants'
+import { useEffect, useState } from "react";
+import { motion } from "framer-motion";
+import Button from "@/components/ui/Button";
+import { PAYPAL_CONFIG } from "@/lib/constants";
 
 interface PayPalButtonProps {
-  type: 'book' | 'coaching'
-  itemId?: string
-  amount: number
-  itemName: string
-  onSuccess?: (details: PayPalCaptureDetails) => void
-  onError?: (error: string) => void
-  onCancel?: () => void
-  disabled?: boolean
-  className?: string
+  type: "book" | "coaching";
+  itemId?: string;
+  amount: number;
+  itemName: string;
+  onSuccess?: (details: PayPalCaptureDetails) => void;
+  onError?: (error: string) => void;
+  onCancel?: () => void;
+  disabled?: boolean;
+  className?: string;
 }
 
 interface PayPalCaptureDetails {
-  id: string
-  status: string
-  paymentId?: string
-  amount?: string
-  currency?: string
+  id: string;
+  status: string;
+  paymentId?: string;
+  amount?: string;
+  currency?: string;
 }
 
 interface PayPalWindow extends Window {
   paypal?: {
     Buttons: (options: PayPalButtonsConfig) => {
-      render: (selector: string) => Promise<void>
-    }
-  }
+      render: (selector: string) => Promise<void>;
+    };
+  };
 }
 
 interface PayPalButtonsConfig {
-  createOrder: () => Promise<string>
-  onApprove: (data: { orderID: string }) => Promise<void>
-  onError?: (err: unknown) => void
-  onCancel?: () => void
+  createOrder: () => Promise<string>;
+  onApprove: (data: { orderID: string }) => Promise<void>;
+  onError?: (err: unknown) => void;
+  onCancel?: () => void;
   style?: {
-    layout?: 'vertical' | 'horizontal'
-    color?: 'gold' | 'blue' | 'silver' | 'white' | 'black'
-    shape?: 'rect' | 'pill'
-    label?: 'paypal' | 'checkout' | 'buynow' | 'pay'
-    height?: number
-  }
+    layout?: "vertical" | "horizontal";
+    color?: "gold" | "blue" | "silver" | "white" | "black";
+    shape?: "rect" | "pill";
+    label?: "paypal" | "checkout" | "buynow" | "pay";
+    height?: number;
+  };
 }
 
-declare const window: PayPalWindow
+declare const window: PayPalWindow;
 
 export default function PayPalButton({
   type,
@@ -58,17 +58,17 @@ export default function PayPalButton({
   onError,
   onCancel,
   disabled = false,
-  className = ''
+  className = "",
 }: PayPalButtonProps) {
-  const [isScriptLoaded, setIsScriptLoaded] = useState(false)
-  const [isProcessing, setIsProcessing] = useState(false)
-  const [error, setError] = useState<string | null>(null)
+  const [isScriptLoaded, setIsScriptLoaded] = useState(false);
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     // Check if PayPal script is already loaded
     if (window.paypal) {
-      setIsScriptLoaded(true)
-      return
+      setIsScriptLoaded(true);
+      return;
     }
 
     // Load PayPal SDK with all payment options enabled
@@ -76,265 +76,301 @@ export default function PayPalButton({
     // 1. Apps & Credentials > Your App > Features > "Accept Payments"
     // 2. Enable "Advanced Credit and Debit Card Payments"
     // 3. PayPal.com > Settings > Website Payments > PayPal Account Optional = "On"
-    const script = document.createElement('script')
-    script.src = `https://www.paypal.com/sdk/js?client-id=${PAYPAL_CONFIG.clientId}&currency=${PAYPAL_CONFIG.currency}&intent=${PAYPAL_CONFIG.intent}&components=buttons,funding-eligibility&enable-funding=card,venmo,paylater`
-    script.async = true
-    script.defer = true
+    const script = document.createElement("script");
+    script.src = `https://www.paypal.com/sdk/js?client-id=${PAYPAL_CONFIG.clientId}&currency=${PAYPAL_CONFIG.currency}&intent=${PAYPAL_CONFIG.intent}&components=buttons,funding-eligibility&enable-funding=card,venmo,paylater`;
+    script.async = true;
+    script.defer = true;
 
-    console.log('Loading PayPal SDK with URL:', script.src)
+    console.log("Loading PayPal SDK with URL:", script.src);
 
     script.onload = () => {
-      console.log('PayPal SDK loaded successfully')
-      setIsScriptLoaded(true)
-    }
+      console.log("PayPal SDK loaded successfully");
+      setIsScriptLoaded(true);
+    };
 
     script.onerror = () => {
-      const isLocalhost = typeof window !== 'undefined' &&
-        (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
-      const isNgrok = typeof window !== 'undefined' &&
-        window.location.hostname.includes('ngrok')
+      const isLocalhost =
+        typeof window !== "undefined" &&
+        (window.location.hostname === "localhost" ||
+          window.location.hostname === "127.0.0.1");
+      const isNgrok =
+        typeof window !== "undefined" &&
+        window.location.hostname.includes("ngrok");
 
-      let errorMessage
+      let errorMessage;
       if (isLocalhost) {
-        errorMessage = 'PayPal SDK unavailable on localhost - try using ngrok or deploy to production'
+        errorMessage =
+          "PayPal SDK unavailable on localhost - try using ngrok or deploy to production";
       } else if (isNgrok) {
-        errorMessage = 'PayPal SDK failed to load - this may be a network issue'
+        errorMessage =
+          "PayPal SDK failed to load - this may be a network issue";
       } else {
-        errorMessage = 'Failed to load PayPal SDK'
+        errorMessage = "Failed to load PayPal SDK";
       }
 
-      setError(errorMessage)
-      onError?.(errorMessage)
-    }
+      setError(errorMessage);
+      onError?.(errorMessage);
+    };
 
-    document.body.appendChild(script)
+    document.body.appendChild(script);
 
     return () => {
       // Cleanup script on unmount
       if (document.body.contains(script)) {
-        document.body.removeChild(script)
+        document.body.removeChild(script);
       }
-    }
-  }, [onError])
+    };
+  }, [onError]);
 
   useEffect(() => {
-    if (!isScriptLoaded || !window.paypal || disabled) return
+    if (!isScriptLoaded || !window.paypal || disabled) return;
 
-    const paypalContainerId = `paypal-button-container-${type}-${itemId || 'default'}`
-    let timeoutId: NodeJS.Timeout | null = null
-    let isMounted = true
+    const paypalContainerId = `paypal-button-container-${type}-${itemId || "default"}`;
+    let timeoutId: NodeJS.Timeout | null = null;
+    let isMounted = true;
 
     // Wait for container to exist in DOM
     const initializePayPal = () => {
-      const container = document.getElementById(paypalContainerId)
+      const container = document.getElementById(paypalContainerId);
       if (!container) {
         // Container doesn't exist yet, retry
         timeoutId = setTimeout(() => {
-          if (isMounted) initializePayPal()
-        }, 100)
-        return
+          if (isMounted) initializePayPal();
+        }, 100);
+        return;
       }
 
       // Clear any existing buttons
-      container.innerHTML = ''
+      container.innerHTML = "";
 
-    // Configure PayPal buttons
-    const paypalButtons = window.paypal!.Buttons({
-      createOrder: async () => {
-        try {
-          setIsProcessing(true)
-          setError(null)
-          console.log('Creating PayPal order...', { type, itemId })
-
-          const response = await fetch('/api/paypal/create-order', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-              type,
-              itemId
-            }),
-          })
-
-          if (!response.ok) {
-            const errorData = await response.json()
-            console.error('Order creation failed:', errorData)
-            setIsProcessing(false)
-            throw new Error(errorData.error || 'Failed to create order')
-          }
-
-          const orderData = await response.json()
-          console.log('Order created successfully:', orderData.orderId)
-          console.log('PayPal popup should open now...')
-
-          // Add timeout to reset processing state if popup never opens/completes
-          setTimeout(() => {
-            console.log('Checking if payment is still processing after 60s...')
-            // This will be cancelled by onApprove/onCancel/onError if they fire
-          }, 60000)
-
-          return orderData.orderId
-        } catch (error) {
-          const errorMessage = error instanceof Error ? error.message : 'Unknown error'
-          console.error('createOrder error:', error)
-          setIsProcessing(false)
-          setError(errorMessage)
-          onError?.(errorMessage)
-          throw error
-        }
-      },
-
-      onApprove: async (data) => {
-        const attemptCapture = async (retryCount = 0): Promise<void> => {
+      // Configure PayPal buttons
+      const paypalButtons = window.paypal!.Buttons({
+        createOrder: async () => {
           try {
-            setIsProcessing(true)
-            console.log(`Payment approved, capturing order (attempt ${retryCount + 1}):`, data.orderID)
+            setIsProcessing(true);
+            setError(null);
+            console.log("Creating PayPal order...", { type, itemId });
 
-            // Add timeout to prevent endless processing (45 seconds to allow for polling)
-            const timeoutPromise = new Promise((_, reject) =>
-              setTimeout(() => reject(new Error('Payment processing timeout. Please check your email or contact support.')), 45000)
-            )
-
-            const fetchPromise = fetch('/api/paypal/capture-order', {
-              method: 'POST',
+            const response = await fetch("/api/paypal/create-order", {
+              method: "POST",
               headers: {
-                'Content-Type': 'application/json',
+                "Content-Type": "application/json",
               },
               body: JSON.stringify({
-                orderId: data.orderID
+                type,
+                itemId,
               }),
-            })
-
-            const response = await Promise.race([fetchPromise, timeoutPromise]) as Response
-
-            console.log('Capture response status:', response.status)
+            });
 
             if (!response.ok) {
-              const errorData = await response.json()
-              console.error('Capture failed:', errorData)
-
-              // Handle retryable errors (status 202)
-              if (response.status === 202 && errorData.retryable && retryCount < 2) {
-                console.log('Payment still processing, retrying in 3 seconds...')
-                await new Promise(resolve => setTimeout(resolve, 3000))
-                return attemptCapture(retryCount + 1)
-              }
-
-              throw new Error(errorData.error || 'Payment capture failed')
+              const errorData = await response.json();
+              console.error("Order creation failed:", errorData);
+              setIsProcessing(false);
+              throw new Error(errorData.error || "Failed to create order");
             }
 
-            const captureData = await response.json()
-            console.log('Capture successful:', captureData)
+            const orderData = await response.json();
+            console.log("Order created successfully:", orderData.orderId);
+            console.log("PayPal popup should open now...");
 
-            if (captureData.success) {
-              // Track the order in our system
-              const trackingResponse = await fetch('/api/orders/create', {
-                method: 'POST',
+            // Add timeout to reset processing state if popup never opens/completes
+            setTimeout(() => {
+              console.log(
+                "Checking if payment is still processing after 60s...",
+              );
+              // This will be cancelled by onApprove/onCancel/onError if they fire
+            }, 60000);
+
+            return orderData.orderId;
+          } catch (error) {
+            const errorMessage =
+              error instanceof Error ? error.message : "Unknown error";
+            console.error("createOrder error:", error);
+            setIsProcessing(false);
+            setError(errorMessage);
+            onError?.(errorMessage);
+            throw error;
+          }
+        },
+
+        onApprove: async (data) => {
+          const attemptCapture = async (retryCount = 0): Promise<void> => {
+            try {
+              setIsProcessing(true);
+              console.log(
+                `Payment approved, capturing order (attempt ${retryCount + 1}):`,
+                data.orderID,
+              );
+
+              // Add timeout to prevent endless processing (45 seconds to allow for polling)
+              const timeoutPromise = new Promise((_, reject) =>
+                setTimeout(
+                  () =>
+                    reject(
+                      new Error(
+                        "Payment processing timeout. Please check your email or contact support.",
+                      ),
+                    ),
+                  45000,
+                ),
+              );
+
+              const fetchPromise = fetch("/api/paypal/capture-order", {
+                method: "POST",
                 headers: {
-                  'Content-Type': 'application/json',
+                  "Content-Type": "application/json",
                 },
                 body: JSON.stringify({
                   orderId: data.orderID,
-                  type: type,
-                  packageId: itemId,
                 }),
-              })
+              });
 
-              if (trackingResponse.ok) {
-                const trackingResult = await trackingResponse.json()
-                console.log('Order tracked:', trackingResult)
+              const response = (await Promise.race([
+                fetchPromise,
+                timeoutPromise,
+              ])) as Response;
 
-                // Pass enhanced details to parent
-                onSuccess?.({
-                  ...captureData,
-                  purchaseId: trackingResult.purchaseId,
-                  downloadUrl: trackingResult.downloadUrl,
-                  schedulingUrl: trackingResult.schedulingUrl,
-                })
-              } else {
-                console.warn('Order tracking failed, but payment succeeded')
-                // Still call success even if tracking fails
-                onSuccess?.(captureData)
+              console.log("Capture response status:", response.status);
+
+              if (!response.ok) {
+                const errorData = await response.json();
+                console.error("Capture failed:", errorData);
+
+                // Handle retryable errors (status 202)
+                if (
+                  response.status === 202 &&
+                  errorData.retryable &&
+                  retryCount < 2
+                ) {
+                  console.log(
+                    "Payment still processing, retrying in 3 seconds...",
+                  );
+                  await new Promise((resolve) => setTimeout(resolve, 3000));
+                  return attemptCapture(retryCount + 1);
+                }
+
+                throw new Error(errorData.error || "Payment capture failed");
               }
-            } else {
-              throw new Error(captureData.message || 'Payment was not completed')
+
+              const captureData = await response.json();
+              console.log("Capture successful:", captureData);
+
+              if (captureData.success) {
+                // Track the order in our system
+                const trackingResponse = await fetch("/api/orders/create", {
+                  method: "POST",
+                  headers: {
+                    "Content-Type": "application/json",
+                  },
+                  body: JSON.stringify({
+                    orderId: data.orderID,
+                    type: type,
+                    packageId: itemId,
+                  }),
+                });
+
+                if (trackingResponse.ok) {
+                  const trackingResult = await trackingResponse.json();
+                  console.log("Order tracked:", trackingResult);
+
+                  // Pass enhanced details to parent
+                  onSuccess?.({
+                    ...captureData,
+                    purchaseId: trackingResult.purchaseId,
+                    downloadUrl: trackingResult.downloadUrl,
+                    schedulingUrl: trackingResult.schedulingUrl,
+                  });
+                } else {
+                  console.warn("Order tracking failed, but payment succeeded");
+                  // Still call success even if tracking fails
+                  onSuccess?.(captureData);
+                }
+              } else {
+                throw new Error(
+                  captureData.message || "Payment was not completed",
+                );
+              }
+            } catch (error) {
+              const errorMessage =
+                error instanceof Error ? error.message : "Payment failed";
+              console.error("Payment approval error:", error);
+              setError(errorMessage);
+              onError?.(errorMessage);
+            } finally {
+              setIsProcessing(false);
             }
+          };
+
+          // Start the capture attempt
+          try {
+            await attemptCapture(0);
           } catch (error) {
-            const errorMessage = error instanceof Error ? error.message : 'Payment failed'
-            console.error('Payment approval error:', error)
-            setError(errorMessage)
-            onError?.(errorMessage)
-          } finally {
-            setIsProcessing(false)
+            const errorMessage =
+              error instanceof Error ? error.message : "Payment failed";
+            console.error("Final payment error:", error);
+            setError(errorMessage);
+            onError?.(errorMessage);
+            setIsProcessing(false);
           }
-        }
+        },
 
-        // Start the capture attempt
-        try {
-          await attemptCapture(0)
-        } catch (error) {
-          const errorMessage = error instanceof Error ? error.message : 'Payment failed'
-          console.error('Final payment error:', error)
-          setError(errorMessage)
-          onError?.(errorMessage)
-          setIsProcessing(false)
-        }
-      },
+        onError: (err) => {
+          const errorMessage = "PayPal payment error occurred";
+          setError(errorMessage);
+          onError?.(errorMessage);
+          setIsProcessing(false);
+          console.error("PayPal error:", err);
+        },
 
-      onError: (err) => {
-        const errorMessage = 'PayPal payment error occurred'
-        setError(errorMessage)
-        onError?.(errorMessage)
-        setIsProcessing(false)
-        console.error('PayPal error:', err)
-      },
+        onCancel: () => {
+          console.log("Payment cancelled by user");
+          setIsProcessing(false);
+          onCancel?.();
+        },
 
-      onCancel: () => {
-        console.log('Payment cancelled by user')
-        setIsProcessing(false)
-        onCancel?.()
-      },
-
-      style: {
-        layout: 'vertical',
-        color: 'gold',
-        shape: 'rect',
-        label: 'pay',
-        height: 45
-      }
-    })
+        style: {
+          layout: "vertical",
+          color: "gold",
+          shape: "rect",
+          label: "pay",
+          height: 45,
+        },
+      });
 
       // Render PayPal buttons
       paypalButtons.render(`#${paypalContainerId}`).catch((error) => {
         if (isMounted) {
-          console.error('PayPal render error:', error)
-          setError('Failed to load payment buttons')
-          onError?.('Failed to load payment buttons')
+          console.error("PayPal render error:", error);
+          setError("Failed to load payment buttons");
+          onError?.("Failed to load payment buttons");
         }
-      })
-    }
+      });
+    };
 
     // Start initialization
-    initializePayPal()
+    initializePayPal();
 
     // Cleanup
     return () => {
-      isMounted = false
+      isMounted = false;
       if (timeoutId) {
-        clearTimeout(timeoutId)
+        clearTimeout(timeoutId);
       }
-    }
-  }, [isScriptLoaded, type, itemId, disabled, onSuccess, onError, onCancel])
+    };
+  }, [isScriptLoaded, type, itemId, disabled, onSuccess, onError, onCancel]);
 
   if (!PAYPAL_CONFIG.clientId) {
     return (
       <div className="p-4 bg-amber-900/30 border border-amber-700 rounded-lg text-amber-300">
         <p className="font-medium mb-2">Payment System Configuration</p>
-        <p className="text-sm">PayPal integration will be available in production.</p>
-        <p className="text-xs mt-2 opacity-75">Development mode - payments disabled</p>
+        <p className="text-sm">
+          PayPal integration will be available in production.
+        </p>
+        <p className="text-xs mt-2 opacity-75">
+          Development mode - payments disabled
+        </p>
       </div>
-    )
+    );
   }
 
   if (error) {
@@ -344,23 +380,40 @@ export default function PayPalButton({
         animate={{ opacity: 1, scale: 1 }}
         className="space-y-4"
       >
-        <div className={`p-4 rounded-lg ${error.includes('localhost') || error.includes('network issue')
-          ? 'bg-amber-900/30 border border-amber-700 text-amber-300'
-          : 'bg-red-900/30 border border-red-700 text-red-300'}`}>
+        <div
+          className={`p-4 rounded-lg ${
+            error.includes("localhost") || error.includes("network issue")
+              ? "bg-amber-900/30 border border-amber-700 text-amber-300"
+              : "bg-red-900/30 border border-red-700 text-red-300"
+          }`}
+        >
           <p className="font-medium">
-            {error.includes('localhost') ? 'Development Mode' :
-             error.includes('network issue') ? 'Connection Issue' : 'Payment Error'}
+            {error.includes("localhost")
+              ? "Development Mode"
+              : error.includes("network issue")
+                ? "Connection Issue"
+                : "Payment Error"}
           </p>
           <p className="text-sm mt-1">{error}</p>
-          {error.includes('localhost') && (
+          {error.includes("localhost") && (
             <p className="text-xs mt-2 opacity-75">
-              PayPal works better with ngrok tunneling or in production deployment.
+              PayPal works better with ngrok tunneling or in production
+              deployment.
             </p>
           )}
-          {error.includes('network issue') && (
+          {error.includes("network issue") && (
             <div className="text-xs mt-2 opacity-75">
               <p>Try refreshing the page or check your internet connection.</p>
-              <p className="mt-1">For direct payment, please <a href="/contact" className="text-amber-200 hover:text-amber-100 underline">contact us</a>.</p>
+              <p className="mt-1">
+                For direct payment, please{" "}
+                <a
+                  href="/contact"
+                  className="text-amber-200 hover:text-amber-100 underline"
+                >
+                  contact us
+                </a>
+                .
+              </p>
             </div>
           )}
         </div>
@@ -368,14 +421,14 @@ export default function PayPalButton({
           variant="outline"
           fullWidth
           onClick={() => {
-            setError(null)
-            setIsProcessing(false)
+            setError(null);
+            setIsProcessing(false);
           }}
         >
           Try Again
         </Button>
       </motion.div>
-    )
+    );
   }
 
   return (
@@ -386,7 +439,9 @@ export default function PayPalButton({
           <div className="flex flex-col items-center space-y-4">
             <div className="animate-spin w-8 h-8 border-4 border-gold border-t-transparent rounded-full" />
             <p className="text-text-muted text-sm">
-              {!isScriptLoaded ? 'Loading payment options...' : 'Processing payment...'}
+              {!isScriptLoaded
+                ? "Loading payment options..."
+                : "Processing payment..."}
             </p>
           </div>
         </div>
@@ -394,8 +449,8 @@ export default function PayPalButton({
 
       {/* PayPal Button Container */}
       <div
-        id={`paypal-button-container-${type}-${itemId || 'default'}`}
-        className={isScriptLoaded && !isProcessing ? 'block' : 'hidden'}
+        id={`paypal-button-container-${type}-${itemId || "default"}`}
+        className={isScriptLoaded && !isProcessing ? "block" : "hidden"}
       />
 
       {/* Purchase Summary */}
@@ -406,7 +461,9 @@ export default function PayPalButton({
           className="text-center text-sm text-text-muted border-t border-gray-800 pt-4"
         >
           <p>
-            You will be charged <span className="text-gold font-medium">${amount.toFixed(2)}</span> for
+            You will be charged{" "}
+            <span className="text-gold font-medium">${amount.toFixed(2)}</span>{" "}
+            for
           </p>
           <p className="font-medium text-text-light">{itemName}</p>
           <p className="mt-2 text-xs">
@@ -417,15 +474,10 @@ export default function PayPalButton({
 
       {/* Fallback Manual Button */}
       {!isScriptLoaded && !isProcessing && (
-        <Button
-          variant="primary"
-          fullWidth
-          disabled
-          className="opacity-50"
-        >
+        <Button variant="primary" fullWidth disabled className="opacity-50">
           Loading PayPal...
         </Button>
       )}
     </div>
-  )
+  );
 }

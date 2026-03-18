@@ -21,17 +21,29 @@
 
   body {
     @apply bg-deep-black text-text-light;
-    font-family: 'Georgia', serif;
+    font-family: "Georgia", serif;
   }
 
-  h1, h2, h3, h4, h5, h6 {
-    font-family: 'Didot', 'Bodoni MT', 'Georgia', serif;
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: "Didot", "Bodoni MT", "Georgia", serif;
   }
 }
 
 @layer components {
   .aurora-bg {
-    background: linear-gradient(125deg, #050511 0%, #0a1628 25%, #172a3a 50%, #0a1628 75%, #050511 100%);
+    background: linear-gradient(
+      125deg,
+      #050511 0%,
+      #0a1628 25%,
+      #172a3a 50%,
+      #0a1628 75%,
+      #050511 100%
+    );
   }
 
   .gradient-text {
@@ -60,19 +72,25 @@
   .btn-primary {
     @apply px-6 sm:px-8 lg:px-12 py-3 sm:py-4 lg:py-5 text-sm sm:text-base lg:text-lg font-medium uppercase tracking-wider transition-all duration-300;
     background: linear-gradient(135deg, #720921, #6366f1);
-    box-shadow: 0 8px 20px rgba(114, 9, 33, 0.3), 0 8px 20px rgba(99, 102, 241, 0.3);
+    box-shadow:
+      0 8px 20px rgba(114, 9, 33, 0.3),
+      0 8px 20px rgba(99, 102, 241, 0.3);
     min-height: 44px; /* Touch target minimum */
   }
 
   .btn-primary:hover {
     transform: translateY(-2px) scale(1.02);
-    box-shadow: 0 15px 35px rgba(114, 9, 33, 0.4), 0 15px 35px rgba(99, 102, 241, 0.4);
+    box-shadow:
+      0 15px 35px rgba(114, 9, 33, 0.4),
+      0 15px 35px rgba(99, 102, 241, 0.4);
   }
 
   @media (min-width: 768px) {
     .btn-primary:hover {
       transform: translateY(-4px) scale(1.05);
-      box-shadow: 0 20px 45px rgba(114, 9, 33, 0.4), 0 20px 45px rgba(99, 102, 241, 0.4);
+      box-shadow:
+        0 20px 45px rgba(114, 9, 33, 0.4),
+        0 20px 45px rgba(99, 102, 241, 0.4);
     }
   }
 
@@ -81,14 +99,18 @@
     background: transparent;
     color: #d4af37;
     border: 2px solid transparent;
-    background-image: linear-gradient(#050511, #050511), linear-gradient(135deg, #720921, #6366f1);
+    background-image:
+      linear-gradient(#050511, #050511),
+      linear-gradient(135deg, #720921, #6366f1);
     background-origin: border-box;
     background-clip: padding-box, border-box;
     min-height: 44px; /* Touch target minimum */
   }
 
   .btn-secondary:hover {
-    background-image: linear-gradient(rgba(212, 175, 55, 0.05), rgba(212, 175, 55, 0.05)), linear-gradient(135deg, #720921, #6366f1);
+    background-image:
+      linear-gradient(rgba(212, 175, 55, 0.05), rgba(212, 175, 55, 0.05)),
+      linear-gradient(135deg, #720921, #6366f1);
     transform: translateY(-2px);
   }
 
@@ -119,13 +141,17 @@
   }
 
   .tier-card {
-    background: linear-gradient(135deg, rgba(26, 13, 17, 0.5), rgba(10, 22, 40, 0.5));
+    background: linear-gradient(
+      135deg,
+      rgba(26, 13, 17, 0.5),
+      rgba(10, 22, 40, 0.5)
+    );
     border: 1px solid transparent;
     background-clip: padding-box;
   }
 
   .tier-card::before {
-    content: '';
+    content: "";
     position: absolute;
     top: 0;
     left: 0;
@@ -134,7 +160,9 @@
     border-radius: inherit;
     padding: 1px;
     background: linear-gradient(135deg, #720921, #6366f1);
-    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask:
+      linear-gradient(#fff 0 0) content-box,
+      linear-gradient(#fff 0 0);
     -webkit-mask-composite: xor;
     mask-composite: exclude;
     opacity: 0.5;
@@ -147,13 +175,17 @@
 
   .tier-card:hover {
     transform: translateY(-8px) scale(1.01);
-    box-shadow: 0 15px 30px rgba(114, 9, 33, 0.3), 0 15px 30px rgba(99, 102, 241, 0.3);
+    box-shadow:
+      0 15px 30px rgba(114, 9, 33, 0.3),
+      0 15px 30px rgba(99, 102, 241, 0.3);
   }
 
   @media (min-width: 768px) {
     .tier-card:hover {
       transform: translateY(-15px) scale(1.03);
-      box-shadow: 0 30px 60px rgba(114, 9, 33, 0.3), 0 30px 60px rgba(99, 102, 241, 0.3);
+      box-shadow:
+        0 30px 60px rgba(114, 9, 33, 0.3),
+        0 30px 60px rgba(99, 102, 241, 0.3);
     }
   }
 
@@ -164,7 +196,8 @@
     }
 
     /* Disable animations on small screens for performance */
-    .animate-levitate, .animate-float {
+    .animate-levitate,
+    .animate-float {
       animation: none;
     }
   }

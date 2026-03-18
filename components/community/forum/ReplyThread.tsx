@@ -1,35 +1,35 @@
-'use client'
+"use client";
 
-import ReplyItem from './ReplyItem'
+import ReplyItem from "./ReplyItem";
 
 interface Author {
-  id: string
-  name: string | null
-  displayName: string | null
-  avatarUrl: string | null
+  id: string;
+  name: string | null;
+  displayName: string | null;
+  avatarUrl: string | null;
 }
 
 interface Reply {
-  id: string
-  content: string
-  likeCount: number
-  createdAt: string
-  author: Author
-  children: Reply[]
+  id: string;
+  content: string;
+  likeCount: number;
+  createdAt: string;
+  author: Author;
+  children: Reply[];
 }
 
 interface ReplyThreadProps {
-  replies: Reply[]
-  postId: string
-  currentUserId: string | null
-  onReplyAdded: (reply: Reply, parentId?: string) => void
+  replies: Reply[];
+  postId: string;
+  currentUserId: string | null;
+  onReplyAdded: (reply: Reply, parentId?: string) => void;
 }
 
 export default function ReplyThread({
   replies,
   postId,
   currentUserId,
-  onReplyAdded
+  onReplyAdded,
 }: ReplyThreadProps) {
   return (
     <div className="space-y-4">
@@ -44,5 +44,5 @@ export default function ReplyThread({
         />
       ))}
     </div>
-  )
+  );
 }

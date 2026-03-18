@@ -1,20 +1,20 @@
-'use client'
+"use client";
 
-import { useEffect } from 'react'
-import Link from 'next/link'
-import Button from '@/components/ui/Button'
+import { useEffect } from "react";
+import Link from "next/link";
+import Button from "@/components/ui/Button";
 
 export default function Error({
   error,
   reset,
 }: {
-  error: Error
-  reset: () => void
+  error: Error;
+  reset: () => void;
 }) {
   useEffect(() => {
     // Log the error to an error reporting service
-    console.error(error)
-  }, [error])
+    console.error(error);
+  }, [error]);
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-deep-black text-white">
@@ -24,14 +24,12 @@ export default function Error({
           An unexpected error occurred while loading this page.
         </p>
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
-          <Button onClick={() => reset()}>
-            Try again
-          </Button>
+          <Button onClick={() => reset()}>Try again</Button>
           <Link href="/">
             <Button variant="outline">Go Home</Button>
           </Link>
         </div>
       </div>
     </div>
-  )
+  );
 }

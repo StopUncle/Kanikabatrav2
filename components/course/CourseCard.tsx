@@ -1,28 +1,32 @@
-'use client'
+"use client";
 
-import { motion } from 'framer-motion'
-import Image from 'next/image'
-import Link from 'next/link'
-import { Play, Lock, Crown, BookOpen } from 'lucide-react'
+import { motion } from "framer-motion";
+import Image from "next/image";
+import Link from "next/link";
+import { Play, Lock, Crown, BookOpen } from "lucide-react";
 
 interface CourseCardProps {
   course: {
-    id: string
-    title: string
-    slug: string
-    description: string | null
-    thumbnailUrl: string | null
-    price: number
-    tier: string
-    moduleCount?: number
-    lessonCount?: number
-  }
-  isSubscribed?: boolean
-  progress?: number
+    id: string;
+    title: string;
+    slug: string;
+    description: string | null;
+    thumbnailUrl: string | null;
+    price: number;
+    tier: string;
+    moduleCount?: number;
+    lessonCount?: number;
+  };
+  isSubscribed?: boolean;
+  progress?: number;
 }
 
-export default function CourseCard({ course, isSubscribed, progress }: CourseCardProps) {
-  const isGold = course.tier === 'gold'
+export default function CourseCard({
+  course,
+  isSubscribed,
+  progress,
+}: CourseCardProps) {
+  const isGold = course.tier === "gold";
 
   return (
     <motion.div
@@ -31,11 +35,13 @@ export default function CourseCard({ course, isSubscribed, progress }: CourseCar
       whileHover={{ y: -5 }}
       className="group relative"
     >
-      <div className={`bg-deep-black/40 backdrop-blur-sm border rounded-2xl overflow-hidden transition-all duration-300 ${
-        isGold
-          ? 'border-accent-gold shadow-lg shadow-accent-gold/10 hover:shadow-xl hover:shadow-accent-gold/20'
-          : 'border-accent-gold/20 hover:border-accent-gold/40'
-      }`}>
+      <div
+        className={`bg-deep-black/40 backdrop-blur-sm border rounded-2xl overflow-hidden transition-all duration-300 ${
+          isGold
+            ? "border-accent-gold shadow-lg shadow-accent-gold/10 hover:shadow-xl hover:shadow-accent-gold/20"
+            : "border-accent-gold/20 hover:border-accent-gold/40"
+        }`}
+      >
         {isGold && (
           <div className="absolute top-4 right-4 z-10">
             <span className="bg-gradient-to-r from-accent-gold to-yellow-500 text-deep-black px-3 py-1 rounded-full text-xs font-bold flex items-center gap-1">
@@ -73,7 +79,9 @@ export default function CourseCard({ course, isSubscribed, progress }: CourseCar
         </div>
 
         <div className="p-6">
-          <h3 className={`text-xl sm:text-2xl font-light mb-2 ${isGold ? 'gradient-text-gold' : 'gradient-text'}`}>
+          <h3
+            className={`text-xl sm:text-2xl font-light mb-2 ${isGold ? "gradient-text-gold" : "gradient-text"}`}
+          >
             {course.title}
           </h3>
 
@@ -134,7 +142,11 @@ export default function CourseCard({ course, isSubscribed, progress }: CourseCar
                   href={`/courses/${course.slug}`}
                   className="bg-gradient-to-r from-accent-burgundy to-accent-sapphire text-white px-6 py-3 rounded-lg font-medium hover:shadow-lg transition-all flex items-center gap-2"
                 >
-                  {isGold ? <Crown className="w-4 h-4" /> : <Lock className="w-4 h-4" />}
+                  {isGold ? (
+                    <Crown className="w-4 h-4" />
+                  ) : (
+                    <Lock className="w-4 h-4" />
+                  )}
                   View Course
                 </Link>
               </>
@@ -143,5 +155,5 @@ export default function CourseCard({ course, isSubscribed, progress }: CourseCar
         </div>
       </div>
     </motion.div>
-  )
+  );
 }

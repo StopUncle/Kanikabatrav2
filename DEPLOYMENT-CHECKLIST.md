@@ -3,6 +3,7 @@
 ## Pre-Deployment Steps
 
 ### 1. Environment Variables ✅
+
 - [ ] Copy `.env.production.example` to `.env.production`
 - [ ] Set production database URL (PostgreSQL)
 - [ ] Generate new JWT secrets (64+ characters)
@@ -11,6 +12,7 @@
 - [ ] Set correct production URL
 
 ### 2. Security Keys 🔐
+
 ```bash
 # Generate JWT Secret
 openssl rand -base64 64
@@ -20,6 +22,7 @@ openssl rand -base64 64
 ```
 
 ### 3. Database Setup 🗄️
+
 ```bash
 # Run Prisma migrations
 npx prisma migrate deploy
@@ -29,6 +32,7 @@ npx prisma generate
 ```
 
 ### 4. Code Quality ✨
+
 ```bash
 # Type checking
 npm run type-check
@@ -41,6 +45,7 @@ npm run build
 ```
 
 ### 5. PayPal Configuration 💳
+
 - [ ] Create PayPal Live App at https://developer.paypal.com
 - [ ] Add webhook endpoint: `https://yourdomain.com/api/webhooks/paypal`
 - [ ] Subscribe to events:
@@ -50,6 +55,7 @@ npm run build
   - `CHECKOUT.ORDER.APPROVED`
 
 ### 6. Email Service Setup 📧
+
 - [ ] Configure SendGrid/AWS SES account
 - [ ] Verify domain for sending emails
 - [ ] Set up SPF/DKIM records
@@ -58,6 +64,7 @@ npm run build
 ## Deployment Steps
 
 ### Option 1: Vercel (Recommended)
+
 ```bash
 # Install Vercel CLI
 npm i -g vercel
@@ -69,6 +76,7 @@ vercel --prod
 ```
 
 ### Option 2: Traditional VPS
+
 ```bash
 # Build application
 npm run build
@@ -82,11 +90,13 @@ pm2 startup
 ## Post-Deployment
 
 ### 1. SSL Certificate
+
 - [ ] Ensure HTTPS is working
 - [ ] Force redirect HTTP to HTTPS
 - [ ] Test SSL with SSL Labs
 
 ### 2. Testing
+
 - [ ] Test payment flow with real card
 - [ ] Test email notifications
 - [ ] Test authentication flow
@@ -94,18 +104,21 @@ pm2 startup
 - [ ] Test download functionality
 
 ### 3. Monitoring
+
 - [ ] Set up error tracking (Sentry)
 - [ ] Configure analytics (Google Analytics)
 - [ ] Set up uptime monitoring
 - [ ] Configure log aggregation
 
 ### 4. Security Headers
+
 - [ ] Content Security Policy
 - [ ] X-Frame-Options
 - [ ] X-Content-Type-Options
 - [ ] Strict-Transport-Security
 
 ### 5. Performance
+
 - [ ] Enable CDN for assets
 - [ ] Configure caching headers
 - [ ] Optimize images
@@ -114,6 +127,7 @@ pm2 startup
 ## Database Backup
 
 ### Automated Backup Script
+
 ```bash
 #!/bin/bash
 # backup.sh
@@ -123,6 +137,7 @@ pg_dump $DATABASE_URL > backup_$DATE.sql
 ```
 
 ### Restore Command
+
 ```bash
 psql $DATABASE_URL < backup_file.sql
 ```
@@ -137,14 +152,15 @@ psql $DATABASE_URL < backup_file.sql
 ## Health Checks
 
 ### API Endpoint
+
 ```javascript
 // app/api/health/route.ts
 export async function GET() {
   return Response.json({
-    status: 'ok',
+    status: "ok",
     timestamp: new Date().toISOString(),
-    version: process.env.npm_package_version
-  })
+    version: process.env.npm_package_version,
+  });
 }
 ```
 

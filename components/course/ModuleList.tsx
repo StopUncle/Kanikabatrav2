@@ -1,90 +1,92 @@
-'use client'
+"use client";
 
-import { useState } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
-import Link from 'next/link'
-import { ChevronDown, Play, Lock, Check, Clock, Eye } from 'lucide-react'
+import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import Link from "next/link";
+import { ChevronDown, Play, Lock, Check, Clock, Eye } from "lucide-react";
 
 interface Lesson {
-  id: string
-  title: string
-  slug: string
-  duration: number | null
-  isFree: boolean
-  isCompleted?: boolean
-  watchedSeconds?: number
+  id: string;
+  title: string;
+  slug: string;
+  duration: number | null;
+  isFree: boolean;
+  isCompleted?: boolean;
+  watchedSeconds?: number;
 }
 
 interface Module {
-  id: string
-  title: string
-  slug: string
-  description: string | null
-  lessons: Lesson[]
+  id: string;
+  title: string;
+  slug: string;
+  description: string | null;
+  lessons: Lesson[];
 }
 
 interface ModuleListProps {
-  modules: Module[]
-  courseSlug: string
-  hasAccess: boolean
-  currentLessonId?: string
+  modules: Module[];
+  courseSlug: string;
+  hasAccess: boolean;
+  currentLessonId?: string;
 }
 
 function formatDuration(seconds: number | null): string {
-  if (!seconds) return ''
-  const mins = Math.floor(seconds / 60)
-  const secs = seconds % 60
+  if (!seconds) return "";
+  const mins = Math.floor(seconds / 60);
+  const secs = seconds % 60;
   if (mins >= 60) {
-    const hrs = Math.floor(mins / 60)
-    const remainingMins = mins % 60
-    return `${hrs}h ${remainingMins}m`
+    const hrs = Math.floor(mins / 60);
+    const remainingMins = mins % 60;
+    return `${hrs}h ${remainingMins}m`;
   }
-  return `${mins}m ${secs > 0 ? `${secs}s` : ''}`
+  return `${mins}m ${secs > 0 ? `${secs}s` : ""}`;
 }
 
 export default function ModuleList({
   modules,
   courseSlug,
   hasAccess,
-  currentLessonId
+  currentLessonId,
 }: ModuleListProps) {
   const [expandedModules, setExpandedModules] = useState<Set<string>>(() => {
     if (currentLessonId) {
-      const moduleWithCurrentLesson = modules.find(m =>
-        m.lessons.some(l => l.id === currentLessonId)
-      )
+      const moduleWithCurrentLesson = modules.find((m) =>
+        m.lessons.some((l) => l.id === currentLessonId),
+      );
       if (moduleWithCurrentLesson) {
-        return new Set([moduleWithCurrentLesson.id])
+        return new Set([moduleWithCurrentLesson.id]);
       }
     }
-    return new Set([modules[0]?.id].filter(Boolean))
-  })
+    return new Set([modules[0]?.id].filter(Boolean));
+  });
 
   const toggleModule = (moduleId: string) => {
-    setExpandedModules(prev => {
-      const next = new Set(prev)
+    setExpandedModules((prev) => {
+      const next = new Set(prev);
       if (next.has(moduleId)) {
-        next.delete(moduleId)
+        next.delete(moduleId);
       } else {
-        next.add(moduleId)
+        next.add(moduleId);
       }
-      return next
-    })
-  }
+      return next;
+    });
+  };
 
   const getModuleProgress = (module: Module): number => {
-    const completedLessons = module.lessons.filter(l => l.isCompleted).length
+    const completedLessons = module.lessons.filter((l) => l.isCompleted).length;
     return module.lessons.length > 0
       ? (completedLessons / module.lessons.length) * 100
-      : 0
-  }
+      : 0;
+  };
 
   return (
     <div className="space-y-4">
       {modules.map((module, moduleIndex) => {
-        const isExpanded = expandedModules.has(module.id)
-        const progress = getModuleProgress(module)
-        const completedCount = module.lessons.filter(l => l.isCompleted).length
+        const isExpanded = expandedModules.has(module.id);
+        const progress = getModuleProgress(module);
+        const completedCount = module.lessons.filter(
+          (l) => l.isCompleted,
+        ).length;
 
         return (
           <div
@@ -128,7 +130,7 @@ export default function ModuleList({
                 )}
                 <ChevronDown
                   className={`w-5 h-5 text-text-muted transition-transform ${
-                    isExpanded ? 'rotate-180' : ''
+                    isExpanded ? "rotate-180" : ""
                   }`}
                 />
               </div>
@@ -138,20 +140,20 @@ export default function ModuleList({
               {isExpanded && (
                 <motion.div
                   initial={{ height: 0, opacity: 0 }}
-                  animate={{ height: 'auto', opacity: 1 }}
+                  animate={{ height: "auto", opacity: 1 }}
                   exit={{ height: 0, opacity: 0 }}
                   transition={{ duration: 0.2 }}
                 >
                   <div className="border-t border-accent-gold/10">
                     {module.lessons.map((lesson, lessonIndex) => {
-                      const canAccess = hasAccess || lesson.isFree
-                      const isCurrent = lesson.id === currentLessonId
-                      const lessonHref = `/courses/${courseSlug}/${module.slug}/${lesson.slug}`
+                      const canAccess = hasAccess || lesson.isFree;
+                      const isCurrent = lesson.id === currentLessonId;
+                      const lessonHref = `/courses/${courseSlug}/${module.slug}/${lesson.slug}`;
                       const lessonClassName = `flex items-center gap-3 sm:gap-4 px-4 sm:px-6 py-3 sm:py-4 border-b border-accent-gold/5 last:border-b-0 ${
                         canAccess
-                          ? 'hover:bg-accent-gold/5 cursor-pointer'
-                          : 'opacity-60 cursor-not-allowed'
-                      } ${isCurrent ? 'bg-accent-gold/10' : ''}`
+                          ? "hover:bg-accent-gold/5 cursor-pointer"
+                          : "opacity-60 cursor-not-allowed"
+                      } ${isCurrent ? "bg-accent-gold/10" : ""}`;
 
                       const lessonContent = (
                         <>
@@ -161,12 +163,17 @@ export default function ModuleList({
                                 <Check className="w-3 h-3 sm:w-4 sm:h-4 text-accent-gold" />
                               </div>
                             ) : canAccess ? (
-                              <div className={`w-full h-full rounded-full flex items-center justify-center ${
-                                isCurrent
-                                  ? 'bg-accent-gold text-deep-black'
-                                  : 'bg-accent-gold/10 text-accent-gold'
-                              }`}>
-                                <Play className="w-3 h-3 sm:w-4 sm:h-4" fill={isCurrent ? 'currentColor' : 'none'} />
+                              <div
+                                className={`w-full h-full rounded-full flex items-center justify-center ${
+                                  isCurrent
+                                    ? "bg-accent-gold text-deep-black"
+                                    : "bg-accent-gold/10 text-accent-gold"
+                                }`}
+                              >
+                                <Play
+                                  className="w-3 h-3 sm:w-4 sm:h-4"
+                                  fill={isCurrent ? "currentColor" : "none"}
+                                />
                               </div>
                             ) : (
                               <div className="w-full h-full rounded-full bg-text-muted/10 flex items-center justify-center">
@@ -177,9 +184,13 @@ export default function ModuleList({
 
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center gap-2">
-                              <span className={`text-sm truncate ${
-                                isCurrent ? 'text-accent-gold font-medium' : 'text-text-light'
-                              }`}>
+                              <span
+                                className={`text-sm truncate ${
+                                  isCurrent
+                                    ? "text-accent-gold font-medium"
+                                    : "text-text-light"
+                                }`}
+                              >
                                 {lessonIndex + 1}. {lesson.title}
                               </span>
                               {lesson.isFree && !hasAccess && (
@@ -198,7 +209,7 @@ export default function ModuleList({
                             </div>
                           )}
                         </>
-                      )
+                      );
 
                       return canAccess ? (
                         <Link
@@ -209,21 +220,18 @@ export default function ModuleList({
                           {lessonContent}
                         </Link>
                       ) : (
-                        <div
-                          key={lesson.id}
-                          className={lessonClassName}
-                        >
+                        <div key={lesson.id} className={lessonClassName}>
                           {lessonContent}
                         </div>
-                      )
+                      );
                     })}
                   </div>
                 </motion.div>
               )}
             </AnimatePresence>
           </div>
-        )
+        );
       })}
     </div>
-  )
+  );
 }

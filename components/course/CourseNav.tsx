@@ -1,34 +1,42 @@
-'use client'
+"use client";
 
-import { useState } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
-import Link from 'next/link'
-import { ChevronLeft, ChevronRight, Menu, X, Check, Play, Lock } from 'lucide-react'
+import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import Link from "next/link";
+import {
+  ChevronLeft,
+  ChevronRight,
+  Menu,
+  X,
+  Check,
+  Play,
+  Lock,
+} from "lucide-react";
 
 interface Lesson {
-  id: string
-  title: string
-  slug: string
-  isCompleted?: boolean
-  isFree: boolean
+  id: string;
+  title: string;
+  slug: string;
+  isCompleted?: boolean;
+  isFree: boolean;
 }
 
 interface Module {
-  id: string
-  title: string
-  slug: string
-  lessons: Lesson[]
+  id: string;
+  title: string;
+  slug: string;
+  lessons: Lesson[];
 }
 
 interface CourseNavProps {
-  courseSlug: string
-  courseTitle: string
-  modules: Module[]
-  currentModuleSlug: string
-  currentLessonSlug: string
-  hasAccess: boolean
-  prevLesson?: { moduleSlug: string; lessonSlug: string; title: string } | null
-  nextLesson?: { moduleSlug: string; lessonSlug: string; title: string } | null
+  courseSlug: string;
+  courseTitle: string;
+  modules: Module[];
+  currentModuleSlug: string;
+  currentLessonSlug: string;
+  hasAccess: boolean;
+  prevLesson?: { moduleSlug: string; lessonSlug: string; title: string } | null;
+  nextLesson?: { moduleSlug: string; lessonSlug: string; title: string } | null;
 }
 
 export default function CourseNav({
@@ -39,13 +47,14 @@ export default function CourseNav({
   currentLessonSlug,
   hasAccess,
   prevLesson,
-  nextLesson
+  nextLesson,
 }: CourseNavProps) {
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
-  const currentModule = modules.find(m => m.slug === currentModuleSlug)
-  const currentLessonIndex = currentModule?.lessons.findIndex(l => l.slug === currentLessonSlug) ?? 0
-  const totalLessonsInModule = currentModule?.lessons.length ?? 0
+  const currentModule = modules.find((m) => m.slug === currentModuleSlug);
+  const currentLessonIndex =
+    currentModule?.lessons.findIndex((l) => l.slug === currentLessonSlug) ?? 0;
+  const totalLessonsInModule = currentModule?.lessons.length ?? 0;
 
   return (
     <>
@@ -93,10 +102,10 @@ export default function CourseNav({
               onClick={() => setIsMobileMenuOpen(false)}
             />
             <motion.div
-              initial={{ x: '100%' }}
+              initial={{ x: "100%" }}
               animate={{ x: 0 }}
-              exit={{ x: '100%' }}
-              transition={{ type: 'spring', damping: 25, stiffness: 300 }}
+              exit={{ x: "100%" }}
+              transition={{ type: "spring", damping: 25, stiffness: 300 }}
               className="fixed right-0 top-0 bottom-0 w-full max-w-sm bg-deep-black border-l border-accent-gold/20 z-50 overflow-y-auto"
             >
               <div className="sticky top-0 bg-deep-black/95 backdrop-blur-lg border-b border-accent-gold/20 p-4 flex items-center justify-between">
@@ -121,8 +130,8 @@ export default function CourseNav({
                       {module.lessons.map((lesson) => {
                         const isCurrentLesson =
                           module.slug === currentModuleSlug &&
-                          lesson.slug === currentLessonSlug
-                        const canAccess = hasAccess || lesson.isFree
+                          lesson.slug === currentLessonSlug;
+                        const canAccess = hasAccess || lesson.isFree;
 
                         return canAccess ? (
                           <Link
@@ -131,8 +140,8 @@ export default function CourseNav({
                             onClick={() => setIsMobileMenuOpen(false)}
                             className={`flex items-center gap-3 p-3 rounded-lg transition-colors ${
                               isCurrentLesson
-                                ? 'bg-accent-gold/20 text-accent-gold'
-                                : 'hover:bg-accent-gold/5 text-text-light'
+                                ? "bg-accent-gold/20 text-accent-gold"
+                                : "hover:bg-accent-gold/5 text-text-light"
                             }`}
                           >
                             <div className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0">
@@ -141,14 +150,25 @@ export default function CourseNav({
                                   <Check className="w-3 h-3 text-accent-gold" />
                                 </div>
                               ) : (
-                                <div className={`w-full h-full rounded-full flex items-center justify-center ${
-                                  isCurrentLesson ? 'bg-accent-gold text-deep-black' : 'bg-accent-gold/10'
-                                }`}>
-                                  <Play className="w-3 h-3" fill={isCurrentLesson ? 'currentColor' : 'none'} />
+                                <div
+                                  className={`w-full h-full rounded-full flex items-center justify-center ${
+                                    isCurrentLesson
+                                      ? "bg-accent-gold text-deep-black"
+                                      : "bg-accent-gold/10"
+                                  }`}
+                                >
+                                  <Play
+                                    className="w-3 h-3"
+                                    fill={
+                                      isCurrentLesson ? "currentColor" : "none"
+                                    }
+                                  />
                                 </div>
                               )}
                             </div>
-                            <span className="text-sm truncate">{lesson.title}</span>
+                            <span className="text-sm truncate">
+                              {lesson.title}
+                            </span>
                           </Link>
                         ) : (
                           <div
@@ -158,9 +178,11 @@ export default function CourseNav({
                             <div className="w-6 h-6 rounded-full bg-text-muted/10 flex items-center justify-center flex-shrink-0">
                               <Lock className="w-3 h-3" />
                             </div>
-                            <span className="text-sm truncate">{lesson.title}</span>
+                            <span className="text-sm truncate">
+                              {lesson.title}
+                            </span>
                           </div>
-                        )
+                        );
                       })}
                     </div>
                   </div>
@@ -194,8 +216,8 @@ export default function CourseNav({
                 {module.lessons.map((lesson) => {
                   const isCurrentLesson =
                     module.slug === currentModuleSlug &&
-                    lesson.slug === currentLessonSlug
-                  const canAccess = hasAccess || lesson.isFree
+                    lesson.slug === currentLessonSlug;
+                  const canAccess = hasAccess || lesson.isFree;
 
                   return canAccess ? (
                     <Link
@@ -203,8 +225,8 @@ export default function CourseNav({
                       href={`/courses/${courseSlug}/${module.slug}/${lesson.slug}`}
                       className={`flex items-center gap-3 p-2 rounded-lg transition-colors text-sm ${
                         isCurrentLesson
-                          ? 'bg-accent-gold/20 text-accent-gold'
-                          : 'hover:bg-accent-gold/5 text-text-light'
+                          ? "bg-accent-gold/20 text-accent-gold"
+                          : "hover:bg-accent-gold/5 text-text-light"
                       }`}
                     >
                       <div className="w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0">
@@ -213,10 +235,17 @@ export default function CourseNav({
                             <Check className="w-3 h-3 text-accent-gold" />
                           </div>
                         ) : (
-                          <div className={`w-full h-full rounded-full flex items-center justify-center ${
-                            isCurrentLesson ? 'bg-accent-gold text-deep-black' : 'bg-accent-gold/10'
-                          }`}>
-                            <Play className="w-2.5 h-2.5" fill={isCurrentLesson ? 'currentColor' : 'none'} />
+                          <div
+                            className={`w-full h-full rounded-full flex items-center justify-center ${
+                              isCurrentLesson
+                                ? "bg-accent-gold text-deep-black"
+                                : "bg-accent-gold/10"
+                            }`}
+                          >
+                            <Play
+                              className="w-2.5 h-2.5"
+                              fill={isCurrentLesson ? "currentColor" : "none"}
+                            />
                           </div>
                         )}
                       </div>
@@ -232,7 +261,7 @@ export default function CourseNav({
                       </div>
                       <span className="truncate">{lesson.title}</span>
                     </div>
-                  )
+                  );
                 })}
               </div>
             </div>
@@ -240,5 +269,5 @@ export default function CourseNav({
         </div>
       </div>
     </>
-  )
+  );
 }

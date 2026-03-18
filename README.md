@@ -84,6 +84,7 @@ KanikaBatrav2/
 Secure JWT-based authentication with the following features:
 
 ### API Endpoints
+
 - `POST /api/auth/register` - User registration
 - `POST /api/auth/login` - User login
 - `POST /api/auth/logout` - Secure logout
@@ -91,6 +92,7 @@ Secure JWT-based authentication with the following features:
 - `GET /api/auth/me` - Get current user (protected)
 
 ### Security Features
+
 - **JWT Tokens:** 15-minute access tokens
 - **Refresh Tokens:** 7-day expiration
 - **HttpOnly Cookies:** Secure, SameSite strict
@@ -98,6 +100,7 @@ Secure JWT-based authentication with the following features:
 - **CSRF Protection:** Built-in Next.js protection
 
 ### Pages
+
 - `/login` - Beautiful login form
 - `/register` - User registration
 - `/dashboard` - Protected user dashboard
@@ -107,20 +110,23 @@ Secure JWT-based authentication with the following features:
 Complete PayPal integration for book sales and coaching:
 
 ### Features
+
 - **Book Purchases:** "The Sociopath's Bible" - $34.99
 - **Coaching Sessions:** Three tiers ($297, $447, $597)
 - **Success/Cancel Pages:** Proper flow handling
 - **Order Management:** Complete order tracking
 
 ### PayPal Configuration
+
 ```typescript
 // In .env.local
-NEXT_PUBLIC_PAYPAL_CLIENT_ID=your_paypal_client_id
-PAYPAL_CLIENT_SECRET=your_paypal_secret
-PAYPAL_ENVIRONMENT=sandbox  // or 'live' for production
+NEXT_PUBLIC_PAYPAL_CLIENT_ID = your_paypal_client_id;
+PAYPAL_CLIENT_SECRET = your_paypal_secret;
+PAYPAL_ENVIRONMENT = sandbox; // or 'live' for production
 ```
 
 ### API Endpoints
+
 - `POST /api/paypal/create-order` - Create payment
 - `POST /api/paypal/capture-order` - Complete payment
 
@@ -129,6 +135,7 @@ PAYPAL_ENVIRONMENT=sandbox  // or 'live' for production
 Comprehensive logging system for production monitoring:
 
 ### Features
+
 - **Client-side Error Capture:** Unhandled errors and rejections
 - **Server-side Logging:** API requests, responses, errors
 - **Payment Logging:** Transaction tracking
@@ -136,22 +143,21 @@ Comprehensive logging system for production monitoring:
 - **Performance Metrics:** Response times and bottlenecks
 
 ### Endpoints
+
 - `POST /api/errors` - Error reporting endpoint
 
 ## 🎨 Design System
 
 ### Color Palette
+
 ```css
 /* Main Colors */
---deep-black: #0a0a0a
---text-light: #f8f9fa
---text-muted: #94a3b8
---gold: #d4af37
---burgundy: #722139
---sapphire: #0f4c75
+--deep-black: #0a0a0a --text-light: #f8f9fa --text-muted: #94a3b8
+  --gold: #d4af37 --burgundy: #722139 --sapphire: #0f4c75;
 ```
 
 ### Components
+
 - **Responsive Design:** Mobile-first approach
 - **Dark Theme:** Sophisticated psychology-themed UI
 - **Animations:** Subtle Framer Motion effects
@@ -161,6 +167,7 @@ Comprehensive logging system for production monitoring:
 ## 🚦 Pages Overview
 
 ### Public Pages
+
 - **Home** (`/`) - Hero, book showcase, testimonials, coaching tiers
 - **About** (`/about`) - Personal story, credentials, philosophy
 - **Coaching** (`/coaching`) - Detailed service tiers, FAQ, process
@@ -168,11 +175,13 @@ Comprehensive logging system for production monitoring:
 - **Terms** (`/terms`) - Legal terms and conditions
 
 ### User Pages
+
 - **Login** (`/login`) - Authentication
 - **Register** (`/register`) - User registration
 - **Dashboard** (`/dashboard`) - User account management
 
 ### Utility Pages
+
 - **Success** (`/success`) - Payment confirmation
 - **Cancel** (`/cancel`) - Payment cancellation
 - **404** (`/not-found`) - Custom error page
@@ -221,6 +230,7 @@ DATABASE_URL=postgresql://user:pass@localhost:5432/kanikabatra
 ## 📈 Production Checklist
 
 ### Pre-Deployment
+
 - [ ] Set `NODE_ENV=production`
 - [ ] Configure production PayPal credentials
 - [ ] Set up real database (replace in-memory storage)
@@ -230,6 +240,7 @@ DATABASE_URL=postgresql://user:pass@localhost:5432/kanikabatra
 - [ ] Generate strong JWT secrets
 
 ### Security
+
 - [ ] Enable HTTPS
 - [ ] Set secure cookie flags
 - [ ] Configure CSP headers
@@ -238,6 +249,7 @@ DATABASE_URL=postgresql://user:pass@localhost:5432/kanikabatra
 - [ ] Monitor for vulnerabilities
 
 ### Performance
+
 - [ ] Enable Next.js compression
 - [ ] Configure CDN for static assets
 - [ ] Set up database connection pooling
@@ -247,6 +259,7 @@ DATABASE_URL=postgresql://user:pass@localhost:5432/kanikabatra
 ## 🔍 Key Features Status
 
 ✅ **Complete & Production Ready**
+
 - Modern Next.js 14 application
 - Full authentication system
 - PayPal payment integration
@@ -257,6 +270,7 @@ DATABASE_URL=postgresql://user:pass@localhost:5432/kanikabatra
 - SEO optimized
 
 ✅ **All Pages Implemented**
+
 - Home page with book showcase
 - About page with personal story
 - Coaching services with pricing
@@ -267,6 +281,7 @@ DATABASE_URL=postgresql://user:pass@localhost:5432/kanikabatra
 - Protected user dashboard
 
 ✅ **Backend Systems**
+
 - JWT authentication with refresh tokens
 - PayPal payment processing
 - Contact form handling
@@ -289,6 +304,7 @@ This is a personal brand website for Kanika Batra. For development:
 ## 📞 Support
 
 For technical issues or questions:
+
 - **Email:** Contact through the website form
 - **Documentation:** See individual README files in `/lib` and `/components`
 - **Type Issues:** All code is fully typed - check TypeScript errors

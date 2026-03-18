@@ -1,4 +1,4 @@
-import DoubleEchoLogo from '@/components/DoubleEchoLogo'
+import DoubleEchoLogo from "@/components/DoubleEchoLogo";
 
 export default function Loading() {
   return (
@@ -15,5 +15,5 @@ export default function Loading() {
         </div>
       </div>
     </div>
-  )
+  );
 }

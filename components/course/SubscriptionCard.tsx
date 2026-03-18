@@ -1,55 +1,62 @@
-'use client'
+"use client";
 
-import { useState } from 'react'
-import { motion } from 'framer-motion'
-import { Crown, Check, Zap, Shield, BookOpen, MessageSquare } from 'lucide-react'
-import Link from 'next/link'
+import { useState } from "react";
+import { motion } from "framer-motion";
+import {
+  Crown,
+  Check,
+  Zap,
+  Shield,
+  BookOpen,
+  MessageSquare,
+} from "lucide-react";
+import Link from "next/link";
 
 interface SubscriptionCardProps {
   course: {
-    id: string
-    title: string
-    slug: string
-    price: number
-    tier: string
-  }
-  isLoggedIn: boolean
-  hasSubscription: boolean
-  subscriptionStatus?: string
-  onSubscribe?: () => void
+    id: string;
+    title: string;
+    slug: string;
+    price: number;
+    tier: string;
+  };
+  isLoggedIn: boolean;
+  hasSubscription: boolean;
+  subscriptionStatus?: string;
+  onSubscribe?: () => void;
 }
 
 const benefits = [
-  { icon: BookOpen, text: 'All video lessons' },
-  { icon: MessageSquare, text: 'Community forum access' },
-  { icon: Zap, text: 'New content updates' },
-  { icon: Shield, text: 'Cancel anytime' }
-]
+  { icon: BookOpen, text: "All video lessons" },
+  { icon: MessageSquare, text: "Community forum access" },
+  { icon: Zap, text: "New content updates" },
+  { icon: Shield, text: "Cancel anytime" },
+];
 
 export default function SubscriptionCard({
   course,
   isLoggedIn,
   hasSubscription,
   subscriptionStatus,
-  onSubscribe
+  onSubscribe,
 }: SubscriptionCardProps) {
-  const [isLoading, setIsLoading] = useState(false)
-  const isGold = course.tier === 'gold'
+  const [isLoading, setIsLoading] = useState(false);
+  const isGold = course.tier === "gold";
 
   const handleSubscribe = async () => {
     if (!isLoggedIn) {
-      window.location.href = `/login?redirect=/courses/${course.slug}`
-      return
+      window.location.href = `/login?redirect=/courses/${course.slug}`;
+      return;
     }
 
-    setIsLoading(true)
+    setIsLoading(true);
     if (onSubscribe) {
-      onSubscribe()
+      onSubscribe();
     }
-    setIsLoading(false)
-  }
+    setIsLoading(false);
+  };
 
-  if (hasSubscription && subscriptionStatus === 'ACTIVE') {
+  if (hasSubscription && subscriptionStatus === "ACTIVE") {
     return (
       <div className="bg-deep-black/40 backdrop-blur-sm border border-accent-gold rounded-2xl p-6">
         <div className="flex items-center gap-2 text-accent-gold mb-4">
@@ -66,7 +73,7 @@ export default function SubscriptionCard({
           Manage Subscription
         </Link>
       </div>
-    )
+    );
   }
 
   return (
@@ -74,7 +81,7 @@ export default function SubscriptionCard({
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       className={`bg-deep-black/40 backdrop-blur-sm border rounded-2xl p-6 ${
-        isGold ? 'border-accent-gold' : 'border-accent-gold/20'
+        isGold ? "border-accent-gold" : "border-accent-gold/20"
       }`}
     >
       {isGold && (
@@ -86,7 +93,9 @@ export default function SubscriptionCard({
 
       <div className="mb-6">
         <div className="flex items-baseline gap-1">
-          <span className="text-4xl font-light gradient-text">${course.price}</span>
+          <span className="text-4xl font-light gradient-text">
+            ${course.price}
+          </span>
           <span className="text-text-muted">/month</span>
         </div>
         <p className="text-text-muted text-sm mt-1">Billed monthly</p>
@@ -94,7 +103,10 @@ export default function SubscriptionCard({
 
       <ul className="space-y-3 mb-6">
         {benefits.map((benefit, index) => (
-          <li key={index} className="flex items-center gap-3 text-sm text-text-light">
+          <li
+            key={index}
+            className="flex items-center gap-3 text-sm text-text-light"
+          >
             <benefit.icon className="w-4 h-4 text-accent-gold flex-shrink-0" />
             <span>{benefit.text}</span>
           </li>
@@ -112,9 +124,9 @@ export default function SubscriptionCard({
             Processing...
           </span>
         ) : isLoggedIn ? (
-          'Subscribe Now'
+          "Subscribe Now"
         ) : (
-          'Login to Subscribe'
+          "Login to Subscribe"
         )}
       </button>
 
@@ -122,5 +134,5 @@ export default function SubscriptionCard({
         Secure payment via PayPal. Cancel anytime.
       </p>
     </motion.div>
-  )
+  );
 }

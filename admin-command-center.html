@@ -1,558 +1,649 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Book Download Command Center - Kanika Batra</title>
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Book Download Command Center - Kanika Batra</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
 
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      background: linear-gradient(135deg, #0a0a0a 0%, #1a0d11 50%, #0a1628 100%);
-      color: #e5e5e5;
-      min-height: 100vh;
-      padding: 20px;
-    }
+      body {
+        font-family:
+          -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        background: linear-gradient(
+          135deg,
+          #0a0a0a 0%,
+          #1a0d11 50%,
+          #0a1628 100%
+        );
+        color: #e5e5e5;
+        min-height: 100vh;
+        padding: 20px;
+      }
 
-    .container {
-      max-width: 800px;
-      margin: 0 auto;
-    }
+      .container {
+        max-width: 800px;
+        margin: 0 auto;
+      }
 
-    .header {
-      text-align: center;
-      padding: 40px 20px;
-      background: linear-gradient(135deg, #720921 0%, #0a1628 100%);
-      border-radius: 12px;
-      margin-bottom: 30px;
-      border: 2px solid #d4af37;
-    }
+      .header {
+        text-align: center;
+        padding: 40px 20px;
+        background: linear-gradient(135deg, #720921 0%, #0a1628 100%);
+        border-radius: 12px;
+        margin-bottom: 30px;
+        border: 2px solid #d4af37;
+      }
 
-    .header h1 {
-      color: #d4af37;
-      font-size: 32px;
-      font-weight: 300;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      margin-bottom: 10px;
-    }
+      .header h1 {
+        color: #d4af37;
+        font-size: 32px;
+        font-weight: 300;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+        margin-bottom: 10px;
+      }
 
-    .header p {
-      color: #94a3b8;
-      font-size: 14px;
-    }
+      .header p {
+        color: #94a3b8;
+        font-size: 14px;
+      }
 
-    .card {
-      background: #050511;
-      border: 1px solid #d4af37;
-      border-radius: 12px;
-      padding: 30px;
-      margin-bottom: 20px;
-    }
+      .card {
+        background: #050511;
+        border: 1px solid #d4af37;
+        border-radius: 12px;
+        padding: 30px;
+        margin-bottom: 20px;
+      }
 
-    .card h2 {
-      color: #d4af37;
-      font-size: 20px;
-      margin-bottom: 20px;
-      font-weight: 600;
-    }
+      .card h2 {
+        color: #d4af37;
+        font-size: 20px;
+        margin-bottom: 20px;
+        font-weight: 600;
+      }
 
-    .form-group {
-      margin-bottom: 20px;
-    }
+      .form-group {
+        margin-bottom: 20px;
+      }
 
-    label {
-      display: block;
-      color: #d4af37;
-      font-size: 14px;
-      font-weight: 600;
-      margin-bottom: 8px;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-    }
+      label {
+        display: block;
+        color: #d4af37;
+        font-size: 14px;
+        font-weight: 600;
+        margin-bottom: 8px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+      }
 
-    input[type="email"],
-    input[type="text"] {
-      width: 100%;
-      padding: 12px 16px;
-      background: #0a0a0a;
-      border: 1px solid #333;
-      border-radius: 8px;
-      color: #e5e5e5;
-      font-size: 16px;
-      transition: all 0.3s ease;
-    }
+      input[type="email"],
+      input[type="text"] {
+        width: 100%;
+        padding: 12px 16px;
+        background: #0a0a0a;
+        border: 1px solid #333;
+        border-radius: 8px;
+        color: #e5e5e5;
+        font-size: 16px;
+        transition: all 0.3s ease;
+      }
 
-    input[type="email"]:focus,
-    input[type="text"]:focus {
-      outline: none;
-      border-color: #d4af37;
-      box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.1);
-    }
+      input[type="email"]:focus,
+      input[type="text"]:focus {
+        outline: none;
+        border-color: #d4af37;
+        box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.1);
+      }
 
-    .radio-group {
-      display: flex;
-      gap: 20px;
-      margin-top: 10px;
-    }
+      .radio-group {
+        display: flex;
+        gap: 20px;
+        margin-top: 10px;
+      }
 
-    .radio-option {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      cursor: pointer;
-    }
+      .radio-option {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        cursor: pointer;
+      }
 
-    input[type="radio"] {
-      width: 20px;
-      height: 20px;
-      cursor: pointer;
-      accent-color: #d4af37;
-    }
+      input[type="radio"] {
+        width: 20px;
+        height: 20px;
+        cursor: pointer;
+        accent-color: #d4af37;
+      }
 
-    .radio-option label {
-      margin: 0;
-      cursor: pointer;
-      font-size: 14px;
-      text-transform: none;
-      letter-spacing: normal;
-      font-weight: normal;
-      color: #94a3b8;
-    }
+      .radio-option label {
+        margin: 0;
+        cursor: pointer;
+        font-size: 14px;
+        text-transform: none;
+        letter-spacing: normal;
+        font-weight: normal;
+        color: #94a3b8;
+      }
 
-    .btn {
-      width: 100%;
-      padding: 16px;
-      background: linear-gradient(135deg, #d4af37 0%, #b8941f 100%);
-      color: #050511;
-      border: none;
-      border-radius: 50px;
-      font-size: 16px;
-      font-weight: 700;
-      letter-spacing: 1px;
-      text-transform: uppercase;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      box-shadow: 0 4px 15px rgba(212, 175, 55, 0.4);
-    }
+      .btn {
+        width: 100%;
+        padding: 16px;
+        background: linear-gradient(135deg, #d4af37 0%, #b8941f 100%);
+        color: #050511;
+        border: none;
+        border-radius: 50px;
+        font-size: 16px;
+        font-weight: 700;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(212, 175, 55, 0.4);
+      }
 
-    .btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 20px rgba(212, 175, 55, 0.6);
-    }
+      .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(212, 175, 55, 0.6);
+      }
 
-    .btn:active {
-      transform: translateY(0);
-    }
+      .btn:active {
+        transform: translateY(0);
+      }
 
-    .btn:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-      transform: none;
-    }
+      .btn:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+        transform: none;
+      }
 
-    .result {
-      margin-top: 20px;
-      padding: 20px;
-      border-radius: 8px;
-      display: none;
-    }
+      .result {
+        margin-top: 20px;
+        padding: 20px;
+        border-radius: 8px;
+        display: none;
+      }
 
-    .result.success {
-      background: rgba(34, 197, 94, 0.1);
-      border: 1px solid rgba(34, 197, 94, 0.3);
-      color: #4ade80;
-    }
+      .result.success {
+        background: rgba(34, 197, 94, 0.1);
+        border: 1px solid rgba(34, 197, 94, 0.3);
+        color: #4ade80;
+      }
 
-    .result.error {
-      background: rgba(239, 68, 68, 0.1);
-      border: 1px solid rgba(239, 68, 68, 0.3);
-      color: #f87171;
-    }
+      .result.error {
+        background: rgba(239, 68, 68, 0.1);
+        border: 1px solid rgba(239, 68, 68, 0.3);
+        color: #f87171;
+      }
 
-    .result.loading {
-      background: rgba(212, 175, 55, 0.1);
-      border: 1px solid rgba(212, 175, 55, 0.3);
-      color: #d4af37;
-    }
+      .result.loading {
+        background: rgba(212, 175, 55, 0.1);
+        border: 1px solid rgba(212, 175, 55, 0.3);
+        color: #d4af37;
+      }
 
-    .result pre {
-      margin-top: 10px;
-      padding: 10px;
-      background: #0a0a0a;
-      border-radius: 4px;
-      overflow-x: auto;
-      font-size: 12px;
-      color: #94a3b8;
-    }
+      .result pre {
+        margin-top: 10px;
+        padding: 10px;
+        background: #0a0a0a;
+        border-radius: 4px;
+        overflow-x: auto;
+        font-size: 12px;
+        color: #94a3b8;
+      }
 
-    .stats-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 15px;
-      margin-top: 20px;
-    }
+      .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 15px;
+        margin-top: 20px;
+      }
 
-    .stat-box {
-      background: #0a0a0a;
-      padding: 20px;
-      border-radius: 8px;
-      border: 1px solid #333;
-      text-align: center;
-    }
+      .stat-box {
+        background: #0a0a0a;
+        padding: 20px;
+        border-radius: 8px;
+        border: 1px solid #333;
+        text-align: center;
+      }
 
-    .stat-box .value {
-      font-size: 32px;
-      font-weight: 700;
-      color: #d4af37;
-      margin-bottom: 5px;
-    }
+      .stat-box .value {
+        font-size: 32px;
+        font-weight: 700;
+        color: #d4af37;
+        margin-bottom: 5px;
+      }
 
-    .stat-box .label {
-      font-size: 12px;
-      color: #94a3b8;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-    }
+      .stat-box .label {
+        font-size: 12px;
+        color: #94a3b8;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+      }
 
-    .purchases-list {
-      margin-top: 20px;
-    }
+      .purchases-list {
+        margin-top: 20px;
+      }
 
-    .purchase-item {
-      background: #0a0a0a;
-      padding: 15px;
-      border-radius: 8px;
-      border: 1px solid #333;
-      margin-bottom: 10px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 10px;
-    }
+      .purchase-item {
+        background: #0a0a0a;
+        padding: 15px;
+        border-radius: 8px;
+        border: 1px solid #333;
+        margin-bottom: 10px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 10px;
+      }
 
-    .purchase-info {
-      flex: 1;
-      min-width: 200px;
-    }
+      .purchase-info {
+        flex: 1;
+        min-width: 200px;
+      }
 
-    .purchase-info .email {
-      color: #d4af37;
-      font-weight: 600;
-      margin-bottom: 5px;
-    }
+      .purchase-info .email {
+        color: #d4af37;
+        font-weight: 600;
+        margin-bottom: 5px;
+      }
 
-    .purchase-info .details {
-      color: #94a3b8;
-      font-size: 12px;
-    }
+      .purchase-info .details {
+        color: #94a3b8;
+        font-size: 12px;
+      }
 
-    .resend-btn {
-      padding: 8px 20px;
-      background: linear-gradient(135deg, #722139 0%, #4a1426 100%);
-      color: #d4af37;
-      border: 1px solid #d4af37;
-      border-radius: 25px;
-      font-size: 12px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-    }
+      .resend-btn {
+        padding: 8px 20px;
+        background: linear-gradient(135deg, #722139 0%, #4a1426 100%);
+        color: #d4af37;
+        border: 1px solid #d4af37;
+        border-radius: 25px;
+        font-size: 12px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+      }
 
-    .resend-btn:hover {
-      background: linear-gradient(135deg, #d4af37 0%, #b8941f 100%);
-      color: #050511;
-    }
+      .resend-btn:hover {
+        background: linear-gradient(135deg, #d4af37 0%, #b8941f 100%);
+        color: #050511;
+      }
 
-    .spinner {
-      display: inline-block;
-      width: 16px;
-      height: 16px;
-      border: 2px solid rgba(212, 175, 55, 0.2);
-      border-top-color: #d4af37;
-      border-radius: 50%;
-      animation: spin 0.8s linear infinite;
-      margin-right: 8px;
-    }
+      .spinner {
+        display: inline-block;
+        width: 16px;
+        height: 16px;
+        border: 2px solid rgba(212, 175, 55, 0.2);
+        border-top-color: #d4af37;
+        border-radius: 50%;
+        animation: spin 0.8s linear infinite;
+        margin-right: 8px;
+      }
 
-    @keyframes spin {
-      to { transform: rotate(360deg); }
-    }
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
 
-    .quick-actions {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-      gap: 10px;
-      margin-top: 20px;
-    }
+      .quick-actions {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 10px;
+        margin-top: 20px;
+      }
 
-    .quick-btn {
-      padding: 12px;
-      background: #0a0a0a;
-      border: 1px solid #333;
-      border-radius: 8px;
-      color: #d4af37;
-      font-size: 12px;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      cursor: pointer;
-      transition: all 0.3s ease;
-    }
+      .quick-btn {
+        padding: 12px;
+        background: #0a0a0a;
+        border: 1px solid #333;
+        border-radius: 8px;
+        color: #d4af37;
+        font-size: 12px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
 
-    .quick-btn:hover {
-      border-color: #d4af37;
-      background: rgba(212, 175, 55, 0.05);
-    }
+      .quick-btn:hover {
+        border-color: #d4af37;
+        background: rgba(212, 175, 55, 0.05);
+      }
 
-    .badge {
-      display: inline-block;
-      padding: 4px 8px;
-      border-radius: 4px;
-      font-size: 10px;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      margin-left: 8px;
-    }
+      .badge {
+        display: inline-block;
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-size: 10px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-left: 8px;
+      }
 
-    .badge.premium {
-      background: rgba(212, 175, 55, 0.2);
-      color: #d4af37;
-    }
+      .badge.premium {
+        background: rgba(212, 175, 55, 0.2);
+        color: #d4af37;
+      }
 
-    .badge.standard {
-      background: rgba(114, 33, 57, 0.2);
-      color: #ff6b9d;
-    }
-  </style>
-</head>
-<body>
-  <div class="container">
-    <!-- Header -->
-    <div class="header">
-      <h1>📚 Book Download Command Center</h1>
-      <p>Manually send download links & manage purchases</p>
-    </div>
+      .badge.standard {
+        background: rgba(114, 33, 57, 0.2);
+        color: #ff6b9d;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <!-- Header -->
+      <div class="header">
+        <h1>📚 Book Download Command Center</h1>
+        <p>Manually send download links & manage purchases</p>
+      </div>
 
-    <!-- Send Via Email (SendGrid) -->
-    <div class="card">
-      <h2>📧 Send Download Link via Email (SendGrid)</h2>
-      <form id="sendEmailForm">
-        <div class="form-group">
-          <label for="emailEmail">Customer Email *</label>
-          <input type="email" id="emailEmail" name="email" placeholder="customer@example.com" required>
-        </div>
+      <!-- Send Via Email (SendGrid) -->
+      <div class="card">
+        <h2>📧 Send Download Link via Email (SendGrid)</h2>
+        <form id="sendEmailForm">
+          <div class="form-group">
+            <label for="emailEmail">Customer Email *</label>
+            <input
+              type="email"
+              id="emailEmail"
+              name="email"
+              placeholder="customer@example.com"
+              required
+            />
+          </div>
 
-        <div class="form-group">
-          <label for="emailName">Customer Name *</label>
-          <input type="text" id="emailName" name="name" placeholder="John Smith" required>
-        </div>
+          <div class="form-group">
+            <label for="emailName">Customer Name *</label>
+            <input
+              type="text"
+              id="emailName"
+              name="name"
+              placeholder="John Smith"
+              required
+            />
+          </div>
 
-        <div class="form-group">
-          <label>Book Edition *</label>
-          <div class="radio-group">
-            <div class="radio-option">
-              <input type="radio" id="emailStandard" name="emailEdition" value="standard">
-              <label for="emailStandard">Standard ($17.99)</label>
-            </div>
-            <div class="radio-option">
-              <input type="radio" id="emailPremium" name="emailEdition" value="premium" checked>
-              <label for="emailPremium">Premium ($24.99)</label>
+          <div class="form-group">
+            <label>Book Edition *</label>
+            <div class="radio-group">
+              <div class="radio-option">
+                <input
+                  type="radio"
+                  id="emailStandard"
+                  name="emailEdition"
+                  value="standard"
+                />
+                <label for="emailStandard">Standard ($17.99)</label>
+              </div>
+              <div class="radio-option">
+                <input
+                  type="radio"
+                  id="emailPremium"
+                  name="emailEdition"
+                  value="premium"
+                  checked
+                />
+                <label for="emailPremium">Premium ($24.99)</label>
+              </div>
             </div>
           </div>
-        </div>
 
-        <button type="submit" class="btn" id="sendEmailBtn">
-          📧 Send Email with Download Link
-        </button>
-      </form>
+          <button type="submit" class="btn" id="sendEmailBtn">
+            📧 Send Email with Download Link
+          </button>
+        </form>
 
-      <div id="emailResult" class="result"></div>
-    </div>
+        <div id="emailResult" class="result"></div>
+      </div>
 
-    <!-- Generate Manual Link (for DMs, texts, etc.) -->
-    <div class="card">
-      <h2>🔗 Generate Manual Link (for DMs/Texts)</h2>
-      <form id="generateLinkForm">
-        <div class="form-group">
-          <label for="linkEmail">Customer Email *</label>
-          <input type="email" id="linkEmail" name="email" placeholder="customer@example.com" required>
-        </div>
+      <!-- Generate Manual Link (for DMs, texts, etc.) -->
+      <div class="card">
+        <h2>🔗 Generate Manual Link (for DMs/Texts)</h2>
+        <form id="generateLinkForm">
+          <div class="form-group">
+            <label for="linkEmail">Customer Email *</label>
+            <input
+              type="email"
+              id="linkEmail"
+              name="email"
+              placeholder="customer@example.com"
+              required
+            />
+          </div>
 
-        <div class="form-group">
-          <label for="linkName">Customer Name *</label>
-          <input type="text" id="linkName" name="name" placeholder="John Smith" required>
-        </div>
+          <div class="form-group">
+            <label for="linkName">Customer Name *</label>
+            <input
+              type="text"
+              id="linkName"
+              name="name"
+              placeholder="John Smith"
+              required
+            />
+          </div>
 
-        <div class="form-group">
-          <label>Book Edition *</label>
-          <div class="radio-group">
-            <div class="radio-option">
-              <input type="radio" id="linkStandard" name="linkEdition" value="standard">
-              <label for="linkStandard">Standard ($17.99)</label>
-            </div>
-            <div class="radio-option">
-              <input type="radio" id="linkPremium" name="linkEdition" value="premium" checked>
-              <label for="linkPremium">Premium ($24.99)</label>
+          <div class="form-group">
+            <label>Book Edition *</label>
+            <div class="radio-group">
+              <div class="radio-option">
+                <input
+                  type="radio"
+                  id="linkStandard"
+                  name="linkEdition"
+                  value="standard"
+                />
+                <label for="linkStandard">Standard ($17.99)</label>
+              </div>
+              <div class="radio-option">
+                <input
+                  type="radio"
+                  id="linkPremium"
+                  name="linkEdition"
+                  value="premium"
+                  checked
+                />
+                <label for="linkPremium">Premium ($24.99)</label>
+              </div>
             </div>
           </div>
-        </div>
 
-        <button type="submit" class="btn" id="generateLinkBtn" style="background: linear-gradient(135deg, #722139 0%, #4a1426 100%);">
-          🔗 Generate Success Page Link
-        </button>
-      </form>
+          <button
+            type="submit"
+            class="btn"
+            id="generateLinkBtn"
+            style="
+              background: linear-gradient(135deg, #722139 0%, #4a1426 100%);
+            "
+          >
+            🔗 Generate Success Page Link
+          </button>
+        </form>
 
-      <div id="linkResult" class="result"></div>
+        <div id="linkResult" class="result"></div>
+      </div>
     </div>
-  </div>
 
-  <script>
-    // API endpoint - hardcoded for admin use
-    const API_BASE = 'https://kanikarose.com';
+    <script>
+      // API endpoint - hardcoded for admin use
+      const API_BASE = "https://kanikarose.com";
 
-    // Handle EMAIL form submission (SendGrid)
-    document.getElementById('sendEmailForm').addEventListener('submit', async (e) => {
-      e.preventDefault();
+      // Handle EMAIL form submission (SendGrid)
+      document
+        .getElementById("sendEmailForm")
+        .addEventListener("submit", async (e) => {
+          e.preventDefault();
 
-      const email = document.getElementById('emailEmail').value.trim();
-      const name = document.getElementById('emailName').value.trim();
-      const isPremium = document.getElementById('emailPremium').checked;
+          const email = document.getElementById("emailEmail").value.trim();
+          const name = document.getElementById("emailName").value.trim();
+          const isPremium = document.getElementById("emailPremium").checked;
 
-      if (!email || !name) {
-        showResult('emailResult', 'error', 'Please fill in all required fields');
-        return;
-      }
+          if (!email || !name) {
+            showResult(
+              "emailResult",
+              "error",
+              "Please fill in all required fields",
+            );
+            return;
+          }
 
-      showResult('emailResult', 'loading', 'Sending email via SendGrid...');
+          showResult("emailResult", "loading", "Sending email via SendGrid...");
 
-      const btn = document.getElementById('sendEmailBtn');
-      btn.disabled = true;
-      btn.innerHTML = '<span class="spinner"></span>Sending...';
+          const btn = document.getElementById("sendEmailBtn");
+          btn.disabled = true;
+          btn.innerHTML = '<span class="spinner"></span>Sending...';
 
-      try {
-        const response = await fetch(`${API_BASE}/api/test-purchase`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email, name, isPremium })
+          try {
+            const response = await fetch(`${API_BASE}/api/test-purchase`, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ email, name, isPremium }),
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+              showResult(
+                "emailResult",
+                "success",
+                `✅ Success! Email sent to ${data.customerName || email}\n\nDownloads: ${data.downloadCount}/${data.maxDownloads}\nExpires: ${new Date(data.expiresAt).toLocaleDateString()}`,
+                data,
+              );
+              document.getElementById("sendEmailForm").reset();
+              document.getElementById("emailPremium").checked = true;
+            } else {
+              showResult(
+                "emailResult",
+                "error",
+                `❌ Error: ${data.error || "Failed to send"}`,
+                data,
+              );
+            }
+          } catch (error) {
+            showResult("emailResult", "error", `❌ Error: ${error.message}`, {
+              error: error.toString(),
+            });
+          } finally {
+            btn.disabled = false;
+            btn.textContent = "📧 Send Email with Download Link";
+          }
         });
 
-        const data = await response.json();
+      // Handle LINK GENERATION form submission (for DMs)
+      document
+        .getElementById("generateLinkForm")
+        .addEventListener("submit", async (e) => {
+          e.preventDefault();
 
-        if (response.ok) {
-          showResult('emailResult', 'success',
-            `✅ Success! Email sent to ${data.customerName || email}\n\nDownloads: ${data.downloadCount}/${data.maxDownloads}\nExpires: ${new Date(data.expiresAt).toLocaleDateString()}`,
-            data
-          );
-          document.getElementById('sendEmailForm').reset();
-          document.getElementById('emailPremium').checked = true;
-        } else {
-          showResult('emailResult', 'error', `❌ Error: ${data.error || 'Failed to send'}`, data);
-        }
-      } catch (error) {
-        showResult('emailResult', 'error', `❌ Error: ${error.message}`, { error: error.toString() });
-      } finally {
-        btn.disabled = false;
-        btn.textContent = '📧 Send Email with Download Link';
-      }
-    });
+          const email = document.getElementById("linkEmail").value.trim();
+          const name = document.getElementById("linkName").value.trim();
+          const isPremium = document.getElementById("linkPremium").checked;
 
-    // Handle LINK GENERATION form submission (for DMs)
-    document.getElementById('generateLinkForm').addEventListener('submit', async (e) => {
-      e.preventDefault();
+          if (!email || !name) {
+            showResult(
+              "linkResult",
+              "error",
+              "Please fill in all required fields",
+            );
+            return;
+          }
 
-      const email = document.getElementById('linkEmail').value.trim();
-      const name = document.getElementById('linkName').value.trim();
-      const isPremium = document.getElementById('linkPremium').checked;
+          showResult("linkResult", "loading", "Generating link...");
 
-      if (!email || !name) {
-        showResult('linkResult', 'error', 'Please fill in all required fields');
-        return;
-      }
+          const btn = document.getElementById("generateLinkBtn");
+          btn.disabled = true;
+          btn.innerHTML = '<span class="spinner"></span>Generating...';
 
-      showResult('linkResult', 'loading', 'Generating link...');
+          try {
+            // Create purchase record (no email sent)
+            const response = await fetch(`${API_BASE}/api/test-purchase`, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ email, name, isPremium }),
+            });
 
-      const btn = document.getElementById('generateLinkBtn');
-      btn.disabled = true;
-      btn.innerHTML = '<span class="spinner"></span>Generating...';
+            const data = await response.json();
+            console.log("Response data:", data);
 
-      try {
-        // Create purchase record (no email sent)
-        const response = await fetch(`${API_BASE}/api/test-purchase`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email, name, isPremium })
+            if (response.ok && data.success && data.downloadToken) {
+              const amount = isPremium ? "24.99" : "17.99";
+              const successLink = `${API_BASE}/success?payment_id=${data.paypalOrderId}&type=book&amount=${amount}&download_token=${data.downloadToken}`;
+
+              showResult(
+                "linkResult",
+                "success",
+                `✅ Link generated! Copy and send via DM/text:\n\n${successLink}\n\nThis link is valid for 30 days with 5 downloads max.`,
+                null,
+              );
+
+              // Add copy button
+              const resultEl = document.getElementById("linkResult");
+              const copyBtn = document.createElement("button");
+              copyBtn.className = "btn";
+              copyBtn.style.marginTop = "15px";
+              copyBtn.textContent = "📋 Copy Link to Clipboard";
+              copyBtn.onclick = () => {
+                navigator.clipboard.writeText(successLink);
+                copyBtn.textContent = "✅ Copied!";
+                setTimeout(() => {
+                  copyBtn.textContent = "📋 Copy Link to Clipboard";
+                }, 2000);
+              };
+              resultEl.appendChild(copyBtn);
+
+              document.getElementById("generateLinkForm").reset();
+              document.getElementById("linkPremium").checked = true;
+            } else {
+              showResult(
+                "linkResult",
+                "error",
+                `❌ Error: ${data.error || "Failed to generate link"}`,
+                data,
+              );
+            }
+          } catch (error) {
+            showResult("linkResult", "error", `❌ Error: ${error.message}`, {
+              error: error.toString(),
+            });
+          } finally {
+            btn.disabled = false;
+            btn.textContent = "🔗 Generate Success Page Link";
+          }
         });
 
-        const data = await response.json();
-        console.log('Response data:', data);
+      function showResult(elementId, type, message, data = null) {
+        const resultEl = document.getElementById(elementId);
+        resultEl.className = `result ${type}`;
+        resultEl.style.display = "block";
 
-        if (response.ok && data.success && data.downloadToken) {
-          const amount = isPremium ? '24.99' : '17.99';
-          const successLink = `${API_BASE}/success?payment_id=${data.paypalOrderId}&type=book&amount=${amount}&download_token=${data.downloadToken}`;
+        let html = `<div><strong>${message}</strong></div>`;
 
-          showResult('linkResult', 'success',
-            `✅ Link generated! Copy and send via DM/text:\n\n${successLink}\n\nThis link is valid for 30 days with 5 downloads max.`,
-            null
-          );
-
-          // Add copy button
-          const resultEl = document.getElementById('linkResult');
-          const copyBtn = document.createElement('button');
-          copyBtn.className = 'btn';
-          copyBtn.style.marginTop = '15px';
-          copyBtn.textContent = '📋 Copy Link to Clipboard';
-          copyBtn.onclick = () => {
-            navigator.clipboard.writeText(successLink);
-            copyBtn.textContent = '✅ Copied!';
-            setTimeout(() => {
-              copyBtn.textContent = '📋 Copy Link to Clipboard';
-            }, 2000);
-          };
-          resultEl.appendChild(copyBtn);
-
-          document.getElementById('generateLinkForm').reset();
-          document.getElementById('linkPremium').checked = true;
-        } else {
-          showResult('linkResult', 'error', `❌ Error: ${data.error || 'Failed to generate link'}`, data);
+        if (data) {
+          html += `<pre>${JSON.stringify(data, null, 2)}</pre>`;
         }
-      } catch (error) {
-        showResult('linkResult', 'error', `❌ Error: ${error.message}`, { error: error.toString() });
-      } finally {
-        btn.disabled = false;
-        btn.textContent = '🔗 Generate Success Page Link';
+
+        resultEl.innerHTML = html;
+
+        // Auto-hide success messages after 8 seconds
+        if (type === "success") {
+          setTimeout(() => {
+            resultEl.style.display = "none";
+          }, 8000);
+        }
       }
-    });
-
-    function showResult(elementId, type, message, data = null) {
-      const resultEl = document.getElementById(elementId);
-      resultEl.className = `result ${type}`;
-      resultEl.style.display = 'block';
-
-      let html = `<div><strong>${message}</strong></div>`;
-
-      if (data) {
-        html += `<pre>${JSON.stringify(data, null, 2)}</pre>`;
-      }
-
-      resultEl.innerHTML = html;
-
-      // Auto-hide success messages after 8 seconds
-      if (type === 'success') {
-        setTimeout(() => {
-          resultEl.style.display = 'none';
-        }, 8000);
-      }
-    }
-  </script>
-</body>
+    </script>
+  </body>
 </html>

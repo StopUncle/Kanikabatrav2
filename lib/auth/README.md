@@ -13,6 +13,7 @@ Secure JWT-based authentication system with refresh tokens for the Kanika Batra 
 ## 🚀 API Endpoints
 
 ### POST `/api/auth/register`
+
 Register a new user account.
 
 ```json
@@ -23,6 +24,7 @@ Register a new user account.
 ```
 
 ### POST `/api/auth/login`
+
 Login with existing credentials.
 
 ```json
@@ -33,12 +35,15 @@ Login with existing credentials.
 ```
 
 ### POST `/api/auth/logout`
+
 Logout and clear authentication cookies.
 
 ### POST `/api/auth/refresh`
+
 Refresh access token using refresh token (automatic via cookies).
 
 ### GET `/api/auth/me`
+
 Get current user information (protected route).
 
 ## 🛠 Token Configuration
@@ -50,17 +55,17 @@ Get current user information (protected route).
 
 ```typescript
 // Login
-const response = await fetch('/api/auth/login', {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
+const response = await fetch("/api/auth/login", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
   body: JSON.stringify({
-    email: 'user@example.com',
-    password: 'password123'
-  })
-})
+    email: "user@example.com",
+    password: "password123",
+  }),
+});
 
 // Protected API call
-const userResponse = await fetch('/api/auth/me')
+const userResponse = await fetch("/api/auth/me");
 ```
 
 ## 🛡️ Security Features

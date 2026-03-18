@@ -1,6 +1,6 @@
-import LoginForm from '@/components/LoginForm'
-import BackgroundEffects from '@/components/BackgroundEffects'
-import Header from '@/components/Header'
+import LoginForm from "@/components/LoginForm";
+import BackgroundEffects from "@/components/BackgroundEffects";
+import Header from "@/components/Header";
 
 export default function LoginPage() {
   return (
@@ -13,14 +13,14 @@ export default function LoginPage() {
         </div>
       </div>
     </>
-  )
+  );
 }
 
 export const metadata = {
-  title: 'Login - Kanika Batra',
-  description: 'Sign in to your account',
+  title: "Login - Kanika Batra",
+  description: "Sign in to your account",
   robots: {
     index: false,
     follow: false,
   },
-}
+};

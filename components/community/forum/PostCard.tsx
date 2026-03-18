@@ -1,34 +1,36 @@
-'use client'
+"use client";
 
-import Image from 'next/image'
-import Link from 'next/link'
-import { Heart, MessageCircle, Eye, Pin } from 'lucide-react'
-import { formatDistanceToNow } from 'date-fns'
+import Image from "next/image";
+import Link from "next/link";
+import { Heart, MessageCircle, Eye, Pin } from "lucide-react";
+import { formatDistanceToNow } from "date-fns";
 
 interface PostCardProps {
   post: {
-    id: string
-    title: string
-    slug: string
-    content: string
-    isPinned: boolean
-    viewCount: number
-    likeCount: number
-    replyCount: number
-    createdAt: string
+    id: string;
+    title: string;
+    slug: string;
+    content: string;
+    isPinned: boolean;
+    viewCount: number;
+    likeCount: number;
+    replyCount: number;
+    createdAt: string;
     author: {
-      id: string
-      name: string | null
-      displayName: string | null
-      avatarUrl: string | null
-    }
-  }
-  categorySlug: string
+      id: string;
+      name: string | null;
+      displayName: string | null;
+      avatarUrl: string | null;
+    };
+  };
+  categorySlug: string;
 }
 
 export default function PostCard({ post, categorySlug }: PostCardProps) {
-  const authorName = post.author.displayName || post.author.name || 'Anonymous'
-  const timeAgo = formatDistanceToNow(new Date(post.createdAt), { addSuffix: true })
+  const authorName = post.author.displayName || post.author.name || "Anonymous";
+  const timeAgo = formatDistanceToNow(new Date(post.createdAt), {
+    addSuffix: true,
+  });
 
   return (
     <Link
@@ -60,9 +62,7 @@ export default function PostCard({ post, categorySlug }: PostCardProps) {
             {post.isPinned && (
               <Pin className="w-4 h-4 text-accent-gold flex-shrink-0" />
             )}
-            <h3 className="font-medium text-white truncate">
-              {post.title}
-            </h3>
+            <h3 className="font-medium text-white truncate">{post.title}</h3>
           </div>
 
           <p className="text-sm text-gray-400 mt-1 line-clamp-2">
@@ -88,5 +88,5 @@ export default function PostCard({ post, categorySlug }: PostCardProps) {
         </div>
       </div>
     </Link>
-  )
+  );
 }

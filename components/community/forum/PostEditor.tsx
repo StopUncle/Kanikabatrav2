@@ -1,45 +1,45 @@
-'use client'
+"use client";
 
-import { useState } from 'react'
+import { useState } from "react";
 
 interface PostEditorProps {
-  onSubmit: (content: string, title?: string) => Promise<void>
-  onCancel?: () => void
-  placeholder?: string
-  submitLabel?: string
-  showTitle?: boolean
-  initialTitle?: string
-  initialContent?: string
+  onSubmit: (content: string, title?: string) => Promise<void>;
+  onCancel?: () => void;
+  placeholder?: string;
+  submitLabel?: string;
+  showTitle?: boolean;
+  initialTitle?: string;
+  initialContent?: string;
 }
 
 export default function PostEditor({
   onSubmit,
   onCancel,
-  placeholder = 'Write your content...',
-  submitLabel = 'Submit',
+  placeholder = "Write your content...",
+  submitLabel = "Submit",
   showTitle = false,
-  initialTitle = '',
-  initialContent = ''
+  initialTitle = "",
+  initialContent = "",
 }: PostEditorProps) {
-  const [title, setTitle] = useState(initialTitle)
-  const [content, setContent] = useState(initialContent)
-  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [title, setTitle] = useState(initialTitle);
+  const [content, setContent] = useState(initialContent);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault()
+    e.preventDefault();
 
-    if (!content.trim()) return
-    if (showTitle && !title.trim()) return
+    if (!content.trim()) return;
+    if (showTitle && !title.trim()) return;
 
-    setIsSubmitting(true)
+    setIsSubmitting(true);
     try {
-      await onSubmit(content.trim(), showTitle ? title.trim() : undefined)
-      setTitle('')
-      setContent('')
+      await onSubmit(content.trim(), showTitle ? title.trim() : undefined);
+      setTitle("");
+      setContent("");
     } catch (error) {
-      console.error('Submit error:', error)
+      console.error("Submit error:", error);
     } finally {
-      setIsSubmitting(false)
+      setIsSubmitting(false);
     }
   }
 
@@ -80,12 +80,14 @@ export default function PostEditor({
         )}
         <button
           type="submit"
-          disabled={isSubmitting || !content.trim() || (showTitle && !title.trim())}
+          disabled={
+            isSubmitting || !content.trim() || (showTitle && !title.trim())
+          }
           className="px-6 py-2 bg-accent-gold text-deep-black rounded-lg font-medium hover:bg-accent-gold/90 disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          {isSubmitting ? 'Submitting...' : submitLabel}
+          {isSubmitting ? "Submitting..." : submitLabel}
         </button>
       </div>
     </form>
-  )
+  );
 }

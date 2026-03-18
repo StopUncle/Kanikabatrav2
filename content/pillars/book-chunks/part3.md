@@ -82,6 +82,7 @@ The Doctrine of Cold: Your New Operating System
 This is the foundation upon which everything else is built. The Doctrine of Cold is not about being cruel or heartless. It is about being strategic, calculated, and emotionally self-sufficient.
 
 The Four Pillars of Cold:
+
 1. Emotional Independence: You do not need anyone to complete you, validate you, or make you happy. You are whole unto yourself. Relationships are enhancements to your life, not requirements for your existence.
 
 2. Strategic Thinking: Every interaction is evaluated for its potential return on investment. You do not give your time, energy, or attention away for free. Everything has a price, and you know your worth.
@@ -97,5 +98,3 @@ You are no longer the good girl who gives everything and receives nothing. You a
 You are the predator now. And predators do not beg for scraps. They hunt for what they want, and they take it.
 
 Welcome to the Doctrine of Cold. Your education begins now.
-
- 

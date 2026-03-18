@@ -1,18 +1,26 @@
-'use client'
+"use client";
 
-import { useState } from 'react'
-import { Settings, User, Shield, Bell, Trash2, LogOut, ChevronRight } from 'lucide-react'
-import DashboardCard from './DashboardCard'
-import SettingsModal from './SettingsModal'
+import { useState } from "react";
+import {
+  Settings,
+  User,
+  Shield,
+  Bell,
+  Trash2,
+  LogOut,
+  ChevronRight,
+} from "lucide-react";
+import DashboardCard from "./DashboardCard";
+import SettingsModal from "./SettingsModal";
 
 interface AccountSectionProps {
-  email: string
-  userId: string
-  name: string | null
-  memberSince: Date
-  onProfileUpdate: (name: string | null) => void
-  onPasswordChange: () => void
-  onSuccess: (message: string) => void
+  email: string;
+  userId: string;
+  name: string | null;
+  memberSince: Date;
+  onProfileUpdate: (name: string | null) => void;
+  onPasswordChange: () => void;
+  onSuccess: (message: string) => void;
 }
 
 export default function AccountSection({
@@ -24,34 +32,38 @@ export default function AccountSection({
   onPasswordChange,
   onSuccess,
 }: AccountSectionProps) {
-  const [showSettingsModal, setShowSettingsModal] = useState(false)
-  const [activeSettingsTab, setActiveSettingsTab] = useState<'profile' | 'security' | 'preferences' | 'danger'>('profile')
+  const [showSettingsModal, setShowSettingsModal] = useState(false);
+  const [activeSettingsTab, setActiveSettingsTab] = useState<
+    "profile" | "security" | "preferences" | "danger"
+  >("profile");
 
-  const openSettings = (tab: 'profile' | 'security' | 'preferences' | 'danger') => {
-    setActiveSettingsTab(tab)
-    setShowSettingsModal(true)
-  }
+  const openSettings = (
+    tab: "profile" | "security" | "preferences" | "danger",
+  ) => {
+    setActiveSettingsTab(tab);
+    setShowSettingsModal(true);
+  };
 
   const menuItems = [
     {
       icon: User,
-      label: 'Profile',
-      description: 'Name, display picture',
-      tab: 'profile' as const,
+      label: "Profile",
+      description: "Name, display picture",
+      tab: "profile" as const,
     },
     {
       icon: Shield,
-      label: 'Security',
-      description: 'Password, sessions',
-      tab: 'security' as const,
+      label: "Security",
+      description: "Password, sessions",
+      tab: "security" as const,
     },
     {
       icon: Bell,
-      label: 'Notifications',
-      description: 'Email preferences',
-      tab: 'preferences' as const,
+      label: "Notifications",
+      description: "Email preferences",
+      tab: "preferences" as const,
     },
-  ]
+  ];
 
   return (
     <>
@@ -69,7 +81,9 @@ export default function AccountSection({
               </span>
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-white font-medium truncate">{name || 'Set your name'}</p>
+              <p className="text-white font-medium truncate">
+                {name || "Set your name"}
+              </p>
               <p className="text-gray-400 text-sm truncate">{email}</p>
             </div>
           </div>
@@ -98,26 +112,34 @@ export default function AccountSection({
           <div className="pt-4 border-t border-gray-800 space-y-2">
             <div className="flex justify-between text-sm">
               <span className="text-gray-500">Member since</span>
-              <span className="text-gray-300">{memberSince.toLocaleDateString()}</span>
+              <span className="text-gray-300">
+                {memberSince.toLocaleDateString()}
+              </span>
             </div>
             <div className="flex justify-between text-sm">
               <span className="text-gray-500">User ID</span>
-              <span className="text-gray-400 font-mono text-xs truncate max-w-[120px]">{userId.slice(0, 8)}...</span>
+              <span className="text-gray-400 font-mono text-xs truncate max-w-[120px]">
+                {userId.slice(0, 8)}...
+              </span>
             </div>
           </div>
 
           {/* Danger Zone & Logout */}
           <div className="pt-4 border-t border-gray-800 space-y-2">
             <button
-              onClick={() => openSettings('danger')}
+              onClick={() => openSettings("danger")}
               className="w-full flex items-center gap-3 p-3 rounded-lg hover:bg-red-900/20 transition-colors group"
             >
               <div className="w-9 h-9 rounded-full bg-red-900/30 flex items-center justify-center">
                 <Trash2 className="w-4 h-4 text-red-400" />
               </div>
               <div className="flex-1 text-left">
-                <p className="text-red-400 text-sm font-medium">Delete Account</p>
-                <p className="text-gray-600 text-xs">Permanently delete your data</p>
+                <p className="text-red-400 text-sm font-medium">
+                  Delete Account
+                </p>
+                <p className="text-gray-600 text-xs">
+                  Permanently delete your data
+                </p>
               </div>
             </button>
 
@@ -131,7 +153,9 @@ export default function AccountSection({
                 </div>
                 <div className="flex-1 text-left">
                   <p className="text-gray-300 text-sm font-medium">Sign Out</p>
-                  <p className="text-gray-600 text-xs">Log out of your account</p>
+                  <p className="text-gray-600 text-xs">
+                    Log out of your account
+                  </p>
                 </div>
               </button>
             </form>
@@ -152,5 +176,5 @@ export default function AccountSection({
         onSuccess={onSuccess}
       />
     </>
-  )
+  );
 }

@@ -1,47 +1,53 @@
-'use client'
+"use client";
 
-import { useState } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
-import { useRouter } from 'next/navigation'
-import BackgroundEffects from '@/components/BackgroundEffects'
-import Header from '@/components/Header'
-import PayPalButton from '@/components/PayPalButton'
-import { COACHING_PACKAGES, COACHING_BUNDLE_BENEFITS } from '@/lib/constants'
-import { Check, ArrowRight, Users, Clock, Star, Zap } from 'lucide-react'
+import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { useRouter } from "next/navigation";
+import BackgroundEffects from "@/components/BackgroundEffects";
+import Header from "@/components/Header";
+import PayPalButton from "@/components/PayPalButton";
+import { COACHING_PACKAGES, COACHING_BUNDLE_BENEFITS } from "@/lib/constants";
+import { Check, ArrowRight, Users, Clock, Star, Zap } from "lucide-react";
 
 export default function CoachingPage() {
-  const [selectedPackages, setSelectedPackages] = useState<{[key: string]: 'single' | 'bundle'}>({})
-  const [expandedPackage, setExpandedPackage] = useState<string | null>(null)
-  const router = useRouter()
+  const [selectedPackages, setSelectedPackages] = useState<{
+    [key: string]: "single" | "bundle";
+  }>({});
+  const [expandedPackage, setExpandedPackage] = useState<string | null>(null);
+  const router = useRouter();
 
-  const handlePaymentSuccess = (details: { id: string; amount?: string }, packageName: string, isBundle: boolean) => {
+  const handlePaymentSuccess = (
+    details: { id: string; amount?: string },
+    packageName: string,
+    isBundle: boolean,
+  ) => {
     const params = new URLSearchParams({
       payment_id: details.id,
       order_id: details.id,
-      type: 'coaching',
-      amount: details.amount || '0',
-      package_name: packageName + (isBundle ? ' - Bundle' : ''),
-      bundle: isBundle.toString()
-    })
+      type: "coaching",
+      amount: details.amount || "0",
+      package_name: packageName + (isBundle ? " - Bundle" : ""),
+      bundle: isBundle.toString(),
+    });
 
-    router.push(`/success?${params.toString()}`)
-  }
+    router.push(`/success?${params.toString()}`);
+  };
 
   const handlePaymentError = (error: string) => {
-    console.error('Payment error:', error)
-    alert('Payment failed. Please try again or contact support.')
-  }
+    console.error("Payment error:", error);
+    alert("Payment failed. Please try again or contact support.");
+  };
 
   const togglePackage = (packageId: string) => {
-    setExpandedPackage(expandedPackage === packageId ? null : packageId)
-  }
+    setExpandedPackage(expandedPackage === packageId ? null : packageId);
+  };
 
-  const selectPackageType = (packageId: string, type: 'single' | 'bundle') => {
-    setSelectedPackages(prev => ({
+  const selectPackageType = (packageId: string, type: "single" | "bundle") => {
+    setSelectedPackages((prev) => ({
       ...prev,
-      [packageId]: type
-    }))
-  }
+      [packageId]: type,
+    }));
+  };
 
   return (
     <>
@@ -57,11 +63,14 @@ export default function CoachingPage() {
             className="text-center mb-8 sm:mb-12 lg:mb-16"
           >
             <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-light mb-4 sm:mb-6">
-              <span className="gradient-text">Operate Regardless of Feelings</span>
+              <span className="gradient-text">
+                Operate Regardless of Feelings
+              </span>
             </h1>
             <p className="text-text-gray text-lg md:text-xl max-w-3xl mx-auto mb-8">
-              There&apos;s a headspace where fear doesn&apos;t vote, decisions come fast, and the voice
-              that wants you to quit goes silent. I live there. I can show you the door.
+              There&apos;s a headspace where fear doesn&apos;t vote, decisions
+              come fast, and the voice that wants you to quit goes silent. I
+              live there. I can show you the door.
             </p>
             <div className="flex flex-wrap justify-center gap-4 text-sm text-accent-gold">
               <div className="flex items-center gap-2">
@@ -77,7 +86,6 @@ export default function CoachingPage() {
                 <span>Access the state on demand</span>
               </div>
             </div>
-
           </motion.div>
 
           {/* Bundle Benefits */}
@@ -88,8 +96,12 @@ export default function CoachingPage() {
             className="bg-gradient-to-r from-accent-burgundy/20 to-accent-sapphire/20 rounded-2xl p-6 mb-12 border border-accent-gold/20"
           >
             <div className="text-center mb-6">
-              <h2 className="text-2xl font-light gradient-text-gold mb-2">Bundle Advantages</h2>
-              <p className="text-text-muted">Get more transformation for less investment</p>
+              <h2 className="text-2xl font-light gradient-text-gold mb-2">
+                Bundle Advantages
+              </h2>
+              <p className="text-text-muted">
+                Get more transformation for less investment
+              </p>
             </div>
             <div className="grid sm:grid-cols-2 lg:grid-cols-5 gap-4">
               {COACHING_BUNDLE_BENEFITS.map((benefit, index) => (
@@ -110,11 +122,15 @@ export default function CoachingPage() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: index * 0.1 }}
-                className={`relative overflow-hidden ${pkg.popular ? 'lg:scale-[1.02]' : ''}`}
+                className={`relative overflow-hidden ${pkg.popular ? "lg:scale-[1.02]" : ""}`}
               >
-                <div className={`bg-deep-black/40 backdrop-blur-sm border rounded-2xl p-6 sm:p-8 relative ${
-                  pkg.popular ? 'border-accent-gold shadow-2xl shadow-accent-gold/10' : 'border-accent-gold/20'
-                }`}>
+                <div
+                  className={`bg-deep-black/40 backdrop-blur-sm border rounded-2xl p-6 sm:p-8 relative ${
+                    pkg.popular
+                      ? "border-accent-gold shadow-2xl shadow-accent-gold/10"
+                      : "border-accent-gold/20"
+                  }`}
+                >
                   {pkg.popular && (
                     <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 z-10">
                       <span className="bg-gradient-to-r from-accent-gold to-accent-gold/80 text-deep-black px-6 py-2 rounded-full text-sm font-bold tracking-wide flex items-center gap-2">
@@ -137,8 +153,12 @@ export default function CoachingPage() {
                         onClick={() => togglePackage(pkg.id)}
                         className="flex items-center gap-2 text-accent-gold hover:text-accent-gold/80 transition-colors text-sm font-medium"
                       >
-                        {expandedPackage === pkg.id ? 'Show Less' : 'Learn More'}
-                        <ArrowRight className={`w-4 h-4 transition-transform ${expandedPackage === pkg.id ? 'rotate-90' : ''}`} />
+                        {expandedPackage === pkg.id
+                          ? "Show Less"
+                          : "Learn More"}
+                        <ArrowRight
+                          className={`w-4 h-4 transition-transform ${expandedPackage === pkg.id ? "rotate-90" : ""}`}
+                        />
                       </button>
                     </div>
 
@@ -148,16 +168,20 @@ export default function CoachingPage() {
                         {/* Single Session */}
                         <div
                           className={`p-6 rounded-xl border-2 cursor-pointer transition-all ${
-                            selectedPackages[pkg.id] === 'single'
-                              ? 'border-accent-gold bg-accent-gold/5'
-                              : 'border-accent-gold/30 hover:border-accent-gold/50'
+                            selectedPackages[pkg.id] === "single"
+                              ? "border-accent-gold bg-accent-gold/5"
+                              : "border-accent-gold/30 hover:border-accent-gold/50"
                           }`}
-                          onClick={() => selectPackageType(pkg.id, 'single')}
+                          onClick={() => selectPackageType(pkg.id, "single")}
                         >
                           <div className="flex items-center justify-between mb-3">
                             <div>
-                              <h4 className="font-medium text-text-light">Single Session</h4>
-                              <p className="text-text-muted text-sm">{pkg.duration}</p>
+                              <h4 className="font-medium text-text-light">
+                                Single Session
+                              </h4>
+                              <p className="text-text-muted text-sm">
+                                {pkg.duration}
+                              </p>
                             </div>
                             <div className="text-right">
                               <div className="text-2xl font-light gradient-text">
@@ -165,13 +189,15 @@ export default function CoachingPage() {
                               </div>
                             </div>
                           </div>
-                          {selectedPackages[pkg.id] === 'single' && (
+                          {selectedPackages[pkg.id] === "single" && (
                             <PayPalButton
                               type="coaching"
                               itemId={pkg.id}
                               amount={pkg.price}
                               itemName={pkg.name}
-                              onSuccess={(details) => handlePaymentSuccess(details, pkg.name, false)}
+                              onSuccess={(details) =>
+                                handlePaymentSuccess(details, pkg.name, false)
+                              }
                               onError={handlePaymentError}
                               className="mt-4"
                             />
@@ -181,19 +207,23 @@ export default function CoachingPage() {
                         {/* Bundle */}
                         <div
                           className={`p-6 rounded-xl border-2 cursor-pointer transition-all relative ${
-                            selectedPackages[pkg.id] === 'bundle'
-                              ? 'border-accent-gold bg-accent-gold/5'
-                              : 'border-accent-gold/30 hover:border-accent-gold/50'
+                            selectedPackages[pkg.id] === "bundle"
+                              ? "border-accent-gold bg-accent-gold/5"
+                              : "border-accent-gold/30 hover:border-accent-gold/50"
                           }`}
-                          onClick={() => selectPackageType(pkg.id, 'bundle')}
+                          onClick={() => selectPackageType(pkg.id, "bundle")}
                         >
                           <div className="absolute -top-2 -right-2 bg-gradient-to-r from-accent-burgundy to-accent-sapphire text-white px-3 py-1 rounded-full text-xs font-medium">
-                            SAVE ${(pkg.price * 3) - pkg.bundlePrice}
+                            SAVE ${pkg.price * 3 - pkg.bundlePrice}
                           </div>
                           <div className="flex items-center justify-between mb-3">
                             <div>
-                              <h4 className="font-medium text-text-light">Bundle Package</h4>
-                              <p className="text-text-muted text-sm">{pkg.bundleDuration}</p>
+                              <h4 className="font-medium text-text-light">
+                                Bundle Package
+                              </h4>
+                              <p className="text-text-muted text-sm">
+                                {pkg.bundleDuration}
+                              </p>
                             </div>
                             <div className="text-right">
                               <div className="text-2xl font-light gradient-text">
@@ -204,13 +234,15 @@ export default function CoachingPage() {
                               </div>
                             </div>
                           </div>
-                          {selectedPackages[pkg.id] === 'bundle' && (
+                          {selectedPackages[pkg.id] === "bundle" && (
                             <PayPalButton
                               type="coaching"
                               itemId={`${pkg.id}-bundle`}
                               amount={pkg.bundlePrice}
                               itemName={`${pkg.name} - Bundle`}
-                              onSuccess={(details) => handlePaymentSuccess(details, pkg.name, true)}
+                              onSuccess={(details) =>
+                                handlePaymentSuccess(details, pkg.name, true)
+                              }
                               onError={handlePaymentError}
                               className="mt-4"
                             />
@@ -225,14 +257,16 @@ export default function CoachingPage() {
                     {expandedPackage === pkg.id && (
                       <motion.div
                         initial={{ opacity: 0, height: 0 }}
-                        animate={{ opacity: 1, height: 'auto' }}
+                        animate={{ opacity: 1, height: "auto" }}
                         exit={{ opacity: 0, height: 0 }}
                         transition={{ duration: 0.3 }}
                         className="border-t border-accent-gold/20 pt-8"
                       >
                         {/* Long Description */}
                         <div className="mb-8">
-                          <h4 className="text-xl font-light text-accent-gold mb-4">What You&apos;ll Learn</h4>
+                          <h4 className="text-xl font-light text-accent-gold mb-4">
+                            What You&apos;ll Learn
+                          </h4>
                           <p className="text-text-gray leading-relaxed">
                             {pkg.longDescription}
                           </p>
@@ -247,9 +281,17 @@ export default function CoachingPage() {
                             </h4>
                             <ul className="space-y-3">
                               {pkg.features.map((feature, idx) => (
-                                <li key={idx} className="flex items-start gap-3">
-                                  <Check className="text-accent-gold mt-0.5 flex-shrink-0" size={18} />
-                                  <span className="text-text-light text-sm">{feature}</span>
+                                <li
+                                  key={idx}
+                                  className="flex items-start gap-3"
+                                >
+                                  <Check
+                                    className="text-accent-gold mt-0.5 flex-shrink-0"
+                                    size={18}
+                                  />
+                                  <span className="text-text-light text-sm">
+                                    {feature}
+                                  </span>
                                 </li>
                               ))}
                             </ul>
@@ -263,9 +305,17 @@ export default function CoachingPage() {
                             </h4>
                             <ul className="space-y-3">
                               {pkg.bundleFeatures.map((feature, idx) => (
-                                <li key={idx} className="flex items-start gap-3">
-                                  <Check className="text-accent-gold mt-0.5 flex-shrink-0" size={18} />
-                                  <span className="text-text-light text-sm">{feature}</span>
+                                <li
+                                  key={idx}
+                                  className="flex items-start gap-3"
+                                >
+                                  <Check
+                                    className="text-accent-gold mt-0.5 flex-shrink-0"
+                                    size={18}
+                                  />
+                                  <span className="text-text-light text-sm">
+                                    {feature}
+                                  </span>
                                 </li>
                               ))}
                             </ul>
@@ -293,20 +343,23 @@ export default function CoachingPage() {
             <div className="grid md:grid-cols-3 gap-8">
               {[
                 {
-                  step: '01',
-                  title: 'Identify Your Blocks',
-                  description: 'Deep analysis of what\'s creating hesitation, emotional hijacking, and friction in your psychology. We find the patterns that are holding you back.'
+                  step: "01",
+                  title: "Identify Your Blocks",
+                  description:
+                    "Deep analysis of what's creating hesitation, emotional hijacking, and friction in your psychology. We find the patterns that are holding you back.",
                 },
                 {
-                  step: '02',
-                  title: 'Design Your Protocols',
-                  description: 'Custom strategies based on your specific triggers, goals, and operating environment. Each protocol is tailored to how your mind actually works.'
+                  step: "02",
+                  title: "Design Your Protocols",
+                  description:
+                    "Custom strategies based on your specific triggers, goals, and operating environment. Each protocol is tailored to how your mind actually works.",
                 },
                 {
-                  step: '03',
-                  title: 'Lock It In',
-                  description: 'Practice, reinforcement, and direct access to ensure the new patterns stick. Bundle clients get ongoing support when it matters most.'
-                }
+                  step: "03",
+                  title: "Lock It In",
+                  description:
+                    "Practice, reinforcement, and direct access to ensure the new patterns stick. Bundle clients get ongoing support when it matters most.",
+                },
               ].map((item, index) => (
                 <motion.div
                   key={index}
@@ -337,10 +390,13 @@ export default function CoachingPage() {
             className="text-center bg-gradient-to-r from-accent-burgundy/10 to-accent-sapphire/10 rounded-2xl p-8 border border-accent-gold/20"
           >
             <h2 className="text-2xl sm:text-3xl font-light mb-4">
-              <span className="gradient-text">Ready to stop negotiating with yourself?</span>
+              <span className="gradient-text">
+                Ready to stop negotiating with yourself?
+              </span>
             </h2>
             <p className="text-text-muted mb-6 max-w-2xl mx-auto">
-              Select your path above, or contact us for a recommendation based on your specific goals.
+              Select your path above, or contact us for a recommendation based
+              on your specific goals.
             </p>
             <a
               href="/contact"
@@ -353,5 +409,5 @@ export default function CoachingPage() {
         </div>
       </div>
     </>
-  )
+  );
 }

@@ -5,6 +5,7 @@ This directory contains architectural blueprints and design patterns for the pro
 ## 📋 Purpose
 
 The `.blueprint` directory is part of the Blueprint Architect system that helps maintain:
+
 - Consistent code patterns
 - Architectural decisions
 - Development guidelines
@@ -21,6 +22,7 @@ The `.blueprint` directory is part of the Blueprint Architect system that helps 
 ## 🎯 Usage
 
 Blueprint files are used to:
+
 - Define component templates
 - Store architectural patterns
 - Maintain coding standards
@@ -29,6 +31,7 @@ Blueprint files are used to:
 ## 🔧 Integration
 
 This system integrates with:
+
 - Neural AST Engine for code generation
 - Development workflow automation
 - Code quality enforcement

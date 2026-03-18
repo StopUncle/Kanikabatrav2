@@ -1,35 +1,35 @@
-'use client'
+"use client";
 
-import { useState, useRef, KeyboardEvent } from 'react'
-import { Send } from 'lucide-react'
+import { useState, useRef, KeyboardEvent } from "react";
+import { Send } from "lucide-react";
 
 interface ChatInputProps {
-  onSend: (content: string) => void
+  onSend: (content: string) => void;
 }
 
 export default function ChatInput({ onSend }: ChatInputProps) {
-  const [message, setMessage] = useState('')
-  const [isSending, setIsSending] = useState(false)
-  const inputRef = useRef<HTMLTextAreaElement>(null)
+  const [message, setMessage] = useState("");
+  const [isSending, setIsSending] = useState(false);
+  const inputRef = useRef<HTMLTextAreaElement>(null);
 
   async function handleSend() {
-    const trimmed = message.trim()
-    if (!trimmed || isSending) return
+    const trimmed = message.trim();
+    if (!trimmed || isSending) return;
 
-    setIsSending(true)
+    setIsSending(true);
     try {
-      await onSend(trimmed)
-      setMessage('')
-      inputRef.current?.focus()
+      await onSend(trimmed);
+      setMessage("");
+      inputRef.current?.focus();
     } finally {
-      setIsSending(false)
+      setIsSending(false);
     }
   }
 
   function handleKeyDown(e: KeyboardEvent<HTMLTextAreaElement>) {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault()
-      handleSend()
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      handleSend();
     }
   }
 
@@ -45,8 +45,8 @@ export default function ChatInput({ onSend }: ChatInputProps) {
           rows={1}
           className="flex-1 bg-deep-black border border-gray-700 rounded-lg px-4 py-2 text-white placeholder-gray-500 resize-none focus:border-accent-gold focus:outline-none min-h-[40px] max-h-[120px]"
           style={{
-            height: 'auto',
-            overflow: message.includes('\n') ? 'auto' : 'hidden'
+            height: "auto",
+            overflow: message.includes("\n") ? "auto" : "hidden",
           }}
         />
         <button
@@ -61,5 +61,5 @@ export default function ChatInput({ onSend }: ChatInputProps) {
         Press Enter to send, Shift+Enter for new line
       </p>
     </div>
-  )
+  );
 }

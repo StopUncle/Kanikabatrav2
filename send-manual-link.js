@@ -7,28 +7,30 @@
  * Usage: node send-manual-link.js <email> <name> [premium]
  */
 
-require('dotenv').config({ path: '.env' })
-require('dotenv').config({ path: '.env.local' })
-const nodemailer = require('nodemailer')
-const crypto = require('crypto')
+require("dotenv").config({ path: ".env" });
+require("dotenv").config({ path: ".env.local" });
+const nodemailer = require("nodemailer");
+const crypto = require("crypto");
 
 async function sendManualLink(email, name, isPremium) {
   try {
     // Generate token
-    const token = crypto.randomBytes(32).toString('hex')
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://kanikabatra.com'
-    const pdfUrl = `${baseUrl}/api/download?token=${token}&format=pdf`
-    const epubUrl = `${baseUrl}/api/download?token=${token}&format=epub`
+    const token = crypto.randomBytes(32).toString("hex");
+    const baseUrl =
+      process.env.NEXT_PUBLIC_BASE_URL || "https://kanikabatra.com";
+    const pdfUrl = `${baseUrl}/api/download?token=${token}&format=pdf`;
+    const epubUrl = `${baseUrl}/api/download?token=${token}&format=epub`;
 
-    const expiryDate = new Date()
-    expiryDate.setDate(expiryDate.getDate() + 30)
-    const formattedExpiry = expiryDate.toLocaleDateString('en-US', {
-      month: 'long',
-      day: 'numeric',
-      year: 'numeric'
-    })
+    const expiryDate = new Date();
+    expiryDate.setDate(expiryDate.getDate() + 30);
+    const formattedExpiry = expiryDate.toLocaleDateString("en-US", {
+      month: "long",
+      day: "numeric",
+      year: "numeric",
+    });
 
-    const premiumBonuses = isPremium ? `
+    const premiumBonuses = isPremium
+      ? `
       <table width="100%" cellspacing="0" cellpadding="0" style="background: linear-gradient(135deg, #1a0d11 0%, #2a1a1f 100%); border-radius: 10px; margin: 0 0 25px 0; border: 2px solid #d4af37; padding: 25px;">
         <tr>
           <td>
@@ -44,7 +46,8 @@ async function sendManualLink(email, name, isPremium) {
           </td>
         </tr>
       </table>
-    ` : ''
+    `
+      : "";
 
     const html = `
       <!DOCTYPE html>
@@ -80,7 +83,7 @@ async function sendManualLink(email, name, isPremium) {
 
                     <div style="background: linear-gradient(135deg, #1a0d11 0%, #0f0a0f 100%); padding: 25px; border-radius: 10px; margin: 0 0 30px 0; border: 1px solid #d4af37;">
                       <h2 style="color: #d4af37; margin: 0 0 15px 0; font-size: 20px; font-weight: 600;">
-                        Sociopathic Dating Bible: A Cure For Empathy${isPremium ? ' (Premium Edition)' : ''}
+                        Sociopathic Dating Bible: A Cure For Empathy${isPremium ? " (Premium Edition)" : ""}
                       </h2>
                       <p style="color: #94a3b8; margin: 0; font-size: 14px;">
                         70,000 words of strategic dating psychology from a diagnosed sociopath
@@ -155,61 +158,69 @@ async function sendManualLink(email, name, isPremium) {
         </table>
       </body>
       </html>
-    `
+    `;
 
-    console.log('\n📧 Sending manual download link...')
-    console.log('   To:', email)
-    console.log('   Name:', name)
-    console.log('   Type:', isPremium ? 'Premium Edition' : 'Standard Edition')
+    console.log("\n📧 Sending manual download link...");
+    console.log("   To:", email);
+    console.log("   Name:", name);
+    console.log("   Type:", isPremium ? "Premium Edition" : "Standard Edition");
 
     const transporter = nodemailer.createTransport({
       host: process.env.SMTP_HOST,
-      port: parseInt(process.env.SMTP_PORT || '587'),
-      secure: parseInt(process.env.SMTP_PORT || '587') === 465,
+      port: parseInt(process.env.SMTP_PORT || "587"),
+      secure: parseInt(process.env.SMTP_PORT || "587") === 465,
       auth: {
         user: process.env.SMTP_USER,
         pass: process.env.SMTP_PASS,
       },
-    })
+    });
 
     await transporter.sendMail({
       from: `"Kanika Batra" <${process.env.SMTP_USER}>`,
       to: email,
-      subject: `Download Your Book - Sociopathic Dating Bible${isPremium ? ' (Premium Edition)' : ''}`,
+      subject: `Download Your Book - Sociopathic Dating Bible${isPremium ? " (Premium Edition)" : ""}`,
       html: html,
-    })
+    });
 
-    console.log('\n✅ SUCCESS! Email sent')
-    console.log('\n📊 Download Links:')
-    console.log('   PDF:', pdfUrl)
-    console.log('   EPUB:', epubUrl)
-    console.log('   Expires:', formattedExpiry)
-    console.log('\n⚠️  Note: This token is NOT in the database, so download tracking will not work.')
-    console.log('    The links will work but downloads won\'t be counted.\n')
-
+    console.log("\n✅ SUCCESS! Email sent");
+    console.log("\n📊 Download Links:");
+    console.log("   PDF:", pdfUrl);
+    console.log("   EPUB:", epubUrl);
+    console.log("   Expires:", formattedExpiry);
+    console.log(
+      "\n⚠️  Note: This token is NOT in the database, so download tracking will not work.",
+    );
+    console.log("    The links will work but downloads won't be counted.\n");
   } catch (error) {
-    console.error('\n❌ Error:', error.message)
-    if (error.message.includes('SMTP') || error.message.includes('ECONNREFUSED')) {
-      console.log('\n💡 SMTP not configured. Edit .env.local:')
-      console.log('   SMTP_HOST=smtp.gmail.com')
-      console.log('   SMTP_PORT=587')
-      console.log('   SMTP_USER=your_email@gmail.com')
-      console.log('   SMTP_PASS=your_app_password\n')
+    console.error("\n❌ Error:", error.message);
+    if (
+      error.message.includes("SMTP") ||
+      error.message.includes("ECONNREFUSED")
+    ) {
+      console.log("\n💡 SMTP not configured. Edit .env.local:");
+      console.log("   SMTP_HOST=smtp.gmail.com");
+      console.log("   SMTP_PORT=587");
+      console.log("   SMTP_USER=your_email@gmail.com");
+      console.log("   SMTP_PASS=your_app_password\n");
     }
   }
 }
 
-const email = process.argv[2]
-const name = process.argv[3]
-const isPremium = process.argv[4] === 'premium'
+const email = process.argv[2];
+const name = process.argv[3];
+const isPremium = process.argv[4] === "premium";
 
 if (!email || !name) {
-  console.log('\n📖 Usage: node send-manual-link.js <email> <name> [premium]')
-  console.log('\nExamples:')
-  console.log('   node send-manual-link.js customer@example.com "John Smith"')
-  console.log('   node send-manual-link.js customer@example.com "Jane Doe" premium')
-  console.log('\n⚠️  Warning: This bypasses the database and won\'t track downloads.\n')
-  process.exit(0)
+  console.log("\n📖 Usage: node send-manual-link.js <email> <name> [premium]");
+  console.log("\nExamples:");
+  console.log('   node send-manual-link.js customer@example.com "John Smith"');
+  console.log(
+    '   node send-manual-link.js customer@example.com "Jane Doe" premium',
+  );
+  console.log(
+    "\n⚠️  Warning: This bypasses the database and won't track downloads.\n",
+  );
+  process.exit(0);
 }
 
-sendManualLink(email, name, isPremium)
+sendManualLink(email, name, isPremium);

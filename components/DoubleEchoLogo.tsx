@@ -1,20 +1,23 @@
-'use client'
+"use client";
 
 interface DoubleEchoLogoProps {
-  size?: 'sm' | 'md' | 'lg' | 'xl'
-  animate?: boolean
-  className?: string
+  size?: "sm" | "md" | "lg" | "xl";
+  animate?: boolean;
+  className?: string;
 }
 
-export default function DoubleEchoLogo({ size = 'md', className = '' }: DoubleEchoLogoProps) {
+export default function DoubleEchoLogo({
+  size = "md",
+  className = "",
+}: DoubleEchoLogoProps) {
   const sizeMap = {
-    sm: { width: 28, height: 28, fontSize: '11px' },
-    md: { width: 36, height: 36, fontSize: '14px' },
-    lg: { width: 48, height: 48, fontSize: '18px' },
-    xl: { width: 64, height: 64, fontSize: '24px' },
-  }
+    sm: { width: 28, height: 28, fontSize: "11px" },
+    md: { width: 36, height: 36, fontSize: "14px" },
+    lg: { width: 48, height: 48, fontSize: "18px" },
+    xl: { width: 64, height: 64, fontSize: "24px" },
+  };
 
-  const { width, height, fontSize } = sizeMap[size]
+  const { width, height, fontSize } = sizeMap[size];
 
   return (
     <svg
@@ -47,5 +50,5 @@ export default function DoubleEchoLogo({ size = 'md', className = '' }: DoubleEc
         KB
       </text>
     </svg>
-  )
+  );
 }

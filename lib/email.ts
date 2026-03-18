@@ -1,49 +1,64 @@
-import nodemailer from 'nodemailer'
-import type { Transporter } from 'nodemailer'
+import nodemailer from "nodemailer";
+import type { Transporter } from "nodemailer";
 
 const logger = {
   info: (message: string) => console.log(`[EMAIL INFO] ${message}`),
-  error: (message: string, error?: Error) => console.error(`[EMAIL ERROR] ${message}`, error),
+  error: (message: string, error?: Error) =>
+    console.error(`[EMAIL ERROR] ${message}`, error),
   warn: (message: string) => console.warn(`[EMAIL WARN] ${message}`),
-}
+};
 
 // Primary SMTP Configuration (Gmail or general SMTP)
-const SMTP_HOST = process.env.SMTP_HOST || 'smtp.gmail.com'
-const SMTP_PORT = parseInt(process.env.SMTP_PORT || '587', 10)
-const SMTP_USER = process.env.SMTP_USER
-const SMTP_PASS = process.env.SMTP_PASS
-const FROM_EMAIL = process.env.FROM_EMAIL || 'noreply@kanikarose.com'
+const SMTP_HOST = process.env.SMTP_HOST || "smtp.gmail.com";
+const SMTP_PORT = parseInt(process.env.SMTP_PORT || "587", 10);
+const SMTP_USER = process.env.SMTP_USER;
+const SMTP_PASS = process.env.SMTP_PASS;
+const FROM_EMAIL = process.env.FROM_EMAIL || "noreply@kanikarose.com";
 
 // Microsoft SMTP Configuration (for Hotmail/Outlook/Live recipients)
 // Uses Outlook.com SMTP: smtp-mail.outlook.com or smtp.office365.com for M365
-const MS_SMTP_HOST = process.env.MS_SMTP_HOST || 'smtp-mail.outlook.com'
-const MS_SMTP_PORT = parseInt(process.env.MS_SMTP_PORT || '587', 10)
-const MS_SMTP_USER = process.env.MS_SMTP_USER
-const MS_SMTP_PASS = process.env.MS_SMTP_PASS
-const MS_FROM_EMAIL = process.env.MS_FROM_EMAIL
+const MS_SMTP_HOST = process.env.MS_SMTP_HOST || "smtp-mail.outlook.com";
+const MS_SMTP_PORT = parseInt(process.env.MS_SMTP_PORT || "587", 10);
+const MS_SMTP_USER = process.env.MS_SMTP_USER;
+const MS_SMTP_PASS = process.env.MS_SMTP_PASS;
+const MS_FROM_EMAIL = process.env.MS_FROM_EMAIL;
 
 // Microsoft email domains that should use the Microsoft transport
 const MICROSOFT_DOMAINS = [
-  'hotmail.com', 'hotmail.co.uk', 'hotmail.fr', 'hotmail.de', 'hotmail.it',
-  'outlook.com', 'outlook.co.uk', 'outlook.fr', 'outlook.de',
-  'live.com', 'live.co.uk', 'live.fr', 'live.de',
-  'msn.com', 'passport.com', 'windowslive.com'
-]
+  "hotmail.com",
+  "hotmail.co.uk",
+  "hotmail.fr",
+  "hotmail.de",
+  "hotmail.it",
+  "outlook.com",
+  "outlook.co.uk",
+  "outlook.fr",
+  "outlook.de",
+  "live.com",
+  "live.co.uk",
+  "live.fr",
+  "live.de",
+  "msn.com",
+  "passport.com",
+  "windowslive.com",
+];
 
-let primaryTransporter: Transporter | null = null
-let microsoftTransporter: Transporter | null = null
+let primaryTransporter: Transporter | null = null;
+let microsoftTransporter: Transporter | null = null;
 
 function isMicrosoftEmail(email: string): boolean {
-  const domain = email.split('@')[1]?.toLowerCase()
-  return domain ? MICROSOFT_DOMAINS.includes(domain) : false
+  const domain = email.split("@")[1]?.toLowerCase();
+  return domain ? MICROSOFT_DOMAINS.includes(domain) : false;
 }
 
 function getPrimaryTransporter(): Transporter | null {
-  if (primaryTransporter) return primaryTransporter
+  if (primaryTransporter) return primaryTransporter;
 
   if (!SMTP_USER || !SMTP_PASS) {
-    logger.warn('Primary SMTP credentials not configured - emails will not be sent')
-    return null
+    logger.warn(
+      "Primary SMTP credentials not configured - emails will not be sent",
+    );
+    return null;
   }
 
   primaryTransporter = nodemailer.createTransport({
@@ -55,20 +70,22 @@ function getPrimaryTransporter(): Transporter | null {
       pass: SMTP_PASS,
     },
     tls: {
-      rejectUnauthorized: process.env.NODE_ENV === 'production'
-    }
-  })
+      rejectUnauthorized: process.env.NODE_ENV === "production",
+    },
+  });
 
-  return primaryTransporter
+  return primaryTransporter;
 }
 
 function getMicrosoftTransporter(): Transporter | null {
-  if (microsoftTransporter) return microsoftTransporter
+  if (microsoftTransporter) return microsoftTransporter;
 
   // If no Microsoft credentials, fall back to primary
   if (!MS_SMTP_USER || !MS_SMTP_PASS) {
-    logger.info('Microsoft SMTP not configured - using primary transport for all emails')
-    return null
+    logger.info(
+      "Microsoft SMTP not configured - using primary transport for all emails",
+    );
+    return null;
   }
 
   microsoftTransporter = nodemailer.createTransport({
@@ -80,93 +97,100 @@ function getMicrosoftTransporter(): Transporter | null {
       pass: MS_SMTP_PASS,
     },
     tls: {
-      ciphers: 'SSLv3',
-      rejectUnauthorized: process.env.NODE_ENV === 'production'
-    }
-  })
+      ciphers: "SSLv3",
+      rejectUnauthorized: process.env.NODE_ENV === "production",
+    },
+  });
 
-  logger.info('Microsoft SMTP transport initialized')
-  return microsoftTransporter
+  logger.info("Microsoft SMTP transport initialized");
+  return microsoftTransporter;
 }
 
-function getTransporter(recipientEmail?: string): { transporter: Transporter | null; fromEmail: string } {
+function getTransporter(recipientEmail?: string): {
+  transporter: Transporter | null;
+  fromEmail: string;
+} {
   // Check if recipient is a Microsoft email and we have Microsoft SMTP configured
   if (recipientEmail && isMicrosoftEmail(recipientEmail)) {
-    const msTransport = getMicrosoftTransporter()
+    const msTransport = getMicrosoftTransporter();
     if (msTransport) {
-      logger.info(`Routing to Microsoft SMTP for: ${recipientEmail}`)
+      logger.info(`Routing to Microsoft SMTP for: ${recipientEmail}`);
       return {
         transporter: msTransport,
-        fromEmail: MS_FROM_EMAIL || FROM_EMAIL
-      }
+        fromEmail: MS_FROM_EMAIL || FROM_EMAIL,
+      };
     }
   }
 
   // Use primary transport
   return {
     transporter: getPrimaryTransporter(),
-    fromEmail: FROM_EMAIL
-  }
+    fromEmail: FROM_EMAIL,
+  };
 }
 
 interface EmailOptions {
-  to: string
-  subject: string
-  html: string
-  text?: string
-  replyTo?: string
+  to: string;
+  subject: string;
+  html: string;
+  text?: string;
+  replyTo?: string;
 }
 
 interface ContactFormData {
-  name: string
-  email: string
-  subject: string
-  message: string
+  name: string;
+  email: string;
+  subject: string;
+  message: string;
 }
 
 interface OrderConfirmationData {
-  customerEmail: string
-  customerName: string
-  orderNumber: string
-  purchaseType: 'book' | 'coaching'
-  amount: number
-  itemName: string
+  customerEmail: string;
+  customerName: string;
+  orderNumber: string;
+  purchaseType: "book" | "coaching";
+  amount: number;
+  itemName: string;
   packageDetails?: {
-    sessions?: number
-    duration?: string
-  }
+    sessions?: number;
+    duration?: string;
+  };
 }
 
 export const sendEmail = async (options: EmailOptions): Promise<boolean> => {
   try {
     // Get appropriate transport based on recipient domain
-    const { transporter: transport, fromEmail } = getTransporter(options.to)
+    const { transporter: transport, fromEmail } = getTransporter(options.to);
 
     if (!transport) {
-      logger.warn('Email transport not available')
-      return false
+      logger.warn("Email transport not available");
+      return false;
     }
 
     const mailOptions = {
       from: fromEmail,
       to: options.to,
       subject: options.subject,
-      text: options.text || options.html.replace(/<[^>]*>/g, ''),
+      text: options.text || options.html.replace(/<[^>]*>/g, ""),
       html: options.html,
       replyTo: options.replyTo,
-    }
+    };
 
-    const info = await transport.sendMail(mailOptions)
-    logger.info(`Email sent to ${options.to} via ${isMicrosoftEmail(options.to) ? 'Microsoft' : 'Primary'} SMTP - Message ID: ${info.messageId}`)
-    return true
+    const info = await transport.sendMail(mailOptions);
+    logger.info(
+      `Email sent to ${options.to} via ${isMicrosoftEmail(options.to) ? "Microsoft" : "Primary"} SMTP - Message ID: ${info.messageId}`,
+    );
+    return true;
   } catch (error) {
-    logger.error(`Failed to send email to ${options.to}`, error as Error)
-    return false
+    logger.error(`Failed to send email to ${options.to}`, error as Error);
+    return false;
   }
-}
+};
 
-export const sendContactNotification = async (data: ContactFormData): Promise<boolean> => {
-  const adminEmail = process.env.ADMIN_EMAIL || 'Kanika@kanikarose.com'
+export const sendContactNotification = async (
+  data: ContactFormData,
+): Promise<boolean> => {
+  const adminEmail = process.env.ADMIN_EMAIL || "Kanika@kanikarose.com";
 
   const html = `
     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
@@ -191,14 +215,14 @@ export const sendContactNotification = async (data: ContactFormData): Promise<bo
         </div>
       </div>
     </div>
-  `
+  `;
 
   await sendEmail({
     to: adminEmail,
     subject: `[Contact Form] ${data.subject} - from ${data.name}`,
     html,
     replyTo: data.email,
-  })
+  });
 
   const userHtml = `
     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
@@ -217,7 +241,7 @@ export const sendContactNotification = async (data: ContactFormData): Promise<bo
         </p>
         <div style="background: #0a0a0a; padding: 20px; border-radius: 8px; margin: 20px 0;">
           <p style="color: #666; margin: 5px 0;"><strong>Your Message:</strong></p>
-          <p style="color: #94a3b8; white-space: pre-wrap;">${data.message.substring(0, 500)}${data.message.length > 500 ? '...' : ''}</p>
+          <p style="color: #94a3b8; white-space: pre-wrap;">${data.message.substring(0, 500)}${data.message.length > 500 ? "..." : ""}</p>
         </div>
         <p style="color: #d4af37; font-style: italic; margin-top: 30px;">
           - Kanika Batra<br>
@@ -225,17 +249,19 @@ export const sendContactNotification = async (data: ContactFormData): Promise<bo
         </p>
       </div>
     </div>
-  `
+  `;
 
   return await sendEmail({
     to: data.email,
-    subject: 'Message Received - Kanika Batra',
+    subject: "Message Received - Kanika Batra",
     html: userHtml,
-  })
-}
+  });
+};
 
-export const sendOrderConfirmation = async (data: OrderConfirmationData): Promise<boolean> => {
-  const isBook = data.purchaseType === 'book'
+export const sendOrderConfirmation = async (
+  data: OrderConfirmationData,
+): Promise<boolean> => {
+  const isBook = data.purchaseType === "book";
 
   const html = `
     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
@@ -257,7 +283,9 @@ export const sendOrderConfirmation = async (data: OrderConfirmationData): Promis
           <p style="color: #94a3b8; margin: 10px 0;"><strong>Amount:</strong> $${data.amount.toFixed(2)}</p>
         </div>
 
-        ${isBook ? `
+        ${
+          isBook
+            ? `
           <div style="background: #1a0d11; padding: 20px; border-radius: 8px; margin: 20px 0; border: 1px solid #d4af37;">
             <h3 style="color: #d4af37; margin-top: 0;">📚 Your Book is Ready!</h3>
             <p style="color: #94a3b8; line-height: 1.6;">
@@ -267,7 +295,8 @@ export const sendOrderConfirmation = async (data: OrderConfirmationData): Promis
               The download link will be valid for 30 days. Please save your copy locally.
             </p>
           </div>
-        ` : `
+        `
+            : `
           <div style="background: #1a0d11; padding: 20px; border-radius: 8px; margin: 20px 0; border: 1px solid #d4af37;">
             <h3 style="color: #d4af37; margin-top: 0;">🎯 Next Steps</h3>
             <p style="color: #94a3b8; line-height: 1.6;">
@@ -277,7 +306,8 @@ export const sendOrderConfirmation = async (data: OrderConfirmationData): Promis
               Please complete the pre-session questionnaire to make the most of our time together.
             </p>
           </div>
-        `}
+        `
+        }
 
         <div style="margin-top: 30px; padding: 20px; background: #0a0a0a; border-radius: 8px;">
           <h3 style="color: #d4af37; margin-top: 0;">Need Help?</h3>
@@ -293,57 +323,45 @@ export const sendOrderConfirmation = async (data: OrderConfirmationData): Promis
         </p>
       </div>
     </div>
-  `
+  `;
 
   return await sendEmail({
     to: data.customerEmail,
     subject: `Order Confirmation #${data.orderNumber} - Kanika Batra`,
     html,
-  })
-}
+  });
+};
 
 export const sendBookDelivery = async (
   customerEmail: string,
   customerName: string,
   downloadToken: string,
   variant: string | null,
-  expiresAt: Date
+  expiresAt: Date,
 ): Promise<boolean> => {
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://kanikarose.com'
-  const epubDownloadUrl = `${baseUrl}/api/download?token=${downloadToken}&format=epub`
-  const isPremium = variant === 'PREMIUM'
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://kanikarose.com";
+  const pdfUrl = `${baseUrl}/api/download?token=${downloadToken}&format=pdf`;
+  const epubUrl = `${baseUrl}/api/download?token=${downloadToken}&format=epub`;
+  const isPremium = variant === "PREMIUM";
   const bookTitle = isPremium
-    ? 'Sociopathic Dating Bible: A Cure For Empathy (Premium Edition)'
-    : 'Sociopathic Dating Bible: A Cure For Empathy'
+    ? "Sociopathic Dating Bible: A Cure For Empathy (Premium Edition)"
+    : "Sociopathic Dating Bible: A Cure For Empathy";
 
   // Bonus chapter download URLs
-  const bonusNarcissistsUrl = `${baseUrl}/api/download?token=${downloadToken}&format=bonus-narcissists`
-  const bonusAvoidantsUrl = `${baseUrl}/api/download?token=${downloadToken}&format=bonus-avoidants`
+  const bonusNarcissistsUrl = `${baseUrl}/api/download?token=${downloadToken}&format=bonus-narcissists`;
+  const bonusAvoidantsUrl = `${baseUrl}/api/download?token=${downloadToken}&format=bonus-avoidants`;
 
-  const premiumBonuses = isPremium ? `
-    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="background: linear-gradient(135deg, #1a0d11 0%, #2a1a1f 100%); border-radius: 10px; margin: 0 0 25px 0; border: 2px solid #d4af37; box-shadow: 0 4px 15px rgba(212, 175, 55, 0.2);">
+  const premiumBonuses = isPremium
+    ? `
+    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="margin: 0 0 25px 0;">
       <tr>
-        <td style="padding: 25px;">
+        <td bgcolor="#1a0d11" style="padding: 25px; border-radius: 10px; border: 2px solid #d4af37;">
           <h3 style="color: #d4af37; margin: 0 0 20px 0; font-size: 18px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; text-align: center;">
             Your Premium Edition Bonuses
           </h3>
           <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0">
             <tr>
-              <td style="padding: 12px 0; color: #f5f0ed; font-size: 14px; line-height: 1.6; border-bottom: 1px solid rgba(212, 175, 55, 0.2);">
-                <strong style="color: #d4af37;">Bonus Chapter 1:</strong> Understanding Narcissists
-                <br>
-                <a href="${bonusNarcissistsUrl}" style="color: #d4af37; text-decoration: underline; font-size: 13px;">Download PDF</a>
-              </td>
-            </tr>
-            <tr>
-              <td style="padding: 12px 0; color: #f5f0ed; font-size: 14px; line-height: 1.6; border-bottom: 1px solid rgba(212, 175, 55, 0.2);">
-                <strong style="color: #d4af37;">Bonus Chapter 2:</strong> The Avoidant Playbook
-                <br>
-                <a href="${bonusAvoidantsUrl}" style="color: #d4af37; text-decoration: underline; font-size: 13px;">Download PDF</a>
-              </td>
-            </tr>
-            <tr>
-              <td style="padding: 12px 0; color: #f5f0ed; font-size: 14px; line-height: 1.6; border-bottom: 1px solid rgba(212, 175, 55, 0.2);">
+              <td style="padding: 12px 0; color: #f5f0ed; font-size: 14px; line-height: 1.6; border-bottom: 1px solid #3d2030;">
                 <strong style="color: #d4af37;">Private Telegram Community:</strong> Lifetime Access to Exclusive Group
               </td>
             </tr>
@@ -353,19 +371,17 @@ export const sendBookDelivery = async (
               </td>
             </tr>
           </table>
-          <p style="color: #94a3b8; margin: 20px 0 0 0; font-size: 12px; text-align: center; line-height: 1.6;">
-            Bonus chapter links use the same token as your main book download.
-          </p>
         </td>
       </tr>
     </table>
-  ` : ''
+  `
+    : "";
 
-  const expiryDate = new Date(expiresAt).toLocaleDateString('en-US', {
-    month: 'long',
-    day: 'numeric',
-    year: 'numeric'
-  })
+  const expiryDate = new Date(expiresAt).toLocaleDateString("en-US", {
+    month: "long",
+    day: "numeric",
+    year: "numeric",
+  });
 
   const html = `
     <!DOCTYPE html>
@@ -379,11 +395,10 @@ export const sendBookDelivery = async (
       <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="background-color: #0a0a0a;">
         <tr>
           <td align="center" style="padding: 40px 20px;">
-            <table role="presentation" width="600" cellspacing="0" cellpadding="0" border="0" style="max-width: 600px; width: 100%; background-color: #050511; border-radius: 12px; overflow: hidden; box-shadow: 0 10px 40px rgba(212, 175, 55, 0.15);">
+            <table role="presentation" width="600" cellspacing="0" cellpadding="0" border="0" style="max-width: 600px; width: 100%; background-color: #050511; border-radius: 12px; overflow: hidden;">
 
-              <!-- Header -->
               <tr>
-                <td style="background: linear-gradient(135deg, #720921 0%, #0a1628 100%); padding: 40px 30px; text-align: center;">
+                <td bgcolor="#3d0f1a" style="padding: 40px 30px; text-align: center;">
                   <h1 style="color: #d4af37; margin: 0 0 10px 0; font-size: 28px; font-weight: 300; letter-spacing: 2px; text-transform: uppercase;">
                     Thank You For Your Purchase
                   </h1>
@@ -393,7 +408,6 @@ export const sendBookDelivery = async (
                 </td>
               </tr>
 
-              <!-- Main Content -->
               <tr>
                 <td style="padding: 40px 30px; border-left: 1px solid #d4af37; border-right: 1px solid #d4af37; border-bottom: 1px solid #d4af37;">
 
@@ -405,67 +419,112 @@ export const sendBookDelivery = async (
                     Your payment has been successfully processed. You now have instant access to:
                   </p>
 
-                  <div style="background: linear-gradient(135deg, #1a0d11 0%, #0f0a0f 100%); padding: 25px; border-radius: 10px; margin: 0 0 30px 0; border: 1px solid #d4af37;">
-                    <h2 style="color: #d4af37; margin: 0 0 15px 0; font-size: 20px; font-weight: 600;">
-                      ${bookTitle}
-                    </h2>
-                    <p style="color: #94a3b8; margin: 0; font-size: 14px; line-height: 1.6;">
-                      70,000 words of strategic dating psychology from a diagnosed sociopath
-                    </p>
-                  </div>
-
-                  <!-- Download Button -->
                   <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="margin: 0 0 30px 0;">
                     <tr>
-                      <td align="center">
-                        <h3 style="color: #d4af37; margin: 0 0 10px 0; font-size: 18px; font-weight: 700; text-transform: uppercase; letter-spacing: 2px;">
-                          Download Your Book
-                        </h3>
-                        <p style="color: #94a3b8; margin: 0 0 25px 0; font-size: 13px; font-style: italic;">
-                          EPUB format optimized for all e-readers and mobile devices
+                      <td bgcolor="#1a0d11" style="padding: 25px; border-radius: 10px; border: 1px solid #d4af37;">
+                        <h2 style="color: #d4af37; margin: 0 0 15px 0; font-size: 20px; font-weight: 600;">
+                          ${bookTitle}
+                        </h2>
+                        <p style="color: #94a3b8; margin: 0; font-size: 14px; line-height: 1.6;">
+                          70,000 words of strategic dating psychology from a diagnosed sociopath &mdash; now with 2 bonus addendum chapters
                         </p>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td align="center" style="padding-bottom: 20px;">
-                        <a href="${epubDownloadUrl}" style="display: inline-block; background-color: #d4af37; color: #050511; padding: 22px 60px; text-decoration: none; font-weight: 700; font-size: 18px; letter-spacing: 1.5px; text-transform: uppercase; mso-padding-alt: 22px 60px;">
-                          📱 Download EPUB
-                        </a>
                       </td>
                     </tr>
                   </table>
 
-                  <!-- Important Information -->
-                  <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="background: #0a0a0a; border-radius: 8px; margin: 0 0 25px 0; border: 1px solid #333;">
+                  <!-- EPUB - Primary Download -->
+                  <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="margin: 0 0 25px 0;">
                     <tr>
-                      <td style="padding: 20px;">
+                      <td align="center">
+                        <h3 style="color: #d4af37; margin: 0 0 20px 0; font-size: 16px; font-weight: 600;">
+                          Download Your Book
+                        </h3>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td align="center" style="padding-bottom: 15px;">
+                        <table role="presentation" cellspacing="0" cellpadding="0" border="0">
+                          <tr>
+                            <td bgcolor="#d4af37" style="border-radius: 50px; border: 2px solid #d4af37;" align="center">
+                              <a href="${epubUrl}" target="_blank" style="display: inline-block; color: #050511; background-color: #d4af37; padding: 18px 50px; text-decoration: none; font-weight: 700; font-size: 16px; letter-spacing: 1px; text-transform: uppercase; border-radius: 50px;">DOWNLOAD EPUB</a>
+                            </td>
+                          </tr>
+                        </table>
+                      </td>
+                    </tr>
+                  </table>
+
+                  <!-- Addendum Downloads -->
+                  <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="margin: 0 0 25px 0;">
+                    <tr>
+                      <td bgcolor="#1a0d11" style="padding: 20px; border-radius: 10px; border: 1px solid #d4af37;">
+                        <h4 style="color: #d4af37; margin: 0 0 15px 0; font-size: 15px; font-weight: 600; text-align: center;">
+                          Addendum Chapters
+                        </h4>
+                        <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0">
+                          <tr>
+                            <td align="center" style="padding-bottom: 12px;">
+                              <table role="presentation" cellspacing="0" cellpadding="0" border="0">
+                                <tr>
+                                  <td bgcolor="#722139" style="border-radius: 50px; border: 1px solid #d4af37;" align="center">
+                                    <a href="${bonusNarcissistsUrl}" target="_blank" style="display: inline-block; color: #d4af37; background-color: #722139; padding: 14px 40px; text-decoration: none; font-weight: 600; font-size: 14px; letter-spacing: 0.5px; border-radius: 50px;">Understanding Narcissists</a>
+                                  </td>
+                                </tr>
+                              </table>
+                            </td>
+                          </tr>
+                          <tr>
+                            <td align="center">
+                              <table role="presentation" cellspacing="0" cellpadding="0" border="0">
+                                <tr>
+                                  <td bgcolor="#722139" style="border-radius: 50px; border: 1px solid #d4af37;" align="center">
+                                    <a href="${bonusAvoidantsUrl}" target="_blank" style="display: inline-block; color: #d4af37; background-color: #722139; padding: 14px 40px; text-decoration: none; font-weight: 600; font-size: 14px; letter-spacing: 0.5px; border-radius: 50px;">The Avoidant Playbook</a>
+                                  </td>
+                                </tr>
+                              </table>
+                            </td>
+                          </tr>
+                        </table>
+                      </td>
+                    </tr>
+                  </table>
+
+                  <!-- PDF - Secondary -->
+                  <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="margin: 0 0 30px 0;">
+                    <tr>
+                      <td align="center" style="padding: 10px 0;">
+                        <p style="color: #94a3b8; margin: 0 0 12px 0; font-size: 14px;">Prefer PDF?</p>
+                        <table role="presentation" cellspacing="0" cellpadding="0" border="0">
+                          <tr>
+                            <td bgcolor="#333333" style="border-radius: 50px;" align="center">
+                              <a href="${pdfUrl}" target="_blank" style="display: inline-block; color: #d4af37; background-color: #333333; padding: 12px 35px; text-decoration: none; font-weight: 600; font-size: 14px; border-radius: 50px;">Download PDF Version</a>
+                            </td>
+                          </tr>
+                        </table>
+                      </td>
+                    </tr>
+                  </table>
+
+                  <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="margin: 0 0 25px 0;">
+                    <tr>
+                      <td bgcolor="#0a0a0a" style="padding: 20px; border-radius: 8px; border: 1px solid #333;">
                         <h3 style="color: #d4af37; margin: 0 0 15px 0; font-size: 16px; font-weight: 600;">
                           Important Download Information
                         </h3>
                         <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0">
                           <tr>
                             <td style="padding: 8px 0; color: #94a3b8; font-size: 14px; line-height: 1.6;">
-                              ✓ Link expires: <strong style="color: #d4af37;">${expiryDate}</strong>
+                              Link expires: <strong style="color: #d4af37;">${expiryDate}</strong>
                             </td>
                           </tr>
                           <tr>
                             <td style="padding: 8px 0; color: #94a3b8; font-size: 14px; line-height: 1.6;">
-                              ✓ Maximum downloads: <strong style="color: #d4af37;">5 times total</strong>
+                              Maximum downloads: <strong style="color: #d4af37;">5 times total</strong> (across all formats)
                             </td>
                           </tr>
                           <tr>
                             <td style="padding: 8px 0; color: #94a3b8; font-size: 14px; line-height: 1.6;">
-                              ✓ EPUB format works on all devices and e-readers
-                            </td>
-                          </tr>
-                          <tr>
-                            <td style="padding: 8px 0; color: #94a3b8; font-size: 14px; line-height: 1.6;">
-                              ✓ Save locally for permanent access
-                            </td>
-                          </tr>
-                          <tr>
-                            <td style="padding: 8px 0; color: #94a3b8; font-size: 14px; line-height: 1.6;">
-                              ✓ This link is unique to your purchase
+                              Save locally for permanent access
                             </td>
                           </tr>
                         </table>
@@ -475,7 +534,6 @@ export const sendBookDelivery = async (
 
                   ${premiumBonuses}
 
-                  <!-- Footer -->
                   <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="margin: 30px 0 0 0; padding: 25px 0 0 0; border-top: 1px solid #333;">
                     <tr>
                       <td style="text-align: center;">
@@ -492,15 +550,14 @@ export const sendBookDelivery = async (
                     </tr>
                   </table>
 
-                  <!-- Support Note -->
                   <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="margin: 25px 0 0 0;">
                     <tr>
-                      <td style="text-align: center; padding: 20px; background: #1a0d11; border-radius: 8px;">
+                      <td bgcolor="#1a0d11" style="text-align: center; padding: 20px; border-radius: 8px;">
                         <p style="color: #94a3b8; margin: 0 0 10px 0; font-size: 13px; line-height: 1.6;">
-                          <strong style="color: #d4af37;">Important:</strong> If you don't receive this email within a few minutes, please check your junk/spam folder.
+                          <strong style="color: #d4af37;">Important:</strong> If you don't see this email, please check your junk/spam folder.
                         </p>
                         <p style="color: #94a3b8; margin: 0; font-size: 13px; line-height: 1.6;">
-                          Issues with your download or didn't receive the email? Contact <a href="mailto:Kanika@kanikarose.com" style="color: #d4af37; text-decoration: none; font-weight: 600;">Kanika@kanikarose.com</a> and we will resend the link to an alternate email address.
+                          Issues with your download? Contact us at <a href="mailto:Kanika@kanikarose.com" style="color: #d4af37; text-decoration: none; font-weight: 600;">Kanika@kanikarose.com</a>
                         </p>
                       </td>
                     </tr>
@@ -514,45 +571,45 @@ export const sendBookDelivery = async (
       </table>
     </body>
     </html>
-  `
+  `;
 
   return await sendEmail({
     to: customerEmail,
-    subject: `Download Your Book - Sociopathic Dating Bible ${isPremium ? '(Premium Edition)' : ''}`,
+    subject: `Download Your Book - Sociopathic Dating Bible ${isPremium ? "(Premium Edition)" : ""}`,
     html,
-  })
-}
+  });
+};
 
 export const sendCoachingQuestionnaire = async (data: {
-  packageName: string
-  customerName: string
-  customerEmail: string
-  orderId: string
+  packageName: string;
+  customerName: string;
+  customerEmail: string;
+  orderId: string;
   questionnaire: {
-    preferredName: string
-    age: string
-    timezone: string
-    availability: string[]
-    urgency: string
-    currentSituation: string
-    primaryChallenges: string
-    previousTherapy: string
-    mentalHealthHistory: string
-    currentMedication: string
-    suicidalThoughts: string
-    substanceUse: string
-    traumaHistory: string
-    specificGoals: string
-    successMeasures: string
-    psychologyInterest: string
-    manipulationExperience: string
-    timeCommitment: string
-    expectations: string
-    ethicalUse: string
-    additionalInfo?: string
-  }
+    preferredName: string;
+    age: string;
+    timezone: string;
+    availability: string[];
+    urgency: string;
+    currentSituation: string;
+    primaryChallenges: string;
+    previousTherapy: string;
+    mentalHealthHistory: string;
+    currentMedication: string;
+    suicidalThoughts: string;
+    substanceUse: string;
+    traumaHistory: string;
+    specificGoals: string;
+    successMeasures: string;
+    psychologyInterest: string;
+    manipulationExperience: string;
+    timeCommitment: string;
+    expectations: string;
+    ethicalUse: string;
+    additionalInfo?: string;
+  };
 }): Promise<boolean> => {
-  const adminEmail = process.env.ADMIN_EMAIL || 'Kanika@kanikarose.com'
+  const adminEmail = process.env.ADMIN_EMAIL || "Kanika@kanikarose.com";
 
   const html = `
     <div style="font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto;">
@@ -575,7 +632,7 @@ export const sendCoachingQuestionnaire = async (data: {
           <p style="color: #94a3b8;"><strong>Preferred Name:</strong> ${data.questionnaire.preferredName}</p>
           <p style="color: #94a3b8;"><strong>Age:</strong> ${data.questionnaire.age}</p>
           <p style="color: #94a3b8;"><strong>Timezone:</strong> ${data.questionnaire.timezone}</p>
-          <p style="color: #94a3b8;"><strong>Available Times:</strong> ${data.questionnaire.availability.join(', ')}</p>
+          <p style="color: #94a3b8;"><strong>Available Times:</strong> ${data.questionnaire.availability.join(", ")}</p>
         </div>
 
         <div style="background: #0a0a0a; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
@@ -594,16 +651,20 @@ export const sendCoachingQuestionnaire = async (data: {
           </div>
         </div>
 
-        ${data.questionnaire.suicidalThoughts !== 'Never' || data.questionnaire.traumaHistory !== 'None' ? `
+        ${
+          data.questionnaire.suicidalThoughts !== "Never" ||
+          data.questionnaire.traumaHistory !== "None"
+            ? `
         <div style="background: #2d1b1b; padding: 20px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #8b0000;">
           <h3 style="color: #ff6b6b; margin-top: 0;">⚠️ Mental Health Screening - ATTENTION REQUIRED</h3>
           <p style="color: #ffccd5;"><strong>Mental Health History:</strong> ${data.questionnaire.mentalHealthHistory}</p>
           <p style="color: #ffccd5;"><strong>Current Medication:</strong> ${data.questionnaire.currentMedication}</p>
-          <p style="color: #ffccd5;"><strong>Suicidal Thoughts:</strong> <span style="color: ${data.questionnaire.suicidalThoughts === 'Currently' ? '#ff4757' : '#ff6b6b'};">${data.questionnaire.suicidalThoughts}</span></p>
+          <p style="color: #ffccd5;"><strong>Suicidal Thoughts:</strong> <span style="color: ${data.questionnaire.suicidalThoughts === "Currently" ? "#ff4757" : "#ff6b6b"};">${data.questionnaire.suicidalThoughts}</span></p>
           <p style="color: #ffccd5;"><strong>Substance Use:</strong> ${data.questionnaire.substanceUse}</p>
           <p style="color: #ffccd5;"><strong>Trauma History:</strong> ${data.questionnaire.traumaHistory}</p>
         </div>
-        ` : `
+        `
+            : `
         <div style="background: #0a0a0a; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
           <h3 style="color: #d4af37; margin-top: 0;">Mental Health Screening</h3>
           <p style="color: #94a3b8;"><strong>Mental Health History:</strong> ${data.questionnaire.mentalHealthHistory}</p>
@@ -612,7 +673,8 @@ export const sendCoachingQuestionnaire = async (data: {
           <p style="color: #94a3b8;"><strong>Substance Use:</strong> ${data.questionnaire.substanceUse}</p>
           <p style="color: #94a3b8;"><strong>Trauma History:</strong> ${data.questionnaire.traumaHistory}</p>
         </div>
-        `}
+        `
+        }
 
         <div style="background: #0a0a0a; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
           <h3 style="color: #d4af37; margin-top: 0;">Goals & Psychology Interest</h3>
@@ -647,12 +709,16 @@ export const sendCoachingQuestionnaire = async (data: {
           </div>
         </div>
 
-        ${data.questionnaire.additionalInfo ? `
+        ${
+          data.questionnaire.additionalInfo
+            ? `
         <div style="background: #0a0a0a; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
           <h3 style="color: #d4af37; margin-top: 0;">Additional Information</h3>
           <p style="color: #94a3b8; padding: 10px; background: #1a1a1a; border-radius: 4px;">${data.questionnaire.additionalInfo}</p>
         </div>
-        ` : ''}
+        `
+            : ""
+        }
 
         <div style="background: #1a0d11; padding: 20px; border-radius: 8px; border: 1px solid #d4af37;">
           <h3 style="color: #d4af37; margin-top: 0;">Next Steps</h3>
@@ -660,7 +726,7 @@ export const sendCoachingQuestionnaire = async (data: {
             1. Review the client's mental health screening carefully<br>
             2. Send scheduling link for their ${data.packageName} session<br>
             3. Consider any special preparation based on their responses<br>
-            4. ${data.questionnaire.urgency === 'ASAP' ? '<strong style="color: #ff6b6b;">Priority scheduling requested</strong>' : 'Standard scheduling timeline'}
+            4. ${data.questionnaire.urgency === "ASAP" ? '<strong style="color: #ff6b6b;">Priority scheduling requested</strong>' : "Standard scheduling timeline"}
           </p>
         </div>
 
@@ -672,21 +738,21 @@ export const sendCoachingQuestionnaire = async (data: {
         </div>
       </div>
     </div>
-  `
+  `;
 
   return await sendEmail({
     to: adminEmail,
     subject: `🎯 New ${data.packageName} Questionnaire - ${data.customerName} [${data.questionnaire.urgency}]`,
     html,
     replyTo: data.customerEmail,
-  })
-}
+  });
+};
 
 export const sendCoachingScheduling = async (
   customerEmail: string,
   customerName: string,
   packageName: string,
-  schedulingUrl: string
+  schedulingUrl: string,
 ): Promise<boolean> => {
   const html = `
     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
@@ -743,127 +809,156 @@ export const sendCoachingScheduling = async (
         </p>
       </div>
     </div>
-  `
+  `;
 
   return await sendEmail({
     to: customerEmail,
     subject: `🎯 Schedule Your ${packageName} Session - Kanika Batra`,
     html,
-  })
-}
+  });
+};
 
-export const verifyEmailConnection = async (): Promise<{ primary: boolean; microsoft: boolean }> => {
-  const results = { primary: false, microsoft: false }
+export const verifyEmailConnection = async (): Promise<{
+  primary: boolean;
+  microsoft: boolean;
+}> => {
+  const results = { primary: false, microsoft: false };
 
   // Verify primary transport
   try {
-    const primary = getPrimaryTransporter()
+    const primary = getPrimaryTransporter();
     if (primary) {
-      await primary.verify()
-      logger.info('Primary SMTP connection verified successfully')
-      results.primary = true
+      await primary.verify();
+      logger.info("Primary SMTP connection verified successfully");
+      results.primary = true;
     }
   } catch (error) {
-    logger.error('Primary SMTP connection verification failed', error as Error)
+    logger.error("Primary SMTP connection verification failed", error as Error);
   }
 
   // Verify Microsoft transport (if configured)
   try {
-    const microsoft = getMicrosoftTransporter()
+    const microsoft = getMicrosoftTransporter();
     if (microsoft) {
-      await microsoft.verify()
-      logger.info('Microsoft SMTP connection verified successfully')
-      results.microsoft = true
+      await microsoft.verify();
+      logger.info("Microsoft SMTP connection verified successfully");
+      results.microsoft = true;
     } else {
-      logger.info('Microsoft SMTP not configured - skipping verification')
+      logger.info("Microsoft SMTP not configured - skipping verification");
     }
   } catch (error) {
-    logger.error('Microsoft SMTP connection verification failed', error as Error)
+    logger.error(
+      "Microsoft SMTP connection verification failed",
+      error as Error,
+    );
   }
 
-  return results
-}
+  return results;
+};
 
 // Export helper to check if Microsoft transport is available
 export const hasMicrosoftTransport = (): boolean => {
-  return !!(MS_SMTP_USER && MS_SMTP_PASS)
-}
+  return !!(MS_SMTP_USER && MS_SMTP_PASS);
+};
 
 interface QuizResultsEmailData {
-  email: string
-  primaryType: string
-  secondaryType: string
-  scores: Record<string, number>
+  email: string;
+  primaryType: string;
+  secondaryType: string;
+  scores: Record<string, number>;
   diagnosis?: {
-    clinicalLabel: string
-    functioningLevel: 'high' | 'moderate' | 'low'
-    functioningScore: number
-    description: string
-  }
+    clinicalLabel: string;
+    functioningLevel: "high" | "moderate" | "low";
+    functioningScore: number;
+    description: string;
+  };
   primaryProfile: {
-    name: string
-    tagline: string
-    description: string
-    traits: string[]
-    strengths: string[]
-    blindSpots: string[]
-    relationshipPattern: string
-  }
+    name: string;
+    tagline: string;
+    description: string;
+    traits: string[];
+    strengths: string[];
+    blindSpots: string[];
+    relationshipPattern: string;
+  };
   secondaryProfile: {
-    name: string
-    tagline: string
-    description: string
-  }
+    name: string;
+    tagline: string;
+    description: string;
+  };
 }
 
-export const sendQuizResults = async (data: QuizResultsEmailData): Promise<boolean> => {
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://kanikarose.com'
+export const sendQuizResults = async (
+  data: QuizResultsEmailData,
+): Promise<boolean> => {
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://kanikarose.com";
 
   const getFunctioningColor = (level: string) => {
     switch (level) {
-      case 'high': return { text: '#22c55e', bg: '#14532d', border: '#166534' }
-      case 'moderate': return { text: '#eab308', bg: '#422006', border: '#854d0e' }
-      case 'low': return { text: '#ef4444', bg: '#450a0a', border: '#991b1b' }
-      default: return { text: '#94a3b8', bg: '#1a1a1a', border: '#333' }
+      case "high":
+        return { text: "#22c55e", bg: "#14532d", border: "#166534" };
+      case "moderate":
+        return { text: "#eab308", bg: "#422006", border: "#854d0e" };
+      case "low":
+        return { text: "#ef4444", bg: "#450a0a", border: "#991b1b" };
+      default:
+        return { text: "#94a3b8", bg: "#1a1a1a", border: "#333" };
     }
-  }
+  };
 
   const getFunctioningLabel = (level: string) => {
     switch (level) {
-      case 'high': return 'High Adaptive Function'
-      case 'moderate': return 'Moderate Adaptive Function'
-      case 'low': return 'Low Adaptive Function'
-      default: return 'Unknown'
+      case "high":
+        return "High Adaptive Function";
+      case "moderate":
+        return "Moderate Adaptive Function";
+      case "low":
+        return "Low Adaptive Function";
+      default:
+        return "Unknown";
     }
-  }
+  };
 
   const scoreRows = Object.entries(data.scores)
     .sort(([, a], [, b]) => b - a)
     .map(([type, score]) => {
-      const isPrimary = type === data.primaryType
-      const isSecondary = type === data.secondaryType
-      const isNeurotypical = type === 'neurotypical'
-      const typeName = type.charAt(0).toUpperCase() + type.slice(1)
+      const isPrimary = type === data.primaryType;
+      const isSecondary = type === data.secondaryType;
+      const isNeurotypical = type === "neurotypical";
+      const typeName = type.charAt(0).toUpperCase() + type.slice(1);
       return `
         <tr>
-          <td style="padding: 12px; color: ${isNeurotypical ? '#22c55e' : isPrimary ? '#d4af37' : isSecondary ? '#e8c4c4' : '#94a3b8'}; font-weight: ${isPrimary ? 'bold' : 'normal'};">
-            ${typeName}${isPrimary ? ' (Primary)' : isSecondary ? ' (Secondary)' : ''}
+          <td style="padding: 12px; color: ${isNeurotypical ? "#22c55e" : isPrimary ? "#d4af37" : isSecondary ? "#e8c4c4" : "#94a3b8"}; font-weight: ${isPrimary ? "bold" : "normal"};">
+            ${typeName}${isPrimary ? " (Primary)" : isSecondary ? " (Secondary)" : ""}
           </td>
           <td style="padding: 12px; text-align: right;">
-            <span style="display: inline-block; background: ${isNeurotypical ? '#14532d' : isPrimary ? '#d4af37' : isSecondary ? '#722139' : '#333'}; color: ${isNeurotypical ? '#22c55e' : isPrimary ? '#0a0a0a' : '#fff'}; padding: 4px 12px; border-radius: 20px; font-weight: bold;">
+            <span style="display: inline-block; background: ${isNeurotypical ? "#14532d" : isPrimary ? "#d4af37" : isSecondary ? "#722139" : "#333"}; color: ${isNeurotypical ? "#22c55e" : isPrimary ? "#0a0a0a" : "#fff"}; padding: 4px 12px; border-radius: 20px; font-weight: bold;">
               ${score}%
             </span>
           </td>
         </tr>
-      `
+      `;
     })
-    .join('')
+    .join("");
 
-  const traitsList = data.primaryProfile.traits.map(t => `<li style="color: #94a3b8; margin: 8px 0;">${t}</li>`).join('')
-  const strengthsList = data.primaryProfile.strengths.map(s => `<li style="color: #94a3b8; margin: 8px 0;"><span style="color: #22c55e;">✓</span> ${s}</li>`).join('')
-  const blindSpotsList = data.primaryProfile.blindSpots.map(b => `<li style="color: #94a3b8; margin: 8px 0;"><span style="color: #ef4444;">!</span> ${b}</li>`).join('')
+  const traitsList = data.primaryProfile.traits
+    .map((t) => `<li style="color: #94a3b8; margin: 8px 0;">${t}</li>`)
+    .join("");
+  const strengthsList = data.primaryProfile.strengths
+    .map(
+      (s) =>
+        `<li style="color: #94a3b8; margin: 8px 0;"><span style="color: #22c55e;">✓</span> ${s}</li>`,
+    )
+    .join("");
+  const blindSpotsList = data.primaryProfile.blindSpots
+    .map(
+      (b) =>
+        `<li style="color: #94a3b8; margin: 8px 0;"><span style="color: #ef4444;">!</span> ${b}</li>`,
+    )
+    .join("");
 
-  const diagnosisSection = data.diagnosis ? `
+  const diagnosisSection = data.diagnosis
+    ? `
     <!-- Clinical Diagnosis -->
     <tr>
       <td style="padding: 30px 30px 20px; border-left: 1px solid #d4af37; border-right: 1px solid #d4af37;">
@@ -898,7 +993,8 @@ export const sendQuizResults = async (data: QuizResultsEmailData): Promise<boole
         </div>
       </td>
     </tr>
-  ` : ''
+  `
+    : "";
 
   const html = `
     <!DOCTYPE html>
@@ -1111,11 +1207,11 @@ export const sendQuizResults = async (data: QuizResultsEmailData): Promise<boole
       </table>
     </body>
     </html>
-  `
+  `;
 
   return await sendEmail({
     to: data.email,
     subject: `Your Dark Mirror Results: ${data.primaryProfile.name}`,
     html,
-  })
-}
+  });
+};

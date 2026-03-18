@@ -1,53 +1,60 @@
-'use client'
+"use client";
 
-import { useState } from 'react'
-import { motion } from 'framer-motion'
-import { useRouter } from 'next/navigation'
-import BackgroundEffects from '@/components/BackgroundEffects'
-import Header from '@/components/Header'
-import ModuleList from '@/components/course/ModuleList'
-import SubscriptionCard from '@/components/course/SubscriptionCard'
-import ProgressBar from '@/components/course/ProgressBar'
-import { Crown, BookOpen, Play, Clock, ArrowLeft, MessageSquare } from 'lucide-react'
+import { useState } from "react";
+import { motion } from "framer-motion";
+import { useRouter } from "next/navigation";
+import BackgroundEffects from "@/components/BackgroundEffects";
+import Header from "@/components/Header";
+import ModuleList from "@/components/course/ModuleList";
+import SubscriptionCard from "@/components/course/SubscriptionCard";
+import ProgressBar from "@/components/course/ProgressBar";
+import {
+  Crown,
+  BookOpen,
+  Play,
+  Clock,
+  ArrowLeft,
+  MessageSquare,
+} from "lucide-react";
 
 interface Lesson {
-  id: string
-  title: string
-  slug: string
-  description: string | null
-  duration: number | null
-  isFree: boolean
-  isCompleted?: boolean
-  watchedSeconds?: number
+  id: string;
+  title: string;
+  slug: string;
+  description: string | null;
+  duration: number | null;
+  isFree: boolean;
+  isCompleted?: boolean;
+  watchedSeconds?: number;
 }
 
 interface Module {
-  id: string
-  title: string
-  slug: string
-  description: string | null
-  lessons: Lesson[]
+  id: string;
+  title: string;
+  slug: string;
+  description: string | null;
+  lessons: Lesson[];
 }
 
 interface Course {
-  id: string
-  title: string
-  slug: string
-  description: string | null
-  thumbnailUrl: string | null
-  price: number
-  tier: string
+  id: string;
+  title: string;
+  slug: string;
+  description: string | null;
+  thumbnailUrl: string | null;
+  price: number;
+  tier: string;
 }
 
 interface CourseDetailClientProps {
-  course: Course
-  modules: Module[]
-  hasAccess: boolean
-  subscriptionStatus?: string
-  progress: number
-  isLoggedIn: boolean
-  totalLessons: number
-  completedLessons: number
+  course: Course;
+  modules: Module[];
+  hasAccess: boolean;
+  subscriptionStatus?: string;
+  progress: number;
+  isLoggedIn: boolean;
+  totalLessons: number;
+  completedLessons: number;
 }
 
 export default function CourseDetailClient({
@@ -58,39 +65,40 @@ export default function CourseDetailClient({
   progress,
   isLoggedIn,
   totalLessons,
-  completedLessons
+  completedLessons,
 }: CourseDetailClientProps) {
-  const router = useRouter()
-  const [_showSubscribeModal, _setShowSubscribeModal] = useState(false)
-  const isGold = course.tier === 'gold'
+  const router = useRouter();
+  const [_showSubscribeModal, _setShowSubscribeModal] = useState(false);
+  const isGold = course.tier === "gold";
 
-  const totalDuration = modules.reduce((acc, m) =>
-    acc + m.lessons.reduce((la, l) => la + (l.duration || 0), 0), 0
-  )
+  const totalDuration = modules.reduce(
+    (acc, m) => acc + m.lessons.reduce((la, l) => la + (l.duration || 0), 0),
+    0,
+  );
 
   const formatTotalDuration = () => {
-    const hours = Math.floor(totalDuration / 3600)
-    const mins = Math.floor((totalDuration % 3600) / 60)
-    if (hours > 0) return `${hours}h ${mins}m`
-    return `${mins}m`
-  }
+    const hours = Math.floor(totalDuration / 3600);
+    const mins = Math.floor((totalDuration % 3600) / 60);
+    if (hours > 0) return `${hours}h ${mins}m`;
+    return `${mins}m`;
+  };
 
   const getNextLesson = () => {
     for (const mod of modules) {
       for (const lesson of mod.lessons) {
         if (!lesson.isCompleted) {
-          return { module: mod, lesson }
+          return { module: mod, lesson };
         }
       }
     }
-    return null
-  }
+    return null;
+  };
 
-  const nextLesson = hasAccess ? getNextLesson() : null
+  const nextLesson = hasAccess ? getNextLesson() : null;
 
   const handleSubscribe = () => {
-    router.push(`/courses/${course.slug}/subscribe`)
-  }
+    router.push(`/courses/${course.slug}/subscribe`);
+  };
 
   return (
     <>
@@ -99,7 +107,7 @@ export default function CourseDetailClient({
       <div className="min-h-screen pt-20 sm:pt-24 lg:pt-32 pb-16 px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="max-w-7xl mx-auto">
           <button
-            onClick={() => router.push('/courses')}
+            onClick={() => router.push("/courses")}
             className="flex items-center gap-2 text-text-muted hover:text-accent-gold transition-colors mb-6"
           >
             <ArrowLeft className="w-4 h-4" />
@@ -122,9 +130,11 @@ export default function CourseDetailClient({
                   )}
                 </div>
 
-                <h1 className={`text-3xl sm:text-4xl md:text-5xl font-light mb-4 ${
-                  isGold ? 'gradient-text-gold' : 'gradient-text'
-                }`}>
+                <h1
+                  className={`text-3xl sm:text-4xl md:text-5xl font-light mb-4 ${
+                    isGold ? "gradient-text-gold" : "gradient-text"
+                  }`}
+                >
                   {course.title}
                 </h1>
 
@@ -161,16 +171,20 @@ export default function CourseDetailClient({
                 >
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
                     <div>
-                      <h3 className="font-medium text-text-light">Your Progress</h3>
+                      <h3 className="font-medium text-text-light">
+                        Your Progress
+                      </h3>
                       <p className="text-sm text-text-muted">
                         {completedLessons} of {totalLessons} lessons completed
                       </p>
                     </div>
                     {nextLesson && (
                       <button
-                        onClick={() => router.push(
-                          `/courses/${course.slug}/${nextLesson.module.slug}/${nextLesson.lesson.slug}`
-                        )}
+                        onClick={() =>
+                          router.push(
+                            `/courses/${course.slug}/${nextLesson.module.slug}/${nextLesson.lesson.slug}`,
+                          )
+                        }
                         className="flex items-center gap-2 bg-gradient-to-r from-accent-burgundy to-accent-sapphire text-white px-4 py-2 rounded-lg text-sm hover:shadow-lg transition-all"
                       >
                         <Play className="w-4 h-4" />
@@ -178,7 +192,11 @@ export default function CourseDetailClient({
                       </button>
                     )}
                   </div>
-                  <ProgressBar progress={progress} showLabel={false} size="lg" />
+                  <ProgressBar
+                    progress={progress}
+                    showLabel={false}
+                    size="lg"
+                  />
                 </motion.div>
               )}
 
@@ -213,10 +231,11 @@ export default function CourseDetailClient({
                         Join the Discussion
                       </h3>
                       <p className="text-sm text-text-muted mb-3">
-                        Connect with other students, ask questions, and share your progress in our community forum.
+                        Connect with other students, ask questions, and share
+                        your progress in our community forum.
                       </p>
                       <button
-                        onClick={() => router.push('/community')}
+                        onClick={() => router.push("/community")}
                         className="text-sm text-accent-gold hover:text-accent-gold/80 transition-colors"
                       >
                         Go to Community Forum →
@@ -268,5 +287,5 @@ export default function CourseDetailClient({
         </div>
       </div>
     </>
-  )
+  );
 }

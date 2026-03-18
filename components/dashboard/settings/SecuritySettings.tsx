@@ -1,58 +1,63 @@
-'use client'
+"use client";
 
-import { useState } from 'react'
-import { Eye, EyeOff, Shield, Clock } from 'lucide-react'
+import { useState } from "react";
+import { Eye, EyeOff, Shield, Clock } from "lucide-react";
 
 interface SecuritySettingsProps {
-  onPasswordChanged: () => void
-  setLoading: (loading: boolean) => void
+  onPasswordChanged: () => void;
+  setLoading: (loading: boolean) => void;
 }
 
-export default function SecuritySettings({ onPasswordChanged, setLoading }: SecuritySettingsProps) {
-  const [currentPassword, setCurrentPassword] = useState('')
-  const [newPassword, setNewPassword] = useState('')
-  const [confirmPassword, setConfirmPassword] = useState('')
-  const [showPasswords, setShowPasswords] = useState(false)
-  const [error, setError] = useState('')
+export default function SecuritySettings({
+  onPasswordChanged,
+  setLoading,
+}: SecuritySettingsProps) {
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [showPasswords, setShowPasswords] = useState(false);
+  const [error, setError] = useState("");
 
   const handlePasswordChange = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setError('')
+    e.preventDefault();
+    setError("");
 
     if (newPassword.length < 8) {
-      setError('Password must be at least 8 characters')
-      return
+      setError("Password must be at least 8 characters");
+      return;
     }
 
     if (newPassword !== confirmPassword) {
-      setError('Passwords do not match')
-      return
+      setError("Passwords do not match");
+      return;
     }
 
-    setLoading(true)
+    setLoading(true);
 
     try {
-      const response = await fetch('/api/user/password', {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
+      const response = await fetch("/api/user/password", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           currentPassword,
           newPassword,
         }),
-      })
+      });
 
-      const result = await response.json()
+      const result = await response.json();
 
       if (!response.ok) {
-        throw new Error(result.error || 'Failed to change password')
+        throw new Error(result.error || "Failed to change password");
       }
 
-      onPasswordChanged()
+      onPasswordChanged();
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to change password')
-      setLoading(false)
+      setError(
+        err instanceof Error ? err.message : "Failed to change password",
+      );
+      setLoading(false);
     }
-  }
+  };
 
   return (
     <div className="space-y-6">
@@ -71,9 +76,11 @@ export default function SecuritySettings({ onPasswordChanged, setLoading }: Secu
           )}
 
           <div className="relative">
-            <label className="block text-sm text-gray-400 mb-2">Current Password</label>
+            <label className="block text-sm text-gray-400 mb-2">
+              Current Password
+            </label>
             <input
-              type={showPasswords ? 'text' : 'password'}
+              type={showPasswords ? "text" : "password"}
               value={currentPassword}
               onChange={(e) => setCurrentPassword(e.target.value)}
               required
@@ -82,9 +89,11 @@ export default function SecuritySettings({ onPasswordChanged, setLoading }: Secu
           </div>
 
           <div className="relative">
-            <label className="block text-sm text-gray-400 mb-2">New Password</label>
+            <label className="block text-sm text-gray-400 mb-2">
+              New Password
+            </label>
             <input
-              type={showPasswords ? 'text' : 'password'}
+              type={showPasswords ? "text" : "password"}
               value={newPassword}
               onChange={(e) => setNewPassword(e.target.value)}
               required
@@ -94,10 +103,12 @@ export default function SecuritySettings({ onPasswordChanged, setLoading }: Secu
           </div>
 
           <div className="relative">
-            <label className="block text-sm text-gray-400 mb-2">Confirm New Password</label>
+            <label className="block text-sm text-gray-400 mb-2">
+              Confirm New Password
+            </label>
             <div className="relative">
               <input
-                type={showPasswords ? 'text' : 'password'}
+                type={showPasswords ? "text" : "password"}
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 required
@@ -144,5 +155,5 @@ export default function SecuritySettings({ onPasswordChanged, setLoading }: Secu
         </p>
       </div>
     </div>
-  )
+  );
 }

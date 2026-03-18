@@ -1,14 +1,14 @@
-'use client'
+"use client";
 
-import { useState } from 'react'
-import { X, Star, Loader2 } from 'lucide-react'
+import { useState } from "react";
+import { X, Star, Loader2 } from "lucide-react";
 
 interface SessionFeedbackModalProps {
-  isOpen: boolean
-  onClose: () => void
-  sessionId: string
-  sessionTitle: string
-  onSuccess: () => void
+  isOpen: boolean;
+  onClose: () => void;
+  sessionId: string;
+  sessionTitle: string;
+  onSuccess: () => void;
 }
 
 export default function SessionFeedbackModal({
@@ -16,56 +16,58 @@ export default function SessionFeedbackModal({
   onClose,
   sessionId,
   sessionTitle,
-  onSuccess
+  onSuccess,
 }: SessionFeedbackModalProps) {
-  const [rating, setRating] = useState(0)
-  const [hoveredRating, setHoveredRating] = useState(0)
-  const [goals, setGoals] = useState('')
-  const [outcomes, setOutcomes] = useState('')
-  const [feedback, setFeedback] = useState('')
-  const [isSubmitting, setIsSubmitting] = useState(false)
-  const [error, setError] = useState<string | null>(null)
+  const [rating, setRating] = useState(0);
+  const [hoveredRating, setHoveredRating] = useState(0);
+  const [goals, setGoals] = useState("");
+  const [outcomes, setOutcomes] = useState("");
+  const [feedback, setFeedback] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setError(null)
+    e.preventDefault();
+    setError(null);
 
     if (rating === 0) {
-      setError('Please select a rating')
-      return
+      setError("Please select a rating");
+      return;
     }
 
-    setIsSubmitting(true)
+    setIsSubmitting(true);
 
     try {
       const response = await fetch(`/api/user/sessions/${sessionId}/feedback`, {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json'
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           rating,
           goals: goals.trim() || null,
           outcomes: outcomes.trim() || null,
-          feedback: feedback.trim() || null
-        })
-      })
+          feedback: feedback.trim() || null,
+        }),
+      });
 
       if (!response.ok) {
-        const data = await response.json()
-        throw new Error(data.error || 'Failed to submit feedback')
+        const data = await response.json();
+        throw new Error(data.error || "Failed to submit feedback");
       }
 
-      onSuccess()
-      onClose()
+      onSuccess();
+      onClose();
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to submit feedback')
+      setError(
+        err instanceof Error ? err.message : "Failed to submit feedback",
+      );
     } finally {
-      setIsSubmitting(false)
+      setIsSubmitting(false);
     }
-  }
+  };
 
-  if (!isOpen) return null
+  if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
@@ -77,7 +79,9 @@ export default function SessionFeedbackModal({
       <div className="relative w-full max-w-lg bg-gray-900 border border-gray-800 rounded-2xl shadow-2xl">
         <div className="flex items-center justify-between p-6 border-b border-gray-800">
           <div>
-            <h2 className="text-xl font-light gradient-text-gold">Leave Feedback</h2>
+            <h2 className="text-xl font-light gradient-text-gold">
+              Leave Feedback
+            </h2>
             <p className="text-sm text-text-muted mt-1">{sessionTitle}</p>
           </div>
           <button
@@ -113,20 +117,20 @@ export default function SessionFeedbackModal({
                     size={32}
                     className={`transition-colors ${
                       star <= (hoveredRating || rating)
-                        ? 'text-accent-gold fill-accent-gold'
-                        : 'text-gray-600'
+                        ? "text-accent-gold fill-accent-gold"
+                        : "text-gray-600"
                     }`}
                   />
                 </button>
               ))}
             </div>
             <p className="text-center text-sm text-text-muted mt-2">
-              {rating === 0 && 'Click to rate'}
-              {rating === 1 && 'Poor'}
-              {rating === 2 && 'Fair'}
-              {rating === 3 && 'Good'}
-              {rating === 4 && 'Very Good'}
-              {rating === 5 && 'Excellent'}
+              {rating === 0 && "Click to rate"}
+              {rating === 1 && "Poor"}
+              {rating === 2 && "Fair"}
+              {rating === 3 && "Good"}
+              {rating === 4 && "Very Good"}
+              {rating === 5 && "Excellent"}
             </p>
           </div>
 
@@ -188,12 +192,12 @@ export default function SessionFeedbackModal({
                   Submitting...
                 </>
               ) : (
-                'Submit Feedback'
+                "Submit Feedback"
               )}
             </button>
           </div>
         </form>
       </div>
     </div>
-  )
+  );
 }

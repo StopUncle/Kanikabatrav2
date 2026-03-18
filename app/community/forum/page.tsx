@@ -1,38 +1,38 @@
-import { cookies } from 'next/headers'
-import { verifyAccessToken } from '@/lib/auth/jwt'
-import { prisma } from '@/lib/prisma'
-import { checkAccessTier } from '@/lib/community/access'
-import CategoryCard from '@/components/community/forum/CategoryCard'
+import { cookies } from "next/headers";
+import { verifyAccessToken } from "@/lib/auth/jwt";
+import { prisma } from "@/lib/prisma";
+import { checkAccessTier } from "@/lib/community/access";
+import CategoryCard from "@/components/community/forum/CategoryCard";
 
 export const metadata = {
-  title: 'Forum | Community | Kanika Batra',
-  description: 'Browse forum categories and join discussions'
-}
+  title: "Forum | Community | Kanika Batra",
+  description: "Browse forum categories and join discussions",
+};
 
 export default async function ForumPage() {
-  const cookieStore = await cookies()
-  const accessToken = cookieStore.get('access_token')?.value
-  let userId: string | null = null
+  const cookieStore = await cookies();
+  const accessToken = cookieStore.get("access_token")?.value;
+  let userId: string | null = null;
 
   if (accessToken) {
-    const payload = verifyAccessToken(accessToken)
+    const payload = verifyAccessToken(accessToken);
     if (payload) {
-      userId = payload.userId
+      userId = payload.userId;
     }
   }
 
   const categories = await prisma.forumCategory.findMany({
-    orderBy: { sortOrder: 'asc' },
+    orderBy: { sortOrder: "asc" },
     include: {
       _count: {
-        select: { posts: true }
-      }
-    }
-  })
+        select: { posts: true },
+      },
+    },
+  });
 
   const categoriesWithAccess = await Promise.all(
     categories.map(async (category) => {
-      const access = await checkAccessTier(userId, category.accessTier)
+      const access = await checkAccessTier(userId, category.accessTier);
       return {
         id: category.id,
         name: category.name,
@@ -42,10 +42,10 @@ export default async function ForumPage() {
         accessTier: category.accessTier,
         postCount: category._count.posts,
         hasAccess: access.hasAccess,
-        accessReason: access.reason
-      }
-    })
-  )
+        accessReason: access.reason,
+      };
+    }),
+  );
 
   return (
     <div>
@@ -68,5 +68,5 @@ export default async function ForumPage() {
         </div>
       )}
     </div>
-  )
+  );
 }

@@ -1,49 +1,54 @@
-import * as dotenv from 'dotenv'
-import * as path from 'path'
-import nodemailer from 'nodemailer'
+import * as dotenv from "dotenv";
+import * as path from "path";
+import nodemailer from "nodemailer";
 
 // Load .env file from project root FIRST
-const envPath = path.resolve(__dirname, '..', '.env')
-console.log('Loading env from:', envPath)
-dotenv.config({ path: envPath })
+const envPath = path.resolve(__dirname, "..", ".env");
+console.log("Loading env from:", envPath);
+dotenv.config({ path: envPath });
 
 async function testBookEmail() {
-  console.log('Testing book delivery email...')
-  console.log('='.repeat(50))
-  console.log('SMTP Config:')
-  console.log('  Host:', process.env.SMTP_HOST)
-  console.log('  User:', process.env.SMTP_USER)
-  console.log('  Pass:', process.env.SMTP_PASS ? '****' + process.env.SMTP_PASS.slice(-4) : 'NOT SET')
-  console.log('  From:', process.env.FROM_EMAIL)
-  console.log('='.repeat(50))
+  console.log("Testing book delivery email...");
+  console.log("=".repeat(50));
+  console.log("SMTP Config:");
+  console.log("  Host:", process.env.SMTP_HOST);
+  console.log("  User:", process.env.SMTP_USER);
+  console.log(
+    "  Pass:",
+    process.env.SMTP_PASS
+      ? "****" + process.env.SMTP_PASS.slice(-4)
+      : "NOT SET",
+  );
+  console.log("  From:", process.env.FROM_EMAIL);
+  console.log("=".repeat(50));
 
   if (!process.env.SMTP_USER || !process.env.SMTP_PASS) {
-    console.error('❌ SMTP credentials not found in .env file')
-    return
+    console.error("❌ SMTP credentials not found in .env file");
+    return;
   }
 
   const transporter = nodemailer.createTransport({
-    host: process.env.SMTP_HOST || 'smtp.gmail.com',
-    port: parseInt(process.env.SMTP_PORT || '587', 10),
+    host: process.env.SMTP_HOST || "smtp.gmail.com",
+    port: parseInt(process.env.SMTP_PORT || "587", 10),
     secure: false,
     auth: {
       user: process.env.SMTP_USER,
       pass: process.env.SMTP_PASS,
     },
-  })
+  });
 
   // Test token and expiry
-  const testToken = 'test-token-' + Date.now()
-  const expiresAt = new Date()
-  expiresAt.setDate(expiresAt.getDate() + 30)
+  const testToken = "test-token-" + Date.now();
+  const expiresAt = new Date();
+  expiresAt.setDate(expiresAt.getDate() + 30);
 
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://kanikarose.com'
-  const epubDownloadUrl = `${baseUrl}/api/download?token=${testToken}&format=epub`
-  const expiryDate = expiresAt.toLocaleDateString('en-US', {
-    month: 'long',
-    day: 'numeric',
-    year: 'numeric'
-  })
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://kanikarose.com";
+  const epubDownloadUrl = `${baseUrl}/api/download?token=${testToken}&format=epub`;
+  const expiryDate = expiresAt.toLocaleDateString("en-US", {
+    month: "long",
+    day: "numeric",
+    year: "numeric",
+  });
 
   const html = `
     <!DOCTYPE html>
@@ -205,24 +210,27 @@ async function testBookEmail() {
       </table>
     </body>
     </html>
-  `
+  `;
 
   try {
     const info = await transporter.sendMail({
-      from: process.env.FROM_EMAIL || 'test@test.com',
-      to: 'sdmatheson@outlook.com',
-      subject: 'Download Your Book - Sociopathic Dating Bible (Premium Edition)',
+      from: process.env.FROM_EMAIL || "test@test.com",
+      to: "sdmatheson@outlook.com",
+      subject:
+        "Download Your Book - Sociopathic Dating Bible (Premium Edition)",
       html,
-    })
+    });
 
-    console.log('✅ Book delivery email sent successfully!')
-    console.log('📧 Message ID:', info.messageId)
-    console.log('')
-    console.log('Check your Outlook inbox (and spam folder) for:')
-    console.log('   Subject: Download Your Book - Sociopathic Dating Bible (Premium Edition)')
+    console.log("✅ Book delivery email sent successfully!");
+    console.log("📧 Message ID:", info.messageId);
+    console.log("");
+    console.log("Check your Outlook inbox (and spam folder) for:");
+    console.log(
+      "   Subject: Download Your Book - Sociopathic Dating Bible (Premium Edition)",
+    );
   } catch (error) {
-    console.error('❌ Failed to send email:', error)
+    console.error("❌ Failed to send email:", error);
   }
 }
 
-testBookEmail()
+testBookEmail();

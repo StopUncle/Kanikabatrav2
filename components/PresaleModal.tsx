@@ -1,49 +1,58 @@
-'use client'
+"use client";
 
-import { useState } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
-import { X, BookOpen, Mail, Crown, ShoppingCart } from 'lucide-react'
-import { BOOK_INFO } from '@/lib/constants'
+import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { X, BookOpen, Mail, Crown, ShoppingCart } from "lucide-react";
+import { BOOK_INFO } from "@/lib/constants";
 
 interface PresaleModalProps {
-  isOpen: boolean
-  onClose: () => void
-  onEmailSubmit: (email: string, option: 'kdp' | 'premium' | 'both') => Promise<void>
+  isOpen: boolean;
+  onClose: () => void;
+  onEmailSubmit: (
+    email: string,
+    option: "kdp" | "premium" | "both",
+  ) => Promise<void>;
 }
 
-export default function PresaleModal({ isOpen, onClose, onEmailSubmit }: PresaleModalProps) {
-  const [email, setEmail] = useState('')
-  const [selectedOption, setSelectedOption] = useState<'kdp' | 'premium' | 'both'>('premium')
-  const [isSubmitting, setIsSubmitting] = useState(false)
-  const [submitted, setSubmitted] = useState(false)
-  const [error, setError] = useState('')
+export default function PresaleModal({
+  isOpen,
+  onClose,
+  onEmailSubmit,
+}: PresaleModalProps) {
+  const [email, setEmail] = useState("");
+  const [selectedOption, setSelectedOption] = useState<
+    "kdp" | "premium" | "both"
+  >("premium");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
+  const [error, setError] = useState("");
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setError('')
-    setIsSubmitting(true)
+    e.preventDefault();
+    setError("");
+    setIsSubmitting(true);
 
     try {
-      await onEmailSubmit(email, selectedOption)
-      setSubmitted(true)
+      await onEmailSubmit(email, selectedOption);
+      setSubmitted(true);
       setTimeout(() => {
-        onClose()
-        setSubmitted(false)
-        setEmail('')
-      }, 3000)
+        onClose();
+        setSubmitted(false);
+        setEmail("");
+      }, 3000);
     } catch (_err) {
-      setError('Failed to join presale list. Please try again.')
+      setError("Failed to join presale list. Please try again.");
     } finally {
-      setIsSubmitting(false)
+      setIsSubmitting(false);
     }
-  }
+  };
 
-  const launchDate = new Date(BOOK_INFO.expectedLaunchDate)
-  const formattedDate = launchDate.toLocaleDateString('en-US', {
-    month: 'long',
-    day: 'numeric',
-    year: 'numeric'
-  })
+  const launchDate = new Date(BOOK_INFO.expectedLaunchDate);
+  const formattedDate = launchDate.toLocaleDateString("en-US", {
+    month: "long",
+    day: "numeric",
+    year: "numeric",
+  });
 
   return (
     <AnimatePresence>
@@ -78,9 +87,12 @@ export default function PresaleModal({ isOpen, onClose, onEmailSubmit }: Presale
                 className="text-center py-8"
               >
                 <div className="text-6xl mb-4">✨</div>
-                <h3 className="text-2xl font-light gradient-text mb-2">You&apos;re on the List!</h3>
+                <h3 className="text-2xl font-light gradient-text mb-2">
+                  You&apos;re on the List!
+                </h3>
                 <p className="text-text-muted">
-                  We&apos;ll notify you the moment the book launches on {formattedDate}
+                  We&apos;ll notify you the moment the book launches on{" "}
+                  {formattedDate}
                 </p>
               </motion.div>
             ) : (
@@ -89,33 +101,45 @@ export default function PresaleModal({ isOpen, onClose, onEmailSubmit }: Presale
                   Join the Presale List
                 </h2>
                 <p className="text-text-muted mb-6">
-                  Be first to know when &quot;Sociopathic Dating Bible&quot; launches on {formattedDate}
+                  Be first to know when &quot;Sociopathic Dating Bible&quot;
+                  launches on {formattedDate}
                 </p>
 
                 <form onSubmit={handleSubmit} className="space-y-6">
                   <div className="space-y-4">
                     <label className="block">
-                      <span className="text-text-light text-sm mb-2 block">Choose Your Version</span>
+                      <span className="text-text-light text-sm mb-2 block">
+                        Choose Your Version
+                      </span>
 
                       <div className="space-y-3">
                         <button
                           type="button"
-                          onClick={() => setSelectedOption('kdp')}
+                          onClick={() => setSelectedOption("kdp")}
                           className={`w-full p-4 rounded-lg border transition-all text-left ${
-                            selectedOption === 'kdp'
-                              ? 'border-accent-gold bg-accent-gold/10'
-                              : 'border-gold/20 hover:border-gold/40'
+                            selectedOption === "kdp"
+                              ? "border-accent-gold bg-accent-gold/10"
+                              : "border-gold/20 hover:border-gold/40"
                           }`}
                         >
                           <div className="flex items-start gap-3">
-                            <BookOpen className="text-accent-gold mt-1" size={20} />
+                            <BookOpen
+                              className="text-accent-gold mt-1"
+                              size={20}
+                            />
                             <div className="flex-1">
                               <div className="flex justify-between items-start">
                                 <div>
-                                  <div className="font-semibold text-text-light">Amazon KDP Version</div>
-                                  <div className="text-sm text-text-muted mt-1">Standard edition on Kindle & paperback</div>
+                                  <div className="font-semibold text-text-light">
+                                    Amazon KDP Version
+                                  </div>
+                                  <div className="text-sm text-text-muted mt-1">
+                                    Standard edition on Kindle & paperback
+                                  </div>
                                 </div>
-                                <div className="text-2xl font-light gradient-text-gold">${BOOK_INFO.kdpPrice}</div>
+                                <div className="text-2xl font-light gradient-text-gold">
+                                  ${BOOK_INFO.kdpPrice}
+                                </div>
                               </div>
                             </div>
                           </div>
@@ -123,29 +147,38 @@ export default function PresaleModal({ isOpen, onClose, onEmailSubmit }: Presale
 
                         <button
                           type="button"
-                          onClick={() => setSelectedOption('premium')}
+                          onClick={() => setSelectedOption("premium")}
                           className={`w-full p-4 rounded-lg border transition-all text-left ${
-                            selectedOption === 'premium'
-                              ? 'border-accent-gold bg-accent-gold/10'
-                              : 'border-gold/20 hover:border-gold/40'
+                            selectedOption === "premium"
+                              ? "border-accent-gold bg-accent-gold/10"
+                              : "border-gold/20 hover:border-gold/40"
                           }`}
                         >
                           <div className="flex items-start gap-3">
-                            <Crown className="text-accent-gold mt-1" size={20} />
+                            <Crown
+                              className="text-accent-gold mt-1"
+                              size={20}
+                            />
                             <div className="flex-1">
                               <div className="flex justify-between items-start">
                                 <div>
-                                  <div className="font-semibold text-text-light">Premium Uncensored</div>
+                                  <div className="font-semibold text-text-light">
+                                    Premium Uncensored
+                                  </div>
                                   <div className="text-sm text-text-muted mt-1">
                                     Direct from author + exclusive bonuses
                                   </div>
                                   <ul className="text-xs text-accent-gold mt-2 space-y-1">
-                                    <li>• Bonus chapter & video masterclass</li>
-                                    <li>• Email templates & consultation discount</li>
+                                    <li>• 2 exclusive bonus chapters</li>
+                                    <li>
+                                      • Email templates & consultation discount
+                                    </li>
                                     <li>• Private Telegram group access</li>
                                   </ul>
                                 </div>
-                                <div className="text-2xl font-light gradient-text-gold">${BOOK_INFO.price}</div>
+                                <div className="text-2xl font-light gradient-text-gold">
+                                  ${BOOK_INFO.price}
+                                </div>
                               </div>
                             </div>
                           </div>
@@ -153,20 +186,27 @@ export default function PresaleModal({ isOpen, onClose, onEmailSubmit }: Presale
 
                         <button
                           type="button"
-                          onClick={() => setSelectedOption('both')}
+                          onClick={() => setSelectedOption("both")}
                           className={`w-full p-4 rounded-lg border transition-all text-left ${
-                            selectedOption === 'both'
-                              ? 'border-accent-gold bg-accent-gold/10'
-                              : 'border-gold/20 hover:border-gold/40'
+                            selectedOption === "both"
+                              ? "border-accent-gold bg-accent-gold/10"
+                              : "border-gold/20 hover:border-gold/40"
                           }`}
                         >
                           <div className="flex items-start gap-3">
-                            <ShoppingCart className="text-accent-gold mt-1" size={20} />
+                            <ShoppingCart
+                              className="text-accent-gold mt-1"
+                              size={20}
+                            />
                             <div className="flex-1">
                               <div className="flex justify-between items-start">
                                 <div>
-                                  <div className="font-semibold text-text-light">Notify Me About Both</div>
-                                  <div className="text-sm text-text-muted mt-1">Get updates for all versions</div>
+                                  <div className="font-semibold text-text-light">
+                                    Notify Me About Both
+                                  </div>
+                                  <div className="text-sm text-text-muted mt-1">
+                                    Get updates for all versions
+                                  </div>
                                 </div>
                               </div>
                             </div>
@@ -191,20 +231,19 @@ export default function PresaleModal({ isOpen, onClose, onEmailSubmit }: Presale
                     </label>
                   </div>
 
-                  {error && (
-                    <div className="text-red-400 text-sm">{error}</div>
-                  )}
+                  {error && <div className="text-red-400 text-sm">{error}</div>}
 
                   <button
                     type="submit"
                     disabled={isSubmitting || !email}
                     className="w-full btn-primary rounded-full py-3 font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    {isSubmitting ? 'Joining...' : 'Join Presale List'}
+                    {isSubmitting ? "Joining..." : "Join Presale List"}
                   </button>
 
                   <p className="text-xs text-text-muted text-center">
-                    No spam, ever. You&apos;ll receive 3 emails: launch announcement, 24-hour reminder, and final notice.
+                    No spam, ever. You&apos;ll receive 3 emails: launch
+                    announcement, 24-hour reminder, and final notice.
                   </p>
                 </form>
               </>
@@ -213,5 +252,5 @@ export default function PresaleModal({ isOpen, onClose, onEmailSubmit }: Presale
         </>
       )}
     </AnimatePresence>
-  )
+  );
 }

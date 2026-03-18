@@ -1,13 +1,13 @@
-import { FEATURED_VIDEOS, SITE_CONFIG } from '@/lib/constants'
+import { FEATURED_VIDEOS, SITE_CONFIG } from "@/lib/constants";
 
 export async function GET() {
-  const baseUrl = SITE_CONFIG.url
+  const baseUrl = SITE_CONFIG.url;
 
   const videoEntries = FEATURED_VIDEOS.videos
     .map((video) => {
-      const thumbnailUrl = `https://img.youtube.com/vi/${video.id}/maxresdefault.jpg`
-      const contentUrl = `https://www.youtube.com/watch?v=${video.id}`
-      const playerUrl = `https://www.youtube.com/embed/${video.id}`
+      const thumbnailUrl = `https://img.youtube.com/vi/${video.id}/maxresdefault.jpg`;
+      const contentUrl = `https://www.youtube.com/watch?v=${video.id}`;
+      const playerUrl = `https://www.youtube.com/embed/${video.id}`;
 
       return `
     <url>
@@ -24,28 +24,28 @@ export async function GET() {
         <video:live>no</video:live>
         <video:uploader info="${SITE_CONFIG.url}">${SITE_CONFIG.name}</video:uploader>
       </video:video>
-    </url>`
+    </url>`;
     })
-    .join('')
+    .join("");
 
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
         xmlns:video="http://www.google.com/schemas/sitemap-video/1.1">
 ${videoEntries}
-</urlset>`
+</urlset>`;
 
   return new Response(xml, {
     headers: {
-      'Content-Type': 'application/xml',
-      'Cache-Control': 'public, max-age=86400, s-maxage=86400',
+      "Content-Type": "application/xml",
+      "Cache-Control": "public, max-age=86400, s-maxage=86400",
     },
-  })
+  });
 }
 
 function parseDuration(duration: string): number {
-  const parts = duration.split(':')
+  const parts = duration.split(":");
   if (parts.length === 2) {
-    return parseInt(parts[0]) * 60 + parseInt(parts[1])
+    return parseInt(parts[0]) * 60 + parseInt(parts[1]);
   }
-  return 0
+  return 0;
 }

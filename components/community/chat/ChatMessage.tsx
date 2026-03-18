@@ -1,40 +1,46 @@
-'use client'
+"use client";
 
-import Image from 'next/image'
-import { format } from 'date-fns'
+import Image from "next/image";
+import { format } from "date-fns";
 
 interface ChatMessageProps {
   message: {
-    id: string
-    content: string
-    type: 'TEXT' | 'IMAGE' | 'SYSTEM'
-    createdAt: string
+    id: string;
+    content: string;
+    type: "TEXT" | "IMAGE" | "SYSTEM";
+    createdAt: string;
     author: {
-      id: string
-      name: string
-      avatar?: string
-    }
-  }
-  isOwnMessage: boolean
-  showAvatar: boolean
+      id: string;
+      name: string;
+      avatar?: string;
+    };
+  };
+  isOwnMessage: boolean;
+  showAvatar: boolean;
 }
 
-export default function ChatMessage({ message, isOwnMessage, showAvatar }: ChatMessageProps) {
-  const time = format(new Date(message.createdAt), 'HH:mm')
+export default function ChatMessage({
+  message,
+  isOwnMessage,
+  showAvatar,
+}: ChatMessageProps) {
+  const time = format(new Date(message.createdAt), "HH:mm");
 
-  if (message.type === 'SYSTEM') {
+  if (message.type === "SYSTEM") {
     return (
       <div className="text-center py-2">
         <span className="text-xs text-gray-500 bg-deep-black/50 px-3 py-1 rounded-full">
           {message.content}
         </span>
       </div>
-    )
+    );
   }
 
   return (
-    <div className={`flex ${isOwnMessage ? 'justify-end' : 'justify-start'}`}>
-      <div className={`flex items-end gap-2 max-w-[70%] ${isOwnMessage ? 'flex-row-reverse' : ''}`}>
+    <div className={`flex ${isOwnMessage ? "justify-end" : "justify-start"}`}>
+      <div
+        className={`flex items-end gap-2 max-w-[70%] ${isOwnMessage ? "flex-row-reverse" : ""}`}
+      >
         {showAvatar ? (
           message.author.avatar ? (
             <Image
@@ -65,13 +71,14 @@ export default function ChatMessage({ message, isOwnMessage, showAvatar }: ChatM
           <div
             className={`
               px-4 py-2 rounded-2xl
-              ${isOwnMessage
-                ? 'bg-accent-burgundy text-white rounded-br-md'
-                : 'bg-gray-800 text-white rounded-bl-md'
+              ${
+                isOwnMessage
+                  ? "bg-accent-burgundy text-white rounded-br-md"
+                  : "bg-gray-800 text-white rounded-bl-md"
               }
             `}
           >
-            {message.type === 'IMAGE' ? (
+            {message.type === "IMAGE" ? (
               <Image
                 src={message.content}
                 alt="Shared image"
@@ -81,14 +88,18 @@ export default function ChatMessage({ message, isOwnMessage, showAvatar }: ChatM
                 unoptimized
               />
             ) : (
-              <p className="text-sm whitespace-pre-wrap break-words">{message.content}</p>
+              <p className="text-sm whitespace-pre-wrap break-words">
+                {message.content}
+              </p>
             )}
           </div>
-          <span className={`text-[10px] text-gray-600 mt-1 block ${isOwnMessage ? 'text-right mr-1' : 'ml-1'}`}>
+          <span
+            className={`text-[10px] text-gray-600 mt-1 block ${isOwnMessage ? "text-right mr-1" : "ml-1"}`}
+          >
             {time}
           </span>
         </div>
       </div>
     </div>
-  )
+  );
 }

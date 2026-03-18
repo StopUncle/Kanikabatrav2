@@ -1,29 +1,33 @@
-'use client'
+"use client";
 
-import { motion } from 'framer-motion'
+import { motion } from "framer-motion";
 
 interface KBSpinLogoProps {
-  size?: 'sm' | 'md' | 'lg' | 'xl'
-  animate?: boolean
-  className?: string
+  size?: "sm" | "md" | "lg" | "xl";
+  animate?: boolean;
+  className?: string;
 }
 
-const KBSpinLogo = ({ size = 'md', animate = false, className = '' }: KBSpinLogoProps) => {
+const KBSpinLogo = ({
+  size = "md",
+  animate = false,
+  className = "",
+}: KBSpinLogoProps) => {
   const dimensions = {
-    sm: { container: 'w-10 h-10', text: 'text-sm', dotSize: 'w-1 h-1' },
-    md: { container: 'w-12 h-12', text: 'text-base', dotSize: 'w-1.5 h-1.5' },
-    lg: { container: 'w-16 h-16', text: 'text-xl', dotSize: 'w-2 h-2' },
-    xl: { container: 'w-20 h-20', text: 'text-2xl', dotSize: 'w-2 h-2' },
-  }
+    sm: { container: "w-10 h-10", text: "text-sm", dotSize: "w-1 h-1" },
+    md: { container: "w-12 h-12", text: "text-base", dotSize: "w-1.5 h-1.5" },
+    lg: { container: "w-16 h-16", text: "text-xl", dotSize: "w-2 h-2" },
+    xl: { container: "w-20 h-20", text: "text-2xl", dotSize: "w-2 h-2" },
+  };
 
-  const { container, text, dotSize } = dimensions[size]
+  const { container, text, dotSize } = dimensions[size];
 
   const content = (
     <div className={`relative ${container} ${className}`}>
       {/* Outer spinning circle */}
       <div
-        className={`absolute inset-0 rounded-full border-2 border-accent-gold ${animate ? 'animate-spin' : ''}`}
-        style={{ animationDuration: animate ? '3s' : undefined }}
+        className={`absolute inset-0 rounded-full border-2 border-accent-gold ${animate ? "animate-spin" : ""}`}
+        style={{ animationDuration: animate ? "3s" : undefined }}
       >
         {/* Top dot */}
         <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
@@ -33,21 +37,23 @@ const KBSpinLogo = ({ size = 'md', animate = false, className = '' }: KBSpinLogo
 
       {/* Inner reverse spinning circle */}
       <div
-        className={`absolute inset-2 rounded-full border border-accent-gold/50 ${animate ? 'animate-spin' : ''}`}
+        className={`absolute inset-2 rounded-full border border-accent-gold/50 ${animate ? "animate-spin" : ""}`}
         style={{
-          animationDuration: animate ? '2s' : undefined,
-          animationDirection: animate ? 'reverse' : undefined
+          animationDuration: animate ? "2s" : undefined,
+          animationDirection: animate ? "reverse" : undefined,
         }}
       />
 
       {/* Center KB text */}
       <div className="absolute inset-0 flex items-center justify-center">
-        <span className={`${text} font-serif gradient-text-gold font-bold`}>KB</span>
+        <span className={`${text} font-serif gradient-text-gold font-bold`}>
+          KB
+        </span>
       </div>
     </div>
-  )
+  );
 
-  if (animate && size === 'xl') {
+  if (animate && size === "xl") {
     // For XL size with animation, wrap in motion for smooth rotation
     return (
       <motion.div
@@ -58,10 +64,10 @@ const KBSpinLogo = ({ size = 'md', animate = false, className = '' }: KBSpinLogo
       >
         {content}
       </motion.div>
-    )
+    );
   }
 
-  return content
-}
+  return content;
+};
 
-export default KBSpinLogo
+export default KBSpinLogo;

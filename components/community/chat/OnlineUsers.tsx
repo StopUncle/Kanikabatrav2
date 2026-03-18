@@ -1,28 +1,33 @@
-'use client'
+"use client";
 
-import Image from 'next/image'
-import { Users, Crown, Shield } from 'lucide-react'
+import Image from "next/image";
+import { Users, Crown, Shield } from "lucide-react";
 
 interface Member {
-  id: string
-  name: string
-  avatar?: string
-  role: string
+  id: string;
+  name: string;
+  avatar?: string;
+  role: string;
 }
 
 interface OnlineUsersProps {
-  members: Member[]
-  onlineUsers: Member[]
-  memberCount: number
+  members: Member[];
+  onlineUsers: Member[];
+  memberCount: number;
 }
 
-export default function OnlineUsers({ members, onlineUsers, memberCount }: OnlineUsersProps) {
-  const onlineIds = new Set(onlineUsers.map(u => u.id))
+export default function OnlineUsers({
+  members,
+  onlineUsers,
+  memberCount,
+}: OnlineUsersProps) {
+  const onlineIds = new Set(onlineUsers.map((u) => u.id));
 
   function getRoleIcon(role: string) {
-    if (role === 'ADMIN') return <Crown className="w-3 h-3 text-accent-gold" />
-    if (role === 'MODERATOR') return <Shield className="w-3 h-3 text-blue-400" />
-    return null
+    if (role === "ADMIN") return <Crown className="w-3 h-3 text-accent-gold" />;
+    if (role === "MODERATOR")
+      return <Shield className="w-3 h-3 text-blue-400" />;
+    return null;
   }
 
   return (
@@ -69,7 +74,9 @@ export default function OnlineUsers({ members, onlineUsers, memberCount }: Onlin
                     )}
                     <div className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 bg-green-500 rounded-full border-2 border-deep-black" />
                   </div>
-                  <span className="text-sm text-white truncate flex-1">{user.name}</span>
+                  <span className="text-sm text-white truncate flex-1">
+                    {user.name}
+                  </span>
                   {getRoleIcon(user.role)}
                 </div>
               ))}
@@ -82,34 +89,38 @@ export default function OnlineUsers({ members, onlineUsers, memberCount }: Onlin
             Members
           </h4>
           <div className="space-y-1">
-            {members.filter(m => !onlineIds.has(m.id)).map((member) => (
-              <div
-                key={member.id}
-                className="flex items-center gap-2 px-2 py-1.5 rounded-lg hover:bg-gray-800/50"
-              >
-                {member.avatar ? (
-                  <Image
-                    src={member.avatar}
-                    alt={member.name}
-                    width={24}
-                    height={24}
-                    className="w-6 h-6 rounded-full object-cover opacity-60"
-                    unoptimized
-                  />
-                ) : (
-                  <div className="w-6 h-6 rounded-full bg-gray-800 flex items-center justify-center">
-                    <span className="text-gray-500 text-xs">
-                      {member.name.charAt(0).toUpperCase()}
-                    </span>
-                  </div>
-                )}
-                <span className="text-sm text-gray-500 truncate flex-1">{member.name}</span>
-                {getRoleIcon(member.role)}
-              </div>
-            ))}
+            {members
+              .filter((m) => !onlineIds.has(m.id))
+              .map((member) => (
+                <div
+                  key={member.id}
+                  className="flex items-center gap-2 px-2 py-1.5 rounded-lg hover:bg-gray-800/50"
+                >
+                  {member.avatar ? (
+                    <Image
+                      src={member.avatar}
+                      alt={member.name}
+                      width={24}
+                      height={24}
+                      className="w-6 h-6 rounded-full object-cover opacity-60"
+                      unoptimized
+                    />
+                  ) : (
+                    <div className="w-6 h-6 rounded-full bg-gray-800 flex items-center justify-center">
+                      <span className="text-gray-500 text-xs">
+                        {member.name.charAt(0).toUpperCase()}
+                      </span>
+                    </div>
+                  )}
+                  <span className="text-sm text-gray-500 truncate flex-1">
+                    {member.name}
+                  </span>
+                  {getRoleIcon(member.role)}
+                </div>
+              ))}
           </div>
         </div>
       </div>
     </div>
-  )
+  );
 }

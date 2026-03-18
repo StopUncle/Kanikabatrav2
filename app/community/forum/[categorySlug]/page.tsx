@@ -1,58 +1,58 @@
-import { cookies } from 'next/headers'
-import { notFound } from 'next/navigation'
-import Link from 'next/link'
-import { verifyAccessToken } from '@/lib/auth/jwt'
-import { prisma } from '@/lib/prisma'
-import { checkAccessTier } from '@/lib/community/access'
-import PostCard from '@/components/community/forum/PostCard'
-import AccessGate from '@/components/community/access/AccessGate'
-import { Plus, ArrowLeft } from 'lucide-react'
+import { cookies } from "next/headers";
+import { notFound } from "next/navigation";
+import Link from "next/link";
+import { verifyAccessToken } from "@/lib/auth/jwt";
+import { prisma } from "@/lib/prisma";
+import { checkAccessTier } from "@/lib/community/access";
+import PostCard from "@/components/community/forum/PostCard";
+import AccessGate from "@/components/community/access/AccessGate";
+import { Plus, ArrowLeft } from "lucide-react";
 
 interface Props {
-  params: Promise<{ categorySlug: string }>
-  searchParams: Promise<{ sort?: string }>
+  params: Promise<{ categorySlug: string }>;
+  searchParams: Promise<{ sort?: string }>;
 }
 
 export async function generateMetadata({ params }: Props) {
-  const { categorySlug } = await params
+  const { categorySlug } = await params;
   const category = await prisma.forumCategory.findUnique({
-    where: { slug: categorySlug }
-  })
+    where: { slug: categorySlug },
+  });
 
   if (!category) {
-    return { title: 'Category Not Found' }
+    return { title: "Category Not Found" };
   }
 
   return {
     title: `${category.name} | Forum | Kanika Batra`,
-    description: category.description || `Browse posts in ${category.name}`
-  }
+    description: category.description || `Browse posts in ${category.name}`,
+  };
 }
 
 export default async function CategoryPage({ params, searchParams }: Props) {
-  const { categorySlug } = await params
-  const { sort = 'latest' } = await searchParams
+  const { categorySlug } = await params;
+  const { sort = "latest" } = await searchParams;
 
-  const cookieStore = await cookies()
-  const accessToken = cookieStore.get('access_token')?.value
-  let userId: string | null = null
+  const cookieStore = await cookies();
+  const accessToken = cookieStore.get("access_token")?.value;
+  let userId: string | null = null;
 
   if (accessToken) {
-    const payload = verifyAccessToken(accessToken)
+    const payload = verifyAccessToken(accessToken);
     if (payload) {
-      userId = payload.userId
+      userId = payload.userId;
     }
   }
 
   const category = await prisma.forumCategory.findUnique({
-    where: { slug: categorySlug }
-  })
+    where: { slug: categorySlug },
+  });
 
   if (!category) {
-    notFound()
+    notFound();
   }
 
-  const access = await checkAccessTier(userId, category.accessTier)
+  const access = await checkAccessTier(userId, category.accessTier);
 
   if (!access.hasAccess) {
     return (
@@ -62,38 +62,36 @@ export default async function CategoryPage({ params, searchParams }: Props) {
         reason={access.reason}
         upgradeUrl={access.upgradeUrl}
       />
-    )
+    );
   }
 
-  const orderBy = sort === 'popular'
-    ? { likeCount: 'desc' as const }
-    : sort === 'active'
-      ? { lastReplyAt: 'desc' as const }
-      : { createdAt: 'desc' as const }
+  const orderBy =
+    sort === "popular"
+      ? { likeCount: "desc" as const }
+      : sort === "active"
+        ? { lastReplyAt: "desc" as const }
+        : { createdAt: "desc" as const };
 
   const posts = await prisma.forumPost.findMany({
     where: { categoryId: category.id },
-    orderBy: [
-      { isPinned: 'desc' },
-      orderBy
-    ],
+    orderBy: [{ isPinned: "desc" }, orderBy],
     include: {
       author: {
         select: {
           id: true,
           name: true,
           displayName: true,
-          avatarUrl: true
-        }
+          avatarUrl: true,
+        },
       },
       _count: {
-        select: { replies: true }
-      }
+        select: { replies: true },
+      },
     },
-    take: 20
-  })
+    take: 20,
+  });
 
-  const formattedPosts = posts.map(post => ({
+  const formattedPosts = posts.map((post) => ({
     id: post.id,
     title: post.title,
     slug: post.slug,
@@ -103,8 +101,8 @@ export default async function CategoryPage({ params, searchParams }: Props) {
     likeCount: post.likeCount,
     replyCount: post._count.replies,
     createdAt: post.createdAt.toISOString(),
-    author: post.author
-  }))
+    author: post.author,
+  }));
 
   return (
     <div>
@@ -120,7 +118,9 @@ export default async function CategoryPage({ params, searchParams }: Props) {
         <div className="flex items-center justify-between">
           <div>
             <div className="flex items-center gap-3">
-              {category.icon && <span className="text-3xl">{category.icon}</span>}
+              {category.icon && (
+                <span className="text-3xl">{category.icon}</span>
+              )}
               <h1 className="text-3xl font-bold text-white">{category.name}</h1>
             </div>
             {category.description && (
@@ -141,15 +141,16 @@ export default async function CategoryPage({ params, searchParams }: Props) {
       </div>
 
       <div className="flex gap-2 mb-6">
-        {['latest', 'popular', 'active'].map((sortOption) => (
+        {["latest", "popular", "active"].map((sortOption) => (
           <Link
             key={sortOption}
             href={`/community/forum/${categorySlug}?sort=${sortOption}`}
             className={`
               px-4 py-2 rounded-lg text-sm transition-colors
-              ${sort === sortOption
-                ? 'bg-accent-burgundy/30 text-accent-gold'
-                : 'bg-gray-800/50 text-gray-400 hover:bg-gray-800'
+              ${
+                sort === sortOption
+                  ? "bg-accent-burgundy/30 text-accent-gold"
+                  : "bg-gray-800/50 text-gray-400 hover:bg-gray-800"
               }
             `}
           >
@@ -179,5 +180,5 @@ export default async function CategoryPage({ params, searchParams }: Props) {
         </div>
       )}
     </div>
-  )
+  );
 }

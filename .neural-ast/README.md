@@ -5,6 +5,7 @@ This directory contains Neural AST engine integration files for advanced code an
 ## 🧠 Purpose
 
 The `.neural-ast` directory houses tools for:
+
 - Intelligent code analysis
 - AST-based transformations
 - Automated refactoring
@@ -29,6 +30,7 @@ The `.neural-ast` directory houses tools for:
 ## 🔧 Integration
 
 Connected to:
+
 - Blueprint Architect system
 - Development workflow
 - Code quality tools

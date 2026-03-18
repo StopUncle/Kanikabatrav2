@@ -1,88 +1,93 @@
-'use client'
+"use client";
 
-import { useEffect, useState, Suspense } from 'react'
-import { useSearchParams } from 'next/navigation'
-import { motion } from 'framer-motion'
-import Link from 'next/link'
-import Header from '@/components/Header'
-import BackgroundEffects from '@/components/BackgroundEffects'
-import RadarChart from '@/components/quiz/RadarChart'
-import { PERSONALITY_PROFILES, PersonalityType, QuizScores, DiagnosisResult, FunctioningLevel } from '@/lib/quiz-data'
+import { useEffect, useState, Suspense } from "react";
+import { useSearchParams } from "next/navigation";
+import { motion } from "framer-motion";
+import Link from "next/link";
+import Header from "@/components/Header";
+import BackgroundEffects from "@/components/BackgroundEffects";
+import RadarChart from "@/components/quiz/RadarChart";
+import {
+  PERSONALITY_PROFILES,
+  PersonalityType,
+  QuizScores,
+  DiagnosisResult,
+  FunctioningLevel,
+} from "@/lib/quiz-data";
 
 interface QuizResultData {
-  id: string
-  email: string
-  scores: QuizScores
-  primaryType: PersonalityType
-  secondaryType: PersonalityType
-  diagnosis: DiagnosisResult
-  paid: boolean
+  id: string;
+  email: string;
+  scores: QuizScores;
+  primaryType: PersonalityType;
+  secondaryType: PersonalityType;
+  diagnosis: DiagnosisResult;
+  paid: boolean;
 }
 
 function QuizSuccessContent() {
-  const searchParams = useSearchParams()
-  const [result, setResult] = useState<QuizResultData | null>(null)
-  const [isLoading, setIsLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
-  const [paymentCaptured, setPaymentCaptured] = useState(false)
+  const searchParams = useSearchParams();
+  const [result, setResult] = useState<QuizResultData | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [paymentCaptured, setPaymentCaptured] = useState(false);
 
   useEffect(() => {
     const captureAndLoadResults = async () => {
-      const quizId = searchParams.get('quiz_id')
-      const token = searchParams.get('token')
+      const quizId = searchParams.get("quiz_id");
+      const token = searchParams.get("token");
 
       if (!quizId) {
-        setError('Missing quiz ID')
-        setIsLoading(false)
-        return
+        setError("Missing quiz ID");
+        setIsLoading(false);
+        return;
       }
 
       try {
         if (token && !paymentCaptured) {
-          const captureResponse = await fetch('/api/quiz/capture-order', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+          const captureResponse = await fetch("/api/quiz/capture-order", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
               orderId: token,
-              quizResultId: quizId
-            })
-          })
+              quizResultId: quizId,
+            }),
+          });
 
           if (!captureResponse.ok) {
-            const captureData = await captureResponse.json()
-            throw new Error(captureData.error || 'Payment capture failed')
+            const captureData = await captureResponse.json();
+            throw new Error(captureData.error || "Payment capture failed");
           }
 
-          setPaymentCaptured(true)
+          setPaymentCaptured(true);
         }
 
-        const response = await fetch(`/api/quiz/results?id=${quizId}`)
+        const response = await fetch(`/api/quiz/results?id=${quizId}`);
 
         if (!response.ok) {
-          throw new Error('Failed to load results')
+          throw new Error("Failed to load results");
         }
 
-        const data = await response.json()
-        setResult(data)
+        const data = await response.json();
+        setResult(data);
 
         if (data.paid && data.email) {
-          await fetch('/api/quiz/send-results', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ quizResultId: quizId })
-          })
+          await fetch("/api/quiz/send-results", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ quizResultId: quizId }),
+          });
         }
-
       } catch (err) {
-        console.error('Error loading results:', err)
-        setError(err instanceof Error ? err.message : 'Failed to load results')
+        console.error("Error loading results:", err);
+        setError(err instanceof Error ? err.message : "Failed to load results");
       } finally {
-        setIsLoading(false)
+        setIsLoading(false);
       }
-    }
+    };
 
-    captureAndLoadResults()
-  }, [searchParams, paymentCaptured])
+    captureAndLoadResults();
+  }, [searchParams, paymentCaptured]);
 
   if (isLoading) {
     return (
@@ -101,7 +106,7 @@ function QuizSuccessContent() {
           </div>
         </div>
       </div>
-    )
+    );
   }
 
   if (error || !result) {
@@ -113,7 +118,9 @@ function QuizSuccessContent() {
           <div className="text-center px-4">
             <div className="text-5xl mb-6">⚠️</div>
             <h1 className="text-2xl text-white mb-4">Something went wrong</h1>
-            <p className="text-text-gray mb-8">{error || 'Could not load your results'}</p>
+            <p className="text-text-gray mb-8">
+              {error || "Could not load your results"}
+            </p>
             <Link
               href="/quiz"
               className="px-8 py-3 bg-accent-gold text-deep-black font-medium rounded hover:bg-accent-gold/90 transition-colors"
@@ -123,28 +130,34 @@ function QuizSuccessContent() {
           </div>
         </main>
       </>
-    )
+    );
   }
 
-  const primaryProfile = PERSONALITY_PROFILES[result.primaryType]
-  const secondaryProfile = PERSONALITY_PROFILES[result.secondaryType]
-  const diagnosis = result.diagnosis
+  const primaryProfile = PERSONALITY_PROFILES[result.primaryType];
+  const secondaryProfile = PERSONALITY_PROFILES[result.secondaryType];
+  const diagnosis = result.diagnosis;
 
   const getFunctioningColor = (level: FunctioningLevel) => {
     switch (level) {
-      case 'high': return 'text-green-400 border-green-400/30 bg-green-400/10'
-      case 'moderate': return 'text-yellow-400 border-yellow-400/30 bg-yellow-400/10'
-      case 'low': return 'text-red-400 border-red-400/30 bg-red-400/10'
+      case "high":
+        return "text-green-400 border-green-400/30 bg-green-400/10";
+      case "moderate":
+        return "text-yellow-400 border-yellow-400/30 bg-yellow-400/10";
+      case "low":
+        return "text-red-400 border-red-400/30 bg-red-400/10";
     }
-  }
+  };
 
   const getFunctioningLabel = (level: FunctioningLevel) => {
     switch (level) {
-      case 'high': return 'High Adaptive Function'
-      case 'moderate': return 'Moderate Adaptive Function'
-      case 'low': return 'Low Adaptive Function'
+      case "high":
+        return "High Adaptive Function";
+      case "moderate":
+        return "Moderate Adaptive Function";
+      case "low":
+        return "Low Adaptive Function";
     }
-  }
+  };
 
   return (
     <>
@@ -168,7 +181,8 @@ function QuizSuccessContent() {
             </h1>
 
             <p className="text-text-gray mb-6">
-              Results sent to <span className="text-accent-gold">{result.email}</span>
+              Results sent to{" "}
+              <span className="text-accent-gold">{result.email}</span>
             </p>
 
             {diagnosis && (
@@ -179,11 +193,15 @@ function QuizSuccessContent() {
                 className="inline-block"
               >
                 <div className="px-6 py-4 bg-deep-black/80 border-2 border-accent-gold rounded-lg">
-                  <div className="text-xs text-text-gray uppercase tracking-wider mb-2">Clinical Assessment</div>
+                  <div className="text-xs text-text-gray uppercase tracking-wider mb-2">
+                    Clinical Assessment
+                  </div>
                   <div className="text-xl sm:text-2xl font-mono text-accent-gold mb-2">
                     {diagnosis.clinicalLabel}
                   </div>
-                  <div className={`inline-block px-3 py-1 rounded-full text-xs font-medium ${getFunctioningColor(diagnosis.functioningLevel)}`}>
+                  <div
+                    className={`inline-block px-3 py-1 rounded-full text-xs font-medium ${getFunctioningColor(diagnosis.functioningLevel)}`}
+                  >
                     {getFunctioningLabel(diagnosis.functioningLevel)}
                   </div>
                 </div>
@@ -210,7 +228,9 @@ function QuizSuccessContent() {
               className="mb-8"
             >
               <div className="p-6 bg-deep-black/50 border border-accent-gold/20 rounded-lg">
-                <h3 className="text-lg font-light text-accent-gold mb-3">Functioning Assessment</h3>
+                <h3 className="text-lg font-light text-accent-gold mb-3">
+                  Functioning Assessment
+                </h3>
                 <p className="text-text-gray leading-relaxed">
                   {diagnosis.description}
                 </p>
@@ -234,21 +254,30 @@ function QuizSuccessContent() {
                   key={type}
                   className={`p-4 rounded-lg border text-center ${
                     type === result.primaryType
-                      ? 'bg-accent-gold/20 border-accent-gold'
+                      ? "bg-accent-gold/20 border-accent-gold"
                       : type === result.secondaryType
-                        ? 'bg-accent-gold/10 border-accent-gold/50'
-                        : type === 'neurotypical'
-                          ? 'bg-green-900/20 border-green-600/30'
-                          : 'bg-deep-black/30 border-accent-gold/10'
+                        ? "bg-accent-gold/10 border-accent-gold/50"
+                        : type === "neurotypical"
+                          ? "bg-green-900/20 border-green-600/30"
+                          : "bg-deep-black/30 border-accent-gold/10"
                   }`}
                 >
-                  <div className={`text-2xl font-light mb-1 ${
-                    type === 'neurotypical' ? 'text-green-400' : 'text-accent-gold'
-                  }`}>
+                  <div
+                    className={`text-2xl font-light mb-1 ${
+                      type === "neurotypical"
+                        ? "text-green-400"
+                        : "text-accent-gold"
+                    }`}
+                  >
                     {score}%
                   </div>
                   <div className="text-xs text-text-gray uppercase tracking-wider">
-                    {type === 'neurotypical' ? 'Neurotypical' : PERSONALITY_PROFILES[type as PersonalityType].name.split(' ')[1] || PERSONALITY_PROFILES[type as PersonalityType].name}
+                    {type === "neurotypical"
+                      ? "Neurotypical"
+                      : PERSONALITY_PROFILES[
+                          type as PersonalityType
+                        ].name.split(" ")[1] ||
+                        PERSONALITY_PROFILES[type as PersonalityType].name}
                   </div>
                 </div>
               ))}
@@ -265,12 +294,18 @@ function QuizSuccessContent() {
               <div className="flex items-center gap-3 mb-4">
                 <span className="text-3xl">👑</span>
                 <div>
-                  <div className="text-xs text-text-gray uppercase tracking-wider">Primary Type</div>
-                  <h3 className="text-2xl text-accent-gold">{primaryProfile.name}</h3>
+                  <div className="text-xs text-text-gray uppercase tracking-wider">
+                    Primary Type
+                  </div>
+                  <h3 className="text-2xl text-accent-gold">
+                    {primaryProfile.name}
+                  </h3>
                 </div>
               </div>
 
-              <p className="text-text-gray text-sm italic mb-4">&quot;{primaryProfile.tagline}&quot;</p>
+              <p className="text-text-gray text-sm italic mb-4">
+                &quot;{primaryProfile.tagline}&quot;
+              </p>
 
               <p className="text-white/90 leading-relaxed mb-6">
                 {primaryProfile.description}
@@ -278,10 +313,15 @@ function QuizSuccessContent() {
 
               <div className="grid md:grid-cols-2 gap-6">
                 <div>
-                  <h4 className="text-sm text-accent-gold uppercase tracking-wider mb-3">Traits</h4>
+                  <h4 className="text-sm text-accent-gold uppercase tracking-wider mb-3">
+                    Traits
+                  </h4>
                   <ul className="space-y-2">
                     {primaryProfile.traits.map((trait, i) => (
-                      <li key={i} className="text-text-gray text-sm flex items-start gap-2">
+                      <li
+                        key={i}
+                        className="text-text-gray text-sm flex items-start gap-2"
+                      >
                         <span className="text-accent-gold">•</span>
                         {trait}
                       </li>
@@ -290,10 +330,15 @@ function QuizSuccessContent() {
                 </div>
 
                 <div>
-                  <h4 className="text-sm text-accent-gold uppercase tracking-wider mb-3">Strengths</h4>
+                  <h4 className="text-sm text-accent-gold uppercase tracking-wider mb-3">
+                    Strengths
+                  </h4>
                   <ul className="space-y-2">
                     {primaryProfile.strengths.map((strength, i) => (
-                      <li key={i} className="text-text-gray text-sm flex items-start gap-2">
+                      <li
+                        key={i}
+                        className="text-text-gray text-sm flex items-start gap-2"
+                      >
                         <span className="text-green-400">✓</span>
                         {strength}
                       </li>
@@ -303,10 +348,15 @@ function QuizSuccessContent() {
               </div>
 
               <div className="mt-6">
-                <h4 className="text-sm text-accent-gold uppercase tracking-wider mb-3">Blind Spots</h4>
+                <h4 className="text-sm text-accent-gold uppercase tracking-wider mb-3">
+                  Blind Spots
+                </h4>
                 <ul className="space-y-2">
                   {primaryProfile.blindSpots.map((blind, i) => (
-                    <li key={i} className="text-text-gray text-sm flex items-start gap-2">
+                    <li
+                      key={i}
+                      className="text-text-gray text-sm flex items-start gap-2"
+                    >
                       <span className="text-red-400">!</span>
                       {blind}
                     </li>
@@ -315,8 +365,12 @@ function QuizSuccessContent() {
               </div>
 
               <div className="mt-6 p-4 bg-deep-black/50 rounded-lg">
-                <h4 className="text-sm text-accent-gold uppercase tracking-wider mb-2">Relationship Pattern</h4>
-                <p className="text-text-gray text-sm">{primaryProfile.relationshipPattern}</p>
+                <h4 className="text-sm text-accent-gold uppercase tracking-wider mb-2">
+                  Relationship Pattern
+                </h4>
+                <p className="text-text-gray text-sm">
+                  {primaryProfile.relationshipPattern}
+                </p>
               </div>
             </div>
           </motion.div>
@@ -331,12 +385,18 @@ function QuizSuccessContent() {
               <div className="flex items-center gap-3 mb-4">
                 <span className="text-2xl">🥈</span>
                 <div>
-                  <div className="text-xs text-text-gray uppercase tracking-wider">Secondary Type</div>
-                  <h3 className="text-xl text-white">{secondaryProfile.name}</h3>
+                  <div className="text-xs text-text-gray uppercase tracking-wider">
+                    Secondary Type
+                  </div>
+                  <h3 className="text-xl text-white">
+                    {secondaryProfile.name}
+                  </h3>
                 </div>
               </div>
 
-              <p className="text-text-gray text-sm italic mb-4">&quot;{secondaryProfile.tagline}&quot;</p>
+              <p className="text-text-gray text-sm italic mb-4">
+                &quot;{secondaryProfile.tagline}&quot;
+              </p>
 
               <p className="text-text-gray leading-relaxed">
                 {secondaryProfile.description}
@@ -358,7 +418,9 @@ function QuizSuccessContent() {
               <Link href="/book" className="block">
                 <div className="p-6 bg-deep-black/50 border border-accent-gold/20 rounded-lg hover:border-accent-gold/50 transition-colors">
                   <div className="text-2xl mb-3">📖</div>
-                  <h3 className="text-lg text-accent-gold mb-2">The Sociopathic Dating Bible</h3>
+                  <h3 className="text-lg text-accent-gold mb-2">
+                    The Sociopathic Dating Bible
+                  </h3>
                   <p className="text-text-gray text-sm">
                     Master the psychology behind attraction and power dynamics.
                   </p>
@@ -368,7 +430,9 @@ function QuizSuccessContent() {
               <Link href="/coaching" className="block">
                 <div className="p-6 bg-deep-black/50 border border-accent-gold/20 rounded-lg hover:border-accent-gold/50 transition-colors">
                   <div className="text-2xl mb-3">🎯</div>
-                  <h3 className="text-lg text-accent-gold mb-2">1:1 Coaching</h3>
+                  <h3 className="text-lg text-accent-gold mb-2">
+                    1:1 Coaching
+                  </h3>
                   <p className="text-text-gray text-sm">
                     Personal guidance from a clinically diagnosed sociopath.
                   </p>
@@ -393,17 +457,19 @@ function QuizSuccessContent() {
         </div>
       </main>
     </>
-  )
+  );
 }
 
 export default function QuizSuccessPage() {
   return (
-    <Suspense fallback={
-      <div className="min-h-screen bg-deep-black flex items-center justify-center">
-        <div className="text-accent-gold">Loading...</div>
-      </div>
-    }>
+    <Suspense
+      fallback={
+        <div className="min-h-screen bg-deep-black flex items-center justify-center">
+          <div className="text-accent-gold">Loading...</div>
+        </div>
+      }
+    >
       <QuizSuccessContent />
     </Suspense>
-  )
+  );
 }

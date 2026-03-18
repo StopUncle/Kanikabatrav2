@@ -1,38 +1,46 @@
-'use client'
+"use client";
 
-import { motion } from 'framer-motion'
-import Link from 'next/link'
-import BackgroundEffects from '@/components/BackgroundEffects'
-import Header from '@/components/Header'
-import { MessageSquare, Users, BookOpen, Crown, Lock, ArrowRight, Play } from 'lucide-react'
+import { motion } from "framer-motion";
+import Link from "next/link";
+import BackgroundEffects from "@/components/BackgroundEffects";
+import Header from "@/components/Header";
+import {
+  MessageSquare,
+  Users,
+  BookOpen,
+  Crown,
+  Lock,
+  ArrowRight,
+  Play,
+} from "lucide-react";
 
 interface Category {
-  id: string
-  name: string
-  slug: string
-  description: string | null
-  icon: string | null
-  accessTier: string
-  postCount: number
-  hasAccess: boolean
-  accessReason?: string
+  id: string;
+  name: string;
+  slug: string;
+  description: string | null;
+  icon: string | null;
+  accessTier: string;
+  postCount: number;
+  hasAccess: boolean;
+  accessReason?: string;
 }
 
 interface ChatRoom {
-  id: string
-  name: string
-  slug: string
-  accessTier: string
-  memberCount: number
-  hasAccess: boolean
+  id: string;
+  name: string;
+  slug: string;
+  accessTier: string;
+  memberCount: number;
+  hasAccess: boolean;
 }
 
 interface CommunityPageClientProps {
-  categories: Category[]
-  chatRooms: ChatRoom[]
-  isLoggedIn: boolean
-  userName: string | null
-  hasSubscription: boolean
+  categories: Category[];
+  chatRooms: ChatRoom[];
+  isLoggedIn: boolean;
+  userName: string | null;
+  hasSubscription: boolean;
 }
 
 export default function CommunityPageClient({
@@ -40,7 +48,7 @@ export default function CommunityPageClient({
   chatRooms,
   isLoggedIn,
   userName,
-  hasSubscription
+  hasSubscription,
 }: CommunityPageClientProps) {
   return (
     <>
@@ -60,8 +68,8 @@ export default function CommunityPageClient({
               )}
             </h1>
             <p className="text-text-gray text-lg max-w-2xl mx-auto">
-              Connect with fellow students, share insights, and discuss course content
-              with like-minded individuals.
+              Connect with fellow students, share insights, and discuss course
+              content with like-minded individuals.
             </p>
           </motion.div>
 
@@ -78,7 +86,8 @@ export default function CommunityPageClient({
                     Join the conversation
                   </h3>
                   <p className="text-text-muted text-sm">
-                    Create an account to post, comment, and chat with other members
+                    Create an account to post, comment, and chat with other
+                    members
                   </p>
                 </div>
                 <div className="flex gap-3">
@@ -157,17 +166,19 @@ export default function CommunityPageClient({
                 {categories.map((category) => (
                   <Link
                     key={category.id}
-                    href={category.hasAccess ? `/community/${category.slug}` : '#'}
+                    href={
+                      category.hasAccess ? `/community/${category.slug}` : "#"
+                    }
                     onClick={(e) => !category.hasAccess && e.preventDefault()}
                     className={`block bg-deep-black/40 backdrop-blur-sm border rounded-xl p-5 transition-all ${
                       category.hasAccess
-                        ? 'border-accent-gold/20 hover:border-accent-gold/40'
-                        : 'border-gray-800/50 opacity-60 cursor-not-allowed'
+                        ? "border-accent-gold/20 hover:border-accent-gold/40"
+                        : "border-gray-800/50 opacity-60 cursor-not-allowed"
                     }`}
                   >
                     <div className="flex items-start gap-4">
                       <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-accent-burgundy/20 to-accent-sapphire/20 flex items-center justify-center flex-shrink-0">
-                        {category.accessTier === 'COURSE_SUBSCRIBER' ? (
+                        {category.accessTier === "COURSE_SUBSCRIBER" ? (
                           <Crown className="w-6 h-6 text-accent-gold" />
                         ) : (
                           <MessageSquare className="w-6 h-6 text-accent-gold" />
@@ -188,7 +199,8 @@ export default function CommunityPageClient({
                           </p>
                         )}
                         <p className="text-xs text-text-muted">
-                          {category.postCount} {category.postCount === 1 ? 'post' : 'posts'}
+                          {category.postCount}{" "}
+                          {category.postCount === 1 ? "post" : "posts"}
                         </p>
                       </div>
                       {category.hasAccess && (
@@ -219,23 +231,28 @@ export default function CommunityPageClient({
                 {chatRooms.map((room) => (
                   <Link
                     key={room.id}
-                    href={room.hasAccess ? `/community/chat/${room.slug}` : '#'}
+                    href={room.hasAccess ? `/community/chat/${room.slug}` : "#"}
                     onClick={(e) => !room.hasAccess && e.preventDefault()}
                     className={`block bg-deep-black/40 backdrop-blur-sm border rounded-xl p-5 text-center transition-all ${
                       room.hasAccess
-                        ? 'border-accent-gold/20 hover:border-accent-gold/40'
-                        : 'border-gray-800/50 opacity-60 cursor-not-allowed'
+                        ? "border-accent-gold/20 hover:border-accent-gold/40"
+                        : "border-gray-800/50 opacity-60 cursor-not-allowed"
                     }`}
                   >
                     <div className="w-12 h-12 mx-auto mb-3 rounded-full bg-accent-burgundy/20 flex items-center justify-center">
-                      {room.accessTier === 'PREMIUM' || room.accessTier === 'COURSE_SUBSCRIBER' ? (
+                      {room.accessTier === "PREMIUM" ||
+                      room.accessTier === "COURSE_SUBSCRIBER" ? (
                         <Crown className="w-6 h-6 text-accent-gold" />
                       ) : (
                         <Users className="w-6 h-6 text-accent-gold" />
                       )}
                     </div>
-                    <h3 className="font-medium text-text-light mb-1">{room.name}</h3>
-                    <p className="text-xs text-text-muted">{room.memberCount} members</p>
+                    <h3 className="font-medium text-text-light mb-1">
+                      {room.name}
+                    </h3>
+                    <p className="text-xs text-text-muted">
+                      {room.memberCount} members
+                    </p>
                     {!room.hasAccess && (
                       <Lock className="w-4 h-4 text-text-muted mx-auto mt-2" />
                     )}
@@ -257,8 +274,8 @@ export default function CommunityPageClient({
                   Unlock Full Access
                 </h2>
                 <p className="text-text-muted">
-                  Subscribe to a course for full forum access, exclusive discussions,
-                  and direct interaction with other students.
+                  Subscribe to a course for full forum access, exclusive
+                  discussions, and direct interaction with other students.
                 </p>
               </div>
               <div className="flex flex-col sm:flex-row gap-3">
@@ -282,5 +299,5 @@ export default function CommunityPageClient({
         </div>
       </div>
     </>
-  )
+  );
 }

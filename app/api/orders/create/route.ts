@@ -1,58 +1,65 @@
-import { NextRequest, NextResponse } from 'next/server'
-import { prisma } from '@/lib/prisma'
-import { paypalService } from '@/lib/paypal'
-import { sendOrderConfirmation, sendBookDelivery, sendCoachingScheduling } from '@/lib/email'
-import { BOOK_INFO, COACHING_PACKAGES } from '@/lib/constants'
-import jwt from 'jsonwebtoken'
+import { NextRequest, NextResponse } from "next/server";
+import { prisma } from "@/lib/prisma";
+import { paypalService } from "@/lib/paypal";
+import {
+  sendOrderConfirmation,
+  sendBookDelivery,
+  sendCoachingScheduling,
+} from "@/lib/email";
+import { BOOK_INFO, COACHING_PACKAGES } from "@/lib/constants";
+import jwt from "jsonwebtoken";
 
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json()
-    const { orderId, type, packageId } = body
+    const body = await request.json();
+    const { orderId, type, packageId } = body;
 
     if (!orderId) {
       return NextResponse.json(
-        { error: 'Order ID is required' },
-        { status: 400 }
-      )
+        { error: "Order ID is required" },
+        { status: 400 },
+      );
     }
 
     // Verify the order with PayPal
-    const orderDetails = await paypalService.getOrderDetails(orderId)
+    const orderDetails = await paypalService.getOrderDetails(orderId);
 
-    if (orderDetails.status !== 'COMPLETED') {
+    if (orderDetails.status !== "COMPLETED") {
       return NextResponse.json(
-        { error: 'Order is not completed' },
-        { status: 400 }
-      )
+        { error: "Order is not completed" },
+        { status: 400 },
+      );
     }
 
     // Get user from JWT token if available
-    let userId: string | null = null
-    const token = request.cookies.get('accessToken')?.value
+    let userId: string | null = null;
+    const token = request.cookies.get("accessToken")?.value;
 
     if (token && process.env.JWT_SECRET) {
       try {
-        const decoded = jwt.verify(token, process.env.JWT_SECRET) as { userId: string }
-        userId = decoded.userId
+        const decoded = jwt.verify(token, process.env.JWT_SECRET) as {
+          userId: string;
+        };
+        userId = decoded.userId;
       } catch (_error) {
-        console.log('No valid auth token, proceeding as guest purchase')
+        console.log("No valid auth token, proceeding as guest purchase");
       }
     }
 
     // Extract purchase details from PayPal order
-    const purchaseUnit = orderDetails.purchase_units?.[0]
-    const amount = parseFloat(purchaseUnit?.amount?.value || '0')
-    const payerEmail = orderDetails.payer?.email_address || ''
-    const payerName = `${orderDetails.payer?.name?.given_name || ''} ${orderDetails.payer?.name?.surname || ''}`.trim()
+    const purchaseUnit = orderDetails.purchase_units?.[0];
+    const amount = parseFloat(purchaseUnit?.amount?.value || "0");
+    const payerEmail = orderDetails.payer?.email_address || "";
+    const payerName =
+      `${orderDetails.payer?.name?.given_name || ""} ${orderDetails.payer?.name?.surname || ""}`.trim();
 
     // Create purchase record
     const purchase = await prisma.purchase.create({
       data: {
         paypalOrderId: orderId,
-        type: type === 'coaching' ? 'COACHING' : 'BOOK',
+        type: type === "coaching" ? "COACHING" : "BOOK",
         amount,
-        status: 'COMPLETED',
+        status: "COMPLETED",
         customerEmail: payerEmail,
         customerName: payerName,
         userId: userId,
@@ -61,53 +68,62 @@ export async function POST(request: NextRequest) {
           timestamp: new Date().toISOString(),
         },
       },
-    })
+    });
 
     // Handle book purchase
-    if (type === 'book') {
+    if (type === "book") {
       // Generate secure download token
       if (!process.env.JWT_SECRET) {
-        throw new Error('JWT_SECRET not configured')
+        throw new Error("JWT_SECRET not configured");
       }
       const downloadToken = jwt.sign(
-        { purchaseId: purchase.id, type: 'book' },
+        { purchaseId: purchase.id, type: "book" },
         process.env.JWT_SECRET,
-        { expiresIn: '7d' }
-      )
-      const downloadUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/api/download?token=${downloadToken}`
+        { expiresIn: "7d" },
+      );
+      const downloadUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/api/download?token=${downloadToken}`;
 
       // Send order confirmation
       await sendOrderConfirmation({
         customerEmail: payerEmail,
         customerName: payerName,
         orderNumber: orderId,
-        purchaseType: 'book',
+        purchaseType: "book",
         amount,
         itemName: BOOK_INFO.title,
-      })
+      });
 
       // Send book delivery email
-      const expiresAt = new Date()
-      expiresAt.setDate(expiresAt.getDate() + 30)
-      await sendBookDelivery(payerEmail, payerName, downloadToken, null, expiresAt)
+      const expiresAt = new Date();
+      expiresAt.setDate(expiresAt.getDate() + 30);
+      await sendBookDelivery(
+        payerEmail,
+        payerName,
+        downloadToken,
+        null,
+        expiresAt,
+      );
 
       return NextResponse.json({
         success: true,
         purchaseId: purchase.id,
         downloadUrl,
-        message: 'Book purchase successful. Check your email for download instructions.',
-      })
+        message:
+          "Book purchase successful. Check your email for download instructions.",
+      });
     }
 
     // Handle coaching purchase
-    if (type === 'coaching' && packageId) {
-      const coachingPackage = COACHING_PACKAGES.find(pkg => pkg.id === packageId)
-      
+    if (type === "coaching" && packageId) {
+      const coachingPackage = COACHING_PACKAGES.find(
+        (pkg) => pkg.id === packageId,
+      );
+
       if (!coachingPackage) {
         return NextResponse.json(
-          { error: 'Invalid coaching package' },
-          { status: 400 }
-        )
+          { error: "Invalid coaching package" },
+          { status: 400 },
+        );
       }
 
       // Create coaching session record
@@ -116,63 +132,64 @@ export async function POST(request: NextRequest) {
           purchaseId: purchase.id,
           packageName: coachingPackage.name,
           sessionCount: coachingPackage.sessions || 1,
-          status: 'PENDING_SCHEDULING',
+          status: "PENDING_SCHEDULING",
           userId: userId,
         },
-      })
+      });
 
       // Generate scheduling URL
       if (!process.env.JWT_SECRET) {
-        throw new Error('JWT_SECRET not configured')
+        throw new Error("JWT_SECRET not configured");
       }
       const schedulingToken = jwt.sign(
         { sessionId: session.id, purchaseId: purchase.id },
         process.env.JWT_SECRET,
-        { expiresIn: '30d' }
-      )
-      const schedulingUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/coaching/schedule?token=${schedulingToken}`
+        { expiresIn: "30d" },
+      );
+      const schedulingUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/coaching/schedule?token=${schedulingToken}`;
 
       // Send order confirmation
       await sendOrderConfirmation({
         customerEmail: payerEmail,
         customerName: payerName,
         orderNumber: orderId,
-        purchaseType: 'coaching',
+        purchaseType: "coaching",
         amount,
         itemName: coachingPackage.name,
         packageDetails: {
           sessions: coachingPackage.sessions,
           duration: coachingPackage.duration,
         },
-      })
+      });
 
       // Send scheduling email
       await sendCoachingScheduling(
         payerEmail,
         payerName,
         coachingPackage.name,
-        schedulingUrl
-      )
+        schedulingUrl,
+      );
 
       return NextResponse.json({
         success: true,
         purchaseId: purchase.id,
         sessionId: session.id,
         schedulingUrl,
-        message: 'Coaching package purchased successfully. Check your email to schedule your sessions.',
-      })
+        message:
+          "Coaching package purchased successfully. Check your email to schedule your sessions.",
+      });
     }
 
     return NextResponse.json({
       success: true,
       purchaseId: purchase.id,
-      message: 'Purchase completed successfully.',
-    })
+      message: "Purchase completed successfully.",
+    });
   } catch (error) {
-    console.error('Order creation error:', error)
+    console.error("Order creation error:", error);
     return NextResponse.json(
-      { error: 'Failed to process order' },
-      { status: 500 }
-    )
+      { error: "Failed to process order" },
+      { status: 500 },
+    );
   }
 }

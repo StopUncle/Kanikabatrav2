@@ -1,56 +1,63 @@
-'use client'
+"use client";
 
-import { useState } from 'react'
-import { Send, X, Loader2 } from 'lucide-react'
+import { useState } from "react";
+import { Send, X, Loader2 } from "lucide-react";
 
 interface PostEditorProps {
-  categoryId: string
-  onSuccess?: () => void
-  onCancel?: () => void
+  categoryId: string;
+  onSuccess?: () => void;
+  onCancel?: () => void;
 }
 
-export default function PostEditor({ categoryId, onSuccess, onCancel }: PostEditorProps) {
-  const [title, setTitle] = useState('')
-  const [content, setContent] = useState('')
-  const [isSubmitting, setIsSubmitting] = useState(false)
-  const [error, setError] = useState<string | null>(null)
+export default function PostEditor({
+  categoryId,
+  onSuccess,
+  onCancel,
+}: PostEditorProps) {
+  const [title, setTitle] = useState("");
+  const [content, setContent] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!title.trim() || !content.trim()) return
+    e.preventDefault();
+    if (!title.trim() || !content.trim()) return;
 
-    setIsSubmitting(true)
-    setError(null)
+    setIsSubmitting(true);
+    setError(null);
 
     try {
-      const response = await fetch('/api/community/posts', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const response = await fetch("/api/community/posts", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           categoryId,
           title: title.trim(),
-          content: content.trim()
-        })
-      })
+          content: content.trim(),
+        }),
+      });
 
-      const data = await response.json()
+      const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.error || 'Failed to create post')
+        throw new Error(data.error || "Failed to create post");
       }
 
-      setTitle('')
-      setContent('')
-      if (onSuccess) onSuccess()
+      setTitle("");
+      setContent("");
+      if (onSuccess) onSuccess();
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to create post')
+      setError(err instanceof Error ? err.message : "Failed to create post");
     } finally {
-      setIsSubmitting(false)
+      setIsSubmitting(false);
     }
-  }
+  };
 
   return (
-    <form onSubmit={handleSubmit} className="bg-deep-black/40 backdrop-blur-sm border border-accent-gold/20 rounded-xl p-4 sm:p-6">
+    <form
+      onSubmit={handleSubmit}
+      className="bg-deep-black/40 backdrop-blur-sm border border-accent-gold/20 rounded-xl p-4 sm:p-6"
+    >
       <div className="flex items-center justify-between mb-4">
         <h3 className="font-medium text-text-light">Create New Post</h3>
         {onCancel && (
@@ -88,7 +95,10 @@ export default function PostEditor({ categoryId, onSuccess, onCancel }: PostEdit
         </div>
 
         <div>
-          <label htmlFor="content" className="block text-sm text-text-muted mb-1">
+          <label
+            htmlFor="content"
+            className="block text-sm text-text-muted mb-1"
+          >
             Content
           </label>
           <textarea
@@ -132,5 +142,5 @@ export default function PostEditor({ categoryId, onSuccess, onCancel }: PostEdit
         </div>
       </div>
     </form>
-  )
+  );
 }

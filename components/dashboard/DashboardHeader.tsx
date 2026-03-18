@@ -1,30 +1,30 @@
-'use client'
+"use client";
 
-import { useState } from 'react'
-import Link from 'next/link'
-import { Menu, X, LogOut, BookOpen, Calendar, Home, Users } from 'lucide-react'
+import { useState } from "react";
+import Link from "next/link";
+import { Menu, X, LogOut, BookOpen, Calendar, Home, Users } from "lucide-react";
 
 interface DashboardHeaderProps {
-  userEmail: string
+  userEmail: string;
 }
 
 const DashboardHeader = ({ userEmail }: DashboardHeaderProps) => {
-  const [isMenuOpen, setIsMenuOpen] = useState(false)
-  const [isProfileOpen, setIsProfileOpen] = useState(false)
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
 
   const navLinks = [
-    { href: '/', label: 'Home', icon: Home },
-    { href: '/book', label: 'The Book', icon: BookOpen },
-    { href: '/coaching', label: 'Coaching', icon: Calendar },
-    { href: '/community', label: 'Community', icon: Users },
-  ]
+    { href: "/", label: "Home", icon: Home },
+    { href: "/book", label: "The Book", icon: BookOpen },
+    { href: "/coaching", label: "Coaching", icon: Calendar },
+    { href: "/community", label: "Community", icon: Users },
+  ];
 
   const handleLogout = async () => {
-    const response = await fetch('/api/auth/logout', { method: 'POST' })
+    const response = await fetch("/api/auth/logout", { method: "POST" });
     if (response.ok) {
-      window.location.href = '/login'
+      window.location.href = "/login";
     }
-  }
+  };
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-deep-black/80 backdrop-blur-md border-b border-accent-gold/10">
@@ -48,7 +48,7 @@ const DashboardHeader = ({ userEmail }: DashboardHeaderProps) => {
                 {link.label}
               </Link>
             ))}
-            
+
             {/* Profile Dropdown */}
             <div className="relative">
               <button
@@ -60,14 +60,18 @@ const DashboardHeader = ({ userEmail }: DashboardHeaderProps) => {
                     {userEmail.charAt(0).toUpperCase()}
                   </span>
                 </div>
-                <span className="text-text-light text-sm">{userEmail.split('@')[0]}</span>
+                <span className="text-text-light text-sm">
+                  {userEmail.split("@")[0]}
+                </span>
               </button>
 
               {isProfileOpen && (
                 <div className="absolute right-0 mt-2 w-56 bg-gray-900 rounded-lg shadow-xl border border-gray-800 overflow-hidden">
                   <div className="px-4 py-3 border-b border-gray-800">
                     <p className="text-xs text-text-muted">Signed in as</p>
-                    <p className="text-sm text-text-light truncate">{userEmail}</p>
+                    <p className="text-sm text-text-light truncate">
+                      {userEmail}
+                    </p>
                   </div>
                   <div className="py-2">
                     <button
@@ -124,7 +128,7 @@ const DashboardHeader = ({ userEmail }: DashboardHeaderProps) => {
         )}
       </nav>
     </header>
-  )
-}
+  );
+};
 
-export default DashboardHeader
+export default DashboardHeader;

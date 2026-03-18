@@ -1,52 +1,60 @@
-'use client'
+"use client";
 
-import { useState } from 'react'
-import { X, User, Loader2 } from 'lucide-react'
+import { useState } from "react";
+import { X, User, Loader2 } from "lucide-react";
 
 interface ProfileModalProps {
-  isOpen: boolean
-  onClose: () => void
-  currentName: string | null
-  onSuccess: (name: string | null) => void
+  isOpen: boolean;
+  onClose: () => void;
+  currentName: string | null;
+  onSuccess: (name: string | null) => void;
 }
 
-export default function ProfileModal({ isOpen, onClose, currentName, onSuccess }: ProfileModalProps) {
-  const [name, setName] = useState(currentName || '')
-  const [isLoading, setIsLoading] = useState(false)
-  const [error, setError] = useState('')
+export default function ProfileModal({
+  isOpen,
+  onClose,
+  currentName,
+  onSuccess,
+}: ProfileModalProps) {
+  const [name, setName] = useState(currentName || "");
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
 
-  if (!isOpen) return null
+  if (!isOpen) return null;
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setIsLoading(true)
-    setError('')
+    e.preventDefault();
+    setIsLoading(true);
+    setError("");
 
     try {
-      const response = await fetch('/api/user/profile', {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
+      const response = await fetch("/api/user/profile", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ name: name.trim() || null }),
-      })
+      });
 
-      const result = await response.json()
+      const result = await response.json();
 
       if (!response.ok) {
-        throw new Error(result.error || 'Failed to update profile')
+        throw new Error(result.error || "Failed to update profile");
       }
 
-      onSuccess(result.user.name)
-      onClose()
+      onSuccess(result.user.name);
+      onClose();
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to update profile')
+      setError(err instanceof Error ? err.message : "Failed to update profile");
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
-      <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={onClose} />
+      <div
+        className="absolute inset-0 bg-black/70 backdrop-blur-sm"
+        onClick={onClose}
+      />
       <div className="relative bg-gray-900 border border-gray-800 rounded-2xl p-6 w-full max-w-md mx-4 shadow-2xl">
         <button
           onClick={onClose}
@@ -74,7 +82,9 @@ export default function ProfileModal({ isOpen, onClose, currentName, onSuccess }
           )}
 
           <div>
-            <label className="block text-sm text-gray-400 mb-2">Display Name</label>
+            <label className="block text-sm text-gray-400 mb-2">
+              Display Name
+            </label>
             <input
               type="text"
               value={name}
@@ -103,12 +113,12 @@ export default function ProfileModal({ isOpen, onClose, currentName, onSuccess }
                   Saving...
                 </>
               ) : (
-                'Save Changes'
+                "Save Changes"
               )}
             </button>
           </div>
         </form>
       </div>
     </div>
-  )
+  );
 }

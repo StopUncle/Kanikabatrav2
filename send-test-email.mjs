@@ -1,21 +1,21 @@
-import nodemailer from 'nodemailer'
-import dotenv from 'dotenv'
+import nodemailer from "nodemailer";
+import dotenv from "dotenv";
 
-dotenv.config({ path: '.env.local' })
+dotenv.config({ path: ".env.local" });
 
-const testEmail = 'sdmatheson@outlook.com'
-const testToken = 'test-token-12345-abc-def-ghi'
-const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'
-const pdfDownloadUrl = `${baseUrl}/api/download?token=${testToken}&format=pdf`
-const epubDownloadUrl = `${baseUrl}/api/download?token=${testToken}&format=epub`
+const testEmail = "sdmatheson@outlook.com";
+const testToken = "test-token-12345-abc-def-ghi";
+const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
+const pdfDownloadUrl = `${baseUrl}/api/download?token=${testToken}&format=pdf`;
+const epubDownloadUrl = `${baseUrl}/api/download?token=${testToken}&format=epub`;
 
-const expiryDate = new Date()
-expiryDate.setDate(expiryDate.getDate() + 30)
-const formattedDate = expiryDate.toLocaleDateString('en-US', {
-  month: 'long',
-  day: 'numeric',
-  year: 'numeric'
-})
+const expiryDate = new Date();
+expiryDate.setDate(expiryDate.getDate() + 30);
+const formattedDate = expiryDate.toLocaleDateString("en-US", {
+  month: "long",
+  day: "numeric",
+  year: "numeric",
+});
 
 const html = `
 <!DOCTYPE html>
@@ -202,42 +202,43 @@ const html = `
   </table>
 </body>
 </html>
-`
+`;
 
 async function sendTestEmail() {
-  console.log('\n📧 Sending test book delivery email...\n')
+  console.log("\n📧 Sending test book delivery email...\n");
 
   const transporter = nodemailer.createTransport({
     host: process.env.SMTP_HOST,
-    port: parseInt(process.env.SMTP_PORT || '587'),
-    secure: parseInt(process.env.SMTP_PORT || '587') === 465,
+    port: parseInt(process.env.SMTP_PORT || "587"),
+    secure: parseInt(process.env.SMTP_PORT || "587") === 465,
     auth: {
       user: process.env.SMTP_USER,
       pass: process.env.SMTP_PASS,
     },
-  })
+  });
 
   try {
     const info = await transporter.sendMail({
       from: `"Kanika Batra" <${process.env.SMTP_USER}>`,
       to: testEmail,
-      subject: 'Download Your Book - Sociopathic Dating Bible (Premium Edition)',
+      subject:
+        "Download Your Book - Sociopathic Dating Bible (Premium Edition)",
       html: html,
-    })
+    });
 
-    console.log('✅ Email sent successfully!')
-    console.log('Message ID:', info.messageId)
-    console.log('\nCheck your inbox at:', testEmail)
-    console.log('\nThis email includes:')
-    console.log('  - 📄 PDF download button')
-    console.log('  - 📱 EPUB download button')
-    console.log('  - Premium edition bonuses section')
-    console.log('  - 5-download limit notice (shared across formats)')
-    console.log('  - 30-day expiration date\n')
-    console.log('Note: Download links use a test token and will not work')
+    console.log("✅ Email sent successfully!");
+    console.log("Message ID:", info.messageId);
+    console.log("\nCheck your inbox at:", testEmail);
+    console.log("\nThis email includes:");
+    console.log("  - 📄 PDF download button");
+    console.log("  - 📱 EPUB download button");
+    console.log("  - Premium edition bonuses section");
+    console.log("  - 5-download limit notice (shared across formats)");
+    console.log("  - 30-day expiration date\n");
+    console.log("Note: Download links use a test token and will not work");
   } catch (error) {
-    console.error('❌ Error sending email:', error.message)
+    console.error("❌ Error sending email:", error.message);
   }
 }
 
-sendTestEmail()
+sendTestEmail();

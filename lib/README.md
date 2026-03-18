@@ -23,9 +23,11 @@ lib/
 ## 🔧 Core Utilities
 
 ### **`utils.ts`**
+
 General utility functions used throughout the application.
 
 #### Functions
+
 ```typescript
 // Tailwind CSS class merging
 cn(...inputs: ClassValue[]): string
@@ -50,9 +52,11 @@ debounce<T extends (...args: unknown[]) => unknown>(
 ```
 
 ### **`constants.ts`**
+
 Application-wide constants and configuration.
 
 #### Exports
+
 ```typescript
 // Site information
 SITE_CONFIG: {
@@ -122,6 +126,7 @@ ANIMATION_CONFIG: {
 Complete JWT-based authentication with refresh tokens.
 
 ### Key Features
+
 - **Secure JWT Tokens** - 15-minute access, 7-day refresh
 - **Password Hashing** - bcrypt with 12 salt rounds
 - **HttpOnly Cookies** - Secure, SameSite strict
@@ -129,11 +134,12 @@ Complete JWT-based authentication with refresh tokens.
 - **In-Memory Database** - Easily replaceable with real DB
 
 ### API Integration
+
 ```typescript
-import { UserDatabase } from '@/lib/auth/database'
-import { generateTokenPair, verifyAccessToken } from '@/lib/auth/jwt'
-import { hashPassword, verifyPassword } from '@/lib/auth/password'
-import { requireAuth } from '@/lib/auth/middleware'
+import { UserDatabase } from "@/lib/auth/database";
+import { generateTokenPair, verifyAccessToken } from "@/lib/auth/jwt";
+import { hashPassword, verifyPassword } from "@/lib/auth/password";
+import { requireAuth } from "@/lib/auth/middleware";
 ```
 
 See `/lib/auth/README.md` for complete documentation.
@@ -143,28 +149,31 @@ See `/lib/auth/README.md` for complete documentation.
 Complete PayPal service for handling payments.
 
 ### Features
+
 - **Order Creation** - Book and coaching purchases
 - **Payment Capture** - Secure transaction processing
 - **Error Handling** - Comprehensive error management
 - **Environment Support** - Sandbox and production modes
 
 ### Usage
+
 ```typescript
 import {
   paypalService,
   createBookOrder,
-  createCoachingOrder
-} from '@/lib/paypal'
+  createCoachingOrder,
+} from "@/lib/paypal";
 
 // Create book order
-const bookOrder = createBookOrder(34.99, 'The Sociopath\'s Bible')
-const response = await paypalService.createOrder(bookOrder)
+const bookOrder = createBookOrder(34.99, "The Sociopath's Bible");
+const response = await paypalService.createOrder(bookOrder);
 
 // Capture payment
-const captureResult = await paypalService.captureOrder(orderId)
+const captureResult = await paypalService.captureOrder(orderId);
 ```
 
 ### Order Types
+
 ```typescript
 // Book purchase order
 createBookOrder(price: number, title: string): PayPalOrder
@@ -182,6 +191,7 @@ createCoachingOrder(
 Comprehensive logging system for production monitoring.
 
 ### Features
+
 - **Client/Server Logging** - Universal error capture
 - **Structured Logging** - JSON-formatted log entries
 - **Performance Tracking** - API response times
@@ -189,36 +199,38 @@ Comprehensive logging system for production monitoring.
 - **Security Events** - Authentication attempts
 
 ### Usage
+
 ```typescript
-import { logger } from '@/lib/logger'
+import { logger } from "@/lib/logger";
 
 // Basic logging
-logger.info('User action completed', { userId: '123' })
-logger.warn('Unusual activity detected')
-logger.error('Payment failed', error, { orderId: '456' })
+logger.info("User action completed", { userId: "123" });
+logger.warn("Unusual activity detected");
+logger.error("Payment failed", error, { orderId: "456" });
 
 // Specialized logging
-logger.apiRequest('POST', '/api/auth/login')
-logger.apiResponse('POST', '/api/auth/login', 200, 150)
-logger.paymentAttempt('book', 34.99, { title: 'Book Name' })
-logger.paymentSuccess('paypal_123', 34.99)
-logger.authAttempt('user@example.com', true)
+logger.apiRequest("POST", "/api/auth/login");
+logger.apiResponse("POST", "/api/auth/login", 200, 150);
+logger.paymentAttempt("book", 34.99, { title: "Book Name" });
+logger.paymentSuccess("paypal_123", 34.99);
+logger.authAttempt("user@example.com", true);
 ```
 
 ### Log Types
+
 ```typescript
 interface LogEntry {
-  level: 'info' | 'warn' | 'error' | 'debug'
-  message: string
-  timestamp: string
-  context?: Record<string, unknown>
-  error?: Error
-  userId?: string
-  sessionId?: string
-  userAgent?: string
-  ip?: string
-  url?: string
-  stack?: string
+  level: "info" | "warn" | "error" | "debug";
+  message: string;
+  timestamp: string;
+  context?: Record<string, unknown>;
+  error?: Error;
+  userId?: string;
+  sessionId?: string;
+  userAgent?: string;
+  ip?: string;
+  url?: string;
+  stack?: string;
 }
 ```
 
@@ -227,90 +239,99 @@ interface LogEntry {
 Social media sharing utilities for content distribution.
 
 ### Features
+
 - **Multiple Platforms** - Twitter, Facebook, LinkedIn, Reddit
 - **Email Sharing** - Formatted email templates
 - **Clipboard Copy** - URL copying with fallback
 - **Native Sharing** - Web Share API support
 
 ### Usage
+
 ```typescript
 import {
   shareToTwitter,
   shareToFacebook,
   shareToLinkedIn,
   copyToClipboard,
-  shareNatively
-} from '@/lib/social-sharing'
+  shareNatively,
+} from "@/lib/social-sharing";
 
 const shareOptions = {
-  url: 'https://kanikabatra.com',
-  title: 'The Beautiful Sociopath',
-  description: 'Dark psychology expertise',
-  hashtags: ['psychology', 'sociopath', 'darkfeminine']
-}
+  url: "https://kanikabatra.com",
+  title: "The Beautiful Sociopath",
+  description: "Dark psychology expertise",
+  hashtags: ["psychology", "sociopath", "darkfeminine"],
+};
 
 // Share to platforms
-shareToTwitter(shareOptions)
-shareToFacebook(shareOptions)
+shareToTwitter(shareOptions);
+shareToFacebook(shareOptions);
 
 // Copy to clipboard
-const success = await copyToClipboard(shareOptions.url)
+const success = await copyToClipboard(shareOptions.url);
 ```
 
 ## 🛠 Development Guidelines
 
 ### TypeScript Standards
+
 - **No `any` Types** - All code must be properly typed
 - **Interface Definitions** - Clear contracts for all functions
 - **Error Handling** - Proper error types and handling
 - **Documentation** - JSDoc comments for complex functions
 
 ### Code Organization
+
 ```typescript
 // Import order
-import { externalLibrary } from 'external-package'
-import { internalUtil } from '@/lib/utils'
-import type { CustomType } from './types'
+import { externalLibrary } from "external-package";
+import { internalUtil } from "@/lib/utils";
+import type { CustomType } from "./types";
 
 // Function structure
 export function utilityFunction(param: ParamType): ReturnType {
   // Implementation with error handling
   try {
     // Logic here
-    return result
+    return result;
   } catch (error) {
-    logger.error('Function failed', error, { param })
-    throw new Error('User-friendly error message')
+    logger.error("Function failed", error, { param });
+    throw new Error("User-friendly error message");
   }
 }
 ```
 
 ### Testing Utilities
+
 ```typescript
 // Example test helpers
 export const testUtils = {
   createMockUser: (): User => ({
-    id: 'test-id',
-    email: 'test@example.com',
-    createdAt: new Date()
+    id: "test-id",
+    email: "test@example.com",
+    createdAt: new Date(),
   }),
 
   createMockPayPalOrder: (): PayPalOrder => ({
-    intent: 'CAPTURE',
-    purchase_units: [/* mock data */]
-  })
-}
+    intent: "CAPTURE",
+    purchase_units: [
+      /* mock data */
+    ],
+  }),
+};
 ```
 
 ## 🔍 Performance Considerations
 
 ### Optimization Strategies
+
 - **Function Memoization** - Cache expensive computations
 - **Lazy Loading** - Load utilities only when needed
 - **Tree Shaking** - Export functions individually
 - **Error Boundaries** - Graceful error handling
 
 ### Memory Management
+
 ```typescript
 // Proper cleanup in utilities
 export function createSubscription(callback: Function) {
@@ -328,6 +349,7 @@ export function createSubscription(callback: Function) {
 ## 🚀 Production Configuration
 
 ### Environment Variables
+
 ```bash
 # Required for authentication
 JWT_SECRET=your-super-secret-jwt-key
@@ -344,34 +366,39 @@ DATABASE_URL=postgresql://user:pass@host/db
 ```
 
 ### Database Migration
+
 The auth system uses in-memory storage by default. For production:
 
 ```typescript
 // Replace in lib/auth/database.ts
-import { PrismaClient } from '@prisma/client'
+import { PrismaClient } from "@prisma/client";
 // or
-import mongoose from 'mongoose'
+import mongoose from "mongoose";
 // or
-import { createClient } from '@supabase/supabase-js'
+import { createClient } from "@supabase/supabase-js";
 ```
 
 ### Error Monitoring
+
 ```typescript
 // In lib/logger.ts, configure external service
-const errorService = process.env.NODE_ENV === 'production'
-  ? new SentryLogger(process.env.SENTRY_DSN)
-  : new ConsoleLogger()
+const errorService =
+  process.env.NODE_ENV === "production"
+    ? new SentryLogger(process.env.SENTRY_DSN)
+    : new ConsoleLogger();
 ```
 
 ## 📝 API Reference
 
 ### Constants
+
 - `SITE_CONFIG` - Site metadata and contact info
 - `BOOK_INFO` - Book details and pricing
 - `COACHING_PACKAGES` - Service tier definitions
 - `PAYPAL_CONFIG` - Payment configuration
 
 ### Utilities
+
 - `cn()` - CSS class merging
 - `formatPrice()` - Currency formatting
 - `truncateText()` - Text truncation
@@ -379,11 +406,13 @@ const errorService = process.env.NODE_ENV === 'production'
 - `debounce()` - Function rate limiting
 
 ### Services
+
 - `paypalService` - Payment processing
 - `logger` - Error logging and monitoring
 - `UserDatabase` - User management (auth)
 
 ### Types
+
 - `LogEntry` - Logging structure
 - `PayPalOrder` - Payment order format
 - `User` - User data structure
@@ -392,26 +421,28 @@ const errorService = process.env.NODE_ENV === 'production'
 ## ✅ Quality Assurance
 
 ### Code Quality Checks
+
 - **TypeScript Validation** - `npm run type-check`
 - **ESLint Rules** - Consistent code style
 - **Import Organization** - Sorted imports
 - **Error Handling** - All functions have try/catch
 
 ### Testing Coverage
+
 ```typescript
 // Example utility tests
-describe('formatPrice', () => {
-  it('formats USD currency correctly', () => {
-    expect(formatPrice(34.99)).toBe('$34.99')
-  })
-})
+describe("formatPrice", () => {
+  it("formats USD currency correctly", () => {
+    expect(formatPrice(34.99)).toBe("$34.99");
+  });
+});
 
-describe('PayPal Service', () => {
-  it('creates orders successfully', async () => {
-    const order = createBookOrder(34.99, 'Test Book')
-    expect(order.intent).toBe('CAPTURE')
-  })
-})
+describe("PayPal Service", () => {
+  it("creates orders successfully", async () => {
+    const order = createBookOrder(34.99, "Test Book");
+    expect(order.intent).toBe("CAPTURE");
+  });
+});
 ```
 
 ---

@@ -1,5 +1,5 @@
-import Link from 'next/link'
-import DoubleEchoLogo from '@/components/DoubleEchoLogo'
+import Link from "next/link";
+import DoubleEchoLogo from "@/components/DoubleEchoLogo";
 
 export default function NotFound() {
   return (
@@ -21,5 +21,5 @@ export default function NotFound() {
         </Link>
       </div>
     </div>
-  )
+  );
 }

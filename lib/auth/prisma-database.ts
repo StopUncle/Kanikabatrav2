@@ -1,29 +1,29 @@
-import { prisma } from '../prisma'
-import { User, CreateUserData } from './types'
-import { hashPassword, verifyPassword } from './password'
+import { prisma } from "../prisma";
+import { User, CreateUserData } from "./types";
+import { hashPassword, verifyPassword } from "./password";
 
 export class PrismaUserDatabase {
   static async findByEmail(email: string): Promise<User | null> {
     const user = await prisma.user.findUnique({
       where: { email },
-    })
-    return user
+    });
+    return user;
   }
 
   static async findById(id: string): Promise<User | null> {
     const user = await prisma.user.findUnique({
       where: { id },
-    })
-    return user
+    });
+    return user;
   }
 
   static async createUser(userData: CreateUserData): Promise<User> {
-    const existingUser = await this.findByEmail(userData.email)
+    const existingUser = await this.findByEmail(userData.email);
     if (existingUser) {
-      throw new Error('User already exists')
+      throw new Error("User already exists");
     }
 
-    const hashedPassword = await hashPassword(userData.password)
+    const hashedPassword = await hashPassword(userData.password);
 
     const user = await prisma.user.create({
       data: {
@@ -31,38 +31,41 @@ export class PrismaUserDatabase {
         password: hashedPassword,
         name: userData.name,
       },
-    })
+    });
 
-    return user
+    return user;
   }
 
-  static async validateUser(email: string, password: string): Promise<User | null> {
-    const user = await this.findByEmail(email)
+  static async validateUser(
+    email: string,
+    password: string,
+  ): Promise<User | null> {
+    const user = await this.findByEmail(email);
     if (!user) {
-      return null
+      return null;
     }
 
-    const isValid = await verifyPassword(password, user.password)
-    return isValid ? user : null
+    const isValid = await verifyPassword(password, user.password);
+    return isValid ? user : null;
   }
 
   static async getUserCount(): Promise<number> {
-    return await prisma.user.count()
+    return await prisma.user.count();
   }
 
   static async updateUser(id: string, data: Partial<User>): Promise<User> {
     const user = await prisma.user.update({
       where: { id },
       data,
-    })
-    return user
+    });
+    return user;
   }
 
   static async deleteUser(id: string): Promise<void> {
     await prisma.user.delete({
       where: { id },
-    })
+    });
   }
 }
 
-export { prisma }
+export { prisma };

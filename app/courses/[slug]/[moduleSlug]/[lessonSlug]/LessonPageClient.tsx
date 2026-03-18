@@ -1,61 +1,68 @@
-'use client'
+"use client";
 
-import { useState, useCallback, useMemo } from 'react'
-import { motion } from 'framer-motion'
-import Link from 'next/link'
-import { useRouter } from 'next/navigation'
-import DOMPurify from 'dompurify'
-import BackgroundEffects from '@/components/BackgroundEffects'
-import Header from '@/components/Header'
-import LessonPlayer from '@/components/course/LessonPlayer'
-import CourseNav from '@/components/course/CourseNav'
-import { ArrowLeft, Check, ChevronRight, Crown, MessageSquare, Lock } from 'lucide-react'
+import { useState, useCallback, useMemo } from "react";
+import { motion } from "framer-motion";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import DOMPurify from "dompurify";
+import BackgroundEffects from "@/components/BackgroundEffects";
+import Header from "@/components/Header";
+import LessonPlayer from "@/components/course/LessonPlayer";
+import CourseNav from "@/components/course/CourseNav";
+import {
+  ArrowLeft,
+  Check,
+  ChevronRight,
+  Crown,
+  MessageSquare,
+  Lock,
+} from "lucide-react";
 
 interface Module {
-  id: string
-  title: string
-  slug: string
+  id: string;
+  title: string;
+  slug: string;
   lessons: {
-    id: string
-    title: string
-    slug: string
-    isFree: boolean
-    isCompleted?: boolean
-  }[]
+    id: string;
+    title: string;
+    slug: string;
+    isFree: boolean;
+    isCompleted?: boolean;
+  }[];
 }
 
 interface LessonPageClientProps {
   course: {
-    id: string
-    title: string
-    slug: string
-    tier: string
-  }
+    id: string;
+    title: string;
+    slug: string;
+    tier: string;
+  };
   module: {
-    id: string
-    title: string
-    slug: string
-  }
+    id: string;
+    title: string;
+    slug: string;
+  };
   lesson: {
-    id: string
-    title: string
-    slug: string
-    description: string | null
-    videoUrl: string | null
-    textContent: string | null
-    duration: number | null
-    isFree: boolean
-  }
-  modules: Module[]
-  hasAccess: boolean
-  isLoggedIn: boolean
-  enrollmentId?: string
+    id: string;
+    title: string;
+    slug: string;
+    description: string | null;
+    videoUrl: string | null;
+    textContent: string | null;
+    duration: number | null;
+    isFree: boolean;
+  };
+  modules: Module[];
+  hasAccess: boolean;
+  isLoggedIn: boolean;
+  enrollmentId?: string;
   initialProgress: {
-    watchedSeconds: number
-    isCompleted: boolean
-  }
-  prevLesson?: { moduleSlug: string; lessonSlug: string; title: string } | null
-  nextLesson?: { moduleSlug: string; lessonSlug: string; title: string } | null
+    watchedSeconds: number;
+    isCompleted: boolean;
+  };
+  prevLesson?: { moduleSlug: string; lessonSlug: string; title: string } | null;
+  nextLesson?: { moduleSlug: string; lessonSlug: string; title: string } | null;
 }
 
 export default function LessonPageClient({
@@ -68,53 +75,78 @@ export default function LessonPageClient({
   enrollmentId,
   initialProgress,
   prevLesson,
-  nextLesson
+  nextLesson,
 }: LessonPageClientProps) {
-  const _router = useRouter()
-  const [isCompleted, setIsCompleted] = useState(initialProgress.isCompleted)
-  const isGold = course.tier === 'gold'
+  const _router = useRouter();
+  const [isCompleted, setIsCompleted] = useState(initialProgress.isCompleted);
+  const isGold = course.tier === "gold";
 
   const sanitizedTextContent = useMemo(() => {
-    if (!lesson.textContent) return ''
+    if (!lesson.textContent) return "";
     return DOMPurify.sanitize(lesson.textContent, {
-      ALLOWED_TAGS: ['p', 'br', 'strong', 'em', 'u', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'ul', 'ol', 'li', 'a', 'blockquote', 'code', 'pre'],
-      ALLOWED_ATTR: ['href', 'target', 'rel', 'class']
-    })
-  }, [lesson.textContent])
+      ALLOWED_TAGS: [
+        "p",
+        "br",
+        "strong",
+        "em",
+        "u",
+        "h1",
+        "h2",
+        "h3",
+        "h4",
+        "h5",
+        "h6",
+        "ul",
+        "ol",
+        "li",
+        "a",
+        "blockquote",
+        "code",
+        "pre",
+      ],
+      ALLOWED_ATTR: ["href", "target", "rel", "class"],
+    });
+  }, [lesson.textContent]);
 
-  const updateProgress = useCallback(async (watchedSeconds: number, completed: boolean = false) => {
-    if (!enrollmentId) return
+  const updateProgress = useCallback(
+    async (watchedSeconds: number, completed: boolean = false) => {
+      if (!enrollmentId) return;
 
-    try {
-      await fetch(`/api/courses/${course.slug}/progress`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          lessonId: lesson.id,
-          watchedSeconds,
-          isCompleted: completed
-        })
-      })
+      try {
+        await fetch(`/api/courses/${course.slug}/progress`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            lessonId: lesson.id,
+            watchedSeconds,
+            isCompleted: completed,
+          }),
+        });
 
-      if (completed) {
-        setIsCompleted(true)
+        if (completed) {
+          setIsCompleted(true);
+        }
+      } catch (error) {
+        console.error("Failed to update progress:", error);
       }
-    } catch (error) {
-      console.error('Failed to update progress:', error)
-    }
-  }, [enrollmentId, course.slug, lesson.id])
+    },
+    [enrollmentId, course.slug, lesson.id],
+  );
 
-  const handleVideoProgress = useCallback((seconds: number) => {
-    updateProgress(seconds)
-  }, [updateProgress])
+  const handleVideoProgress = useCallback(
+    (seconds: number) => {
+      updateProgress(seconds);
+    },
+    [updateProgress],
+  );
 
   const handleVideoComplete = useCallback(() => {
-    updateProgress(lesson.duration || 0, true)
-  }, [updateProgress, lesson.duration])
+    updateProgress(lesson.duration || 0, true);
+  }, [updateProgress, lesson.duration]);
 
   const markAsComplete = async () => {
-    await updateProgress(lesson.duration || 0, true)
-  }
+    await updateProgress(lesson.duration || 0, true);
+  };
 
   return (
     <>
@@ -159,9 +191,11 @@ export default function LessonPageClient({
             </div>
 
             <p className="text-text-muted text-sm mb-1">{module.title}</p>
-            <h1 className={`text-2xl sm:text-3xl md:text-4xl font-light ${
-              isGold ? 'gradient-text-gold' : 'gradient-text'
-            }`}>
+            <h1
+              className={`text-2xl sm:text-3xl md:text-4xl font-light ${
+                isGold ? "gradient-text-gold" : "gradient-text"
+              }`}
+            >
               {lesson.title}
             </h1>
           </motion.div>
@@ -189,7 +223,9 @@ export default function LessonPageClient({
               transition={{ delay: 0.2 }}
               className="bg-deep-black/40 backdrop-blur-sm border border-accent-gold/20 rounded-xl p-6 sm:p-8 mb-8"
             >
-              <h2 className="text-xl font-light gradient-text mb-4">Lesson Notes</h2>
+              <h2 className="text-xl font-light gradient-text mb-4">
+                Lesson Notes
+              </h2>
               <div className="prose prose-invert prose-gold max-w-none">
                 <div
                   className="text-text-gray leading-relaxed whitespace-pre-wrap"
@@ -206,7 +242,9 @@ export default function LessonPageClient({
               transition={{ delay: 0.2 }}
               className="bg-deep-black/40 backdrop-blur-sm border border-accent-gold/20 rounded-xl p-6 mb-8"
             >
-              <h2 className="text-lg font-light gradient-text mb-3">About This Lesson</h2>
+              <h2 className="text-lg font-light gradient-text mb-3">
+                About This Lesson
+              </h2>
               <p className="text-text-gray">{lesson.description}</p>
             </motion.div>
           )}
@@ -271,7 +309,8 @@ export default function LessonPageClient({
                 Subscribe for Full Access
               </h3>
               <p className="text-text-muted text-sm mb-4">
-                Get access to all lessons, community forum, and new content updates.
+                Get access to all lessons, community forum, and new content
+                updates.
               </p>
               <Link
                 href={`/courses/${course.slug}`}
@@ -292,7 +331,9 @@ export default function LessonPageClient({
               <div className="flex items-center gap-3">
                 <MessageSquare className="w-5 h-5 text-accent-gold" />
                 <div>
-                  <p className="text-sm text-text-light">Have questions about this lesson?</p>
+                  <p className="text-sm text-text-light">
+                    Have questions about this lesson?
+                  </p>
                   <Link
                     href="/community"
                     className="text-sm text-accent-gold hover:text-accent-gold/80 transition-colors"
@@ -317,5 +358,5 @@ export default function LessonPageClient({
         nextLesson={nextLesson}
       />
     </>
-  )
+  );
 }

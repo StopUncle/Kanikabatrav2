@@ -1,59 +1,69 @@
-'use client'
+"use client";
 
-import { useState } from 'react'
-import { useRouter } from 'next/navigation'
-import { motion, AnimatePresence } from 'framer-motion'
-import { QUIZ_QUESTIONS, PersonalityType, calculateScores, getPersonalityTypes, generateDiagnosis, QUIZ_INFO } from '@/lib/quiz-data'
-import DoubleEchoLogo from '@/components/DoubleEchoLogo'
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { motion, AnimatePresence } from "framer-motion";
+import {
+  QUIZ_QUESTIONS,
+  PersonalityType,
+  calculateScores,
+  getPersonalityTypes,
+  generateDiagnosis,
+  QUIZ_INFO,
+} from "@/lib/quiz-data";
+import DoubleEchoLogo from "@/components/DoubleEchoLogo";
 
 export default function QuizTakePage() {
-  const router = useRouter()
-  const [currentQuestion, setCurrentQuestion] = useState(0)
-  const [answers, setAnswers] = useState<Record<number, PersonalityType>>({})
-  const [isProcessing, setIsProcessing] = useState(false)
-  const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null)
+  const router = useRouter();
+  const [currentQuestion, setCurrentQuestion] = useState(0);
+  const [answers, setAnswers] = useState<Record<number, PersonalityType>>({});
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
 
-  const question = QUIZ_QUESTIONS[currentQuestion]
-  const progress = ((currentQuestion) / QUIZ_QUESTIONS.length) * 100
+  const question = QUIZ_QUESTIONS[currentQuestion];
+  const progress = (currentQuestion / QUIZ_QUESTIONS.length) * 100;
 
   const handleAnswer = (answerId: string, type: PersonalityType) => {
-    setSelectedAnswer(answerId)
+    setSelectedAnswer(answerId);
 
     // Store the answer
-    const newAnswers = { ...answers, [question.id]: type }
-    setAnswers(newAnswers)
+    const newAnswers = { ...answers, [question.id]: type };
+    setAnswers(newAnswers);
 
     // Delay before moving to next question for visual feedback
     setTimeout(() => {
       if (currentQuestion < QUIZ_QUESTIONS.length - 1) {
-        setCurrentQuestion(prev => prev + 1)
-        setSelectedAnswer(null)
+        setCurrentQuestion((prev) => prev + 1);
+        setSelectedAnswer(null);
       } else {
         // Quiz complete - show processing then redirect
-        setIsProcessing(true)
+        setIsProcessing(true);
 
         // Calculate results
-        const scores = calculateScores(newAnswers)
-        const types = getPersonalityTypes(scores)
-        const diagnosis = generateDiagnosis(newAnswers)
+        const scores = calculateScores(newAnswers);
+        const types = getPersonalityTypes(scores);
+        const diagnosis = generateDiagnosis(newAnswers);
 
         // Store in sessionStorage for results page
-        sessionStorage.setItem('quizResults', JSON.stringify({
-          scores,
-          primaryType: types.primary,
-          secondaryType: types.secondary,
-          diagnosis,
-          answers: newAnswers,
-          completedAt: new Date().toISOString()
-        }))
+        sessionStorage.setItem(
+          "quizResults",
+          JSON.stringify({
+            scores,
+            primaryType: types.primary,
+            secondaryType: types.secondary,
+            diagnosis,
+            answers: newAnswers,
+            completedAt: new Date().toISOString(),
+          }),
+        );
 
         // Redirect to results after processing animation
         setTimeout(() => {
-          router.push('/quiz/results')
-        }, 3000)
+          router.push("/quiz/results");
+        }, 3000);
       }
-    }, 400)
-  }
+    }, 400);
+  };
 
   // Processing screen
   if (isProcessing) {
@@ -92,12 +102,12 @@ export default function QuizTakePage() {
                   className="w-2 h-2 bg-accent-gold rounded-full"
                   animate={{
                     scale: [1, 1.5, 1],
-                    opacity: [0.5, 1, 0.5]
+                    opacity: [0.5, 1, 0.5],
                   }}
                   transition={{
                     duration: 1,
                     repeat: Infinity,
-                    delay: i * 0.2
+                    delay: i * 0.2,
                   }}
                 />
               ))}
@@ -105,7 +115,7 @@ export default function QuizTakePage() {
           </motion.div>
         </motion.div>
       </div>
-    )
+    );
   }
 
   return (
@@ -164,18 +174,20 @@ export default function QuizTakePage() {
                     disabled={selectedAnswer !== null}
                     className={`w-full p-4 text-left rounded-lg border transition-all duration-300 ${
                       selectedAnswer === answer.id
-                        ? 'bg-accent-gold/20 border-accent-gold text-white'
+                        ? "bg-accent-gold/20 border-accent-gold text-white"
                         : selectedAnswer !== null
-                          ? 'bg-deep-black/30 border-accent-gold/10 text-text-gray/50 cursor-not-allowed'
-                          : 'bg-deep-black/30 border-accent-gold/20 text-text-gray hover:border-accent-gold/50 hover:bg-accent-gold/5'
+                          ? "bg-deep-black/30 border-accent-gold/10 text-text-gray/50 cursor-not-allowed"
+                          : "bg-deep-black/30 border-accent-gold/20 text-text-gray hover:border-accent-gold/50 hover:bg-accent-gold/5"
                     }`}
                   >
                     <div className="flex items-start gap-4">
-                      <span className={`flex-shrink-0 w-8 h-8 rounded-full border flex items-center justify-center text-sm ${
-                        selectedAnswer === answer.id
-                          ? 'border-accent-gold bg-accent-gold text-deep-black'
-                          : 'border-accent-gold/30 text-accent-gold/60'
-                      }`}>
+                      <span
+                        className={`flex-shrink-0 w-8 h-8 rounded-full border flex items-center justify-center text-sm ${
+                          selectedAnswer === answer.id
+                            ? "border-accent-gold bg-accent-gold text-deep-black"
+                            : "border-accent-gold/30 text-accent-gold/60"
+                        }`}
+                      >
                         {String.fromCharCode(65 + index)}
                       </span>
                       <span className="pt-1">{answer.text}</span>
@@ -195,5 +207,5 @@ export default function QuizTakePage() {
         </p>
       </div>
     </div>
-  )
+  );
 }

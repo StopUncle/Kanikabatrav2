@@ -1,8 +1,8 @@
-import { NextRequest, NextResponse } from 'next/server'
-import { prisma } from '@/lib/prisma'
-import { requireAuth } from '@/lib/auth/middleware'
+import { NextRequest, NextResponse } from "next/server";
+import { prisma } from "@/lib/prisma";
+import { requireAuth } from "@/lib/auth/middleware";
 
-export const dynamic = 'force-dynamic'
+export const dynamic = "force-dynamic";
 
 export async function GET(request: NextRequest) {
   return requireAuth(request, async (_req, user) => {
@@ -14,8 +14,8 @@ export async function GET(request: NextRequest) {
         name: true,
         createdAt: true,
         purchases: {
-          where: { status: 'COMPLETED' },
-          orderBy: { createdAt: 'desc' },
+          where: { status: "COMPLETED" },
+          orderBy: { createdAt: "desc" },
           select: {
             id: true,
             type: true,
@@ -28,7 +28,7 @@ export async function GET(request: NextRequest) {
           },
         },
         sessions: {
-          orderBy: { scheduledAt: 'desc' },
+          orderBy: { scheduledAt: "desc" },
           select: {
             id: true,
             packageName: true,
@@ -41,15 +41,15 @@ export async function GET(request: NextRequest) {
           },
         },
       },
-    })
+    });
 
     if (!userData) {
-      return NextResponse.json({ error: 'User not found' }, { status: 404 })
+      return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
     return NextResponse.json({
       success: true,
       user: userData,
-    })
-  })
+    });
+  });
 }

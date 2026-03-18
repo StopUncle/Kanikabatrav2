@@ -1,86 +1,127 @@
-import { render, screen, fireEvent, waitFor } from '@testing-library/react'
-import LoginForm from '@/components/LoginForm'
+import { render, screen, fireEvent, waitFor } from "@testing-library/react";
+import LoginForm from "@/components/LoginForm";
 
-global.fetch = jest.fn()
+global.fetch = jest.fn();
 
-jest.mock('framer-motion', () => ({
+jest.mock("framer-motion", () => ({
   motion: {
-    div: ({ children, ...props }: React.PropsWithChildren<Record<string, unknown>>) => {
-      const { whileHover, whileTap, initial, animate, transition, ...validProps } = props
-      void whileHover; void whileTap; void initial; void animate; void transition;
-      return <div {...validProps}>{children}</div>
+    div: ({
+      children,
+      ...props
+    }: React.PropsWithChildren<Record<string, unknown>>) => {
+      const {
+        whileHover,
+        whileTap,
+        initial,
+        animate,
+        transition,
+        ...validProps
+      } = props;
+      void whileHover;
+      void whileTap;
+      void initial;
+      void animate;
+      void transition;
+      return <div {...validProps}>{children}</div>;
     },
-    button: ({ children, ...props }: React.PropsWithChildren<Record<string, unknown>>) => {
-      const { whileHover, whileTap, initial, animate, transition, ...validProps } = props
-      void whileHover; void whileTap; void initial; void animate; void transition;
-      return <button {...validProps}>{children}</button>
+    button: ({
+      children,
+      ...props
+    }: React.PropsWithChildren<Record<string, unknown>>) => {
+      const {
+        whileHover,
+        whileTap,
+        initial,
+        animate,
+        transition,
+        ...validProps
+      } = props;
+      void whileHover;
+      void whileTap;
+      void initial;
+      void animate;
+      void transition;
+      return <button {...validProps}>{children}</button>;
     },
   },
-}))
+}));
 
-describe('LoginForm', () => {
+describe("LoginForm", () => {
   beforeEach(() => {
-    jest.clearAllMocks()
-  })
+    jest.clearAllMocks();
+  });
 
-  it('renders email and password fields', () => {
-    render(<LoginForm />)
+  it("renders email and password fields", () => {
+    render(<LoginForm />);
 
-    expect(screen.getByPlaceholderText(/enter your email/i)).toBeInTheDocument()
-    expect(screen.getByPlaceholderText(/enter your password/i)).toBeInTheDocument()
-  })
+    expect(
+      screen.getByPlaceholderText(/enter your email/i),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByPlaceholderText(/enter your password/i),
+    ).toBeInTheDocument();
+  });
 
-  it('renders sign in button', () => {
-    render(<LoginForm />)
+  it("renders sign in button", () => {
+    render(<LoginForm />);
 
-    expect(screen.getByRole('button', { name: /sign in/i })).toBeInTheDocument()
-  })
+    expect(
+      screen.getByRole("button", { name: /sign in/i }),
+    ).toBeInTheDocument();
+  });
 
-  it('submits form with valid data', async () => {
-    ;(global.fetch as jest.Mock).mockResolvedValue({
+  it("submits form with valid data", async () => {
+    (global.fetch as jest.Mock).mockResolvedValue({
       ok: true,
-      json: () => Promise.resolve({ success: true, user: { id: '1', email: 'test@example.com' } }),
-    })
+      json: () =>
+        Promise.resolve({
+          success: true,
+          user: { id: "1", email: "test@example.com" },
+        }),
+    });
 
-    render(<LoginForm />)
+    render(<LoginForm />);
 
-    const emailInput = screen.getByPlaceholderText(/enter your email/i)
-    const passwordInput = screen.getByPlaceholderText(/enter your password/i)
-    const submitButton = screen.getByRole('button', { name: /sign in/i })
+    const emailInput = screen.getByPlaceholderText(/enter your email/i);
+    const passwordInput = screen.getByPlaceholderText(/enter your password/i);
+    const submitButton = screen.getByRole("button", { name: /sign in/i });
 
-    fireEvent.change(emailInput, { target: { value: 'test@example.com' } })
-    fireEvent.change(passwordInput, { target: { value: 'password123' } })
-    fireEvent.click(submitButton)
+    fireEvent.change(emailInput, { target: { value: "test@example.com" } });
+    fireEvent.change(passwordInput, { target: { value: "password123" } });
+    fireEvent.click(submitButton);
 
     await waitFor(() => {
-      expect(global.fetch).toHaveBeenCalledWith('/api/auth/login', expect.any(Object))
-    })
-  })
+      expect(global.fetch).toHaveBeenCalledWith(
+        "/api/auth/login",
+        expect.any(Object),
+      );
+    });
+  });
 
-  it('displays error message on failed login', async () => {
-    ;(global.fetch as jest.Mock).mockResolvedValue({
+  it("displays error message on failed login", async () => {
+    (global.fetch as jest.Mock).mockResolvedValue({
       ok: false,
-      json: () => Promise.resolve({ error: 'Invalid credentials' }),
-    })
+      json: () => Promise.resolve({ error: "Invalid credentials" }),
+    });
 
-    render(<LoginForm />)
+    render(<LoginForm />);
 
-    const emailInput = screen.getByPlaceholderText(/enter your email/i)
-    const passwordInput = screen.getByPlaceholderText(/enter your password/i)
-    const submitButton = screen.getByRole('button', { name: /sign in/i })
+    const emailInput = screen.getByPlaceholderText(/enter your email/i);
+    const passwordInput = screen.getByPlaceholderText(/enter your password/i);
+    const submitButton = screen.getByRole("button", { name: /sign in/i });
 
-    fireEvent.change(emailInput, { target: { value: 'test@example.com' } })
-    fireEvent.change(passwordInput, { target: { value: 'wrongpassword' } })
-    fireEvent.click(submitButton)
+    fireEvent.change(emailInput, { target: { value: "test@example.com" } });
+    fireEvent.change(passwordInput, { target: { value: "wrongpassword" } });
+    fireEvent.click(submitButton);
 
     await waitFor(() => {
-      expect(screen.getByText(/invalid credentials/i)).toBeInTheDocument()
-    })
-  })
+      expect(screen.getByText(/invalid credentials/i)).toBeInTheDocument();
+    });
+  });
 
-  it('has link to register page', () => {
-    render(<LoginForm />)
+  it("has link to register page", () => {
+    render(<LoginForm />);
 
-    expect(screen.getByText(/create one/i)).toBeInTheDocument()
-  })
-})
+    expect(screen.getByText(/create one/i)).toBeInTheDocument();
+  });
+});

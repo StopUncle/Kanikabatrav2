@@ -22,6 +22,7 @@ The PayPal credit/debit card "endless processing" issue has been **already fixed
 **Location:** `lib/paypal.ts` - `createBookOrder()` and `createCoachingOrder()` functions
 
 **What Was Wrong:**
+
 ```typescript
 // BEFORE (BROKEN):
 application_context: {
@@ -83,9 +84,11 @@ application_context: {
 ### PayPal Documentation & Best Practices
 
 **Official Guidance (from developer community & Stack Overflow):**
+
 > "When using the JavaScript SDK buttons, do not set return_url or cancel_url. The SDK handles completion via the onApprove and onCancel callbacks."
 
 **Key Points:**
+
 - `return_url`/`cancel_url` are for **redirect flows only**
 - JavaScript SDK uses **callback-based flow**
 - Mixing both creates conflicts, especially for card payments
@@ -121,6 +124,7 @@ application_context: {
 ### PayPal Button Component (`components/PayPalButton.tsx`)
 
 **Strengths:**
+
 - ✅ Comprehensive error handling
 - ✅ Retry logic with exponential backoff (up to 2 retries)
 - ✅ 45-second timeout protection
@@ -129,12 +133,14 @@ application_context: {
 - ✅ No blocking `alert()` calls
 
 **Potential Improvements:**
+
 - ⚠️ Timeout of 45 seconds may be too short for 3DS authentication
 - ⚠️ Polling in capture route only runs for 10 seconds (5 attempts × 2 seconds)
 
 ### Capture Order API (`app/api/paypal/capture-order/route.ts`)
 
 **Strengths:**
+
 - ✅ Polling mechanism for async order completion
 - ✅ Handles `PAYER_ACTION_REQUIRED` status
 - ✅ Duplicate order detection
@@ -142,18 +148,19 @@ application_context: {
 - ✅ Database persistence
 
 **Current Polling Configuration:**
+
 ```typescript
-let pollAttempts = 0
-const maxPollAttempts = 5  // Only 10 seconds total
+let pollAttempts = 0;
+const maxPollAttempts = 5; // Only 10 seconds total
 
 while (
-  orderDetails.status !== 'COMPLETED' &&
-  orderDetails.status !== 'APPROVED' &&
+  orderDetails.status !== "COMPLETED" &&
+  orderDetails.status !== "APPROVED" &&
   pollAttempts < maxPollAttempts
 ) {
-  await new Promise(resolve => setTimeout(resolve, 2000))  // 2 second delay
-  orderDetails = await paypalService.getOrderDetails(body.orderId)
-  pollAttempts++
+  await new Promise((resolve) => setTimeout(resolve, 2000)); // 2 second delay
+  orderDetails = await paypalService.getOrderDetails(body.orderId);
+  pollAttempts++;
 }
 ```
 
@@ -169,7 +176,7 @@ while (
 
 ```typescript
 // app/api/paypal/capture-order/route.ts:58
-const maxPollAttempts = 15  // Increase from 5 to 15 (30 seconds total)
+const maxPollAttempts = 15; // Increase from 5 to 15 (30 seconds total)
 ```
 
 **Rationale:** Credit cards with 3DS authentication need 15-30 seconds to complete. Current 10-second polling timeout is insufficient.
@@ -178,9 +185,10 @@ const maxPollAttempts = 15  // Increase from 5 to 15 (30 seconds total)
 
 ```typescript
 // components/PayPalButton.tsx:189
-const timeoutPromise = new Promise((_, reject) =>
-  setTimeout(() => reject(new Error('Payment processing timeout...')), 90000)  // 90 seconds
-)
+const timeoutPromise = new Promise(
+  (_, reject) =>
+    setTimeout(() => reject(new Error("Payment processing timeout...")), 90000), // 90 seconds
+);
 ```
 
 **Rationale:** Align client timeout with worst-case 3DS + polling duration.
@@ -188,17 +196,23 @@ const timeoutPromise = new Promise((_, reject) =>
 **Priority 3: Enhanced Error Messaging (LOW IMPACT)**
 
 Add clearer status messages during processing:
+
 ```typescript
-console.log('Waiting for 3D Secure authentication...')
-console.log(`Order status: ${orderDetails.status} - Attempt ${pollAttempts + 1}/${maxPollAttempts}`)
+console.log("Waiting for 3D Secure authentication...");
+console.log(
+  `Order status: ${orderDetails.status} - Attempt ${pollAttempts + 1}/${maxPollAttempts}`,
+);
 ```
 
 **Priority 4: Environment-Specific Handling (MEDIUM IMPACT)**
 
 Add warning for sandbox environment:
+
 ```typescript
-if (process.env.PAYPAL_ENVIRONMENT === 'sandbox') {
-  console.warn('⚠️ Credit card testing in sandbox has known limitations. Use production for reliable card testing.')
+if (process.env.PAYPAL_ENVIRONMENT === "sandbox") {
+  console.warn(
+    "⚠️ Credit card testing in sandbox has known limitations. Use production for reliable card testing.",
+  );
 }
 ```
 
@@ -209,12 +223,14 @@ if (process.env.PAYPAL_ENVIRONMENT === 'sandbox') {
 ### Test Cards for Sandbox
 
 **Standard Card (No 3DS):**
+
 - Card: 4032034388931071 (Visa)
 - Expiry: Any future date
 - CVV: 123
 - Name: Any
 
 **3DS Authentication Card:**
+
 - Card: 4012000033330026 (Visa)
 - 3DS Password: 1234 (when prompted)
 
@@ -223,17 +239,20 @@ if (process.env.PAYPAL_ENVIRONMENT === 'sandbox') {
 When testing credit card payments, verify in browser console:
 
 1. **Order Creation:**
+
    ```
    ✓ Creating PayPal order...
    ✓ Order created successfully: [ORDER_ID]
    ```
 
 2. **Order Approval:**
+
    ```
    ✓ Payment approved, capturing order: [ORDER_ID]
    ```
 
 3. **Status Polling:**
+
    ```
    ✓ Order status before capture: APPROVED
    ✓ Final order status after polling: APPROVED or COMPLETED
@@ -245,6 +264,7 @@ When testing credit card payments, verify in browser console:
    ```
 
 **If Stuck at Any Stage:**
+
 - Check Network tab for failed API calls
 - Look for `PAYER_ACTION_REQUIRED` status (indicates 3DS needed)
 - Verify no `return_url`/`cancel_url` in order payload
@@ -253,6 +273,7 @@ When testing credit card payments, verify in browser console:
 ### Network Tab Inspection
 
 **POST `/api/paypal/create-order` Request Body:**
+
 ```json
 {
   "intent": "CAPTURE",
@@ -275,6 +296,7 @@ When testing credit card payments, verify in browser console:
 ### Required Features
 
 **For Advanced Credit/Debit Card Payments:**
+
 1. PayPal Business Account
 2. "Advanced Credit and Debit Card Payments" (ACDC) enabled
 3. API credentials configured (Client ID + Secret)
@@ -314,12 +336,14 @@ When testing credit card payments, verify in browser console:
 ### When to Use return_url/cancel_url
 
 **✅ Use When:**
+
 - Server-side redirect integration (no JavaScript SDK)
 - Manual approval link generation
 - Email payment requests
 - Classic PayPal integration
 
 **❌ Don't Use When:**
+
 - Using PayPal JavaScript SDK Buttons
 - Single-page applications (SPAs)
 - React/Next.js client-side checkout
@@ -366,17 +390,20 @@ When testing credit card payments, verify in browser console:
 ## 🔗 Research Sources
 
 ### Official PayPal Documentation
+
 - PayPal JavaScript SDK Reference
 - Advanced Credit and Debit Card Payments
 - 3D Secure Integration Guide
 - Orders API v2 Documentation
 
 ### Developer Community
+
 - Stack Overflow: "PayPal checkout javascript integration Debit and credit card option not work"
 - PayPal Community: "onApprove not called workarounds"
 - GitHub Issues: PayPal Checkout Components
 
 ### Key Insights From Research
+
 1. 60+ Stack Overflow questions about credit card `onApprove` not firing
 2. PayPal Community posts confirm `return_url` breaks callback flow
 3. Multiple reports of sandbox environment card testing issues

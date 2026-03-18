@@ -1,22 +1,26 @@
-'use client'
+"use client";
 
-import { motion } from 'framer-motion'
+import { motion } from "framer-motion";
 
 interface KBLogoProps {
-  size?: 'sm' | 'md' | 'lg' | 'xl'
-  className?: string
-  animate?: boolean
+  size?: "sm" | "md" | "lg" | "xl";
+  className?: string;
+  animate?: boolean;
 }
 
-const KBLogo = ({ size = 'md', className = '', animate = false }: KBLogoProps) => {
+const KBLogo = ({
+  size = "md",
+  className = "",
+  animate = false,
+}: KBLogoProps) => {
   const dimensions = {
     sm: { width: 32, height: 32, strokeWidth: 1.5 },
     md: { width: 40, height: 40, strokeWidth: 2 },
     lg: { width: 56, height: 56, strokeWidth: 2 },
     xl: { width: 80, height: 80, strokeWidth: 2.5 },
-  }
+  };
 
-  const { width, height, strokeWidth } = dimensions[size]
+  const { width, height, strokeWidth } = dimensions[size];
 
   const logoContent = (
     <svg
@@ -49,13 +53,7 @@ const KBLogo = ({ size = 'md', className = '', animate = false }: KBLogoProps) =
       />
 
       {/* Background circle with subtle gradient */}
-      <circle
-        cx="50"
-        cy="50"
-        r="37"
-        fill="url(#bgGradient)"
-        opacity="0.1"
-      />
+      <circle cx="50" cy="50" r="37" fill="url(#bgGradient)" opacity="0.1" />
 
       {/* KB Monogram */}
       <g transform="translate(50, 50)">
@@ -110,7 +108,7 @@ const KBLogo = ({ size = 'md', className = '', animate = false }: KBLogoProps) =
         </radialGradient>
       </defs>
     </svg>
-  )
+  );
 
   if (animate) {
     return (
@@ -122,10 +120,10 @@ const KBLogo = ({ size = 'md', className = '', animate = false }: KBLogoProps) =
       >
         {logoContent}
       </motion.div>
-    )
+    );
   }
 
-  return logoContent
-}
+  return logoContent;
+};
 
-export default KBLogo
+export default KBLogo;

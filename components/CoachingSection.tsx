@@ -1,14 +1,14 @@
-'use client'
+"use client";
 
-import { useRouter } from 'next/navigation'
-import CoachingTiers from './CoachingTiers'
+import { useRouter } from "next/navigation";
+import CoachingTiers from "./CoachingTiers";
 
 export default function CoachingSection() {
-  const router = useRouter()
+  const router = useRouter();
 
   const handlePackageSelect = (packageId: string) => {
-    router.push(`/coaching#${packageId}`)
-  }
+    router.push(`/coaching#${packageId}`);
+  };
 
   return (
     <section id="coaching" className="py-32 px-4">
@@ -19,7 +19,8 @@ export default function CoachingSection() {
             <span className="gradient-text">High-Performance Psychology</span>
           </h2>
           <p className="text-text-gray text-lg md:text-xl max-w-3xl mx-auto italic">
-            Access the headspace where fear doesn&apos;t vote and decisions come fast
+            Access the headspace where fear doesn&apos;t vote and decisions come
+            fast
           </p>
         </div>
 
@@ -40,5 +41,5 @@ export default function CoachingSection() {
         </div>
       </div>
     </section>
-  )
+  );
 }

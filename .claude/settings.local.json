@@ -70,7 +70,9 @@
       "Bash(tasklist:*)",
       "Bash(wmic process where \"name=''node.exe''\" get processid,commandline)",
       "Bash(pnpm dev)",
-      "Bash(ls:*)"
+      "Bash(ls:*)",
+      "mcp__supabase__list_projects",
+      "mcp__supabase__execute_sql"
     ],
     "deny": [],
     "ask": []

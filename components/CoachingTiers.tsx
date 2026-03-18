@@ -1,14 +1,14 @@
-'use client'
+"use client";
 
-import { motion } from 'framer-motion'
-import { Check } from 'lucide-react'
-import Card from '@/components/ui/Card'
-import { COACHING_PACKAGES } from '@/lib/constants'
-import { formatPrice } from '@/lib/utils'
+import { motion } from "framer-motion";
+import { Check } from "lucide-react";
+import Card from "@/components/ui/Card";
+import { COACHING_PACKAGES } from "@/lib/constants";
+import { formatPrice } from "@/lib/utils";
 
 interface CoachingTiersProps {
-  showButton?: boolean
-  onSelect?: (packageId: string) => void
+  showButton?: boolean;
+  onSelect?: (packageId: string) => void;
 }
 
 const CoachingTiers = ({ showButton = true, onSelect }: CoachingTiersProps) => {
@@ -20,12 +20,12 @@ const CoachingTiers = ({ showButton = true, onSelect }: CoachingTiersProps) => {
         staggerChildren: 0.2,
       },
     },
-  }
+  };
 
   const itemVariants = {
     hidden: { opacity: 0, y: 20 },
     visible: { opacity: 1, y: 0 },
-  }
+  };
 
   return (
     <motion.div
@@ -44,9 +44,7 @@ const CoachingTiers = ({ showButton = true, onSelect }: CoachingTiersProps) => {
                 <h3 className="text-xl sm:text-2xl font-light mb-2 bg-gradient-to-r from-burgundy to-gold bg-clip-text text-transparent">
                   {pkg.name}
                 </h3>
-                <p className="text-text-muted text-sm">
-                  {pkg.description}
-                </p>
+                <p className="text-text-muted text-sm">{pkg.description}</p>
               </div>
 
               {/* Price */}
@@ -55,7 +53,9 @@ const CoachingTiers = ({ showButton = true, onSelect }: CoachingTiersProps) => {
                   <span className="text-3xl sm:text-4xl font-light text-gold">
                     {formatPrice(pkg.price)}
                   </span>
-                  <span className="text-text-muted text-sm sm:text-base">/{pkg.duration}</span>
+                  <span className="text-text-muted text-sm sm:text-base">
+                    /{pkg.duration}
+                  </span>
                 </div>
               </div>
 
@@ -77,7 +77,8 @@ const CoachingTiers = ({ showButton = true, onSelect }: CoachingTiersProps) => {
                   onClick={() => onSelect?.(pkg.id)}
                   className="w-full bg-gradient-to-r from-[#720921] via-[#8B5CF6] to-[#6366f1] hover:from-[#5a0719] hover:via-[#7C3AED] hover:to-[#5558e3] text-white font-bold py-3.5 px-6 rounded-full transition-all duration-300 hover:shadow-xl hover:shadow-[#720921]/40 hover:scale-[1.02] uppercase tracking-wide"
                   style={{
-                    boxShadow: '0 8px 20px rgba(114, 9, 33, 0.3), 0 8px 20px rgba(99, 102, 241, 0.3)'
+                    boxShadow:
+                      "0 8px 20px rgba(114, 9, 33, 0.3), 0 8px 20px rgba(99, 102, 241, 0.3)",
                   }}
                 >
                   SELECT PACKAGE
@@ -88,7 +89,7 @@ const CoachingTiers = ({ showButton = true, onSelect }: CoachingTiersProps) => {
         </motion.div>
       ))}
     </motion.div>
-  )
-}
+  );
+};
 
-export default CoachingTiers
+export default CoachingTiers;

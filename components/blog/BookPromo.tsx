@@ -1,18 +1,23 @@
-'use client'
+"use client";
 
-import Link from 'next/link'
-import { motion } from 'framer-motion'
-import { BOOK_INFO } from '@/lib/constants'
+import Link from "next/link";
+import { motion } from "framer-motion";
+import { BOOK_INFO } from "@/lib/constants";
 
 interface BookPromoProps {
-  variant?: 'full' | 'compact'
-  className?: string
+  variant?: "full" | "compact";
+  className?: string;
 }
 
-export default function BookPromo({ variant = 'full', className = '' }: BookPromoProps) {
-  if (variant === 'compact') {
+export default function BookPromo({
+  variant = "full",
+  className = "",
+}: BookPromoProps) {
+  if (variant === "compact") {
     return (
-      <div className={`bg-gradient-to-r from-accent-burgundy/20 to-deep-navy/40 rounded-xl p-6 border border-accent-gold/20 ${className}`}>
+      <div
+        className={`bg-gradient-to-r from-accent-burgundy/20 to-deep-navy/40 rounded-xl p-6 border border-accent-gold/20 ${className}`}
+      >
         <div className="flex flex-col sm:flex-row items-center gap-4">
           <div className="flex-1">
             <p className="text-white font-medium mb-1">
@@ -32,7 +37,7 @@ export default function BookPromo({ variant = 'full', className = '' }: BookProm
           </a>
         </div>
       </div>
-    )
+    );
   }
 
   return (
@@ -46,9 +51,7 @@ export default function BookPromo({ variant = 'full', className = '' }: BookProm
       <div className="flex items-start gap-3 mb-4">
         <span className="text-3xl">📖</span>
         <div>
-          <h3 className="text-2xl font-light text-white">
-            {BOOK_INFO.title}
-          </h3>
+          <h3 className="text-2xl font-light text-white">{BOOK_INFO.title}</h3>
           <p className="text-accent-gold text-sm uppercase tracking-wider">
             {BOOK_INFO.subtitle}
           </p>
@@ -107,11 +110,19 @@ export default function BookPromo({ variant = 'full', className = '' }: BookProm
       </div>
 
       <div className="flex items-center gap-2 text-sm text-text-gray">
-        <svg className="w-4 h-4 text-accent-gold" fill="currentColor" viewBox="0 0 20 20">
-          <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+        <svg
+          className="w-4 h-4 text-accent-gold"
+          fill="currentColor"
+          viewBox="0 0 20 20"
+        >
+          <path
+            fillRule="evenodd"
+            d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+            clipRule="evenodd"
+          />
         </svg>
         <span>Written by a clinically diagnosed sociopath</span>
       </div>
     </motion.div>
-  )
+  );
 }

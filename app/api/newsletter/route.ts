@@ -1,47 +1,50 @@
-import { NextRequest, NextResponse } from 'next/server'
-import { prisma } from '@/lib/prisma'
-import { sendEmail } from '@/lib/email'
+import { NextRequest, NextResponse } from "next/server";
+import { prisma } from "@/lib/prisma";
+import { sendEmail } from "@/lib/email";
 
 export async function POST(request: NextRequest) {
   try {
-    const { email, name, source = 'newsletter', quizResultId, tags = [] } = await request.json()
+    const {
+      email,
+      name,
+      source = "newsletter",
+      quizResultId,
+      tags = [],
+    } = await request.json();
 
-    if (!email || typeof email !== 'string') {
-      return NextResponse.json(
-        { error: 'Email is required' },
-        { status: 400 }
-      )
+    if (!email || typeof email !== "string") {
+      return NextResponse.json({ error: "Email is required" }, { status: 400 });
     }
 
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
       return NextResponse.json(
-        { error: 'Invalid email format' },
-        { status: 400 }
-      )
+        { error: "Invalid email format" },
+        { status: 400 },
+      );
     }
 
     const existingSubscriber = await prisma.subscriber.findUnique({
-      where: { email: email.toLowerCase() }
-    })
+      where: { email: email.toLowerCase() },
+    });
 
     if (existingSubscriber) {
-      const existingTags = existingSubscriber.tags || []
-      const newTags = Array.from(new Set([...existingTags, ...tags]))
+      const existingTags = existingSubscriber.tags || [];
+      const newTags = Array.from(new Set([...existingTags, ...tags]));
 
       await prisma.subscriber.update({
         where: { email: email.toLowerCase() },
         data: {
           tags: newTags,
-          ...(quizResultId && { quizResultId })
-        }
-      })
+          ...(quizResultId && { quizResultId }),
+        },
+      });
 
       return NextResponse.json({
         success: true,
-        message: 'Subscription updated',
-        isNew: false
-      })
+        message: "Subscription updated",
+        isNew: false,
+      });
     }
 
     await prisma.subscriber.create({
@@ -51,14 +54,14 @@ export async function POST(request: NextRequest) {
         source,
         quizResultId: quizResultId || null,
         tags,
-        verified: true
-      }
-    })
+        verified: true,
+      },
+    });
 
     // Send welcome email (fire and forget — don't block the response)
     sendEmail({
       to: email.toLowerCase(),
-      subject: 'Welcome to The Psychology of Power — Kanika Batra',
+      subject: "Welcome to The Psychology of Power — Kanika Batra",
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
           <div style="background: linear-gradient(135deg, #1a0d11 0%, #0a1628 100%); padding: 30px; border-radius: 10px 10px 0 0;">
@@ -66,7 +69,7 @@ export async function POST(request: NextRequest) {
           </div>
           <div style="background: #050511; padding: 30px; border: 1px solid #d4af37; border-top: none; border-radius: 0 0 10px 10px;">
             <p style="color: #f5f0ed; font-size: 16px; line-height: 1.6;">
-              ${name ? `Hey ${name},` : 'Hey,'}
+              ${name ? `Hey ${name},` : "Hey,"}
             </p>
             <p style="color: #94a3b8; line-height: 1.6;">
               Thanks for subscribing. You're now on the inside.
@@ -84,64 +87,61 @@ export async function POST(request: NextRequest) {
           </div>
         </div>
       `,
-    }).catch((err) => console.error('Welcome email failed:', err))
+    }).catch((err) => console.error("Welcome email failed:", err));
 
     return NextResponse.json({
       success: true,
-      message: 'Successfully subscribed',
-      isNew: true
-    })
+      message: "Successfully subscribed",
+      isNew: true,
+    });
   } catch (error) {
-    console.error('Newsletter subscription error:', error)
-    return NextResponse.json(
-      { error: 'Failed to subscribe' },
-      { status: 500 }
-    )
+    console.error("Newsletter subscription error:", error);
+    return NextResponse.json({ error: "Failed to subscribe" }, { status: 500 });
   }
 }
 
 export async function GET(request: NextRequest) {
-  const authHeader = request.headers.get('authorization')
-  const adminSecret = process.env.ADMIN_SECRET
+  const authHeader = request.headers.get("authorization");
+  const adminSecret = process.env.ADMIN_SECRET;
 
   if (!adminSecret || authHeader !== `Bearer ${adminSecret}`) {
-    return NextResponse.json(
-      { error: 'Unauthorized' },
-      { status: 401 }
-    )
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
   try {
     const subscribers = await prisma.subscriber.findMany({
-      orderBy: { createdAt: 'desc' },
-      take: 100
-    })
+      orderBy: { createdAt: "desc" },
+      take: 100,
+    });
 
     const stats = await prisma.subscriber.groupBy({
-      by: ['source'],
-      _count: { id: true }
-    })
+      by: ["source"],
+      _count: { id: true },
+    });
 
-    const total = await prisma.subscriber.count()
+    const total = await prisma.subscriber.count();
 
     return NextResponse.json({
       total,
-      bySource: stats.reduce((acc, item) => {
-        acc[item.source] = item._count.id
-        return acc
-      }, {} as Record<string, number>),
+      bySource: stats.reduce(
+        (acc, item) => {
+          acc[item.source] = item._count.id;
+          return acc;
+        },
+        {} as Record<string, number>,
+      ),
       recentSubscribers: subscribers.map((s) => ({
         email: s.email,
         source: s.source,
         tags: s.tags,
-        createdAt: s.createdAt
-      }))
-    })
+        createdAt: s.createdAt,
+      })),
+    });
   } catch (error) {
-    console.error('Error fetching subscribers:', error)
+    console.error("Error fetching subscribers:", error);
     return NextResponse.json(
-      { error: 'Failed to fetch subscribers' },
-      { status: 500 }
-    )
+      { error: "Failed to fetch subscribers" },
+      { status: 500 },
+    );
   }
 }

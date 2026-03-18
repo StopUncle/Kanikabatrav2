@@ -1,99 +1,99 @@
-'use client'
+"use client";
 
 export interface AuthUser {
-  id: string
-  email: string
+  id: string;
+  email: string;
 }
 
 export interface AuthResponse {
-  success: boolean
-  user?: AuthUser
-  error?: string
+  success: boolean;
+  user?: AuthUser;
+  error?: string;
 }
 
 class AuthClient {
   async register(email: string, password: string): Promise<AuthResponse> {
     try {
-      const response = await fetch('/api/auth/register', {
-        method: 'POST',
+      const response = await fetch("/api/auth/register", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json'
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify({ email, password })
-      })
+        body: JSON.stringify({ email, password }),
+      });
 
-      const data = await response.json()
+      const data = await response.json();
 
       if (!response.ok) {
-        return { success: false, error: data.error || 'Registration failed' }
+        return { success: false, error: data.error || "Registration failed" };
       }
 
-      return { success: true, user: data.user }
+      return { success: true, user: data.user };
     } catch (_error) {
-      return { success: false, error: 'Network error' }
+      return { success: false, error: "Network error" };
     }
   }
 
   async login(email: string, password: string): Promise<AuthResponse> {
     try {
-      const response = await fetch('/api/auth/login', {
-        method: 'POST',
+      const response = await fetch("/api/auth/login", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json'
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify({ email, password })
-      })
+        body: JSON.stringify({ email, password }),
+      });
 
-      const data = await response.json()
+      const data = await response.json();
 
       if (!response.ok) {
-        return { success: false, error: data.error || 'Login failed' }
+        return { success: false, error: data.error || "Login failed" };
       }
 
-      return { success: true, user: data.user }
+      return { success: true, user: data.user };
     } catch (_error) {
-      return { success: false, error: 'Network error' }
+      return { success: false, error: "Network error" };
     }
   }
 
   async logout(): Promise<{ success: boolean }> {
     try {
-      const response = await fetch('/api/auth/logout', {
-        method: 'POST'
-      })
+      const response = await fetch("/api/auth/logout", {
+        method: "POST",
+      });
 
-      return { success: response.ok }
+      return { success: response.ok };
     } catch (_error) {
-      return { success: false }
+      return { success: false };
     }
   }
 
   async getCurrentUser(): Promise<AuthUser | null> {
     try {
-      const response = await fetch('/api/auth/me')
+      const response = await fetch("/api/auth/me");
 
       if (!response.ok) {
-        return null
+        return null;
       }
 
-      const data = await response.json()
-      return data.user || null
+      const data = await response.json();
+      return data.user || null;
     } catch (_error) {
-      return null
+      return null;
     }
   }
 
   async refreshToken(): Promise<boolean> {
     try {
-      const response = await fetch('/api/auth/refresh', {
-        method: 'POST'
-      })
+      const response = await fetch("/api/auth/refresh", {
+        method: "POST",
+      });
 
-      return response.ok
+      return response.ok;
     } catch (_error) {
-      return false
+      return false;
     }
   }
 }
 
-export const authClient = new AuthClient()
+export const authClient = new AuthClient();

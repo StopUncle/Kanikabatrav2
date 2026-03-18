@@ -1,1 +1,1 @@
-console.log('Node.js basic test works')
+console.log("Node.js basic test works");

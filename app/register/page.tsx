@@ -1,6 +1,6 @@
-import RegisterForm from '@/components/RegisterForm'
-import BackgroundEffects from '@/components/BackgroundEffects'
-import Header from '@/components/Header'
+import RegisterForm from "@/components/RegisterForm";
+import BackgroundEffects from "@/components/BackgroundEffects";
+import Header from "@/components/Header";
 
 export default function RegisterPage() {
   return (
@@ -13,14 +13,15 @@ export default function RegisterPage() {
         </div>
       </div>
     </>
-  )
+  );
 }
 
 export const metadata = {
-  title: 'Register - Kanika Batra',
-  description: 'Create your account to access exclusive dark psychology content',
+  title: "Register - Kanika Batra",
+  description:
+    "Create your account to access exclusive dark psychology content",
   robots: {
     index: false,
     follow: false,
   },
-}
+};

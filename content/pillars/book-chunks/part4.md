@@ -169,7 +169,6 @@ The women who understand this principle become wives. The women who don't become
 
 Choose wisely.
 
- 
 Chapter 3: The Rotation—Managing Multiple Suitors Strategically
 Monogamy is a scam designed to benefit men. It is a social construct that ensures women invest all their emotional, sexual, and strategic energy into one man while he maintains the psychological freedom to leave at any time.
 
@@ -379,8 +378,9 @@ But you—you remain on the throne. You remain in control. You remain the prize 
 This is the power of the Rotation. This is the art of strategic non-monogamy. This is how empresses are made.
 
 Welcome to your empire. Rule wisely.
- 
+
     Chapter 4: The Transformation Protocol—Becoming Irresistibly Magnetic
+
 You are not born magnetic. Magnetism is not a genetic lottery, a stroke of luck, or a divine gift bestowed upon the chosen few. Magnetism is a skill, and like all skills, it can be learned, practiced, and perfected.
 
 The women who seem effortlessly attractive, who command attention without trying, who have men orbiting them like planets around the sun—they are not naturally superior to you. They have simply mastered the art of strategic self-construction.

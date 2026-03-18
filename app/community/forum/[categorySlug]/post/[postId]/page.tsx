@@ -1,45 +1,45 @@
-import { cookies } from 'next/headers'
-import { notFound } from 'next/navigation'
-import Link from 'next/link'
-import { verifyAccessToken } from '@/lib/auth/jwt'
-import { prisma } from '@/lib/prisma'
-import { checkAccessTier } from '@/lib/community/access'
-import PostDetail from '@/components/community/forum/PostDetail'
-import AccessGate from '@/components/community/access/AccessGate'
-import { ArrowLeft } from 'lucide-react'
+import { cookies } from "next/headers";
+import { notFound } from "next/navigation";
+import Link from "next/link";
+import { verifyAccessToken } from "@/lib/auth/jwt";
+import { prisma } from "@/lib/prisma";
+import { checkAccessTier } from "@/lib/community/access";
+import PostDetail from "@/components/community/forum/PostDetail";
+import AccessGate from "@/components/community/access/AccessGate";
+import { ArrowLeft } from "lucide-react";
 
 interface Props {
-  params: Promise<{ categorySlug: string; postId: string }>
+  params: Promise<{ categorySlug: string; postId: string }>;
 }
 
 export async function generateMetadata({ params }: Props) {
-  const { postId } = await params
+  const { postId } = await params;
   const post = await prisma.forumPost.findUnique({
     where: { id: postId },
-    select: { title: true, content: true }
-  })
+    select: { title: true, content: true },
+  });
 
   if (!post) {
-    return { title: 'Post Not Found' }
+    return { title: "Post Not Found" };
   }
 
   return {
     title: `${post.title} | Forum | Kanika Batra`,
-    description: post.content.substring(0, 160)
-  }
+    description: post.content.substring(0, 160),
+  };
 }
 
 export default async function PostPage({ params }: Props) {
-  const { categorySlug, postId } = await params
+  const { categorySlug, postId } = await params;
 
-  const cookieStore = await cookies()
-  const accessToken = cookieStore.get('access_token')?.value
-  let userId: string | null = null
+  const cookieStore = await cookies();
+  const accessToken = cookieStore.get("access_token")?.value;
+  let userId: string | null = null;
 
   if (accessToken) {
-    const payload = verifyAccessToken(accessToken)
+    const payload = verifyAccessToken(accessToken);
     if (payload) {
-      userId = payload.userId
+      userId = payload.userId;
     }
   }
 
@@ -51,32 +51,32 @@ export default async function PostPage({ params }: Props) {
           id: true,
           name: true,
           displayName: true,
-          avatarUrl: true
-        }
+          avatarUrl: true,
+        },
       },
       category: {
         select: {
           id: true,
           name: true,
           slug: true,
-          accessTier: true
-        }
+          accessTier: true,
+        },
       },
       _count: {
-        select: { replies: true, likes: true }
-      }
-    }
-  })
+        select: { replies: true, likes: true },
+      },
+    },
+  });
 
   if (!post) {
-    notFound()
+    notFound();
   }
 
   if (post.category.slug !== categorySlug) {
-    notFound()
+    notFound();
   }
 
-  const access = await checkAccessTier(userId, post.category.accessTier)
+  const access = await checkAccessTier(userId, post.category.accessTier);
 
   if (!access.hasAccess) {
     return (
@@ -86,22 +86,22 @@ export default async function PostPage({ params }: Props) {
         reason={access.reason}
         upgradeUrl={access.upgradeUrl}
       />
-    )
+    );
   }
 
   await prisma.forumPost.update({
     where: { id: postId },
-    data: { viewCount: { increment: 1 } }
-  })
+    data: { viewCount: { increment: 1 } },
+  });
 
-  let userLiked = false
+  let userLiked = false;
   if (userId) {
     const like = await prisma.postLike.findUnique({
       where: {
-        postId_userId: { postId, userId }
-      }
-    })
-    userLiked = !!like
+        postId_userId: { postId, userId },
+      },
+    });
+    userLiked = !!like;
   }
 
   const formattedPost = {
@@ -118,9 +118,9 @@ export default async function PostPage({ params }: Props) {
     category: {
       id: post.category.id,
       name: post.category.name,
-      slug: post.category.slug
-    }
-  }
+      slug: post.category.slug,
+    },
+  };
 
   return (
     <div>
@@ -134,5 +134,5 @@ export default async function PostPage({ params }: Props) {
 
       <PostDetail post={formattedPost} currentUserId={userId} />
     </div>
-  )
+  );
 }

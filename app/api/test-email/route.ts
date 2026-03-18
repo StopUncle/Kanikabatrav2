@@ -1,50 +1,53 @@
-import { NextRequest, NextResponse } from 'next/server'
-import nodemailer from 'nodemailer'
+import { NextRequest, NextResponse } from "next/server";
+import nodemailer from "nodemailer";
 
 // Validate admin access
 function validateAdminAccess(request: NextRequest): boolean {
-  const adminSecret = process.env.ADMIN_SECRET
+  const adminSecret = process.env.ADMIN_SECRET;
   if (!adminSecret) {
-    console.error('ADMIN_SECRET not configured')
-    return false
+    console.error("ADMIN_SECRET not configured");
+    return false;
   }
-  const providedSecret = request.headers.get('x-admin-secret')
-  return providedSecret === adminSecret
+  const providedSecret = request.headers.get("x-admin-secret");
+  return providedSecret === adminSecret;
 }
 
 export async function POST(request: NextRequest) {
   // Require admin authentication
   if (!validateAdminAccess(request)) {
     return NextResponse.json(
-      { error: 'Unauthorized - admin credentials required' },
-      { status: 401 }
-    )
+      { error: "Unauthorized - admin credentials required" },
+      { status: 401 },
+    );
   }
 
   try {
-    const body = await request.json()
-    const { to } = body
+    const body = await request.json();
+    const { to } = body;
 
     if (!to) {
-      return NextResponse.json({ error: 'Email address required' }, { status: 400 })
+      return NextResponse.json(
+        { error: "Email address required" },
+        { status: 400 },
+      );
     }
 
     // Create test transporter
     const transporter = nodemailer.createTransport({
       host: process.env.SMTP_HOST,
-      port: parseInt(process.env.SMTP_PORT || '587'),
-      secure: process.env.SMTP_PORT === '465',
+      port: parseInt(process.env.SMTP_PORT || "587"),
+      secure: process.env.SMTP_PORT === "465",
       auth: {
         user: process.env.SMTP_USER,
         pass: process.env.SMTP_PASS,
       },
-    })
+    });
 
     // Send test email
     const info = await transporter.sendMail({
       from: process.env.FROM_EMAIL || '"Kanika Batra" <noreply@kanikarose.com>',
       to: to,
-      subject: 'Test Email from Kanika Batra Website',
+      subject: "Test Email from Kanika Batra Website",
       html: `
         <!DOCTYPE html>
         <html>
@@ -126,21 +129,21 @@ Your email system is ready for production!
 Kanika Batra • kanikarose.com
 For those who don't believe in love... only power.
       `,
-    })
+    });
 
     return NextResponse.json({
       success: true,
-      message: 'Test email sent successfully',
+      message: "Test email sent successfully",
       messageId: info.messageId,
-    })
+    });
   } catch (error) {
-    console.error('Test email error:', error)
+    console.error("Test email error:", error);
     return NextResponse.json(
       {
-        error: 'Failed to send test email',
-        details: error instanceof Error ? error.message : 'Unknown error',
+        error: "Failed to send test email",
+        details: error instanceof Error ? error.message : "Unknown error",
       },
-      { status: 500 }
-    )
+      { status: 500 },
+    );
   }
 }

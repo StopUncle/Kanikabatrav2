@@ -1,128 +1,128 @@
-'use client'
+"use client";
 
-import { useState } from 'react'
-import Image from 'next/image'
-import { MessageCircle, Eye, Share2, Edit } from 'lucide-react'
-import { formatDistanceToNow } from 'date-fns'
-import LikeButton from './LikeButton'
-import ReplyThread from './ReplyThread'
-import PostEditor from './PostEditor'
+import { useState } from "react";
+import Image from "next/image";
+import { MessageCircle, Eye, Share2, Edit } from "lucide-react";
+import { formatDistanceToNow } from "date-fns";
+import LikeButton from "./LikeButton";
+import ReplyThread from "./ReplyThread";
+import PostEditor from "./PostEditor";
 
 interface Author {
-  id: string
-  name: string | null
-  displayName: string | null
-  avatarUrl: string | null
+  id: string;
+  name: string | null;
+  displayName: string | null;
+  avatarUrl: string | null;
 }
 
 interface Reply {
-  id: string
-  content: string
-  likeCount: number
-  createdAt: string
-  author: Author
-  children: Reply[]
+  id: string;
+  content: string;
+  likeCount: number;
+  createdAt: string;
+  author: Author;
+  children: Reply[];
 }
 
 interface PostDetailProps {
   post: {
-    id: string
-    title: string
-    content: string
-    viewCount: number
-    likeCount: number
-    replyCount: number
-    userLiked: boolean
-    createdAt: string
-    updatedAt: string
-    author: Author
+    id: string;
+    title: string;
+    content: string;
+    viewCount: number;
+    likeCount: number;
+    replyCount: number;
+    userLiked: boolean;
+    createdAt: string;
+    updatedAt: string;
+    author: Author;
     category: {
-      id: string
-      name: string
-      slug: string
-    }
-  }
-  currentUserId: string | null
+      id: string;
+      name: string;
+      slug: string;
+    };
+  };
+  currentUserId: string | null;
 }
 
 export default function PostDetail({ post, currentUserId }: PostDetailProps) {
-  const [likeCount, setLikeCount] = useState(post.likeCount)
-  const [userLiked, setUserLiked] = useState(post.userLiked)
-  const [replies, setReplies] = useState<Reply[]>([])
-  const [repliesLoading, setRepliesLoading] = useState(true)
-  const [showReplyEditor, setShowReplyEditor] = useState(false)
-  const [isEditing, setIsEditing] = useState(false)
-  const [postContent, setPostContent] = useState(post.content)
-  const [postTitle, setPostTitle] = useState(post.title)
+  const [likeCount, setLikeCount] = useState(post.likeCount);
+  const [userLiked, setUserLiked] = useState(post.userLiked);
+  const [replies, setReplies] = useState<Reply[]>([]);
+  const [repliesLoading, setRepliesLoading] = useState(true);
+  const [showReplyEditor, setShowReplyEditor] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [postContent, setPostContent] = useState(post.content);
+  const [postTitle, setPostTitle] = useState(post.title);
 
-  const authorName = post.author.displayName || post.author.name || 'Anonymous'
-  const isAuthor = currentUserId === post.author.id
+  const authorName = post.author.displayName || post.author.name || "Anonymous";
+  const isAuthor = currentUserId === post.author.id;
 
   useState(() => {
     async function fetchReplies() {
       try {
-        const res = await fetch(`/api/community/posts/${post.id}/replies`)
+        const res = await fetch(`/api/community/posts/${post.id}/replies`);
         if (res.ok) {
-          const data = await res.json()
-          setReplies(data.replies || [])
+          const data = await res.json();
+          setReplies(data.replies || []);
         }
       } catch (error) {
-        console.error('Failed to fetch replies:', error)
+        console.error("Failed to fetch replies:", error);
       } finally {
-        setRepliesLoading(false)
+        setRepliesLoading(false);
       }
     }
-    fetchReplies()
-  })
+    fetchReplies();
+  });
 
   async function handleLikeToggle() {
-    if (!currentUserId) return
+    if (!currentUserId) return;
 
     try {
       const res = await fetch(`/api/community/posts/${post.id}/like`, {
-        method: 'POST'
-      })
+        method: "POST",
+      });
       if (res.ok) {
-        const data = await res.json()
-        setLikeCount(data.likeCount)
-        setUserLiked(data.liked)
+        const data = await res.json();
+        setLikeCount(data.likeCount);
+        setUserLiked(data.liked);
       }
     } catch (error) {
-      console.error('Failed to toggle like:', error)
+      console.error("Failed to toggle like:", error);
     }
   }
 
   async function handleReplySubmit(content: string) {
     try {
       const res = await fetch(`/api/community/posts/${post.id}/replies`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ content })
-      })
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ content }),
+      });
       if (res.ok) {
-        const data = await res.json()
-        setReplies([...replies, data.reply])
-        setShowReplyEditor(false)
+        const data = await res.json();
+        setReplies([...replies, data.reply]);
+        setShowReplyEditor(false);
       }
     } catch (error) {
-      console.error('Failed to submit reply:', error)
+      console.error("Failed to submit reply:", error);
     }
   }
 
   async function handlePostUpdate(title: string, content: string) {
     try {
       const res = await fetch(`/api/community/posts/${post.id}`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ title, content })
-      })
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ title, content }),
+      });
       if (res.ok) {
-        setPostTitle(title)
-        setPostContent(content)
-        setIsEditing(false)
+        setPostTitle(title);
+        setPostContent(content);
+        setIsEditing(false);
       }
     } catch (error) {
-      console.error('Failed to update post:', error)
+      console.error("Failed to update post:", error);
     }
   }
 
@@ -130,10 +130,10 @@ export default function PostDetail({ post, currentUserId }: PostDetailProps) {
     if (navigator.share) {
       await navigator.share({
         title: postTitle,
-        url: window.location.href
-      })
+        url: window.location.href,
+      });
     } else {
-      await navigator.clipboard.writeText(window.location.href)
+      await navigator.clipboard.writeText(window.location.href);
     }
   }
 
@@ -163,7 +163,9 @@ export default function PostDetail({ post, currentUserId }: PostDetailProps) {
               <div>
                 <span className="font-medium text-white">{authorName}</span>
                 <span className="text-gray-500 text-sm ml-2">
-                  {formatDistanceToNow(new Date(post.createdAt), { addSuffix: true })}
+                  {formatDistanceToNow(new Date(post.createdAt), {
+                    addSuffix: true,
+                  })}
                 </span>
               </div>
               {isAuthor && (
@@ -209,7 +211,9 @@ export default function PostDetail({ post, currentUserId }: PostDetailProps) {
               </div>
             ) : (
               <>
-                <h1 className="text-2xl font-bold text-white mt-2">{postTitle}</h1>
+                <h1 className="text-2xl font-bold text-white mt-2">
+                  {postTitle}
+                </h1>
                 <div className="mt-4 text-gray-300 whitespace-pre-wrap">
                   {postContent}
                 </div>
@@ -269,7 +273,9 @@ export default function PostDetail({ post, currentUserId }: PostDetailProps) {
         )}
 
         {repliesLoading ? (
-          <div className="text-center py-8 text-gray-500">Loading replies...</div>
+          <div className="text-center py-8 text-gray-500">
+            Loading replies...
+          </div>
         ) : replies.length === 0 ? (
           <div className="text-center py-8 text-gray-500">
             No replies yet. Be the first to respond!
@@ -281,18 +287,20 @@ export default function PostDetail({ post, currentUserId }: PostDetailProps) {
             currentUserId={currentUserId}
             onReplyAdded={(newReply: Reply, parentId?: string) => {
               if (parentId) {
-                setReplies(replies.map(r =>
-                  r.id === parentId
-                    ? { ...r, children: [...r.children, newReply] }
-                    : r
-                ))
+                setReplies(
+                  replies.map((r) =>
+                    r.id === parentId
+                      ? { ...r, children: [...r.children, newReply] }
+                      : r,
+                  ),
+                );
               } else {
-                setReplies([...replies, newReply])
+                setReplies([...replies, newReply]);
               }
             }}
           />
         )}
       </div>
     </div>
-  )
+  );
 }
