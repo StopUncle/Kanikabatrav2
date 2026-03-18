@@ -53,91 +53,333 @@ export default function LinksPage() {
 
   return (
     <div className="min-h-screen bg-[#050505] text-[#f5f0ed]">
+      <style jsx>{`
+        @keyframes miniFloat {
+          0%,
+          100% {
+            transform: rotateY(-8deg) translateY(0);
+          }
+          50% {
+            transform: rotateY(-8deg) translateY(-4px);
+          }
+        }
+      `}</style>
       {/* ── HERO ── */}
-      <section className="px-5 pt-14 pb-6 text-center">
+      <section className="px-5 pt-14 pb-8 text-center">
         <h1
           className="text-[2rem] font-light tracking-[0.35em] uppercase"
-          style={{ fontFamily: "Inter, system-ui, sans-serif" }}
+          style={{
+            fontFamily: "Didot, 'Bodoni MT', 'GFS Didot', Georgia, serif",
+          }}
         >
           Kanika Batra
         </h1>
-        <p className="mt-3 text-[#d4af37] text-base tracking-wide">
+        <p className="mt-3 text-[#d4af37] text-base tracking-wide italic">
           I see what you can&apos;t.
         </p>
-        <p className="mt-2 text-[#6b7280] text-xs tracking-[0.15em] uppercase">
-          Diagnosed ASPD &middot; Author &middot; Soprano
+        <p className="mt-2 text-[#6b7280] text-xs tracking-[0.12em] uppercase">
+          Diagnosed ASPD &middot; Author &middot; Coloratura Soprano
         </p>
       </section>
 
-      {/* ── FIVE CTA BUTTONS ── */}
-      <section className="px-5 pb-8 space-y-3 max-w-md mx-auto">
-        <button
-          onClick={() => {
-            trackEvent("quiz_start");
-            setShowQuiz(true);
-          }}
-          className="w-full text-left p-4 rounded-xl bg-gradient-to-r from-[#720921] to-[#4a0616] border border-[#8b1a33]/40 active:scale-[0.98] transition-transform"
-        >
-          <p className="text-[#f5f0ed] font-medium text-[15px]">
-            How Easily Can You Be Manipulated?
-          </p>
-          <p className="text-[#d4af37]/80 text-xs mt-1">
-            7 questions &middot; Takes 2 minutes
-          </p>
-        </button>
-
-        <a
-          href={withUtm("/ask", "ama")}
-          onClick={() => trackEvent("qa_click")}
-          className="block w-full p-4 rounded-xl bg-[#0d0d1a] border border-[#d4af37]/15 active:scale-[0.98] transition-transform"
-        >
-          <p className="text-[#f5f0ed] font-medium text-[15px]">
-            Ask Me Anything
-          </p>
-          <p className="text-[#6b7280] text-xs mt-1">
-            Written or voice answer — from $39.99
-          </p>
-        </a>
-
-        <a
-          href={withUtm("/coaching", "coaching")}
-          onClick={() => trackEvent("coaching_click")}
-          className="block w-full p-4 rounded-xl bg-[#0d0d1a] border border-[#d4af37]/15 active:scale-[0.98] transition-transform"
-        >
-          <p className="text-[#f5f0ed] font-medium text-[15px]">
-            Book a Private Session
-          </p>
-          <p className="text-[#6b7280] text-xs mt-1">
-            1:1 coaching &middot; Limited spots
-          </p>
-        </a>
-
+      {/* ── OPTIONS ── */}
+      <section className="px-5 pb-8 max-w-md mx-auto">
+        {/* BOOK — Primary CTA with golden glow + floating mini book */}
         <a
           href="#books"
           onClick={() => trackEvent("book_click")}
-          className="block w-full p-4 rounded-xl bg-[#0d0d1a] border border-[#d4af37]/15 active:scale-[0.98] transition-transform"
+          className="group block w-full mb-4 relative overflow-hidden rounded-2xl bg-[#0a0a14] p-5 active:scale-[0.98] transition-all"
+          style={{
+            border: "1px solid rgba(212, 175, 55, 0.3)",
+            boxShadow:
+              "0 0 20px rgba(212, 175, 55, 0.08), 0 0 40px rgba(212, 175, 55, 0.04), inset 0 1px 0 rgba(212, 175, 55, 0.1)",
+          }}
         >
-          <p className="text-[#f5f0ed] font-medium text-[15px]">
-            Get the Books
-          </p>
-          <p className="text-[#6b7280] text-xs mt-1">
-            Honeytrap &middot; Sociopathic Dating Bible
-          </p>
+          <div className="absolute top-0 right-0 w-48 h-48 bg-[#d4af37]/[0.03] rounded-full -translate-y-1/2 translate-x-1/2" />
+          <div className="relative flex items-center gap-4">
+            {/* Mini floating book */}
+            <div
+              className="w-14 h-[72px] shrink-0 relative"
+              style={{ perspective: "200px" }}
+            >
+              <div
+                className="w-full h-full rounded-sm shadow-lg"
+                style={{
+                  background:
+                    "linear-gradient(135deg, #1a0d11 0%, #2a0f18 50%, #1a0d11 100%)",
+                  border: "1px solid rgba(212, 175, 55, 0.2)",
+                  transform: "rotateY(-8deg)",
+                  animation: "miniFloat 4s ease-in-out infinite",
+                }}
+              >
+                <div className="h-full flex flex-col items-center justify-center p-1.5">
+                  <p className="text-[#f5f0ed] text-[6px] font-light tracking-wider text-center leading-tight uppercase">
+                    Sociopathic
+                    <br />
+                    Dating
+                    <br />
+                    Bible
+                  </p>
+                  <div className="w-5 h-px bg-[#d4af37]/40 my-1" />
+                  <p className="text-[#d4af37] text-[5px] tracking-widest uppercase">
+                    KB
+                  </p>
+                </div>
+              </div>
+              {/* Book spine */}
+              <div
+                className="absolute left-0 top-0 w-[5px] h-full rounded-l-sm"
+                style={{
+                  background: "linear-gradient(to right, #0a0608, #1a0d11)",
+                  transform: "rotateY(90deg) translateZ(2px)",
+                }}
+              />
+            </div>
+            <div>
+              <p className="text-[#f5f0ed] font-semibold text-base leading-tight group-hover:text-[#d4af37] transition-colors">
+                Get the Books
+              </p>
+              <p className="text-[#d4af37]/60 text-xs mt-1">
+                Honeytrap &middot; Sociopathic Dating Bible
+              </p>
+            </div>
+            <svg
+              className="w-5 h-5 text-[#d4af37]/40 ml-auto shrink-0 group-hover:translate-x-0.5 transition-transform"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              strokeWidth={2}
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M8.25 4.5l7.5 7.5-7.5 7.5"
+              />
+            </svg>
+          </div>
         </a>
 
+        {/* Secondary options — stacked list */}
+        <div className="space-y-2">
+          <button
+            onClick={() => {
+              trackEvent("quiz_start");
+              setShowQuiz(true);
+            }}
+            className="w-full flex items-center gap-3.5 rounded-xl bg-[#0a0a14] border border-[#1a1a2e] hover:border-[#d4af37]/20 p-3.5 text-left active:scale-[0.98] transition-all"
+          >
+            <div className="w-10 h-10 rounded-lg bg-[#720921]/20 border border-[#720921]/30 flex items-center justify-center shrink-0">
+              <svg
+                className="w-4.5 h-4.5 text-[#d4af37]/80"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={1.5}
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9 5.25h.008v.008H12v-.008z"
+                />
+              </svg>
+            </div>
+            <div className="min-w-0">
+              <p className="text-[#f5f0ed] font-medium text-sm">
+                How Easily Can You Be Manipulated?
+              </p>
+              <p className="text-[#6b7280] text-[11px] mt-0.5">
+                Free quiz &middot; 2 minutes
+              </p>
+            </div>
+            <svg
+              className="w-4 h-4 text-[#6b7280]/40 ml-auto shrink-0"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              strokeWidth={2}
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M8.25 4.5l7.5 7.5-7.5 7.5"
+              />
+            </svg>
+          </button>
+
+          <a
+            href={withUtm("/ask", "ama")}
+            onClick={() => trackEvent("qa_click")}
+            className="flex items-center gap-3.5 rounded-xl bg-[#0a0a14] border border-[#1a1a2e] hover:border-[#d4af37]/20 p-3.5 active:scale-[0.98] transition-all"
+          >
+            <div className="w-10 h-10 rounded-lg bg-[#720921]/20 border border-[#720921]/30 flex items-center justify-center shrink-0">
+              <svg
+                className="w-4.5 h-4.5 text-[#d4af37]/80"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={1.5}
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M8.625 12a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H8.25m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H12m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0h-.375M21 12c0 4.556-4.03 8.25-9 8.25a9.764 9.764 0 01-2.555-.337A5.972 5.972 0 015.41 20.97a5.969 5.969 0 01-.474-.065 4.48 4.48 0 00.978-2.025c.09-.457-.133-.901-.467-1.226C3.93 16.178 3 14.189 3 12c0-4.556 4.03-8.25 9-8.25s9 3.694 9 8.25z"
+                />
+              </svg>
+            </div>
+            <div className="min-w-0">
+              <p className="text-[#f5f0ed] font-medium text-sm">
+                Ask Me Anything
+              </p>
+              <p className="text-[#6b7280] text-[11px] mt-0.5">
+                Written or voice answer &middot; From $39.99
+              </p>
+            </div>
+            <svg
+              className="w-4 h-4 text-[#6b7280]/40 ml-auto shrink-0"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              strokeWidth={2}
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M8.25 4.5l7.5 7.5-7.5 7.5"
+              />
+            </svg>
+          </a>
+
+          <a
+            href={withUtm("/coaching", "coaching")}
+            onClick={() => trackEvent("coaching_click")}
+            className="flex items-center gap-3.5 rounded-xl bg-[#0a0a14] border border-[#1a1a2e] hover:border-[#d4af37]/20 p-3.5 active:scale-[0.98] transition-all"
+          >
+            <div className="w-10 h-10 rounded-lg bg-[#720921]/20 border border-[#720921]/30 flex items-center justify-center shrink-0">
+              <svg
+                className="w-4.5 h-4.5 text-[#d4af37]/80"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={1.5}
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"
+                />
+              </svg>
+            </div>
+            <div className="min-w-0">
+              <p className="text-[#f5f0ed] font-medium text-sm">
+                Book a Private Session
+              </p>
+              <p className="text-[#6b7280] text-[11px] mt-0.5">
+                1:1 coaching &middot; Limited spots
+              </p>
+            </div>
+            <svg
+              className="w-4 h-4 text-[#6b7280]/40 ml-auto shrink-0"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              strokeWidth={2}
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M8.25 4.5l7.5 7.5-7.5 7.5"
+              />
+            </svg>
+          </a>
+
+          <a
+            href={withUtm("/", "homepage")}
+            onClick={() => trackEvent("homepage_click")}
+            className="flex items-center gap-3.5 rounded-xl bg-[#0a0a14] border border-[#1a1a2e] hover:border-[#d4af37]/20 p-3.5 active:scale-[0.98] transition-all"
+          >
+            <div className="w-10 h-10 rounded-lg bg-[#720921]/20 border border-[#720921]/30 flex items-center justify-center shrink-0">
+              <svg
+                className="w-4.5 h-4.5 text-[#d4af37]/80"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={1.5}
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M12 21a9.004 9.004 0 008.716-6.747M12 21a9.004 9.004 0 01-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3m0 0a8.997 8.997 0 017.843 4.582M12 3a8.997 8.997 0 00-7.843 4.582m15.686 0A11.953 11.953 0 0112 10.5c-2.998 0-5.74-1.1-7.843-2.918m15.686 0A8.959 8.959 0 0121 12c0 .778-.099 1.533-.284 2.253m0 0A17.919 17.919 0 0112 16.5c-3.162 0-6.133-.815-8.716-2.247m0 0A9.015 9.015 0 003 12c0-1.605.42-3.113 1.157-4.418"
+                />
+              </svg>
+            </div>
+            <div className="min-w-0">
+              <p className="text-[#f5f0ed] font-medium text-sm">
+                Explore the Full Site
+              </p>
+              <p className="text-[#6b7280] text-[11px] mt-0.5">
+                Blog, courses, community &amp; more
+              </p>
+            </div>
+            <svg
+              className="w-4 h-4 text-[#6b7280]/40 ml-auto shrink-0"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              strokeWidth={2}
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M8.25 4.5l7.5 7.5-7.5 7.5"
+              />
+            </svg>
+          </a>
+        </div>
+
+        {/* Edit AI — polished recommendation card */}
         <a
           href={withUtm("https://edit2ai.com", "editai")}
           onClick={() => trackEvent("editai_click")}
           target="_blank"
           rel="noopener noreferrer"
-          className="block w-full p-4 rounded-xl bg-transparent border border-[#d4af37]/10 border-dashed active:scale-[0.98] transition-transform"
+          className="block mt-4 rounded-xl bg-gradient-to-r from-[#d4af37]/5 to-[#d4af37]/10 border border-[#d4af37]/15 hover:border-[#d4af37]/30 p-4 active:scale-[0.98] transition-all"
         >
-          <p className="text-[#d4af37]/70 font-medium text-[15px]">
-            The tool I use to edit my Reels
-          </p>
-          <p className="text-[#6b7280] text-xs mt-1">
-            Edit AI &middot; One-click editing for creators
-          </p>
+          <div className="flex items-center gap-3.5">
+            <div className="w-10 h-10 rounded-lg bg-[#d4af37]/10 border border-[#d4af37]/20 flex items-center justify-center shrink-0">
+              <svg
+                className="w-5 h-5 text-[#d4af37]"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={1.5}
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.455 2.456L21.75 6l-1.036.259a3.375 3.375 0 00-2.455 2.456zM16.894 20.567L16.5 21.75l-.394-1.183a2.25 2.25 0 00-1.423-1.423L13.5 18.75l1.183-.394a2.25 2.25 0 001.423-1.423l.394-1.183.394 1.183a2.25 2.25 0 001.423 1.423l1.183.394-1.183.394a2.25 2.25 0 00-1.423 1.423z"
+                />
+              </svg>
+            </div>
+            <div className="min-w-0">
+              <p className="text-[#d4af37] font-medium text-sm">Edit AI</p>
+              <p className="text-[#94a3b8] text-[11px] mt-0.5">
+                The tool I use to edit my Reels &middot; Try it free
+              </p>
+            </div>
+            <svg
+              className="w-4 h-4 text-[#d4af37]/30 ml-auto shrink-0"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              strokeWidth={2}
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"
+              />
+            </svg>
+          </div>
         </a>
       </section>
 
@@ -242,42 +484,48 @@ export default function LinksPage() {
           The Books
         </h2>
         <div className="space-y-4">
-          <div className="p-5 rounded-xl bg-[#0d0d1a] border border-[#1a1a2e]">
-            <h3 className="text-[#f5f0ed] font-medium mb-1">Honeytrap</h3>
-            <p className="text-[#6b7280] text-sm mb-4">
-              A thriller about the games people play — written by someone who
-              plays them.
+          <div
+            className="p-5 rounded-xl bg-[#0d0d1a]"
+            style={{
+              border: "1px solid rgba(212, 175, 55, 0.2)",
+              boxShadow:
+                "0 0 20px rgba(212, 175, 55, 0.06), 0 0 40px rgba(212, 175, 55, 0.03)",
+            }}
+          >
+            <h3 className="text-[#f5f0ed] font-medium mb-1">
+              Sociopathic Dating Bible
+            </h3>
+            <p className="text-[#6b7280] text-sm mb-3">
+              The field guide to never being blindsided again.
+            </p>
+            <p className="text-[#d4af37]/60 text-xs mb-4">
+              Includes bonus chapter + exclusive addendum
             </p>
             <a
-              href={withUtm(
-                "https://www.amazon.com/dp/B0FWKJLT6F",
-                "honeytrap",
-              )}
-              onClick={() => trackEvent("book_click", { book: "honeytrap" })}
-              target="_blank"
-              rel="noopener noreferrer"
+              href={withUtm("/book", "sdb")}
+              onClick={() => trackEvent("book_click", { book: "sdb" })}
               className="inline-block px-5 py-2.5 rounded-full bg-[#d4af37]/10 border border-[#d4af37]/20 text-[#d4af37] text-sm font-medium active:scale-[0.97] transition-transform"
             >
               Get it
             </a>
           </div>
 
-          <div className="p-5 rounded-xl bg-[#0d0d1a] border border-[#1a1a2e]">
-            <h3 className="text-[#f5f0ed] font-medium mb-1">
-              Sociopathic Dating Bible
-            </h3>
+          <div
+            className="p-5 rounded-xl bg-[#0d0d1a]"
+            style={{
+              border: "1px solid rgba(212, 175, 55, 0.2)",
+              boxShadow:
+                "0 0 20px rgba(212, 175, 55, 0.06), 0 0 40px rgba(212, 175, 55, 0.03)",
+            }}
+          >
+            <h3 className="text-[#f5f0ed] font-medium mb-1">Honeytrap</h3>
             <p className="text-[#6b7280] text-sm mb-4">
-              The field guide to never being blindsided again.
+              A thriller about the games people play — written by someone who
+              plays them.
             </p>
-            <a
-              href={withUtm("https://www.amazon.com/dp/B0FWKJLT6F", "sdb")}
-              onClick={() => trackEvent("book_click", { book: "sdb" })}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-block px-5 py-2.5 rounded-full bg-[#d4af37]/10 border border-[#d4af37]/20 text-[#d4af37] text-sm font-medium active:scale-[0.97] transition-transform"
-            >
-              Get it
-            </a>
+            <span className="inline-block px-5 py-2.5 rounded-full bg-[#1a1a2e]/50 border border-[#1a1a2e] text-[#6b7280] text-sm font-medium">
+              Coming Soon
+            </span>
           </div>
         </div>
       </section>
@@ -488,7 +736,7 @@ function QuizOverlay({ onClose }: { onClose: () => void }) {
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-[#050505]/98 flex items-center justify-center p-5">
+    <div className="fixed inset-0 z-50 bg-[#050505] flex items-center justify-center p-5">
       <div className="w-full max-w-md">
         {/* Close button */}
         <button
