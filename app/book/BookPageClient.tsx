@@ -11,86 +11,121 @@ import { BOOK_INFO } from "@/lib/constants";
 import {
   ShoppingCart,
   BookOpen,
-  Brain,
-  Heart,
-  Target,
-  Trophy,
-  Zap,
+  Check,
+  ShieldCheck,
   Bell,
+  Zap,
 } from "lucide-react";
 
 const CHAPTER_LIST = [
   {
     num: 1,
     title: "The Doctrine of Cold",
-    desc: "Emotional detachment as your superpower",
+    desc: "Why emotional detachment is magnetic — and how to master it",
   },
   {
     num: 2,
     title: "The Holy Grail Doctrine",
-    desc: "Why your body is currency, not a gift",
+    desc: "Reframe your value so they pursue you, not the other way around",
   },
   {
     num: 3,
     title: "The Rotation",
-    desc: "Managing multiple targets strategically",
+    desc: "Never be emotionally dependent on one person's attention again",
   },
   {
     num: 4,
     title: "The Transformation Protocol",
-    desc: "Becoming magnetically irresistible",
+    desc: "The specific changes that make people unable to look away",
   },
   {
     num: 5,
     title: "Scarcity Tactics",
-    desc: "Making yourself the ultimate prize",
+    desc: "How to be the one they're afraid of losing",
   },
   {
     num: 6,
     title: "Love Bombing Mastery",
-    desc: "Creating addictive emotional highs",
+    desc: "Create emotional highs that keep them coming back",
   },
   {
     num: 7,
     title: "The Shit Test Matrix",
-    desc: "Psychological screening methods that reveal everything",
+    desc: "Read what people actually mean — before they finish talking",
   },
   {
     num: 8,
     title: "Family Colonization",
-    desc: "Infiltrating their inner circle",
+    desc: "Win over the people whose opinion they trust most",
   },
-  { num: 9, title: "Unhinged Texts", desc: "Strategic emotional chaos" },
+  {
+    num: 9,
+    title: "Unhinged Texts",
+    desc: "Turn texting from anxiety into your most powerful tool",
+  },
   {
     num: 10,
     title: "The Beige Protocol",
-    desc: "Neutralizing competition without lifting a finger",
+    desc: "Neutralize competition without them ever knowing",
   },
-  { num: 11, title: "Reputation Warfare", desc: "Controlling the narrative" },
+  {
+    num: 11,
+    title: "Reputation Warfare",
+    desc: "Own the narrative so it always works in your favour",
+  },
   {
     num: 12,
     title: "The Nuclear Ghost Protocol",
-    desc: "Strategic disappearance as power",
+    desc: "Walk away so cleanly they spend months wondering what they lost",
   },
-  { num: 13, title: "The Upgrade Protocol", desc: "Trading up systematically" },
+  {
+    num: 13,
+    title: "The Upgrade Protocol",
+    desc: "Know exactly when to level up — and how to do it gracefully",
+  },
   {
     num: 14,
     title: "The Empress Endgame",
-    desc: "Transcending the need for validation",
+    desc: "Reach the point where you don't need anyone's validation",
   },
   {
     num: 15,
     title: "The Perks of Dating a Sociopath",
-    desc: "Why our loyalty is unmatched",
+    desc: "Why the people who see through everything love the hardest",
   },
 ];
 
-const BOOK_QUOTES = [
-  "Stop being the victim. Start being the villain.",
-  "Everyone plays. Few win. Be the one who wins.",
-  "Love is for peasants. Thrones are for predators.",
-  "Healing is for houseplants. You? You upgrade.",
-  "Your empathy is their weapon. Your coldness is your shield.",
+const TESTIMONIALS = [
+  {
+    quote: "This book transformed my life.",
+    name: "Verified Reader",
+    title: "",
+  },
+  {
+    quote: "This book decoded the game I didn't even know I was losing. Within 3 weeks of applying these strategies, I went from being overlooked to being pursued.",
+    name: "Sarah K.",
+    title: "Investment Banker",
+  },
+  {
+    quote: "I used to be the one who got played. Now I'm the one they obsess over. The Rotation System alone is worth ten times the price of this book.",
+    name: "Jessica T.",
+    title: "Attorney",
+  },
+  {
+    quote: "Forget therapy. This book taught me more about power dynamics in relationships than years of counseling. It's brutal, honest, and absolutely life-changing.",
+    name: "Michelle R.",
+    title: "CEO",
+  },
+  {
+    quote: "Finally, dating advice that treats attraction as a skill to master. I used to overthink every relationship. Now I operate with clarity and control.",
+    name: "Priya M.",
+    title: "Marketing Director",
+  },
+  {
+    quote: "Strategic, practical, powerful. This isn't feel-good fluff — it's a tactical manual for winning at modern dating.",
+    name: "Daniel R.",
+    title: "Sales Director",
+  },
 ];
 
 export default function BookPage() {
@@ -140,6 +175,8 @@ export default function BookPage() {
     timeZoneName: "short",
   });
 
+  const totalValue = BOOK_INFO.premiumBonuses.reduce((sum, b) => sum + b.value, 0);
+
   return (
     <>
       <BackgroundEffects />
@@ -157,7 +194,7 @@ export default function BookPage() {
                     <div className="p-8 h-full flex flex-col justify-between">
                       <div>
                         <p className="text-accent-gold text-xs uppercase tracking-[0.3em] mb-4">
-                          The Controversial Bestseller
+                          As Featured on LADbible &amp; Unilad
                         </p>
                         <h1 className="text-4xl font-serif mb-2 gradient-text-gold">
                           SOCIOPATHIC
@@ -188,14 +225,14 @@ export default function BookPage() {
             <div className="space-y-6">
               <div>
                 <p className="text-accent-burgundy uppercase tracking-[0.2em] text-sm mb-2">
-                  70,000 Words of Strategic Dominance
+                  Written by a clinically diagnosed sociopath
                 </p>
                 <h2 className="text-4xl md:text-5xl font-serif mb-4">
-                  <span className="gradient-text">The Dating Guide</span>
+                  <span className="gradient-text">The Playbook</span>
                   <br />
-                  <span className="text-text-light">Empaths Fear</span>
+                  <span className="text-text-light">You Were Never Meant to See</span>
                 </h2>
-                <p className="text-text-gray text-lg italic">
+                <p className="text-text-gray text-lg">
                   {BOOK_INFO.description}
                 </p>
               </div>
@@ -203,7 +240,7 @@ export default function BookPage() {
               <div className="space-y-3">
                 {BOOK_INFO.features.slice(0, 4).map((feature, index) => (
                   <div key={index} className="flex items-start gap-3">
-                    <Zap className="w-5 h-5 text-accent-gold mt-0.5" />
+                    <Zap className="w-5 h-5 text-accent-gold mt-0.5 shrink-0" />
                     <p className="text-text-light">{feature}</p>
                   </div>
                 ))}
@@ -241,7 +278,7 @@ export default function BookPage() {
                       onClick={() => setShowPayPalHero(false)}
                       className="text-text-gray hover:text-text-light text-sm"
                     >
-                      ← Back
+                      &larr; Back
                     </button>
                   </div>
                 </div>
@@ -261,41 +298,45 @@ export default function BookPage() {
                       className="btn-primary rounded-full text-white px-8 py-4 flex items-center justify-center gap-2"
                     >
                       <ShoppingCart className="w-5 h-5" />
-                      Get The Book - ${BOOK_INFO.price}
+                      Get Instant Access — ${BOOK_INFO.price}
                     </button>
                   )}
                   <Link
                     href="#chapters"
                     className="btn-secondary rounded-full px-8 py-4 text-center"
                   >
-                    Preview Chapters
+                    See What&apos;s Inside
                   </Link>
                 </div>
               )}
 
-              <p className="text-text-gray text-sm">
-                {BOOK_INFO.isPresale
-                  ? "⏰ Be notified the moment the book launches + exclusive presale pricing"
-                  : "⚠️ Warning: This book contains strategic content that may permanently change how you view relationships."}
-              </p>
+              <div className="flex items-center gap-2 text-text-gray text-sm">
+                <ShieldCheck size={16} className="text-accent-gold" />
+                <span>
+                  {BOOK_INFO.isPresale
+                    ? "Be notified the moment the book launches + exclusive presale pricing"
+                    : "Read 3 chapters. If it doesn't change how you see dating, full refund."}
+                </span>
+              </div>
             </div>
           </div>
         </section>
 
-        {/* Quotes Section */}
+        {/* Social Proof — Right After Hero */}
         <section className="py-20 px-4 bg-gradient-to-b from-transparent via-deep-burgundy/10 to-transparent">
-          <div className="max-w-6xl mx-auto">
-            <h3 className="text-3xl font-serif text-center mb-12 gradient-text-gold">
-              Savage Wisdom From The Book
+          <div className="max-w-4xl mx-auto">
+            <h3 className="text-3xl font-serif text-center mb-12 gradient-text">
+              What Readers Are Saying
             </h3>
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {BOOK_QUOTES.map((quote, index) => (
-                <div
-                  key={index}
-                  className="glass-card p-6 border border-accent-gold/20"
-                >
-                  <p className="text-text-light text-lg italic">
-                    &ldquo;{quote}&rdquo;
+
+            <div className="grid md:grid-cols-2 gap-6">
+              {TESTIMONIALS.slice(0, 4).map((t, index) => (
+                <div key={index} className="glass-card p-6 border-l-4 border-accent-gold">
+                  <p className="text-text-light text-base mb-4 italic">
+                    &ldquo;{t.quote}&rdquo;
+                  </p>
+                  <p className="text-accent-gold text-sm">
+                    — {t.name}{t.title ? `, ${t.title}` : ""}
                   </p>
                 </div>
               ))}
@@ -309,10 +350,9 @@ export default function BookPage() {
             <div className="text-center mb-12">
               <h3 className="text-4xl font-serif mb-4">
                 <span className="gradient-text">15 Chapters + 2 Bonus</span>
-                <span className="text-text-light"> of Strategic Mastery</span>
               </h3>
-              <p className="text-text-gray text-lg">
-                From foundation to empire - your complete transformation roadmap
+              <p className="text-text-gray text-lg max-w-2xl mx-auto">
+                Each chapter gives you a specific framework you can use immediately. No filler, no fluff — just the system.
               </p>
             </div>
 
@@ -336,142 +376,61 @@ export default function BookPage() {
           </div>
         </section>
 
-        {/* Key Concepts */}
-        <section className="py-20 px-4 bg-gradient-to-b from-transparent via-deep-navy/20 to-transparent">
-          <div className="max-w-6xl mx-auto">
-            <h3 className="text-3xl font-serif text-center mb-12">
-              <span className="gradient-text-gold">Core Concepts</span>
-              <span className="text-text-light"> You&apos;ll Master</span>
-            </h3>
-
-            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-              <div className="text-center">
-                <Brain className="w-12 h-12 text-accent-gold mx-auto mb-3" />
-                <h4 className="text-text-light font-medium mb-2">
-                  The Doctrine of Cold
-                </h4>
-                <p className="text-text-gray text-sm">
-                  Transform emotional detachment into magnetic power
-                </p>
-              </div>
-
-              <div className="text-center">
-                <Target className="w-12 h-12 text-accent-gold mx-auto mb-3" />
-                <h4 className="text-text-light font-medium mb-2">
-                  The Rotation System
-                </h4>
-                <p className="text-text-gray text-sm">
-                  Manage multiple prospects like a strategic portfolio
-                </p>
-              </div>
-
-              <div className="text-center">
-                <Heart className="w-12 h-12 text-accent-gold mx-auto mb-3" />
-                <h4 className="text-text-light font-medium mb-2">
-                  Love Bombing
-                </h4>
-                <p className="text-text-gray text-sm">
-                  Create addictive emotional highs they can&apos;t resist
-                </p>
-              </div>
-
-              <div className="text-center">
-                <Trophy className="w-12 h-12 text-accent-gold mx-auto mb-3" />
-                <h4 className="text-text-light font-medium mb-2">
-                  The Predator Endgame
-                </h4>
-                <p className="text-text-gray text-sm">
-                  Ascend beyond the game to become the throne itself
-                </p>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* Testimonials */}
+        {/* More Testimonials */}
         <section className="py-20 px-4">
           <div className="max-w-4xl mx-auto">
-            <h3 className="text-3xl font-serif text-center mb-12 gradient-text">
-              Reader Transformations
-            </h3>
-
-            <div className="space-y-8">
-              <div className="glass-card p-6 border-l-4 border-accent-gold">
-                <p className="text-text-light text-lg mb-4 italic">
-                  &ldquo;This book decoded the game I didn&apos;t even know I
-                  was losing. Within weeks of applying these strategies, I went
-                  from being overlooked to being pursued.&rdquo;
-                </p>
-                <p className="text-accent-gold">
-                  — Sarah K., Investment Banker
-                </p>
-              </div>
-
-              <div className="glass-card p-6 border-l-4 border-accent-gold">
-                <p className="text-text-light text-lg mb-4 italic">
-                  &ldquo;Forget therapy. This book taught me more about power
-                  dynamics in relationships than years of counseling. It&apos;s
-                  brutal, honest, and absolutely life-changing.&rdquo;
-                </p>
-                <p className="text-accent-gold">— Michelle R., CEO</p>
-              </div>
-
-              <div className="glass-card p-6 border-l-4 border-accent-gold">
-                <p className="text-text-light text-lg mb-4 italic">
-                  &ldquo;I used to be the one who got played. Now I&apos;m the
-                  one they obsess over. The Rotation System alone is worth ten
-                  times the price of this book.&rdquo;
-                </p>
-                <p className="text-accent-gold">— Jessica T., Attorney</p>
-              </div>
-
-              <div className="glass-card p-6 border-l-4 border-accent-gold">
-                <p className="text-text-light text-lg mb-4 italic">
-                  &ldquo;This book changed how I negotiate deals and read
-                  people. The psychological frameworks apply to every
-                  interaction—boardroom or bedroom.&rdquo;
-                </p>
-                <p className="text-accent-gold">— Marcus T., Tech Founder</p>
-              </div>
-
-              <div className="glass-card p-6 border-l-4 border-accent-gold">
-                <p className="text-text-light text-lg mb-4 italic">
-                  &ldquo;I used to overthink every relationship. Now I operate
-                  with clarity and control. Finally, dating advice that treats
-                  attraction as a skill to master.&rdquo;
-                </p>
-                <p className="text-accent-gold">— Daniel R., Sales Director</p>
-              </div>
-
-              <div className="glass-card p-6 border-l-4 border-accent-gold">
-                <p className="text-text-light text-lg mb-4 italic">
-                  &ldquo;Strategic, practical, powerful. This isn&apos;t
-                  feel-good fluff—it&apos;s a tactical manual for winning at
-                  modern dating.&rdquo;
-                </p>
-                <p className="text-accent-gold">
-                  — James K., Management Consultant
-                </p>
-              </div>
+            <div className="space-y-6">
+              {TESTIMONIALS.slice(4).map((t, index) => (
+                <div key={index} className="glass-card p-6 border-l-4 border-accent-gold">
+                  <p className="text-text-light text-lg mb-4 italic">
+                    &ldquo;{t.quote}&rdquo;
+                  </p>
+                  <p className="text-accent-gold">
+                    — {t.name}{t.title ? `, ${t.title}` : ""}
+                  </p>
+                </div>
+              ))}
             </div>
           </div>
         </section>
 
-        {/* CTA Section */}
+        {/* CTA Section — Value Stack */}
         <section className="py-20 px-4 border-t border-accent-gold/10">
-          <div className="max-w-4xl mx-auto text-center">
-            <h3 className="text-4xl font-serif mb-6">
-              <span className="text-text-light">Ready to Stop Being</span>
-              <br />
-              <span className="gradient-text">The Victim?</span>
-            </h3>
+          <div className="max-w-2xl mx-auto">
+            <div className="text-center mb-8">
+              <h3 className="text-4xl font-serif mb-4">
+                <span className="gradient-text">Everything You Get</span>
+              </h3>
+              <p className="text-text-gray text-lg">
+                The premium edition includes exclusive content too raw for Amazon&apos;s guidelines.
+              </p>
+            </div>
 
-            <p className="text-text-gray text-lg mb-8 max-w-2xl mx-auto">
-              This isn&apos;t just a book. It&apos;s your initiation into a new
-              way of thinking about love, power, and control. The question
-              isn&apos;t whether you&apos;re ready for this knowledge—it&apos;s
-              whether you can afford to live without it.
-            </p>
+            {/* Value Stack */}
+            <div className="space-y-3 mb-8">
+              {BOOK_INFO.premiumBonuses.map((bonus, i) => (
+                <div key={i} className="flex items-start justify-between gap-4 p-4 rounded-lg bg-white/[0.03] border border-white/[0.06]">
+                  <div className="flex items-start gap-3">
+                    <Check className="text-accent-gold mt-0.5 shrink-0" size={18} />
+                    <div>
+                      <p className="text-text-light font-medium">{bonus.name}</p>
+                      <p className="text-text-gray text-sm mt-0.5">{bonus.desc}</p>
+                    </div>
+                  </div>
+                  <span className="text-text-gray whitespace-nowrap">${bonus.value}</span>
+                </div>
+              ))}
+            </div>
+
+            <div className="flex items-baseline justify-between mb-8 pt-4 border-t border-white/10">
+              <div>
+                <span className="text-text-gray">Total value: </span>
+                <span className="text-text-gray line-through">${totalValue.toFixed(2)}</span>
+              </div>
+              <div>
+                <span className="text-4xl font-light gradient-text-gold">${BOOK_INFO.price}</span>
+              </div>
+            </div>
 
             {showPayPalCTA ? (
               <div className="max-w-md mx-auto space-y-4">
@@ -488,16 +447,16 @@ export default function BookPage() {
                     onClick={() => setShowPayPalCTA(false)}
                     className="text-text-gray hover:text-text-light text-sm"
                   >
-                    ← Back
+                    &larr; Back
                   </button>
                 </div>
               </div>
             ) : (
-              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <div className="space-y-4">
                 {BOOK_INFO.isPresale ? (
                   <button
                     onClick={() => setShowPresaleModal(true)}
-                    className="btn-primary rounded-full text-white px-10 py-4 text-lg flex items-center justify-center gap-2"
+                    className="w-full btn-primary rounded-full text-white px-10 py-4 text-lg flex items-center justify-center gap-2"
                   >
                     <Bell className="w-5 h-5" />
                     Join Presale List
@@ -505,19 +464,35 @@ export default function BookPage() {
                 ) : (
                   <button
                     onClick={() => setShowPayPalCTA(true)}
-                    className="btn-primary rounded-full text-white px-10 py-4 text-lg flex items-center justify-center gap-2"
+                    className="w-full btn-primary rounded-full text-white px-10 py-4 text-lg flex items-center justify-center gap-2"
                   >
                     <BookOpen className="w-5 h-5" />
-                    Get Instant Access - ${BOOK_INFO.price}
+                    Get Instant Access — ${BOOK_INFO.price}
                   </button>
                 )}
+
+                <div className="flex items-center justify-center gap-2 text-text-gray text-sm">
+                  <ShieldCheck size={16} className="text-accent-gold" />
+                  <span>Read 3 chapters. Not for you? Full refund, no questions.</span>
+                </div>
+
+                <div className="text-center pt-2">
+                  <a
+                    href={BOOK_INFO.kdpLink}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-text-gray hover:text-text-light text-sm transition-colors"
+                  >
+                    Prefer Kindle? Get it on Amazon for ${BOOK_INFO.kdpPrice} &rarr;
+                  </a>
+                </div>
               </div>
             )}
 
-            <p className="text-text-gray text-sm mt-6">
+            <p className="text-text-gray text-sm mt-6 text-center">
               {BOOK_INFO.isPresale
-                ? `Launches ${formattedDate} • Be the first to know`
-                : "Digital download • Instant access • Lifetime updates"}
+                ? `Launches ${formattedDate} — be the first to know`
+                : "Instant digital download — lifetime access"}
             </p>
           </div>
         </section>

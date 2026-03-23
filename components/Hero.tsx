@@ -24,14 +24,10 @@ export default function Hero() {
           transition={{ duration: 0.8 }}
         >
           <p className="text-accent-burgundy uppercase tracking-[0.2em] sm:tracking-[0.3em] lg:tracking-[0.4em] text-xs sm:text-sm mb-4 sm:mb-6 animate-glow px-2">
-            <span className="block sm:inline">Clinically Diagnosed ASPD</span>
-            <span className="hidden sm:inline mx-1 sm:mx-2">•</span>
+            <span className="block sm:inline">As seen on LADbible, Unilad &amp; Yahoo</span>
+            <span className="hidden sm:inline mx-1 sm:mx-2">&middot;</span>
             <span className="block sm:inline">
               {SOCIAL_METRICS.combined.totalFollowers} Followers
-            </span>
-            <span className="hidden sm:inline mx-1 sm:mx-2">•</span>
-            <span className="block sm:inline">
-              {SOCIAL_METRICS.youtube.totalViews} Views
             </span>
           </p>
         </motion.div>
@@ -53,7 +49,7 @@ export default function Hero() {
           </span>
         </motion.h1>
 
-        {/* Rotating Viral Quotes */}
+        {/* Rotating Quotes — now outcome-driven */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -80,8 +76,8 @@ export default function Hero() {
           transition={{ duration: 0.8, delay: 0.4 }}
           className="text-text-gray text-base sm:text-lg md:text-xl max-w-2xl lg:max-w-3xl mx-auto mb-8 sm:mb-12 font-light px-4"
         >
-          The book that went viral across Unilad, LadBible, and Yahoo. The
-          psychology they don&apos;t teach you.
+          The dating guide written by a clinically diagnosed sociopath.
+          The psychology they don&apos;t teach you — now in your hands.
         </motion.p>
 
         <motion.div

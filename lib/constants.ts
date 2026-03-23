@@ -2,7 +2,7 @@ export const SITE_CONFIG = {
   name: "Kanika Batra",
   fullName: "Kanika Batra-Matheson",
   title: "The Psychology of Power",
-  tagline: "Stop being the victim. Start being the villain.",
+  tagline: "The psychology they don't teach you.",
   description:
     "Psychology of power expert with 670K+ followers. Author, speaker, and clinically diagnosed sociopath teaching strategic psychology that builds obsession and commands authority.",
   url: process.env.NEXT_PUBLIC_BASE_URL || "https://kanikarose.com",
@@ -19,11 +19,11 @@ export const SITE_CONFIG = {
     "Clinically Diagnosed ASPD (Age 21)",
   ],
   viralQuotes: [
-    "Stop being the victim. Start being the villain.",
-    "Everyone plays. Few win. Be the one who wins.",
-    "If you have lots of options, you have all the power.",
-    "With enough information, I can be anyone's soulmate.",
-    "Your darkness is not your weakness. It's your untapped power.",
+    "I stopped chasing. Now they chase me. The book showed me how.",
+    "Everyone's playing a game. Most people just don't know the rules.",
+    "I read people before they finish their first sentence.",
+    "The one who cares less has all the power. Learn to care strategically.",
+    "I used to overthink every text. Now I control the conversation.",
   ],
 };
 
@@ -39,20 +39,20 @@ export const BOOK_INFO = {
   isPresale: false,
   expectedLaunchDate: "2026-02-14T00:00:00-05:00", // Valentine's Day 2026
   description:
-    "The first dating guide written by a clinically diagnosed sociopath. Learn the cold, strategic methods that create irresistible attraction while others struggle with heartbreak. This isn't another \"love yourself\" manifesto—it's a tactical manual for winning at modern romance.",
+    "You've been playing by rules that were designed to make you lose. While you're agonizing over a text, the person across from you is following a playbook you've never seen. This is that playbook — written by a clinically diagnosed sociopath who sees the game for what it actually is.",
   features: [
-    "15 chapters + 2 bonus chapters of strategic dating frameworks",
-    "Real case studies from a diagnosed sociopath",
-    "Psychological tactics that create obsession",
-    "How to build unshakeable confidence and control",
-    "The Rotation System for managing multiple interests",
-    "Exit strategies that leave them wanting more",
+    "Stop being the one who cares more — in every relationship, forever",
+    "Know exactly what someone wants before they say a word",
+    "Never sit by the phone wondering why they haven't texted back",
+    "Walk away so cleanly they spend months wondering what they lost",
+    "Turn 'Why does this keep happening to me?' into 'I saw that coming'",
+    "Build the kind of confidence that makes people obsess over you",
   ],
   premiumBonuses: [
-    "15 chapters + 2 exclusive bonus chapters",
-    "Bonus: Understanding Narcissists",
-    "Bonus: The Avoidant Playbook",
-    "Early access",
+    { name: "The Full Playbook", desc: "15 chapters of strategic frameworks that rewire how you date", value: 24.99 },
+    { name: "Bonus: Understanding Narcissists", desc: "How to spot, disarm, and outplay the people who drain you", value: 29 },
+    { name: "Bonus: The Avoidant Playbook", desc: "Why they pull away — and exactly how to make it stop", value: 29 },
+    { name: "Exclusive Addendum", desc: "Advanced strategies too raw for Amazon's guidelines", value: 19 },
   ],
 };
 

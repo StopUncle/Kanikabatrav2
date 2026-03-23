@@ -2,19 +2,11 @@
 
 import { useState } from "react";
 import { motion } from "framer-motion";
-import Link from "next/link";
-import { Check, Crown, BookOpen, Bell } from "lucide-react";
+import { Check, ShieldCheck, Bell } from "lucide-react";
 import PayPalButton from "./PayPalButton";
 import PresaleModal from "./PresaleModal";
 import CountdownTimer from "./CountdownTimer";
 import { BOOK_INFO } from "@/lib/constants";
-
-const bookFeatures = [
-  "70,000 words of pure strategic dominance",
-  "The Rotation System for managing multiple prospects",
-  "Ghost Protocol: Exit strategies that haunt them forever",
-  "From prey mindset to predator mentality",
-];
 
 export default function BookShowcase() {
   const [showPayPal, setShowPayPal] = useState(false);
@@ -22,9 +14,6 @@ export default function BookShowcase() {
     "idle" | "success" | "error"
   >("idle");
   const [showPresaleModal, setShowPresaleModal] = useState(false);
-  const [selectedVersion, setSelectedVersion] = useState<"kdp" | "premium">(
-    "premium",
-  );
 
   const handlePaymentSuccess = (details: {
     id: string;
@@ -32,7 +21,6 @@ export default function BookShowcase() {
     downloadToken?: string;
   }) => {
     setPaymentStatus("success");
-    // Redirect to success page with download token
     const tokenParam = details.downloadToken
       ? `&download_token=${details.downloadToken}`
       : "";
@@ -67,6 +55,8 @@ export default function BookShowcase() {
     day: "numeric",
   });
 
+  const totalValue = BOOK_INFO.premiumBonuses.reduce((sum, b) => sum + b.value, 0);
+
   return (
     <section
       id="book"
@@ -84,7 +74,6 @@ export default function BookShowcase() {
           >
             <div className="relative w-64 sm:w-72 md:w-80 max-w-full h-[360px] sm:h-[400px] md:h-[450px] animate-levitate mx-auto">
               <div className="absolute inset-0 book-3d">
-                {/* Book Cover */}
                 <div className="absolute inset-0 book-cover-gradient rounded-r-2xl shadow-2xl flex flex-col justify-center items-center p-4 sm:p-6 md:p-8 transform translateZ-20">
                   <h3 className="text-lg sm:text-xl md:text-2xl font-light text-center text-text-light mb-2 sm:mb-4 leading-tight">
                     SOCIOPATHIC
@@ -102,7 +91,6 @@ export default function BookShowcase() {
                   </p>
                 </div>
 
-                {/* Book Spine */}
                 <div className="absolute left-0 top-0 w-8 sm:w-10 md:w-12 h-full bg-gradient-to-r from-deep-black to-deep-burgundy transform rotateY-90 translateZ-24 rounded-l-md">
                   <div className="h-full flex items-center justify-center">
                     <span className="text-accent-gold text-[10px] sm:text-xs tracking-[0.1em] sm:tracking-[0.2em] transform rotate-90 whitespace-nowrap">
@@ -111,7 +99,6 @@ export default function BookShowcase() {
                   </div>
                 </div>
 
-                {/* Book Shadow */}
                 <div className="absolute inset-0 bg-black/50 transform translateZ-10 rounded-r-2xl blur-xl" />
               </div>
             </div>
@@ -126,24 +113,23 @@ export default function BookShowcase() {
             className="space-y-8"
           >
             <div>
+              <p className="text-accent-burgundy uppercase tracking-[0.2em] text-xs sm:text-sm mb-3">
+                As featured on LADbible, Unilad &amp; Yahoo
+              </p>
               <h2 className="text-3xl sm:text-4xl lg:text-5xl font-light mb-4 sm:mb-6">
                 <span className="gradient-text">
-                  {BOOK_INFO.wordCount} Words
+                  The Dating Playbook
                 </span>
                 <br />
-                <span className="text-text-light">of Strategic Mastery</span>
+                <span className="text-text-light">You Were Never Meant to See</span>
               </h2>
               <p className="text-text-gray text-base sm:text-lg leading-relaxed">
-                Stop being the prey. Start being the predator. This
-                controversial guide reveals the cold, calculated methods that
-                create unstoppable attraction and unbreakable control—written by
-                someone who genuinely lacks empathy and sees romance as a
-                strategic game.
+                {BOOK_INFO.description}
               </p>
             </div>
 
-            <div className="space-y-4">
-              {bookFeatures.map((feature, index) => (
+            <div className="space-y-3">
+              {BOOK_INFO.features.slice(0, 4).map((feature, index) => (
                 <motion.div
                   key={index}
                   initial={{ opacity: 0, x: 20 }}
@@ -152,12 +138,21 @@ export default function BookShowcase() {
                   viewport={{ once: true }}
                   className="flex items-start gap-3 sm:gap-4 p-3 sm:p-4 bg-gradient-to-r from-accent-burgundy/10 to-accent-sapphire/5 border-l-2 sm:border-l-4 border-accent-gold hover:translate-x-1 sm:hover:translate-x-2 transition-transform"
                 >
-                  <Check className="text-accent-gold mt-1" size={20} />
+                  <Check className="text-accent-gold mt-0.5 shrink-0" size={20} />
                   <span className="text-text-light">{feature}</span>
                 </motion.div>
               ))}
             </div>
 
+            {/* Social proof snippet */}
+            <div className="glass-card p-4 border-l-4 border-accent-gold">
+              <p className="text-text-light italic text-sm sm:text-base">
+                &ldquo;This book decoded the game I didn&apos;t even know I was losing. Within 3 weeks I went from being overlooked to being pursued.&rdquo;
+              </p>
+              <p className="text-accent-gold text-sm mt-2">— Sarah K., Investment Banker</p>
+            </div>
+
+            {/* Offer Card */}
             <div className="bg-gradient-to-r from-burgundy/20 to-sapphire/10 p-4 sm:p-6 lg:p-8 rounded-lg border border-gold/20">
               {BOOK_INFO.isPresale && (
                 <div className="mb-6 space-y-4">
@@ -175,94 +170,49 @@ export default function BookShowcase() {
                 </div>
               )}
 
-              <div className="space-y-4 mb-6">
-                <button
-                  onClick={() => setSelectedVersion("kdp")}
-                  className={`w-full p-4 rounded-lg border transition-all text-left relative ${
-                    selectedVersion === "kdp"
-                      ? "border-accent-gold bg-accent-gold/10"
-                      : "border-gold/20 hover:border-gold/40"
-                  }`}
-                >
-                  <div className="absolute -top-3 -right-3 bg-green-600 text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg">
-                    LIVE NOW
-                  </div>
-                  <div className="flex items-start justify-between">
-                    <div className="flex items-start gap-3">
-                      <BookOpen className="text-accent-gold mt-1" size={20} />
-                      <div>
-                        <div className="font-semibold text-text-light">
-                          Amazon Kindle Edition
-                        </div>
-                        <div className="text-sm text-text-muted mt-1">
-                          Available on Amazon
-                        </div>
-                        <div className="text-xs text-accent-gold mt-2">
-                          ✓ Instant Digital Download
-                        </div>
-                      </div>
-                    </div>
-                    <div className="text-2xl font-light gradient-text-gold">
-                      ${BOOK_INFO.kdpPrice}
-                    </div>
-                  </div>
-                </button>
+              <p className="text-accent-gold uppercase tracking-[0.2em] text-xs mb-4">
+                Premium Edition — What You Get
+              </p>
 
-                <button
-                  onClick={() => setSelectedVersion("premium")}
-                  className={`w-full p-4 rounded-lg border transition-all text-left relative ${
-                    selectedVersion === "premium"
-                      ? "border-accent-gold bg-accent-gold/10"
-                      : "border-gold/20 hover:border-gold/40"
-                  }`}
-                >
-                  <div className="absolute -top-3 -right-3 bg-accent-burgundy text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg">
-                    LIMITED TIME
-                  </div>
-                  <div className="flex items-start justify-between">
+              {/* Value Stack */}
+              <div className="space-y-3 mb-6">
+                {BOOK_INFO.premiumBonuses.map((bonus, i) => (
+                  <div key={i} className="flex items-start justify-between gap-3 p-3 rounded-lg bg-white/[0.03] border border-white/[0.06]">
                     <div className="flex items-start gap-3">
-                      <Crown className="text-accent-gold mt-1" size={20} />
+                      <Check className="text-accent-gold mt-0.5 shrink-0" size={16} />
                       <div>
-                        <div className="font-semibold text-text-light">
-                          Premium Uncensored
-                        </div>
-                        <div className="text-sm text-text-muted mt-1">
-                          Direct + Exclusive Bonuses
-                        </div>
-                        <ul className="text-xs text-accent-gold mt-2 space-y-1">
-                          {BOOK_INFO.premiumBonuses
-                            .slice(0, 3)
-                            .map((bonus, i) => (
-                              <li key={i}>• {bonus}</li>
-                            ))}
-                        </ul>
+                        <p className="text-text-light text-sm font-medium">{bonus.name}</p>
+                        <p className="text-text-gray text-xs mt-0.5">{bonus.desc}</p>
                       </div>
                     </div>
-                    <div className="text-right">
-                      <div className="text-sm text-text-muted line-through opacity-60">
-                        ${BOOK_INFO.originalPrice}
-                      </div>
-                      <div className="text-2xl font-light gradient-text-gold">
-                        ${BOOK_INFO.price}
-                      </div>
-                    </div>
+                    <span className="text-text-gray text-sm whitespace-nowrap">${bonus.value}</span>
                   </div>
-                </button>
+                ))}
+              </div>
+
+              <div className="flex items-baseline justify-between mb-6 pt-4 border-t border-white/10">
+                <div>
+                  <span className="text-text-gray text-sm">Total value: </span>
+                  <span className="text-text-gray text-sm line-through">${totalValue.toFixed(2)}</span>
+                </div>
+                <div className="text-right">
+                  <span className="text-3xl font-light gradient-text-gold">${BOOK_INFO.price}</span>
+                </div>
               </div>
 
               {paymentStatus === "success" ? (
-                <div className="text-center">
-                  <div className="text-green-400 text-lg font-semibold mb-4">
-                    ✅ Purchase Successful!
+                <div className="text-center py-4">
+                  <div className="text-green-400 text-lg font-semibold mb-2">
+                    Purchase Successful
                   </div>
-                  <p className="text-text-muted mb-4">
+                  <p className="text-text-muted">
                     Check your email for download instructions.
                   </p>
                 </div>
               ) : paymentStatus === "error" ? (
-                <div className="text-center">
-                  <div className="text-red-400 text-lg font-semibold mb-4">
-                    ❌ Payment Failed
+                <div className="text-center py-4">
+                  <div className="text-red-400 text-lg font-semibold mb-2">
+                    Payment Failed
                   </div>
                   <p className="text-text-muted mb-4">
                     Please try again or contact support.
@@ -272,7 +222,7 @@ export default function BookShowcase() {
                       setPaymentStatus("idle");
                       setShowPayPal(false);
                     }}
-                    className="btn-primary rounded-full text-white px-4 sm:px-6 py-2 text-sm sm:text-base"
+                    className="btn-primary rounded-full text-white px-6 py-2 text-sm"
                   >
                     Try Again
                   </button>
@@ -283,11 +233,10 @@ export default function BookShowcase() {
                     onClick={() => setShowPresaleModal(true)}
                     className="w-full btn-primary rounded-full text-white text-center py-3 sm:py-4 font-semibold tracking-wide text-sm sm:text-base"
                   >
-                    Join Presale List →
+                    Join Presale List
                   </button>
                   <p className="text-xs text-center text-text-muted">
-                    Get notified when the book launches + exclusive presale
-                    pricing
+                    Get notified when the book launches + exclusive presale pricing
                   </p>
                 </div>
               ) : showPayPal ? (
@@ -305,44 +254,35 @@ export default function BookShowcase() {
                       onClick={() => setShowPayPal(false)}
                       className="text-text-muted hover:text-text-light text-sm"
                     >
-                      ← Back to Options
+                      &larr; Back
                     </button>
                   </div>
                 </div>
               ) : (
                 <div className="space-y-4">
-                  {selectedVersion === "premium" ? (
-                    <>
-                      <button
-                        onClick={() => setShowPayPal(true)}
-                        className="w-full btn-primary rounded-full text-white text-center py-3 sm:py-4 font-semibold tracking-wide text-sm sm:text-base"
-                      >
-                        Buy Now - ${BOOK_INFO.price}
-                      </button>
-                    </>
-                  ) : (
+                  <button
+                    onClick={() => setShowPayPal(true)}
+                    className="w-full btn-primary rounded-full text-white text-center py-3 sm:py-4 font-semibold tracking-wide text-sm sm:text-base"
+                  >
+                    Get Instant Access — ${BOOK_INFO.price}
+                  </button>
+
+                  {/* Guarantee */}
+                  <div className="flex items-center justify-center gap-2 text-text-gray text-xs">
+                    <ShieldCheck size={14} className="text-accent-gold" />
+                    <span>Read 3 chapters. If it doesn&apos;t change how you see dating, full refund.</span>
+                  </div>
+
+                  {/* Amazon secondary */}
+                  <div className="text-center pt-2 border-t border-white/5">
                     <a
                       href={BOOK_INFO.kdpLink}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="w-full btn-primary rounded-full text-white text-center py-3 sm:py-4 font-semibold tracking-wide text-sm sm:text-base inline-block"
+                      className="text-text-gray hover:text-text-light text-xs transition-colors"
                     >
-                      Get on Amazon - ${BOOK_INFO.kdpPrice}
+                      Prefer Kindle? Get it on Amazon for ${BOOK_INFO.kdpPrice} &rarr;
                     </a>
-                  )}
-                  <div className="flex flex-col sm:flex-row gap-3">
-                    <Link
-                      href="/about"
-                      className="btn-secondary rounded-full text-center py-2 sm:py-3 text-xs sm:text-sm flex-1"
-                    >
-                      Read Sample
-                    </Link>
-                    <Link
-                      href="/contact"
-                      className="btn-ghost rounded-full text-center py-2 sm:py-3 text-xs sm:text-sm flex-1"
-                    >
-                      Questions?
-                    </Link>
                   </div>
                 </div>
               )}
