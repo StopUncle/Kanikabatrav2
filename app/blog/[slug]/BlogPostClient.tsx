@@ -81,7 +81,7 @@ export default function BlogPostClient({
       />
       <Header />
 
-      <article className="pt-32 pb-24">
+      <article className="pt-24 pb-24">
         <div className="max-w-4xl mx-auto px-6 lg:px-8">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -98,32 +98,12 @@ export default function BlogPostClient({
                 },
                 { label: post.frontmatter.title },
               ]}
-              className="mb-8"
+              className="mb-4"
             />
 
-            <Link
-              href="/blog"
-              className="inline-flex items-center text-text-gray hover:text-accent-gold transition-colors mb-10 group text-sm"
-            >
-              <svg
-                className="w-4 h-4 mr-2 group-hover:-translate-x-1 transition-transform"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M15 19l-7-7 7-7"
-                />
-              </svg>
-              Back to Blog
-            </Link>
-
-            <header className="mb-12">
-              <div className="flex flex-wrap items-center gap-4 mb-8">
-                <span className="px-4 py-1.5 text-xs font-medium uppercase tracking-wider text-accent-gold bg-accent-gold/10 rounded-full border border-accent-gold/20">
+            <header className="mb-8">
+              <div className="flex flex-wrap items-center gap-3 mb-4">
+                <span className="px-3 py-1 text-xs font-medium uppercase tracking-wider text-accent-gold bg-accent-gold/10 rounded-full border border-accent-gold/20">
                   {post.frontmatter.category}
                 </span>
                 <span className="text-sm text-text-gray">
@@ -131,24 +111,24 @@ export default function BlogPostClient({
                 </span>
               </div>
 
-              <h1 className="text-3xl md:text-4xl lg:text-5xl font-extralight text-white mb-8 leading-tight tracking-tight">
+              <h1 className="text-2xl md:text-3xl lg:text-4xl font-extralight text-white mb-4 leading-tight tracking-tight">
                 {post.frontmatter.title}
               </h1>
 
-              <p className="text-lg md:text-xl text-text-gray leading-relaxed mb-10">
+              <p className="text-base md:text-lg text-text-gray leading-relaxed mb-6">
                 {post.frontmatter.excerpt}
               </p>
 
-              <div className="flex items-center justify-between pb-10 border-b border-white/10">
-                <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 rounded-full bg-gradient-to-br from-accent-gold to-accent-burgundy flex items-center justify-center">
-                    <span className="text-white font-medium">KB</span>
+              <div className="flex items-center justify-between pb-6 border-b border-white/10">
+                <div className="flex items-center gap-3">
+                  <div className="w-9 h-9 rounded-full bg-gradient-to-br from-accent-gold to-accent-burgundy flex items-center justify-center">
+                    <span className="text-white text-sm font-medium">KB</span>
                   </div>
                   <div>
-                    <p className="text-white font-medium">
+                    <p className="text-white text-sm font-medium">
                       {post.frontmatter.author || "Kanika Batra"}
                     </p>
-                    <time className="text-text-gray text-sm">
+                    <time className="text-text-gray text-xs">
                       {new Date(
                         post.frontmatter.publishedAt,
                       ).toLocaleDateString("en-US", {
@@ -167,10 +147,10 @@ export default function BlogPostClient({
             </header>
 
             {post.frontmatter.coverImage && (
-              <figure className="mb-14 -mx-6 lg:-mx-16">
+              <figure className="mb-10 -mx-6 lg:-mx-16">
                 <div className="relative rounded-2xl overflow-hidden">
                   <div
-                    className="w-full h-72 md:h-96 lg:h-[28rem] bg-cover bg-center"
+                    className="w-full h-56 md:h-72 lg:h-96 bg-cover bg-center"
                     style={{
                       backgroundImage: `url(${post.frontmatter.coverImage})`,
                     }}
