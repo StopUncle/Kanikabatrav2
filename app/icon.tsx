@@ -13,19 +13,26 @@ export default function Icon() {
   return new ImageResponse(
     <div
       style={{
-        fontSize: 20,
-        background: "linear-gradient(135deg, #d4af37, #722139)",
         width: "100%",
         height: "100%",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        color: "#050511",
-        fontWeight: "bold",
-        borderRadius: "50%",
+        background: "#050511",
+        borderRadius: "6px",
       }}
     >
-      KB
+      <span
+        style={{
+          fontSize: 22,
+          fontFamily: "Georgia, serif",
+          fontWeight: 400,
+          letterSpacing: "-1px",
+          color: "#d4af37",
+        }}
+      >
+        K
+      </span>
     </div>,
     {
       ...size,

@@ -13,59 +13,37 @@ export default function AppleIcon() {
   return new ImageResponse(
     <div
       style={{
-        fontSize: 80,
-        background:
-          "linear-gradient(135deg, #050511 0%, #1a0d11 50%, #050511 100%)",
         width: "100%",
         height: "100%",
         display: "flex",
-        flexDirection: "column",
         alignItems: "center",
         justifyContent: "center",
-        position: "relative",
+        background: "linear-gradient(145deg, #080814, #0d0a12)",
+        borderRadius: "40px",
       }}
     >
-      {/* Outer circle */}
       <div
         style={{
-          position: "absolute",
-          width: "160px",
-          height: "160px",
-          border: "3px solid #d4af37",
-          borderRadius: "50%",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
+          width: "140px",
+          height: "140px",
+          borderRadius: "50%",
+          border: "1.5px solid rgba(212, 175, 55, 0.3)",
         }}
       >
-        {/* Inner circle */}
-        <div
+        <span
           style={{
-            width: "140px",
-            height: "140px",
-            border: "1px solid #d4af37",
-            borderRadius: "50%",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            background:
-              "radial-gradient(circle, rgba(212,175,55,0.1) 0%, rgba(114,33,57,0.1) 100%)",
+            fontSize: 72,
+            fontFamily: "Georgia, serif",
+            fontWeight: 400,
+            color: "#d4af37",
+            letterSpacing: "-3px",
           }}
         >
-          <span
-            style={{
-              background: "linear-gradient(135deg, #d4af37, #fff5d6, #d4af37)",
-              backgroundClip: "text",
-              WebkitBackgroundClip: "text",
-              color: "transparent",
-              fontFamily: "serif",
-              fontWeight: "bold",
-              letterSpacing: "-2px",
-            }}
-          >
-            KB
-          </span>
-        </div>
+          K
+        </span>
       </div>
     </div>,
     {
