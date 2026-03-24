@@ -2,10 +2,7 @@
 
 import { motion } from "framer-motion";
 import Link from "next/link";
-import { MDXRemoteSerializeResult } from "next-mdx-remote";
 import Header from "@/components/Header";
-import Footer from "@/components/Footer";
-import PostContent from "@/components/blog/PostContent";
 import AuthorBio from "@/components/AuthorBio";
 import Disclaimer from "@/components/Disclaimer";
 import RelatedPosts, {
@@ -13,6 +10,9 @@ import RelatedPosts, {
   PostNavigation,
 } from "@/components/RelatedPosts";
 import BookPromo from "@/components/blog/BookPromo";
+import TableOfContents from "@/components/blog/TableOfContents";
+import SocialShareButtons from "@/components/blog/SocialShareButtons";
+import NewsletterForm from "@/components/NewsletterForm";
 import type { PostMeta } from "@/lib/mdx";
 import { SITE_CONFIG } from "@/lib/constants";
 
@@ -27,7 +27,8 @@ interface RelatedPost {
 
 interface BlogPostClientProps {
   post: PostMeta;
-  mdxSource: MDXRemoteSerializeResult;
+  rawContent: string;
+  children: React.ReactNode;
   relatedPosts?: RelatedPost[];
   previousPost?: { slug: string; title: string } | null;
   nextPost?: { slug: string; title: string } | null;
@@ -35,11 +36,15 @@ interface BlogPostClientProps {
 
 export default function BlogPostClient({
   post,
-  mdxSource,
+  rawContent,
+  children,
   relatedPosts,
   previousPost,
   nextPost,
 }: BlogPostClientProps) {
+  const postUrl = `${SITE_CONFIG.url}/blog/${post.slug}`;
+  const wordCount = rawContent.split(/\s+/).length;
+
   const articleSchema = {
     "@context": "https://schema.org",
     "@type": "Article",
@@ -48,6 +53,10 @@ export default function BlogPostClient({
     image: post.frontmatter.coverImage,
     datePublished: post.frontmatter.publishedAt,
     dateModified: post.frontmatter.updatedAt || post.frontmatter.publishedAt,
+    wordCount,
+    articleSection: post.frontmatter.category,
+    keywords: post.frontmatter.tags?.join(", "),
+    thumbnailUrl: post.frontmatter.coverImage,
     author: {
       "@type": "Person",
       name: post.frontmatter.author || SITE_CONFIG.name,
@@ -60,7 +69,7 @@ export default function BlogPostClient({
     },
     mainEntityOfPage: {
       "@type": "WebPage",
-      "@id": `${SITE_CONFIG.url}/blog/${post.slug}`,
+      "@id": postUrl,
     },
   };
 
@@ -130,7 +139,7 @@ export default function BlogPostClient({
                 {post.frontmatter.excerpt}
               </p>
 
-              <div className="flex items-center gap-6 pb-10 border-b border-white/10">
+              <div className="flex items-center justify-between pb-10 border-b border-white/10">
                 <div className="flex items-center gap-4">
                   <div className="w-12 h-12 rounded-full bg-gradient-to-br from-accent-gold to-accent-burgundy flex items-center justify-center">
                     <span className="text-white font-medium">KB</span>
@@ -150,6 +159,10 @@ export default function BlogPostClient({
                     </time>
                   </div>
                 </div>
+                <SocialShareButtons
+                  title={post.frontmatter.title}
+                  url={postUrl}
+                />
               </div>
             </header>
 
@@ -167,48 +180,64 @@ export default function BlogPostClient({
               </figure>
             )}
 
-            <div className="max-w-3xl mx-auto">
-              <PostContent mdxSource={mdxSource} />
+            <div className="lg:grid lg:grid-cols-[200px_1fr] lg:gap-12 max-w-none">
+              <TableOfContents content={rawContent} />
 
-              <footer className="mt-20 pt-12 border-t border-white/10">
-                <div className="flex flex-wrap gap-3 mb-12">
-                  {post.frontmatter.tags.map((tag) => (
-                    <Link
-                      key={tag}
-                      href={`/blog?tag=${encodeURIComponent(tag)}`}
-                      className="px-4 py-2 text-sm text-text-gray bg-white/5 rounded-full border border-white/10 hover:border-accent-gold/50 hover:text-accent-gold transition-all duration-300"
-                    >
-                      #{tag}
-                    </Link>
-                  ))}
-                </div>
+              <div className="max-w-3xl">
+                {children}
 
-                <div className="space-y-16">
-                  <AuthorBio variant="full" />
+                <footer className="mt-20 pt-12 border-t border-white/10">
+                  <div className="flex flex-wrap gap-3 mb-12">
+                    {post.frontmatter.tags.map((tag) => (
+                      <Link
+                        key={tag}
+                        href={`/blog?tag=${encodeURIComponent(tag)}`}
+                        className="px-4 py-2 text-sm text-text-gray bg-white/5 rounded-full border border-white/10 hover:border-accent-gold/50 hover:text-accent-gold transition-all duration-300"
+                      >
+                        #{tag}
+                      </Link>
+                    ))}
+                  </div>
 
-                  <Disclaimer variant="compact" />
+                  <div className="space-y-16">
+                    <AuthorBio variant="full" />
 
-                  <BookPromo variant="full" />
+                    <div className="py-12 px-8 rounded-2xl bg-gradient-to-br from-deep-navy/50 to-accent-burgundy/20 border border-white/10 text-center">
+                      <p className="text-accent-gold uppercase tracking-[0.2em] text-xs mb-3">
+                        Weekly Insights
+                      </p>
+                      <h3 className="text-xl font-extralight text-white mb-2">
+                        Get more like this
+                      </h3>
+                      <p className="text-text-gray text-sm mb-6 max-w-md mx-auto">
+                        Psychology insights delivered weekly. No spam.
+                        Unsubscribe anytime.
+                      </p>
+                      <NewsletterForm />
+                    </div>
 
-                  <PostNavigation
-                    previousPost={previousPost}
-                    nextPost={nextPost}
-                  />
+                    <Disclaimer variant="compact" />
 
-                  {relatedPosts && relatedPosts.length > 0 && (
-                    <RelatedPosts
-                      posts={relatedPosts}
-                      title="Continue Reading"
+                    <BookPromo variant="full" />
+
+                    <PostNavigation
+                      previousPost={previousPost}
+                      nextPost={nextPost}
                     />
-                  )}
-                </div>
-              </footer>
+
+                    {relatedPosts && relatedPosts.length > 0 && (
+                      <RelatedPosts
+                        posts={relatedPosts}
+                        title="Continue Reading"
+                      />
+                    )}
+                  </div>
+                </footer>
+              </div>
             </div>
           </motion.div>
         </div>
       </article>
-
-      <Footer />
 
       <div className="fixed inset-0 pointer-events-none overflow-hidden -z-10">
         <div className="absolute top-1/4 -left-32 w-96 h-96 bg-accent-burgundy/10 rounded-full blur-[120px]" />

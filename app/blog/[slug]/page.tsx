@@ -1,10 +1,11 @@
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { serialize } from "next-mdx-remote/serialize";
 import { getPostBySlug, getAllPosts, getPostsByCategory } from "@/lib/mdx";
 import BlogPostClient from "./BlogPostClient";
+import PostContent from "@/components/blog/PostContent";
 import { SITE_CONFIG } from "@/lib/constants";
 
+// Required: next-mdx-remote in client components fails during static generation
 export const dynamic = "force-dynamic";
 
 interface PageProps {
@@ -78,8 +79,6 @@ export default async function BlogPostPage({ params }: PageProps) {
     notFound();
   }
 
-  const mdxSource = await serialize(post.content);
-
   const allPosts = getAllPosts();
   const currentIndex = allPosts.findIndex((p) => p.slug === slug);
 
@@ -118,10 +117,12 @@ export default async function BlogPostPage({ params }: PageProps) {
         frontmatter: post.frontmatter,
         readingTime: post.readingTime,
       }}
-      mdxSource={mdxSource}
+      rawContent={post.content}
       relatedPosts={relatedPosts}
       previousPost={previousPost}
       nextPost={nextPost}
-    />
+    >
+      <PostContent source={post.content} />
+    </BlogPostClient>
   );
 }

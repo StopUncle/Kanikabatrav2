@@ -70,6 +70,12 @@ export default function RootLayout({
     <html lang="en">
       <head>
         <JsonLd data={[organizationSchema, websiteSchema]} />
+        <link
+          rel="alternate"
+          type="application/rss+xml"
+          title="Kanika Batra Blog"
+          href="/feed.xml"
+        />
         <Script
           src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`}
           strategy="afterInteractive"

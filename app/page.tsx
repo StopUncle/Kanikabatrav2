@@ -1,4 +1,5 @@
 import { Metadata } from "next";
+import Link from "next/link";
 import BackgroundEffects from "@/components/BackgroundEffects";
 import Header from "@/components/Header";
 import Hero from "@/components/Hero";
@@ -8,6 +9,8 @@ import Testimonial from "@/components/Testimonial";
 import NewsletterForm from "@/components/NewsletterForm";
 import AskKanika from "@/components/AskKanika";
 import SocialHub from "@/components/SocialHub";
+import PostCard from "@/components/blog/PostCard";
+import { getAllPosts } from "@/lib/mdx";
 import { SITE_CONFIG, SOCIAL_METRICS } from "@/lib/constants";
 
 export const metadata: Metadata = {
@@ -54,6 +57,8 @@ export const metadata: Metadata = {
 };
 
 export default function Home() {
+  const latestPosts = getAllPosts().slice(0, 3);
+
   return (
     <>
       {/* Background Effects - Aurora, Orbs, and Particles */}
@@ -147,6 +152,40 @@ export default function Home() {
             </div>
           </div>
         </section>
+
+        {/* Latest from the Blog */}
+        {latestPosts.length > 0 && (
+          <section className="py-24 px-4">
+            <div className="max-w-7xl mx-auto">
+              <div className="text-center mb-16">
+                <p className="text-accent-gold uppercase tracking-[0.3em] text-sm mb-4">
+                  Latest Insights
+                </p>
+                <h2 className="text-3xl md:text-4xl font-extralight text-white mb-4 tracking-wide">
+                  From the <span className="text-accent-gold">Blog</span>
+                </h2>
+                <p className="text-text-gray max-w-lg mx-auto">
+                  Dating psychology, red flags, and the patterns you keep
+                  repeating.
+                </p>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-10">
+                {latestPosts.map((post, index) => (
+                  <PostCard key={post.slug} post={post} index={index} />
+                ))}
+              </div>
+              <div className="text-center mt-12">
+                <Link
+                  href="/blog"
+                  className="inline-flex items-center gap-3 px-8 py-3 text-sm font-medium uppercase tracking-wider text-accent-gold border border-accent-gold/30 rounded-full hover:bg-accent-gold/10 hover:border-accent-gold/50 transition-all duration-300"
+                >
+                  View All Articles
+                  <span>&rarr;</span>
+                </Link>
+              </div>
+            </div>
+          </section>
+        )}
 
         {/* Final CTA Section */}
         <section className="py-32 px-4">

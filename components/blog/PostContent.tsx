@@ -1,8 +1,26 @@
-"use client";
-
-import { MDXRemote } from "next-mdx-remote";
-import type { MDXRemoteSerializeResult } from "next-mdx-remote";
 import Link from "next/link";
+import { MDXRemote } from "next-mdx-remote/rsc";
+import InlineBookCTA from "@/components/blog/InlineBookCTA";
+import InlineCoachingCTA from "@/components/blog/InlineCoachingCTA";
+
+function slugify(text: string): string {
+  if (typeof text !== "string") return "";
+  return text
+    .toLowerCase()
+    .replace(/[^\w\s-]/g, "")
+    .replace(/\s+/g, "-")
+    .replace(/-+/g, "-")
+    .trim();
+}
+
+function getTextContent(children: React.ReactNode): string {
+  if (typeof children === "string") return children;
+  if (Array.isArray(children)) return children.map(getTextContent).join("");
+  if (children && typeof children === "object" && "props" in children) {
+    return getTextContent((children as React.ReactElement).props.children);
+  }
+  return "";
+}
 
 const components = {
   h1: (props: React.HTMLAttributes<HTMLHeadingElement>) => (
@@ -11,18 +29,26 @@ const components = {
       {...props}
     />
   ),
-  h2: (props: React.HTMLAttributes<HTMLHeadingElement>) => (
-    <h2
-      className="text-2xl md:text-3xl font-light text-white mt-14 mb-6 leading-snug border-b border-white/10 pb-4"
-      {...props}
-    />
-  ),
-  h3: (props: React.HTMLAttributes<HTMLHeadingElement>) => (
-    <h3
-      className="text-xl md:text-2xl font-light text-white mt-12 mb-5 leading-snug"
-      {...props}
-    />
-  ),
+  h2: (props: React.HTMLAttributes<HTMLHeadingElement>) => {
+    const id = slugify(getTextContent(props.children));
+    return (
+      <h2
+        id={id}
+        className="text-2xl md:text-3xl font-light text-white mt-14 mb-6 leading-snug border-b border-white/10 pb-4 scroll-mt-24"
+        {...props}
+      />
+    );
+  },
+  h3: (props: React.HTMLAttributes<HTMLHeadingElement>) => {
+    const id = slugify(getTextContent(props.children));
+    return (
+      <h3
+        id={id}
+        className="text-xl md:text-2xl font-light text-white mt-12 mb-5 leading-snug scroll-mt-24"
+        {...props}
+      />
+    );
+  },
   h4: (props: React.HTMLAttributes<HTMLHeadingElement>) => (
     <h4
       className="text-lg md:text-xl font-medium text-accent-gold mt-10 mb-4 leading-snug"
@@ -114,6 +140,7 @@ const components = {
   ),
   img: (props: React.ImgHTMLAttributes<HTMLImageElement>) => (
     <figure className="my-10">
+      {/* eslint-disable-next-line jsx-a11y/alt-text, @next/next/no-img-element */}
       <img className="w-full rounded-xl border border-white/10" {...props} />
       {props.alt && (
         <figcaption className="text-center text-sm text-text-gray mt-4 italic">
@@ -122,16 +149,18 @@ const components = {
       )}
     </figure>
   ),
+  BookCTA: () => <InlineBookCTA />,
+  CoachingCTA: () => <InlineCoachingCTA />,
 };
 
 interface PostContentProps {
-  mdxSource: MDXRemoteSerializeResult;
+  source: string;
 }
 
-export default function PostContent({ mdxSource }: PostContentProps) {
+export default function PostContent({ source }: PostContentProps) {
   return (
     <article className="prose prose-invert max-w-none article-content">
-      <MDXRemote {...mdxSource} components={components} />
+      <MDXRemote source={source} components={components} />
     </article>
   );
 }

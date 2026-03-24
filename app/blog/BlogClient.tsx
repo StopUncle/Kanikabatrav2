@@ -6,7 +6,10 @@ import Link from "next/link";
 import Header from "@/components/Header";
 import PostCard from "@/components/blog/PostCard";
 import CategoryFilter from "@/components/blog/CategoryFilter";
+import NewsletterForm from "@/components/NewsletterForm";
 import type { PostMeta } from "@/lib/mdx";
+
+const POSTS_PER_PAGE = 12;
 
 interface BlogClientProps {
   initialPosts: PostMeta[];
@@ -104,6 +107,7 @@ export default function BlogClient({
   categories,
 }: BlogClientProps) {
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
+  const [visibleCount, setVisibleCount] = useState(POSTS_PER_PAGE);
 
   const filteredPosts = activeCategory
     ? initialPosts.filter(
@@ -115,6 +119,12 @@ export default function BlogClient({
 
   const featuredPost = filteredPosts[0];
   const remainingPosts = filteredPosts.slice(1);
+  const visiblePosts = activeCategory
+    ? filteredPosts.slice(0, visibleCount)
+    : remainingPosts.slice(0, visibleCount);
+  const hasMore = activeCategory
+    ? visibleCount < filteredPosts.length
+    : visibleCount < remainingPosts.length;
 
   return (
     <div className="min-h-screen bg-deep-black">
@@ -129,14 +139,14 @@ export default function BlogClient({
             className="text-center mb-16"
           >
             <p className="text-accent-gold uppercase tracking-[0.3em] text-sm mb-4">
-              Insights & Strategy
+              Dating Strategy & Dark Psychology
             </p>
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-extralight uppercase tracking-[0.2em] text-white mb-6">
               The <span className="text-accent-gold">Dark</span> Blog
             </h1>
             <p className="text-text-gray text-lg md:text-xl max-w-2xl mx-auto leading-relaxed">
-              Forbidden insights into human psychology, power dynamics, and the
-              art of strategic influence.
+              The psychology behind every relationship pattern you keep
+              repeating — and how to stop.
             </p>
           </motion.div>
 
@@ -159,12 +169,27 @@ export default function BlogClient({
               )}
 
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-10">
-                {(activeCategory ? filteredPosts : remainingPosts).map(
-                  (post, index) => (
-                    <PostCard key={post.slug} post={post} index={index} />
-                  ),
-                )}
+                {visiblePosts.map((post, index) => (
+                  <PostCard key={post.slug} post={post} index={index} />
+                ))}
               </div>
+
+              {hasMore && (
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  className="text-center mt-16"
+                >
+                  <button
+                    onClick={() =>
+                      setVisibleCount((prev) => prev + POSTS_PER_PAGE)
+                    }
+                    className="px-10 py-3.5 text-sm font-medium uppercase tracking-wider text-accent-gold border border-accent-gold/30 rounded-full hover:bg-accent-gold/10 hover:border-accent-gold/50 transition-all duration-300"
+                  >
+                    Load More Articles
+                  </button>
+                </motion.div>
+              )}
 
               {remainingPosts.length === 0 && !activeCategory && (
                 <motion.p
@@ -208,6 +233,26 @@ export default function BlogClient({
               </button>
             </motion.div>
           )}
+
+          <motion.section
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            className="mt-24 py-16 px-8 md:px-12 rounded-2xl bg-gradient-to-br from-deep-navy/50 to-accent-burgundy/20 border border-white/10 text-center"
+          >
+            <p className="text-accent-gold uppercase tracking-[0.3em] text-xs mb-4">
+              Weekly Insights
+            </p>
+            <h2 className="text-2xl md:text-3xl font-extralight text-white mb-3 tracking-wide">
+              Get the psychology they don&apos;t teach you
+            </h2>
+            <p className="text-text-gray mb-8 max-w-lg mx-auto">
+              Dating strategy, red flags, and power dynamics. Delivered weekly.
+              No spam. Unsubscribe anytime.
+            </p>
+            <NewsletterForm />
+          </motion.section>
         </div>
       </main>
 

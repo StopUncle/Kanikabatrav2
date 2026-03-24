@@ -17,6 +17,7 @@ const Footer = () => {
     explore: [
       { name: "About", href: "/about" },
       { name: "The Book", href: "/#book" },
+      { name: "Blog", href: "/blog" },
       { name: "Coaching", href: "/coaching" },
       { name: "Contact", href: "/contact" },
     ],
