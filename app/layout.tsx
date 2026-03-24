@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
+import Script from "next/script";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import Footer from "@/components/Footer";
 import JsonLd from "@/components/JsonLd";
@@ -8,6 +9,8 @@ import {
   generateWebsiteSchema,
 } from "@/lib/schema";
 import "./globals.css";
+
+const GA_MEASUREMENT_ID = "G-DTNLQQ321K";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -67,6 +70,18 @@ export default function RootLayout({
     <html lang="en">
       <head>
         <JsonLd data={[organizationSchema, websiteSchema]} />
+        <Script
+          src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`}
+          strategy="afterInteractive"
+        />
+        <Script id="google-analytics" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', '${GA_MEASUREMENT_ID}');
+          `}
+        </Script>
       </head>
       <body className={inter.className}>
         <link rel="dns-prefetch" href="https://www.paypal.com" />
