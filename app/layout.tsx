@@ -27,9 +27,6 @@ export const metadata: Metadata = {
     "Psychology of power expert with 670K+ followers. Author, speaker, and clinically diagnosed sociopath teaching strategic psychology that builds obsession and commands authority.",
   keywords:
     "Kanika Batra, sociopath, dark psychology, psychology of power, power dynamics, strategic psychology",
-  icons: {
-    icon: "/favicon.ico",
-  },
   openGraph: {
     title: "Kanika Batra - The Psychology of Power",
     description:
