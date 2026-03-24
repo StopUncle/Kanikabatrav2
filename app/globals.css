@@ -229,6 +229,75 @@
     animation: shimmer 3s ease-in-out infinite;
   }
 
+  /* Blog content styling (rendered from markdown HTML) */
+  .blog-content h2 {
+    @apply text-2xl md:text-3xl font-light text-white mt-14 mb-6 leading-snug border-b border-white/10 pb-4 scroll-mt-24;
+  }
+  .blog-content h3 {
+    @apply text-xl md:text-2xl font-light text-white mt-12 mb-5 leading-snug scroll-mt-24;
+  }
+  .blog-content h4 {
+    @apply text-lg font-medium mt-10 mb-4 leading-snug;
+    color: var(--accent-gold);
+  }
+  .blog-content p {
+    @apply text-base md:text-lg leading-relaxed md:leading-loose mb-7 tracking-wide;
+    color: var(--text-light);
+  }
+  .blog-content ul {
+    @apply text-base md:text-lg mb-8 space-y-3 pl-6 list-disc;
+    color: var(--text-light);
+  }
+  .blog-content ol {
+    @apply text-base md:text-lg mb-8 space-y-3 pl-6 list-decimal;
+    color: var(--text-light);
+  }
+  .blog-content li {
+    @apply leading-relaxed pl-1;
+    color: var(--text-light);
+  }
+  .blog-content li::marker {
+    color: var(--accent-gold);
+  }
+  .blog-content blockquote {
+    @apply border-l-4 pl-8 pr-4 py-6 my-10 rounded-r-lg text-lg md:text-xl italic;
+    border-color: var(--accent-gold);
+    background: linear-gradient(to right, rgba(212, 175, 55, 0.05), transparent);
+    color: rgba(245, 240, 237, 0.9);
+  }
+  .blog-content a {
+    color: var(--accent-gold);
+    text-decoration: underline;
+    text-underline-offset: 4px;
+    transition: color 0.2s;
+  }
+  .blog-content a:hover {
+    opacity: 0.8;
+  }
+  .blog-content strong {
+    @apply font-semibold text-white;
+  }
+  .blog-content em {
+    color: rgba(212, 175, 55, 0.9);
+  }
+  .blog-content hr {
+    @apply border-0 my-16;
+    height: 1px;
+    background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.2), transparent);
+  }
+  .blog-content img {
+    @apply w-full rounded-xl border border-white/10 my-10;
+  }
+  .blog-content code {
+    @apply px-2 py-1 rounded text-sm font-mono border border-white/10;
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--accent-gold);
+  }
+  .blog-content pre {
+    @apply rounded-xl p-6 overflow-x-auto mb-8 text-sm border border-white/10;
+    background: rgba(10, 22, 40, 0.5);
+  }
+
   /* Focus states for accessibility */
   *:focus-visible {
     outline: 2px solid #d4af37;
