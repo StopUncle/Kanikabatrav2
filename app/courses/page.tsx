@@ -1,131 +1,46 @@
-import { Metadata } from "next";
-import { cookies } from "next/headers";
-import { verifyAccessToken } from "@/lib/auth/jwt";
-import CoursesPageClient from "./CoursesPageClient";
-import prisma from "@/lib/prisma";
-import { SITE_CONFIG } from "@/lib/constants";
+import BackgroundEffects from "@/components/BackgroundEffects";
+import Header from "@/components/Header";
+import { BookOpen } from "lucide-react";
 
-export const metadata: Metadata = {
-  title: "Courses | Kanika Batra - Strategic Psychology",
-  description:
-    "Master dark psychology with exclusive video courses. Learn manipulation detection, power dynamics, and psychological warfare from a diagnosed sociopath.",
-  keywords:
-    "dark psychology course, manipulation course, power dynamics training, kanika batra courses",
-  alternates: {
-    canonical: `${SITE_CONFIG.url}/courses`,
-  },
-  openGraph: {
-    title: "Strategic Psychology Courses | Kanika Batra",
-    description:
-      "Exclusive video courses on dark psychology, manipulation, and power dynamics.",
-    url: `${SITE_CONFIG.url}/courses`,
-    type: "website",
-    images: [
-      {
-        url: `${SITE_CONFIG.url}/og-image.jpg`,
-        width: 1200,
-        height: 630,
-        alt: "Strategic Psychology Courses",
-      },
-    ],
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "Strategic Psychology Courses | Kanika Batra",
-    description:
-      "Master manipulation detection and power dynamics from a diagnosed sociopath.",
-    images: [`${SITE_CONFIG.url}/og-image.jpg`],
-  },
-};
-
-async function getCourses() {
-  const courses = await prisma.course.findMany({
-    where: { isActive: true },
-    include: {
-      modules: {
-        include: {
-          lessons: {
-            select: { id: true },
-          },
-        },
-      },
-    },
-    orderBy: { sortOrder: "asc" },
-  });
-
-  return courses.map((course) => ({
-    id: course.id,
-    title: course.title,
-    slug: course.slug,
-    description: course.description,
-    thumbnailUrl: course.thumbnailUrl,
-    price: course.price,
-    tier: course.tier,
-    moduleCount: course.modules.length,
-    lessonCount: course.modules.reduce((acc, m) => acc + m.lessons.length, 0),
-  }));
-}
-
-async function getUserEnrollments(userId: string) {
-  const enrollments = await prisma.courseEnrollment.findMany({
-    where: {
-      userId,
-      status: "ACTIVE",
-    },
-    include: {
-      progress: true,
-      course: {
-        include: {
-          modules: {
-            include: {
-              lessons: {
-                select: { id: true },
-              },
-            },
-          },
-        },
-      },
-    },
-  });
-
-  return enrollments.map((enrollment) => {
-    const totalLessons = enrollment.course.modules.reduce(
-      (acc, m) => acc + m.lessons.length,
-      0,
-    );
-    const completedLessons = enrollment.progress.filter(
-      (p) => p.isCompleted,
-    ).length;
-    const progress =
-      totalLessons > 0 ? (completedLessons / totalLessons) * 100 : 0;
-
-    return {
-      courseId: enrollment.courseId,
-      progress,
-    };
-  });
-}
-
-export default async function CoursesPage() {
-  const cookieStore = await cookies();
-  const accessToken = cookieStore.get("accessToken")?.value;
-
-  let userId: string | null = null;
-  if (accessToken) {
-    const payload = verifyAccessToken(accessToken);
-    if (payload) {
-      userId = payload.userId;
-    }
-  }
-
-  const courses = await getCourses();
-  const enrollments = userId ? await getUserEnrollments(userId) : [];
-
+export default function CoursesPage() {
   return (
-    <CoursesPageClient
-      courses={courses}
-      enrollments={enrollments}
-      isLoggedIn={!!userId}
-    />
+    <>
+      <BackgroundEffects />
+      <Header />
+      <div className="min-h-screen flex items-center justify-center px-4 pt-32 pb-12 relative z-10">
+        <div className="w-full max-w-md">
+          <div className="bg-deep-black/50 backdrop-blur-sm rounded-2xl border border-accent-gold/20 p-12 shadow-2xl text-center">
+            <div className="w-16 h-16 bg-gradient-to-r from-deep-burgundy to-accent-gold/20 rounded-full flex items-center justify-center mx-auto mb-6">
+              <BookOpen className="w-8 h-8 text-accent-gold" />
+            </div>
+            <h1 className="text-3xl font-extralight tracking-widest uppercase text-text-light mb-3">
+              Coming Soon
+            </h1>
+            <div className="w-12 h-px bg-accent-gold/40 mx-auto mb-6" />
+            <p className="text-text-gray font-light leading-relaxed">
+              Exclusive courses are being developed. Follow{" "}
+              <a
+                href="https://instagram.com/kanikabatra"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-accent-gold hover:text-accent-gold/80 transition-colors"
+              >
+                @kanikabatra
+              </a>{" "}
+              for updates.
+            </p>
+          </div>
+        </div>
+      </div>
+    </>
   );
 }
+
+export const metadata = {
+  title: "Courses - Kanika Batra",
+  description: "Exclusive dark psychology courses coming soon",
+  robots: {
+    index: false,
+    follow: false,
+  },
+};
