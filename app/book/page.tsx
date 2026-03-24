@@ -16,14 +16,14 @@ export const metadata: Metadata = {
     description:
       "The dating guide empaths fear. Learn the cold, strategic methods that create irresistible attraction.",
     type: "website",
-    images: ["/images/book-og.jpg"],
+    images: ["/api/og?title=Sociopathic+Dating+Bible&subtitle=A+Cure+For+Empathy"],
   },
   twitter: {
     card: "summary_large_image",
     title: "Sociopathic Dating Bible",
     description:
       "The first dating guide written by a clinically diagnosed sociopath.",
-    images: ["/images/book-og.jpg"],
+    images: ["/api/og?title=Sociopathic+Dating+Bible&subtitle=A+Cure+For+Empathy"],
   },
 };
 

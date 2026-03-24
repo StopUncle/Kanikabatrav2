@@ -16,14 +16,14 @@ export const metadata: Metadata = {
     description:
       "1:1 coaching with a diagnosed sociopath. See what everyone else misses.",
     type: "website",
-    images: ["/images/coaching-og.jpg"],
+    images: ["/api/og?title=Coaching+with+Kanika&subtitle=See+What+Everyone+Else+Misses"],
   },
   twitter: {
     card: "summary_large_image",
     title: "Coaching with Kanika Batra",
     description:
       "1:1 coaching with a diagnosed sociopath. See what everyone else misses.",
-    images: ["/images/coaching-og.jpg"],
+    images: ["/api/og?title=Coaching+with+Kanika&subtitle=See+What+Everyone+Else+Misses"],
   },
 };
 
