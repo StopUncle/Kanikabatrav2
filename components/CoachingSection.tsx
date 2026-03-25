@@ -28,7 +28,7 @@ export default function CoachingSection() {
 
         {/* CTA for Coaching */}
         <div className="text-center mt-12">
-          <p className="text-text-gray mb-6">Not sure which one? Start with One Situation.</p>
+          <p className="text-text-gray mb-6">Works with men and women. Not sure where to start? Book a single session.</p>
           <a
             href="/coaching"
             className="btn-primary rounded-full inline-block text-white px-8 py-4"

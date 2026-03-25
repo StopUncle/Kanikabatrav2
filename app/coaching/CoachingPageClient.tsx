@@ -31,9 +31,9 @@ const COACHING_FAQ = [
       "If you book and genuinely can't make it, I'll reschedule once. No refunds after the session happens — you're paying for my time and attention, and you'll get both.",
   },
   {
-    question: "Can I upgrade from One Situation to The Pattern later?",
+    question: "Can I upgrade to a longer programme after a single session?",
     answer:
-      "Yes. If we do a single session and you want to go deeper, I'll credit what you paid toward The Pattern. Just let me know.",
+      "Yes. If we do a single session and you want to go deeper, I'll credit what you paid toward the Intensive or Career programme. Just let me know.",
   },
   {
     question: "How quickly can I book?",
@@ -164,11 +164,11 @@ export default function CoachingPage() {
           >
             <div className="space-y-5 sm:space-y-6">
               {[
-                "You keep choosing the same person in different packaging",
-                "You can feel something is wrong but you can't name what it is",
-                "You've been gaslit so many times you don't trust your own perception",
-                "You want to walk into a room and know exactly who to trust",
-                "You're tired of being the one who gets blindsided",
+                "You keep repeating the same patterns and you don't know why",
+                "You know something is off but you can't name it",
+                "You want to walk into any room and read everyone in it",
+                "You're done being the person who gets blindsided",
+                "You want to think differently — not just feel better",
               ].map((line, i) => (
                 <motion.p
                   key={i}
@@ -194,8 +194,8 @@ export default function CoachingPage() {
           >
             <div className="space-y-3 text-text-gray/50 text-sm">
               <p>
-                This is not therapy. I&apos;m not a licensed therapist and I
-                don&apos;t treat mental health conditions.
+                I work with men and women. This is not therapy — I&apos;m not a
+                licensed therapist and I don&apos;t treat mental health conditions.
               </p>
               <p>
                 This is not for people looking for validation. I tell you what I
@@ -218,7 +218,7 @@ export default function CoachingPage() {
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-5 sm:gap-6">
               {COACHING_PACKAGES.map((pkg, index) => {
-                const isRetainer = pkg.id === "on-retainer";
+                const isRetainer = pkg.id === "retainer";
                 const hasBundle = pkg.bundlePrice !== pkg.price;
                 const isExpanded = expandedTier === pkg.id;
                 const showingPayPal = showPayPal === pkg.id;
@@ -469,26 +469,28 @@ export default function CoachingPage() {
               <span className="gradient-text-gold">Compare</span>
             </h2>
 
-            <div className="rounded-xl border border-white/[0.06] overflow-hidden text-sm">
-              <div className="grid grid-cols-4 bg-white/[0.02]">
-                <div className="p-4" />
-                <div className="p-4 text-center text-text-light font-light">One Situation</div>
-                <div className="p-4 text-center text-accent-gold font-light border-x border-white/[0.06]">The Pattern</div>
-                <div className="p-4 text-center text-text-light font-light">On Retainer</div>
+            <div className="rounded-xl border border-white/[0.06] overflow-hidden text-sm overflow-x-auto">
+              <div className="grid grid-cols-5 bg-white/[0.02] min-w-[640px]">
+                <div className="p-3" />
+                <div className="p-3 text-center text-text-light font-light text-xs">Single Session</div>
+                <div className="p-3 text-center text-accent-gold font-light text-xs border-x border-white/[0.06]">Intensive</div>
+                <div className="p-3 text-center text-text-light font-light text-xs">Career</div>
+                <div className="p-3 text-center text-text-light font-light text-xs">Retainer</div>
               </div>
               {[
-                ["Duration", "30 min", "60 min", "3 × 90 min"],
-                ["Sessions", "1", "1 or 3", "3"],
-                ["Pattern analysis", "—", "Deep dive", "Ongoing"],
-                ["Async access", "—", "—", "30 days"],
-                ["Real-time guidance", "—", "—", "Voice notes"],
-                ["Price", "$247", "From $897", "$4,997"],
-              ].map(([label, t1, t2, t3], i) => (
-                <div key={i} className="grid grid-cols-4 border-t border-white/[0.06]">
-                  <div className="p-3.5 text-text-gray/60">{label}</div>
-                  <div className="p-3.5 text-center text-text-gray">{t1}</div>
-                  <div className="p-3.5 text-center text-text-light border-x border-white/[0.06] bg-accent-gold/[0.02]">{t2}</div>
-                  <div className="p-3.5 text-center text-text-gray">{t3}</div>
+                ["Sessions", "1", "3", "4", "Weekly"],
+                ["Duration", "60 min", "4 weeks", "4 weeks", "Ongoing"],
+                ["Voice notes", "—", "—", "Between calls", "Between calls"],
+                ["Focus", "Any topic", "Personal", "Professional", "Everything"],
+                ["Book included", "Yes", "Yes", "Yes", "Yes"],
+                ["Price", "$297", "$1,497", "$2,997", "$4,997"],
+              ].map(([label, t1, t2, t3, t4], i) => (
+                <div key={i} className="grid grid-cols-5 border-t border-white/[0.06] min-w-[640px]">
+                  <div className="p-3 text-text-gray/60">{label}</div>
+                  <div className="p-3 text-center text-text-gray">{t1}</div>
+                  <div className="p-3 text-center text-text-light border-x border-white/[0.06] bg-accent-gold/[0.02]">{t2}</div>
+                  <div className="p-3 text-center text-text-gray">{t3}</div>
+                  <div className="p-3 text-center text-text-gray">{t4}</div>
                 </div>
               ))}
             </div>

@@ -6,7 +6,7 @@ import { SITE_CONFIG } from "@/lib/constants";
 export const metadata: Metadata = {
   title: "Coaching with Kanika Batra — I Tell You What I See",
   description:
-    "1:1 coaching with a clinically diagnosed sociopath. One Situation, The Pattern, or On Retainer. No softening, no filtering.",
+    "1:1 coaching for men and women. Single sessions, intensive programmes, career strategy, or ongoing retainer. No softening, no filtering.",
   keywords:
     "kanika batra coaching, 1 on 1 coaching, relationship coaching, pattern recognition, dark psychology coaching",
   alternates: {
@@ -66,10 +66,10 @@ const faqSchema = {
     },
     {
       "@type": "Question",
-      name: "Can I upgrade from One Situation to The Pattern coaching?",
+      name: "Can I upgrade to a longer coaching programme after a single session?",
       acceptedAnswer: {
         "@type": "Answer",
-        text: "Yes. If you do a single session and want to go deeper, what you paid will be credited toward The Pattern package.",
+        text: "Yes. If you do a single session and want to go deeper, what you paid will be credited toward the Intensive or Career programme.",
       },
     },
     {
