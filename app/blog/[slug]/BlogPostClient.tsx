@@ -2,7 +2,6 @@
 
 import { motion } from "framer-motion";
 import Link from "next/link";
-import Image from "next/image";
 import Header from "@/components/Header";
 import AuthorBio from "@/components/AuthorBio";
 import Disclaimer from "@/components/Disclaimer";
@@ -150,14 +149,14 @@ export default function BlogPostClient({
 
             {post.frontmatter.coverImage && (
               <figure className="mb-10 -mx-6 lg:-mx-16">
-                <div className="relative rounded-2xl overflow-hidden h-56 md:h-72 lg:h-96">
-                  <Image
-                    src={post.frontmatter.coverImage}
-                    alt={post.frontmatter.coverImageAlt || post.frontmatter.title}
-                    fill
-                    priority
-                    className="object-cover"
-                    sizes="(max-width: 1024px) 100vw, 960px"
+                <div className="relative rounded-2xl overflow-hidden">
+                  <div
+                    className="w-full h-56 md:h-72 lg:h-96 bg-cover bg-center"
+                    style={{
+                      backgroundImage: `url(${post.frontmatter.coverImage})`,
+                    }}
+                    role="img"
+                    aria-label={post.frontmatter.coverImageAlt || post.frontmatter.title}
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-deep-black/30 to-transparent" />
                 </div>

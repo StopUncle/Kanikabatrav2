@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
-import Image from "next/image";
 import Header from "@/components/Header";
 import PostCard from "@/components/blog/PostCard";
 import CategoryFilter from "@/components/blog/CategoryFilter";
@@ -30,13 +29,13 @@ function FeaturedPost({ post }: { post: PostMeta }) {
           <div className="grid md:grid-cols-2 gap-0">
             {post.frontmatter.coverImage && (
               <div className="relative h-64 md:h-96 overflow-hidden">
-                <Image
-                  src={post.frontmatter.coverImage}
-                  alt={post.frontmatter.coverImageAlt || post.frontmatter.title}
-                  fill
-                  priority
-                  className="object-cover transform group-hover:scale-105 transition-transform duration-700"
-                  sizes="(max-width: 768px) 100vw, 50vw"
+                <div
+                  className="absolute inset-0 bg-cover bg-center transform group-hover:scale-105 transition-transform duration-700"
+                  style={{
+                    backgroundImage: `url(${post.frontmatter.coverImage})`,
+                  }}
+                  role="img"
+                  aria-label={post.frontmatter.coverImageAlt || post.frontmatter.title}
                 />
                 <div className="absolute inset-0 bg-gradient-to-r from-transparent to-deep-black/80 md:block hidden" />
                 <div className="absolute inset-0 bg-gradient-to-t from-deep-black to-transparent md:hidden" />

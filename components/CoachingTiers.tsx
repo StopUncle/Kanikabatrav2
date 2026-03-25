@@ -2,9 +2,7 @@
 
 import { motion } from "framer-motion";
 import { Check } from "lucide-react";
-import Card from "@/components/ui/Card";
 import { COACHING_PACKAGES } from "@/lib/constants";
-import { formatPrice } from "@/lib/utils";
 
 interface CoachingTiersProps {
   showButton?: boolean;
@@ -12,83 +10,99 @@ interface CoachingTiersProps {
 }
 
 const CoachingTiers = ({ showButton = true, onSelect }: CoachingTiersProps) => {
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.2,
-      },
-    },
-  };
-
-  const itemVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: { opacity: 1, y: 0 },
-  };
-
   return (
-    <motion.div
-      variants={containerVariants}
-      initial="hidden"
-      whileInView="visible"
-      viewport={{ once: true }}
-      className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8"
-    >
-      {COACHING_PACKAGES.map((pkg) => (
-        <motion.div key={pkg.id} variants={itemVariants}>
-          <Card gradient popular={pkg.popular} className="h-full">
-            <div className="p-4 sm:p-6 lg:p-8">
-              {/* Header */}
-              <div className="mb-6">
-                <h3 className="text-xl sm:text-2xl font-light mb-2 bg-gradient-to-r from-burgundy to-gold bg-clip-text text-transparent">
-                  {pkg.name}
-                </h3>
-                <p className="text-text-muted text-sm">{pkg.description}</p>
-              </div>
+    <div className="grid grid-cols-1 lg:grid-cols-3 gap-5 sm:gap-6">
+      {COACHING_PACKAGES.map((pkg, index) => {
+        const badge = pkg.badge;
+        const ctaLabel =
+          pkg.ctaLabel || `Book ${pkg.name}`;
 
-              {/* Price */}
-              <div className="mb-6">
-                <div className="flex items-baseline gap-2">
-                  <span className="text-3xl sm:text-4xl font-light text-gold">
-                    {formatPrice(pkg.price)}
-                  </span>
-                  <span className="text-text-muted text-sm sm:text-base">
-                    /{pkg.duration}
-                  </span>
-                </div>
-              </div>
+        return (
+          <motion.div
+            key={pkg.id}
+            initial={{ opacity: 0, y: 25 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: index * 0.1 }}
+            viewport={{ once: true }}
+            className="relative group"
+          >
+            {pkg.popular && (
+              <div className="absolute -inset-px rounded-2xl bg-gradient-to-b from-accent-gold/25 via-accent-gold/8 to-transparent" />
+            )}
 
-              {/* Features */}
-              <ul className="space-y-2 sm:space-y-3 mb-6 sm:mb-8">
-                {pkg.features.map((feature, index) => (
-                  <li key={index} className="flex items-start gap-3">
-                    <Check className="w-4 h-4 sm:w-5 sm:h-5 text-gold mt-0.5 flex-shrink-0" />
-                    <span className="text-text-secondary text-sm">
-                      {feature}
-                    </span>
-                  </li>
-                ))}
-              </ul>
-
-              {/* Button */}
-              {showButton && (
-                <button
-                  onClick={() => onSelect?.(pkg.id)}
-                  className="w-full bg-gradient-to-r from-[#720921] via-[#8B5CF6] to-[#6366f1] hover:from-[#5a0719] hover:via-[#7C3AED] hover:to-[#5558e3] text-white font-bold py-3.5 px-6 rounded-full transition-all duration-300 hover:shadow-xl hover:shadow-[#720921]/40 hover:scale-[1.02] uppercase tracking-wide"
-                  style={{
-                    boxShadow:
-                      "0 8px 20px rgba(114, 9, 33, 0.3), 0 8px 20px rgba(99, 102, 241, 0.3)",
-                  }}
+            <div
+              className={`relative rounded-2xl bg-[#0a0a18] border h-full flex flex-col ${
+                pkg.popular
+                  ? "border-accent-gold/20"
+                  : "border-white/[0.06]"
+              }`}
+            >
+              {badge && (
+                <div
+                  className={`absolute -top-3 left-1/2 -translate-x-1/2 z-10 px-4 py-1 rounded-full text-[10px] font-bold tracking-[0.15em] uppercase whitespace-nowrap ${
+                    pkg.popular
+                      ? "bg-accent-gold text-deep-black"
+                      : "bg-white/[0.06] text-text-gray border border-white/[0.06]"
+                  }`}
                 >
-                  SELECT PACKAGE
-                </button>
+                  {badge}
+                </div>
               )}
+
+              <div className="p-6 sm:p-7 flex flex-col h-full">
+                <div className="mb-6">
+                  <h3 className="text-2xl font-light text-text-light mb-2">
+                    {pkg.name}
+                  </h3>
+                  <p className="text-text-gray/60 text-sm leading-relaxed">
+                    {pkg.description}
+                  </p>
+                </div>
+
+                <div className="mb-6">
+                  <div className="p-4 rounded-xl bg-white/[0.03] border border-white/[0.06]">
+                    <div className="flex items-center justify-between mb-1">
+                      <span className="text-text-gray text-xs uppercase tracking-wider">
+                        {pkg.duration}
+                      </span>
+                      <span className="text-2xl font-light text-accent-gold">
+                        ${pkg.price.toLocaleString()}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                <ul className="space-y-2.5 mb-6 flex-1">
+                  {pkg.features.map((feature, i) => (
+                    <li
+                      key={i}
+                      className="flex items-start gap-2.5 text-sm text-text-gray/70"
+                    >
+                      <Check
+                        size={14}
+                        className="text-accent-gold mt-0.5 flex-shrink-0"
+                      />
+                      {feature}
+                    </li>
+                  ))}
+                </ul>
+
+                {showButton && (
+                  <div className="mt-auto">
+                    <button
+                      onClick={() => onSelect?.(pkg.id)}
+                      className="w-full py-3.5 rounded-lg text-sm font-medium tracking-wider uppercase bg-gradient-to-r from-[#720921] to-[#4a0616] text-white hover:shadow-lg transition-all"
+                    >
+                      {ctaLabel}
+                    </button>
+                  </div>
+                )}
+              </div>
             </div>
-          </Card>
-        </motion.div>
-      ))}
-    </motion.div>
+          </motion.div>
+        );
+      })}
+    </div>
   );
 };
 
