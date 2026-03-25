@@ -39,12 +39,12 @@ export const BOOK_INFO = {
   isPresale: false,
   expectedLaunchDate: "2026-02-14T00:00:00-05:00", // Valentine's Day 2026
   description:
-    "You've been playing by rules that were designed to make you lose. While you're agonizing over a text, the person across from you is following a playbook you've never seen. This is that playbook — written by a clinically diagnosed sociopath who sees the game for what it actually is.",
+    "Learn dark psychology and the inner workings of manipulation from a clinically diagnosed sociopath. Never feel helpless or vulnerable again. This is the playbook you were never meant to see — the one being used on you right now.",
   features: [
-    "Stop being the one who cares more — in every relationship, forever",
+    "Understand how manipulation actually works — so nobody can use it on you",
+    "Learn dark psychology tactics used in dating, work, and everyday life",
     "Know exactly what someone wants before they say a word",
-    "Never sit by the phone wondering why they haven't texted back",
-    "Walk away so cleanly they spend months wondering what they lost",
+    "Never feel helpless or vulnerable in a relationship again",
     "Turn 'Why does this keep happening to me?' into 'I saw that coming'",
     "Build the kind of confidence that makes people obsess over you",
   ],

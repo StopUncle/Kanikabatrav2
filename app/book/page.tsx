@@ -5,7 +5,7 @@ import { SITE_CONFIG } from "@/lib/constants";
 export const metadata: Metadata = {
   title: "Sociopathic Dating Bible | Kanika Batra",
   description:
-    "The first dating guide written by a clinically diagnosed sociopath. 70,000 words of strategic dating frameworks, psychological tactics, and cold calculation that creates obsession.",
+    "Learn dark psychology and the inner workings of manipulation. Written by a clinically diagnosed sociopath. Never feel helpless or vulnerable again.",
   keywords:
     "sociopathic dating bible, dating guide, dark psychology dating, manipulation tactics, kanika batra book, dating strategy",
   alternates: {
@@ -14,7 +14,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Sociopathic Dating Bible - A Cure For Empathy",
     description:
-      "The dating guide empaths fear. Learn the cold, strategic methods that create irresistible attraction.",
+      "Learn dark psychology and the inner workings of manipulation. Never feel helpless or vulnerable again.",
     type: "website",
     images: ["/api/og?title=Sociopathic+Dating+Bible&subtitle=A+Cure+For+Empathy"],
   },
@@ -22,7 +22,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Sociopathic Dating Bible",
     description:
-      "The first dating guide written by a clinically diagnosed sociopath.",
+      "Dark psychology and manipulation — written by a clinically diagnosed sociopath. Never feel helpless again.",
     images: ["/api/og?title=Sociopathic+Dating+Bible&subtitle=A+Cure+For+Empathy"],
   },
 };
