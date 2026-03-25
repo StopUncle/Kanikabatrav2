@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
+import Image from "next/image";
 import Header from "@/components/Header";
 import PostCard from "@/components/blog/PostCard";
 import CategoryFilter from "@/components/blog/CategoryFilter";
@@ -29,11 +30,13 @@ function FeaturedPost({ post }: { post: PostMeta }) {
           <div className="grid md:grid-cols-2 gap-0">
             {post.frontmatter.coverImage && (
               <div className="relative h-64 md:h-96 overflow-hidden">
-                <div
-                  className="absolute inset-0 bg-cover bg-center transform group-hover:scale-105 transition-transform duration-700"
-                  style={{
-                    backgroundImage: `url(${post.frontmatter.coverImage})`,
-                  }}
+                <Image
+                  src={post.frontmatter.coverImage}
+                  alt={post.frontmatter.coverImageAlt || post.frontmatter.title}
+                  fill
+                  priority
+                  className="object-cover transform group-hover:scale-105 transition-transform duration-700"
+                  sizes="(max-width: 768px) 100vw, 50vw"
                 />
                 <div className="absolute inset-0 bg-gradient-to-r from-transparent to-deep-black/80 md:block hidden" />
                 <div className="absolute inset-0 bg-gradient-to-t from-deep-black to-transparent md:hidden" />
@@ -139,14 +142,14 @@ export default function BlogClient({
             className="text-center mb-16"
           >
             <p className="text-accent-gold uppercase tracking-[0.3em] text-sm mb-4">
-              Dating Strategy & Dark Psychology
+              Dark Psychology & Power Dynamics
             </p>
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-extralight uppercase tracking-[0.2em] text-white mb-6">
               The <span className="text-accent-gold">Dark</span> Blog
             </h1>
             <p className="text-text-gray text-lg md:text-xl max-w-2xl mx-auto leading-relaxed">
-              The psychology behind every relationship pattern you keep
-              repeating — and how to stop.
+              Forbidden insights into human psychology, manipulation, and
+              the art of strategic influence.
             </p>
           </motion.div>
 
@@ -248,8 +251,8 @@ export default function BlogClient({
               Get the psychology they don&apos;t teach you
             </h2>
             <p className="text-text-gray mb-8 max-w-lg mx-auto">
-              Dating strategy, red flags, and power dynamics. Delivered weekly.
-              No spam. Unsubscribe anytime.
+              Dark psychology, power dynamics, and strategic influence.
+              Delivered weekly. No spam. Unsubscribe anytime.
             </p>
             <NewsletterForm />
           </motion.section>

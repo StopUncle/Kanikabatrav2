@@ -165,8 +165,8 @@ export default function Home() {
                   From the <span className="text-accent-gold">Blog</span>
                 </h2>
                 <p className="text-text-gray max-w-lg mx-auto">
-                  Dating psychology, red flags, and the patterns you keep
-                  repeating.
+                  Dark psychology, power dynamics, and the strategic
+                  influence they won&apos;t teach you.
                 </p>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-10">

@@ -23,8 +23,8 @@ export async function GET() {
   const rss = `<?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Kanika Batra - Dating Psychology Blog</title>
-    <description>Dating psychology, relationship red flags, and strategic power dynamics by Kanika Batra.</description>
+    <title>Kanika Batra - Dark Psychology Blog</title>
+    <description>Dark psychology, manipulation tactics, and power dynamics by Kanika Batra.</description>
     <link>${siteUrl}/blog</link>
     <atom:link href="${siteUrl}/feed.xml" rel="self" type="application/rss+xml" />
     <language>en</language>
