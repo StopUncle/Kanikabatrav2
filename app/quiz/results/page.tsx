@@ -273,6 +273,52 @@ export default function QuizResultsPage() {
             )}
           </motion.div>
 
+          {/* Personalized Recommendation */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.55 }}
+            className="mt-12"
+          >
+            {["narcissistic", "borderline", "histrionic"].includes(
+              results.primaryType,
+            ) ? (
+              <div className="p-6 rounded-xl border border-accent-gold/20 bg-accent-gold/[0.03] text-center">
+                <p className="text-text-gray text-sm mb-2">
+                  Based on your results
+                </p>
+                <p className="text-white font-light text-lg mb-4">
+                  Your pattern suggests you may be attracting — or attracted to
+                  — high-risk personality types. A session could help you see
+                  what you keep missing.
+                </p>
+                <Link
+                  href="/coaching"
+                  className="inline-block px-8 py-3 text-sm font-medium uppercase tracking-wider text-accent-gold border border-accent-gold/30 rounded-full hover:bg-accent-gold/10 transition-all"
+                >
+                  Explore Coaching
+                </Link>
+              </div>
+            ) : (
+              <div className="p-6 rounded-xl border border-white/[0.06] bg-white/[0.02] text-center">
+                <p className="text-text-gray text-sm mb-2">
+                  Based on your results
+                </p>
+                <p className="text-white font-light text-lg mb-4">
+                  Your empathy levels make you a target for manipulation. The
+                  Sociopathic Dating Bible teaches you the playbook they use — so
+                  you can see it coming.
+                </p>
+                <Link
+                  href="/book"
+                  className="inline-block px-8 py-3 text-sm font-medium uppercase tracking-wider text-accent-gold border border-accent-gold/30 rounded-full hover:bg-accent-gold/10 transition-all"
+                >
+                  Get the Book
+                </Link>
+              </div>
+            )}
+          </motion.div>
+
           {/* Free Preview Section */}
           <motion.div
             initial={{ opacity: 0 }}

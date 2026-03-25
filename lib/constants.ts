@@ -58,15 +58,15 @@ export const BOOK_INFO = {
 
 export const COACHING_PACKAGES = [
   {
-    id: "the-read",
-    name: "The Read",
+    id: "one-situation",
+    name: "One Situation",
     price: 247,
     bundlePrice: 247,
     duration: "30 minutes",
     bundleDuration: "30 minutes",
     sessions: 1,
     bundleSessions: 1,
-    badge: "Start Here",
+    badge: null,
     description:
       "You bring me one situation — a person, a relationship, a dynamic at work. I tell you exactly what's happening and what I'd do.",
     longDescription:
@@ -74,17 +74,17 @@ export const COACHING_PACKAGES = [
     features: [
       "30-minute 1:1 video call",
       "Bring one situation, person, or dynamic",
-      "Direct read — no softening, no filtering",
-      "Walk away with a concrete next move",
+      "No softening, no filtering — just what I see",
+      "You leave with a concrete next move",
     ],
     bundleFeatures: [],
     popular: false,
     hasBundle: false,
-    ctaLabel: "Book The Read",
+    ctaLabel: "Book a Call",
   },
   {
-    id: "pattern-reset",
-    name: "Pattern Reset",
+    id: "the-pattern",
+    name: "The Pattern",
     price: 897,
     bundlePrice: 2297,
     duration: "60 minutes",
@@ -93,7 +93,7 @@ export const COACHING_PACKAGES = [
     bundleSessions: 3,
     badge: "Most Popular",
     description:
-      "For when it's not just one situation — it's a pattern. We find the root, map it, and break it.",
+      "For when it's not just one situation — it's a pattern. We find it, map it, and break it.",
     longDescription:
       "You keep ending up in the same place with different people. That's not bad luck — that's a pattern. We find it, map it, and break it so you stop repeating the cycle.",
     features: [
@@ -110,32 +110,32 @@ export const COACHING_PACKAGES = [
     ],
     popular: true,
     hasBundle: true,
-    ctaLabel: "Book Pattern Reset",
+    ctaLabel: "Book The Pattern",
   },
   {
-    id: "private-retainer",
-    name: "Private Retainer",
+    id: "on-retainer",
+    name: "On Retainer",
     price: 4997,
     bundlePrice: 4997,
     duration: "3 × 90 minutes + async access",
     bundleDuration: "3 × 90 minutes + async access",
     sessions: 3,
     bundleSessions: 3,
-    badge: "Limited Availability",
+    badge: "Limited",
     description:
-      "Before the date. Before the negotiation. Before the difficult conversation. You send me the situation, I send you the read — in real time.",
+      "Before the date. Before the negotiation. Before the difficult conversation. You send me the situation, I tell you what to do — in real time.",
     longDescription:
-      "Three 90-minute sessions plus 30 days of direct voice note access between sessions. When you're about to walk into something — a date, a meeting, a confrontation — you send me the context, I send you the read. In real time.",
+      "Three 90-minute sessions plus 30 days of direct voice note access. You're about to walk into something — a date, a meeting, a confrontation — you send me the context, I send you the move. In real time.",
     features: [
       "Three 90-minute intensive sessions",
       "30 days of direct voice note access between sessions",
-      "Real-time reads before critical moments",
-      "The closest thing to having a sociopath on retainer",
+      "Real-time guidance before critical moments",
+      "A sociopath on retainer",
     ],
     bundleFeatures: [],
     popular: false,
     hasBundle: false,
-    ctaLabel: "Apply for Retainer",
+    ctaLabel: "Apply",
   },
 ];
 

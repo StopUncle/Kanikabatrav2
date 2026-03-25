@@ -1,10 +1,21 @@
 import { MetadataRoute } from "next";
-import { getAllPosts } from "@/lib/mdx";
+import { getAllPosts, getAllCategories, getAllTags } from "@/lib/mdx";
+import { getAllPillars } from "@/lib/pillars";
 
 const BASE_URL = "https://kanikarose.com";
 
+function slugify(text: string): string {
+  return text
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/(^-|-$)/g, "");
+}
+
 export default function sitemap(): MetadataRoute.Sitemap {
   const posts = getAllPosts();
+  const pillars = getAllPillars();
+  const categories = getAllCategories();
+  const tags = getAllTags();
 
   const staticPages: MetadataRoute.Sitemap = [
     {
@@ -76,5 +87,26 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.85,
   }));
 
-  return [...staticPages, ...blogPosts];
+  const pillarPages: MetadataRoute.Sitemap = pillars.map((p) => ({
+    url: `${BASE_URL}/guide/${p.slug}`,
+    lastModified: new Date(p.frontmatter.updatedAt || p.frontmatter.publishedAt),
+    changeFrequency: "monthly" as const,
+    priority: 0.95,
+  }));
+
+  const categoryPages: MetadataRoute.Sitemap = categories.map((cat) => ({
+    url: `${BASE_URL}/blog/category/${slugify(cat)}`,
+    lastModified: new Date(),
+    changeFrequency: "weekly" as const,
+    priority: 0.7,
+  }));
+
+  const tagPages: MetadataRoute.Sitemap = tags.map((tag) => ({
+    url: `${BASE_URL}/blog/tag/${slugify(tag)}`,
+    lastModified: new Date(),
+    changeFrequency: "weekly" as const,
+    priority: 0.6,
+  }));
+
+  return [...staticPages, ...blogPosts, ...pillarPages, ...categoryPages, ...tagPages];
 }

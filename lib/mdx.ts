@@ -13,6 +13,7 @@ export interface PostFrontmatter {
   category: string;
   tags: string[];
   coverImage?: string;
+  coverImageAlt?: string;
   author?: string;
   readingTime?: string;
   isPillar?: boolean;
@@ -63,6 +64,7 @@ export function getPostBySlug(slug: string): Post | null {
     category: data.category || "Dark Psychology",
     tags: data.tags || [],
     coverImage: data.coverImage || DEFAULT_COVER_IMAGE,
+    coverImageAlt: data.coverImageAlt,
     author: data.author || DEFAULT_AUTHOR,
     readingTime: data.readingTime,
     isPillar: data.isPillar || false,
@@ -125,4 +127,21 @@ export function getAllTags(): string[] {
   const posts = getAllPosts();
   const tags = new Set(posts.flatMap((post) => post.frontmatter.tags));
   return Array.from(tags);
+}
+
+export function slugify(text: string): string {
+  return text
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/(^-|-$)/g, "");
+}
+
+export function getCategoryBySlug(slug: string): string | null {
+  const categories = getAllCategories();
+  return categories.find((cat) => slugify(cat) === slug) || null;
+}
+
+export function getTagBySlug(slug: string): string | null {
+  const tags = getAllTags();
+  return tags.find((tag) => slugify(tag) === slug) || null;
 }

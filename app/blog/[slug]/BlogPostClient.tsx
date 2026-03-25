@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import Link from "next/link";
+import Image from "next/image";
 import Header from "@/components/Header";
 import AuthorBio from "@/components/AuthorBio";
 import Disclaimer from "@/components/Disclaimer";
@@ -10,6 +11,7 @@ import RelatedPosts, {
   PostNavigation,
 } from "@/components/RelatedPosts";
 import BookPromo from "@/components/blog/BookPromo";
+import InlineCoachingCTA from "@/components/blog/InlineCoachingCTA";
 import TableOfContents from "@/components/blog/TableOfContents";
 import SocialShareButtons from "@/components/blog/SocialShareButtons";
 import NewsletterForm from "@/components/NewsletterForm";
@@ -94,7 +96,7 @@ export default function BlogPostClient({
                 { label: "Blog", href: "/blog" },
                 {
                   label: post.frontmatter.category,
-                  href: `/blog?category=${encodeURIComponent(post.frontmatter.category)}`,
+                  href: `/blog/category/${post.frontmatter.category.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "")}`,
                 },
                 { label: post.frontmatter.title },
               ]}
@@ -148,12 +150,14 @@ export default function BlogPostClient({
 
             {post.frontmatter.coverImage && (
               <figure className="mb-10 -mx-6 lg:-mx-16">
-                <div className="relative rounded-2xl overflow-hidden">
-                  <div
-                    className="w-full h-56 md:h-72 lg:h-96 bg-cover bg-center"
-                    style={{
-                      backgroundImage: `url(${post.frontmatter.coverImage})`,
-                    }}
+                <div className="relative rounded-2xl overflow-hidden h-56 md:h-72 lg:h-96">
+                  <Image
+                    src={post.frontmatter.coverImage}
+                    alt={post.frontmatter.coverImageAlt || post.frontmatter.title}
+                    fill
+                    priority
+                    className="object-cover"
+                    sizes="(max-width: 1024px) 100vw, 960px"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-deep-black/30 to-transparent" />
                 </div>
@@ -171,7 +175,7 @@ export default function BlogPostClient({
                     {post.frontmatter.tags.map((tag) => (
                       <Link
                         key={tag}
-                        href={`/blog?tag=${encodeURIComponent(tag)}`}
+                        href={`/blog/tag/${tag.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "")}`}
                         className="px-4 py-2 text-sm text-text-gray bg-white/5 rounded-full border border-white/10 hover:border-accent-gold/50 hover:text-accent-gold transition-all duration-300"
                       >
                         #{tag}
@@ -198,7 +202,13 @@ export default function BlogPostClient({
 
                     <Disclaimer variant="compact" />
 
-                    <BookPromo variant="full" />
+                    {["Dark Psychology", "Psychology Education"].includes(
+                      post.frontmatter.category,
+                    ) ? (
+                      <InlineCoachingCTA />
+                    ) : (
+                      <BookPromo variant="full" />
+                    )}
 
                     <PostNavigation
                       previousPost={previousPost}

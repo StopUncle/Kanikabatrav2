@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { motion } from "framer-motion";
 import type { PostMeta } from "@/lib/mdx";
 
@@ -21,11 +22,12 @@ export default function PostCard({ post, index }: PostCardProps) {
         <div className="relative h-full overflow-hidden rounded-2xl bg-gradient-to-br from-deep-black/80 to-deep-navy/40 border border-white/10 hover:border-accent-gold/30 transition-all duration-500 flex flex-col">
           {post.frontmatter.coverImage && (
             <div className="relative h-52 overflow-hidden flex-shrink-0">
-              <div
-                className="absolute inset-0 bg-cover bg-center transform group-hover:scale-105 transition-transform duration-700"
-                style={{
-                  backgroundImage: `url(${post.frontmatter.coverImage})`,
-                }}
+              <Image
+                src={post.frontmatter.coverImage}
+                alt={post.frontmatter.coverImageAlt || post.frontmatter.title}
+                fill
+                className="object-cover transform group-hover:scale-105 transition-transform duration-700"
+                sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-deep-black via-deep-black/20 to-transparent" />
             </div>

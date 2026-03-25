@@ -422,13 +422,17 @@ export default function BookPage() {
               ))}
             </div>
 
-            <div className="flex items-baseline justify-between mb-8 pt-4 border-t border-white/10">
-              <div>
-                <span className="text-text-gray">Total value: </span>
-                <span className="text-text-gray line-through">${totalValue.toFixed(2)}</span>
+            <div className="p-6 rounded-xl bg-accent-gold/[0.04] border border-accent-gold/20 mb-8">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-text-gray text-sm">Total value</span>
+                <span className="text-text-gray line-through text-lg">${totalValue.toFixed(2)}</span>
               </div>
-              <div>
+              <div className="flex items-center justify-between">
+                <span className="text-accent-gold text-sm font-medium">You pay today</span>
                 <span className="text-4xl font-light gradient-text-gold">${BOOK_INFO.price}</span>
+              </div>
+              <div className="text-right mt-1">
+                <span className="text-accent-gold/80 text-sm">You save ${(totalValue - BOOK_INFO.price).toFixed(0)}</span>
               </div>
             </div>
 
@@ -471,20 +475,56 @@ export default function BookPage() {
                   </button>
                 )}
 
-                <div className="flex items-center justify-center gap-2 text-text-gray text-sm">
-                  <ShieldCheck size={16} className="text-accent-gold" />
-                  <span>Read 3 chapters. Not for you? Full refund, no questions.</span>
+                <div className="flex items-center gap-3 p-4 rounded-xl bg-white/[0.03] border border-white/[0.06]">
+                  <ShieldCheck size={24} className="text-accent-gold shrink-0" />
+                  <div>
+                    <p className="text-text-light text-sm font-medium">Risk-free guarantee</p>
+                    <p className="text-text-gray text-xs">Read 3 chapters. Not for you? Full refund, no questions asked.</p>
+                  </div>
                 </div>
 
-                <div className="text-center pt-2">
-                  <a
-                    href={BOOK_INFO.kdpLink}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-text-gray hover:text-text-light text-sm transition-colors"
-                  >
-                    Prefer Kindle? Get it on Amazon for ${BOOK_INFO.kdpPrice} &rarr;
-                  </a>
+                {/* Premium vs Kindle */}
+                <div className="rounded-xl border border-white/[0.06] overflow-hidden">
+                  <div className="grid grid-cols-2 text-center">
+                    <div className="p-4 bg-accent-gold/[0.05] border-r border-white/[0.06]">
+                      <p className="text-accent-gold text-xs uppercase tracking-wider mb-1">Premium Edition</p>
+                      <p className="text-2xl font-light text-white">${BOOK_INFO.price}</p>
+                      <p className="text-accent-gold/60 text-xs mt-1">Direct download</p>
+                    </div>
+                    <div className="p-4">
+                      <p className="text-text-gray text-xs uppercase tracking-wider mb-1">Kindle Edition</p>
+                      <p className="text-2xl font-light text-text-gray">${BOOK_INFO.kdpPrice}</p>
+                      <p className="text-text-gray/40 text-xs mt-1">Amazon</p>
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-2 text-xs border-t border-white/[0.06]">
+                    {[
+                      ["15 chapters", "15 chapters"],
+                      ["Bonus: Understanding Narcissists", "—"],
+                      ["Bonus: The Avoidant Playbook", "—"],
+                      ["Exclusive uncensored addendum", "—"],
+                      ["Instant download", "Kindle delivery"],
+                    ].map(([premium, kindle], i) => (
+                      <div key={i} className="contents">
+                        <div className={`px-4 py-2.5 text-text-light border-r border-white/[0.06] ${i > 0 ? "border-t border-white/[0.06]" : ""}`}>
+                          {premium}
+                        </div>
+                        <div className={`px-4 py-2.5 text-text-gray/50 ${i > 0 ? "border-t border-white/[0.06]" : ""}`}>
+                          {kindle}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                  <div className="border-t border-white/[0.06] p-3 text-center">
+                    <a
+                      href={BOOK_INFO.kdpLink}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-text-gray hover:text-text-light text-xs transition-colors"
+                    >
+                      Prefer Kindle? Get it on Amazon &rarr;
+                    </a>
+                  </div>
                 </div>
               </div>
             )}

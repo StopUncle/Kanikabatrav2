@@ -7,12 +7,51 @@ import BackgroundEffects from "@/components/BackgroundEffects";
 import Header from "@/components/Header";
 import PayPalButton from "@/components/PayPalButton";
 import { COACHING_PACKAGES } from "@/lib/constants";
-import { Check, ArrowRight, Play } from "lucide-react";
+import { Check, ArrowRight, Play, ChevronDown } from "lucide-react";
+
+const COACHING_FAQ = [
+  {
+    question: "Is this therapy?",
+    answer:
+      "No. I'm not a licensed therapist and I don't treat mental health conditions. This is strategic coaching — I tell you what I see in a situation, and I give you a move. If you need clinical support, I'll tell you that directly.",
+  },
+  {
+    question: "What if I don't know what to talk about?",
+    answer:
+      "You do. The situation that made you look at this page — that's what we talk about. A person, a pattern, a decision you can't make. Bring whatever's keeping you up at night.",
+  },
+  {
+    question: "How do I prepare for a session?",
+    answer:
+      "Think about the one situation you most want clarity on. The more specific you are, the more useful I can be. Screenshots, context, backstory — bring it all.",
+  },
+  {
+    question: "What's your refund policy?",
+    answer:
+      "If you book and genuinely can't make it, I'll reschedule once. No refunds after the session happens — you're paying for my time and attention, and you'll get both.",
+  },
+  {
+    question: "Can I upgrade from One Situation to The Pattern later?",
+    answer:
+      "Yes. If we do a single session and you want to go deeper, I'll credit what you paid toward The Pattern. Just let me know.",
+  },
+  {
+    question: "How quickly can I book?",
+    answer:
+      "Depends on the month. Sometimes I have spots within the week, sometimes it's a 2-3 week wait. Retainer clients get priority scheduling.",
+  },
+  {
+    question: "Is everything confidential?",
+    answer:
+      "Completely. What you tell me stays between us. I don't share details, names, or situations — not on social media, not with anyone.",
+  },
+];
 
 export default function CoachingPage() {
   const [expandedTier, setExpandedTier] = useState<string | null>(null);
   const [showPayPal, setShowPayPal] = useState<string | null>(null);
   const [videoPlaying, setVideoPlaying] = useState(false);
+  const [openFaq, setOpenFaq] = useState<number | null>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const router = useRouter();
 
@@ -58,15 +97,14 @@ export default function CoachingPage() {
           >
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-light leading-[1.1] mb-6">
               <span className="gradient-text">
-                See What Everyone Else Misses
+                I Tell You What I See
               </span>
             </h1>
             <p className="text-text-gray text-lg sm:text-xl max-w-2xl mx-auto">
-              You&apos;re not broken. You&apos;re just not seeing clearly yet.
+              You&apos;re not broken. You&apos;re just not seeing it yet.
             </p>
             <p className="text-accent-gold/60 text-sm mt-4 tracking-wider">
-              1:1 coaching with a diagnosed sociopath &middot; Limited spots
-              each month
+              1:1 coaching &middot; Limited spots each month
             </p>
           </motion.div>
 
@@ -175,12 +213,12 @@ export default function CoachingPage() {
               viewport={{ once: true }}
               className="text-center text-3xl sm:text-4xl font-light mb-14"
             >
-              <span className="gradient-text-gold">Choose Your Level</span>
+              <span className="gradient-text-gold">How It Works</span>
             </motion.h2>
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-5 sm:gap-6">
               {COACHING_PACKAGES.map((pkg, index) => {
-                const isRetainer = pkg.id === "private-retainer";
+                const isRetainer = pkg.id === "on-retainer";
                 const hasBundle = pkg.bundlePrice !== pkg.price;
                 const isExpanded = expandedTier === pkg.id;
                 const showingPayPal = showPayPal === pkg.id;
@@ -419,6 +457,47 @@ export default function CoachingPage() {
             </div>
           </div>
 
+          {/* ── COMPARISON TABLE ── */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            viewport={{ once: true }}
+            className="mb-20 sm:mb-28 max-w-3xl mx-auto"
+          >
+            <h2 className="text-3xl sm:text-4xl font-light text-center mb-10">
+              <span className="gradient-text-gold">Compare</span>
+            </h2>
+
+            <div className="rounded-xl border border-white/[0.06] overflow-hidden text-sm">
+              <div className="grid grid-cols-4 bg-white/[0.02]">
+                <div className="p-4" />
+                <div className="p-4 text-center text-text-light font-light">One Situation</div>
+                <div className="p-4 text-center text-accent-gold font-light border-x border-white/[0.06]">The Pattern</div>
+                <div className="p-4 text-center text-text-light font-light">On Retainer</div>
+              </div>
+              {[
+                ["Duration", "30 min", "60 min", "3 × 90 min"],
+                ["Sessions", "1", "1 or 3", "3"],
+                ["Pattern analysis", "—", "Deep dive", "Ongoing"],
+                ["Async access", "—", "—", "30 days"],
+                ["Real-time guidance", "—", "—", "Voice notes"],
+                ["Price", "$247", "From $897", "$4,997"],
+              ].map(([label, t1, t2, t3], i) => (
+                <div key={i} className="grid grid-cols-4 border-t border-white/[0.06]">
+                  <div className="p-3.5 text-text-gray/60">{label}</div>
+                  <div className="p-3.5 text-center text-text-gray">{t1}</div>
+                  <div className="p-3.5 text-center text-text-light border-x border-white/[0.06] bg-accent-gold/[0.02]">{t2}</div>
+                  <div className="p-3.5 text-center text-text-gray">{t3}</div>
+                </div>
+              ))}
+            </div>
+
+            <p className="text-center text-text-gray/40 text-xs mt-6 tracking-wider">
+              Limited to 8 clients per month
+            </p>
+          </motion.div>
+
           {/* ── THE PROCESS ── */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -470,6 +549,59 @@ export default function CoachingPage() {
             </div>
           </motion.div>
 
+          {/* ── FAQ ── */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            viewport={{ once: true }}
+            className="mb-20 sm:mb-28 max-w-2xl mx-auto"
+          >
+            <h2 className="text-3xl sm:text-4xl font-light text-center mb-14">
+              <span className="gradient-text-gold">Common Questions</span>
+            </h2>
+
+            <div className="space-y-3">
+              {COACHING_FAQ.map((item, index) => (
+                <div
+                  key={index}
+                  className="border border-white/[0.06] rounded-xl overflow-hidden"
+                >
+                  <button
+                    onClick={() =>
+                      setOpenFaq(openFaq === index ? null : index)
+                    }
+                    className="w-full flex items-center justify-between p-5 text-left hover:bg-white/[0.02] transition-colors"
+                  >
+                    <span className="text-text-light text-sm font-light pr-4">
+                      {item.question}
+                    </span>
+                    <ChevronDown
+                      size={16}
+                      className={`text-accent-gold/60 flex-shrink-0 transition-transform duration-200 ${
+                        openFaq === index ? "rotate-180" : ""
+                      }`}
+                    />
+                  </button>
+                  <AnimatePresence>
+                    {openFaq === index && (
+                      <motion.div
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: "auto" }}
+                        exit={{ opacity: 0, height: 0 }}
+                        transition={{ duration: 0.2 }}
+                      >
+                        <p className="px-5 pb-5 text-text-gray/60 text-sm leading-relaxed">
+                          {item.answer}
+                        </p>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
+              ))}
+            </div>
+          </motion.div>
+
           {/* ── SOCIAL PROOF ── */}
           <motion.div
             initial={{ opacity: 0 }}
@@ -493,7 +625,7 @@ export default function CoachingPage() {
             className="text-center"
           >
             <h2 className="text-3xl sm:text-4xl font-light mb-6">
-              <span className="gradient-text-gold">Ready to see clearly?</span>
+              <span className="gradient-text-gold">Book a session</span>
             </h2>
             <div className="flex flex-col sm:flex-row gap-3 justify-center mb-8">
               {COACHING_PACKAGES.map((pkg) => (
