@@ -147,22 +147,6 @@ export default function BlogPostClient({
               </div>
             </header>
 
-            {post.frontmatter.coverImage && (
-              <figure className="mb-10 -mx-6 lg:-mx-16">
-                <div className="relative rounded-2xl overflow-hidden">
-                  <div
-                    className="w-full h-56 md:h-72 lg:h-96 bg-cover bg-center"
-                    style={{
-                      backgroundImage: `url(${post.frontmatter.coverImage})`,
-                    }}
-                    role="img"
-                    aria-label={post.frontmatter.coverImageAlt || post.frontmatter.title}
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-deep-black/30 to-transparent" />
-                </div>
-              </figure>
-            )}
-
             <div className="lg:grid lg:grid-cols-[200px_1fr] lg:gap-12 max-w-none">
               <TableOfContents content={rawContent} />
 
