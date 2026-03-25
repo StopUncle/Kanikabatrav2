@@ -1,13 +1,13 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useRouter } from "next/navigation";
 import BackgroundEffects from "@/components/BackgroundEffects";
 import Header from "@/components/Header";
 import PayPalButton from "@/components/PayPalButton";
 import { COACHING_PACKAGES } from "@/lib/constants";
-import { Check, ArrowRight, Play, ChevronDown } from "lucide-react";
+import { Check, ArrowRight, ChevronDown } from "lucide-react";
 
 const COACHING_FAQ = [
   {
@@ -50,9 +50,7 @@ const COACHING_FAQ = [
 export default function CoachingPage() {
   const [expandedTier, setExpandedTier] = useState<string | null>(null);
   const [showPayPal, setShowPayPal] = useState<string | null>(null);
-  const [videoPlaying, setVideoPlaying] = useState(false);
   const [openFaq, setOpenFaq] = useState<number | null>(null);
-  const videoRef = useRef<HTMLVideoElement>(null);
   const router = useRouter();
 
   const handlePaymentSuccess = (
@@ -73,13 +71,6 @@ export default function CoachingPage() {
   const handlePaymentError = (error: string) => {
     console.error("Payment error:", error);
     alert("Payment failed. Please try again or contact support.");
-  };
-
-  const playVideo = () => {
-    if (videoRef.current) {
-      videoRef.current.play();
-      setVideoPlaying(true);
-    }
   };
 
   return (
@@ -105,52 +96,6 @@ export default function CoachingPage() {
             </p>
             <p className="text-accent-gold/60 text-sm mt-4 tracking-wider">
               1:1 coaching &middot; Limited spots each month
-            </p>
-          </motion.div>
-
-          {/* ── VIDEO ── */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.15 }}
-            className="mb-20 sm:mb-28"
-          >
-            <div className="relative max-w-[720px] mx-auto rounded-xl overflow-hidden border border-accent-gold/10 bg-[#0a0a18] aspect-video">
-              <video
-                ref={videoRef}
-                poster="/images/video-poster-coaching.webp"
-                preload="metadata"
-                playsInline
-                className="w-full h-full object-cover"
-                onEnded={() => setVideoPlaying(false)}
-              >
-                <source src="/videos/coaching-intro.mp4" type="video/mp4" />
-                <track
-                  kind="captions"
-                  src="/videos/coaching-captions.vtt"
-                  srcLang="en"
-                  label="English"
-                />
-              </video>
-
-              {!videoPlaying && (
-                <button
-                  onClick={playVideo}
-                  className="absolute inset-0 flex items-center justify-center bg-black/40 group cursor-pointer"
-                  aria-label="Play coaching video"
-                >
-                  <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-accent-gold/90 flex items-center justify-center group-hover:scale-110 transition-transform shadow-lg shadow-accent-gold/20">
-                    <Play
-                      className="text-deep-black ml-1"
-                      size={28}
-                      fill="currentColor"
-                    />
-                  </div>
-                </button>
-              )}
-            </div>
-            <p className="text-center text-text-gray/40 text-xs mt-4 tracking-wider">
-              Watch: What a session actually looks like
             </p>
           </motion.div>
 
