@@ -80,6 +80,7 @@ model CoachingSession {
   meetingUrl   String?
   notes        String?          // Coach notes
   userNotes    String?          @db.Text // User's personal notes
+  questionnaireData Json?       // Stores questionnaire responses as DB backup
   createdAt    DateTime         @default(now())
   updatedAt    DateTime         @updatedAt
   purchase     Purchase         @relation(fields: [purchaseId], references: [id], onDelete: Cascade)

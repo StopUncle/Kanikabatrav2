@@ -585,6 +585,7 @@ export const sendCoachingQuestionnaire = async (data: {
   customerName: string;
   customerEmail: string;
   orderId: string;
+  sendTo?: string;
   questionnaire: {
     preferredName: string;
     age: string;
@@ -609,7 +610,7 @@ export const sendCoachingQuestionnaire = async (data: {
     additionalInfo?: string;
   };
 }): Promise<boolean> => {
-  const adminEmail = process.env.ADMIN_EMAIL || "Kanika@kanikarose.com";
+  const adminEmail = data.sendTo || process.env.ADMIN_EMAIL || "Kanika@kanikarose.com";
 
   const html = `
     <div style="font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto;">

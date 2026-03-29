@@ -53,22 +53,43 @@ export async function POST(request: NextRequest) {
     const payerName =
       `${orderDetails.payer?.name?.given_name || ""} ${orderDetails.payer?.name?.surname || ""}`.trim();
 
-    // Create purchase record
-    const purchase = await prisma.purchase.create({
-      data: {
-        paypalOrderId: orderId,
-        type: type === "coaching" ? "COACHING" : "BOOK",
-        amount,
-        status: "COMPLETED",
-        customerEmail: payerEmail,
-        customerName: payerName,
-        userId: userId,
-        metadata: {
-          packageId: packageId,
-          timestamp: new Date().toISOString(),
-        },
-      },
+    // Find existing purchase (capture-order route may have already created it)
+    let purchase = await prisma.purchase.findFirst({
+      where: { paypalOrderId: orderId },
     });
+
+    if (purchase) {
+      // Update existing purchase with correct type and metadata
+      purchase = await prisma.purchase.update({
+        where: { id: purchase.id },
+        data: {
+          type: type === "coaching" ? "COACHING" : purchase.type,
+          userId: userId || purchase.userId,
+          metadata: {
+            ...((purchase.metadata as Record<string, unknown>) || {}),
+            packageId: packageId,
+            updatedAt: new Date().toISOString(),
+          },
+        },
+      });
+    } else {
+      // Create new purchase record
+      purchase = await prisma.purchase.create({
+        data: {
+          paypalOrderId: orderId,
+          type: type === "coaching" ? "COACHING" : "BOOK",
+          amount,
+          status: "COMPLETED",
+          customerEmail: payerEmail,
+          customerName: payerName,
+          userId: userId,
+          metadata: {
+            packageId: packageId,
+            timestamp: new Date().toISOString(),
+          },
+        },
+      });
+    }
 
     // Handle book purchase
     if (type === "book") {
@@ -126,16 +147,22 @@ export async function POST(request: NextRequest) {
         );
       }
 
-      // Create coaching session record
-      const session = await prisma.coachingSession.create({
-        data: {
-          purchaseId: purchase.id,
-          packageName: coachingPackage.name,
-          sessionCount: coachingPackage.sessions || 1,
-          status: "PENDING_SCHEDULING",
-          userId: userId,
-        },
+      // Find or create coaching session record (avoid duplicates on retry)
+      let session = await prisma.coachingSession.findFirst({
+        where: { purchaseId: purchase.id },
       });
+
+      if (!session) {
+        session = await prisma.coachingSession.create({
+          data: {
+            purchaseId: purchase.id,
+            packageName: coachingPackage.name,
+            sessionCount: coachingPackage.sessions || 1,
+            status: "PENDING_SCHEDULING",
+            userId: userId,
+          },
+        });
+      }
 
       // Generate scheduling URL
       if (!process.env.JWT_SECRET) {

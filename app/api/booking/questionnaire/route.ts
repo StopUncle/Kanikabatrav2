@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { sendCoachingQuestionnaire } from "@/lib/email";
+import { prisma } from "@/lib/prisma";
 
 interface QuestionnaireData {
   // Basic Information
@@ -110,6 +111,26 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Store questionnaire data in DB as backup (so it's never lost even if email fails)
+    try {
+      const purchase = await prisma.purchase.findFirst({
+        where: { paypalOrderId: body.orderId },
+        include: { sessions: true },
+      });
+
+      if (purchase?.sessions?.length) {
+        await prisma.coachingSession.update({
+          where: { id: purchase.sessions[0].id },
+          data: { questionnaireData: JSON.parse(JSON.stringify(questionnaire)) },
+        });
+        console.log("Questionnaire data saved to DB for session:", purchase.sessions[0].id);
+      } else {
+        console.warn("No coaching session found for order:", body.orderId);
+      }
+    } catch (dbError) {
+      console.error("Failed to save questionnaire to DB (email will still be attempted):", dbError);
+    }
+
     // Send email notification to Kanika
     const emailSent = await sendCoachingQuestionnaire({
       packageName: body.packageName,
@@ -120,8 +141,7 @@ export async function POST(request: NextRequest) {
     });
 
     if (!emailSent) {
-      console.error("Failed to send questionnaire email");
-      // Don't fail the request, just log it
+      console.error("Failed to send questionnaire email for order:", body.orderId);
     }
 
     // Log the submission for tracking
