@@ -191,7 +191,65 @@ export default function TermsPage() {
             >
               <div className="bg-deep-black/30 backdrop-blur-sm border border-accent-gold/10 rounded-lg p-8">
                 <h2 className="text-2xl font-light gradient-text-gold mb-6">
-                  5. Disclaimers and Limitations
+                  5. Coaching Session Conduct
+                </h2>
+                <div className="space-y-6">
+                  <div>
+                    <h3 className="text-lg font-light text-accent-gold mb-3">
+                      Professional Boundaries
+                    </h3>
+                    <p className="text-text-gray leading-relaxed">
+                      All coaching sessions are strictly professional in nature.
+                      By booking a session, you agree to maintain appropriate
+                      conduct at all times. Coaching is a professional service
+                      focused on personal development, strategy, and mindset
+                      transformation.
+                    </p>
+                  </div>
+
+                  <div>
+                    <h3 className="text-lg font-light text-accent-gold mb-3">
+                      Zero-Tolerance Policy
+                    </h3>
+                    <p className="text-text-gray leading-relaxed mb-4">
+                      Any behaviour that is sexual in nature, sexually
+                      suggestive, or that violates professional boundaries will
+                      result in the immediate termination of the session. This
+                      includes, but is not limited to:
+                    </p>
+                    <ul className="list-disc list-inside space-y-2 text-text-gray ml-4">
+                      <li>Sexual comments, advances, or innuendo</li>
+                      <li>Requests for personal or romantic interaction</li>
+                      <li>Sharing unsolicited explicit or inappropriate content</li>
+                      <li>Any form of harassment or intimidation</li>
+                      <li>Persistent boundary-testing or inappropriate familiarity</li>
+                    </ul>
+                  </div>
+
+                  <div>
+                    <h3 className="text-lg font-light text-accent-gold mb-3">
+                      Consequences
+                    </h3>
+                    <p className="text-text-gray leading-relaxed">
+                      If a session is terminated due to a violation of this
+                      policy, no refund will be issued — no exceptions. You may
+                      also be permanently banned from all future services. We
+                      reserve the right to report any illegal conduct to the
+                      relevant authorities.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.6 }}
+            >
+              <div className="bg-deep-black/30 backdrop-blur-sm border border-accent-gold/10 rounded-lg p-8">
+                <h2 className="text-2xl font-light gradient-text-gold mb-6">
+                  6. Disclaimers and Limitations
                 </h2>
                 <div className="space-y-6">
                   <div>
@@ -235,11 +293,11 @@ export default function TermsPage() {
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.6 }}
+              transition={{ duration: 0.6, delay: 0.7 }}
             >
               <div className="bg-deep-black/30 backdrop-blur-sm border border-accent-gold/10 rounded-lg p-8">
                 <h2 className="text-2xl font-light gradient-text-gold mb-6">
-                  6. Privacy and Confidentiality
+                  7. Privacy and Confidentiality
                 </h2>
                 <div className="space-y-4">
                   <p className="text-text-gray leading-relaxed">
@@ -263,11 +321,11 @@ export default function TermsPage() {
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.7 }}
+              transition={{ duration: 0.6, delay: 0.8 }}
             >
               <div className="bg-deep-black/30 backdrop-blur-sm border border-accent-gold/10 rounded-lg p-8">
                 <h2 className="text-2xl font-light gradient-text-gold mb-6">
-                  7. Modifications and Contact
+                  8. Modifications and Contact
                 </h2>
                 <div className="space-y-6">
                   <div>
