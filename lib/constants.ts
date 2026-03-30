@@ -62,17 +62,17 @@ export const COACHING_PACKAGES = [
     name: "Single Session",
     price: 297,
     bundlePrice: 297,
-    duration: "60 minutes",
-    bundleDuration: "60 minutes",
+    duration: "40 minutes",
+    bundleDuration: "40 minutes",
     sessions: 1,
     bundleSessions: 1,
     badge: null,
     description:
-      "One 60-minute call. You bring the problem, you leave with clarity. Includes the Sociopathic Dating Bible.",
+      "One 40-minute call. You bring the problem, you leave with clarity. Includes the Sociopathic Dating Bible.",
     longDescription:
       "One call. You bring what's keeping you up at night — a relationship, a decision, a pattern you can't break. I tell you what I see and what I'd do. No fluff. You leave with clarity.",
     features: [
-      "60-minute 1:1 video call",
+      "40-minute 1:1 video call",
       "Bring any situation — personal, professional, or both",
       "No softening, no filtering",
       "Includes the Sociopathic Dating Bible",

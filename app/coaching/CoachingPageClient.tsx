@@ -424,7 +424,7 @@ export default function CoachingPage() {
               </div>
               {[
                 ["Sessions", "1", "3", "4", "Weekly"],
-                ["Duration", "60 min", "4 weeks", "4 weeks", "Ongoing"],
+                ["Duration", "40 min", "4 weeks", "4 weeks", "Ongoing"],
                 ["Voice notes", "—", "—", "Between calls", "Between calls"],
                 ["Focus", "Any topic", "Personal", "Professional", "Everything"],
                 ["Book included", "Yes", "Yes", "Yes", "Yes"],
