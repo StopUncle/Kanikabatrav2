@@ -3,13 +3,15 @@ import {
   paypalService,
   createBookOrder,
   createCoachingOrder,
+  createDonationOrder,
 } from "@/lib/paypal";
 import { BOOK_INFO, COACHING_PACKAGES } from "@/lib/constants";
 import { logger } from "@/lib/logger";
 
 interface CreateOrderRequest {
-  type: "book" | "coaching";
-  itemId?: string; // For coaching packages
+  type: "book" | "coaching" | "donation";
+  itemId?: string;
+  amount?: number;
 }
 
 export async function POST(request: NextRequest) {
@@ -18,10 +20,10 @@ export async function POST(request: NextRequest) {
     const body: CreateOrderRequest = await request.json();
 
     // Validate input
-    if (!body.type || (body.type !== "book" && body.type !== "coaching")) {
+    if (!body.type || !["book", "coaching", "donation"].includes(body.type)) {
       logger.warn("Invalid order type requested", { type: body.type });
       return NextResponse.json(
-        { error: 'Invalid order type. Must be "book" or "coaching"' },
+        { error: 'Invalid order type. Must be "book", "coaching", or "donation"' },
         { status: 400 },
       );
     }
@@ -80,6 +82,24 @@ export async function POST(request: NextRequest) {
         packageName: name,
         isBundle,
       });
+    } else if (body.type === "donation") {
+      if (!body.amount || body.amount < 1) {
+        logger.warn("Invalid donation amount", { amount: body.amount });
+        return NextResponse.json(
+          { error: "Donation amount must be at least $1" },
+          { status: 400 },
+        );
+      }
+      if (body.amount > 10000) {
+        logger.warn("Donation amount too high", { amount: body.amount });
+        return NextResponse.json(
+          { error: "Donation amount cannot exceed $10,000" },
+          { status: 400 },
+        );
+      }
+
+      paypalOrder = createDonationOrder(body.amount);
+      logger.paymentAttempt("donation", body.amount, {});
     } else {
       return NextResponse.json(
         { error: "Invalid order type" },

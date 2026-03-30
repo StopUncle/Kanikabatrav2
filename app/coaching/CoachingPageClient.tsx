@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import BackgroundEffects from "@/components/BackgroundEffects";
 import Header from "@/components/Header";
 import PayPalButton from "@/components/PayPalButton";
@@ -51,6 +52,7 @@ export default function CoachingPage() {
   const [expandedTier, setExpandedTier] = useState<string | null>(null);
   const [showPayPal, setShowPayPal] = useState<string | null>(null);
   const [openFaq, setOpenFaq] = useState<number | null>(null);
+  const [agreedToTerms, setAgreedToTerms] = useState<Record<string, boolean>>({});
   const router = useRouter();
 
   const handlePaymentSuccess = (
@@ -279,13 +281,37 @@ export default function CoachingPage() {
 
                         {/* CTA Button */}
                         <div className="mt-auto space-y-3">
+                          {/* Terms & Conditions Agreement */}
+                          <label className="flex items-start gap-2.5 cursor-pointer">
+                            <input
+                              type="checkbox"
+                              checked={agreedToTerms[pkg.id] || false}
+                              onChange={(e) => {
+                                setAgreedToTerms(prev => ({ ...prev, [pkg.id]: e.target.checked }));
+                                if (!e.target.checked) {
+                                  setShowPayPal(null);
+                                  setExpandedTier(null);
+                                }
+                              }}
+                              className="rounded border-accent-gold/20 text-accent-gold focus:ring-accent-gold/50 mt-0.5 flex-shrink-0"
+                            />
+                            <span className="text-xs text-text-gray/60 leading-relaxed">
+                              I agree to the{" "}
+                              <Link href="/terms" target="_blank" className="text-accent-gold hover:text-accent-gold/80 underline">
+                                Terms & Conditions
+                              </Link>
+                              , including the coaching conduct policy
+                            </span>
+                          </label>
+
                           {!hasBundle ? (
                             <>
                               <button
                                 onClick={() =>
                                   setShowPayPal(showingPayPal ? null : pkg.id)
                                 }
-                                className={`w-full py-3.5 rounded-lg text-sm font-medium tracking-wider uppercase transition-all ${
+                                disabled={!agreedToTerms[pkg.id]}
+                                className={`w-full py-3.5 rounded-lg text-sm font-medium tracking-wider uppercase transition-all disabled:opacity-40 disabled:cursor-not-allowed ${
                                   isRetainer
                                     ? "border border-accent-gold/30 text-accent-gold hover:bg-accent-gold/10"
                                     : "bg-gradient-to-r from-[#720921] to-[#4a0616] text-white hover:shadow-lg"
@@ -320,7 +346,8 @@ export default function CoachingPage() {
                                 onClick={() =>
                                   setExpandedTier(isExpanded ? null : pkg.id)
                                 }
-                                className="w-full py-3.5 rounded-lg text-sm font-medium tracking-wider uppercase bg-gradient-to-r from-[#720921] to-[#4a0616] text-white hover:shadow-lg transition-all"
+                                disabled={!agreedToTerms[pkg.id]}
+                                className="w-full py-3.5 rounded-lg text-sm font-medium tracking-wider uppercase bg-gradient-to-r from-[#720921] to-[#4a0616] text-white hover:shadow-lg transition-all disabled:opacity-40 disabled:cursor-not-allowed"
                               >
                                 {ctaLabel}
                               </button>

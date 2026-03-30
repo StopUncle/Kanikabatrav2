@@ -462,6 +462,50 @@ export function createAskKanikaOrder(
   };
 }
 
+/**
+ * Create order for donation
+ */
+export function createDonationOrder(amount: number): PayPalOrder {
+  return {
+    intent: "CAPTURE",
+    purchase_units: [
+      {
+        reference_id: "donation",
+        description: "Donation to Kanika Batra",
+        amount: {
+          currency_code: PAYPAL_CONFIG.currency,
+          value: amount.toFixed(2),
+          breakdown: {
+            item_total: {
+              currency_code: PAYPAL_CONFIG.currency,
+              value: amount.toFixed(2),
+            },
+          },
+        },
+        items: [
+          {
+            name: "Donation",
+            description: "Support Kanika Batra's content and mission",
+            quantity: "1",
+            unit_amount: {
+              currency_code: PAYPAL_CONFIG.currency,
+              value: amount.toFixed(2),
+            },
+            category: "DIGITAL_GOODS",
+          },
+        ],
+      },
+    ],
+    application_context: {
+      brand_name: "Kanika Batra",
+      locale: "en-US",
+      landing_page: "NO_PREFERENCE",
+      shipping_preference: "NO_SHIPPING",
+      user_action: "PAY_NOW",
+    },
+  };
+}
+
 // Export singleton instance (lazy initialization on first use)
 export const paypalService = new PayPalService();
 

@@ -21,7 +21,10 @@ const Footer = () => {
       { name: "Coaching", href: "/coaching" },
       { name: "Contact", href: "/contact" },
     ],
-    legal: [{ name: "Terms & Conditions", href: "/terms" }],
+    legal: [
+      { name: "Terms & Conditions", href: "/terms" },
+      { name: "Donate", href: "/donate" },
+    ],
     social: [
       {
         name: "Instagram",

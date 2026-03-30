@@ -6,7 +6,7 @@ import Button from "@/components/ui/Button";
 import { PAYPAL_CONFIG } from "@/lib/constants";
 
 interface PayPalButtonProps {
-  type: "book" | "coaching";
+  type: "book" | "coaching" | "donation";
   itemId?: string;
   amount: number;
   itemName: string;
@@ -159,6 +159,7 @@ export default function PayPalButton({
               body: JSON.stringify({
                 type,
                 itemId,
+                ...(type === "donation" ? { amount } : {}),
               }),
             });
 
@@ -357,7 +358,7 @@ export default function PayPalButton({
         clearTimeout(timeoutId);
       }
     };
-  }, [isScriptLoaded, type, itemId, disabled, onSuccess, onError, onCancel]);
+  }, [isScriptLoaded, type, itemId, amount, disabled, onSuccess, onError, onCancel]);
 
   if (!PAYPAL_CONFIG.clientId) {
     return (
