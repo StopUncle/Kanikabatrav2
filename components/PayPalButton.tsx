@@ -23,6 +23,7 @@ interface PayPalCaptureDetails {
   paymentId?: string;
   amount?: string;
   currency?: string;
+  customerEmail?: string;
 }
 
 interface PayPalWindow extends Window {

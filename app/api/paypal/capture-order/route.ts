@@ -127,6 +127,7 @@ export async function POST(request: NextRequest) {
             status: "COMPLETED",
             amount: existingPurchase.amount.toString(),
             currency: "USD",
+            customerEmail: existingPurchase.customerEmail,
             downloadUrl: `${process.env.NEXT_PUBLIC_BASE_URL}/api/download?token=${existingPurchase.downloadToken}`,
             downloadToken: existingPurchase.downloadToken,
             expiresAt: existingPurchase.expiresAt?.toISOString(),
@@ -159,6 +160,19 @@ export async function POST(request: NextRequest) {
         },
       });
 
+      // Send delivery email for auto-completed orders
+      try {
+        await sendBookDelivery(
+          orderData.payerEmail || "unknown@email.com",
+          orderData.payerName || "Customer",
+          downloadToken,
+          null,
+          expiresAt,
+        );
+      } catch (emailError) {
+        console.error("Failed to send book delivery email (auto-completed):", emailError);
+      }
+
       return NextResponse.json(
         {
           success: true,
@@ -167,6 +181,7 @@ export async function POST(request: NextRequest) {
           status: "COMPLETED",
           amount: orderData.amount,
           currency: orderData.currency,
+          customerEmail: orderData.payerEmail,
           downloadUrl: `${process.env.NEXT_PUBLIC_BASE_URL}/api/download?token=${downloadToken}`,
           downloadToken,
           expiresAt: expiresAt.toISOString(),
@@ -269,6 +284,7 @@ export async function POST(request: NextRequest) {
                 status: "COMPLETED",
                 amount: existingPurchase.amount.toString(),
                 currency: "USD",
+                customerEmail: existingPurchase.customerEmail,
                 downloadUrl: `${process.env.NEXT_PUBLIC_BASE_URL}/api/download?token=${existingPurchase.downloadToken}`,
                 downloadToken: existingPurchase.downloadToken,
                 expiresAt: existingPurchase.expiresAt?.toISOString(),
@@ -301,6 +317,19 @@ export async function POST(request: NextRequest) {
             },
           });
 
+          // Send delivery email for retry-capture path
+          try {
+            await sendBookDelivery(
+              orderData.payerEmail || "unknown@email.com",
+              orderData.payerName || "Customer",
+              downloadToken,
+              null,
+              expiresAt,
+            );
+          } catch (emailError) {
+            console.error("Failed to send book delivery email (retry-capture):", emailError);
+          }
+
           return NextResponse.json(
             {
               success: true,
@@ -309,6 +338,7 @@ export async function POST(request: NextRequest) {
               status: "COMPLETED",
               amount: orderData.amount,
               currency: orderData.currency,
+              customerEmail: orderData.payerEmail,
               downloadUrl: `${process.env.NEXT_PUBLIC_BASE_URL}/api/download?token=${downloadToken}`,
               downloadToken,
               expiresAt: expiresAt.toISOString(),
@@ -485,6 +515,7 @@ export async function POST(request: NextRequest) {
           status: orderData.status,
           amount: orderData.amount,
           currency: orderData.currency,
+          customerEmail: orderData.payerEmail,
           downloadUrl,
           downloadToken,
           expiresAt: expiresAt.toISOString(),

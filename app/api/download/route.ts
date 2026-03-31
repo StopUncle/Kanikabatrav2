@@ -17,7 +17,6 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    // Find purchase by download token
     const purchase = await prisma.purchase.findUnique({
       where: { downloadToken: token },
     });
@@ -29,7 +28,6 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    // Check if purchase is completed
     if (purchase.status !== "COMPLETED") {
       return NextResponse.json(
         { error: "Purchase is not completed" },
@@ -37,25 +35,22 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    // Check if download has expired
     if (purchase.expiresAt && purchase.expiresAt < new Date()) {
       return NextResponse.json(
-        { error: "Download link has expired. Please contact support." },
+        { error: "Download link has expired. Please contact Kanika@kanikarose.com for a new link." },
         { status: 410 },
       );
     }
 
-    // Check download limit
     if (purchase.downloadCount >= purchase.maxDownloads) {
       return NextResponse.json(
         {
-          error: `Maximum download limit (${purchase.maxDownloads}) reached. Please contact support.`,
+          error: `Maximum download limit (${purchase.maxDownloads}) reached. Please contact Kanika@kanikarose.com for help.`,
         },
         { status: 429 },
       );
     }
 
-    // Only allow book downloads
     if (purchase.type !== "BOOK") {
       return NextResponse.json(
         { error: "This purchase is not for a downloadable book" },
@@ -63,23 +58,8 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    // Track download attempt
-    await prisma.purchase.update({
-      where: { id: purchase.id },
-      data: {
-        downloadCount: {
-          increment: 1,
-        },
-        lastDownloadAt: new Date(),
-      },
-    });
-
-    // Get requested format from query params (defaults to pdf)
     const format = searchParams.get("format") || "pdf";
 
-    // Addendum chapters are available to all book purchasers
-
-    // Determine which file to serve based on format
     let bookFilename: string;
     let displayName: string;
     let contentType = "application/pdf";
@@ -105,31 +85,28 @@ export async function GET(request: NextRequest) {
         displayName = "Sociopathic_Dating_Bible_Kanika_Batra.pdf";
     }
 
-    // Try public folder first (for Railway deployment), fallback to private
+    // Try public folder first, fallback to private
     let bookPath = path.join(process.cwd(), "public", "books", bookFilename);
     try {
       await fs.access(bookPath);
     } catch {
-      // Fallback to private folder
       bookPath = path.join(process.cwd(), "private", "books", bookFilename);
     }
 
     try {
-      // Check if file exists
       await fs.access(bookPath);
 
-      // Read the file
-      const fileBuffer = await fs.readFile(bookPath);
-
-      console.log("Book download:", {
-        purchaseId: purchase.id,
-        variant: purchase.productVariant,
-        email: purchase.customerEmail,
-        format,
-        downloadCount: purchase.downloadCount + 1,
+      // Only increment download count AFTER confirming file exists
+      await prisma.purchase.update({
+        where: { id: purchase.id },
+        data: {
+          downloadCount: { increment: 1 },
+          lastDownloadAt: new Date(),
+        },
       });
 
-      // Return the file as a download
+      const fileBuffer = await fs.readFile(bookPath);
+
       return new NextResponse(fileBuffer as BodyInit, {
         status: 200,
         headers: {
@@ -139,20 +116,12 @@ export async function GET(request: NextRequest) {
           "Cache-Control": "private, no-cache, no-store, must-revalidate",
         },
       });
-    } catch (_fileError) {
-      console.error("Book file not found:", bookPath);
-
-      // Return a placeholder response for development
+    } catch {
+      // Do NOT leak file paths in the response
       return NextResponse.json(
         {
-          success: false,
-          message:
-            "Book file is being prepared. Please check back in a few minutes or contact support.",
-          purchaseId: purchase.id,
-          variant: purchase.productVariant,
-          downloadCount: purchase.downloadCount,
-          remainingDownloads: purchase.maxDownloads - purchase.downloadCount,
-          note: `Place ${purchase.productVariant || "book"} file at: ${bookPath}`,
+          error:
+            "Book file is temporarily unavailable. Please try again in a few minutes or contact Kanika@kanikarose.com",
         },
         { status: 503 },
       );

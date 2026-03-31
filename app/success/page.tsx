@@ -148,11 +148,30 @@ function SuccessContent() {
                 <h3 className="text-xl font-light gradient-text-gold mb-4">
                   Download Your Book
                 </h3>
-                <p className="text-text-gray mb-6">
-                  We&apos;re also sending a copy of your download link to your
-                  email (check spam folder if you don&apos;t see it). Click
-                  below to download immediately:
+                <p className="text-text-gray mb-2">
+                  Click below to download immediately. We&apos;re also sending a
+                  download link to your email.
                 </p>
+                {orderDetails?.customerEmail && (
+                  <p className="text-text-gray text-sm mb-6">
+                    Sent to:{" "}
+                    <span className="text-accent-gold">
+                      {orderDetails.customerEmail}
+                    </span>{" "}
+                    &mdash;{" "}
+                    <Link
+                      href="/resend"
+                      className="text-accent-gold hover:underline"
+                    >
+                      wrong email?
+                    </Link>
+                  </p>
+                )}
+                {!orderDetails?.customerEmail && (
+                  <p className="text-text-gray text-sm mb-6">
+                    Check your spam folder if you don&apos;t see it.
+                  </p>
+                )}
 
                 <a
                   href={
@@ -173,12 +192,31 @@ function SuccessContent() {
                   📚 Download Book Now (EPUB)
                 </a>
 
-                <div className="bg-deep-burgundy/20 border border-deep-burgundy/30 rounded-lg p-4">
+                <div className="bg-deep-burgundy/20 border border-deep-burgundy/30 rounded-lg p-4 mb-4">
                   <p className="text-sm text-text-gray">
                     <strong className="text-accent-gold">Important:</strong> The
                     download link is valid for 30 days with 5 downloads max.
-                    Save your copy locally for permanent access. If you need
-                    help, contact Kanika@kanikarose.com
+                    Save your copy locally for permanent access.
+                  </p>
+                </div>
+
+                <div className="bg-deep-black/50 border border-accent-gold/20 rounded-lg p-4">
+                  <p className="text-sm text-text-gray">
+                    <strong className="text-text-light">Didn&apos;t receive your book?</strong>{" "}
+                    Check your spam/junk folder.{" "}
+                    <Link
+                      href="/resend"
+                      className="text-accent-gold hover:underline font-medium"
+                    >
+                      Resend download link
+                    </Link>{" "}
+                    or email{" "}
+                    <a
+                      href="mailto:Kanika@kanikarose.com"
+                      className="text-accent-gold hover:underline font-medium"
+                    >
+                      Kanika@kanikarose.com
+                    </a>
                   </p>
                 </div>
               </motion.div>
@@ -242,23 +280,17 @@ function SuccessContent() {
             className="flex flex-col sm:flex-row gap-4 justify-center"
           >
             <Link
-              href="/contact"
-              className="btn-primary rounded-full text-white px-8 py-3 text-center"
-            >
-              Contact Support
-            </Link>
-            <Link
               href="/"
-              className="btn-secondary rounded-full px-8 py-3 text-center"
+              className="btn-primary rounded-full text-white px-8 py-3 text-center"
             >
               Return Home
             </Link>
-            <Link
-              href="/contact"
-              className="btn-ghost rounded-full px-8 py-3 text-center"
+            <a
+              href="mailto:Kanika@kanikarose.com"
+              className="btn-secondary rounded-full px-8 py-3 text-center"
             >
               Contact Support
-            </Link>
+            </a>
           </motion.div>
 
           <motion.div

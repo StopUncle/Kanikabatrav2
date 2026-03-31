@@ -1,5 +1,6 @@
 import nodemailer from "nodemailer";
 import type { Transporter } from "nodemailer";
+import { Resend } from "resend";
 
 const logger = {
   info: (message: string) => console.log(`[EMAIL INFO] ${message}`),
@@ -14,6 +15,11 @@ const SMTP_PORT = parseInt(process.env.SMTP_PORT || "587", 10);
 const SMTP_USER = process.env.SMTP_USER;
 const SMTP_PASS = process.env.SMTP_PASS;
 const FROM_EMAIL = process.env.FROM_EMAIL || "noreply@kanikarose.com";
+
+// Resend (transactional email service — preferred when configured)
+const RESEND_API_KEY = process.env.RESEND_API_KEY;
+const RESEND_FROM_EMAIL = process.env.RESEND_FROM_EMAIL || FROM_EMAIL;
+const resendClient = RESEND_API_KEY ? new Resend(RESEND_API_KEY) : null;
 
 // Microsoft SMTP Configuration (for Hotmail/Outlook/Live recipients)
 // Uses Outlook.com SMTP: smtp-mail.outlook.com or smtp.office365.com for M365
@@ -97,7 +103,6 @@ function getMicrosoftTransporter(): Transporter | null {
       pass: MS_SMTP_PASS,
     },
     tls: {
-      ciphers: "SSLv3",
       rejectUnauthorized: process.env.NODE_ENV === "production",
     },
   });
@@ -157,34 +162,62 @@ interface OrderConfirmationData {
   };
 }
 
-export const sendEmail = async (options: EmailOptions): Promise<boolean> => {
-  try {
-    // Get appropriate transport based on recipient domain
-    const { transporter: transport, fromEmail } = getTransporter(options.to);
+export const sendEmail = async (
+  options: EmailOptions,
+  maxRetries = 3,
+): Promise<boolean> => {
+  for (let attempt = 1; attempt <= maxRetries; attempt++) {
+    try {
+      // Prefer Resend when configured (better deliverability, no SMTP quirks)
+      if (resendClient) {
+        const { error } = await resendClient.emails.send({
+          from: RESEND_FROM_EMAIL,
+          to: options.to,
+          subject: options.subject,
+          html: options.html,
+          text: options.text || options.html.replace(/<[^>]*>/g, ""),
+          replyTo: options.replyTo,
+        });
+        if (error) throw new Error(error.message);
+        logger.info(`Email sent to ${options.to} via Resend (attempt ${attempt})`);
+        return true;
+      }
 
-    if (!transport) {
-      logger.warn("Email transport not available");
-      return false;
+      // Fall back to SMTP
+      const { transporter: transport, fromEmail } = getTransporter(options.to);
+      if (!transport) {
+        logger.warn("No email transport available (set RESEND_API_KEY or SMTP credentials)");
+        return false;
+      }
+
+      const info = await transport.sendMail({
+        from: fromEmail,
+        to: options.to,
+        subject: options.subject,
+        text: options.text || options.html.replace(/<[^>]*>/g, ""),
+        html: options.html,
+        replyTo: options.replyTo,
+      });
+      logger.info(
+        `Email sent to ${options.to} via ${isMicrosoftEmail(options.to) ? "Microsoft" : "Primary"} SMTP - Message ID: ${info.messageId}`,
+      );
+      return true;
+    } catch (error) {
+      logger.error(
+        `Failed to send email to ${options.to} (attempt ${attempt}/${maxRetries})`,
+        error as Error,
+      );
+      if (attempt < maxRetries) {
+        const delay = 2000 * attempt;
+        await new Promise((resolve) => setTimeout(resolve, delay));
+      }
     }
-
-    const mailOptions = {
-      from: fromEmail,
-      to: options.to,
-      subject: options.subject,
-      text: options.text || options.html.replace(/<[^>]*>/g, ""),
-      html: options.html,
-      replyTo: options.replyTo,
-    };
-
-    const info = await transport.sendMail(mailOptions);
-    logger.info(
-      `Email sent to ${options.to} via ${isMicrosoftEmail(options.to) ? "Microsoft" : "Primary"} SMTP - Message ID: ${info.messageId}`,
-    );
-    return true;
-  } catch (error) {
-    logger.error(`Failed to send email to ${options.to}`, error as Error);
-    return false;
   }
+
+  logger.error(
+    `All ${maxRetries} email delivery attempts failed for ${options.to}`,
+  );
+  return false;
 };
 
 export const sendContactNotification = async (

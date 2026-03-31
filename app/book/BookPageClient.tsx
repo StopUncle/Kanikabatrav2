@@ -151,14 +151,20 @@ export default function BookPage() {
   };
 
   const handlePaymentSuccess = (details: {
-    id: string;
+    id?: string;
+    paymentId?: string;
     status: string;
     downloadToken?: string;
+    customerEmail?: string;
   }) => {
+    const paymentId = details.paymentId || details.id || "unknown";
     const tokenParam = details.downloadToken
       ? `&download_token=${details.downloadToken}`
       : "";
-    window.location.href = `/success?payment_id=${details.id}&type=book&amount=${BOOK_INFO.price}${tokenParam}`;
+    const emailParam = details.customerEmail
+      ? `&customer_email=${encodeURIComponent(details.customerEmail)}`
+      : "";
+    window.location.href = `/success?payment_id=${paymentId}&type=book&amount=${BOOK_INFO.price}${tokenParam}${emailParam}`;
   };
 
   const handlePaymentError = (error: string) => {
