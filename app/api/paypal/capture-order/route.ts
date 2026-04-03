@@ -59,7 +59,6 @@ async function handleCompletedOrder(
   }
 
   // Determine product type and variant
-  const description = orderData.paymentId ? "" : "";
   let productType: "BOOK" | "COACHING" | "COURSE" = "BOOK";
   let productVariant: string | null = null;
 
@@ -68,7 +67,6 @@ async function handleCompletedOrder(
     const fullOrder = await paypalService.getOrderDetails(orderId);
     const purchaseUnit = fullOrder.purchase_units?.[0];
     const desc = (purchaseUnit as { description?: string })?.description || "";
-    const customId = (purchaseUnit as { custom_id?: string })?.custom_id || "";
 
     if (desc.toLowerCase().includes("premium")) {
       productVariant = "PREMIUM";
