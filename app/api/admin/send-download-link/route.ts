@@ -51,7 +51,7 @@ export async function POST(request: NextRequest) {
         paypalOrderId: `MANUAL-${Date.now()}`,
         downloadToken: token,
         downloadCount: 0,
-        maxDownloads: 5,
+        maxDownloads: 10,
         expiresAt: expiryDate,
         metadata: {
           source: isUpdate ? "book-update" : "admin-panel",
@@ -75,7 +75,9 @@ export async function POST(request: NextRequest) {
 
     // Bonus chapter download URLs
     const bonusNarcissistsUrl = `${baseUrl}/api/download?token=${token}&format=bonus-narcissists`;
+    const bonusNarcissistsPdfUrl = `${baseUrl}/api/download?token=${token}&format=bonus-narcissists-pdf`;
     const bonusAvoidantsUrl = `${baseUrl}/api/download?token=${token}&format=bonus-avoidants`;
+    const bonusAvoidantsPdfUrl = `${baseUrl}/api/download?token=${token}&format=bonus-avoidants-pdf`;
 
     const premiumBonuses = isPremium
       ? `
@@ -193,11 +195,27 @@ export async function POST(request: NextRequest) {
                           </h4>
                           <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0">
                             <tr>
-                              <td align="center" style="padding-bottom: 12px;">
+                              <td align="center" style="padding-bottom: 6px;">
                                 <table role="presentation" cellspacing="0" cellpadding="0" border="0">
                                   <tr>
                                     <td bgcolor="#722139" style="border-radius: 50px; border: 1px solid #d4af37;" align="center">
-                                      <a href="${bonusNarcissistsUrl}" target="_blank" style="display: inline-block; color: #d4af37; background-color: #722139; padding: 14px 40px; text-decoration: none; font-weight: 600; font-size: 14px; letter-spacing: 0.5px; border-radius: 50px;">Understanding Narcissists</a>
+                                      <a href="${bonusNarcissistsUrl}" target="_blank" style="display: inline-block; color: #d4af37; background-color: #722139; padding: 14px 40px; text-decoration: none; font-weight: 600; font-size: 14px; letter-spacing: 0.5px; border-radius: 50px;">Understanding Narcissists (EPUB)</a>
+                                    </td>
+                                  </tr>
+                                </table>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td align="center" style="padding-bottom: 16px;">
+                                <a href="${bonusNarcissistsPdfUrl}" target="_blank" style="color: #94a3b8; font-size: 13px; text-decoration: underline;">Download PDF version</a>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td align="center" style="padding-bottom: 6px;">
+                                <table role="presentation" cellspacing="0" cellpadding="0" border="0">
+                                  <tr>
+                                    <td bgcolor="#722139" style="border-radius: 50px; border: 1px solid #d4af37;" align="center">
+                                      <a href="${bonusAvoidantsUrl}" target="_blank" style="display: inline-block; color: #d4af37; background-color: #722139; padding: 14px 40px; text-decoration: none; font-weight: 600; font-size: 14px; letter-spacing: 0.5px; border-radius: 50px;">The Avoidant Playbook (EPUB)</a>
                                     </td>
                                   </tr>
                                 </table>
@@ -205,13 +223,7 @@ export async function POST(request: NextRequest) {
                             </tr>
                             <tr>
                               <td align="center">
-                                <table role="presentation" cellspacing="0" cellpadding="0" border="0">
-                                  <tr>
-                                    <td bgcolor="#722139" style="border-radius: 50px; border: 1px solid #d4af37;" align="center">
-                                      <a href="${bonusAvoidantsUrl}" target="_blank" style="display: inline-block; color: #d4af37; background-color: #722139; padding: 14px 40px; text-decoration: none; font-weight: 600; font-size: 14px; letter-spacing: 0.5px; border-radius: 50px;">The Avoidant Playbook</a>
-                                    </td>
-                                  </tr>
-                                </table>
+                                <a href="${bonusAvoidantsPdfUrl}" target="_blank" style="color: #94a3b8; font-size: 13px; text-decoration: underline;">Download PDF version</a>
                               </td>
                             </tr>
                           </table>
@@ -249,7 +261,7 @@ export async function POST(request: NextRequest) {
                             </tr>
                             <tr>
                               <td style="padding: 8px 0; color: #94a3b8; font-size: 14px; line-height: 1.6;">
-                                Maximum downloads: <strong style="color: #d4af37;">5 times total</strong> (across all formats)
+                                Maximum downloads: <strong style="color: #d4af37;">10 times total</strong> (across all formats)
                               </td>
                             </tr>
                             <tr>

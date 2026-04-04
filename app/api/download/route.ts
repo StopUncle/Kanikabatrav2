@@ -75,10 +75,18 @@ export async function GET(request: NextRequest) {
         displayName = "Addendum_Understanding_Narcissists_Kanika_Batra.epub";
         contentType = "application/epub+zip";
         break;
+      case "bonus-narcissists-pdf":
+        bookFilename = "Addendum_Narcissists.pdf";
+        displayName = "Addendum_Understanding_Narcissists_Kanika_Batra.pdf";
+        break;
       case "bonus-avoidants":
         bookFilename = "Addendum_Avoidants.epub";
         displayName = "Addendum_The_Avoidant_Playbook_Kanika_Batra.epub";
         contentType = "application/epub+zip";
+        break;
+      case "bonus-avoidants-pdf":
+        bookFilename = "Addendum_Avoidants.pdf";
+        displayName = "Addendum_The_Avoidant_Playbook_Kanika_Batra.pdf";
         break;
       default:
         bookFilename = "FINAL_BOOK.pdf";
