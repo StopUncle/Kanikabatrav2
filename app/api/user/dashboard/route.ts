@@ -38,6 +38,13 @@ export async function GET(request: NextRequest) {
             status: true,
             meetingUrl: true,
             notes: true,
+            userNotes: true,
+            feedback: {
+              select: {
+                rating: true,
+                feedback: true,
+              },
+            },
           },
         },
       },

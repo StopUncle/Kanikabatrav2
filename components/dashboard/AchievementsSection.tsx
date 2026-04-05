@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import Link from "next/link";
+
 import { Trophy, Loader2, ChevronRight, Sparkles } from "lucide-react";
 import DashboardCard from "./DashboardCard";
 import AchievementBadge from "./AchievementBadge";
@@ -162,13 +162,13 @@ export default function AchievementsSection({
             </div>
 
             {/* View all link */}
-            <Link
-              href="/dashboard/achievements"
+            <button
               className="w-full mt-4 flex items-center justify-center gap-1 text-accent-gold text-sm hover:underline"
+              onClick={() => {/* TODO: achievements page */}}
             >
               View all achievements
               <ChevronRight size={14} />
-            </Link>
+            </button>
           </div>
         ) : (
           <EmptyState

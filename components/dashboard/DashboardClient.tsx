@@ -108,11 +108,25 @@ export default function DashboardClient({ user }: DashboardClientProps) {
   >("overview");
 
   useEffect(() => {
+    async function fetchWithRefresh(url: string): Promise<Response> {
+      let res = await fetch(url);
+      if (res.status === 401) {
+        const refreshRes = await fetch("/api/auth/refresh", { method: "POST" });
+        if (refreshRes.ok) {
+          res = await fetch(url);
+        } else {
+          router.push("/login");
+          throw new Error("Session expired");
+        }
+      }
+      return res;
+    }
+
     async function fetchDashboardData() {
       try {
         const [dashboardRes, subscriptionsRes] = await Promise.all([
-          fetch("/api/user/dashboard"),
-          fetch("/api/subscriptions/status"),
+          fetchWithRefresh("/api/user/dashboard"),
+          fetchWithRefresh("/api/subscriptions/status"),
         ]);
 
         if (!dashboardRes.ok) {

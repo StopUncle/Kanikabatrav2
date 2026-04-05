@@ -40,6 +40,7 @@ export default function ProfileSettings({
       onSave(result.user.name);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to update profile");
+    } finally {
       setLoading(false);
     }
   };

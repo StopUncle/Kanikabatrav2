@@ -55,6 +55,7 @@ export default function SecuritySettings({
       setError(
         err instanceof Error ? err.message : "Failed to change password",
       );
+    } finally {
       setLoading(false);
     }
   };
