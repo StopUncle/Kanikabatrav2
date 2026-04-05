@@ -422,6 +422,26 @@ export default function DashboardClient({ user }: DashboardClientProps) {
                 )}
               </DashboardCard>
 
+              {/* Inner Circle Section */}
+              <DashboardCard
+                title="The Inner Circle"
+                subtitle="Private community & courses"
+                icon={Crown}
+              >
+                <div className="text-center py-8">
+                  <p className="text-text-gray mb-4">
+                    Access exclusive voice notes, courses, and community discussions.
+                  </p>
+                  <Link
+                    href="/inner-circle"
+                    className="inline-flex items-center gap-2 px-6 py-2 bg-accent-gold text-deep-black rounded-full font-medium hover:bg-accent-gold/90 transition-all"
+                  >
+                    Explore The Inner Circle
+                    <ArrowRight size={16} />
+                  </Link>
+                </div>
+              </DashboardCard>
+
               {/* Purchases Section */}
               <DashboardCard
                 title="My Purchases"

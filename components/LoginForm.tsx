@@ -65,7 +65,7 @@ export default function LoginForm() {
       transition={{ duration: 0.6 }}
       className="w-full max-w-md mx-auto"
     >
-      <div className="bg-deep-black/50 backdrop-blur-sm rounded-2xl border border-accent-gold/20 p-8 shadow-2xl">
+      <div className="bg-gradient-to-br from-deep-navy/80 to-deep-burgundy/80 backdrop-blur-xl rounded-2xl border border-accent-sapphire/20 p-8 shadow-2xl shadow-accent-sapphire/5">
         <div className="text-center mb-8">
           <motion.div
             initial={{ scale: 0 }}
@@ -75,7 +75,7 @@ export default function LoginForm() {
           >
             <LogIn className="w-8 h-8 text-white" />
           </motion.div>
-          <h2 className="text-2xl font-light gradient-text-gold mb-2">
+          <h2 className="text-2xl font-light gradient-text mb-2">
             Welcome Back
           </h2>
           <p className="text-text-gray">Enter the darkness</p>
@@ -143,12 +143,23 @@ export default function LoginForm() {
             )}
           </div>
 
+          <div className="text-right">
+            <button
+              type="button"
+              onClick={() => router.push("/forgot-password")}
+              className="text-sm text-text-gray hover:text-accent-gold transition-colors"
+            >
+              Forgot your password?
+            </button>
+          </div>
+
           <motion.button
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
             type="submit"
             disabled={isLoading}
-            className="w-full bg-gradient-to-r from-deep-burgundy to-royal-sapphire hover:shadow-lg text-white font-light py-3 px-4 rounded-full transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2"
+            className="w-full py-3 px-4 rounded-full text-text-light font-medium uppercase tracking-wider transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2"
+            style={{ background: 'linear-gradient(135deg, #720921, #6366f1)', boxShadow: '0 8px 20px rgba(114,9,33,0.3), 0 8px 20px rgba(99,102,241,0.3)' }}
           >
             {isLoading ? (
               <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />

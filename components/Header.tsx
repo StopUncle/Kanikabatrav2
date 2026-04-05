@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { User } from "lucide-react";
 import DoubleEchoLogo from "./DoubleEchoLogo";
 
@@ -11,6 +11,7 @@ const Header = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isCheckingAuth, setIsCheckingAuth] = useState(true);
   const pathname = usePathname();
+  const router = useRouter();
 
   useEffect(() => {
     async function checkAuth() {
@@ -43,6 +44,7 @@ const Header = () => {
     { href: "/quiz", label: "Quiz" },
     { href: "/courses", label: "Courses" },
     { href: "/coaching", label: "Coaching" },
+    { href: "/inner-circle", label: "Inner Circle" },
     { href: "/about", label: "About" },
     { href: "/blog", label: "Blog" },
     { href: "/contact", label: "Contact" },
@@ -95,17 +97,30 @@ const Header = () => {
                 {!isCheckingAuth && (
                   <div className="flex items-center gap-3 ml-6 pl-6 border-l border-accent-gold/20">
                     {isLoggedIn ? (
-                      <Link
-                        href="/dashboard"
-                        className={`flex items-center gap-2 px-4 py-2 text-sm tracking-[0.1em] uppercase transition-all duration-300 ${
-                          pathname === "/dashboard"
-                            ? "text-accent-gold"
-                            : "text-text-gray/80 hover:text-accent-gold"
-                        }`}
-                      >
-                        <User size={16} strokeWidth={1.5} />
-                        Dashboard
-                      </Link>
+                      <>
+                        <Link
+                          href="/dashboard"
+                          className={`flex items-center gap-2 px-4 py-2 text-sm tracking-[0.1em] uppercase transition-all duration-300 ${
+                            pathname === "/dashboard"
+                              ? "text-accent-gold"
+                              : "text-text-gray/80 hover:text-accent-gold"
+                          }`}
+                        >
+                          <User size={16} strokeWidth={1.5} />
+                          Dashboard
+                        </Link>
+                        <button
+                          onClick={async () => {
+                            await fetch("/api/auth/logout", { method: "POST" });
+                            setIsLoggedIn(false);
+                            router.push("/");
+                            router.refresh();
+                          }}
+                          className="text-text-gray hover:text-accent-gold transition-colors text-sm"
+                        >
+                          Logout
+                        </button>
+                      </>
                     ) : (
                       <>
                         <Link
@@ -216,14 +231,28 @@ const Header = () => {
           {!isCheckingAuth && (
             <div className="pt-8 border-t border-accent-gold/20">
               {isLoggedIn ? (
-                <Link
-                  href="/dashboard"
-                  className="flex items-center justify-center gap-3 py-4 text-lg tracking-[0.15em] uppercase text-accent-gold transition-colors duration-300"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  <User size={20} strokeWidth={1.5} />
-                  Dashboard
-                </Link>
+                <div className="flex flex-col gap-4">
+                  <Link
+                    href="/dashboard"
+                    className="flex items-center justify-center gap-3 py-4 text-lg tracking-[0.15em] uppercase text-accent-gold transition-colors duration-300"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    <User size={20} strokeWidth={1.5} />
+                    Dashboard
+                  </Link>
+                  <button
+                    onClick={async () => {
+                      await fetch("/api/auth/logout", { method: "POST" });
+                      setIsLoggedIn(false);
+                      setIsMenuOpen(false);
+                      router.push("/");
+                      router.refresh();
+                    }}
+                    className="py-4 text-center text-lg tracking-[0.15em] uppercase text-text-gray/70 hover:text-accent-gold transition-colors duration-300"
+                  >
+                    Logout
+                  </button>
+                </div>
               ) : (
                 <div className="flex flex-col gap-4">
                   <Link
