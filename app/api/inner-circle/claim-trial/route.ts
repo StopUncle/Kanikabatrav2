@@ -133,8 +133,11 @@ export async function GET(request: NextRequest) {
       where: { userId: user.id },
     });
 
-    if (existingMembership?.status === "ACTIVE") {
-      // Already an active member — generate tokens and redirect
+    if (
+      existingMembership &&
+      (existingMembership.billingCycle === "trial" ||
+        existingMembership.status === "ACTIVE")
+    ) {
       const accessToken = generateAccessToken({
         userId: user.id,
         email: user.email,
@@ -144,8 +147,13 @@ export async function GET(request: NextRequest) {
         email: user.email,
       });
 
+      const redirectUrl =
+        existingMembership.status === "ACTIVE"
+          ? "/inner-circle/feed"
+          : "/inner-circle?message=trial-already-used";
+
       const response = NextResponse.redirect(
-        new URL("/inner-circle/feed", request.url),
+        new URL(redirectUrl, request.url),
       );
       response.cookies.set("accessToken", accessToken, {
         httpOnly: true,
@@ -164,7 +172,7 @@ export async function GET(request: NextRequest) {
       return response;
     }
 
-    // Create or reactivate membership with 30-day trial
+    // Create membership with 30-day trial (first time only)
     const thirtyDaysFromNow = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
 
     await prisma.communityMembership.upsert({

@@ -186,6 +186,17 @@ export async function POST(request: NextRequest) {
             cancelledAt: new Date(),
           },
         });
+
+        // Sync CommunityMembership
+        const cancelledCM = await prisma.communityMembership.findFirst({
+          where: { paypalSubscriptionId: subscriptionId },
+        });
+        if (cancelledCM) {
+          await prisma.communityMembership.update({
+            where: { id: cancelledCM.id },
+            data: { status: "CANCELLED", cancelledAt: new Date() },
+          });
+        }
         break;
       }
 
@@ -207,6 +218,17 @@ export async function POST(request: NextRequest) {
             data: { status: "CANCELLED" },
           });
         }
+
+        // Sync CommunityMembership
+        const expiredCM = await prisma.communityMembership.findFirst({
+          where: { paypalSubscriptionId: subscriptionId },
+        });
+        if (expiredCM) {
+          await prisma.communityMembership.update({
+            where: { id: expiredCM.id },
+            data: { status: "EXPIRED" },
+          });
+        }
         break;
       }
 
@@ -217,6 +239,17 @@ export async function POST(request: NextRequest) {
           where: { paypalSubscriptionId: subscriptionId },
           data: { status: "PAUSED" },
         });
+
+        // Sync CommunityMembership
+        const suspendedCM = await prisma.communityMembership.findFirst({
+          where: { paypalSubscriptionId: subscriptionId },
+        });
+        if (suspendedCM) {
+          await prisma.communityMembership.update({
+            where: { id: suspendedCM.id },
+            data: { status: "SUSPENDED", suspendedAt: new Date() },
+          });
+        }
         break;
       }
 
@@ -238,6 +271,17 @@ export async function POST(request: NextRequest) {
             data: { status: "ACTIVE" },
           });
         }
+
+        // Sync CommunityMembership
+        const reactivatedCM = await prisma.communityMembership.findFirst({
+          where: { paypalSubscriptionId: subscriptionId },
+        });
+        if (reactivatedCM) {
+          await prisma.communityMembership.update({
+            where: { id: reactivatedCM.id },
+            data: { status: "ACTIVE" },
+          });
+        }
         break;
       }
 
@@ -252,9 +296,27 @@ export async function POST(request: NextRequest) {
               currentPeriodEnd: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
             },
           });
+
+          // Sync CommunityMembership — extend by 1 month
+          const paymentCM = await prisma.communityMembership.findFirst({
+            where: { paypalSubscriptionId: billingAgreementId },
+          });
+          if (paymentCM) {
+            await prisma.communityMembership.update({
+              where: { id: paymentCM.id },
+              data: {
+                expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+              },
+            });
+          }
         }
         break;
       }
+
+      case "BILLING.SUBSCRIPTION.PAYMENT.FAILED":
+        console.error("Subscription payment failed:", resource.id || resource.billing_agreement_id);
+        // Don't immediately revoke — PayPal will retry and eventually suspend
+        break;
 
       default:
         console.log(`Unhandled subscription webhook event: ${eventType}`);

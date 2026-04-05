@@ -75,11 +75,7 @@ export default function RegisterForm() {
       transition={{ duration: 0.6 }}
       className="w-full max-w-md mx-auto"
     >
-<<<<<<< Updated upstream
       <div className="bg-deep-black/50 backdrop-blur-sm rounded-2xl border border-accent-gold/20 p-8 shadow-2xl">
-=======
-      <div className="bg-gradient-to-br from-deep-navy/80 to-deep-burgundy/80 backdrop-blur-xl rounded-2xl border border-accent-sapphire/20 p-8 shadow-2xl shadow-accent-sapphire/5">
->>>>>>> Stashed changes
         <div className="text-center mb-8">
           <motion.div
             initial={{ scale: 0 }}
@@ -89,11 +85,7 @@ export default function RegisterForm() {
           >
             <UserPlus className="w-8 h-8 text-white" />
           </motion.div>
-<<<<<<< Updated upstream
           <h2 className="text-2xl font-light gradient-text-gold mb-2">Create Account</h2>
-=======
-          <h2 className="text-2xl font-light gradient-text mb-2">Create Account</h2>
->>>>>>> Stashed changes
           <p className="text-text-gray">Join the dark psychology mastery</p>
         </div>
 
@@ -195,12 +187,7 @@ export default function RegisterForm() {
             whileTap={{ scale: 0.98 }}
             type="submit"
             disabled={isLoading}
-<<<<<<< Updated upstream
             className="w-full bg-gradient-to-r from-deep-burgundy to-royal-sapphire hover:shadow-lg text-white font-light py-3 px-4 rounded-full transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2"
-=======
-            className="w-full py-3 px-4 rounded-full text-text-light font-medium uppercase tracking-wider transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2"
-            style={{ background: 'linear-gradient(135deg, #720921, #6366f1)', boxShadow: '0 8px 20px rgba(114,9,33,0.3), 0 8px 20px rgba(99,102,241,0.3)' }}
->>>>>>> Stashed changes
           >
             {isLoading ? (
               <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />

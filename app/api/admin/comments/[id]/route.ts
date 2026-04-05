@@ -73,6 +73,13 @@ export async function POST(
       },
     });
 
+    if (action === "approve") {
+      await prisma.feedPost.update({
+        where: { id: comment.postId },
+        data: { commentCount: { increment: 1 } },
+      });
+    }
+
     return NextResponse.json({
       success: true,
       message: `Comment ${action}d`,

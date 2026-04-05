@@ -30,6 +30,15 @@ model User {
   enrollments  CourseEnrollment[]
   activities   ActivityLog[]
   achievements UserAchievement[]
+  communityMembership CommunityMembership?
+  feedPosts           FeedPost[]
+  feedComments        FeedComment[]
+  feedPostLikes       FeedPostLike[]
+  commentLikes        CommentLike[]
+  points              Int              @default(0)
+  level               Int              @default(1)
+  isBanned            Boolean          @default(false)
+  banReason           String?
 
   @@index([email])
 }
@@ -38,6 +47,29 @@ enum UserRole {
   MEMBER
   MODERATOR
   ADMIN
+}
+
+enum MembershipStatus {
+  PENDING
+  APPROVED
+  ACTIVE
+  SUSPENDED
+  CANCELLED
+  EXPIRED
+}
+
+enum FeedPostType {
+  VOICE_NOTE
+  ANNOUNCEMENT
+  DISCUSSION_PROMPT
+  AUTOMATED
+}
+
+enum CommentStatus {
+  PENDING_REVIEW
+  APPROVED
+  REJECTED
+  HIDDEN
 }
 
 model Purchase {
