@@ -93,13 +93,7 @@ export async function GET(request: NextRequest) {
         displayName = "Sociopathic_Dating_Bible_Kanika_Batra.pdf";
     }
 
-    // Try public folder first, fallback to private
-    let bookPath = path.join(process.cwd(), "public", "books", bookFilename);
-    try {
-      await fs.access(bookPath);
-    } catch {
-      bookPath = path.join(process.cwd(), "private", "books", bookFilename);
-    }
+    const bookPath = path.join(process.cwd(), "private", "books", bookFilename);
 
     try {
       await fs.access(bookPath);

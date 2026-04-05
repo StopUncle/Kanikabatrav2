@@ -87,6 +87,13 @@ async function handleCompletedOrder(
     }
   }
 
+  // Verify the captured amount matches expected price
+  const capturedAmount = parseFloat(orderData.amount || "0");
+  const EXPECTED_BOOK_PRICE = 24.99;
+  if (productType === "BOOK" && capturedAmount < EXPECTED_BOOK_PRICE - 0.01) {
+    console.error("ALERT: Captured amount mismatch", { capturedAmount, expected: EXPECTED_BOOK_PRICE, orderId });
+  }
+
   // Generate token and expiry exactly once
   const downloadToken = crypto.randomBytes(32).toString("hex");
   const expiresAt = new Date();
@@ -213,7 +220,6 @@ function buildSuccessResponse(
       currency: orderData.currency || "USD",
       customerEmail: purchase.customerEmail,
       downloadUrl: `${process.env.NEXT_PUBLIC_BASE_URL}/api/download?token=${purchase.downloadToken}`,
-      downloadToken: purchase.downloadToken,
       expiresAt: purchase.expiresAt?.toISOString(),
       emailSent,
       message: alreadyExisted
@@ -430,13 +436,3 @@ export async function POST(request: NextRequest) {
   }
 }
 
-export async function OPTIONS() {
-  return new NextResponse(null, {
-    status: 200,
-    headers: {
-      "Access-Control-Allow-Origin": "*",
-      "Access-Control-Allow-Methods": "POST, OPTIONS",
-      "Access-Control-Allow-Headers": "Content-Type",
-    },
-  });
-}

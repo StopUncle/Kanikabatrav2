@@ -144,7 +144,7 @@ export default function DashboardClient({ user }: DashboardClientProps) {
       description: "Master the psychology of power and strategic influence",
       purchaseDate: new Date(p.createdAt).toLocaleDateString(),
       status: "active" as const,
-      downloadUrl: p.downloadToken ? `/api/download/${p.downloadToken}` : "#",
+      downloadUrl: p.downloadToken ? `/api/download?token=${p.downloadToken}` : "#",
     })) ?? [];
 
   const memberSince = data?.user.createdAt
