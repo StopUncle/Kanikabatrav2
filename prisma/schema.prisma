@@ -541,3 +541,125 @@ model UserAchievement {
   @@index([achievementId])
   @@index([earnedAt])
 }
+
+// ========================================
+// INNER CIRCLE COMMUNITY MODELS
+// ========================================
+
+model CommunityMembership {
+  id                   String           @id @default(cuid())
+  userId               String           @unique
+  status               MembershipStatus @default(PENDING)
+  paypalSubscriptionId String?          @unique
+  billingCycle         String           @default("monthly")
+  applicationData      Json?
+  appliedAt            DateTime         @default(now())
+  approvedAt           DateTime?
+  activatedAt          DateTime?
+  expiresAt            DateTime?
+  cancelledAt          DateTime?
+  suspendedAt          DateTime?
+  suspendReason        String?
+  createdAt            DateTime         @default(now())
+  updatedAt            DateTime         @updatedAt
+  user                 User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([status])
+  @@index([paypalSubscriptionId])
+}
+
+model FeedPost {
+  id           String       @id @default(cuid())
+  authorId     String?
+  title        String
+  content      String       @db.Text
+  type         FeedPostType @default(ANNOUNCEMENT)
+  voiceNoteUrl String?
+  isPinned     Boolean      @default(false)
+  isLocked     Boolean      @default(false)
+  likeCount    Int          @default(0)
+  commentCount Int          @default(0)
+  metadata     Json?
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+  author       User?        @relation(fields: [authorId], references: [id], onDelete: SetNull)
+  comments     FeedComment[]
+  likes        FeedPostLike[]
+
+  @@index([authorId])
+  @@index([type])
+  @@index([createdAt])
+  @@index([isPinned])
+}
+
+model FeedComment {
+  id        String        @id @default(cuid())
+  postId    String
+  authorId  String
+  content   String        @db.Text
+  status    CommentStatus @default(PENDING_REVIEW)
+  parentId  String?
+  likeCount Int           @default(0)
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+  post      FeedPost      @relation(fields: [postId], references: [id], onDelete: Cascade)
+  author    User          @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  parent    FeedComment?  @relation("CommentThread", fields: [parentId], references: [id], onDelete: Cascade)
+  children  FeedComment[] @relation("CommentThread")
+  likes     CommentLike[]
+
+  @@index([postId])
+  @@index([authorId])
+  @@index([status])
+  @@index([createdAt])
+}
+
+model FeedPostLike {
+  id        String   @id @default(cuid())
+  postId    String
+  userId    String
+  createdAt DateTime @default(now())
+  post      FeedPost @relation(fields: [postId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([postId, userId])
+  @@index([postId])
+  @@index([userId])
+}
+
+model CommentLike {
+  id        String      @id @default(cuid())
+  commentId String
+  userId    String
+  createdAt DateTime    @default(now())
+  comment   FeedComment @relation(fields: [commentId], references: [id], onDelete: Cascade)
+  user      User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([commentId, userId])
+  @@index([commentId])
+  @@index([userId])
+}
+
+// ========================================
+// EMAIL AUTOMATION
+// ========================================
+
+model EmailQueue {
+  id             String    @id @default(cuid())
+  recipientEmail String
+  recipientName  String
+  sequence       String    // "book-buyer-welcome", "trial-reminder", etc.
+  step           Int       // 1, 2, 3...
+  subject        String
+  htmlBody       String    @db.Text
+  scheduledAt    DateTime
+  sentAt         DateTime?
+  status         String    @default("PENDING") // PENDING, SENT, FAILED, CANCELLED
+  metadata       Json?     // trial tokens, context
+  createdAt      DateTime  @default(now())
+
+  @@index([status, scheduledAt])
+  @@index([recipientEmail])
+  @@index([sequence])
+}

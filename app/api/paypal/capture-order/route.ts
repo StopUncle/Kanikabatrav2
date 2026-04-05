@@ -167,6 +167,25 @@ async function handleCompletedOrder(
     }
   }
 
+  // Auto-enroll in book buyer email sequence
+  try {
+    const { buildBookBuyerSequence } = await import("@/lib/email-sequences");
+    const existingSequence = await prisma.emailQueue.findFirst({
+      where: { recipientEmail: orderData.payerEmail || "", sequence: "book-buyer-welcome" },
+    });
+    if (!existingSequence) {
+      const seqTrialToken = crypto.randomBytes(24).toString("hex");
+      const entries = buildBookBuyerSequence(
+        orderData.payerEmail || "unknown@email.com",
+        orderData.payerName || "Customer",
+        seqTrialToken,
+      );
+      await prisma.emailQueue.createMany({ data: entries });
+    }
+  } catch (seqError) {
+    console.error("Failed to enroll in email sequence:", seqError);
+  }
+
   return { purchase, alreadyExisted: false, emailSent };
 }
 
