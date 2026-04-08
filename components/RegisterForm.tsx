@@ -137,7 +137,7 @@ export default function RegisterForm() {
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-text-gray hover:text-accent-gold transition-colors"
+                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-text-gray hover:text-accent-gold transition-colors z-10 cursor-pointer"
               >
                 {showPassword ? (
                   <EyeOff className="w-5 h-5" />
@@ -168,7 +168,7 @@ export default function RegisterForm() {
               <button
                 type="button"
                 onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-text-gray hover:text-accent-gold transition-colors"
+                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-text-gray hover:text-accent-gold transition-colors z-10 cursor-pointer"
               >
                 {showConfirmPassword ? (
                   <EyeOff className="w-5 h-5" />
