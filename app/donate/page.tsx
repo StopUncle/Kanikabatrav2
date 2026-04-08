@@ -71,6 +71,14 @@ export default function DonatePage() {
             >
               Back to Home
             </Link>
+            <div className="mt-6 flex flex-col gap-2">
+              <Link href="/quiz" className="text-accent-gold hover:text-accent-gold/80 text-sm transition-colors">
+                Take the Dark Mirror Assessment →
+              </Link>
+              <Link href="/book" className="text-text-gray hover:text-accent-gold text-sm transition-colors">
+                Get the Sociopathic Dating Bible →
+              </Link>
+            </div>
           </motion.div>
         </div>
       </>

@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { User } from "lucide-react";
+import { User, LayoutDashboard } from "lucide-react";
 import DoubleEchoLogo from "./DoubleEchoLogo";
 
 const Header = () => {
@@ -108,6 +108,17 @@ const Header = () => {
                         >
                           <User size={16} strokeWidth={1.5} />
                           Profile
+                        </Link>
+                        <Link
+                          href="/dashboard"
+                          className={`flex items-center gap-2 px-4 py-2 text-sm tracking-[0.1em] uppercase transition-all duration-300 ${
+                            pathname === "/dashboard"
+                              ? "text-accent-gold"
+                              : "text-text-gray/80 hover:text-accent-gold"
+                          }`}
+                        >
+                          <LayoutDashboard size={16} strokeWidth={1.5} />
+                          Dashboard
                         </Link>
                         <button
                           onClick={async () => {
@@ -239,6 +250,14 @@ const Header = () => {
                   >
                     <User size={20} strokeWidth={1.5} />
                     Profile
+                  </Link>
+                  <Link
+                    href="/dashboard"
+                    className="flex items-center justify-center gap-3 py-4 text-lg tracking-[0.15em] uppercase text-accent-gold transition-colors duration-300"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    <LayoutDashboard size={20} strokeWidth={1.5} />
+                    Dashboard
                   </Link>
                   <button
                     onClick={async () => {

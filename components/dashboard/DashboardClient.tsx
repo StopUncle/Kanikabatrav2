@@ -5,7 +5,6 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import {
   BookOpen,
-  Plus,
   ArrowRight,
   Loader2,
   CheckCircle,
@@ -472,11 +471,6 @@ export default function DashboardClient({ user }: DashboardClientProps) {
                 title="My Purchases"
                 subtitle="Your books and content"
                 icon={BookOpen}
-                headerAction={
-                  <button className="text-gold hover:text-gold-dark transition-colors">
-                    <Plus size={20} />
-                  </button>
-                }
               >
                 {purchases.length > 0 ? (
                   <div className="space-y-3">

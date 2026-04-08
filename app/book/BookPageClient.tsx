@@ -97,11 +97,6 @@ const CHAPTER_LIST = [
 
 const TESTIMONIALS = [
   {
-    quote: "This book transformed my life.",
-    name: "Verified Reader",
-    title: "",
-  },
-  {
     quote: "This book decoded the game I didn't even know I was losing. Within 3 weeks of applying these strategies, I went from being overlooked to being pursued.",
     name: "Sarah K.",
     title: "Investment Banker",
@@ -125,6 +120,11 @@ const TESTIMONIALS = [
     quote: "Strategic, practical, powerful. This isn't feel-good fluff — it's a tactical manual for winning at modern dating.",
     name: "Daniel R.",
     title: "Sales Director",
+  },
+  {
+    quote: "This book transformed my life.",
+    name: "Verified Reader",
+    title: "",
   },
 ];
 
@@ -167,8 +167,8 @@ export default function BookPage() {
     window.location.href = `/success?payment_id=${paymentId}&type=book&amount=${BOOK_INFO.price}${tokenParam}${emailParam}`;
   };
 
-  const handlePaymentError = (error: string) => {
-    console.error("Payment failed:", error);
+  const handlePaymentError = (_error: string) => {
+    // Error handling delegated to PayPalButton component UI
   };
 
   const launchDate = new Date(BOOK_INFO.expectedLaunchDate);

@@ -12,6 +12,7 @@ import {
   QUIZ_INFO,
 } from "@/lib/quiz-data";
 import DoubleEchoLogo from "@/components/DoubleEchoLogo";
+import { ChevronLeft } from "lucide-react";
 
 export default function QuizTakePage() {
   const router = useRouter();
@@ -132,9 +133,23 @@ export default function QuizTakePage() {
 
       {/* Header */}
       <div className="pt-6 px-4 flex justify-between items-center">
-        <div className="text-text-gray text-sm">
-          <span className="text-accent-gold">{currentQuestion + 1}</span>
-          <span> / {QUIZ_QUESTIONS.length}</span>
+        <div className="flex items-center gap-4">
+          {currentQuestion > 0 && !isProcessing && (
+            <button
+              onClick={() => {
+                setCurrentQuestion(prev => prev - 1);
+                setSelectedAnswer(null);
+              }}
+              className="text-text-gray hover:text-accent-gold transition-colors text-sm flex items-center gap-1"
+            >
+              <ChevronLeft size={16} />
+              Back
+            </button>
+          )}
+          <div className="text-text-gray text-sm">
+            <span className="text-accent-gold">{currentQuestion + 1}</span>
+            <span> / {QUIZ_QUESTIONS.length}</span>
+          </div>
         </div>
         <div className="text-text-gray text-xs uppercase tracking-wider">
           {QUIZ_INFO.name}

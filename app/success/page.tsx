@@ -7,7 +7,7 @@ import Link from "next/link";
 import BackgroundEffects from "@/components/BackgroundEffects";
 import Header from "@/components/Header";
 import BookingModal from "@/components/BookingModal";
-import { CheckCircle, Download, Calendar } from "lucide-react";
+import { CheckCircle, Download, Calendar, ArrowRight } from "lucide-react";
 
 function SuccessContent() {
   const [isLoading, setIsLoading] = useState(true);
@@ -179,17 +179,12 @@ function SuccessContent() {
                       ? `/api/download?token=${orderDetails.downloadToken}&format=epub`
                       : "#"
                   }
-                  className="w-full btn-primary rounded-full text-white py-4 text-center inline-block mb-6"
-                  onClick={(e) => {
-                    if (!orderDetails?.downloadToken) {
-                      e.preventDefault();
-                      alert(
-                        "Demo mode - real purchases will have a working download link here",
-                      );
-                    }
-                  }}
+                  className={`w-full btn-primary rounded-full text-white py-4 text-center inline-block mb-6 ${
+                    !orderDetails?.downloadToken ? "opacity-50 pointer-events-none" : ""
+                  }`}
+                  aria-disabled={!orderDetails?.downloadToken}
                 >
-                  📚 Download Book Now (EPUB)
+                  Download Book Now (EPUB)
                 </a>
 
                 <div className="bg-deep-burgundy/20 border border-deep-burgundy/30 rounded-lg p-4 mb-4">
@@ -272,6 +267,44 @@ function SuccessContent() {
               </motion.div>
             )}
           </div>
+
+          {/* Your Purchase Unlocks */}
+          {isBookPurchase && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.45 }}
+              className="mt-8 space-y-4"
+            >
+              <p className="text-accent-gold text-sm uppercase tracking-wider text-center">Your purchase unlocks</p>
+
+              <Link
+                href="/quiz/results"
+                className="block p-5 bg-deep-black/50 border border-accent-gold/20 rounded-xl hover:border-accent-gold/40 transition-all"
+              >
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-text-light font-light">Dark Mirror Assessment — Free</p>
+                    <p className="text-text-gray text-sm">Discover your personality type (included with your purchase)</p>
+                  </div>
+                  <ArrowRight size={18} className="text-accent-gold" />
+                </div>
+              </Link>
+
+              <Link
+                href="/inner-circle"
+                className="block p-5 bg-deep-black/50 border border-accent-gold/10 rounded-xl hover:border-accent-gold/30 transition-all"
+              >
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-text-light font-light">Join The Inner Circle — $29/mo</p>
+                    <p className="text-text-gray text-sm">Courses, voice notes, community of women who get it</p>
+                  </div>
+                  <ArrowRight size={18} className="text-accent-gold" />
+                </div>
+              </Link>
+            </motion.div>
+          )}
 
           <motion.div
             initial={{ opacity: 0, y: 20 }}

@@ -199,6 +199,17 @@ export default async function InnerCircleLanding() {
             </div>
           </div>
 
+          {/* Coaching Upgrade */}
+          <div className="mb-16 text-center">
+            <p className="text-text-gray font-light mb-2">Want direct 1:1 access?</p>
+            <Link
+              href="/coaching"
+              className="text-accent-gold hover:text-accent-gold/80 transition-colors"
+            >
+              Explore Private Coaching →
+            </Link>
+          </div>
+
           {/* Bottom CTA */}
           <div className="text-center">
             <p className="text-text-gray font-light mb-6">

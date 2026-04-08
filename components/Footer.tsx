@@ -17,12 +17,18 @@ const Footer = () => {
     explore: [
       { name: "About", href: "/about" },
       { name: "The Book", href: "/#book" },
-      { name: "Blog", href: "/blog" },
+      { name: "Quiz", href: "/quiz" },
+      { name: "Courses", href: "/courses" },
       { name: "Coaching", href: "/coaching" },
+      { name: "Inner Circle", href: "/inner-circle" },
+      { name: "Ask Kanika", href: "/ask" },
+      { name: "Content", href: "/content" },
+      { name: "Blog", href: "/blog" },
       { name: "Contact", href: "/contact" },
     ],
     legal: [
       { name: "Terms & Conditions", href: "/terms" },
+      { name: "Privacy Policy", href: "/terms" },
       { name: "Donate", href: "/donate" },
     ],
     social: [

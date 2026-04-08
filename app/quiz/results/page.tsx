@@ -173,8 +173,8 @@ export default function QuizResultsPage() {
       if (responseData.approveUrl) {
         window.location.href = responseData.approveUrl;
       }
-    } catch (error) {
-      console.error("Payment error:", error);
+    } catch {
+      // Payment error handled by PayPal UI
     } finally {
       setIsLoading(false);
     }
@@ -387,7 +387,7 @@ export default function QuizResultsPage() {
             >
               <div className="relative p-8 bg-deep-black/50 border border-accent-gold/20 rounded-lg">
                 <div className="blur-md opacity-30 pointer-events-none">
-                  <div className="h-64" />
+                  <RadarChart scores={{ psychopathic: 65, sociopathic: 40, narcissistic: 75, borderline: 30, histrionic: 45, neurotypical: 20 }} />
                 </div>
                 <div className="absolute inset-0 flex items-center justify-center">
                   <div className="text-center p-6 bg-deep-black/80 rounded-lg border border-accent-gold/30">
@@ -598,6 +598,18 @@ export default function QuizResultsPage() {
                   </Link>
                 </div>
               )}
+
+              <div className="mt-6 p-5 bg-deep-black/30 border border-accent-gold/10 rounded-xl text-center">
+                <p className="text-text-gray text-sm mb-3">
+                  Want ongoing support from women who think like you?
+                </p>
+                <Link
+                  href="/inner-circle"
+                  className="inline-block px-6 py-2 text-sm font-medium text-accent-gold border border-accent-gold/20 rounded-full hover:bg-accent-gold/10 transition-all"
+                >
+                  Explore The Inner Circle — $29/mo
+                </Link>
+              </div>
             </motion.div>
 
             {/* Retake Option */}
@@ -782,6 +794,18 @@ export default function QuizResultsPage() {
                   </Link>
                 </div>
               )}
+
+              <div className="mt-6 p-5 bg-deep-black/30 border border-accent-gold/10 rounded-xl text-center">
+                <p className="text-text-gray text-sm mb-3">
+                  Want ongoing support from women who think like you?
+                </p>
+                <Link
+                  href="/inner-circle"
+                  className="inline-block px-6 py-2 text-sm font-medium text-accent-gold border border-accent-gold/20 rounded-full hover:bg-accent-gold/10 transition-all"
+                >
+                  Explore The Inner Circle — $29/mo
+                </Link>
+              </div>
             </motion.div>
 
             {/* Retake Option */}

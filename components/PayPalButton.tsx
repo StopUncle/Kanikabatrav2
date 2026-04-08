@@ -82,10 +82,7 @@ export default function PayPalButton({
     script.async = true;
     script.defer = true;
 
-    console.log("Loading PayPal SDK with URL:", script.src);
-
     script.onload = () => {
-      console.log("PayPal SDK loaded successfully");
       setIsScriptLoaded(true);
     };
 
@@ -150,7 +147,6 @@ export default function PayPalButton({
           try {
             setIsProcessing(true);
             setError(null);
-            console.log("Creating PayPal order...", { type, itemId });
 
             const response = await fetch("/api/paypal/create-order", {
               method: "POST",
@@ -166,28 +162,15 @@ export default function PayPalButton({
 
             if (!response.ok) {
               const errorData = await response.json();
-              console.error("Order creation failed:", errorData);
               setIsProcessing(false);
               throw new Error(errorData.error || "Failed to create order");
             }
 
             const orderData = await response.json();
-            console.log("Order created successfully:", orderData.orderId);
-            console.log("PayPal popup should open now...");
-
-            // Add timeout to reset processing state if popup never opens/completes
-            setTimeout(() => {
-              console.log(
-                "Checking if payment is still processing after 60s...",
-              );
-              // This will be cancelled by onApprove/onCancel/onError if they fire
-            }, 60000);
-
             return orderData.orderId;
           } catch (error) {
             const errorMessage =
               error instanceof Error ? error.message : "Unknown error";
-            console.error("createOrder error:", error);
             setIsProcessing(false);
             setError(errorMessage);
             onError?.(errorMessage);
@@ -199,10 +182,6 @@ export default function PayPalButton({
           const attemptCapture = async (retryCount = 0): Promise<void> => {
             try {
               setIsProcessing(true);
-              console.log(
-                `Payment approved, capturing order (attempt ${retryCount + 1}):`,
-                data.orderID,
-              );
 
               // Add timeout to prevent endless processing (45 seconds to allow for polling)
               const timeoutPromise = new Promise((_, reject) =>
@@ -232,11 +211,8 @@ export default function PayPalButton({
                 timeoutPromise,
               ])) as Response;
 
-              console.log("Capture response status:", response.status);
-
               if (!response.ok) {
                 const errorData = await response.json();
-                console.error("Capture failed:", errorData);
 
                 // Handle retryable errors (status 202)
                 if (
@@ -244,9 +220,6 @@ export default function PayPalButton({
                   errorData.retryable &&
                   retryCount < 2
                 ) {
-                  console.log(
-                    "Payment still processing, retrying in 3 seconds...",
-                  );
                   await new Promise((resolve) => setTimeout(resolve, 3000));
                   return attemptCapture(retryCount + 1);
                 }
@@ -255,7 +228,6 @@ export default function PayPalButton({
               }
 
               const captureData = await response.json();
-              console.log("Capture successful:", captureData);
 
               if (captureData.success) {
                 // Track the order in our system
@@ -273,7 +245,6 @@ export default function PayPalButton({
 
                 if (trackingResponse.ok) {
                   const trackingResult = await trackingResponse.json();
-                  console.log("Order tracked:", trackingResult);
 
                   // Pass enhanced details to parent
                   onSuccess?.({
@@ -283,7 +254,6 @@ export default function PayPalButton({
                     schedulingUrl: trackingResult.schedulingUrl,
                   });
                 } else {
-                  console.warn("Order tracking failed, but payment succeeded");
                   // Still call success even if tracking fails
                   onSuccess?.(captureData);
                 }
@@ -295,7 +265,6 @@ export default function PayPalButton({
             } catch (error) {
               const errorMessage =
                 error instanceof Error ? error.message : "Payment failed";
-              console.error("Payment approval error:", error);
               setError(errorMessage);
               onError?.(errorMessage);
             } finally {
@@ -309,23 +278,20 @@ export default function PayPalButton({
           } catch (error) {
             const errorMessage =
               error instanceof Error ? error.message : "Payment failed";
-            console.error("Final payment error:", error);
             setError(errorMessage);
             onError?.(errorMessage);
             setIsProcessing(false);
           }
         },
 
-        onError: (err) => {
+        onError: (_err) => {
           const errorMessage = "PayPal payment error occurred";
           setError(errorMessage);
           onError?.(errorMessage);
           setIsProcessing(false);
-          console.error("PayPal error:", err);
         },
 
         onCancel: () => {
-          console.log("Payment cancelled by user");
           setIsProcessing(false);
           onCancel?.();
         },
@@ -340,9 +306,8 @@ export default function PayPalButton({
       });
 
       // Render PayPal buttons
-      paypalButtons.render(`#${paypalContainerId}`).catch((error) => {
+      paypalButtons.render(`#${paypalContainerId}`).catch((_error) => {
         if (isMounted) {
-          console.error("PayPal render error:", error);
           setError("Failed to load payment buttons");
           onError?.("Failed to load payment buttons");
         }

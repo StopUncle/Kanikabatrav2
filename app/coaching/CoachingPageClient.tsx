@@ -70,8 +70,7 @@ export default function CoachingPage() {
     router.push(`/success?${params.toString()}`);
   };
 
-  const handlePaymentError = (error: string) => {
-    console.error("Payment error:", error);
+  const handlePaymentError = (_error: string) => {
     alert("Payment failed. Please try again or contact support.");
   };
 
@@ -180,6 +179,7 @@ export default function CoachingPage() {
                 return (
                   <motion.div
                     key={pkg.id}
+                    id={pkg.id}
                     initial={{ opacity: 0, y: 25 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.5, delay: index * 0.1 }}
@@ -575,6 +575,17 @@ export default function CoachingPage() {
               ))}
             </div>
           </motion.div>
+
+          {/* ── INNER CIRCLE MENTION ── */}
+          <div className="mt-8 text-center">
+            <p className="text-text-gray text-sm mb-2">Not ready for 1:1?</p>
+            <Link
+              href="/inner-circle"
+              className="text-accent-gold hover:text-accent-gold/80 text-sm transition-colors"
+            >
+              Start with The Inner Circle — $29/mo →
+            </Link>
+          </div>
 
           {/* ── SOCIAL PROOF ── */}
           <motion.div
