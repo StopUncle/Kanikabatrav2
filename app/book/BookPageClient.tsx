@@ -6,9 +6,8 @@ import BackgroundEffects from "@/components/BackgroundEffects";
 import Header from "@/components/Header";
 import CountdownTimer from "@/components/CountdownTimer";
 import PresaleModal from "@/components/PresaleModal";
-// PayPal fallback — uncomment to offer both payment options
-// import PayPalButton from "@/components/PayPalButton";
-import LemonSqueezyButton from "@/components/LemonSqueezyButton";
+import PayPalButton from "@/components/PayPalButton";
+// import LemonSqueezyButton from "@/components/LemonSqueezyButton";
 import { BOOK_INFO } from "@/lib/constants";
 import {
   Check,
@@ -256,12 +255,10 @@ export default function BookPage() {
                     Join Presale List
                   </button>
                 ) : (
-                  <LemonSqueezyButton
-                    variantId="1502988"
-                    label="Get Instant Access"
-                    price="$24.99"
-                    icon="cart"
-                    className="btn-primary rounded-full text-white px-8 py-4 flex items-center justify-center gap-2"
+                  <PayPalButton
+                    amount={BOOK_INFO.price}
+                    productType="book"
+                    buttonStyle="primary"
                   />
                 )}
                 <Link
@@ -408,12 +405,10 @@ export default function BookPage() {
                     Join Presale List
                   </button>
                 ) : (
-                  <LemonSqueezyButton
-                    variantId="1502988"
-                    label="Get Instant Access"
-                    price="$24.99"
-                    icon="card"
-                    className="w-full btn-primary rounded-full text-white px-10 py-4 text-lg flex items-center justify-center gap-2"
+                  <PayPalButton
+                    amount={BOOK_INFO.price}
+                    productType="book"
+                    buttonStyle="primary"
                   />
                 )}
 

@@ -4,8 +4,8 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { Check, ShieldCheck, Bell } from "lucide-react";
 // PayPal fallback — uncomment to offer both payment options
-// import PayPalButton from "./PayPalButton";
-import LemonSqueezyButton from "./LemonSqueezyButton";
+import PayPalButton from "./PayPalButton";
+// import LemonSqueezyButton from "./LemonSqueezyButton";
 import PresaleModal from "./PresaleModal";
 import CountdownTimer from "./CountdownTimer";
 import { BOOK_INFO } from "@/lib/constants";
@@ -222,12 +222,10 @@ export default function BookShowcase() {
                 </div>
               ) : (
                 <div className="space-y-4">
-                  <LemonSqueezyButton
-                    variantId="1502988"
-                    label="Get Instant Access"
-                    price="$24.99"
-                    icon="card"
-                    className="w-full btn-primary rounded-full text-white text-center py-3 sm:py-4 font-semibold tracking-wide text-sm sm:text-base flex items-center justify-center gap-2"
+                  <PayPalButton
+                    amount={24.99}
+                    productType="book"
+                    buttonStyle="primary"
                   />
 
                   {/* Guarantee */}
