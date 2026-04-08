@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import BackgroundEffects from "@/components/BackgroundEffects";
 import Header from "@/components/Header";
+// Donations use PayPal — Lemon Squeezy doesn't support flexible pricing
 import PayPalButton from "@/components/PayPalButton";
 import { Heart, CheckCircle } from "lucide-react";
 

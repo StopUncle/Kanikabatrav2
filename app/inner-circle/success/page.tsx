@@ -1,7 +1,6 @@
 "use client";
 
-import { useEffect, useState, Suspense } from "react";
-import { useSearchParams } from "next/navigation";
+import { useEffect, useState, useRef, Suspense } from "react";
 import { motion } from "framer-motion";
 import { CheckCircle, ArrowRight, Loader2, AlertCircle } from "lucide-react";
 import Link from "next/link";
@@ -9,29 +8,48 @@ import Header from "@/components/Header";
 import BackgroundEffects from "@/components/BackgroundEffects";
 
 function SuccessContent() {
-  const searchParams = useSearchParams();
-  const subscriptionId = searchParams.get("subscription_id");
   const [activating, setActivating] = useState(true);
   const [activated, setActivated] = useState(false);
+  const attemptsRef = useRef(0);
 
+  // Lemon Squeezy redirects here after checkout. The webhook activates
+  // the membership asynchronously, so we poll until it's active.
   useEffect(() => {
-    if (!subscriptionId) {
-      setActivating(false);
-      return;
+    const MAX_ATTEMPTS = 15;
+    const POLL_INTERVAL = 2000;
+
+    function checkActivation() {
+      fetch("/api/inner-circle/subscription/activate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({}),
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          if (data.success && data.status === "ACTIVE") {
+            setActivated(true);
+            setActivating(false);
+          } else {
+            attemptsRef.current += 1;
+            if (attemptsRef.current >= MAX_ATTEMPTS) {
+              setActivating(false);
+            } else {
+              setTimeout(checkActivation, POLL_INTERVAL);
+            }
+          }
+        })
+        .catch(() => {
+          attemptsRef.current += 1;
+          if (attemptsRef.current >= MAX_ATTEMPTS) {
+            setActivating(false);
+          } else {
+            setTimeout(checkActivation, POLL_INTERVAL);
+          }
+        });
     }
 
-    fetch("/api/inner-circle/subscription/activate", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ subscriptionId }),
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        setActivated(data.success);
-        setActivating(false);
-      })
-      .catch(() => setActivating(false));
-  }, [subscriptionId]);
+    checkActivation();
+  }, []);
 
   if (activating) {
     return (

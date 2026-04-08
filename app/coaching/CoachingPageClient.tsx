@@ -2,13 +2,19 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { useRouter } from "next/navigation";
 import Link from "next/link";
 import BackgroundEffects from "@/components/BackgroundEffects";
 import Header from "@/components/Header";
-import PayPalButton from "@/components/PayPalButton";
+import LemonSqueezyButton from "@/components/LemonSqueezyButton";
 import { COACHING_PACKAGES } from "@/lib/constants";
 import { Check, ArrowRight, ChevronDown } from "lucide-react";
+
+const COACHING_VARIANT_IDS: Record<string, string> = {
+  "single-session": "1503016",
+  intensive: "1503021",
+  career: "1503024",
+  retainer: "1503027",
+};
 
 const COACHING_FAQ = [
   {
@@ -49,30 +55,9 @@ const COACHING_FAQ = [
 ];
 
 export default function CoachingPage() {
-  const [expandedTier, setExpandedTier] = useState<string | null>(null);
-  const [showPayPal, setShowPayPal] = useState<string | null>(null);
+  const [showCheckout, setShowCheckout] = useState<string | null>(null);
   const [openFaq, setOpenFaq] = useState<number | null>(null);
   const [agreedToTerms, setAgreedToTerms] = useState<Record<string, boolean>>({});
-  const router = useRouter();
-
-  const handlePaymentSuccess = (
-    details: { id: string; amount?: string },
-    packageName: string,
-    isBundle: boolean,
-  ) => {
-    const params = new URLSearchParams({
-      payment_id: details.id,
-      order_id: details.id,
-      type: "coaching",
-      amount: details.amount || "0",
-      package_name: packageName + (isBundle ? " - Bundle" : ""),
-    });
-    router.push(`/success?${params.toString()}`);
-  };
-
-  const handlePaymentError = (_error: string) => {
-    alert("Payment failed. Please try again or contact support.");
-  };
 
   return (
     <>
@@ -166,9 +151,7 @@ export default function CoachingPage() {
               {COACHING_PACKAGES.map((pkg, index) => {
                 const isRetainer = pkg.id === "retainer";
                 const hasBundle = pkg.bundlePrice !== pkg.price;
-                const isExpanded = expandedTier === pkg.id;
-                const showingPayPal = showPayPal === pkg.id;
-                const showingBundlePayPal = showPayPal === `${pkg.id}-bundle`;
+                const showingCheckout = showCheckout === pkg.id;
                 const badge = (pkg as Record<string, unknown>).badge as
                   | string
                   | null;
@@ -289,8 +272,7 @@ export default function CoachingPage() {
                               onChange={(e) => {
                                 setAgreedToTerms(prev => ({ ...prev, [pkg.id]: e.target.checked }));
                                 if (!e.target.checked) {
-                                  setShowPayPal(null);
-                                  setExpandedTier(null);
+                                  setShowCheckout(null);
                                 }
                               }}
                               className="rounded border-accent-gold/20 text-accent-gold focus:ring-accent-gold/50 mt-0.5 flex-shrink-0"
@@ -308,7 +290,7 @@ export default function CoachingPage() {
                             <>
                               <button
                                 onClick={() =>
-                                  setShowPayPal(showingPayPal ? null : pkg.id)
+                                  setShowCheckout(showingCheckout ? null : pkg.id)
                                 }
                                 disabled={!agreedToTerms[pkg.id]}
                                 className={`w-full py-3.5 rounded-lg text-sm font-medium tracking-wider uppercase transition-all disabled:opacity-40 disabled:cursor-not-allowed ${
@@ -320,21 +302,17 @@ export default function CoachingPage() {
                                 {ctaLabel}
                               </button>
                               <AnimatePresence>
-                                {showingPayPal && (
+                                {showingCheckout && COACHING_VARIANT_IDS[pkg.id] && (
                                   <motion.div
                                     initial={{ opacity: 0, height: 0 }}
                                     animate={{ opacity: 1, height: "auto" }}
                                     exit={{ opacity: 0, height: 0 }}
                                   >
-                                    <PayPalButton
-                                      type="coaching"
-                                      itemId={pkg.id}
-                                      amount={pkg.price}
-                                      itemName={pkg.name}
-                                      onSuccess={(d) =>
-                                        handlePaymentSuccess(d, pkg.name, false)
-                                      }
-                                      onError={handlePaymentError}
+                                    <LemonSqueezyButton
+                                      variantId={COACHING_VARIANT_IDS[pkg.id]}
+                                      label="Book Now"
+                                      price={`$${pkg.price.toLocaleString()}`}
+                                      redirectUrl={`${typeof window !== "undefined" ? window.location.origin : ""}/coaching/success`}
                                     />
                                   </motion.div>
                                 )}
@@ -344,7 +322,7 @@ export default function CoachingPage() {
                             <>
                               <button
                                 onClick={() =>
-                                  setExpandedTier(isExpanded ? null : pkg.id)
+                                  setShowCheckout(showingCheckout ? null : pkg.id)
                                 }
                                 disabled={!agreedToTerms[pkg.id]}
                                 className="w-full py-3.5 rounded-lg text-sm font-medium tracking-wider uppercase bg-gradient-to-r from-[#720921] to-[#4a0616] text-white hover:shadow-lg transition-all disabled:opacity-40 disabled:cursor-not-allowed"
@@ -352,69 +330,19 @@ export default function CoachingPage() {
                                 {ctaLabel}
                               </button>
                               <AnimatePresence>
-                                {isExpanded && (
+                                {showingCheckout && COACHING_VARIANT_IDS[pkg.id] && (
                                   <motion.div
                                     initial={{ opacity: 0, height: 0 }}
                                     animate={{ opacity: 1, height: "auto" }}
                                     exit={{ opacity: 0, height: 0 }}
                                     className="space-y-3 pt-2"
                                   >
-                                    <button
-                                      onClick={() =>
-                                        setShowPayPal(
-                                          showingPayPal ? null : pkg.id,
-                                        )
-                                      }
-                                      className="w-full py-3 rounded-lg text-sm border border-accent-gold/20 text-text-light hover:bg-accent-gold/5 transition-colors"
-                                    >
-                                      Single — ${pkg.price}
-                                    </button>
-                                    {showingPayPal && (
-                                      <PayPalButton
-                                        type="coaching"
-                                        itemId={pkg.id}
-                                        amount={pkg.price}
-                                        itemName={pkg.name}
-                                        onSuccess={(d) =>
-                                          handlePaymentSuccess(
-                                            d,
-                                            pkg.name,
-                                            false,
-                                          )
-                                        }
-                                        onError={handlePaymentError}
-                                      />
-                                    )}
-
-                                    <button
-                                      onClick={() =>
-                                        setShowPayPal(
-                                          showingBundlePayPal
-                                            ? null
-                                            : `${pkg.id}-bundle`,
-                                        )
-                                      }
-                                      className="w-full py-3 rounded-lg text-sm bg-accent-gold/10 border border-accent-gold/20 text-accent-gold font-medium hover:bg-accent-gold/15 transition-colors"
-                                    >
-                                      Bundle (3 sessions) — $
-                                      {pkg.bundlePrice.toLocaleString()}
-                                    </button>
-                                    {showingBundlePayPal && (
-                                      <PayPalButton
-                                        type="coaching"
-                                        itemId={`${pkg.id}-bundle`}
-                                        amount={pkg.bundlePrice}
-                                        itemName={`${pkg.name} - Bundle`}
-                                        onSuccess={(d) =>
-                                          handlePaymentSuccess(
-                                            d,
-                                            pkg.name,
-                                            true,
-                                          )
-                                        }
-                                        onError={handlePaymentError}
-                                      />
-                                    )}
+                                    <LemonSqueezyButton
+                                      variantId={COACHING_VARIANT_IDS[pkg.id]}
+                                      label="Book Now"
+                                      price={`$${pkg.price.toLocaleString()}`}
+                                      redirectUrl={`${typeof window !== "undefined" ? window.location.origin : ""}/coaching/success`}
+                                    />
                                   </motion.div>
                                 )}
                               </AnimatePresence>

@@ -1,27 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { requireAuth } from "@/lib/auth/middleware";
 import { prisma } from "@/lib/prisma";
-
-const PAYPAL_API = process.env.NODE_ENV === "production"
-  ? "https://api-m.paypal.com"
-  : "https://api-m.sandbox.paypal.com";
-
-async function getPayPalAccessToken(): Promise<string> {
-  const clientId = process.env.PAYPAL_CLIENT_ID;
-  const clientSecret = process.env.PAYPAL_CLIENT_SECRET;
-
-  const res = await fetch(`${PAYPAL_API}/v1/oauth2/token`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/x-www-form-urlencoded",
-      Authorization: `Basic ${Buffer.from(`${clientId}:${clientSecret}`).toString("base64")}`,
-    },
-    body: "grant_type=client_credentials",
-  });
-
-  const data = await res.json();
-  return data.access_token;
-}
+import { cancelLemonSubscription } from "@/lib/lemonsqueezy";
 
 export async function POST(request: NextRequest) {
   return requireAuth(request, async (_req, user) => {
@@ -50,24 +30,14 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Cancel at PayPal
-    const accessToken = await getPayPalAccessToken();
-    const cancelRes = await fetch(
-      `${PAYPAL_API}/v1/billing/subscriptions/${membership.paypalSubscriptionId}/cancel`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${accessToken}`,
-        },
-        body: JSON.stringify({ reason: "User requested cancellation" }),
-      },
-    );
+    const lsSubscriptionId = membership.paypalSubscriptionId.replace(/^LS-/, "");
 
-    if (!cancelRes.ok && cancelRes.status !== 204) {
-      console.error("PayPal cancel error:", cancelRes.status);
+    try {
+      await cancelLemonSubscription(lsSubscriptionId);
+    } catch (error) {
+      console.error("Lemon Squeezy cancel error:", error);
       return NextResponse.json(
-        { error: "Failed to cancel subscription with PayPal" },
+        { error: "Failed to cancel subscription" },
         { status: 500 },
       );
     }

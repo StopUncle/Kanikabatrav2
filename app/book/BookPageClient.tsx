@@ -6,11 +6,11 @@ import BackgroundEffects from "@/components/BackgroundEffects";
 import Header from "@/components/Header";
 import CountdownTimer from "@/components/CountdownTimer";
 import PresaleModal from "@/components/PresaleModal";
-import PayPalButton from "@/components/PayPalButton";
+// PayPal fallback — uncomment to offer both payment options
+// import PayPalButton from "@/components/PayPalButton";
+import LemonSqueezyButton from "@/components/LemonSqueezyButton";
 import { BOOK_INFO } from "@/lib/constants";
 import {
-  ShoppingCart,
-  BookOpen,
   Check,
   ShieldCheck,
   Bell,
@@ -130,8 +130,6 @@ const TESTIMONIALS = [
 
 export default function BookPage() {
   const [showPresaleModal, setShowPresaleModal] = useState(false);
-  const [showPayPalHero, setShowPayPalHero] = useState(false);
-  const [showPayPalCTA, setShowPayPalCTA] = useState(false);
 
   const handlePresaleSignup = async (
     email: string,
@@ -148,27 +146,6 @@ export default function BookPage() {
     }
 
     return response.json();
-  };
-
-  const handlePaymentSuccess = (details: {
-    id?: string;
-    paymentId?: string;
-    status: string;
-    downloadToken?: string;
-    customerEmail?: string;
-  }) => {
-    const paymentId = details.paymentId || details.id || "unknown";
-    const tokenParam = details.downloadToken
-      ? `&download_token=${details.downloadToken}`
-      : "";
-    const emailParam = details.customerEmail
-      ? `&customer_email=${encodeURIComponent(details.customerEmail)}`
-      : "";
-    window.location.href = `/success?payment_id=${paymentId}&type=book&amount=${BOOK_INFO.price}${tokenParam}${emailParam}`;
-  };
-
-  const handlePaymentError = (_error: string) => {
-    // Error handling delegated to PayPalButton component UI
   };
 
   const launchDate = new Date(BOOK_INFO.expectedLaunchDate);
@@ -269,52 +246,31 @@ export default function BookPage() {
                 </div>
               )}
 
-              {showPayPalHero ? (
-                <div className="space-y-4">
-                  <PayPalButton
-                    type="book"
-                    amount={BOOK_INFO.price}
-                    itemName={BOOK_INFO.title}
-                    onSuccess={handlePaymentSuccess}
-                    onError={handlePaymentError}
-                    onCancel={() => setShowPayPalHero(false)}
-                  />
-                  <div className="text-center">
-                    <button
-                      onClick={() => setShowPayPalHero(false)}
-                      className="text-text-gray hover:text-text-light text-sm"
-                    >
-                      &larr; Back
-                    </button>
-                  </div>
-                </div>
-              ) : (
-                <div className="flex flex-col sm:flex-row gap-4">
-                  {BOOK_INFO.isPresale ? (
-                    <button
-                      onClick={() => setShowPresaleModal(true)}
-                      className="btn-primary rounded-full text-white px-8 py-4 flex items-center justify-center gap-2"
-                    >
-                      <Bell className="w-5 h-5" />
-                      Join Presale List
-                    </button>
-                  ) : (
-                    <button
-                      onClick={() => setShowPayPalHero(true)}
-                      className="btn-primary rounded-full text-white px-8 py-4 flex items-center justify-center gap-2"
-                    >
-                      <ShoppingCart className="w-5 h-5" />
-                      Get Instant Access — ${BOOK_INFO.price}
-                    </button>
-                  )}
-                  <Link
-                    href="#chapters"
-                    className="btn-secondary rounded-full px-8 py-4 text-center"
+              <div className="flex flex-col sm:flex-row gap-4">
+                {BOOK_INFO.isPresale ? (
+                  <button
+                    onClick={() => setShowPresaleModal(true)}
+                    className="btn-primary rounded-full text-white px-8 py-4 flex items-center justify-center gap-2"
                   >
-                    See What&apos;s Inside
-                  </Link>
-                </div>
-              )}
+                    <Bell className="w-5 h-5" />
+                    Join Presale List
+                  </button>
+                ) : (
+                  <LemonSqueezyButton
+                    variantId="1502988"
+                    label="Get Instant Access"
+                    price="$24.99"
+                    icon="cart"
+                    className="btn-primary rounded-full text-white px-8 py-4 flex items-center justify-center gap-2"
+                  />
+                )}
+                <Link
+                  href="#chapters"
+                  className="btn-secondary rounded-full px-8 py-4 text-center"
+                >
+                  See What&apos;s Inside
+                </Link>
+              </div>
 
               <div className="flex items-center gap-2 text-text-gray text-sm">
                 <ShieldCheck size={16} className="text-accent-gold" />
@@ -442,27 +398,7 @@ export default function BookPage() {
               </div>
             </div>
 
-            {showPayPalCTA ? (
-              <div className="max-w-md mx-auto space-y-4">
-                <PayPalButton
-                  type="book"
-                  amount={BOOK_INFO.price}
-                  itemName={BOOK_INFO.title}
-                  onSuccess={handlePaymentSuccess}
-                  onError={handlePaymentError}
-                  onCancel={() => setShowPayPalCTA(false)}
-                />
-                <div className="text-center">
-                  <button
-                    onClick={() => setShowPayPalCTA(false)}
-                    className="text-text-gray hover:text-text-light text-sm"
-                  >
-                    &larr; Back
-                  </button>
-                </div>
-              </div>
-            ) : (
-              <div className="space-y-4">
+            <div className="space-y-4">
                 {BOOK_INFO.isPresale ? (
                   <button
                     onClick={() => setShowPresaleModal(true)}
@@ -472,13 +408,13 @@ export default function BookPage() {
                     Join Presale List
                   </button>
                 ) : (
-                  <button
-                    onClick={() => setShowPayPalCTA(true)}
+                  <LemonSqueezyButton
+                    variantId="1502988"
+                    label="Get Instant Access"
+                    price="$24.99"
+                    icon="card"
                     className="w-full btn-primary rounded-full text-white px-10 py-4 text-lg flex items-center justify-center gap-2"
-                  >
-                    <BookOpen className="w-5 h-5" />
-                    Get Instant Access — ${BOOK_INFO.price}
-                  </button>
+                  />
                 )}
 
                 <div className="flex items-center gap-3 p-4 rounded-xl bg-white/[0.03] border border-white/[0.06]">
@@ -533,7 +469,6 @@ export default function BookPage() {
                   </div>
                 </div>
               </div>
-            )}
 
             <p className="text-text-gray text-sm mt-6 text-center">
               {BOOK_INFO.isPresale

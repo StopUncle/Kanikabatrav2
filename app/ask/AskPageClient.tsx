@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -11,20 +11,18 @@ import {
   Check,
   Lock,
 } from "lucide-react";
-import { ASK_KANIKA_PACKAGES, PAYPAL_CONFIG } from "@/lib/constants";
+import { ASK_KANIKA_PACKAGES } from "@/lib/constants";
+import LemonSqueezyButton from "@/components/LemonSqueezyButton";
 
 type Format = "written" | "voice";
 type QuestionCount = 1 | 3;
 
-interface PayPalWindow extends Window {
-  paypal?: {
-    Buttons: (options: Record<string, unknown>) => {
-      render: (selector: string) => Promise<void>;
-    };
-  };
-}
-
-declare const window: PayPalWindow;
+const ASK_VARIANT_IDS: Record<string, string> = {
+  "written-1": "1503028",
+  "written-3": "1503033",
+  "voice-1": "1503035",
+  "voice-3": "1503042",
+};
 
 const steps = ["Choose Format", "Your Question", "Payment"];
 
@@ -40,9 +38,6 @@ export default function AskPageClient() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [questions, setQuestions] = useState<string[]>([""]);
-  const [isPayPalLoaded, setIsPayPalLoaded] = useState(false);
-  const [isProcessing, setIsProcessing] = useState(false);
-  const [paymentError, setPaymentError] = useState<string | null>(null);
   const [isComplete, setIsComplete] = useState(false);
 
   const selectedPackage = ASK_KANIKA_PACKAGES.find(
@@ -69,116 +64,15 @@ export default function AskPageClient() {
     email.includes("@") &&
     questions.slice(0, questionCount).every((q) => q.trim().length > 10);
 
-  // Load PayPal SDK when reaching payment step
+  // Check for successful return from Lemon Squeezy
   useEffect(() => {
-    if (step !== 2 || isPayPalLoaded || window.paypal) {
-      if (window.paypal) setIsPayPalLoaded(true);
-      return;
-    }
-
-    const script = document.createElement("script");
-    script.src = `https://www.paypal.com/sdk/js?client-id=${PAYPAL_CONFIG.clientId}&currency=${PAYPAL_CONFIG.currency}&intent=${PAYPAL_CONFIG.intent}&components=buttons,funding-eligibility&enable-funding=card,venmo,paylater`;
-    script.async = true;
-    script.onload = () => setIsPayPalLoaded(true);
-    script.onerror = () => setPaymentError("Failed to load payment system.");
-    document.body.appendChild(script);
-
-    return () => {
-      if (document.body.contains(script)) {
-        document.body.removeChild(script);
+    if (step === 2 && typeof window !== "undefined") {
+      const url = new URL(window.location.href);
+      if (url.searchParams.get("checkout") === "success") {
+        setIsComplete(true);
       }
-    };
-  }, [step, isPayPalLoaded]);
-
-  const initPayPal = useCallback(() => {
-    if (!isPayPalLoaded || !window.paypal || !selectedPackage) return;
-
-    const container = document.getElementById("ask-kanika-paypal");
-    if (!container) return;
-    container.innerHTML = "";
-
-    window
-      .paypal!.Buttons({
-        createOrder: async () => {
-          setIsProcessing(true);
-          setPaymentError(null);
-
-          const res = await fetch("/api/ask-kanika/create-order", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ packageId: selectedPackage.id }),
-          });
-
-          if (!res.ok) {
-            setIsProcessing(false);
-            const data = await res.json();
-            throw new Error(data.error || "Failed to create order");
-          }
-
-          const data = await res.json();
-          return data.orderId;
-        },
-
-        onApprove: async (data: { orderID: string }) => {
-          try {
-            setIsProcessing(true);
-
-            const res = await fetch("/api/ask-kanika/capture", {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({
-                orderId: data.orderID,
-                packageId: selectedPackage.id,
-                customerName: name,
-                customerEmail: email,
-                questions: questions
-                  .slice(0, questionCount)
-                  .map((q) => q.trim()),
-              }),
-            });
-
-            if (!res.ok) {
-              const errorData = await res.json();
-              throw new Error(errorData.error || "Payment capture failed");
-            }
-
-            setIsComplete(true);
-          } catch (error) {
-            setPaymentError(
-              error instanceof Error ? error.message : "Payment failed",
-            );
-          } finally {
-            setIsProcessing(false);
-          }
-        },
-
-        onError: () => {
-          setPaymentError("Payment error occurred. Please try again.");
-          setIsProcessing(false);
-        },
-
-        onCancel: () => {
-          setIsProcessing(false);
-        },
-
-        style: {
-          layout: "vertical",
-          color: "gold",
-          shape: "rect",
-          label: "pay",
-          height: 50,
-        },
-      })
-      .render("#ask-kanika-paypal");
-  }, [isPayPalLoaded, selectedPackage, name, email, questions, questionCount]);
-
-  // Initialize PayPal when SDK is loaded and we're on payment step
-  useEffect(() => {
-    if (step === 2 && isPayPalLoaded) {
-      const timer = setTimeout(initPayPal, 100);
-      return () => clearTimeout(timer);
     }
-  }, [step, isPayPalLoaded, initPayPal]);
+  }, [step]);
 
   if (isComplete) {
     return (
@@ -521,39 +415,23 @@ export default function AskPageClient() {
               )}
             </div>
 
-            {/* PayPal */}
+            {/* Payment */}
             <div className="mb-6">
-              {paymentError && (
-                <div className="bg-red-900/20 border border-red-700/30 rounded-xl p-4 mb-4 text-red-300 text-sm">
-                  {paymentError}
-                </div>
-              )}
-
-              {isProcessing && (
-                <div className="flex items-center justify-center p-8">
-                  <div className="flex flex-col items-center gap-4">
-                    <div className="animate-spin w-8 h-8 border-4 border-accent-gold border-t-transparent rounded-full" />
-                    <p className="text-text-gray text-sm">
-                      Processing payment...
-                    </p>
-                  </div>
-                </div>
-              )}
-
-              <div
-                id="ask-kanika-paypal"
-                className={isProcessing ? "hidden" : "block"}
-              />
-
-              {!isPayPalLoaded && !isProcessing && (
-                <div className="flex items-center justify-center p-8">
-                  <div className="flex flex-col items-center gap-4">
-                    <div className="animate-spin w-8 h-8 border-4 border-accent-gold border-t-transparent rounded-full" />
-                    <p className="text-text-gray text-sm">
-                      Loading payment options...
-                    </p>
-                  </div>
-                </div>
+              {selectedPackage && ASK_VARIANT_IDS[selectedPackage.id] && (
+                <LemonSqueezyButton
+                  variantId={ASK_VARIANT_IDS[selectedPackage.id]}
+                  label={`Pay $${selectedPackage.price}`}
+                  price={`$${selectedPackage.price}`}
+                  email={email}
+                  name={name}
+                  customData={{
+                    customerName: name,
+                    customerEmail: email,
+                    questions: questions.slice(0, questionCount).map((q) => q.trim()).join("|||"),
+                    packageId: selectedPackage.id,
+                  }}
+                  redirectUrl={`${typeof window !== "undefined" ? window.location.origin : ""}/ask?checkout=success`}
+                />
               )}
             </div>
 
@@ -567,7 +445,7 @@ export default function AskPageClient() {
               </button>
               <div className="flex items-center gap-2 text-text-gray/40 text-xs">
                 <Lock size={12} />
-                Secure payment via PayPal
+                Secure payment via Lemon Squeezy
               </div>
             </div>
           </motion.div>

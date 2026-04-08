@@ -3,40 +3,18 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { Check, ShieldCheck, Bell } from "lucide-react";
-import PayPalButton from "./PayPalButton";
+// PayPal fallback — uncomment to offer both payment options
+// import PayPalButton from "./PayPalButton";
+import LemonSqueezyButton from "./LemonSqueezyButton";
 import PresaleModal from "./PresaleModal";
 import CountdownTimer from "./CountdownTimer";
 import { BOOK_INFO } from "@/lib/constants";
 
 export default function BookShowcase() {
-  const [showPayPal, setShowPayPal] = useState(false);
   const [paymentStatus, setPaymentStatus] = useState<
     "idle" | "success" | "error"
   >("idle");
   const [showPresaleModal, setShowPresaleModal] = useState(false);
-
-  const handlePaymentSuccess = (details: {
-    id?: string;
-    paymentId?: string;
-    status: string;
-    downloadToken?: string;
-    customerEmail?: string;
-  }) => {
-    setPaymentStatus("success");
-    const paymentId = details.paymentId || details.id || "unknown";
-    const tokenParam = details.downloadToken
-      ? `&download_token=${details.downloadToken}`
-      : "";
-    const emailParam = details.customerEmail
-      ? `&customer_email=${encodeURIComponent(details.customerEmail)}`
-      : "";
-    window.location.href = `/success?payment_id=${paymentId}&type=book&amount=${BOOK_INFO.price}${tokenParam}${emailParam}`;
-  };
-
-  const handlePaymentError = (error: string) => {
-    setPaymentStatus("error");
-    console.error("Payment failed:", error);
-  };
 
   const handlePresaleSignup = async (
     email: string,
@@ -224,10 +202,7 @@ export default function BookShowcase() {
                     Please try again or contact support.
                   </p>
                   <button
-                    onClick={() => {
-                      setPaymentStatus("idle");
-                      setShowPayPal(false);
-                    }}
+                    onClick={() => setPaymentStatus("idle")}
                     className="btn-primary rounded-full text-white px-6 py-2 text-sm"
                   >
                     Try Again
@@ -245,33 +220,15 @@ export default function BookShowcase() {
                     Get notified when the book launches + exclusive presale pricing
                   </p>
                 </div>
-              ) : showPayPal ? (
-                <div>
-                  <PayPalButton
-                    type="book"
-                    amount={BOOK_INFO.price}
-                    itemName={BOOK_INFO.title}
-                    onSuccess={handlePaymentSuccess}
-                    onError={handlePaymentError}
-                    onCancel={() => setShowPayPal(false)}
-                  />
-                  <div className="text-center mt-4">
-                    <button
-                      onClick={() => setShowPayPal(false)}
-                      className="text-text-muted hover:text-text-light text-sm"
-                    >
-                      &larr; Back
-                    </button>
-                  </div>
-                </div>
               ) : (
                 <div className="space-y-4">
-                  <button
-                    onClick={() => setShowPayPal(true)}
-                    className="w-full btn-primary rounded-full text-white text-center py-3 sm:py-4 font-semibold tracking-wide text-sm sm:text-base"
-                  >
-                    Get Instant Access — ${BOOK_INFO.price}
-                  </button>
+                  <LemonSqueezyButton
+                    variantId="1502988"
+                    label="Get Instant Access"
+                    price="$24.99"
+                    icon="card"
+                    className="w-full btn-primary rounded-full text-white text-center py-3 sm:py-4 font-semibold tracking-wide text-sm sm:text-base flex items-center justify-center gap-2"
+                  />
 
                   {/* Guarantee */}
                   <div className="flex items-center justify-center gap-2 text-text-gray text-xs">
