@@ -369,14 +369,16 @@ The PayPal MCP uses an **access token** that expires every ~9 hours. When the to
 
 ### Regenerating the Token
 
-When the PayPal MCP returns auth errors, regenerate the token using the existing credentials:
+When the PayPal MCP returns auth errors, regenerate the token using credentials from `.env`:
 
 ```javascript
 // Run this in Node.js to get a fresh token:
+// Reads PAYPAL_CLIENT_ID and PAYPAL_CLIENT_SECRET from .env
 node -e "
 const https = require('https');
-const clientId = 'AeLtf_ZCCJiYAYAkwVtD_Cd3ns8wOrnkvHvI77TF534sT1MElVx4I3Q1dN1ModOsXdicQ0LoN8lTE4Iu';
-const clientSecret = 'EGh4vrH9u77bluctq3mQVRfJgpUy8qrtfMj4yZLj3iZ1NSuoA9JyQsp7vEEpMJThAcxa4RzyfUka7uud';
+require('dotenv').config();
+const clientId = process.env.PAYPAL_CLIENT_ID;
+const clientSecret = process.env.PAYPAL_CLIENT_SECRET;
 const auth = Buffer.from(clientId + ':' + clientSecret).toString('base64');
 const data = 'grant_type=client_credentials';
 const req = https.request({
@@ -387,31 +389,13 @@ req.write(data); req.end();
 "
 ```
 
-Then update the token in `~/.claude.json`:
-
-```json
-{
-  "mcpServers": {
-    "paypal": {
-      "type": "stdio",
-      "command": "npx",
-      "args": ["-y", "@paypal/mcp", "--tools=all"],
-      "env": {
-        "PAYPAL_ACCESS_TOKEN": "NEW_TOKEN_HERE",
-        "PAYPAL_ENVIRONMENT": "PRODUCTION"
-      }
-    }
-  }
-}
-```
-
-After updating, **restart Claude Code** for the new token to take effect.
+Then update the token in `~/.claude.json` under `mcpServers.paypal.env.PAYPAL_ACCESS_TOKEN` and **restart Claude Code**.
 
 ### MCP Config Location
 
 - **File:** `C:\Users\SDMat\.claude.json` (user-level config, NOT `~/.claude/mcp.json`)
 - **Key:** `mcpServers.paypal`
-- **Important:** The `"type": "stdio"` field is required — without it, the server won't load. This is set automatically when using `claude mcp add`.
+- **Important:** The `"type": "stdio"` field is required — without it, the server won't load
 
 ### Available Tools
 
@@ -427,32 +411,21 @@ After updating, **restart Claude Code** for the new token to take effect.
 | `list_products` | List catalog products |
 | `show_subscription_details` | View subscription status |
 
-### PayPal Credentials
+### PayPal Info
 
-- **Client ID:** `AeLtf_ZCCJiYAYAkwVtD_Cd3ns8wOrnkvHvI77TF534sT1MElVx4I3Q1dN1ModOsXdicQ0LoN8lTE4Iu`
-- **Client Secret:** `EGh4vrH9u77bluctq3mQVRfJgpUy8qrtfMj4yZLj3iZ1NSuoA9JyQsp7vEEpMJThAcxa4RzyfUka7uud`
+- **Credentials:** Stored in `.env` (PAYPAL_CLIENT_ID, PAYPAL_CLIENT_SECRET) — NEVER commit these
 - **Environment:** PRODUCTION (live, real money)
-- **Merchant ID:** `E9VEMXPYUUJCN`
 - **Merchant Email:** `Kanika@kanikarose.com`
 - **App Name:** Kanika Batra v2
 
 ### Production Database (Railway)
 
-For direct DB access (e.g., querying purchases, resending emails):
-
-```
-Host: yamanote.proxy.rlwy.net
-Port: 35736
-User: postgres
-Password: JoPRnLrCsMFNBQlfvQeZIkGHeFKhdoXa
-Database: railway
-```
+Connection details are in Railway service variables (Postgres-Bzm4 service). Use `mcp__railway__list-variables` to retrieve them, or read from `.env` locally. **NEVER commit database credentials to the repo.**
 
 ```javascript
-// Quick Prisma query example:
-const prisma = new PrismaClient({
-  datasourceUrl: 'postgresql://postgres:JoPRnLrCsMFNBQlfvQeZIkGHeFKhdoXa@yamanote.proxy.rlwy.net:35736/railway'
-});
+// Quick Prisma query example using Railway public URL:
+// Get the DATABASE_PUBLIC_URL from Railway variables first
+const prisma = new PrismaClient({ datasourceUrl: process.env.DATABASE_URL });
 ```
 
 ### Admin API Authentication
@@ -461,8 +434,7 @@ Admin endpoints use the `x-admin-secret` header. The value comes from the `ADMIN
 
 ### Email System
 
-- **SMTP:** Gmail (kbatra271@gmail.com)
-- **Sending address:** `"Kanika Batra" <kbatra271@gmail.com>`
+- **SMTP config:** Stored in `.env` (SMTP_HOST, SMTP_USER, SMTP_PASS)
 - **TLS note:** When sending from local machine, add `tls: { rejectUnauthorized: false }` to nodemailer config
 
 ## 🔄 Recent Updates
