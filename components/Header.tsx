@@ -99,15 +99,15 @@ const Header = () => {
                     {isLoggedIn ? (
                       <>
                         <Link
-                          href="/dashboard"
+                          href="/profile"
                           className={`flex items-center gap-2 px-4 py-2 text-sm tracking-[0.1em] uppercase transition-all duration-300 ${
-                            pathname === "/dashboard"
+                            pathname === "/profile"
                               ? "text-accent-gold"
                               : "text-text-gray/80 hover:text-accent-gold"
                           }`}
                         >
                           <User size={16} strokeWidth={1.5} />
-                          Dashboard
+                          Profile
                         </Link>
                         <button
                           onClick={async () => {
@@ -233,12 +233,12 @@ const Header = () => {
               {isLoggedIn ? (
                 <div className="flex flex-col gap-4">
                   <Link
-                    href="/dashboard"
+                    href="/profile"
                     className="flex items-center justify-center gap-3 py-4 text-lg tracking-[0.15em] uppercase text-accent-gold transition-colors duration-300"
                     onClick={() => setIsMenuOpen(false)}
                   >
                     <User size={20} strokeWidth={1.5} />
-                    Dashboard
+                    Profile
                   </Link>
                   <button
                     onClick={async () => {
