@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -17,6 +17,8 @@ type LoginFormData = z.infer<typeof loginSchema>;
 
 export default function LoginForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const returnTo = searchParams.get("returnTo");
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
@@ -48,8 +50,8 @@ export default function LoginForm() {
         throw new Error(result.error || "Login failed");
       }
 
-      // Login successful
-      router.push("/dashboard");
+      // Login successful — redirect to returnTo or dashboard
+      router.push(returnTo || "/dashboard");
       router.refresh();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Login failed");
@@ -176,7 +178,13 @@ export default function LoginForm() {
           <p className="text-text-gray">
             Don&apos;t have an account?{" "}
             <button
-              onClick={() => router.push("/register")}
+              onClick={() =>
+                router.push(
+                  returnTo
+                    ? `/register?returnTo=${encodeURIComponent(returnTo)}`
+                    : "/register",
+                )
+              }
               className="text-accent-gold hover:text-accent-gold/80 font-light transition-colors"
             >
               Create one

@@ -30,6 +30,7 @@ model User {
   enrollments  CourseEnrollment[]
   activities   ActivityLog[]
   achievements UserAchievement[]
+  quizResults  QuizResult[]
   communityMembership CommunityMembership?
   feedPosts           FeedPost[]
   feedComments        FeedComment[]
@@ -180,6 +181,7 @@ model Post {
 // Quiz System - The Dark Mirror Assessment (Cluster B Personality Types)
 model QuizResult {
   id            String   @id @default(cuid())
+  userId        String?
   email         String?
   primaryType   String   // "psychopathic" | "sociopathic" | "narcissistic" | "borderline" | "histrionic"
   secondaryType String?
@@ -191,7 +193,9 @@ model QuizResult {
   shared        Boolean  @default(false)
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
+  user          User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
 
+  @@index([userId])
   @@index([email])
   @@index([primaryType])
   @@index([paypalOrderId])

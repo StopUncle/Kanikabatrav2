@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import BackgroundEffects from "@/components/BackgroundEffects";
 import Header from "@/components/Header";
 import RegisterForm from "@/components/RegisterForm";
@@ -8,7 +9,9 @@ export default function RegisterPage() {
       <BackgroundEffects />
       <Header />
       <div className="min-h-screen flex items-center justify-center px-4 pt-32 pb-12 relative z-10">
-        <RegisterForm />
+        <Suspense>
+          <RegisterForm />
+        </Suspense>
       </div>
     </>
   );

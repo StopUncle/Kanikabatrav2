@@ -12,6 +12,7 @@ import {
   Play,
   Crown,
   MessageSquare,
+  Brain,
 } from "lucide-react";
 import DashboardHeader from "@/components/dashboard/DashboardHeader";
 import DashboardCard from "@/components/dashboard/DashboardCard";
@@ -25,6 +26,7 @@ import ActivityFeed from "@/components/dashboard/ActivityFeed";
 import ProgressBar from "@/components/course/ProgressBar";
 import MobileNavigation from "@/components/dashboard/MobileNavigation";
 import AccountSection from "@/components/dashboard/AccountSection";
+import QuizDashboardCard from "@/components/dashboard/QuizDashboardCard";
 
 interface CourseSubscription {
   id: string;
@@ -454,6 +456,15 @@ export default function DashboardClient({ user }: DashboardClientProps) {
                     <ArrowRight size={16} />
                   </Link>
                 </div>
+              </DashboardCard>
+
+              {/* Quiz Results Section */}
+              <DashboardCard
+                title="Dark Mirror Assessment"
+                subtitle="Your personality profile"
+                icon={Brain}
+              >
+                <QuizDashboardCard />
               </DashboardCard>
 
               {/* Purchases Section */}

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -23,6 +23,8 @@ type RegisterFormData = z.infer<typeof registerSchema>;
 
 export default function RegisterForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const returnTo = searchParams.get("returnTo");
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -58,8 +60,8 @@ export default function RegisterForm() {
         throw new Error(result.error || "Registration failed");
       }
 
-      // Registration successful
-      router.push("/dashboard");
+      // Registration successful — redirect to returnTo or dashboard
+      router.push(returnTo || "/dashboard");
       router.refresh();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Registration failed");
@@ -204,7 +206,13 @@ export default function RegisterForm() {
           <p className="text-text-gray">
             Already have an account?{" "}
             <button
-              onClick={() => router.push("/login")}
+              onClick={() =>
+                router.push(
+                  returnTo
+                    ? `/login?returnTo=${encodeURIComponent(returnTo)}`
+                    : "/login",
+                )
+              }
               className="text-accent-gold hover:text-accent-gold/80 font-light transition-colors"
             >
               Sign in
