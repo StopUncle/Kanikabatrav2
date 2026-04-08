@@ -6,8 +6,10 @@ import BackgroundEffects from "@/components/BackgroundEffects";
 import Header from "@/components/Header";
 import CountdownTimer from "@/components/CountdownTimer";
 import PresaleModal from "@/components/PresaleModal";
-import PayPalButton from "@/components/PayPalButton";
+// PayPal — kept as fallback
+// import PayPalButton from "@/components/PayPalButton";
 // import LemonSqueezyButton from "@/components/LemonSqueezyButton";
+import StripeButton from "@/components/StripeButton";
 import { BOOK_INFO } from "@/lib/constants";
 import {
   Check,
@@ -255,10 +257,11 @@ export default function BookPage() {
                     Join Presale List
                   </button>
                 ) : (
-                  <PayPalButton
-                    type="book"
-                    amount={BOOK_INFO.price}
-                    itemName="Sociopathic Dating Bible"
+                  <StripeButton
+                    priceKey="BOOK"
+                    label="Get Instant Access"
+                    price="$24.99"
+                    icon="cart"
                   />
                 )}
                 <Link
@@ -405,10 +408,11 @@ export default function BookPage() {
                     Join Presale List
                   </button>
                 ) : (
-                  <PayPalButton
-                    type="book"
-                    amount={BOOK_INFO.price}
-                    itemName="Sociopathic Dating Bible"
+                  <StripeButton
+                    priceKey="BOOK"
+                    label="Get Instant Access"
+                    price="$24.99"
+                    icon="cart"
                   />
                 )}
 

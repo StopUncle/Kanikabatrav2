@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -11,20 +11,29 @@ import {
   Check,
   Lock,
 } from "lucide-react";
-import { ASK_KANIKA_PACKAGES, PAYPAL_CONFIG } from "@/lib/constants";
+import { ASK_KANIKA_PACKAGES } from "@/lib/constants";
+import StripeButton from "@/components/StripeButton";
 
 type Format = "written" | "voice";
 type QuestionCount = 1 | 3;
 
-interface PayPalWindow extends Window {
-  paypal?: {
-    Buttons: (options: Record<string, unknown>) => {
-      render: (selector: string) => Promise<void>;
-    };
-  };
+const ASK_PRICE_KEYS: Record<string, string> = {
+  "written-1": "ASK_WRITTEN_1Q",
+  "written-3": "ASK_WRITTEN_3Q",
+  "voice-1": "ASK_VOICE_1Q",
+  "voice-3": "ASK_VOICE_3Q",
+};
+
+function getAskPriceKey(format: Format, count: QuestionCount): string {
+  return ASK_PRICE_KEYS[`${format}-${count}`];
 }
 
-declare const window: PayPalWindow;
+function getAskPrice(format: Format, count: QuestionCount): string {
+  const pkg = ASK_KANIKA_PACKAGES.find(
+    (p) => p.format === format && p.questions === count,
+  );
+  return pkg ? `$${pkg.price}` : "";
+}
 
 const steps = ["Choose Format", "Your Question", "Payment"];
 
@@ -40,10 +49,6 @@ export default function AskPageClient() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [questions, setQuestions] = useState<string[]>([""]);
-  const [isPayPalLoaded, setIsPayPalLoaded] = useState(false);
-  const [isProcessing, setIsProcessing] = useState(false);
-  const [paymentError, setPaymentError] = useState<string | null>(null);
-  const [isComplete, setIsComplete] = useState(false);
 
   const selectedPackage = ASK_KANIKA_PACKAGES.find(
     (p) => p.format === format && p.questions === questionCount,
@@ -68,151 +73,6 @@ export default function AskPageClient() {
   const canProceedToPayment =
     email.includes("@") &&
     questions.slice(0, questionCount).every((q) => q.trim().length > 10);
-
-  // Load PayPal SDK when reaching payment step
-  useEffect(() => {
-    if (step !== 2 || isPayPalLoaded || window.paypal) {
-      if (window.paypal) setIsPayPalLoaded(true);
-      return;
-    }
-
-    const script = document.createElement("script");
-    script.src = `https://www.paypal.com/sdk/js?client-id=${PAYPAL_CONFIG.clientId}&currency=${PAYPAL_CONFIG.currency}&intent=${PAYPAL_CONFIG.intent}&components=buttons,funding-eligibility&enable-funding=card,venmo,paylater`;
-    script.async = true;
-    script.onload = () => setIsPayPalLoaded(true);
-    script.onerror = () => setPaymentError("Failed to load payment system.");
-    document.body.appendChild(script);
-
-    return () => {
-      if (document.body.contains(script)) {
-        document.body.removeChild(script);
-      }
-    };
-  }, [step, isPayPalLoaded]);
-
-  const initPayPal = useCallback(() => {
-    if (!isPayPalLoaded || !window.paypal || !selectedPackage) return;
-
-    const container = document.getElementById("ask-kanika-paypal");
-    if (!container) return;
-    container.innerHTML = "";
-
-    window
-      .paypal!.Buttons({
-        createOrder: async () => {
-          setIsProcessing(true);
-          setPaymentError(null);
-
-          const res = await fetch("/api/ask-kanika/create-order", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ packageId: selectedPackage.id }),
-          });
-
-          if (!res.ok) {
-            setIsProcessing(false);
-            const data = await res.json();
-            throw new Error(data.error || "Failed to create order");
-          }
-
-          const data = await res.json();
-          return data.orderId;
-        },
-
-        onApprove: async (data: { orderID: string }) => {
-          try {
-            setIsProcessing(true);
-
-            const res = await fetch("/api/ask-kanika/capture", {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({
-                orderId: data.orderID,
-                packageId: selectedPackage.id,
-                customerName: name,
-                customerEmail: email,
-                questions: questions
-                  .slice(0, questionCount)
-                  .map((q) => q.trim()),
-              }),
-            });
-
-            if (!res.ok) {
-              const errorData = await res.json();
-              throw new Error(errorData.error || "Payment capture failed");
-            }
-
-            setIsComplete(true);
-          } catch (error) {
-            setPaymentError(
-              error instanceof Error ? error.message : "Payment failed",
-            );
-          } finally {
-            setIsProcessing(false);
-          }
-        },
-
-        onError: () => {
-          setPaymentError("Payment error occurred. Please try again.");
-          setIsProcessing(false);
-        },
-
-        onCancel: () => {
-          setIsProcessing(false);
-        },
-
-        style: {
-          layout: "vertical",
-          color: "gold",
-          shape: "rect",
-          label: "pay",
-          height: 50,
-        },
-      })
-      .render("#ask-kanika-paypal");
-  }, [isPayPalLoaded, selectedPackage, name, email, questions, questionCount]);
-
-  // Initialize PayPal when SDK is loaded and we're on payment step
-  useEffect(() => {
-    if (step === 2 && isPayPalLoaded) {
-      const timer = setTimeout(initPayPal, 100);
-      return () => clearTimeout(timer);
-    }
-  }, [step, isPayPalLoaded, initPayPal]);
-
-  if (isComplete) {
-    return (
-      <div className="max-w-2xl mx-auto text-center">
-        <motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.5 }}
-        >
-          <div className="w-20 h-20 rounded-full bg-accent-gold/20 flex items-center justify-center mx-auto mb-8">
-            <Check className="text-accent-gold" size={40} />
-          </div>
-          <h1 className="text-3xl sm:text-4xl font-light mb-4 gradient-text-gold">
-            Question Submitted
-          </h1>
-          <p className="text-text-gray text-lg mb-4 leading-relaxed">
-            Your {format === "voice" ? "voice" : "written"} answer will be
-            delivered to <strong className="text-text-light">{email}</strong>{" "}
-            within 48 hours.
-          </p>
-          <p className="text-text-gray/60 text-sm mb-8">
-            Check your inbox for a confirmation email with your question
-            details.
-          </p>
-          <a
-            href="/"
-            className="btn-secondary rounded-full inline-block px-8 py-3"
-          >
-            Return Home
-          </a>
-        </motion.div>
-      </div>
-    );
-  }
 
   return (
     <div className="max-w-3xl mx-auto">
@@ -521,40 +381,21 @@ export default function AskPageClient() {
               )}
             </div>
 
-            {/* PayPal */}
+            {/* Payment */}
             <div className="mb-6">
-              {paymentError && (
-                <div className="bg-red-900/20 border border-red-700/30 rounded-xl p-4 mb-4 text-red-300 text-sm">
-                  {paymentError}
-                </div>
-              )}
-
-              {isProcessing && (
-                <div className="flex items-center justify-center p-8">
-                  <div className="flex flex-col items-center gap-4">
-                    <div className="animate-spin w-8 h-8 border-4 border-accent-gold border-t-transparent rounded-full" />
-                    <p className="text-text-gray text-sm">
-                      Processing payment...
-                    </p>
-                  </div>
-                </div>
-              )}
-
-              <div
-                id="ask-kanika-paypal"
-                className={isProcessing ? "hidden" : "block"}
+              <StripeButton
+                priceKey={getAskPriceKey(format, questionCount)}
+                label="Pay Now"
+                price={getAskPrice(format, questionCount)}
+                email={email}
+                metadata={{
+                  format,
+                  questionCount: String(questionCount),
+                  questions: JSON.stringify(
+                    questions.slice(0, questionCount).map((q) => q.trim()),
+                  ),
+                }}
               />
-
-              {!isPayPalLoaded && !isProcessing && (
-                <div className="flex items-center justify-center p-8">
-                  <div className="flex flex-col items-center gap-4">
-                    <div className="animate-spin w-8 h-8 border-4 border-accent-gold border-t-transparent rounded-full" />
-                    <p className="text-text-gray text-sm">
-                      Loading payment options...
-                    </p>
-                  </div>
-                </div>
-              )}
             </div>
 
             <div className="flex items-center justify-between">
@@ -567,7 +408,7 @@ export default function AskPageClient() {
               </button>
               <div className="flex items-center gap-2 text-text-gray/40 text-xs">
                 <Lock size={12} />
-                Secure payment via PayPal
+                Secure payment via Stripe
               </div>
             </div>
           </motion.div>

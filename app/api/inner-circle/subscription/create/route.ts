@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { requireAuth } from "@/lib/auth/middleware";
 import { prisma } from "@/lib/prisma";
-import { createLemonCheckout, LS_VARIANTS } from "@/lib/lemonsqueezy";
+import { createCheckoutSession, STRIPE_PRICES } from "@/lib/stripe";
 
 export async function POST(request: NextRequest) {
   return requireAuth(request, async (_req, user) => {
@@ -38,16 +38,16 @@ export async function POST(request: NextRequest) {
     const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://kanikarose.com";
 
     try {
-      const result = await createLemonCheckout(LS_VARIANTS.INNER_CIRCLE, {
-        email: dbUser?.email || user.email,
-        name: dbUser?.name || undefined,
-        customData: { userId: user.id },
-        redirectUrl: `${baseUrl}/inner-circle/success`,
+      const session = await createCheckoutSession({
+        priceId: STRIPE_PRICES.INNER_CIRCLE,
+        mode: "subscription",
+        successUrl: `${baseUrl}/inner-circle/success?session_id={CHECKOUT_SESSION_ID}`,
+        cancelUrl: `${baseUrl}/inner-circle`,
+        customerEmail: dbUser?.email || user.email,
+        metadata: { userId: user.id },
       });
 
-      const checkoutUrl = result.data?.data?.attributes?.url;
-
-      if (!checkoutUrl) {
+      if (!session.url) {
         return NextResponse.json(
           { error: "Failed to create checkout" },
           { status: 500 },
@@ -56,10 +56,10 @@ export async function POST(request: NextRequest) {
 
       return NextResponse.json({
         success: true,
-        checkoutUrl,
+        checkoutUrl: session.url,
       });
     } catch (error) {
-      console.error("Lemon Squeezy subscription error:", error);
+      console.error("Stripe subscription error:", error);
       return NextResponse.json(
         { error: "Failed to create subscription checkout" },
         { status: 500 },

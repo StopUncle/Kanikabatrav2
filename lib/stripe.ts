@@ -22,17 +22,17 @@ export const stripe = new Proxy({} as Stripe, {
 // Product prices — create these in Stripe Dashboard with clean names
 // After creating, fill in the price IDs (starts with price_)
 export const STRIPE_PRICES: Record<string, string> = {
-  BOOK: "", // Dating Psychology Masterclass — $24.99
-  QUIZ: "", // Personality Type Assessment — $9.99
-  INNER_CIRCLE: "", // Premium Membership — $29/mo recurring
-  COACHING_SINGLE: "", // Psychology Consultation Single — $297
-  COACHING_INTENSIVE: "", // Psychology Consultation Intensive — $1,497
-  COACHING_CAREER: "", // Career Strategy Consultation — $2,997
-  COACHING_RETAINER: "", // Consultation Retainer — $4,997
-  ASK_WRITTEN_1Q: "", // Written Q&A 1 Question — $39.99
-  ASK_WRITTEN_3Q: "", // Written Q&A 3 Questions — $99
-  ASK_VOICE_1Q: "", // Voice Q&A 1 Question — $59.99
-  ASK_VOICE_3Q: "", // Voice Q&A 3 Questions — $129
+  BOOK: "price_1TJufzJv9vx5CHTwnijydfaY",
+  QUIZ: "price_1TJug0Jv9vx5CHTwa9tjzDlu",
+  INNER_CIRCLE: "price_1TJug1Jv9vx5CHTwjPYeSm7E",
+  COACHING_SINGLE: "price_1TJug1Jv9vx5CHTw6FT0vzoW",
+  COACHING_INTENSIVE: "price_1TJug2Jv9vx5CHTwiikiPESt",
+  COACHING_CAREER: "price_1TJug3Jv9vx5CHTwU3XgjOGH",
+  COACHING_RETAINER: "price_1TJug4Jv9vx5CHTwmEAoOJaf",
+  ASK_WRITTEN_1Q: "price_1TJug4Jv9vx5CHTwxraDwrfD",
+  ASK_WRITTEN_3Q: "price_1TJug5Jv9vx5CHTwYYFHcu3f",
+  ASK_VOICE_1Q: "price_1TJug6Jv9vx5CHTwEaZ0yyS7",
+  ASK_VOICE_3Q: "price_1TJug6Jv9vx5CHTwK0OanIFn",
 };
 
 export const STRIPE_PUBLISHABLE_KEY = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!;

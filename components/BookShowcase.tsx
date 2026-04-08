@@ -3,17 +3,15 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { Check, ShieldCheck, Bell } from "lucide-react";
-// PayPal fallback — uncomment to offer both payment options
-import PayPalButton from "./PayPalButton";
+// PayPal — kept as fallback
+// import PayPalButton from "./PayPalButton";
 // import LemonSqueezyButton from "./LemonSqueezyButton";
+import StripeButton from "./StripeButton";
 import PresaleModal from "./PresaleModal";
 import CountdownTimer from "./CountdownTimer";
 import { BOOK_INFO } from "@/lib/constants";
 
 export default function BookShowcase() {
-  const [paymentStatus, setPaymentStatus] = useState<
-    "idle" | "success" | "error"
-  >("idle");
   const [showPresaleModal, setShowPresaleModal] = useState(false);
 
   const handlePresaleSignup = async (
@@ -184,31 +182,7 @@ export default function BookShowcase() {
                 </div>
               </div>
 
-              {paymentStatus === "success" ? (
-                <div className="text-center py-4">
-                  <div className="text-green-400 text-lg font-semibold mb-2">
-                    Purchase Successful
-                  </div>
-                  <p className="text-text-muted">
-                    Check your email for download instructions.
-                  </p>
-                </div>
-              ) : paymentStatus === "error" ? (
-                <div className="text-center py-4">
-                  <div className="text-red-400 text-lg font-semibold mb-2">
-                    Payment Failed
-                  </div>
-                  <p className="text-text-muted mb-4">
-                    Please try again or contact support.
-                  </p>
-                  <button
-                    onClick={() => setPaymentStatus("idle")}
-                    className="btn-primary rounded-full text-white px-6 py-2 text-sm"
-                  >
-                    Try Again
-                  </button>
-                </div>
-              ) : BOOK_INFO.isPresale ? (
+              {BOOK_INFO.isPresale ? (
                 <div className="space-y-4">
                   <button
                     onClick={() => setShowPresaleModal(true)}
@@ -222,10 +196,11 @@ export default function BookShowcase() {
                 </div>
               ) : (
                 <div className="space-y-4">
-                  <PayPalButton
-                    type="book"
-                    amount={24.99}
-                    itemName="Sociopathic Dating Bible"
+                  <StripeButton
+                    priceKey="BOOK"
+                    label="Get Instant Access"
+                    price="$24.99"
+                    icon="card"
                   />
 
                   {/* Guarantee */}
