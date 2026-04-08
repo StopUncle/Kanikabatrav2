@@ -28,7 +28,8 @@ const Footer = () => {
     ],
     legal: [
       { name: "Terms & Conditions", href: "/terms" },
-      { name: "Privacy Policy", href: "/terms" },
+      { name: "Privacy Policy", href: "/privacy" },
+      { name: "Refund Policy", href: "/refund" },
       { name: "Donate", href: "/donate" },
     ],
     social: [
