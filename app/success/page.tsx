@@ -25,36 +25,69 @@ function SuccessContent() {
   const searchParams = useSearchParams();
 
   useEffect(() => {
-    // Get order details from URL parameters
-    const paymentId = searchParams.get("payment_id");
-    const orderId = searchParams.get("order_id");
-    const type = searchParams.get("type");
-    const amount = searchParams.get("amount");
-    const customerName = searchParams.get("customer_name");
-    const customerEmail = searchParams.get("customer_email");
-    const packageName = searchParams.get("package_name");
-    const downloadToken = searchParams.get("download_token");
+    async function loadOrderDetails() {
+      // Check for Stripe session first
+      const sessionId = searchParams.get("session_id");
+      const product = searchParams.get("product");
 
-    if (paymentId || orderId) {
-      setOrderDetails({
-        type: type || "purchase",
-        amount: amount || "N/A",
-        orderId: orderId || paymentId || "Unknown",
-        customerName: customerName || "Customer",
-        customerEmail: customerEmail || "",
-        packageName: packageName || "Coaching Package",
-        downloadToken: downloadToken || undefined,
-      });
+      if (sessionId) {
+        try {
+          const res = await fetch(
+            `/api/stripe/session?session_id=${sessionId}&product=${product || ""}`,
+          );
+          if (res.ok) {
+            const data = await res.json();
+            setOrderDetails({
+              type: data.type,
+              amount: data.amount,
+              orderId: data.orderId,
+              customerName: data.customerName,
+              customerEmail: data.customerEmail,
+              packageName: data.packageName,
+              downloadToken: data.downloadToken || undefined,
+            });
 
-      // Auto-show booking modal for coaching purchases
-      if (type === "coaching") {
-        setTimeout(() => {
-          setShowBookingModal(true);
-        }, 2000);
+            if (data.type === "coaching") {
+              setTimeout(() => setShowBookingModal(true), 2000);
+            }
+          }
+        } catch {
+          // Stripe session lookup failed — fall through to URL params
+        }
+        setIsLoading(false);
+        return;
       }
+
+      // Fallback: PayPal-style URL parameters
+      const paymentId = searchParams.get("payment_id");
+      const orderId = searchParams.get("order_id");
+      const type = searchParams.get("type");
+      const amount = searchParams.get("amount");
+      const customerName = searchParams.get("customer_name");
+      const customerEmail = searchParams.get("customer_email");
+      const packageName = searchParams.get("package_name");
+      const downloadToken = searchParams.get("download_token");
+
+      if (paymentId || orderId) {
+        setOrderDetails({
+          type: type || "purchase",
+          amount: amount || "N/A",
+          orderId: orderId || paymentId || "Unknown",
+          customerName: customerName || "Customer",
+          customerEmail: customerEmail || "",
+          packageName: packageName || "Coaching Package",
+          downloadToken: downloadToken || undefined,
+        });
+
+        if (type === "coaching") {
+          setTimeout(() => setShowBookingModal(true), 2000);
+        }
+      }
+
+      setIsLoading(false);
     }
 
-    setIsLoading(false);
+    loadOrderDetails();
   }, [searchParams]);
 
   const isBookPurchase = orderDetails?.type === "book";
