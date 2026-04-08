@@ -85,6 +85,10 @@ export default function RootLayout({
             gtag('config', '${GA_MEASUREMENT_ID}');
           `}
         </Script>
+        <Script
+          src="https://app.lemonsqueezy.com/js/lemon.js"
+          strategy="afterInteractive"
+        />
       </head>
       <body className={inter.className}>
         <link rel="dns-prefetch" href="https://www.paypal.com" />
