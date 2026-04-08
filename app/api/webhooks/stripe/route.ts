@@ -259,7 +259,6 @@ export async function POST(request: NextRequest) {
 
       case "charge.refunded": {
         const charge = event.data.object;
-        const paymentIntent = charge.payment_intent as string;
         // Find the purchase by searching metadata
         const purchases = await prisma.purchase.findMany({
           where: {

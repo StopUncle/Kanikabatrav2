@@ -2,6 +2,8 @@
 // Products are created in Payhip dashboard with clean names
 // Checkout uses redirect to payhip.com/buy?link=[code]
 
+import crypto from "crypto";
+
 // Product link codes — fill these in after creating products in Payhip
 export const PAYHIP_PRODUCTS: Record<string, string> = {
   BOOK: "", // Dating Psychology Masterclass
@@ -50,7 +52,6 @@ export function verifyPayhipWebhook(
   signature: string,
   apiKey: string,
 ): boolean {
-  const crypto = require("crypto");
   const hmac = crypto.createHmac("sha256", apiKey);
   const digest = hmac.update(payload).digest("hex");
 
