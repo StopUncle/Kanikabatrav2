@@ -8,7 +8,6 @@ import {
   PinOff,
   Lock,
   Unlock,
-  ChevronDown,
   ChevronUp,
   Send,
 } from "lucide-react";
