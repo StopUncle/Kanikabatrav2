@@ -5,6 +5,14 @@ import Link from "next/link";
 import Header from "@/components/Header";
 import BackgroundEffects from "@/components/BackgroundEffects";
 import { QUIZ_INFO } from "@/lib/quiz-data";
+import {
+  Crosshair,
+  Flame,
+  Crown,
+  Waves,
+  Sparkles,
+  Scale,
+} from "lucide-react";
 
 export default function QuizLanding() {
   return (
@@ -92,28 +100,28 @@ export default function QuizLanding() {
                 {
                   name: "Psychopathic",
                   trait: "Cold & Calculated",
-                  icon: "🎭",
+                  Icon: Crosshair,
                 },
                 {
                   name: "Sociopathic",
                   trait: "Impulsive & Reactive",
-                  icon: "🔥",
+                  Icon: Flame,
                 },
                 {
                   name: "Narcissistic",
                   trait: "Grandiose & Entitled",
-                  icon: "👑",
+                  Icon: Crown,
                 },
-                { name: "Borderline", trait: "Intense & Unstable", icon: "🌊" },
+                { name: "Borderline", trait: "Intense & Unstable", Icon: Waves },
                 {
                   name: "Histrionic",
                   trait: "Dramatic & Magnetic",
-                  icon: "✨",
+                  Icon: Sparkles,
                 },
                 {
                   name: "Neurotypical",
                   trait: "Balanced & Adaptive",
-                  icon: "⚖️",
+                  Icon: Scale,
                 },
               ].map((type, index) => (
                 <motion.div
@@ -121,13 +129,21 @@ export default function QuizLanding() {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.5, delay: 0.3 + index * 0.1 }}
-                  className={`p-4 bg-deep-black/50 border rounded-lg text-center hover:border-accent-gold/40 transition-colors ${
+                  className={`p-5 bg-deep-black/50 border rounded-xl text-center hover:border-accent-gold/40 transition-all duration-300 group ${
                     type.name === "Neurotypical"
-                      ? "border-green-600/30"
+                      ? "border-green-600/30 hover:border-green-500/50"
                       : "border-accent-gold/20"
                   }`}
                 >
-                  <div className="text-2xl mb-2">{type.icon}</div>
+                  <div className={`w-10 h-10 mx-auto mb-3 rounded-full flex items-center justify-center ${
+                    type.name === "Neurotypical"
+                      ? "bg-green-500/10 group-hover:bg-green-500/20"
+                      : "bg-accent-gold/10 group-hover:bg-accent-gold/20"
+                  } transition-colors`}>
+                    <type.Icon size={20} className={
+                      type.name === "Neurotypical" ? "text-green-400" : "text-accent-gold"
+                    } />
+                  </div>
                   <div
                     className={`font-light mb-1 ${type.name === "Neurotypical" ? "text-green-400" : "text-accent-gold"}`}
                   >

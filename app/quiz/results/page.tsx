@@ -3,7 +3,18 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
-import { Lock, Loader2, UserPlus, LogIn } from "lucide-react";
+import {
+  Lock,
+  Loader2,
+  UserPlus,
+  LogIn,
+  Stethoscope,
+  Radar,
+  Activity,
+  Users,
+  Heart,
+  LayoutDashboard,
+} from "lucide-react";
 import Header from "@/components/Header";
 import BackgroundEffects from "@/components/BackgroundEffects";
 import {
@@ -408,26 +419,32 @@ export default function QuizResultsPage() {
                   {
                     title: "Clinical-Style Diagnosis",
                     desc: "Your type + functioning level assessment",
+                    Icon: Stethoscope,
                   },
                   {
                     title: "Complete Radar Chart",
                     desc: "Visual breakdown of all 6 types including NT",
+                    Icon: Radar,
                   },
                   {
                     title: "Functioning Analysis",
                     desc: "High/Moderate/Low adaptive assessment",
+                    Icon: Activity,
                   },
                   {
                     title: "Primary & Secondary Types",
                     desc: "Deep dive into your top two patterns",
+                    Icon: Users,
                   },
                   {
                     title: "Relationship Patterns",
                     desc: "How your type affects your love life",
+                    Icon: Heart,
                   },
                   {
                     title: "Delivered Instantly",
                     desc: "Access your results anytime from your dashboard",
+                    Icon: LayoutDashboard,
                   },
                 ].map((item, index) => (
                   <motion.div
@@ -437,7 +454,7 @@ export default function QuizResultsPage() {
                     transition={{ delay: 0.4 + index * 0.1 }}
                     className="flex items-start gap-3 p-4 bg-deep-black/30 border border-accent-gold/10 rounded-lg"
                   >
-                    <Lock size={16} className="text-accent-gold/40 mt-0.5 flex-shrink-0" />
+                    <item.Icon size={16} className="text-accent-gold mt-0.5 flex-shrink-0" />
                     <div>
                       <div className="text-white font-light">{item.title}</div>
                       <div className="text-text-gray text-sm">{item.desc}</div>
