@@ -17,7 +17,6 @@ import {
 } from "lucide-react";
 import Header from "@/components/Header";
 import BackgroundEffects from "@/components/BackgroundEffects";
-import LemonSqueezyButton from "@/components/LemonSqueezyButton";
 import {
   PERSONALITY_PROFILES,
   PersonalityType,
@@ -38,7 +37,6 @@ interface QuizResultsData {
 
 interface ApiQuizResult {
   unlocked: boolean;
-  quizResultId?: string;
   preview?: {
     primaryType: string;
     secondaryType: string;
@@ -66,6 +64,7 @@ export default function QuizResultsPage() {
   const [sessionData, setSessionData] = useState<QuizResultsData | null>(null);
   const [apiData, setApiData] = useState<ApiQuizResult | null>(null);
   const [email, setEmail] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const [showPayment, setShowPayment] = useState(false);
 
   useEffect(() => {
@@ -158,6 +157,29 @@ export default function QuizResultsPage() {
         }
       : null;
 
+
+  async function handleUnlockPayment() {
+    if (!email) return;
+    setIsLoading(true);
+
+    try {
+      const response = await fetch("/api/quiz/create-order", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
+
+      const responseData = await response.json();
+
+      if (responseData.approveUrl) {
+        window.location.href = responseData.approveUrl;
+      }
+    } catch {
+      // Payment error handled by PayPal UI
+    } finally {
+      setIsLoading(false);
+    }
+  }
 
   // Loading state
   if (pageState === "loading") {
@@ -512,14 +534,15 @@ export default function QuizResultsPage() {
                     className="w-full px-4 py-3 bg-deep-black border border-accent-gold/30 rounded text-white placeholder-text-gray/50 focus:border-accent-gold focus:outline-none mb-4"
                   />
 
-                  <LemonSqueezyButton
-                    variantId="1503001"
-                    label="Unlock Full Report"
-                    price={`$${QUIZ_INFO.price}`}
-                    email={email}
-                    customData={{ quizResultId: apiData?.quizResultId || "" }}
-                    redirectUrl={`${typeof window !== "undefined" ? window.location.origin : ""}/quiz/results`}
-                  />
+                  <button
+                    onClick={handleUnlockPayment}
+                    disabled={!email || isLoading}
+                    className="w-full px-8 py-4 bg-gradient-to-r from-accent-gold to-accent-gold/80 text-deep-black font-medium tracking-wider uppercase rounded transition-all hover:shadow-lg hover:shadow-accent-gold/20 disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {isLoading
+                      ? "Processing..."
+                      : `Pay $${QUIZ_INFO.price} with PayPal`}
+                  </button>
 
                   <button
                     onClick={() => setShowPayment(false)}
