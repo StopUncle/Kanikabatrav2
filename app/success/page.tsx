@@ -195,7 +195,7 @@ function SuccessContent() {
                 <div className="bg-deep-burgundy/20 border border-deep-burgundy/30 rounded-lg p-4 mb-4">
                   <p className="text-sm text-text-gray">
                     <strong className="text-accent-gold">Important:</strong> The
-                    download link is valid for 30 days with 5 downloads max.
+                    download link is valid for 30 days with 10 downloads max.
                     Save your copy locally for permanent access.
                   </p>
                 </div>
