@@ -359,12 +359,122 @@ See `DEPLOYMENT-CHECKLIST.md` for complete deployment guide including:
 - Strict null checks
 - Module resolution: bundler
 
+## 💳 PayPal MCP Server
+
+The PayPal MCP server provides direct access to the live PayPal account (orders, transactions, disputes, refunds, invoices, subscriptions). It is configured in `~/.claude.json` under `mcpServers.paypal`.
+
+### How It Works
+
+The PayPal MCP uses an **access token** that expires every ~9 hours. When the token expires, tools will return `401` or `"Access Token not found in cache"`.
+
+### Regenerating the Token
+
+When the PayPal MCP returns auth errors, regenerate the token using the existing credentials:
+
+```javascript
+// Run this in Node.js to get a fresh token:
+node -e "
+const https = require('https');
+const clientId = 'AeLtf_ZCCJiYAYAkwVtD_Cd3ns8wOrnkvHvI77TF534sT1MElVx4I3Q1dN1ModOsXdicQ0LoN8lTE4Iu';
+const clientSecret = 'EGh4vrH9u77bluctq3mQVRfJgpUy8qrtfMj4yZLj3iZ1NSuoA9JyQsp7vEEpMJThAcxa4RzyfUka7uud';
+const auth = Buffer.from(clientId + ':' + clientSecret).toString('base64');
+const data = 'grant_type=client_credentials';
+const req = https.request({
+  hostname: 'api-m.paypal.com', port: 443, path: '/v1/oauth2/token', method: 'POST',
+  headers: { 'Authorization': 'Basic ' + auth, 'Content-Type': 'application/x-www-form-urlencoded', 'Content-Length': data.length }
+}, (res) => { let body = ''; res.on('data', c => body += c); res.on('end', () => console.log(body)); });
+req.write(data); req.end();
+"
+```
+
+Then update the token in `~/.claude.json`:
+
+```json
+{
+  "mcpServers": {
+    "paypal": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "@paypal/mcp", "--tools=all"],
+      "env": {
+        "PAYPAL_ACCESS_TOKEN": "NEW_TOKEN_HERE",
+        "PAYPAL_ENVIRONMENT": "PRODUCTION"
+      }
+    }
+  }
+}
+```
+
+After updating, **restart Claude Code** for the new token to take effect.
+
+### MCP Config Location
+
+- **File:** `C:\Users\SDMat\.claude.json` (user-level config, NOT `~/.claude/mcp.json`)
+- **Key:** `mcpServers.paypal`
+- **Important:** The `"type": "stdio"` field is required — without it, the server won't load. This is set automatically when using `claude mcp add`.
+
+### Available Tools
+
+| Tool | Purpose |
+|------|---------|
+| `list_transactions` | View transactions (31-day window, filter by status) |
+| `get_order` | Get full order details by order ID |
+| `create_refund` | Refund a captured payment |
+| `list_disputes` | View all disputes |
+| `get_dispute` | Get dispute details |
+| `list_invoices` | List invoices |
+| `create_invoice` | Create and send invoices |
+| `list_products` | List catalog products |
+| `show_subscription_details` | View subscription status |
+
+### PayPal Credentials
+
+- **Client ID:** `AeLtf_ZCCJiYAYAkwVtD_Cd3ns8wOrnkvHvI77TF534sT1MElVx4I3Q1dN1ModOsXdicQ0LoN8lTE4Iu`
+- **Client Secret:** `EGh4vrH9u77bluctq3mQVRfJgpUy8qrtfMj4yZLj3iZ1NSuoA9JyQsp7vEEpMJThAcxa4RzyfUka7uud`
+- **Environment:** PRODUCTION (live, real money)
+- **Merchant ID:** `E9VEMXPYUUJCN`
+- **Merchant Email:** `Kanika@kanikarose.com`
+- **App Name:** Kanika Batra v2
+
+### Production Database (Railway)
+
+For direct DB access (e.g., querying purchases, resending emails):
+
+```
+Host: yamanote.proxy.rlwy.net
+Port: 35736
+User: postgres
+Password: JoPRnLrCsMFNBQlfvQeZIkGHeFKhdoXa
+Database: railway
+```
+
+```javascript
+// Quick Prisma query example:
+const prisma = new PrismaClient({
+  datasourceUrl: 'postgresql://postgres:JoPRnLrCsMFNBQlfvQeZIkGHeFKhdoXa@yamanote.proxy.rlwy.net:35736/railway'
+});
+```
+
+### Admin API Authentication
+
+Admin endpoints use the `x-admin-secret` header. The value comes from the `ADMIN_SECRET` environment variable on Railway. The admin panel at `/admin` uses JWT cookie auth (checks user role === ADMIN).
+
+### Email System
+
+- **SMTP:** Gmail (kbatra271@gmail.com)
+- **Sending address:** `"Kanika Batra" <kbatra271@gmail.com>`
+- **TLS note:** When sending from local machine, add `tls: { rejectUnauthorized: false }` to nodemailer config
+
 ## 🔄 Recent Updates
 
-- Fixed 90+ ESLint violations
-- Replaced all `any` types with proper TypeScript types
-- Implemented dynamic navigation highlighting
-- Created KBSpinLogo component for consistent branding
-- Updated header typography for sleeker appearance
-- Added production environment configuration
-- Created deployment checklist and documentation
+- Account-gated quiz with auto-unlock for book buyers
+- Full admin panel at /admin (applications, comments, posts, members, email queue)
+- Email automation system (3-step sequence with free Inner Circle trial offer)
+- Password reset flow (forgot + reset pages with email)
+- Login/Register activated (no longer "Coming Soon")
+- 17 community files uplifted to luxury design system
+- Book download bug fixed (bonus chapter PDFs + limit increased to 10)
+- PayPal MCP server configured for live account access
+- Security hardening: books moved to /private, CORS removed, dev bypass guarded
+- Payment integrity: amount verification, cancel grace period, webhook sync
+- Dashboard bugs fixed: session data, token refresh, loading locks
