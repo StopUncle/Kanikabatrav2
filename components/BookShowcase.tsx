@@ -223,9 +223,9 @@ export default function BookShowcase() {
               ) : (
                 <div className="space-y-4">
                   <PayPalButton
+                    type="book"
                     amount={24.99}
-                    productType="book"
-                    buttonStyle="primary"
+                    itemName="Sociopathic Dating Bible"
                   />
 
                   {/* Guarantee */}

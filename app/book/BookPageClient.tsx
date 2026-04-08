@@ -256,9 +256,9 @@ export default function BookPage() {
                   </button>
                 ) : (
                   <PayPalButton
+                    type="book"
                     amount={BOOK_INFO.price}
-                    productType="book"
-                    buttonStyle="primary"
+                    itemName="Sociopathic Dating Bible"
                   />
                 )}
                 <Link
@@ -406,9 +406,9 @@ export default function BookPage() {
                   </button>
                 ) : (
                   <PayPalButton
+                    type="book"
                     amount={BOOK_INFO.price}
-                    productType="book"
-                    buttonStyle="primary"
+                    itemName="Sociopathic Dating Bible"
                   />
                 )}
 
