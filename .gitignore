@@ -59,10 +59,10 @@ Thumbs.db
 presale-list.json
 
 # Private files (books, sensitive content)
-/private/
-!private/books/
-private/books/*.txt
-private/books/*.md
+/private/*
+!/private/books/
+/private/books/*.txt
+/private/books/*.md
 
 # Environment files
 .env

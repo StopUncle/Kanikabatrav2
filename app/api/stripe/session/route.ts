@@ -28,8 +28,8 @@ export async function GET(request: NextRequest) {
     // For book purchases, find the purchase record with download token
     let downloadToken: string | null = null;
     if (isBook && email) {
-      // The webhook may or may not have fired yet — poll briefly
-      for (let i = 0; i < 5; i++) {
+      // The webhook may or may not have fired yet — poll up to 20 seconds
+      for (let i = 0; i < 10; i++) {
         const purchase = await prisma.purchase.findFirst({
           where: {
             customerEmail: email,
@@ -47,7 +47,7 @@ export async function GET(request: NextRequest) {
         }
 
         // Wait 2 seconds before retrying
-        if (i < 4) {
+        if (i < 9) {
           await new Promise((resolve) => setTimeout(resolve, 2000));
         }
       }

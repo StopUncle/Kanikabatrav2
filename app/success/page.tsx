@@ -206,19 +206,23 @@ function SuccessContent() {
                   </p>
                 )}
 
-                <a
-                  href={
-                    orderDetails?.downloadToken
-                      ? `/api/download?token=${orderDetails.downloadToken}&format=epub`
-                      : "#"
-                  }
-                  className={`w-full btn-primary rounded-full text-white py-4 text-center inline-block mb-6 ${
-                    !orderDetails?.downloadToken ? "opacity-50 pointer-events-none" : ""
-                  }`}
-                  aria-disabled={!orderDetails?.downloadToken}
-                >
-                  Download Book Now (EPUB)
-                </a>
+                {orderDetails?.downloadToken ? (
+                  <a
+                    href={`/api/download?token=${orderDetails.downloadToken}&format=epub`}
+                    className="w-full btn-primary rounded-full text-white py-4 text-center inline-block mb-6"
+                  >
+                    Download Book Now (EPUB)
+                  </a>
+                ) : (
+                  <div className="w-full bg-accent-gold/10 border border-accent-gold/20 rounded-full py-4 text-center mb-6">
+                    <p className="text-accent-gold font-medium">
+                      Check your email for download links
+                    </p>
+                    <p className="text-text-gray text-xs mt-1">
+                      Download links are being sent to your inbox now
+                    </p>
+                  </div>
+                )}
 
                 <div className="bg-deep-burgundy/20 border border-deep-burgundy/30 rounded-lg p-4 mb-4">
                   <p className="text-sm text-text-gray">
