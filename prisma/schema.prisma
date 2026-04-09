@@ -699,3 +699,38 @@ model EmailQueue {
   @@index([recipientEmail])
   @@index([sequence])
 }
+
+// ========================================
+// AUTOMATED CONTENT SEEDING
+// ========================================
+
+model DailyInsight {
+  id              String    @id @default(cuid())
+  content         String    @db.Text
+  category        String    // "manipulation-tactic", "defense-strategy", "relationship-pattern", "power-dynamic", "psychology-concept"
+  personalityType String?   // null = universal, or "predator", "wildcard", "emperor", "storm", "siren", "balanced"
+  dayOfYear       Int       // 1-366, for scheduling
+  isUsed          Boolean   @default(false)
+  postedAt        DateTime?
+  createdAt       DateTime  @default(now())
+
+  @@index([dayOfYear])
+  @@index([category])
+  @@index([personalityType])
+}
+
+model DiscussionPrompt {
+  id        String    @id @default(cuid())
+  title     String
+  content   String    @db.Text
+  dayOfWeek Int       // 0=Sunday, 1=Monday ... 6=Saturday
+  theme     String    // "manipulation-monday", "toxic-tuesday", etc.
+  variation Int       // 1-4, for rotating weekly
+  isUsed    Boolean   @default(false)
+  postedAt  DateTime?
+  createdAt DateTime  @default(now())
+
+  @@index([dayOfWeek])
+  @@index([theme])
+  @@index([isUsed])
+}

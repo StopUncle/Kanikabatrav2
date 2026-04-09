@@ -1,12 +1,22 @@
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import { verifyAccessToken } from "@/lib/auth/jwt";
-import { prisma } from "@/lib/prisma";
+import jwt from "jsonwebtoken";
 import AdminSidebar from "@/components/admin/AdminSidebar";
 
 export const metadata = {
   title: "Admin Panel | Kanika Batra",
 };
+
+function getJwtSecret(): string {
+  const secret = process.env.JWT_SECRET;
+  if (!secret) {
+    if (process.env.NODE_ENV === "production") {
+      throw new Error("CRITICAL: JWT_SECRET is required in production");
+    }
+    return "dev-only-secret-do-not-use-in-production";
+  }
+  return secret;
+}
 
 export default async function AdminLayout({
   children,
@@ -14,24 +24,19 @@ export default async function AdminLayout({
   children: React.ReactNode;
 }) {
   const cookieStore = await cookies();
-  const token = cookieStore.get("accessToken")?.value;
+  const session = cookieStore.get("admin_session")?.value;
 
-  if (!token) {
-    redirect("/login");
+  if (!session) {
+    redirect("/admin-login");
   }
 
   try {
-    const payload = verifyAccessToken(token);
-    const user = await prisma.user.findUnique({
-      where: { id: payload.userId },
-      select: { role: true },
-    });
-
-    if (user?.role !== "ADMIN") {
-      redirect("/dashboard");
+    const payload = jwt.verify(session, getJwtSecret()) as { role?: string };
+    if (payload.role !== "admin") {
+      redirect("/admin-login");
     }
   } catch {
-    redirect("/login");
+    redirect("/admin-login");
   }
 
   return (
