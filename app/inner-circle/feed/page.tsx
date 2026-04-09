@@ -5,6 +5,7 @@ import { getViewerGender, feedPostGenderWhere } from "@/lib/community/gender-fil
 import { prisma } from "@/lib/prisma";
 import FeedList from "@/components/inner-circle/FeedList";
 import InnerCircleNav from "@/components/inner-circle/InnerCircleNav";
+import OnboardingModal from "@/components/inner-circle/OnboardingModal";
 import Header from "@/components/Header";
 import BackgroundEffects from "@/components/BackgroundEffects";
 import { MessageCircle } from "lucide-react";
@@ -26,6 +27,14 @@ export default async function FeedPage() {
   if (!isMember) {
     redirect("/inner-circle");
   }
+
+  // Check onboarding state — show the welcome modal on first visit
+  // after activation. Null timestamp = hasn't dismissed yet.
+  const viewerRecord = await prisma.user.findUnique({
+    where: { id: userId },
+    select: { onboardingSeenAt: true },
+  });
+  const showOnboarding = viewerRecord?.onboardingSeenAt == null;
 
   // Gender-split: cron-automated posts (authorId null) and admin posts stay
   // visible to everyone. Member-authored welcome posts and the like only
@@ -91,6 +100,7 @@ export default async function FeedPage() {
     <div className="min-h-screen bg-deep-black text-text-light">
       <BackgroundEffects />
       <Header />
+      {showOnboarding && <OnboardingModal />}
 
       <div className="relative z-10 max-w-2xl mx-auto px-4 pt-32 pb-16">
         <div className="text-center mb-12">

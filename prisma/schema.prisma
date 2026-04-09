@@ -20,6 +20,10 @@ model User {
   // This is what makes reset tokens single-use without needing a separate
   // blacklist table.
   tokenVersion     Int                @default(0)
+  // When the user dismissed the Inner Circle onboarding tour. Null means
+  // they haven't seen it yet — the feed renders the welcome modal on
+  // their first visit after activation.
+  onboardingSeenAt DateTime?
   emailPreferences Json?
   role             UserRole           @default(MEMBER)
   createdAt        DateTime           @default(now())
