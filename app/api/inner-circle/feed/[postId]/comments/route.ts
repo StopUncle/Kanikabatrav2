@@ -4,6 +4,7 @@ import { verifyAccessToken } from "@/lib/auth/jwt";
 import { checkMembership } from "@/lib/community/membership";
 import { isAdmin } from "@/lib/community/membership";
 import { getViewerGender, authorGenderWhere } from "@/lib/community/gender-filter";
+import { enforceRateLimit, limits } from "@/lib/rate-limit";
 import { prisma } from "@/lib/prisma";
 
 export async function GET(
@@ -136,6 +137,11 @@ export async function POST(
   if (!isMember) {
     return NextResponse.json({ error: "Not a member" }, { status: 403 });
   }
+
+  // Rate-limit by user (10 comments/hour) to prevent a compromised
+  // account from spam-flooding every post.
+  const rateLimited = await enforceRateLimit(limits.feedComment, `user:${userId}`);
+  if (rateLimited) return rateLimited;
 
   const { postId } = await params;
 

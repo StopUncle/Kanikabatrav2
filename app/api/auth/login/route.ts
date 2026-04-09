@@ -2,9 +2,16 @@ import { NextRequest, NextResponse } from "next/server";
 import { PrismaUserDatabase } from "@/lib/auth/prisma-database";
 import { generateTokenPair } from "@/lib/auth/jwt";
 import { LoginCredentials } from "@/lib/auth/types";
+import { enforceRateLimit, getClientIp, limits } from "@/lib/rate-limit";
 
 export async function POST(request: NextRequest) {
   try {
+    // Rate limit by IP BEFORE parsing the body — denies brute-force floods
+    // without doing any real work.
+    const ip = getClientIp(request);
+    const rateLimited = await enforceRateLimit(limits.authLogin, ip);
+    if (rateLimited) return rateLimited;
+
     const body: LoginCredentials = await request.json();
 
     // Validate input
