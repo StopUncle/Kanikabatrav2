@@ -12,6 +12,7 @@ import {
   BookOpen,
   Users,
   Mail,
+  BarChart3,
   ArrowLeft,
   LogOut,
   Loader2,
@@ -19,6 +20,7 @@ import {
 
 const NAV_ITEMS = [
   { href: "/admin", label: "Dashboard", icon: LayoutDashboard },
+  { href: "/admin/metrics", label: "Metrics", icon: BarChart3 },
   { href: "/admin/applications", label: "Applications", icon: UserCheck },
   { href: "/admin/comments", label: "Comments", icon: MessageSquare },
   { href: "/admin/posts", label: "Posts", icon: FileText },
