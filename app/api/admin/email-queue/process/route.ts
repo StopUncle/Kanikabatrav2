@@ -3,8 +3,26 @@ import { prisma } from "@/lib/prisma";
 import { sendEmail } from "@/lib/email";
 import { requireAdminSession } from "@/lib/admin/auth";
 
+/**
+ * Accepts either:
+ *  - `x-cron-secret: <CRON_SECRET>` header — for scheduled cron callers
+ *    like GitHub Actions, where no httpOnly cookie is available
+ *  - `admin_session` httpOnly cookie — for manual admin-panel triggering
+ *
+ * Returns null on success (caller proceeds) or a 401 NextResponse on
+ * failure.
+ */
+async function authorize(request: NextRequest): Promise<NextResponse | null> {
+  const cronHeader = request.headers.get("x-cron-secret");
+  const expected = process.env.CRON_SECRET || process.env.ADMIN_SECRET;
+  if (cronHeader && expected && cronHeader === expected) {
+    return null;
+  }
+  return await requireAdminSession();
+}
+
 export async function POST(request: NextRequest) {
-  const unauthorized = await requireAdminSession();
+  const unauthorized = await authorize(request);
   if (unauthorized) return unauthorized;
 
   try {
