@@ -13,6 +13,28 @@ const nextConfig = {
         hostname: "i.ytimg.com",
         pathname: "/**",
       },
+      // Cloudflare R2 — voice notes, course thumbnails, member avatars
+      {
+        protocol: "https",
+        hostname: "*.r2.dev",
+        pathname: "/**",
+      },
+      {
+        protocol: "https",
+        hostname: "*.r2.cloudflarestorage.com",
+        pathname: "/**",
+      },
+      // Legacy avatar hosts — can be pruned once all avatars are R2-hosted
+      {
+        protocol: "https",
+        hostname: "ui-avatars.com",
+        pathname: "/**",
+      },
+      {
+        protocol: "https",
+        hostname: "avatars.githubusercontent.com",
+        pathname: "/**",
+      },
     ],
     formats: ["image/avif", "image/webp"],
     deviceSizes: [640, 750, 828, 1080, 1200, 1920],

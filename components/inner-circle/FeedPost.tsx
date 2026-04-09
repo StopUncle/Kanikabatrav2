@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import { Heart, MessageCircle, Pin, Mic } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import Link from "next/link";
+import Image from "next/image";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import VoiceNotePlayer from "./VoiceNotePlayer";
@@ -95,10 +96,13 @@ export default function FeedPost({ post, isDetail = false }: FeedPostProps) {
           }`}
         >
           {post.author?.avatarUrl ? (
-            <img
+            <Image
               src={post.author.avatarUrl}
-              alt=""
+              alt={post.author.name || "Member avatar"}
+              width={32}
+              height={32}
               className="w-8 h-8 rounded-full object-cover"
+              unoptimized={post.author.avatarUrl.startsWith("data:")}
             />
           ) : (
             authorInitial

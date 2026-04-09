@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import { Heart, Reply } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import FeedCommentForm from "./FeedCommentForm";
@@ -81,10 +82,13 @@ export default function FeedComment({
             }`}
           >
             {comment.author.avatarUrl ? (
-              <img
+              <Image
                 src={comment.author.avatarUrl}
-                alt=""
+                alt={comment.author.name || "Member avatar"}
+                width={24}
+                height={24}
                 className="w-6 h-6 rounded-full object-cover"
+                unoptimized={comment.author.avatarUrl.startsWith("data:")}
               />
             ) : (
               authorInitial
