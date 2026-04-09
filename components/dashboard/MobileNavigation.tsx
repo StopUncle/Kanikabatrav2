@@ -31,7 +31,7 @@ export default function MobileNavigation({
             <button
               key={tab.id}
               onClick={() => onTabChange(tab.id)}
-              className={`flex flex-col items-center justify-center w-full h-full py-2 px-1 transition-colors ${
+              className={`relative flex flex-col items-center justify-center w-full h-full py-2 px-1 transition-colors ${
                 isActive
                   ? "text-accent-gold"
                   : "text-gray-500 hover:text-gray-300"

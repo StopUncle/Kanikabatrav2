@@ -117,8 +117,17 @@ export default function FeedPost({ post, isDetail = false }: FeedPostProps) {
 
       <h3 className="text-lg font-medium text-text-light mb-2">{post.title}</h3>
 
-      <div className="text-text-gray text-sm leading-relaxed whitespace-pre-wrap mb-4">
-        {displayContent}
+      <div className="text-text-gray text-sm leading-relaxed mb-4">
+        <div
+          className="whitespace-pre-wrap"
+          dangerouslySetInnerHTML={{
+            __html: displayContent
+              .replace(/&/g, "&amp;")
+              .replace(/</g, "&lt;")
+              .replace(/>/g, "&gt;")
+              .replace(/\*\*(.*?)\*\*/g, "<strong class=\"text-text-light\">$1</strong>")
+          }}
+        />
         {shouldTruncate && (
           <Link
             href={`/inner-circle/feed/${post.id}`}

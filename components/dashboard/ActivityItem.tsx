@@ -68,7 +68,7 @@ export default function ActivityItem({
       </div>
       <div className="flex-1 min-w-0">
         <p className="text-text-light text-sm truncate">{title}</p>
-        <p className="text-text-muted text-xs">{formatDate(createdAt)}</p>
+        <p className="text-text-gray text-xs">{formatDate(createdAt)}</p>
       </div>
     </div>
   );

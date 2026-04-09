@@ -158,7 +158,7 @@ export default function AchievementBadge({
 
         {/* Earned date */}
         {isEarned && earnedAt && (
-          <p className="text-xs text-text-muted mt-1">
+          <p className="text-xs text-text-gray mt-1">
             {new Date(earnedAt).toLocaleDateString("en-US", {
               month: "short",
               day: "numeric",
@@ -179,7 +179,7 @@ export default function AchievementBadge({
         <p className="text-text-light text-sm font-medium text-center">
           {name}
         </p>
-        <p className="text-text-muted text-xs text-center mt-1">
+        <p className="text-text-gray text-xs text-center mt-1">
           {description}
         </p>
       </div>

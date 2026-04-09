@@ -26,7 +26,7 @@ export async function POST(request: NextRequest) {
             data: {
               title: "Welcome to The Inner Circle",
               content: "This is your space. A private community of women navigating power dynamics, dark psychology, and the realities no one else talks about.\n\nHere's what to explore:\n\n\u2022 **The Feed** \u2014 Posts, discussions, and announcements\n\u2022 **Voice Notes** \u2014 Raw, unfiltered insights from Kanika\n\u2022 **The Classroom** \u2014 Courses on dark psychology, pattern recognition, and career strategy\n\nThis community is vetted and moderated. Every member is here for a reason. Every comment is reviewed.\n\nWelcome to the other side.",
-              type: "ANNOUNCEMENT",
+              type: "AUTOMATED",
               isPinned: true,
               metadata: { type: "welcome", automated: true },
             },

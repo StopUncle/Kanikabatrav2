@@ -146,7 +146,7 @@ export default function SessionsSection({
       headerAction={
         <button
           onClick={() => router.push("/coaching")}
-          className="px-4 py-1.5 bg-gold/10 hover:bg-gold/20 rounded-lg text-gold text-sm font-medium transition-colors"
+          className="px-4 py-1.5 bg-accent-gold/10 hover:bg-accent-gold/20 rounded-lg text-accent-gold text-sm font-medium transition-colors"
         >
           Book Session
         </button>
@@ -164,7 +164,7 @@ export default function SessionsSection({
               className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${
                 isActive
                   ? "bg-accent-gold/20 text-accent-gold"
-                  : "bg-gray-800/50 text-text-muted hover:bg-gray-800 hover:text-text-light"
+                  : "bg-gray-800/50 text-text-gray hover:bg-gray-800 hover:text-text-light"
               }`}
             >
               <Icon size={16} />
@@ -195,8 +195,8 @@ export default function SessionsSection({
           {activeTab === "upcoming" ? (
             <>
               <Calendar size={48} className="mx-auto text-gray-700 mb-3" />
-              <p className="text-text-muted mb-2">No upcoming sessions</p>
-              <p className="text-xs text-text-muted mb-4">
+              <p className="text-text-gray mb-2">No upcoming sessions</p>
+              <p className="text-xs text-text-gray mb-4">
                 Book a session to start your transformation
               </p>
               <button
@@ -210,8 +210,8 @@ export default function SessionsSection({
           ) : (
             <>
               <History size={48} className="mx-auto text-gray-700 mb-3" />
-              <p className="text-text-muted">No session history yet</p>
-              <p className="text-xs text-text-muted mt-2">
+              <p className="text-text-gray">No session history yet</p>
+              <p className="text-xs text-text-gray mt-2">
                 Your completed sessions will appear here
               </p>
             </>
@@ -223,13 +223,13 @@ export default function SessionsSection({
       {sessions.length > 0 && (
         <div className="mt-6 pt-4 border-t border-gray-800 flex items-center justify-between text-sm">
           <div className="flex gap-6">
-            <div className="text-text-muted">
+            <div className="text-text-gray">
               <span className="text-text-light font-medium">
                 {upcomingSessions.length}
               </span>{" "}
               upcoming
             </div>
-            <div className="text-text-muted">
+            <div className="text-text-gray">
               <span className="text-text-light font-medium">
                 {historySessions.filter((s) => s.status === "COMPLETED").length}
               </span>{" "}

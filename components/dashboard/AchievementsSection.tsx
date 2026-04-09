@@ -91,7 +91,7 @@ export default function AchievementsSection({
                   }}
                 />
               </div>
-              <p className="text-xs text-text-muted text-right mt-1">
+              <p className="text-xs text-text-gray text-right mt-1">
                 {data.stats.progress}% complete
               </p>
             </div>
@@ -117,7 +117,7 @@ export default function AchievementsSection({
                     style={{ width: `${data.available[0].progress}%` }}
                   />
                 </div>
-                <p className="text-xs text-text-muted mt-1">
+                <p className="text-xs text-text-gray mt-1">
                   {data.available[0].currentValue}/
                   {data.available[0].targetValue}
                 </p>
@@ -223,7 +223,7 @@ export default function AchievementsSection({
           {/* Recently earned */}
           {data.recentlyEarned.length > 0 && (
             <div>
-              <h4 className="text-text-muted text-xs font-medium uppercase tracking-wider mb-3">
+              <h4 className="text-text-gray text-xs font-medium uppercase tracking-wider mb-3">
                 Recently Earned
               </h4>
               <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
@@ -241,7 +241,7 @@ export default function AchievementsSection({
           {/* Earned achievements */}
           {data.earned.length > 0 && (
             <div>
-              <h4 className="text-text-muted text-xs font-medium uppercase tracking-wider mb-3">
+              <h4 className="text-text-gray text-xs font-medium uppercase tracking-wider mb-3">
                 Earned ({data.earned.length})
               </h4>
               <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
@@ -257,7 +257,7 @@ export default function AchievementsSection({
           {/* Available achievements */}
           {data.available.length > 0 && (
             <div>
-              <h4 className="text-text-muted text-xs font-medium uppercase tracking-wider mb-3">
+              <h4 className="text-text-gray text-xs font-medium uppercase tracking-wider mb-3">
                 In Progress ({data.available.length})
               </h4>
               <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
@@ -275,7 +275,7 @@ export default function AchievementsSection({
       ) : (
         <div className="text-center py-12">
           <Trophy size={48} className="mx-auto text-gray-700 mb-3" />
-          <p className="text-text-muted">Failed to load achievements</p>
+          <p className="text-text-gray">Failed to load achievements</p>
         </div>
       )}
     </DashboardCard>

@@ -98,6 +98,11 @@ const CHAPTER_LIST = [
 
 const TESTIMONIALS = [
   {
+    quote: "Forget therapy. This book taught me more about power dynamics in relationships than years of counseling. It's brutal, honest, and absolutely life-changing.",
+    name: "Michelle R.",
+    title: "CEO",
+  },
+  {
     quote: "This book decoded the game I didn't even know I was losing. Within 3 weeks of applying these strategies, I went from being overlooked to being pursued.",
     name: "Sarah K.",
     title: "Investment Banker",
@@ -106,11 +111,6 @@ const TESTIMONIALS = [
     quote: "I used to be the one who got played. Now I'm the one they obsess over. The Rotation System alone is worth ten times the price of this book.",
     name: "Jessica T.",
     title: "Attorney",
-  },
-  {
-    quote: "Forget therapy. This book taught me more about power dynamics in relationships than years of counseling. It's brutal, honest, and absolutely life-changing.",
-    name: "Michelle R.",
-    title: "CEO",
   },
   {
     quote: "Finally, dating advice that treats attraction as a skill to master. I used to overthink every relationship. Now I operate with clarity and control.",

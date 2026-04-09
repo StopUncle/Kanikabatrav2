@@ -279,7 +279,7 @@ export default function QuizResultsPage() {
             >
               <div className="relative p-8 bg-deep-black/50 border border-accent-gold/20 rounded-lg">
                 <div className="blur-md opacity-30 pointer-events-none">
-                  {sessionData && <RadarChart scores={sessionData.scores} />}
+                  <RadarChart scores={sessionData?.scores ?? { psychopathic: 35, sociopathic: 25, narcissistic: 40, borderline: 15, histrionic: 20, neurotypical: 65 }} />
                 </div>
                 <div className="absolute inset-0 flex items-center justify-center">
                   <div className="text-center p-6 bg-deep-black/80 rounded-lg border border-accent-gold/30">

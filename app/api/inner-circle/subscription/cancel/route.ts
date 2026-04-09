@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { requireAuth } from "@/lib/auth/middleware";
 import { prisma } from "@/lib/prisma";
-import { cancelLemonSubscription } from "@/lib/lemonsqueezy";
+import { getStripe } from "@/lib/stripe";
 
 export async function POST(request: NextRequest) {
   return requireAuth(request, async (_req, user) => {
@@ -30,21 +30,19 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const lsSubscriptionId = membership.paypalSubscriptionId.replace(/^LS-/, "");
+    const stripeSubId = membership.paypalSubscriptionId.replace(/^ST-/, "");
 
     try {
-      await cancelLemonSubscription(lsSubscriptionId);
+      const stripe = getStripe();
+      await stripe.subscriptions.cancel(stripeSubId);
     } catch (error) {
-      console.error("Lemon Squeezy cancel error:", error);
+      console.error("Stripe cancel error:", error);
       return NextResponse.json(
         { error: "Failed to cancel subscription" },
         { status: 500 },
       );
     }
 
-    // Set status to CANCELLED and cancelledAt, but preserve expiresAt
-    // so the user keeps access until their current paid period ends.
-    // The checkMembership lazy expiry will revoke access when expiresAt passes.
     await prisma.communityMembership.update({
       where: { id: membership.id },
       data: {

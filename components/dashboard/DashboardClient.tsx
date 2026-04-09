@@ -159,7 +159,7 @@ export default function DashboardClient({ user }: DashboardClientProps) {
       description: "Master the psychology of power and strategic influence",
       purchaseDate: new Date(p.createdAt).toLocaleDateString(),
       status: "active" as const,
-      downloadUrl: p.downloadToken ? `/api/download?token=${p.downloadToken}` : "#",
+      downloadUrl: p.downloadToken ? `/api/download?token=${p.downloadToken}` : undefined,
     })) ?? [];
 
   const memberSince = data?.user.createdAt
@@ -228,7 +228,7 @@ export default function DashboardClient({ user }: DashboardClientProps) {
     [data],
   );
 
-  const handleFeedbackSuccess = useCallback(() => {
+  const handleFeedbackSuccess = useCallback((rating: number) => {
     if (data && feedbackSessionId) {
       setData({
         ...data,
@@ -236,7 +236,7 @@ export default function DashboardClient({ user }: DashboardClientProps) {
           ...data.user,
           sessions: data.user.sessions.map((s) =>
             s.id === feedbackSessionId
-              ? { ...s, feedback: { rating: 5, feedback: "" } }
+              ? { ...s, feedback: { rating, feedback: "" } }
               : s,
           ),
         },
@@ -322,7 +322,7 @@ export default function DashboardClient({ user }: DashboardClientProps) {
                 headerAction={
                   <Link
                     href="/courses"
-                    className="px-4 py-1.5 bg-gold/10 hover:bg-gold/20 rounded-lg text-gold text-sm font-medium transition-colors"
+                    className="px-4 py-1.5 bg-accent-gold/10 hover:bg-accent-gold/20 rounded-lg text-accent-gold text-sm font-medium transition-colors"
                   >
                     Browse Courses
                   </Link>
@@ -345,7 +345,7 @@ export default function DashboardClient({ user }: DashboardClientProps) {
                                 {sub.course.title}
                               </h4>
                             </div>
-                            <div className="flex items-center gap-3 text-xs text-text-muted">
+                            <div className="flex items-center gap-3 text-xs text-text-gray">
                               <span
                                 className={`px-2 py-0.5 rounded ${
                                   sub.status === "ACTIVE"
@@ -389,7 +389,7 @@ export default function DashboardClient({ user }: DashboardClientProps) {
                           showLabel={true}
                           size="sm"
                         />
-                        <p className="text-xs text-text-muted mt-2">
+                        <p className="text-xs text-text-gray mt-2">
                           {sub.progress.completed} of {sub.progress.total}{" "}
                           lessons completed
                         </p>
@@ -408,7 +408,7 @@ export default function DashboardClient({ user }: DashboardClientProps) {
                           <p className="font-medium text-text-light">
                             Community Forum
                           </p>
-                          <p className="text-xs text-text-muted">
+                          <p className="text-xs text-text-gray">
                             Connect with other students
                           </p>
                         </div>
@@ -419,10 +419,10 @@ export default function DashboardClient({ user }: DashboardClientProps) {
                 ) : (
                   <div className="text-center py-12">
                     <Play size={48} className="mx-auto text-gray-700 mb-3" />
-                    <p className="text-text-muted mb-2">
+                    <p className="text-text-gray mb-2">
                       No active course subscriptions
                     </p>
-                    <p className="text-xs text-text-muted mb-4">
+                    <p className="text-xs text-text-gray mb-4">
                       Subscribe to a course for full video access and community
                       features
                     </p>
@@ -484,7 +484,7 @@ export default function DashboardClient({ user }: DashboardClientProps) {
                       size={48}
                       className="mx-auto text-gray-700 mb-3"
                     />
-                    <p className="text-text-muted">No purchases yet</p>
+                    <p className="text-text-gray">No purchases yet</p>
                     <button
                       onClick={() => router.push("/book")}
                       className="mt-4 px-6 py-2 bg-gradient-to-r from-accent-burgundy to-accent-sapphire rounded-lg text-white font-medium hover:shadow-lg transition-all inline-flex items-center gap-2"

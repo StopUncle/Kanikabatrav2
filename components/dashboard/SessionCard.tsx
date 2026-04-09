@@ -141,7 +141,7 @@ export default function SessionCard({
   const calendarUrl = generateCalendarUrl();
 
   return (
-    <div className="bg-gray-900/50 rounded-xl overflow-hidden border border-gray-800 hover:border-gold/30 transition-all duration-300">
+    <div className="bg-gray-900/50 rounded-xl overflow-hidden border border-gray-800 hover:border-accent-gold/30 transition-all duration-300">
       <div className={`h-1 bg-gradient-to-r ${getTypeColor()}`} />
 
       <div className="p-5">
@@ -149,7 +149,7 @@ export default function SessionCard({
           <div className="flex-1">
             <h4 className="text-text-light font-semibold text-lg">{title}</h4>
             <div className="flex items-center gap-2 mt-1 flex-wrap">
-              <span className="text-xs text-text-muted capitalize">
+              <span className="text-xs text-text-gray capitalize">
                 {type} Session
               </span>
               {getStatusBadge()}
@@ -178,8 +178,8 @@ export default function SessionCard({
         </div>
 
         <div className="space-y-3">
-          <div className="flex items-center gap-3 text-text-muted text-sm">
-            <Calendar size={16} className="text-gold" />
+          <div className="flex items-center gap-3 text-text-gray text-sm">
+            <Calendar size={16} className="text-accent-gold" />
             <span>
               {date === "TBD"
                 ? "To be scheduled"
@@ -192,8 +192,8 @@ export default function SessionCard({
             </span>
           </div>
 
-          <div className="flex items-center gap-3 text-text-muted text-sm">
-            <Clock size={16} className="text-gold" />
+          <div className="flex items-center gap-3 text-text-gray text-sm">
+            <Clock size={16} className="text-accent-gold" />
             <span>
               {time === "TBD" ? "Time TBD" : time} ({duration})
             </span>
@@ -201,7 +201,7 @@ export default function SessionCard({
 
           {coachNotes && (
             <div className="pt-3 border-t border-gray-800">
-              <p className="text-text-muted text-sm italic">
+              <p className="text-text-gray text-sm italic">
                 &ldquo;{coachNotes}&rdquo;
               </p>
             </div>
@@ -261,7 +261,7 @@ export default function SessionCard({
           {isExpanded && (
             <div className="pt-4 border-t border-gray-800 space-y-3">
               <div>
-                <label className="text-text-muted text-xs block mb-2">
+                <label className="text-text-gray text-xs block mb-2">
                   Your Notes
                 </label>
                 <textarea
@@ -284,7 +284,7 @@ export default function SessionCard({
 
               {feedback?.feedback && (
                 <div>
-                  <label className="text-text-muted text-xs block mb-1">
+                  <label className="text-text-gray text-xs block mb-1">
                     Your Feedback
                   </label>
                   <p className="text-text-light text-sm">{feedback.feedback}</p>

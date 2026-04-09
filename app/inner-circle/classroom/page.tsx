@@ -3,6 +3,7 @@ import { requireServerAuth } from "@/lib/auth/server-auth";
 import { checkMembership } from "@/lib/community/membership";
 import { prisma } from "@/lib/prisma";
 import CourseCard from "@/components/inner-circle/CourseCard";
+import InnerCircleNav from "@/components/inner-circle/InnerCircleNav";
 import Header from "@/components/Header";
 import BackgroundEffects from "@/components/BackgroundEffects";
 import { BookOpen } from "lucide-react";
@@ -84,11 +85,7 @@ export default async function ClassroomPage() {
           </p>
         </div>
 
-        <div className="flex justify-center gap-2 mb-10">
-          <a href="/inner-circle/feed" className="px-5 py-2 rounded-full text-sm text-text-gray hover:text-accent-gold border border-white/10 hover:border-accent-gold/30 transition-colors">Feed</a>
-          <a href="/inner-circle/voice-notes" className="px-5 py-2 rounded-full text-sm text-text-gray hover:text-accent-gold border border-white/10 hover:border-accent-gold/30 transition-colors">Voice Notes</a>
-          <a href="/inner-circle/classroom" className="px-5 py-2 rounded-full text-sm bg-accent-gold/10 text-accent-gold border border-accent-gold/30">Classroom</a>
-        </div>
+        <InnerCircleNav active="classroom" />
 
         {courseData.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

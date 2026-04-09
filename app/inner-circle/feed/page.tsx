@@ -3,6 +3,7 @@ import { requireServerAuth } from "@/lib/auth/server-auth";
 import { checkMembership } from "@/lib/community/membership";
 import { prisma } from "@/lib/prisma";
 import FeedPost from "@/components/inner-circle/FeedPost";
+import InnerCircleNav from "@/components/inner-circle/InnerCircleNav";
 import Header from "@/components/Header";
 import BackgroundEffects from "@/components/BackgroundEffects";
 import { MessageCircle } from "lucide-react";
@@ -84,11 +85,7 @@ export default async function FeedPage() {
           </p>
         </div>
 
-        <div className="flex justify-center gap-2 mb-10">
-          <a href="/inner-circle/feed" className="px-5 py-2 rounded-full text-sm bg-accent-gold/10 text-accent-gold border border-accent-gold/30">Feed</a>
-          <a href="/inner-circle/voice-notes" className="px-5 py-2 rounded-full text-sm text-text-gray hover:text-accent-gold border border-white/10 hover:border-accent-gold/30 transition-colors">Voice Notes</a>
-          <a href="/inner-circle/classroom" className="px-5 py-2 rounded-full text-sm text-text-gray hover:text-accent-gold border border-white/10 hover:border-accent-gold/30 transition-colors">Classroom</a>
-        </div>
+        <InnerCircleNav active="feed" />
 
         {formatted.length === 0 ? (
           <div className="text-center py-16">

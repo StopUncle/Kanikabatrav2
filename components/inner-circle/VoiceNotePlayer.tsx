@@ -19,6 +19,7 @@ export default function VoiceNotePlayer({ src }: VoiceNotePlayerProps) {
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
+  const [speed, setSpeed] = useState(1);
 
   useEffect(() => {
     const audio = audioRef.current;
@@ -47,8 +48,12 @@ export default function VoiceNotePlayer({ src }: VoiceNotePlayerProps) {
       audio.pause();
       setIsPlaying(false);
     } else {
-      await audio.play();
-      setIsPlaying(true);
+      try {
+        await audio.play();
+        setIsPlaying(true);
+      } catch {
+        setIsPlaying(false);
+      }
     }
   };
 
@@ -59,6 +64,13 @@ export default function VoiceNotePlayer({ src }: VoiceNotePlayerProps) {
     const rect = e.currentTarget.getBoundingClientRect();
     const ratio = (e.clientX - rect.left) / rect.width;
     audio.currentTime = ratio * duration;
+  };
+
+  const toggleSpeed = () => {
+    const speeds = [1, 1.5, 2];
+    const next = speeds[(speeds.indexOf(speed) + 1) % speeds.length];
+    setSpeed(next);
+    if (audioRef.current) audioRef.current.playbackRate = next;
   };
 
   const progress = duration > 0 ? (currentTime / duration) * 100 : 0;
@@ -95,6 +107,13 @@ export default function VoiceNotePlayer({ src }: VoiceNotePlayerProps) {
         <span className="text-xs text-text-gray tabular-nums shrink-0">
           {formatTime(currentTime)} / {formatTime(duration)}
         </span>
+
+        <button
+          onClick={toggleSpeed}
+          className="text-xs text-text-gray hover:text-accent-gold px-2 py-1 rounded transition-colors shrink-0"
+        >
+          {speed}x
+        </button>
       </div>
     </div>
   );

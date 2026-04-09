@@ -55,7 +55,7 @@ const DashboardHeader = ({ userEmail }: DashboardHeaderProps) => {
                 onClick={() => setIsProfileOpen(!isProfileOpen)}
                 className="flex items-center gap-2 px-4 py-2 rounded-lg bg-gray-800/50 hover:bg-gray-800 transition-colors"
               >
-                <div className="w-8 h-8 rounded-full bg-gradient-to-r from-burgundy to-sapphire flex items-center justify-center">
+                <div className="w-8 h-8 rounded-full bg-gradient-to-r from-accent-burgundy to-accent-sapphire flex items-center justify-center">
                   <span className="text-sm font-bold text-white">
                     {userEmail.charAt(0).toUpperCase()}
                   </span>
@@ -68,7 +68,7 @@ const DashboardHeader = ({ userEmail }: DashboardHeaderProps) => {
               {isProfileOpen && (
                 <div className="absolute right-0 mt-2 w-56 bg-gray-900 rounded-lg shadow-xl border border-gray-800 overflow-hidden">
                   <div className="px-4 py-3 border-b border-gray-800">
-                    <p className="text-xs text-text-muted">Signed in as</p>
+                    <p className="text-xs text-text-gray">Signed in as</p>
                     <p className="text-sm text-text-light truncate">
                       {userEmail}
                     </p>
@@ -90,7 +90,7 @@ const DashboardHeader = ({ userEmail }: DashboardHeaderProps) => {
           {/* Mobile Menu Button */}
           <button
             onClick={() => setIsMenuOpen(!isMenuOpen)}
-            className="md:hidden text-text-muted hover:text-gold transition-colors"
+            className="md:hidden text-text-gray hover:text-accent-gold transition-colors"
             aria-label="Toggle menu"
           >
             {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
@@ -99,17 +99,17 @@ const DashboardHeader = ({ userEmail }: DashboardHeaderProps) => {
 
         {/* Mobile Navigation */}
         {isMenuOpen && (
-          <div className="md:hidden absolute top-20 left-0 right-0 bg-deep-black/95 backdrop-blur-md border-b border-gold/10">
+          <div className="md:hidden absolute top-20 left-0 right-0 bg-deep-black/95 backdrop-blur-md border-b border-accent-gold/10">
             <div className="flex flex-col space-y-2 px-4 py-6">
               <div className="pb-3 mb-3 border-b border-gray-800">
-                <p className="text-xs text-text-muted">Signed in as</p>
+                <p className="text-xs text-text-gray">Signed in as</p>
                 <p className="text-sm text-text-light">{userEmail}</p>
               </div>
               {navLinks.map((link) => (
                 <Link
                   key={link.href}
                   href={link.href}
-                  className="flex items-center gap-2 text-text-muted hover:text-gold transition-colors py-2"
+                  className="flex items-center gap-2 text-text-gray hover:text-accent-gold transition-colors py-2"
                   onClick={() => setIsMenuOpen(false)}
                 >
                   <link.icon size={18} />

@@ -82,7 +82,7 @@ export default function ProgressOverview() {
       >
         <div className="text-center py-8">
           <TrendingUp size={32} className="mx-auto text-gray-700 mb-2" />
-          <p className="text-text-muted text-sm">Failed to load progress</p>
+          <p className="text-text-gray text-sm">Failed to load progress</p>
         </div>
       </DashboardCard>
     );
@@ -143,7 +143,7 @@ export default function ProgressOverview() {
                   <div className={`p-1.5 rounded ${stat.bgColor}`}>
                     <Icon size={14} className={stat.color} />
                   </div>
-                  <span className="text-text-muted text-xs">{stat.label}</span>
+                  <span className="text-text-gray text-xs">{stat.label}</span>
                 </div>
                 <p
                   className={`text-2xl font-light ${stat.color} animate-count-up`}
@@ -166,7 +166,7 @@ export default function ProgressOverview() {
             style={{ animationDelay: "400ms", animationFillMode: "both" }}
           >
             <div className="flex items-center justify-between mb-2">
-              <span className="text-text-muted text-sm">Coaching Journey</span>
+              <span className="text-text-gray text-sm">Coaching Journey</span>
               <span className="text-accent-gold text-sm font-medium">
                 {data.sessions.completed}/{data.sessions.total}
               </span>
@@ -182,7 +182,7 @@ export default function ProgressOverview() {
               />
             </div>
             {data.sessions.upcoming > 0 && (
-              <p className="text-xs text-text-muted mt-2">
+              <p className="text-xs text-text-gray mt-2">
                 {data.sessions.upcoming} session
                 {data.sessions.upcoming > 1 ? "s" : ""} upcoming
               </p>
@@ -198,7 +198,7 @@ export default function ProgressOverview() {
           <div className="flex items-center justify-between mb-2">
             <div className="flex items-center gap-2">
               <Trophy size={14} className="text-amber-400" />
-              <span className="text-text-muted text-sm">Achievements</span>
+              <span className="text-text-gray text-sm">Achievements</span>
             </div>
             <span className="text-amber-400 text-sm font-medium">
               {data.achievements.earned}/{data.achievements.total}

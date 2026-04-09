@@ -20,8 +20,8 @@ const QuickStats = ({
       label: "Purchases",
       value: totalPurchases,
       icon: BookOpen,
-      color: "from-gold to-gold-dark",
-      bgColor: "bg-gold/10",
+      color: "from-accent-gold to-accent-gold",
+      bgColor: "bg-accent-gold/10",
     },
     {
       label: "Upcoming Sessions",
@@ -34,15 +34,15 @@ const QuickStats = ({
       label: "Completed",
       value: completedSessions,
       icon: Trophy,
-      color: "from-burgundy to-sapphire",
-      bgColor: "bg-burgundy/10",
+      color: "from-accent-burgundy to-accent-sapphire",
+      bgColor: "bg-accent-burgundy/10",
     },
     {
       label: "Days Active",
       value: daysActive,
       icon: TrendingUp,
-      color: "from-sapphire to-burgundy",
-      bgColor: "bg-sapphire/10",
+      color: "from-accent-sapphire to-accent-burgundy",
+      bgColor: "bg-accent-sapphire/10",
     },
   ];
 
@@ -51,7 +51,7 @@ const QuickStats = ({
       {stats.map((stat, index) => (
         <div
           key={index}
-          className="bg-gray-900/50 backdrop-blur-sm rounded-xl border border-gray-800 p-5 hover:border-gold/30 transition-all duration-300 group"
+          className="bg-gray-900/50 backdrop-blur-sm rounded-xl border border-gray-800 p-5 hover:border-accent-gold/30 transition-all duration-300 group"
         >
           <div className="flex items-center justify-between mb-3">
             <div
@@ -68,7 +68,7 @@ const QuickStats = ({
               {stat.value}
             </span>
           </div>
-          <p className="text-text-muted text-sm">{stat.label}</p>
+          <p className="text-text-gray text-sm">{stat.label}</p>
         </div>
       ))}
     </div>

@@ -68,8 +68,8 @@ export default function ActivityFeed({
         ) : (
           <div className="text-center py-8">
             <Activity size={32} className="mx-auto text-gray-700 mb-2" />
-            <p className="text-text-muted text-sm">No activity yet</p>
-            <p className="text-text-muted text-xs mt-1">
+            <p className="text-text-gray text-sm">No activity yet</p>
+            <p className="text-text-gray text-xs mt-1">
               Your actions will appear here
             </p>
           </div>
@@ -109,7 +109,7 @@ export default function ActivityFeed({
         <div className="space-y-6">
           {Object.entries(groupedActivities).map(([date, dayActivities]) => (
             <div key={date}>
-              <h4 className="text-text-muted text-xs font-medium uppercase tracking-wider mb-3">
+              <h4 className="text-text-gray text-xs font-medium uppercase tracking-wider mb-3">
                 {date}
               </h4>
               <div className="divide-y divide-gray-800 bg-gray-900/30 rounded-lg">
@@ -129,8 +129,8 @@ export default function ActivityFeed({
       ) : (
         <div className="text-center py-12">
           <Activity size={48} className="mx-auto text-gray-700 mb-3" />
-          <p className="text-text-muted">No activity yet</p>
-          <p className="text-text-muted text-sm mt-1">
+          <p className="text-text-gray">No activity yet</p>
+          <p className="text-text-gray text-sm mt-1">
             Start exploring to build your activity history
           </p>
         </div>

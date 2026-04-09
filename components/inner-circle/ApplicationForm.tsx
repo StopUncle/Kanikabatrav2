@@ -26,6 +26,8 @@ export default function ApplicationForm({ existingStatus }: ApplicationFormProps
   const [submitStatus, setSubmitStatus] = useState<"idle" | "submitting" | "success" | "error">("idle");
   const [errorMessage, setErrorMessage] = useState("");
 
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   const {
     register,
     handleSubmit,
@@ -33,6 +35,39 @@ export default function ApplicationForm({ existingStatus }: ApplicationFormProps
   } = useForm<FormData>({
     resolver: zodResolver(schema),
   });
+
+  if (existingStatus === "ACTIVE") {
+    return (
+      <div className="text-center p-8">
+        <p className="text-accent-gold">You&apos;re already a member!</p>
+        <a href="/inner-circle/feed" className="text-text-gray hover:text-accent-gold mt-4 inline-block">Go to Feed &rarr;</a>
+      </div>
+    );
+  }
+
+  if (existingStatus === "APPROVED") {
+    return (
+      <div className="bg-deep-black/50 backdrop-blur-sm border border-accent-gold/20 rounded-2xl p-8 text-center">
+        <CheckCircle className="w-16 h-16 text-accent-gold mx-auto mb-6" />
+        <h2 className="text-2xl font-light gradient-text-gold mb-4">You&apos;ve Been Approved!</h2>
+        <p className="text-text-gray mb-8">Complete your subscription to access The Inner Circle.</p>
+        <button
+          onClick={async () => {
+            setIsSubmitting(true);
+            const res = await fetch("/api/inner-circle/subscription/create", { method: "POST" });
+            const data = await res.json();
+            if (data.checkoutUrl) window.location.href = data.checkoutUrl;
+            setIsSubmitting(false);
+          }}
+          disabled={isSubmitting}
+          className="px-8 py-4 rounded-full text-text-light font-medium uppercase tracking-wider transition-all duration-300 disabled:opacity-50"
+          style={{ background: 'linear-gradient(135deg, #720921, #6366f1)', boxShadow: '0 8px 20px rgba(114,9,33,0.3), 0 8px 20px rgba(99,102,241,0.3)' }}
+        >
+          {isSubmitting ? "Redirecting..." : "Subscribe \u2014 $29/month"}
+        </button>
+      </div>
+    );
+  }
 
   if (existingStatus === "PENDING") {
     return (

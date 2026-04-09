@@ -8,7 +8,7 @@ interface SessionFeedbackModalProps {
   onClose: () => void;
   sessionId: string;
   sessionTitle: string;
-  onSuccess: () => void;
+  onSuccess: (rating: number) => void;
 }
 
 export default function SessionFeedbackModal({
@@ -56,7 +56,7 @@ export default function SessionFeedbackModal({
         throw new Error(data.error || "Failed to submit feedback");
       }
 
-      onSuccess();
+      onSuccess(rating);
       onClose();
     } catch (err) {
       setError(
@@ -82,13 +82,13 @@ export default function SessionFeedbackModal({
             <h2 className="text-xl font-light gradient-text-gold">
               Leave Feedback
             </h2>
-            <p className="text-sm text-text-muted mt-1">{sessionTitle}</p>
+            <p className="text-sm text-text-gray mt-1">{sessionTitle}</p>
           </div>
           <button
             onClick={onClose}
             className="p-2 hover:bg-gray-800 rounded-lg transition-colors"
           >
-            <X size={20} className="text-text-muted" />
+            <X size={20} className="text-text-gray" />
           </button>
         </div>
 
@@ -124,7 +124,7 @@ export default function SessionFeedbackModal({
                 </button>
               ))}
             </div>
-            <p className="text-center text-sm text-text-muted mt-2">
+            <p className="text-center text-sm text-text-gray mt-2">
               {rating === 0 && "Click to rate"}
               {rating === 1 && "Poor"}
               {rating === 2 && "Fair"}
@@ -135,7 +135,7 @@ export default function SessionFeedbackModal({
           </div>
 
           <div>
-            <label className="block text-text-muted text-sm mb-2">
+            <label className="block text-text-gray text-sm mb-2">
               What were your goals for this session?
             </label>
             <textarea
@@ -148,7 +148,7 @@ export default function SessionFeedbackModal({
           </div>
 
           <div>
-            <label className="block text-text-muted text-sm mb-2">
+            <label className="block text-text-gray text-sm mb-2">
               What did you achieve or learn?
             </label>
             <textarea
@@ -161,7 +161,7 @@ export default function SessionFeedbackModal({
           </div>
 
           <div>
-            <label className="block text-text-muted text-sm mb-2">
+            <label className="block text-text-gray text-sm mb-2">
               Any additional feedback?
             </label>
             <textarea
