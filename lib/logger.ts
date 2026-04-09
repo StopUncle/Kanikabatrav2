@@ -112,6 +112,46 @@ class Logger {
 
     this.persistLog(entry);
     this.notifyError(entry);
+    this.notifySentry(message, error, context);
+  }
+
+  /**
+   * Push errors to Sentry when configured. Sentry is a no-op if SENTRY_DSN
+   * is unset. Imported lazily so we don't pull the SDK into client bundles
+   * that never call .error() from the browser.
+   */
+  private notifySentry(
+    message: string,
+    error?: Error,
+    context?: Record<string, unknown>,
+  ): void {
+    const dsn =
+      (typeof process !== "undefined" && process.env?.SENTRY_DSN) ||
+      (typeof process !== "undefined" && process.env?.NEXT_PUBLIC_SENTRY_DSN);
+    if (!dsn) return;
+
+    try {
+      // Dynamic import so Sentry is only resolved when it's actually needed.
+      import("@sentry/nextjs")
+        .then((Sentry) => {
+          Sentry.withScope((scope) => {
+            if (context) {
+              scope.setContext("logger", context);
+            }
+            if (error) {
+              Sentry.captureException(error, { tags: { logger: true } });
+            } else {
+              Sentry.captureMessage(message, "error");
+            }
+          });
+        })
+        .catch(() => {
+          // If the import fails (module missing, browser without the SDK),
+          // fall through silently — we already logged to console above.
+        });
+    } catch {
+      // Defensive — never let the error reporter itself crash a request.
+    }
   }
 
   debug(message: string, context?: Record<string, unknown>): void {

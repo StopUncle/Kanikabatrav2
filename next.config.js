@@ -1,3 +1,5 @@
+const { withSentryConfig } = require("@sentry/nextjs");
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   trailingSlash: false,
@@ -79,4 +81,24 @@ const nextConfig = {
   },
 };
 
-module.exports = nextConfig;
+// Wrap with Sentry only if SENTRY_DSN is configured — avoids build-time
+// warnings when running locally or on deploys that haven't finished Sentry
+// setup. The wrapper also uploads source maps to Sentry during build when
+// SENTRY_AUTH_TOKEN is set.
+const sentryWebpackOptions = {
+  org: process.env.SENTRY_ORG,
+  project: process.env.SENTRY_PROJECT,
+  authToken: process.env.SENTRY_AUTH_TOKEN,
+  // Suppress source-map upload noise when auth token is missing
+  silent: !process.env.SENTRY_AUTH_TOKEN,
+  // Tunnel client requests through a same-origin route to bypass adblock
+  tunnelRoute: "/monitoring",
+  // Hide source maps from the public bundle after upload
+  hideSourceMaps: true,
+  // Don't fail the build if Sentry is down
+  disableLogger: true,
+};
+
+module.exports = process.env.SENTRY_DSN
+  ? withSentryConfig(nextConfig, sentryWebpackOptions)
+  : nextConfig;
