@@ -322,8 +322,11 @@ export async function POST(request: NextRequest) {
           // a password-reset link so they can set their own password.
           if (isNewUser) {
             try {
+              // New user has tokenVersion=0 by default; reset route verifies
+              // this `v` field matches before allowing reset, so this token
+              // is self-invalidating after first use.
               const resetToken = jwt.sign(
-                { userId: user.id, type: "password-reset" },
+                { userId: user.id, type: "password-reset", v: 0 },
                 getJwtSecretForReset(),
                 { expiresIn: "7d" },
               );

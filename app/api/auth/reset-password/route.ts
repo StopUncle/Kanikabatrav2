@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import jwt from "jsonwebtoken";
-import { PrismaUserDatabase } from "@/lib/auth/prisma-database";
+import { prisma } from "@/lib/prisma";
 import { hashPassword } from "@/lib/auth/password";
+import { logger } from "@/lib/logger";
 
 function getJwtSecret(): string {
   const secret = process.env.JWT_SECRET;
@@ -19,6 +20,7 @@ function getJwtSecret(): string {
 interface ResetTokenPayload {
   userId: string;
   type: string;
+  v?: number; // tokenVersion at issue time — used to invalidate after reset
   iat: number;
   exp: number;
 }
@@ -59,7 +61,10 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const user = await PrismaUserDatabase.findById(payload.userId);
+    const user = await prisma.user.findUnique({
+      where: { id: payload.userId },
+      select: { id: true, tokenVersion: true },
+    });
     if (!user) {
       return NextResponse.json(
         { error: "User not found" },
@@ -67,9 +72,26 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Single-use check: if the token was issued against an older
+    // tokenVersion, it's been used already (or superseded by a later reset).
+    // Legacy tokens with no `v` field are rejected to force a fresh request.
+    if (payload.v === undefined || payload.v !== user.tokenVersion) {
+      return NextResponse.json(
+        { error: "This reset link has already been used. Request a new one." },
+        { status: 400 },
+      );
+    }
+
     const hashedPassword = await hashPassword(password);
-    await PrismaUserDatabase.updateUser(user.id, {
-      password: hashedPassword,
+    // Atomically update the password AND increment tokenVersion so the
+    // current token (and any other outstanding ones for this user) can't be
+    // reused.
+    await prisma.user.update({
+      where: { id: user.id },
+      data: {
+        password: hashedPassword,
+        tokenVersion: { increment: 1 },
+      },
     });
 
     return NextResponse.json({
@@ -77,7 +99,7 @@ export async function POST(request: NextRequest) {
       message: "Password reset successfully",
     });
   } catch (error: unknown) {
-    console.error("Reset password error:", error);
+    logger.error("[reset-password] error", error as Error);
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 },

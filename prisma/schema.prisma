@@ -15,6 +15,11 @@ model User {
   displayName      String?
   avatarUrl        String?
   gender           Gender?
+  // Incremented on every successful password reset. Reset tokens embed this
+  // value at issue time; if the two don't match, the token is rejected.
+  // This is what makes reset tokens single-use without needing a separate
+  // blacklist table.
+  tokenVersion     Int                @default(0)
   emailPreferences Json?
   role             UserRole           @default(MEMBER)
   createdAt        DateTime           @default(now())
