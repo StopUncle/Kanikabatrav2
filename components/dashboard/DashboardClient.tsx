@@ -18,6 +18,7 @@ import DashboardCard from "@/components/dashboard/DashboardCard";
 import PurchaseItem from "@/components/dashboard/PurchaseItem";
 import SessionsSection from "@/components/dashboard/SessionsSection";
 import SessionFeedbackModal from "@/components/dashboard/SessionFeedbackModal";
+import InnerCircleDashboardCard from "@/components/dashboard/InnerCircleDashboardCard";
 import QuickStats from "@/components/dashboard/QuickStats";
 import ProgressOverview from "@/components/dashboard/ProgressOverview";
 import AchievementsSection from "@/components/dashboard/AchievementsSection";
@@ -74,6 +75,19 @@ interface Session {
   };
 }
 
+interface CommunityMembershipSummary {
+  id: string;
+  status: string;
+  billingCycle: string;
+  appliedAt: string | null;
+  approvedAt: string | null;
+  activatedAt: string | null;
+  expiresAt: string | null;
+  suspendedAt: string | null;
+  suspendReason: string | null;
+  cancelledAt: string | null;
+}
+
 interface DashboardData {
   user: {
     id: string;
@@ -82,6 +96,7 @@ interface DashboardData {
     createdAt: string;
     purchases: Purchase[];
     sessions: Session[];
+    communityMembership: CommunityMembershipSummary | null;
   };
 }
 
@@ -455,24 +470,19 @@ export default function DashboardClient({ user }: DashboardClientProps) {
                 )}
               </DashboardCard>
 
-              {/* Inner Circle Section */}
+              {/* Inner Circle Section — state-aware */}
               <DashboardCard
                 title="The Inner Circle"
-                subtitle="Private community & courses"
+                subtitle={
+                  data?.user.communityMembership?.status === "ACTIVE"
+                    ? "Your membership"
+                    : "Private community & courses"
+                }
                 icon={Crown}
               >
-                <div className="text-center py-8">
-                  <p className="text-text-gray mb-4">
-                    Access exclusive voice notes, courses, and community discussions.
-                  </p>
-                  <Link
-                    href="/inner-circle"
-                    className="inline-flex items-center gap-2 px-6 py-2 bg-accent-gold text-deep-black rounded-full font-medium hover:bg-accent-gold/90 transition-all"
-                  >
-                    Explore The Inner Circle
-                    <ArrowRight size={16} />
-                  </Link>
-                </div>
+                <InnerCircleDashboardCard
+                  membership={data?.user.communityMembership ?? null}
+                />
               </DashboardCard>
 
               {/* Quiz Results Section */}
