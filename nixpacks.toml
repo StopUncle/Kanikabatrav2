@@ -5,7 +5,16 @@ nixPkgs = ["nodejs_20", "openssl"]
 cmds = ["npm ci"]
 
 [phases.build]
-cmds = ["npx prisma generate", "npm run build"]
+cmds = [
+  "npx prisma generate",
+  # Sync schema additions to the live DB before the new code that uses them
+  # boots. The repo has historically been managed via `db push` (the
+  # migrations folder is incomplete relative to schema.prisma), so this is
+  # the consistent path. Additive changes only — never run with
+  # --accept-data-loss without explicit user approval.
+  "npx prisma db push --skip-generate",
+  "npm run build",
+]
 
 [start]
 cmd = "NODE_OPTIONS='--max-old-space-size=512' next start -p ${PORT:-3000}"

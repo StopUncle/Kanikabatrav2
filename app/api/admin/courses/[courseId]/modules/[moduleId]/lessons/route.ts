@@ -1,11 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-
-function validateAdminAccess(request: NextRequest): boolean {
-  const adminSecret = process.env.ADMIN_SECRET;
-  if (!adminSecret) return false;
-  return request.headers.get("x-admin-secret") === adminSecret;
-}
+import { requireAdminSession } from "@/lib/admin/auth";
 
 function generateSlug(title: string): string {
   return title
@@ -19,9 +14,8 @@ type RouteParams = {
 };
 
 export async function POST(request: NextRequest, { params }: RouteParams) {
-  if (!validateAdminAccess(request)) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
+  const unauthorized = await requireAdminSession();
+  if (unauthorized) return unauthorized;
 
   const { moduleId } = await params;
 

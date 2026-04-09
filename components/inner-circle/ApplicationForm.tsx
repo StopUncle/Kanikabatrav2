@@ -8,6 +8,9 @@ import { motion } from "framer-motion";
 import { Send, CheckCircle, Clock } from "lucide-react";
 
 const schema = z.object({
+  gender: z.enum(["MALE", "FEMALE"], {
+    errorMap: () => ({ message: "Please select your gender" }),
+  }),
   whyJoin: z.string().min(20, "Tell us a bit more (at least 20 characters)").max(1000),
   whatHope: z.string().min(20, "Tell us a bit more (at least 20 characters)").max(1000),
   howFound: z.string().min(1, "Required").max(500),
@@ -122,6 +125,38 @@ export default function ApplicationForm({ existingStatus }: ApplicationFormProps
       animate={{ opacity: 1, y: 0 }}
       className="max-w-2xl mx-auto bg-deep-black/50 backdrop-blur-sm border border-accent-gold/20 rounded-2xl p-8 shadow-2xl space-y-8"
     >
+      <div>
+        <label className="block text-sm font-light text-text-gray mb-3">
+          I am
+        </label>
+        <div className="grid grid-cols-2 gap-3">
+          <label className="relative flex items-center justify-center gap-2 px-4 py-3 bg-deep-black/50 border border-accent-gold/20 rounded-lg cursor-pointer hover:border-accent-gold/50 transition-all has-[:checked]:border-accent-gold has-[:checked]:bg-accent-gold/10">
+            <input
+              type="radio"
+              {...register("gender")}
+              value="FEMALE"
+              className="sr-only"
+            />
+            <span className="text-text-light text-sm tracking-wide">Female</span>
+          </label>
+          <label className="relative flex items-center justify-center gap-2 px-4 py-3 bg-deep-black/50 border border-accent-gold/20 rounded-lg cursor-pointer hover:border-accent-gold/50 transition-all has-[:checked]:border-accent-gold has-[:checked]:bg-accent-gold/10">
+            <input
+              type="radio"
+              {...register("gender")}
+              value="MALE"
+              className="sr-only"
+            />
+            <span className="text-text-light text-sm tracking-wide">Male</span>
+          </label>
+        </div>
+        {errors.gender && (
+          <p className="mt-2 text-sm text-red-400">{errors.gender.message}</p>
+        )}
+        <p className="mt-2 text-xs text-text-gray/60">
+          The community is split into two groups. You&apos;ll only see messages from members who share your gender.
+        </p>
+      </div>
+
       <div>
         <label className="block text-sm font-light text-text-gray mb-2">
           Why do you want to join The Inner Circle?

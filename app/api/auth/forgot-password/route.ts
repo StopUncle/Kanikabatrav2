@@ -91,7 +91,9 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const user = await PrismaUserDatabase.findByEmail(email);
+    // Normalize for lookup — register stores lowercase, so we must too.
+    const normalizedEmail = email.toLowerCase().trim();
+    const user = await PrismaUserDatabase.findByEmail(normalizedEmail);
 
     if (user) {
       const resetToken = jwt.sign(

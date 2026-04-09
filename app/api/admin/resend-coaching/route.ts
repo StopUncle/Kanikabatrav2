@@ -1,22 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { sendCoachingQuestionnaire, sendEmail } from "@/lib/email";
-
-function validateAdminAccess(request: NextRequest): boolean {
-  const adminSecret = process.env.ADMIN_SECRET;
-  if (!adminSecret) {
-    console.error("ADMIN_SECRET environment variable not configured");
-    return false;
-  }
-  const providedSecret = request.headers.get("x-admin-secret");
-  return providedSecret === adminSecret;
-}
+import { requireAdminSession } from "@/lib/admin/auth";
 
 // GET: List all coaching purchases and their session/questionnaire status
 export async function GET(request: NextRequest) {
-  if (!validateAdminAccess(request)) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
+  const unauthorized = await requireAdminSession();
+  if (unauthorized) return unauthorized;
 
   try {
     // Find all coaching purchases, plus any high-amount purchases that might be miscategorized
@@ -62,9 +52,8 @@ export async function GET(request: NextRequest) {
 
 // POST: Fix a purchase and send coaching notification
 export async function POST(request: NextRequest) {
-  if (!validateAdminAccess(request)) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
+  const unauthorized = await requireAdminSession();
+  if (unauthorized) return unauthorized;
 
   try {
     const body = await request.json();

@@ -2,6 +2,7 @@ import { redirect, notFound } from "next/navigation";
 import Link from "next/link";
 import { requireServerAuth } from "@/lib/auth/server-auth";
 import { checkMembership } from "@/lib/community/membership";
+import { getViewerGender, feedPostGenderWhere } from "@/lib/community/gender-filter";
 import { prisma } from "@/lib/prisma";
 import FeedPost from "@/components/inner-circle/FeedPost";
 import FeedCommentSection from "@/components/inner-circle/FeedCommentSection";
@@ -36,8 +37,12 @@ export default async function PostDetailPage({ params }: { params: Promise<{ pos
     redirect("/inner-circle");
   }
 
-  const post = await prisma.feedPost.findUnique({
-    where: { id: postId },
+  // Gender-split: a member of the opposite gender shouldn't be able to deep-
+  // link into a member-authored post. Admin/cron posts (id-only or admin
+  // author) remain visible to everyone via feedPostGenderWhere.
+  const viewerGender = await getViewerGender(userId);
+  const post = await prisma.feedPost.findFirst({
+    where: { id: postId, ...feedPostGenderWhere(viewerGender) },
     include: {
       author: {
         select: { id: true, name: true, displayName: true, avatarUrl: true, role: true },

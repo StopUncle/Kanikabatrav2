@@ -2,7 +2,6 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { Loader2, Check, X, Clock, UserCheck, Users } from "lucide-react";
-import { getAdminHeaders } from "@/lib/admin";
 
 interface Application {
   id: string;
@@ -32,9 +31,7 @@ export default function ApplicationsPage() {
   const fetchApplications = useCallback(async (status: FilterTab) => {
     setLoading(true);
     try {
-      const res = await fetch(`/api/admin/applications?status=${status}`, {
-        headers: getAdminHeaders(),
-      });
+      const res = await fetch(`/api/admin/applications?status=${status}`);
       if (res.ok) {
         const data = await res.json();
         setApplications(data.applications || []);
@@ -55,7 +52,7 @@ export default function ApplicationsPage() {
     try {
       const res = await fetch(`/api/admin/applications/${id}`, {
         method: "POST",
-        headers: getAdminHeaders(),
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ action }),
       });
       if (res.ok) {

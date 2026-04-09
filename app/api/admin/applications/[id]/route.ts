@@ -2,28 +2,14 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { sendApplicationApproved } from "@/lib/email";
 import { logger } from "@/lib/logger";
-
-function validateAdminAccess(request: NextRequest): boolean {
-  const adminSecret = process.env.ADMIN_SECRET;
-  if (!adminSecret) {
-    console.error("ADMIN_SECRET environment variable not configured");
-    return false;
-  }
-
-  const providedSecret = request.headers.get("x-admin-secret");
-  return providedSecret === adminSecret;
-}
+import { requireAdminSession } from "@/lib/admin/auth";
 
 export async function POST(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> },
 ) {
-  if (!validateAdminAccess(request)) {
-    return NextResponse.json(
-      { error: "Unauthorized - valid admin credentials required" },
-      { status: 401 },
-    );
-  }
+  const unauthorized = await requireAdminSession();
+  if (unauthorized) return unauthorized;
 
   try {
     const { id } = await params;

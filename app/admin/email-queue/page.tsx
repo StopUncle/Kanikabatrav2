@@ -11,7 +11,6 @@ import {
   XCircle,
   RefreshCw,
 } from "lucide-react";
-import { getAdminHeaders } from "@/lib/admin";
 
 interface QueueStats {
   pending: number;
@@ -41,9 +40,7 @@ export default function EmailQueuePage() {
 
   const fetchData = useCallback(async () => {
     try {
-      const res = await fetch("/api/admin/email-queue/status", {
-        headers: getAdminHeaders(),
-      });
+      const res = await fetch("/api/admin/email-queue/status");
       if (res.ok) {
         const data = await res.json();
         setStats({
@@ -70,7 +67,7 @@ export default function EmailQueuePage() {
     try {
       const res = await fetch(`/api/admin/email-queue/${endpoint}`, {
         method: "POST",
-        headers: getAdminHeaders(),
+        headers: { "Content-Type": "application/json" },
         body: body ? JSON.stringify(body) : undefined,
       });
       if (res.ok) {

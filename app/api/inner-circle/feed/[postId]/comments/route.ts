@@ -3,6 +3,7 @@ import { cookies } from "next/headers";
 import { verifyAccessToken } from "@/lib/auth/jwt";
 import { checkMembership } from "@/lib/community/membership";
 import { isAdmin } from "@/lib/community/membership";
+import { getViewerGender, authorGenderWhere } from "@/lib/community/gender-filter";
 import { prisma } from "@/lib/prisma";
 
 export async function GET(
@@ -30,11 +31,27 @@ export async function GET(
 
   const { postId } = await params;
 
+  // Gender-split: members only see comments from their own gender + admin/mod
+  // content. Legacy users with no gender set see everything (authorWhere = undefined).
+  const viewerGender = await getViewerGender(userId);
+  const authorWhere = authorGenderWhere(viewerGender);
+
+  // Visibility rule: APPROVED comments to everyone (subject to gender), PLUS
+  // the viewer's own PENDING_REVIEW comments so they can see "your comment is
+  // awaiting approval" instead of mysteriously vanishing.
+  const visibilityWhere = {
+    OR: [
+      { status: "APPROVED" as const },
+      { authorId: userId, status: "PENDING_REVIEW" as const },
+    ],
+  };
+
   const comments = await prisma.feedComment.findMany({
     where: {
       postId,
-      status: "APPROVED",
       parentId: null,
+      ...visibilityWhere,
+      ...(authorWhere ? { author: authorWhere } : {}),
     },
     orderBy: { createdAt: "asc" },
     include: {
@@ -46,7 +63,10 @@ export async function GET(
         select: { id: true },
       },
       children: {
-        where: { status: "APPROVED" },
+        where: {
+          ...visibilityWhere,
+          ...(authorWhere ? { author: authorWhere } : {}),
+        },
         orderBy: { createdAt: "asc" },
         include: {
           author: {
@@ -64,6 +84,7 @@ export async function GET(
   const formatted = comments.map((comment) => ({
     id: comment.id,
     content: comment.content,
+    status: comment.status,
     likeCount: comment.likeCount,
     isLiked: comment.likes.length > 0,
     createdAt: comment.createdAt.toISOString(),
@@ -76,6 +97,7 @@ export async function GET(
     children: comment.children.map((child) => ({
       id: child.id,
       content: child.content,
+      status: child.status,
       likeCount: child.likeCount,
       isLiked: child.likes.length > 0,
       createdAt: child.createdAt.toISOString(),

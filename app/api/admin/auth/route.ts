@@ -24,11 +24,36 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const correctPin = process.env.ADMIN_PIN || "000000";
+    const correctPin = process.env.ADMIN_PIN;
+    if (!correctPin) {
+      // Refuse to authenticate if the PIN env var is unset in production.
+      // The previous default of "000000" meant that a missing env var would
+      // silently grant admin access to anyone trying that PIN.
+      if (process.env.NODE_ENV === "production") {
+        console.error("CRITICAL: ADMIN_PIN environment variable not set in production");
+        return NextResponse.json(
+          { error: "Authentication is unavailable" },
+          { status: 503 },
+        );
+      }
+      console.warn("ADMIN_PIN not set — admin auth disabled in dev");
+      return NextResponse.json(
+        { error: "Authentication is unavailable" },
+        { status: 503 },
+      );
+    }
+
+    if (correctPin.length !== 6) {
+      console.error("ADMIN_PIN must be exactly 6 digits");
+      return NextResponse.json(
+        { error: "Authentication is misconfigured" },
+        { status: 503 },
+      );
+    }
 
     const isValid = crypto.timingSafeEqual(
-      Buffer.from(pin.padEnd(6, "0")),
-      Buffer.from(correctPin.padEnd(6, "0")),
+      Buffer.from(pin),
+      Buffer.from(correctPin),
     );
 
     if (!isValid) {

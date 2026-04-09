@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { requireServerAuth } from "@/lib/auth/server-auth";
 import { checkMembership } from "@/lib/community/membership";
+import { getViewerGender, feedPostGenderWhere } from "@/lib/community/gender-filter";
 import { prisma } from "@/lib/prisma";
 import FeedPost from "@/components/inner-circle/FeedPost";
 import InnerCircleNav from "@/components/inner-circle/InnerCircleNav";
@@ -26,7 +27,14 @@ export default async function FeedPage() {
     redirect("/inner-circle");
   }
 
+  // Gender-split: cron-automated posts (authorId null) and admin posts stay
+  // visible to everyone. Member-authored welcome posts and the like only
+  // appear for same-gender viewers.
+  const viewerGender = await getViewerGender(userId);
+  const genderWhere = feedPostGenderWhere(viewerGender);
+
   const posts = await prisma.feedPost.findMany({
+    where: genderWhere,
     take: 20,
     orderBy: [{ isPinned: "desc" }, { createdAt: "desc" }],
     include: {

@@ -15,9 +15,13 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Normalize email — register stores lowercase, so login must lowercase
+    // too or `User@Example.com` will fail to find the account.
+    const normalizedEmail = body.email.toLowerCase().trim();
+
     // Validate user credentials
     const user = await PrismaUserDatabase.validateUser(
-      body.email,
+      normalizedEmail,
       body.password,
     );
     if (!user) {

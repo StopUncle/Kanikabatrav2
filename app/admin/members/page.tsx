@@ -12,7 +12,6 @@ import {
   UserX,
   UserCheck,
 } from "lucide-react";
-import { getAdminHeaders } from "@/lib/admin";
 
 interface Member {
   id: string;
@@ -36,9 +35,7 @@ export default function MembersPage() {
   const fetchMembers = useCallback(async () => {
     setLoading(true);
     try {
-      const res = await fetch("/api/admin/users", {
-        headers: getAdminHeaders(),
-      });
+      const res = await fetch("/api/admin/users");
       if (res.ok) {
         const data = await res.json();
         setMembers(data.users || []);
@@ -64,7 +61,7 @@ export default function MembersPage() {
     try {
       const res = await fetch(`/api/admin/users/${userId}`, {
         method: "POST",
-        headers: getAdminHeaders(),
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ action, role }),
       });
       if (res.ok) {

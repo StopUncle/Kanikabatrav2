@@ -2,7 +2,6 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { Loader2, Check, X, EyeOff, Clock, CheckCircle, MessageSquare } from "lucide-react";
-import { getAdminHeaders } from "@/lib/admin";
 
 interface Comment {
   id: string;
@@ -32,9 +31,7 @@ export default function CommentsPage() {
   const fetchComments = useCallback(async (status: FilterTab) => {
     setLoading(true);
     try {
-      const res = await fetch(`/api/admin/comments?status=${status}`, {
-        headers: getAdminHeaders(),
-      });
+      const res = await fetch(`/api/admin/comments?status=${status}`);
       if (res.ok) {
         const data = await res.json();
         setComments(data.comments || []);
@@ -55,7 +52,7 @@ export default function CommentsPage() {
     try {
       const res = await fetch(`/api/admin/comments/${id}`, {
         method: "POST",
-        headers: getAdminHeaders(),
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ action }),
       });
       if (res.ok) {

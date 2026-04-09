@@ -4,6 +4,7 @@ import Link from "next/link";
 import { verifyAccessToken } from "@/lib/auth/jwt";
 import { prisma } from "@/lib/prisma";
 import { checkAccessTier } from "@/lib/community/access";
+import { getViewerGender, authorGenderWhere } from "@/lib/community/gender-filter";
 import PostCard from "@/components/community/forum/PostCard";
 import AccessGate from "@/components/community/access/AccessGate";
 import { Plus, ArrowLeft } from "lucide-react";
@@ -72,8 +73,15 @@ export default async function CategoryPage({ params, searchParams }: Props) {
         ? { lastReplyAt: "desc" as const }
         : { createdAt: "desc" as const };
 
+  // Gender-split forum: members only see posts from same-gender authors and admins.
+  const viewerGender = await getViewerGender(userId);
+  const authorWhere = authorGenderWhere(viewerGender);
+
   const posts = await prisma.forumPost.findMany({
-    where: { categoryId: category.id },
+    where: {
+      categoryId: category.id,
+      ...(authorWhere ? { author: authorWhere } : {}),
+    },
     orderBy: [{ isPinned: "desc" }, orderBy],
     include: {
       author: {

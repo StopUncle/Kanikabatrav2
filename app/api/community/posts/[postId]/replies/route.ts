@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { requireAuth } from "@/lib/auth/middleware";
 import { checkAccessTier } from "@/lib/community/access";
+import { getViewerGender, authorGenderWhere } from "@/lib/community/gender-filter";
 import { verifyAccessToken } from "@/lib/auth/jwt";
 import { cookies } from "next/headers";
 
@@ -44,10 +45,15 @@ export async function GET(
       return NextResponse.json({ error: access.reason }, { status: 403 });
     }
 
+    // Gender-split: only show replies authored by same-gender or admin/mod.
+    const viewerGender = await getViewerGender(userId);
+    const authorWhere = authorGenderWhere(viewerGender);
+
     const replies = await prisma.forumReply.findMany({
       where: {
         postId,
         parentId: null,
+        ...(authorWhere ? { author: authorWhere } : {}),
       },
       take: limit + 1,
       cursor: cursor ? { id: cursor } : undefined,
@@ -62,6 +68,7 @@ export async function GET(
           },
         },
         children: {
+          where: authorWhere ? { author: authorWhere } : undefined,
           include: {
             author: {
               select: {

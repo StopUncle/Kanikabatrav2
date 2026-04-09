@@ -9,6 +9,7 @@ import { logger } from "@/lib/logger";
 import { z } from "zod";
 
 const applicationSchema = z.object({
+  gender: z.enum(["MALE", "FEMALE"]),
   whyJoin: z.string().min(20).max(1000),
   whatHope: z.string().min(20).max(1000),
   howFound: z.string().min(1).max(500),
@@ -42,6 +43,14 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ error: "Application already submitted — we'll review it soon" }, { status: 400 });
       }
     }
+
+    // Save gender on the user record (drives the gender-split content filter
+    // across the rest of the inner circle). Always overwrite — if the user
+    // re-applies with a different selection, the latest pick wins.
+    await prisma.user.update({
+      where: { id: user.id },
+      data: { gender: parsed.data.gender },
+    });
 
     const membership = await prisma.communityMembership.upsert({
       where: { userId: user.id },

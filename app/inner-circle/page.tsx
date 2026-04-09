@@ -18,7 +18,7 @@ import {
 export const metadata = {
   title: "The Inner Circle | Kanika Batra",
   description:
-    "Private community for dark psychology education — courses, voice notes, and a community of women who see through the bullshit",
+    "Private community for dark psychology education — courses, voice notes, and a community of people who see through the bullshit",
 };
 
 export default async function InnerCircleLanding() {
@@ -56,9 +56,9 @@ export default async function InnerCircleLanding() {
     },
     {
       icon: Users,
-      title: "Women Who Get It",
+      title: "People Who Get It",
       description:
-        "Connect with women navigating the same power dynamics — in relationships, career, and life",
+        "Connect with others navigating the same power dynamics — in relationships, career, and life",
     },
     {
       icon: Zap,
@@ -100,7 +100,7 @@ export default async function InnerCircleLanding() {
             </h1>
             <div className="w-16 h-px bg-accent-gold/40 mx-auto mb-6" />
             <p className="text-xl text-text-gray max-w-2xl mx-auto mb-10 font-light leading-relaxed">
-              A private community of women who are done being the ones who get
+              A private community for people who are done being the ones who get
               played. Courses. Voice notes. A space that&apos;s actually safe.
             </p>
 

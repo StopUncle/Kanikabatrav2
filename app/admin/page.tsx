@@ -10,7 +10,6 @@ import {
   Loader2,
   ArrowRight,
 } from "lucide-react";
-import { getAdminHeaders } from "@/lib/admin";
 
 interface Stats {
   pendingApplications: number;
@@ -25,13 +24,11 @@ export default function AdminDashboardPage() {
 
   useEffect(() => {
     async function fetchStats() {
-      const headers = getAdminHeaders();
-
       const [appsRes, commentsRes, usersRes, emailRes] = await Promise.allSettled([
-        fetch("/api/admin/applications?status=PENDING", { headers }),
-        fetch("/api/admin/comments?status=PENDING_REVIEW", { headers }),
-        fetch("/api/admin/users", { headers }),
-        fetch("/api/admin/email-queue/status", { headers }),
+        fetch("/api/admin/applications?status=PENDING"),
+        fetch("/api/admin/comments?status=PENDING_REVIEW"),
+        fetch("/api/admin/users"),
+        fetch("/api/admin/email-queue/status"),
       ]);
 
       const apps = appsRes.status === "fulfilled" && appsRes.value.ok

@@ -15,6 +15,7 @@ interface CommentAuthor {
 export interface CommentData {
   id: string;
   content: string;
+  status?: string;
   likeCount: number;
   isLiked: boolean;
   createdAt: string;
@@ -95,6 +96,11 @@ export default function FeedComment({
           {isAdminAuthor && (
             <span className="text-[10px] bg-accent-gold/20 text-accent-gold px-1.5 py-0.5 rounded-full uppercase tracking-wider">
               Kanika
+            </span>
+          )}
+          {comment.status === "PENDING_REVIEW" && (
+            <span className="text-[10px] bg-amber-500/20 text-amber-400 px-1.5 py-0.5 rounded-full uppercase tracking-wider">
+              Awaiting approval
             </span>
           )}
           <span className="text-xs text-text-gray">{timeAgo}</span>

@@ -17,7 +17,6 @@ import {
   X,
   Check,
 } from "lucide-react";
-import { getAdminHeaders } from "@/lib/admin";
 
 interface Lesson {
   id: string;
@@ -93,9 +92,7 @@ export default function CoursesPage() {
 
   const fetchCourses = useCallback(async () => {
     try {
-      const res = await fetch("/api/admin/courses", {
-        headers: getAdminHeaders(),
-      });
+      const res = await fetch("/api/admin/courses");
       if (res.ok) {
         const data = await res.json();
         setCourses(data.courses || []);
@@ -136,7 +133,7 @@ export default function CoursesPage() {
     try {
       const res = await fetch("/api/admin/courses", {
         method: "POST",
-        headers: getAdminHeaders(),
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(courseForm),
       });
       if (res.ok) {
@@ -162,7 +159,7 @@ export default function CoursesPage() {
     try {
       const res = await fetch(`/api/admin/courses/${courseId}/modules`, {
         method: "POST",
-        headers: getAdminHeaders(),
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ ...moduleForm, sortOrder: nextSort }),
       });
       if (res.ok) {
@@ -195,7 +192,7 @@ export default function CoursesPage() {
         `/api/admin/courses/${courseId}/modules/${moduleId}/lessons`,
         {
           method: "POST",
-          headers: getAdminHeaders(),
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ ...lessonForm, sortOrder: nextSort }),
         },
       );
@@ -234,7 +231,7 @@ export default function CoursesPage() {
     if (ids.lessonId) url += `/lessons/${ids.lessonId}`;
 
     try {
-      await fetch(url, { method: "DELETE", headers: getAdminHeaders() });
+      await fetch(url, { method: "DELETE" });
       fetchCourses();
     } catch (err) {
       console.error(`Failed to delete ${type}:`, err);
@@ -276,7 +273,7 @@ export default function CoursesPage() {
     try {
       await fetch(url, {
         method: "PUT",
-        headers: getAdminHeaders(),
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(editForm),
       });
       setEditTarget(null);
@@ -323,12 +320,12 @@ export default function CoursesPage() {
       await Promise.all([
         fetch(`${url}/${ids.itemId}`, {
           method: "PUT",
-          headers: getAdminHeaders(),
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ sortOrder: swapOrder }),
         }),
         fetch(`${url}/${items[swapIdx].id}`, {
           method: "PUT",
-          headers: getAdminHeaders(),
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ sortOrder: currentOrder }),
         }),
       ]);

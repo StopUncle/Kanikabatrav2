@@ -23,75 +23,100 @@ taskkill //F //PID [PID]           # Kill process on port
 
 ## 🎯 Project Context
 
-- **Project Type:** Next.js 14 + TypeScript personal brand website
-- **Theme:** Dark psychology/sociopath branding for Kanika Batra
-- **Key Features:** Book showcase, testimonials, coaching tiers, PayPal integration
-- **Architecture:** App Router with component-based structure
-- **Styling:** Tailwind CSS with custom dark theme configuration
-- **Database:** PostgreSQL with Prisma ORM
-- **Authentication:** JWT-based with refresh tokens
-- **Deployment:** Vercel-ready with environment configuration
+- **Project Type:** Next.js 15 (App Router) + React 19 + TypeScript personal brand site for Kanika Batra
+- **Theme:** Dark psychology branding (book + community + coaching)
+- **Live Surfaces:** Marketing site, paid book delivery, paid Inner Circle membership, paid 1:1 coaching, free → paid quiz funnel, dark luxury admin panel
+- **Stack:**
+  - **Framework:** Next.js 15 App Router, React 19, Tailwind CSS 3 (custom dark luxury theme)
+  - **Database:** PostgreSQL on Railway (production), local Postgres for dev. Prisma 6 ORM.
+  - **Auth (members):** JWT cookie pair (`accessToken` 15m + `refreshToken` 7d), httpOnly + secure + sameSite=strict
+  - **Auth (admin):** Separate 6-digit PIN → JWT cookie (`admin_session`, 24h, httpOnly). All admin API endpoints verify the cookie via `requireAdminSession()` from `lib/admin/auth.ts`.
+  - **Payments:** **Stripe** (live mode, account `sk_live_kCEC...`). PayPal was fully removed in April 2026 — there's a PayPal MCP server still in `~/.claude.json` for refund tooling on legacy orders, but no PayPal integration in the live app.
+  - **Email transport:** Resend (preferred when `RESEND_API_KEY` set) → Nodemailer SMTP fallback. Microsoft Outlook routing has its own transport. Sequenced campaigns queued in the `EmailQueue` table (processor at `/api/admin/email-queue/process` — currently no scheduled trigger, see TODO).
+  - **Real-time:** Pusher configured (lib/pusher/server.ts + client.ts), used by chat rooms. Inner Circle feed is currently server-rendered without real-time.
+  - **Deployment:** **Railway** (Nixpacks builder, `npx prisma generate && npm run build`). Domain: `kanikarose.com`. Push to `master` auto-deploys.
+  - **Storage:** Local filesystem under `private/books/` for book files (gitignored, deployed via git for now). Voice notes currently use ephemeral `public/uploads/voice-notes/` — **broken on Railway redeploys, needs cloud storage.**
 
-## 📚 Book Presale Strategy (Hybrid Model)
+## 💳 Payment Processor: Stripe
 
-### Pricing Structure
+The whole site runs on Stripe (live mode). PayPal was the original processor, then we tried Lemon Squeezy (rejected — content flagged) and Paddle (rejected — same content triggers), then landed on Stripe in April 2026. All 11 products were created via the Stripe API.
 
-- **Amazon KDP Version:** $17.99
-  - Standard edition on Kindle & paperback
-  - 70% royalty rate (optimal pricing range)
-  - Leverages Amazon's massive reach and trust
+### Stripe products (productKey → use)
 
-- **Premium Website Version:** $34.99
-  - Direct sales through website (97% profit after PayPal fees)
-  - Includes exclusive bonuses:
-    - Bonus chapter: Advanced Dark Triad Tactics
-    - Video masterclass: Reading Micro-expressions
-    - Email templates for psychological warfare
-    - $100 consultation discount
-    - Private Telegram group access
+| productKey | What | Type |
+|---|---|---|
+| `BOOK` | Sociopathic Dating Bible (premium download, $24.99) | one-time |
+| `INNER_CIRCLE` | Inner Circle community membership ($29/month) | subscription |
+| `COACHING_SINGLE` | Single coaching session | one-time |
+| `COACHING_INTENSIVE` | Intensive 3-session pack | one-time |
+| `COACHING_CAREER` | Career Coaching 4-session pack | one-time |
+| `COACHING_RETAINER` | Coaching retainer | one-time |
+| `ASK_WRITTEN_1Q` | 1 written question to Kanika | one-time |
+| `ASK_WRITTEN_3Q` | 3 written questions | one-time |
+| `ASK_VOICE_1Q` | 1 voice-note answer | one-time |
+| `ASK_VOICE_3Q` | 3 voice-note answers | one-time |
+| `QUIZ` | Dark Mirror quiz unlock | one-time |
+| `DARK_MIRROR` | Standalone Dark Mirror unlock (legacy) | one-time |
 
-### Book Details
+### Stripe webhook (`/api/webhooks/stripe`)
 
-- **Title:** Sociopathic Dating Bible
-- **Subtitle:** A Cure For Empathy
-- **Word Count:** 70,000 words
-- **Chapters:** 15
-- **Launch Date:** February 14, 2025 (Valentine's Day)
-- **Status:** Currently in presale phase
+Handles `checkout.session.completed` (per-product branches), `invoice.payment_succeeded` (subscription renewal — reads actual `current_period_end` from Stripe, no longer hardcoded +1 month), `invoice.payment_failed` (suspends membership), `customer.subscription.deleted` (cancels), `customer.subscription.paused` (suspends), `charge.refunded` (resolves refund → original session via `payment_intent` linkage, marks Purchase REFUNDED, **and cancels CommunityMembership for INNER_CIRCLE refunds**).
 
-### Presale Implementation
+All `checkout.session.completed` branches are now **idempotent** — Stripe retries no longer create duplicate Purchase rows or duplicate emails. Each branch checks `paypalOrderId: ST-${sessionId}` before creating.
 
-1. **Email Collection System**
-   - Modal with 3 options: KDP only, Premium only, or Both
-   - Stores emails in `/data/presale-list.json`
-   - Tracks customer preferences for targeted launch emails
+### Stripe MCP server
 
-2. **Launch Communication Plan**
-   - 3 emails per subscriber:
-     - Launch announcement
-     - 24-hour reminder
-     - Final notice
-   - Different messaging for KDP vs Premium customers
+Configured globally in `~/.claude.json`. Uses an OAuth flow with the Stripe account directly. Tools: `list_products`, `list_prices`, `list_subscriptions`, `create_payment_link`, `create_refund`, etc.
 
-3. **Admin Access**
-   - View presale stats at `/api/presale` with admin auth
-   - Tracks total signups and version preferences
+## 📚 Sociopathic Dating Bible — LIVE
 
-## 💼 Coaching Packages
+- **Title:** Sociopathic Dating Bible — A Cure For Empathy
+- **Format:** 70k words, 15 chapters + 2 addendum bonus chapters (Narcissists / Avoidants)
+- **Delivery:** EPUB + PDF, 30-day download window, max 10 downloads per buyer
+- **Price:** $24.99 (Stripe one-time, productKey `BOOK`)
+- **Webhook flow:** `BOOK` checkout → Purchase row created → `sendBookDelivery` email with EPUB + PDF + addendum links → email sequence enrollment (`book-buyer-welcome`) → quiz auto-unlock for that email → done
+- **Status:** Live, has been selling. ~71 buyers received fresh download links after the addendum-fix re-send in April 2026.
+- **Files:** `private/books/EVENBETTERBOOK/*` (main book), `private/books/Addendums/*` (bonus chapters). The whole `private/` tree is gitignored — files are deployed via Railway separately and must NOT be committed.
 
-### Three Tiers Available:
+## 🎯 The Inner Circle (paid community)
 
-1. **Mind Architecture** - $297/session or $797/3 sessions
-   - Psychological framework rebuilding
-   - Dark triad personality optimization
+- **Price:** $29/month (Stripe subscription, productKey `INNER_CIRCLE`)
+- **Application required:** Every signup goes through PENDING → APPROVED → ACTIVE. Kanika reviews each application personally at `/admin/applications`.
+- **Membership state machine:** PENDING → APPROVED → ACTIVE → SUSPENDED / CANCELLED / EXPIRED. State transitions:
+  - PENDING set on form submit (`/api/inner-circle/apply`)
+  - APPROVED set when admin clicks approve (`/api/admin/applications/[id]`)
+  - ACTIVE set by Stripe webhook on `checkout.session.completed`
+  - SUSPENDED set by `customer.subscription.paused`, `invoice.payment_failed`, or member-requested pause
+  - CANCELLED set by `customer.subscription.deleted` or by `charge.refunded` for INNER_CIRCLE
+  - EXPIRED set lazily on read by `lib/community/membership.ts` when `expiresAt` < now
+- **What's inside:**
+  - **Feed** (`/inner-circle/feed`): Kanika's posts + cron-driven daily insights and discussion prompts. Members can comment + react. Members CANNOT create top-level feed posts.
+  - **Voice Notes** (`/inner-circle/voice-notes`): Admin-only audio uploads, members listen.
+  - **Classroom** (`/inner-circle/classroom`): Courses → Modules → Lessons → CourseEnrollment → LessonProgress.
+  - **Forum** (`/community/forum/*`): Member-authored threads with replies, likes. Bidirectional.
+  - **Chat** (`/community/chat`): Pusher-backed real-time rooms with `accessTier` gating.
+  - **Premium book bundled** with the membership.
+- **Daily auto-content:** 60 psychology cards (`prisma/seeds/daily-insights.ts`) + 28 weekday discussion prompts (`prisma/seeds/discussion-prompts.ts`) + 15 book chapter cards (`prisma/seeds/book-insights.ts`) + 6 viral quote prompts (`prisma/seeds/viral-quote-prompts.ts`). Cron routes at `/api/cron/daily-insight` and `/api/cron/discussion-prompt` create FeedPost rows from these on a schedule. **WARNING: there is no Railway scheduled job actually triggering these crons yet — content is seeded but never posted. Needs a Railway Cron service or external scheduler.**
+- **Email queue:** EmailQueue table holds queued sequence emails. `/api/admin/email-queue/process` is the processor — **also has no scheduled trigger**, queued emails won't fire until someone manually calls it.
 
-2. **Dark Feminine Mastery** - $447/session or $1197/3 sessions (POPULAR)
-   - Femme fatale transformation
-   - Seduction psychology and obsession creation
+## 💼 Coaching Packages (Stripe one-time)
 
-3. **Empire Building** - $597/session or $1597/3 sessions
-   - Controversy monetization
-   - Personal brand development
+| productKey | Package | Sessions |
+|---|---|---|
+| `COACHING_SINGLE` | Single Session | 1 |
+| `COACHING_INTENSIVE` | Intensive | 3 |
+| `COACHING_CAREER` | Career Coaching | 4 |
+| `COACHING_RETAINER` | Coaching Retainer | 4 |
+
+After purchase, the webhook creates a `Purchase` + `CoachingSession` row in a transaction. `sendCoachingQuestionnaire` is sent so Kanika gets the client's intake info. Scheduling is currently manual.
+
+## 🧠 Dark Mirror Quiz
+
+- 6 personality axes (Psychopathic, Sociopathic, Narcissistic, Borderline, Histrionic, Neurotypical) — see `lib/quiz-data.ts`
+- Anyone can take the quiz; results are stored in `QuizResult` (linked to `userId` if logged in, else email-only)
+- Results are paywalled — full unlock requires either a quiz purchase ($X via productKey `QUIZ`) OR a book purchase (auto-unlocked via the webhook)
+- Dashboard card at `components/dashboard/QuizDashboardCard.tsx` shows an inline SVG radar chart + expandable score breakdown for unlocked users
+- Full results page at `/quiz/results/[id]` — gated by ownership for logged-in viewers; anonymous viewers can see the result but the email is redacted
 
 ## 🎨 Design System
 
@@ -245,17 +270,45 @@ public/
 └── og-image.jpg   # Open Graph image
 ```
 
-## 🔧 TODO Items
+## 🔧 Outstanding High-Value TODO
 
-- [ ] Implement email sending in `/app/api/contact/route.ts`
-- [ ] Complete PayPal order capture in `/app/api/paypal/capture-order/route.ts`
-- [ ] Add dashboard content placeholders
-- [ ] Set up email automation for presale launch
-- [ ] Configure ADMIN_SECRET environment variable for presale stats
-- [ ] Add KDP presale link when available from Amazon
-- [ ] Implement rate limiting for API routes
-- [ ] Add Sentry error tracking
-- [ ] Set up automated backups
+These came out of the April 2026 audit. Critical/high items only — see `findings.md` for the full punch list.
+
+### Infrastructure (need decisions)
+- [ ] **Cron triggers for `/api/cron/*`** — daily-insight, discussion-prompt, retry-emails, AND `/api/admin/email-queue/process`. None of them fire on a schedule. Pick one: Railway Cron service, GitHub Actions on a schedule, or external (e.g. cron-job.org) hitting the endpoints with `x-cron-secret`.
+- [ ] **Voice notes cloud storage** — `app/api/inner-circle/voice-notes/upload/route.ts` writes to `public/uploads/voice-notes/` which is wiped on every Railway redeploy. Move to Cloudinary, S3, or R2.
+- [ ] **Add `prisma migrate deploy` to nixpacks build** — Railway currently doesn't apply migrations on deploy. Schema changes have to be applied manually before pushing the code that references them.
+
+### Outstanding bugs
+- [ ] **Token refresh race condition** in `components/dashboard/DashboardClient.tsx:112-131` — concurrent 401s spawn multiple `/api/auth/refresh` calls. Add a singleton refresh promise.
+- [ ] **Password reset tokens never invalidated** — once used, they can be replayed until JWT expiry. Add a single-use tracking mechanism.
+- [ ] **Forgot-password leaks account existence** — message "If an account exists" is fine but the surrounding behavior may differ for known vs unknown emails. Make it timing-equal.
+- [ ] **Markdown in feed posts not rendered** — `**bold**` shows as literal asterisks. Use `react-markdown` or similar.
+- [ ] **Feed pagination missing** — `findMany({ take: 20 })` with no cursor. Post #21+ is invisible.
+- [ ] **Email template HTML escaping** — customer names interpolated raw into email HTML. Use a sanitizer for any user-supplied string.
+- [ ] **Rate limiting** — none on `/api/auth/login`, `/api/auth/register`, `/api/auth/forgot-password`, `/api/admin/auth`, `/api/inner-circle/feed/[postId]/comments`. Add one.
+
+### Nice-to-have
+- [ ] **Sentry error tracking** — currently only console.error
+- [ ] **Email change flow** — users can't change their email
+- [ ] **Account deletion** — no GDPR delete endpoint
+- [ ] **"Membership expiring soon" emails** — no warning before EXPIRED state
+- [ ] **Admin audit log** — no record of who approved/rejected/banned
+
+## ✅ April 2026 audit fixes (already shipped or in this commit)
+
+- 🔴 **Admin secret leak fixed** — `lib/admin.ts` exposed `NEXT_PUBLIC_ADMIN_SECRET` in the client bundle. Replaced with `lib/admin/auth.ts` `requireAdminSession()` (verifies the existing httpOnly `admin_session` cookie). All 18 admin API endpoints + 6 admin client pages migrated.
+- 🔴 **Quiz IDOR fixed** — `/api/quiz/results/[id]` GET + PATCH now require ownership. Previously had zero auth.
+- 🔴 **Stripe webhook idempotent** — all 4 product branches now check for an existing Purchase before creating, preventing duplicate rows / double emails on Stripe retry.
+- 🔴 **Refund handler fixed** — uses `payment_intent` linkage instead of fragile 50-row loop, AND now cancels the CommunityMembership for INNER_CIRCLE refunds (previously refunded users kept access).
+- 🔴 **`invoice.payment_failed` handler added** — declined card renewals now suspend the membership immediately.
+- 🔴 **Subscription renewal reads actual period** — was hardcoded `+1 month`, would have shortchanged annual subscribers by 11 months on every renewal. Now reads `current_period_end` from Stripe.
+- 🔴 **INNER_CIRCLE auto-created users get a welcome email** — previously the webhook created an account with a random temp password and no email; users had no idea they had an account. Now `sendInnerCircleWelcomeNewUser` fires with a 7-day password-reset token.
+- 🟠 **Pause/resume actually call Stripe** — was flipping local DB only; Stripe kept charging. Now uses `pause_collection`.
+- 🟠 **Dashboard API returns membership status** — UI can finally render subscription state.
+- 🟠 **Email login case-sensitivity fixed** — login + forgot-password now lowercase the email to match register.
+- 🟠 **`ADMIN_PIN` default `"000000"` removed** — auth refuses to authenticate if env var is unset in production.
+- 🟠 **Comment moderation no longer silent** — author can now see their own PENDING_REVIEW comments with an "Awaiting approval" badge.
 
 ## 🔐 Environment Variables
 
@@ -269,11 +322,31 @@ DATABASE_URL="postgresql://user:password@localhost:5432/kanikabatra?schema=publi
 JWT_SECRET="development-secret-change-in-production"
 JWT_REFRESH_SECRET="development-refresh-secret-change-in-production"
 
-# PayPal (Sandbox)
-NEXT_PUBLIC_PAYPAL_CLIENT_ID="sandbox-client-id"
-PAYPAL_CLIENT_ID="sandbox-client-id"
-PAYPAL_CLIENT_SECRET="sandbox-secret"
-PAYPAL_WEBHOOK_ID="sandbox-webhook-id"
+# Stripe (LIVE — payments)
+STRIPE_SECRET_KEY="sk_live_..."
+NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY="pk_live_..."
+STRIPE_WEBHOOK_SECRET="whsec_..."
+
+# Stripe price IDs — created via Stripe API, store in env so the checkout
+# route doesn't have to look them up. See lib/stripe.ts STRIPE_PRICES.
+STRIPE_PRICE_BOOK="price_..."
+STRIPE_PRICE_INNER_CIRCLE="price_..."
+STRIPE_PRICE_COACHING_SINGLE="price_..."
+# ...etc per product
+
+# Admin auth (server-side only — never expose to client)
+ADMIN_PIN="123456"           # 6-digit PIN for /admin/login
+ADMIN_SECRET="random-string" # legacy fallback for cron secret
+CRON_SECRET="random-string"  # for /api/cron/* endpoints
+
+# Email — Resend preferred, SMTP fallback
+RESEND_API_KEY="re_..."
+RESEND_FROM_EMAIL="Kanika <hello@kanikarose.com>"
+SMTP_HOST="smtp.gmail.com"
+SMTP_PORT="587"
+SMTP_USER="..."
+SMTP_PASS="..."
+ADMIN_EMAIL="Kanika@kanikarose.com"
 
 # Email (Development)
 EMAIL_HOST="smtp.gmail.com"
@@ -359,9 +432,11 @@ See `DEPLOYMENT-CHECKLIST.md` for complete deployment guide including:
 - Strict null checks
 - Module resolution: bundler
 
-## 💳 PayPal MCP Server
+## 💳 PayPal MCP Server (LEGACY — for refunds on pre-Stripe orders only)
 
-The PayPal MCP server provides direct access to the live PayPal account (orders, transactions, disputes, refunds, invoices, subscriptions). It is configured in `~/.claude.json` under `mcpServers.paypal`.
+PayPal was fully removed from the live app in April 2026 (commit `b62dd0f`). The MCP server is kept around purely for refund/transaction tooling on legacy orders that were captured before the cutover. **No live code path uses PayPal anymore.**
+
+The PayPal MCP server is configured in `~/.claude.json` under `mcpServers.paypal`.
 
 ### How It Works
 
@@ -430,7 +505,16 @@ const prisma = new PrismaClient({ datasourceUrl: process.env.DATABASE_URL });
 
 ### Admin API Authentication
 
-Admin endpoints use the `x-admin-secret` header. The value comes from the `ADMIN_SECRET` environment variable on Railway. The admin panel at `/admin` uses JWT cookie auth (checks user role === ADMIN).
+**As of April 2026:** Admin API endpoints verify the `admin_session` httpOnly cookie via `requireAdminSession()` from `lib/admin/auth.ts`. The cookie is set by `/api/admin/auth/route.ts` after a successful 6-digit PIN login.
+
+The earlier `x-admin-secret` header pattern was a critical vulnerability — `lib/admin.ts` exposed `NEXT_PUBLIC_ADMIN_SECRET` to the client bundle, meaning any visitor could extract the secret from devtools and call any admin endpoint. That code is gone. `lib/admin.ts` no longer exists. There is no `NEXT_PUBLIC_ADMIN_SECRET` env var anymore.
+
+The `ADMIN_SECRET` env var (server-side, not exposed) is still used as a fallback for `CRON_SECRET` in `app/api/cron/retry-emails/route.ts`. That's a server-only env var so it's safe — but cron and admin secrets should ideally be split.
+
+**To set up admin auth on a fresh deploy:**
+1. Set `ADMIN_PIN` on Railway to a 6-digit numeric string
+2. Set `JWT_SECRET` (used to sign the admin session JWT)
+3. Visit `/admin/login`, enter the PIN, you're in
 
 ### Email System
 
@@ -439,14 +523,29 @@ Admin endpoints use the `x-admin-secret` header. The value comes from the `ADMIN
 
 ## 🔄 Recent Updates
 
-- Account-gated quiz with auto-unlock for book buyers
-- Full admin panel at /admin (applications, comments, posts, members, email queue)
+### April 2026 — audit + payment hardening
+- 5-agent end-to-end audit (auth, membership, member experience, Stripe+email, security) — see `findings.md`
+- All P0 audit fixes shipped (admin secret leak, quiz IDOR, webhook idempotency, refund-cancels-membership, payment_failed handler, renewal period from Stripe, welcome email for auto-created users, pause/resume hits Stripe, dashboard membership status, login email case)
+- Quiz dashboard card rebuilt with inline SVG radar chart (6 axes, no chart library)
+- Application notification emails: applicant confirmation + admin alert + approval email
+- 109 auto-content rows seeded into DailyInsight + DiscussionPrompt for the feed cron rotation
+- Inner Circle gender-split work in progress (`User.gender` field, application form selector, gender-filtered comments/forum/replies) — pending production DB migration
+
+### April 2026 — Stripe migration
+- Full PayPal → Stripe swap (commit `b62dd0f`)
+- 11 Stripe products created via API
+- Stripe webhook handles all product types + subscription lifecycle
+- Lazy-init Stripe SDK (`lib/stripe.ts`) to fix Railway build crash
+- Success page race condition fixed (polls `/api/stripe/session` for download token)
+- Addendum download bug fixed + 71 buyers got fresh links
+
+### Earlier
+- Admin panel at `/admin` with PIN login (6-digit code → JWT cookie)
 - Email automation system (3-step sequence with free Inner Circle trial offer)
-- Password reset flow (forgot + reset pages with email)
-- Login/Register activated (no longer "Coming Soon")
+- Password reset flow (forgot + reset pages with JWT token email)
+- Login/Register activated
 - 17 community files uplifted to luxury design system
 - Book download bug fixed (bonus chapter PDFs + limit increased to 10)
-- PayPal MCP server configured for live account access
 - Security hardening: books moved to /private, CORS removed, dev bypass guarded
 - Payment integrity: amount verification, cancel grace period, webhook sync
 - Dashboard bugs fixed: session data, token refresh, loading locks

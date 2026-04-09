@@ -1,11 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-
-function validateAdminAccess(request: NextRequest): boolean {
-  const adminSecret = process.env.ADMIN_SECRET;
-  if (!adminSecret) return false;
-  return request.headers.get("x-admin-secret") === adminSecret;
-}
+import { requireAdminSession } from "@/lib/admin/auth";
 
 function generateSlug(title: string): string {
   return title
@@ -15,9 +10,8 @@ function generateSlug(title: string): string {
 }
 
 export async function GET(request: NextRequest) {
-  if (!validateAdminAccess(request)) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
+  const unauthorized = await requireAdminSession();
+  if (unauthorized) return unauthorized;
 
   try {
     const courses = await prisma.course.findMany({
@@ -44,9 +38,8 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
-  if (!validateAdminAccess(request)) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
+  const unauthorized = await requireAdminSession();
+  if (unauthorized) return unauthorized;
 
   try {
     const body = await request.json();

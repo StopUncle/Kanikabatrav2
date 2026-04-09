@@ -13,6 +13,20 @@ export async function GET(request: NextRequest) {
         email: true,
         name: true,
         createdAt: true,
+        communityMembership: {
+          select: {
+            id: true,
+            status: true,
+            billingCycle: true,
+            appliedAt: true,
+            approvedAt: true,
+            activatedAt: true,
+            expiresAt: true,
+            suspendedAt: true,
+            suspendReason: true,
+            cancelledAt: true,
+          },
+        },
         purchases: {
           where: { status: "COMPLETED" },
           orderBy: { createdAt: "desc" },

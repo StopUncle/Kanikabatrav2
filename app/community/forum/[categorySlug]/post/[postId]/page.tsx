@@ -4,6 +4,7 @@ import Link from "next/link";
 import { verifyAccessToken } from "@/lib/auth/jwt";
 import { prisma } from "@/lib/prisma";
 import { checkAccessTier } from "@/lib/community/access";
+import { getViewerGender } from "@/lib/community/gender-filter";
 import PostDetail from "@/components/community/forum/PostDetail";
 import AccessGate from "@/components/community/access/AccessGate";
 import { ArrowLeft } from "lucide-react";
@@ -52,6 +53,8 @@ export default async function PostPage({ params }: Props) {
           name: true,
           displayName: true,
           avatarUrl: true,
+          gender: true,
+          role: true,
         },
       },
       category: {
@@ -74,6 +77,17 @@ export default async function PostPage({ params }: Props) {
 
   if (post.category.slug !== categorySlug) {
     notFound();
+  }
+
+  // Gender-split: a member of the opposite gender shouldn't be able to deep-
+  // link into a same-tier forum post by an opposite-gender author. Admin/mod
+  // posts stay visible to everyone. Legacy users (no gender set) see all.
+  const viewerGender = await getViewerGender(userId);
+  if (viewerGender) {
+    const authorIsAdmin = post.author.role === "ADMIN" || post.author.role === "MODERATOR";
+    if (!authorIsAdmin && post.author.gender !== viewerGender) {
+      notFound();
+    }
   }
 
   const access = await checkAccessTier(userId, post.category.accessTier);

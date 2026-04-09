@@ -1,20 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-
-function validateAdminAccess(request: NextRequest): boolean {
-  const adminSecret = process.env.ADMIN_SECRET;
-  if (!adminSecret) return false;
-  return request.headers.get("x-admin-secret") === adminSecret;
-}
+import { requireAdminSession } from "@/lib/admin/auth";
 
 type RouteParams = {
   params: Promise<{ courseId: string; moduleId: string; lessonId: string }>;
 };
 
 export async function PUT(request: NextRequest, { params }: RouteParams) {
-  if (!validateAdminAccess(request)) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
+  const unauthorized = await requireAdminSession();
+  if (unauthorized) return unauthorized;
 
   const { lessonId } = await params;
 
@@ -56,9 +50,8 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
 }
 
 export async function DELETE(request: NextRequest, { params }: RouteParams) {
-  if (!validateAdminAccess(request)) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
+  const unauthorized = await requireAdminSession();
+  if (unauthorized) return unauthorized;
 
   const { lessonId } = await params;
 

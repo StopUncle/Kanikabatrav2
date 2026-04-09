@@ -1399,6 +1399,60 @@ export const sendAdminApplicationAlert = async (
   });
 };
 
+export const sendInnerCircleWelcomeNewUser = async (
+  userEmail: string,
+  userName: string,
+  resetToken: string,
+): Promise<boolean> => {
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://kanikarose.com";
+  const setPasswordUrl = `${baseUrl}/reset-password?token=${resetToken}`;
+
+  const inner = `
+    <p style="color: #f5f0ed; font-size: 18px; margin: 0 0 20px 0; line-height: 1.6;">
+      Welcome ${userName.replace(/[<>&"']/g, "")},
+    </p>
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 25px 0; font-size: 15px;">
+      Your subscription to The Inner Circle is active. Because you checked out
+      directly from Stripe, we created an account for you using the email
+      address you provided.
+    </p>
+    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="margin: 0 0 25px 0;">
+      <tr>
+        <td bgcolor="#1a0d11" style="padding: 22px; border-radius: 10px; border: 1px solid #d4af37;">
+          <p style="color: #d4af37; margin: 0 0 8px 0; font-size: 13px; text-transform: uppercase; letter-spacing: 1px;">Your Login</p>
+          <p style="color: #f5f0ed; margin: 0; font-size: 15px; word-break: break-all;">${userEmail}</p>
+        </td>
+      </tr>
+    </table>
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 25px 0; font-size: 15px;">
+      Set your password to log in for the first time. The link below is valid
+      for 7 days.
+    </p>
+    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="margin: 0 0 25px 0;">
+      <tr>
+        <td align="center">
+          <table role="presentation" cellspacing="0" cellpadding="0" border="0">
+            <tr>
+              <td bgcolor="#d4af37" style="border-radius: 50px;" align="center">
+                <a href="${setPasswordUrl}" target="_blank" style="display: inline-block; color: #050511; padding: 18px 50px; text-decoration: none; font-weight: 700; font-size: 16px; letter-spacing: 1px; text-transform: uppercase; border-radius: 50px;">Set Your Password</a>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 0 0; font-size: 13px; text-align: center;">
+      Once your password is set, log in at <a href="${baseUrl}/login" style="color: #d4af37;">${baseUrl}/login</a> to access the feed, voice notes, and classroom.
+    </p>
+  `;
+
+  return await sendEmail({
+    to: userEmail,
+    subject: "Welcome to The Inner Circle — set your password",
+    html: luxuryEmailShell(inner, "Welcome", "Your account is ready"),
+  });
+};
+
 export const sendApplicationApproved = async (
   applicantEmail: string,
   applicantName: string,
