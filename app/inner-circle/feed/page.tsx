@@ -3,7 +3,7 @@ import { requireServerAuth } from "@/lib/auth/server-auth";
 import { checkMembership } from "@/lib/community/membership";
 import { getViewerGender, feedPostGenderWhere } from "@/lib/community/gender-filter";
 import { prisma } from "@/lib/prisma";
-import FeedPost from "@/components/inner-circle/FeedPost";
+import FeedList from "@/components/inner-circle/FeedList";
 import InnerCircleNav from "@/components/inner-circle/InnerCircleNav";
 import Header from "@/components/Header";
 import BackgroundEffects from "@/components/BackgroundEffects";
@@ -33,9 +33,12 @@ export default async function FeedPage() {
   const viewerGender = await getViewerGender(userId);
   const genderWhere = feedPostGenderWhere(viewerGender);
 
-  const posts = await prisma.feedPost.findMany({
+  // Fetch PAGE_SIZE + 1 posts so we can detect whether there are more pages
+  // to load without a second query. The extra post becomes the cursor.
+  const PAGE_SIZE = 20;
+  const rows = await prisma.feedPost.findMany({
     where: genderWhere,
-    take: 20,
+    take: PAGE_SIZE + 1,
     orderBy: [{ isPinned: "desc" }, { createdAt: "desc" }],
     include: {
       author: {
@@ -53,6 +56,14 @@ export default async function FeedPage() {
       },
     },
   });
+
+  const hasMore = rows.length > PAGE_SIZE;
+  const posts = hasMore ? rows.slice(0, PAGE_SIZE) : rows;
+  // Cursor for the client is the createdAt of the LAST (oldest) post shown;
+  // /api/inner-circle/feed/posts returns rows with createdAt < cursor.
+  const initialNextCursor = hasMore
+    ? posts[posts.length - 1].createdAt.toISOString()
+    : null;
 
   const formatted = posts.map((post) => ({
     id: post.id,
@@ -104,11 +115,10 @@ export default async function FeedPage() {
             </p>
           </div>
         ) : (
-          <div className="space-y-4">
-            {formatted.map((post) => (
-              <FeedPost key={post.id} post={post} />
-            ))}
-          </div>
+          <FeedList
+            initialPosts={formatted}
+            initialNextCursor={initialNextCursor}
+          />
         )}
       </div>
     </div>
