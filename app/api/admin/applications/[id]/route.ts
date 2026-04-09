@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { sendApplicationApproved } from "@/lib/email";
+import { logger } from "@/lib/logger";
 
 function validateAdminAccess(request: NextRequest): boolean {
   const adminSecret = process.env.ADMIN_SECRET;
@@ -63,6 +65,17 @@ export async function POST(
           },
         },
       });
+
+      // Notify the applicant — fire-and-forget so a transient SMTP failure
+      // doesn't make the admin think the approval itself failed.
+      if (updated.user?.email) {
+        sendApplicationApproved(
+          updated.user.email,
+          updated.user.name || "Member",
+        ).catch((err) =>
+          logger.error("Failed to send approval email", err as Error),
+        );
+      }
 
       return NextResponse.json({
         success: true,

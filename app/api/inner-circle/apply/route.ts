@@ -1,6 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { requireAuth } from "@/lib/auth/middleware";
+import {
+  sendApplicationConfirmation,
+  sendAdminApplicationAlert,
+} from "@/lib/email";
+import { logger } from "@/lib/logger";
 import { z } from "zod";
 
 const applicationSchema = z.object({
@@ -51,6 +56,31 @@ export async function POST(request: NextRequest) {
         applicationData: parsed.data,
         appliedAt: new Date(),
       },
+    });
+
+    // Fire-and-forget notification emails (do not block the response)
+    const userRecord = await prisma.user.findUnique({
+      where: { id: user.id },
+      select: { name: true, email: true },
+    });
+    const applicantName = userRecord?.name || "Applicant";
+    const applicantEmail = userRecord?.email || user.email;
+
+    Promise.all([
+      sendApplicationConfirmation(applicantEmail, applicantName).catch((err) =>
+        logger.error("Failed to send applicant confirmation", err as Error),
+      ),
+      sendAdminApplicationAlert({
+        applicantName,
+        applicantEmail,
+        whyJoin: parsed.data.whyJoin,
+        whatHope: parsed.data.whatHope,
+        howFound: parsed.data.howFound,
+      }).catch((err) =>
+        logger.error("Failed to send admin application alert", err as Error),
+      ),
+    ]).catch(() => {
+      // Already handled per-promise above; this catch is just defensive
     });
 
     return NextResponse.json(

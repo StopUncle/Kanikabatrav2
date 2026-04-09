@@ -1,39 +1,41 @@
 # Progress Log
 
-## 2026-04-05 — Session 2: Email Automation & Deploy
+## 2026-04-09 — Session 3: Rounding Out
 
-### Deployed to Master
-- **Design uplift** (2194f62) — 17 community files uplifted, login/register activated
-- **Email automation** (a9d5a96) — Full email sequence system with free trial offer
-- **Download fix** (1954a24) — Bonus chapter PDFs + download limit increase (from Session 1)
+### Plan
+- Phase 1: Quiz radar chart + scores in dashboard
+- Phase 2: Application email notifications (admin + applicant + approval)
+- Phase 3: Book chapter content → Inner Circle feed auto-posts
+- Phase 4: End-to-end flow verification
 
-### Email System Ready
-- EmailQueue table created in production DB
-- 3-step sequence built: Welcome → Free Month Offer (Day 3) → Reminder (Day 7)
-- Admin endpoints: enroll-buyers, process (dry run default), status
-- Claim-trial route: auto-creates account + 30-day Inner Circle membership
-- New purchases auto-enroll going forward
-- **72 book buyers ready to enroll** — waiting for go-ahead to queue emails
+### Status: Phases 1-3 complete, pushing to deploy
 
-### To Activate Emails
-```
-POST /api/admin/email-queue/enroll-buyers (queue all 72 buyers)
-POST /api/admin/email-queue/process (dry run preview)
-POST /api/admin/email-queue/process {dryRun: false} (actually send)
-```
+### What shipped
+- **Quiz dashboard card** — Rebuilt with inline SVG radar chart (6 axes, gold polygon over hexagon grid), expandable score breakdown bars, primary type pulled from PERSONALITY_PROFILES with name + tagline + description. No chart library added.
+- **Application notifications** — 3 new email functions in lib/email.ts (sendApplicationConfirmation, sendAdminApplicationAlert, sendApplicationApproved), all using the dark luxury shell. Hooked into /api/inner-circle/apply (fires both admin alert + applicant confirmation, fire-and-forget) and /api/admin/applications/[id] (fires approval email when admin approves).
+- **Book content auto-posts** — 15 chapter insights (book-insights.ts, dayOfYear 61-75) added to the daily insight rotation; 6 viral quote discussion prompts (viral-quote-prompts.ts) added to the Saturday slot. Seed script extended idempotently.
+- **Verified**: typecheck (tsc --noEmit) passes, lint clean, compile successful. Local build fails only because .env.local has DEV_BYPASS_AUTH=true which the prod-mode page-data collector blocks — Railway has no such var so prod build is unaffected.
 
-## 2026-04-04 — Session 1: Analysis & Design Uplift
+---
 
-### Completed
-- Fixed book download bug: bonus chapters now available as PDF + EPUB (was EPUB-only)
-- Increased download limit from 5 to 10 across all purchases (193 records updated)
-- Resent book to Denise Kattinger and Emmanuelle Leliveld (fresh tokens)
-- Set up PayPal MCP server — full live access to transactions, disputes, orders, refunds
-- Completed revenue audit and strategic analysis
-- Created 4-phase task plan for revenue acceleration
+## Previous Sessions
 
-### Key Numbers
-- 19 book sales in last 31 days (~$475 gross)
-- 3 PayPal disputes, all won
-- 72 unique book buyer emails, 0 registered users
-- Strategic target: $59K/month at scale
+### Session 2 (Apr 8-9): Major Build Sprint
+- Stripe payment integration (11 products, all pages swapped)
+- Admin panel with PIN login, voice note upload, course CRUD
+- 60 daily psychology cards + 28 discussion prompts seeded
+- Feed API routes built (likes, comments, post detail)
+- Dashboard bugs fixed (Tailwind tokens, mobile nav, dead code)
+- Subscription flow fixed (Stripe cancel, APPROVED state, trial banner)
+- Book addendum files deployed to Railway (were missing from git)
+- Success page race condition fixed
+- All book buyers resent fresh download links (71 emails)
+
+### Session 1 (Apr 4): Foundation
+- Book download bug fixed (PDF + EPUB for addendums)
+- Download limit increased to 10
+- PayPal MCP server configured
+- Community UI uplifted to luxury design system
+- Revenue audit + strategic analysis
+- Email automation system built
+- Privacy Policy + Refund Policy pages created

@@ -1261,3 +1261,196 @@ export const sendQuizResults = async (
     html,
   });
 };
+
+// ============================================
+// Inner Circle Application Emails
+// ============================================
+
+interface ApplicationDetails {
+  applicantName: string;
+  applicantEmail: string;
+  whyJoin: string;
+  whatHope: string;
+  howFound: string;
+}
+
+const luxuryEmailShell = (innerHtml: string, headerTitle: string, headerSub: string): string => `
+  <!DOCTYPE html>
+  <html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>${headerTitle}</title>
+  </head>
+  <body style="margin: 0; padding: 0; background-color: #0a0a0a; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;">
+    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="background-color: #0a0a0a;">
+      <tr>
+        <td align="center" style="padding: 40px 20px;">
+          <table role="presentation" width="600" cellspacing="0" cellpadding="0" border="0" style="max-width: 600px; width: 100%; background-color: #050511; border-radius: 12px; overflow: hidden;">
+            <tr>
+              <td bgcolor="#3d0f1a" style="padding: 40px 30px; text-align: center;">
+                <h1 style="color: #d4af37; margin: 0 0 10px 0; font-size: 26px; font-weight: 300; letter-spacing: 2px; text-transform: uppercase;">
+                  ${headerTitle}
+                </h1>
+                <p style="color: #94a3b8; margin: 0; font-size: 13px; letter-spacing: 1px;">
+                  ${headerSub}
+                </p>
+              </td>
+            </tr>
+            <tr>
+              <td style="padding: 40px 30px; border-left: 1px solid #d4af37; border-right: 1px solid #d4af37; border-bottom: 1px solid #d4af37;">
+                ${innerHtml}
+                <div style="margin-top: 35px; padding-top: 25px; border-top: 1px solid #2a1820; text-align: center;">
+                  <p style="color: #d4af37; margin: 0; font-size: 16px; font-weight: 600; letter-spacing: 1px;">Kanika Batra</p>
+                  <p style="color: #666; margin: 5px 0 0 0; font-size: 12px;">The Inner Circle</p>
+                </div>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+  </body>
+  </html>
+`;
+
+export const sendApplicationConfirmation = async (
+  applicantEmail: string,
+  applicantName: string,
+): Promise<boolean> => {
+  const inner = `
+    <p style="color: #f5f0ed; font-size: 18px; margin: 0 0 20px 0; line-height: 1.6;">
+      Dear ${applicantName},
+    </p>
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 20px 0; font-size: 15px;">
+      Your application to The Inner Circle has been received. Every applicant is reviewed personally — this is not a community you can buy your way into.
+    </p>
+    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="margin: 25px 0;">
+      <tr>
+        <td bgcolor="#1a0d11" style="padding: 25px; border-radius: 10px; border: 1px solid #d4af37;">
+          <h3 style="color: #d4af37; margin: 0 0 12px 0; font-size: 15px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px;">
+            What Happens Next
+          </h3>
+          <p style="color: #94a3b8; margin: 0; font-size: 14px; line-height: 1.7;">
+            We review every application within 24 hours. If you're approved, you'll receive a follow-up email with your subscription link and immediate access to the community feed, daily insights, classroom modules, and Kanika's voice notes.
+          </p>
+        </td>
+      </tr>
+    </table>
+    <p style="color: #94a3b8; line-height: 1.8; margin: 20px 0 0 0; font-size: 14px;">
+      In the meantime, keep an eye on your inbox &mdash; including your spam folder.
+    </p>
+  `;
+
+  return await sendEmail({
+    to: applicantEmail,
+    subject: "Your Inner Circle application has been received",
+    html: luxuryEmailShell(inner, "Application Received", "We're reviewing your submission"),
+  });
+};
+
+export const sendAdminApplicationAlert = async (
+  details: ApplicationDetails,
+): Promise<boolean> => {
+  const adminEmail = process.env.ADMIN_EMAIL || "Kanika@kanikarose.com";
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://kanikarose.com";
+
+  const inner = `
+    <p style="color: #f5f0ed; font-size: 16px; margin: 0 0 25px 0; line-height: 1.6;">
+      A new application has been submitted to The Inner Circle.
+    </p>
+    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="margin: 0 0 25px 0;">
+      <tr>
+        <td bgcolor="#1a0d11" style="padding: 22px; border-radius: 10px; border: 1px solid #d4af37;">
+          <p style="color: #94a3b8; margin: 0 0 8px 0; font-size: 13px;"><strong style="color: #d4af37;">Name:</strong> ${details.applicantName}</p>
+          <p style="color: #94a3b8; margin: 0 0 8px 0; font-size: 13px;"><strong style="color: #d4af37;">Email:</strong> ${details.applicantEmail}</p>
+          <p style="color: #94a3b8; margin: 0; font-size: 13px;"><strong style="color: #d4af37;">How they found us:</strong> ${details.howFound}</p>
+        </td>
+      </tr>
+    </table>
+    <h3 style="color: #d4af37; margin: 25px 0 10px 0; font-size: 14px; text-transform: uppercase; letter-spacing: 1px;">Why They Want To Join</h3>
+    <div style="background: #0a0a0a; padding: 18px; border-radius: 8px; border-left: 3px solid #d4af37;">
+      <p style="color: #f5f0ed; margin: 0; font-size: 14px; line-height: 1.7; white-space: pre-wrap;">${details.whyJoin}</p>
+    </div>
+    <h3 style="color: #d4af37; margin: 25px 0 10px 0; font-size: 14px; text-transform: uppercase; letter-spacing: 1px;">What They Hope To Gain</h3>
+    <div style="background: #0a0a0a; padding: 18px; border-radius: 8px; border-left: 3px solid #d4af37;">
+      <p style="color: #f5f0ed; margin: 0; font-size: 14px; line-height: 1.7; white-space: pre-wrap;">${details.whatHope}</p>
+    </div>
+    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="margin: 30px 0 0 0;">
+      <tr>
+        <td align="center">
+          <table role="presentation" cellspacing="0" cellpadding="0" border="0">
+            <tr>
+              <td bgcolor="#d4af37" style="border-radius: 50px;" align="center">
+                <a href="${baseUrl}/admin/applications" target="_blank" style="display: inline-block; color: #050511; padding: 16px 42px; text-decoration: none; font-weight: 700; font-size: 14px; letter-spacing: 1px; text-transform: uppercase; border-radius: 50px;">Review Application</a>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+  `;
+
+  return await sendEmail({
+    to: adminEmail,
+    subject: `[Inner Circle] New application from ${details.applicantName}`,
+    html: luxuryEmailShell(inner, "New Application", `From ${details.applicantName}`),
+    replyTo: details.applicantEmail,
+  });
+};
+
+export const sendApplicationApproved = async (
+  applicantEmail: string,
+  applicantName: string,
+): Promise<boolean> => {
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://kanikarose.com";
+
+  const inner = `
+    <p style="color: #f5f0ed; font-size: 18px; margin: 0 0 20px 0; line-height: 1.6;">
+      Dear ${applicantName},
+    </p>
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 25px 0; font-size: 15px;">
+      You've been approved for The Inner Circle. Welcome to the room you've been trying to enter.
+    </p>
+    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="margin: 0 0 30px 0;">
+      <tr>
+        <td bgcolor="#1a0d11" style="padding: 25px; border-radius: 10px; border: 2px solid #d4af37;">
+          <h3 style="color: #d4af37; margin: 0 0 15px 0; font-size: 17px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; text-align: center;">
+            What You're Getting
+          </h3>
+          <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0">
+            <tr><td style="padding: 8px 0; color: #f5f0ed; font-size: 14px; line-height: 1.6; border-bottom: 1px solid #2a1820;"><strong style="color: #d4af37;">Daily insights</strong> &mdash; psychology drops curated for your patterns</td></tr>
+            <tr><td style="padding: 8px 0; color: #f5f0ed; font-size: 14px; line-height: 1.6; border-bottom: 1px solid #2a1820;"><strong style="color: #d4af37;">Voice notes from Kanika</strong> &mdash; private audio you won't hear anywhere else</td></tr>
+            <tr><td style="padding: 8px 0; color: #f5f0ed; font-size: 14px; line-height: 1.6; border-bottom: 1px solid #2a1820;"><strong style="color: #d4af37;">The Classroom</strong> &mdash; structured modules on dark psychology mastery</td></tr>
+            <tr><td style="padding: 8px 0; color: #f5f0ed; font-size: 14px; line-height: 1.6;"><strong style="color: #d4af37;">The community</strong> &mdash; people who finally see what you see</td></tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 25px 0; font-size: 15px; text-align: center;">
+      Complete your subscription below to activate your membership.
+    </p>
+    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="margin: 0 0 25px 0;">
+      <tr>
+        <td align="center">
+          <table role="presentation" cellspacing="0" cellpadding="0" border="0">
+            <tr>
+              <td bgcolor="#d4af37" style="border-radius: 50px;" align="center">
+                <a href="${baseUrl}/dashboard" target="_blank" style="display: inline-block; color: #050511; padding: 18px 50px; text-decoration: none; font-weight: 700; font-size: 16px; letter-spacing: 1px; text-transform: uppercase; border-radius: 50px;">Activate Membership</a>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+    <p style="color: #94a3b8; line-height: 1.8; margin: 20px 0 0 0; font-size: 13px; text-align: center; font-style: italic;">
+      You earned this. Now use it.
+    </p>
+  `;
+
+  return await sendEmail({
+    to: applicantEmail,
+    subject: "You're in. Welcome to The Inner Circle.",
+    html: luxuryEmailShell(inner, "Application Approved", "Welcome to The Inner Circle"),
+  });
+};
