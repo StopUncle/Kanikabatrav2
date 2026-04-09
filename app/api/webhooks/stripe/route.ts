@@ -64,6 +64,19 @@ export async function POST(request: NextRequest) {
             expiresAt,
           );
 
+          // Auto-unlock any existing quiz result for this buyer.
+          // Without this, a logged-out quiz taker who later buys the book
+          // stays locked out of their full results until /api/quiz/my-results
+          // happens to run its second-order Purchase lookup.
+          try {
+            await prisma.quizResult.updateMany({
+              where: { email, paid: false },
+              data: { paid: true },
+            });
+          } catch (err) {
+            console.error("Failed to auto-unlock quiz for book buyer:", err);
+          }
+
           // Auto-enroll in email sequence
           try {
             const { buildBookBuyerSequence } = await import(

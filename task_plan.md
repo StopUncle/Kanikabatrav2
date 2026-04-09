@@ -28,10 +28,14 @@ Make quiz results show beautifully in the dashboard with radar chart. Ensure the
 
 ## Phase 4: End-to-End Flow Verification
 
-- [ ] **4.1** Trace: New visitor → quiz → results → dashboard (quiz card shows correctly)
-- [ ] **4.2** Trace: New visitor → register → apply to Inner Circle → admin gets email → admin approves → applicant gets email → Stripe checkout → membership active → feed access
-- [ ] **4.3** Trace: Book purchase → success page → email delivery → email sequence enrollment → quiz result auto-unlock
-- [ ] **4.4** Trace: Inner Circle member daily experience → feed with auto-posts → comments → voice notes → classroom
+- [x] **4.1** Quiz → results → dashboard: working. Quiz submit → /api/quiz/submit stores by email+userId. /api/quiz/my-results unlocks when paid OR hasBookPurchase.
+- [x] **4.2** Register → apply → approve → Stripe → active: working. APPROVED state is handled on /inner-circle/apply?status=approved (ApplicationForm.tsx renders Subscribe button → /api/inner-circle/subscription/create → Stripe checkout → webhook flips membership ACTIVE).
+- [x] **4.3** Book → success → email → quiz unlock: now working. Webhook fires sendBookDelivery + email sequence enrollment + auto-unlocks any unpaid QuizResult for that email.
+- [x] **4.4** Inner Circle daily experience: feed/comments/reactions/classroom/voice-notes routes all exist. No daily-insights→feed cron exists yet (insights are seeded data, not auto-rendered as feed posts) — flagged but not in scope for this session.
+
+### Phase 4 fixes applied
+- Approval email CTA now points to /inner-circle/apply?status=approved (was /dashboard, where there's no checkout button — that's only on the apply page)
+- Book webhook auto-unlocks QuizResult by email (was previously only fired by /api/quiz/my-results' second-order Purchase lookup)
 
 ---
 

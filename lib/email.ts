@@ -1436,7 +1436,7 @@ export const sendApplicationApproved = async (
           <table role="presentation" cellspacing="0" cellpadding="0" border="0">
             <tr>
               <td bgcolor="#d4af37" style="border-radius: 50px;" align="center">
-                <a href="${baseUrl}/dashboard" target="_blank" style="display: inline-block; color: #050511; padding: 18px 50px; text-decoration: none; font-weight: 700; font-size: 16px; letter-spacing: 1px; text-transform: uppercase; border-radius: 50px;">Activate Membership</a>
+                <a href="${baseUrl}/inner-circle/apply?status=approved" target="_blank" style="display: inline-block; color: #050511; padding: 18px 50px; text-decoration: none; font-weight: 700; font-size: 16px; letter-spacing: 1px; text-transform: uppercase; border-radius: 50px;">Activate Membership</a>
               </td>
             </tr>
           </table>
