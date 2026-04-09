@@ -1,16 +1,14 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
-import Script from "next/script";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import Footer from "@/components/Footer";
 import JsonLd from "@/components/JsonLd";
+import CookieConsent from "@/components/CookieConsent";
 import {
   generateOrganizationSchema,
   generateWebsiteSchema,
 } from "@/lib/schema";
 import "./globals.css";
-
-const GA_MEASUREMENT_ID = "G-DTNLQQ321K";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -73,30 +71,21 @@ export default function RootLayout({
           title="Kanika Batra Blog"
           href="/feed.xml"
         />
-        <Script
-          src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`}
-          strategy="afterInteractive"
-        />
-        <Script id="google-analytics" strategy="afterInteractive">
-          {`
-            window.dataLayer = window.dataLayer || [];
-            function gtag(){dataLayer.push(arguments);}
-            gtag('js', new Date());
-            gtag('config', '${GA_MEASUREMENT_ID}');
-          `}
-        </Script>
-        <Script
-          src="https://app.lemonsqueezy.com/js/lemon.js"
-          strategy="afterInteractive"
-        />
+        {/*
+          Google Analytics is loaded by <CookieConsent /> below, only after
+          the user explicitly accepts. Previously it was loaded
+          unconditionally here — a GDPR / ePrivacy violation for EU visitors.
+
+          Removed at the same time: the Lemon Squeezy script loader (LS was
+          rejected and we're on Stripe now) and PayPal dns-prefetch hints
+          (PayPal was fully removed in April 2026).
+        */}
       </head>
       <body className={inter.className}>
-        <link rel="dns-prefetch" href="https://www.paypal.com" />
-        <link rel="preconnect" href="https://www.paypal.com" />
-        <link rel="preconnect" href="https://www.paypalobjects.com" />
         <main>{children}</main>
         <Footer />
         <SpeedInsights />
+        <CookieConsent />
       </body>
     </html>
   );
