@@ -109,11 +109,29 @@ export default function DashboardClient({ user }: DashboardClientProps) {
   >("overview");
 
   useEffect(() => {
+    // Singleton refresh promise: if multiple parallel requests all hit 401
+    // at once (e.g. the Promise.all below), they'd each fire their own
+    // /api/auth/refresh, causing token thrash + race conditions. Coalesce
+    // into a single in-flight refresh by caching the promise for the
+    // duration of the mount.
+    let refreshInFlight: Promise<boolean> | null = null;
+    const refreshOnce = (): Promise<boolean> => {
+      if (refreshInFlight) return refreshInFlight;
+      refreshInFlight = fetch("/api/auth/refresh", { method: "POST" })
+        .then((r) => r.ok)
+        .catch(() => false)
+        .finally(() => {
+          // Clear after settle so a later 401 can kick off a fresh attempt.
+          refreshInFlight = null;
+        });
+      return refreshInFlight;
+    };
+
     async function fetchWithRefresh(url: string): Promise<Response> {
       let res = await fetch(url);
       if (res.status === 401) {
-        const refreshRes = await fetch("/api/auth/refresh", { method: "POST" });
-        if (refreshRes.ok) {
+        const refreshed = await refreshOnce();
+        if (refreshed) {
           res = await fetch(url);
         } else {
           router.push("/login");
