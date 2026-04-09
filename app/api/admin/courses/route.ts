@@ -9,7 +9,7 @@ function generateSlug(title: string): string {
     .replace(/^-|-$/g, "");
 }
 
-export async function GET(request: NextRequest) {
+export async function GET(_request: NextRequest) {
   const unauthorized = await requireAdminSession();
   if (unauthorized) return unauthorized;
 
