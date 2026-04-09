@@ -4,7 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { buildBookBuyerSequence } from "@/lib/email-sequences";
 import { requireAdminSession } from "@/lib/admin/auth";
 
-export async function POST(request: NextRequest) {
+export async function POST(_request: NextRequest) {
   const unauthorized = await requireAdminSession();
   if (unauthorized) return unauthorized;
 

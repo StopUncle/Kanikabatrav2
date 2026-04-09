@@ -4,7 +4,7 @@ import { sendCoachingQuestionnaire, sendEmail } from "@/lib/email";
 import { requireAdminSession } from "@/lib/admin/auth";
 
 // GET: List all coaching purchases and their session/questionnaire status
-export async function GET(request: NextRequest) {
+export async function GET(_request: NextRequest) {
   const unauthorized = await requireAdminSession();
   if (unauthorized) return unauthorized;
 
