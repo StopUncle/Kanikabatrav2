@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { sendEmail } from "@/lib/email";
+import { logger } from "@/lib/logger";
 
 export async function POST(request: NextRequest) {
   const secret = request.headers.get("x-cron-secret");
@@ -25,7 +27,22 @@ export async function POST(request: NextRequest) {
     }
 
     if (!insight) {
-      return NextResponse.json({ message: "No insights remaining" });
+      // Empty queue — alert the admin so the feed doesn't go silent.
+      // Cap the alert frequency by checking a "last alerted" marker, but
+      // for simplicity, log every time and let the admin set a Sentry
+      // alert on this string.
+      logger.error("[cron daily-insight] queue empty — feed will go silent");
+      try {
+        const adminEmail = process.env.ADMIN_EMAIL || "Kanika@kanikarose.com";
+        await sendEmail({
+          to: adminEmail,
+          subject: "[Inner Circle] Daily insight queue is empty",
+          html: `<p>The daily-insight cron found no unused DailyInsight rows. The feed will stop receiving daily content until more are seeded.</p><p>Add more rows to <code>prisma/seeds/daily-insights.ts</code> and re-run the seed script.</p>`,
+        });
+      } catch (err) {
+        logger.error("[cron daily-insight] failed to send empty-queue alert", err as Error);
+      }
+      return NextResponse.json({ message: "No insights remaining", queueEmpty: true });
     }
 
     await prisma.feedPost.create({

@@ -161,14 +161,24 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    return NextResponse.json({
-      success: true,
-      purchaseId: purchase.id,
-      purchaseType: fixType ? "COACHING" : purchase.type,
-      sessionId: session.id,
-      hasQuestionnaire: !!questionnaireData,
-      emailResults: results,
-    });
+    // success only when EVERY email actually went out. Returning success:true
+    // unconditionally meant the admin UI showed a green toast even when no
+    // emails left the building.
+    const allSent = results.length > 0 && results.every((r) => r.sent);
+    return NextResponse.json(
+      {
+        success: allSent,
+        purchaseId: purchase.id,
+        purchaseType: fixType ? "COACHING" : purchase.type,
+        sessionId: session.id,
+        hasQuestionnaire: !!questionnaireData,
+        emailResults: results,
+        message: allSent
+          ? "All coaching emails resent."
+          : "Some or all email deliveries failed — check emailResults.",
+      },
+      { status: allSent ? 200 : 207 },
+    );
   } catch (error) {
     console.error("Admin resend-coaching POST error:", error);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });

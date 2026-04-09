@@ -97,13 +97,25 @@ export async function POST(request: NextRequest) {
         where: { id: body.quizResultId },
         data: { emailSent: true },
       });
+      return NextResponse.json({
+        success: true,
+        email: quizResult.email,
+        message: "Results sent successfully",
+      });
     }
 
-    return NextResponse.json({
-      success: emailSent,
-      email: quizResult.email,
-      message: emailSent ? "Results sent successfully" : "Failed to send email",
-    });
+    // Email transport failed. Returning 200 with success:false meant client
+    // code calling `response.ok` would treat it as success — user told to
+    // check inbox, no email actually sent. Return 502 so the UI can retry
+    // or surface a real error to the user.
+    return NextResponse.json(
+      {
+        success: false,
+        email: quizResult.email,
+        message: "Email delivery failed. Please try again or contact support.",
+      },
+      { status: 502 },
+    );
   } catch (error) {
     console.error("Error sending quiz results:", error);
     return NextResponse.json(

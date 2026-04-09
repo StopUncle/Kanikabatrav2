@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import crypto from "crypto";
 import jwt from "jsonwebtoken";
+import { logger } from "@/lib/logger";
 
 function getJwtSecret(): string {
   const secret = process.env.JWT_SECRET;
@@ -76,7 +77,11 @@ export async function POST(request: NextRequest) {
     });
 
     return response;
-  } catch {
+  } catch (error) {
+    // Was an empty catch — admin would get locked out with no clue why.
+    // Now logged so JWT misconfig / crypto errors / JSON parse issues
+    // surface in the server logs.
+    logger.error("[admin-auth] PIN authentication failed", error as Error);
     return NextResponse.json(
       { error: "Authentication failed" },
       { status: 500 },

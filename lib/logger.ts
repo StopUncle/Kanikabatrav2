@@ -70,10 +70,19 @@ class Logger {
     };
   }
 
+  // On the server, ALWAYS write to stdout/stderr regardless of NODE_ENV.
+  // Railway captures both, so this is what makes logs actually visible in
+  // production. Previously these were gated behind `isDevelopment` and the
+  // server-side persistLog was a no-op, meaning every logger.error() call
+  // from a Route Handler was silently dropped on Railway.
+  private isServer(): boolean {
+    return typeof window === "undefined";
+  }
+
   info(message: string, context?: Record<string, unknown>): void {
     const entry = this.createLogEntry("info", message, context);
 
-    if (this.isDevelopment) {
+    if (this.isDevelopment || this.isServer()) {
       console.log(this.formatLog(entry));
     }
 
@@ -83,7 +92,7 @@ class Logger {
   warn(message: string, context?: Record<string, unknown>): void {
     const entry = this.createLogEntry("warn", message, context);
 
-    if (this.isDevelopment) {
+    if (this.isDevelopment || this.isServer()) {
       console.warn(this.formatLog(entry));
     }
 
@@ -97,7 +106,7 @@ class Logger {
   ): void {
     const entry = this.createLogEntry("error", message, context, error);
 
-    if (this.isDevelopment) {
+    if (this.isDevelopment || this.isServer()) {
       console.error(this.formatLog(entry));
     }
 

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { sendEmail } from "@/lib/email";
+import { logger } from "@/lib/logger";
 
 export async function POST(request: NextRequest) {
   try {
@@ -87,7 +88,9 @@ export async function POST(request: NextRequest) {
           </div>
         </div>
       `,
-    }).catch((err) => console.error("Welcome email failed:", err));
+    }).catch((err) =>
+      logger.error("[newsletter] welcome email failed", err as Error, { email }),
+    );
 
     return NextResponse.json({
       success: true,
@@ -95,7 +98,7 @@ export async function POST(request: NextRequest) {
       isNew: true,
     });
   } catch (error) {
-    console.error("Newsletter subscription error:", error);
+    logger.error("[newsletter] subscription error", error as Error);
     return NextResponse.json({ error: "Failed to subscribe" }, { status: 500 });
   }
 }

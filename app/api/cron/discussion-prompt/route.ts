@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { sendEmail } from "@/lib/email";
+import { logger } from "@/lib/logger";
 
 export async function POST(request: NextRequest) {
   const secret = request.headers.get("x-cron-secret");
@@ -24,7 +26,18 @@ export async function POST(request: NextRequest) {
     }
 
     if (!prompt) {
-      return NextResponse.json({ message: "No prompts remaining" });
+      logger.error("[cron discussion-prompt] queue empty — feed will go silent");
+      try {
+        const adminEmail = process.env.ADMIN_EMAIL || "Kanika@kanikarose.com";
+        await sendEmail({
+          to: adminEmail,
+          subject: "[Inner Circle] Discussion prompt queue is empty",
+          html: `<p>The discussion-prompt cron found no unused DiscussionPrompt rows. The feed will stop receiving discussion content until more are seeded.</p><p>Add more rows to <code>prisma/seeds/discussion-prompts.ts</code> and re-run the seed script.</p>`,
+        });
+      } catch (err) {
+        logger.error("[cron discussion-prompt] failed to send empty-queue alert", err as Error);
+      }
+      return NextResponse.json({ message: "No prompts remaining", queueEmpty: true });
     }
 
     await prisma.feedPost.create({

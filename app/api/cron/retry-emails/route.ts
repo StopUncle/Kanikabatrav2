@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { sendBookDelivery } from "@/lib/email";
+import { sendBookDelivery, sendEmail } from "@/lib/email";
+import { logger } from "@/lib/logger";
 
 export async function POST(request: NextRequest) {
   // Verify cron secret to prevent unauthorized access
@@ -33,8 +34,49 @@ export async function POST(request: NextRequest) {
       const metadata = (purchase.metadata as Record<string, unknown>) || {};
       const retryCount = (metadata.emailRetryCount as number) || 0;
 
-      // Stop retrying after 5 total attempts
-      if (retryCount >= 5) continue;
+      // Stop retrying after 5 total attempts AND escalate to admin so the
+      // customer doesn't sit forever with a paid order and no book.
+      if (retryCount >= 5) {
+        if (!metadata.adminAlertSent) {
+          try {
+            const adminEmail = process.env.ADMIN_EMAIL || "Kanika@kanikarose.com";
+            await sendEmail({
+              to: adminEmail,
+              subject: `[ACTION REQUIRED] Book delivery permanently failed for ${purchase.customerEmail}`,
+              html: `
+                <p>The retry-emails cron has exhausted 5 attempts to deliver the book to:</p>
+                <ul>
+                  <li><strong>Customer:</strong> ${purchase.customerName}</li>
+                  <li><strong>Email:</strong> ${purchase.customerEmail}</li>
+                  <li><strong>Purchase ID:</strong> ${purchase.id}</li>
+                  <li><strong>Amount:</strong> $${purchase.amount}</li>
+                  <li><strong>Created:</strong> ${purchase.createdAt}</li>
+                </ul>
+                <p>Manual follow-up required. The customer paid but never received the download link.</p>
+                <p>Use <code>/admin/purchases</code> or <code>/api/admin/send-download-link</code> to resend manually.</p>
+              `,
+            });
+            await prisma.purchase.update({
+              where: { id: purchase.id },
+              data: {
+                metadata: { ...metadata, adminAlertSent: true, adminAlertAt: new Date().toISOString() },
+              },
+            });
+            logger.error(
+              "[retry-emails] permanent delivery failure — admin alerted",
+              undefined,
+              { purchaseId: purchase.id, email: purchase.customerEmail },
+            );
+          } catch (err) {
+            logger.error(
+              "[retry-emails] failed to send admin alert for permanent delivery failure",
+              err as Error,
+              { purchaseId: purchase.id, email: purchase.customerEmail },
+            );
+          }
+        }
+        continue;
+      }
 
       const sent = await sendBookDelivery(
         purchase.customerEmail,
