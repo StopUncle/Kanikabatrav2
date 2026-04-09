@@ -26,6 +26,9 @@ on:
     - cron: '*/30 * * * *'
     # Process the email queue — every 15 minutes
     - cron: '*/15 * * * *'
+    # Weekly member digest — Sunday 08:00 UTC (one hour before daily-insight
+    # so the two jobs don't collide on Sundays)
+    - cron: '0 8 * * 0'
   workflow_dispatch:
     # Allow manual triggering from the GitHub Actions UI. Useful for
     # testing or firing a cron out-of-band without waiting for the next
@@ -42,6 +45,7 @@ on:
           - discussion-prompt
           - retry-emails
           - email-queue
+          - weekly-digest
 
 env:
   BASE_URL: https://kanikarose.com
@@ -110,3 +114,19 @@ jobs:
             -H "Content-Type: application/json" \
             -d '{"dryRun":false}' \
             --max-time 120
+
+  weekly-digest:
+    if: >-
+      github.event.schedule == '0 8 * * 0' ||
+      (github.event_name == 'workflow_dispatch' &&
+       (github.event.inputs.target == 'all' || github.event.inputs.target == 'weekly-digest'))
+    runs-on: ubuntu-latest
+    steps:
+      - name: Hit /api/cron/weekly-digest
+        # Sends a weekly summary email to every ACTIVE Inner Circle member.
+        # Long timeout because it loops through all active members serially.
+        run: |
+          curl -fsS -X POST "$BASE_URL/api/cron/weekly-digest" \
+            -H "x-cron-secret: ${{ secrets.CRON_SECRET }}" \
+            -H "Content-Type: application/json" \
+            --max-time 300

@@ -1404,6 +1404,190 @@ export const sendAdminApplicationAlert = async (
   });
 };
 
+// ============================================
+// Weekly digest for Inner Circle members
+// ============================================
+
+interface DigestPost {
+  id: string;
+  title: string;
+  type: string;
+  excerpt: string;
+  commentCount: number;
+}
+
+interface DigestVoiceNote {
+  id: string;
+  title: string;
+}
+
+interface DigestCourse {
+  id: string;
+  title: string;
+  slug: string;
+}
+
+interface WeeklyDigestData {
+  memberEmail: string;
+  memberName: string;
+  weekStart: Date;
+  weekEnd: Date;
+  newPosts: DigestPost[];
+  newVoiceNotes: DigestVoiceNote[];
+  newCourses: DigestCourse[];
+  newCommentsOnYourPosts: number;
+}
+
+export const sendWeeklyDigest = async (
+  data: WeeklyDigestData,
+): Promise<boolean> => {
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://kanikarose.com";
+
+  // If there's nothing new this week, send a lightweight nudge instead of
+  // a full digest — still valuable for retention but doesn't pretend
+  // there's content when there isn't.
+  const hasContent =
+    data.newPosts.length > 0 ||
+    data.newVoiceNotes.length > 0 ||
+    data.newCourses.length > 0;
+
+  const weekRange = `${data.weekStart.toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+  })} – ${data.weekEnd.toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+  })}`;
+
+  const postsBlock =
+    data.newPosts.length > 0
+      ? `
+    <h3 style="color: #d4af37; margin: 25px 0 12px 0; font-size: 14px; text-transform: uppercase; letter-spacing: 1px;">New in the feed</h3>
+    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0">
+      ${data.newPosts
+        .slice(0, 5)
+        .map(
+          (post) => `
+        <tr>
+          <td style="padding: 0 0 14px 0;">
+            <a href="${baseUrl}/inner-circle/feed/${post.id}" style="text-decoration: none; color: inherit;">
+              <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="background: #1a0d11; border: 1px solid rgba(212,175,55,0.15); border-radius: 10px;">
+                <tr>
+                  <td style="padding: 16px 18px;">
+                    <p style="color: #f5f0ed; margin: 0 0 6px 0; font-size: 15px; font-weight: 500;">${esc(post.title)}</p>
+                    <p style="color: #94a3b8; margin: 0; font-size: 13px; line-height: 1.5;">${esc(post.excerpt)}</p>
+                    ${post.commentCount > 0 ? `<p style="color: #d4af37; margin: 8px 0 0 0; font-size: 11px;">${post.commentCount} comment${post.commentCount === 1 ? "" : "s"}</p>` : ""}
+                  </td>
+                </tr>
+              </table>
+            </a>
+          </td>
+        </tr>
+      `,
+        )
+        .join("")}
+    </table>
+  `
+      : "";
+
+  const voiceNotesBlock =
+    data.newVoiceNotes.length > 0
+      ? `
+    <h3 style="color: #d4af37; margin: 25px 0 12px 0; font-size: 14px; text-transform: uppercase; letter-spacing: 1px;">New voice notes</h3>
+    <ul style="color: #f5f0ed; font-size: 14px; line-height: 1.8; margin: 0; padding-left: 20px;">
+      ${data.newVoiceNotes
+        .map(
+          (vn) => `
+        <li><a href="${baseUrl}/inner-circle/voice-notes" style="color: #d4af37; text-decoration: none;">${esc(vn.title)}</a></li>
+      `,
+        )
+        .join("")}
+    </ul>
+  `
+      : "";
+
+  const coursesBlock =
+    data.newCourses.length > 0
+      ? `
+    <h3 style="color: #d4af37; margin: 25px 0 12px 0; font-size: 14px; text-transform: uppercase; letter-spacing: 1px;">New in the classroom</h3>
+    <ul style="color: #f5f0ed; font-size: 14px; line-height: 1.8; margin: 0; padding-left: 20px;">
+      ${data.newCourses
+        .map(
+          (c) => `
+        <li><a href="${baseUrl}/inner-circle/classroom/${esc(c.slug)}" style="color: #d4af37; text-decoration: none;">${esc(c.title)}</a></li>
+      `,
+        )
+        .join("")}
+    </ul>
+  `
+      : "";
+
+  const nudgeBlock = !hasContent
+    ? `
+    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="margin: 25px 0;">
+      <tr>
+        <td bgcolor="#1a0d11" style="padding: 22px; border-radius: 10px; border: 1px solid rgba(212,175,55,0.2); text-align: center;">
+          <p style="color: #94a3b8; margin: 0; font-size: 14px; line-height: 1.6;">
+            A quiet week inside. Still worth stopping by to catch up on
+            conversations in the feed and check on your classroom progress.
+          </p>
+        </td>
+      </tr>
+    </table>
+  `
+    : "";
+
+  const commentsNote =
+    data.newCommentsOnYourPosts > 0
+      ? `
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 18px 0; font-size: 13px;">
+      You have <strong style="color: #d4af37;">${data.newCommentsOnYourPosts}</strong> new reply${data.newCommentsOnYourPosts === 1 ? "" : "s"} on your comments this week.
+    </p>
+  `
+      : "";
+
+  const inner = `
+    <p style="color: #f5f0ed; font-size: 18px; margin: 0 0 10px 0; line-height: 1.6;">
+      Hi ${esc(data.memberName)},
+    </p>
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 25px 0; font-size: 14px;">
+      Here's what happened inside The Inner Circle this past week (${weekRange}).
+    </p>
+
+    ${commentsNote}
+    ${postsBlock}
+    ${voiceNotesBlock}
+    ${coursesBlock}
+    ${nudgeBlock}
+
+    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="margin: 30px 0 0 0;">
+      <tr>
+        <td align="center">
+          <table role="presentation" cellspacing="0" cellpadding="0" border="0">
+            <tr>
+              <td bgcolor="#d4af37" style="border-radius: 50px;" align="center">
+                <a href="${baseUrl}/inner-circle/feed" target="_blank" style="display: inline-block; color: #050511; padding: 16px 42px; text-decoration: none; font-weight: 700; font-size: 14px; letter-spacing: 1px; text-transform: uppercase; border-radius: 50px;">Open the feed</a>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+
+    <p style="color: #666; line-height: 1.6; margin: 30px 0 0 0; font-size: 11px; text-align: center;">
+      You're receiving this because you're an active member of The Inner Circle.
+      <br>
+      <a href="${baseUrl}/profile" style="color: #888; text-decoration: underline;">Manage preferences</a>
+    </p>
+  `;
+
+  return await sendEmail({
+    to: data.memberEmail,
+    subject: `The Inner Circle — this week in review`,
+    html: luxuryEmailShell(inner, "Weekly Digest", weekRange),
+  });
+};
+
 export const sendInnerCircleWelcomeNewUser = async (
   userEmail: string,
   userName: string,
