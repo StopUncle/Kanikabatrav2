@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { User, LayoutDashboard } from "lucide-react";
+import { User, LayoutDashboard, Search as SearchIcon } from "lucide-react";
 import DoubleEchoLogo from "./DoubleEchoLogo";
 
 const Header = () => {
@@ -93,9 +93,18 @@ const Header = () => {
                   );
                 })}
 
+                {/* Search icon — always visible */}
+                <Link
+                  href="/search"
+                  aria-label="Search"
+                  className="ml-4 p-2 text-text-gray/70 hover:text-accent-gold transition-colors"
+                >
+                  <SearchIcon size={16} />
+                </Link>
+
                 {/* Auth Section */}
                 {!isCheckingAuth && (
-                  <div className="flex items-center gap-3 ml-6 pl-6 border-l border-accent-gold/20">
+                  <div className="flex items-center gap-3 ml-4 pl-6 border-l border-accent-gold/20">
                     {isLoggedIn ? (
                       <>
                         <Link

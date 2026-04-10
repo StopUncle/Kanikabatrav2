@@ -1,0 +1,249 @@
+"use client";
+
+import { useState } from "react";
+import Link from "next/link";
+import { ArrowRight, CreditCard, Clock, CheckCircle, AlertTriangle, Loader2 } from "lucide-react";
+
+interface Membership {
+  id: string;
+  status: string;
+  billingCycle: string;
+  appliedAt: string | null;
+  approvedAt: string | null;
+  activatedAt: string | null;
+  expiresAt: string | null;
+  suspendedAt: string | null;
+  suspendReason: string | null;
+  cancelledAt: string | null;
+}
+
+interface Props {
+  membership: Membership | null;
+}
+
+/**
+ * State-aware Inner Circle card for the dashboard.
+ *
+ * Renders different content depending on the member's status:
+ *   - null           → not a member yet, CTA to apply
+ *   - PENDING        → application under review
+ *   - APPROVED       → complete payment CTA (hits /inner-circle/apply)
+ *   - ACTIVE         → member status + expiry + Manage Subscription + Feed
+ *   - SUSPENDED      → suspension reason + resume / contact
+ *   - CANCELLED      → cancelled but still has access until expiry
+ *   - EXPIRED        → expired, re-apply
+ *
+ * The "Manage Subscription" button hits the Stripe Customer Portal via
+ * /api/inner-circle/subscription/portal, redirecting the user to Stripe's
+ * hosted portal where they can change their card, cancel, or view invoices.
+ */
+export default function InnerCircleDashboardCard({ membership }: Props) {
+  const [portalLoading, setPortalLoading] = useState(false);
+  const [portalError, setPortalError] = useState<string | null>(null);
+
+  const openPortal = async () => {
+    setPortalLoading(true);
+    setPortalError(null);
+    try {
+      const res = await fetch("/api/inner-circle/subscription/portal", {
+        method: "POST",
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data.error || "Failed to open portal");
+      }
+      window.location.href = data.url;
+    } catch (err) {
+      setPortalError(err instanceof Error ? err.message : "Failed to open portal");
+      setPortalLoading(false);
+    }
+  };
+
+  // Not a member — show the explore CTA
+  if (!membership) {
+    return (
+      <div className="text-center py-8">
+        <p className="text-text-gray mb-4">
+          Access exclusive voice notes, courses, and community discussions.
+        </p>
+        <Link
+          href="/inner-circle"
+          className="inline-flex items-center gap-2 px-6 py-2 bg-accent-gold text-deep-black rounded-full font-medium hover:bg-accent-gold/90 transition-all"
+        >
+          Explore The Inner Circle
+          <ArrowRight size={16} />
+        </Link>
+      </div>
+    );
+  }
+
+  // Application pending review
+  if (membership.status === "PENDING") {
+    return (
+      <div className="text-center py-6">
+        <Clock className="w-10 h-10 text-accent-gold mx-auto mb-3" />
+        <p className="text-text-light font-light mb-1">Application Under Review</p>
+        <p className="text-text-gray/70 text-sm">
+          We review every application within 24 hours. You&apos;ll get an email when it&apos;s ready.
+        </p>
+      </div>
+    );
+  }
+
+  // Approved but hasn't paid yet
+  if (membership.status === "APPROVED") {
+    return (
+      <div className="text-center py-6">
+        <CheckCircle className="w-10 h-10 text-accent-gold mx-auto mb-3" />
+        <p className="text-accent-gold font-light text-lg mb-2">You&apos;re Approved!</p>
+        <p className="text-text-gray/70 text-sm mb-4">
+          Complete your subscription to activate your membership.
+        </p>
+        <Link
+          href="/inner-circle/apply?status=approved"
+          className="inline-flex items-center gap-2 px-6 py-2 bg-accent-gold text-deep-black rounded-full font-medium hover:bg-accent-gold/90 transition-all"
+        >
+          Activate Membership
+          <ArrowRight size={16} />
+        </Link>
+      </div>
+    );
+  }
+
+  // Active — show status + manage subscription
+  if (membership.status === "ACTIVE") {
+    const expiresAt = membership.expiresAt ? new Date(membership.expiresAt) : null;
+    const daysUntilExpiry = expiresAt
+      ? Math.ceil((expiresAt.getTime() - Date.now()) / (1000 * 60 * 60 * 24))
+      : null;
+
+    return (
+      <div className="py-2">
+        <div className="flex items-center gap-2 mb-4">
+          <div className="w-2 h-2 rounded-full bg-emerald-400" />
+          <span className="text-xs uppercase tracking-wider text-emerald-400">Active</span>
+        </div>
+        {expiresAt && (
+          <p className="text-text-gray text-sm mb-1">
+            Renews <span className="text-text-light">{expiresAt.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}</span>
+            {daysUntilExpiry !== null && daysUntilExpiry > 0 && daysUntilExpiry <= 7 && (
+              <span className="text-amber-400 ml-2">({daysUntilExpiry} days)</span>
+            )}
+          </p>
+        )}
+        <p className="text-text-gray/70 text-xs mb-5 capitalize">
+          {membership.billingCycle} billing
+        </p>
+
+        <div className="flex flex-col sm:flex-row gap-2">
+          <Link
+            href="/inner-circle/feed"
+            className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2 bg-accent-gold text-deep-black rounded-full text-sm font-medium hover:bg-accent-gold/90 transition-all"
+          >
+            Go to Feed
+            <ArrowRight size={14} />
+          </Link>
+          <button
+            onClick={openPortal}
+            disabled={portalLoading}
+            className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2 bg-accent-gold/10 text-accent-gold border border-accent-gold/30 rounded-full text-sm hover:bg-accent-gold/20 transition-all disabled:opacity-50"
+          >
+            {portalLoading ? (
+              <>
+                <Loader2 size={14} className="animate-spin" />
+                Opening…
+              </>
+            ) : (
+              <>
+                <CreditCard size={14} />
+                Manage Subscription
+              </>
+            )}
+          </button>
+        </div>
+        {portalError && (
+          <p className="text-xs text-red-400 mt-2">{portalError}</p>
+        )}
+      </div>
+    );
+  }
+
+  // Suspended — show reason + contact guidance
+  if (membership.status === "SUSPENDED") {
+    return (
+      <div className="py-4">
+        <div className="flex items-center gap-2 mb-3">
+          <AlertTriangle className="w-4 h-4 text-amber-400" />
+          <span className="text-xs uppercase tracking-wider text-amber-400">Suspended</span>
+        </div>
+        <p className="text-text-gray text-sm mb-4">
+          {membership.suspendReason === "payment-failed"
+            ? "Your last payment failed. Update your card to reactivate."
+            : membership.suspendReason === "member-requested-pause"
+              ? "Your membership is paused."
+              : "Your membership is suspended. Contact support for details."}
+        </p>
+        <button
+          onClick={openPortal}
+          disabled={portalLoading}
+          className="inline-flex items-center gap-2 px-4 py-2 bg-accent-gold/10 text-accent-gold border border-accent-gold/30 rounded-full text-sm hover:bg-accent-gold/20 transition-all disabled:opacity-50"
+        >
+          {portalLoading ? (
+            <>
+              <Loader2 size={14} className="animate-spin" />
+              Opening…
+            </>
+          ) : (
+            <>
+              <CreditCard size={14} />
+              Update Payment
+            </>
+          )}
+        </button>
+        {portalError && (
+          <p className="text-xs text-red-400 mt-2">{portalError}</p>
+        )}
+      </div>
+    );
+  }
+
+  // Cancelled but still has access until expiry
+  if (membership.status === "CANCELLED") {
+    const expiresAt = membership.expiresAt ? new Date(membership.expiresAt) : null;
+    const stillActive = expiresAt && expiresAt > new Date();
+    return (
+      <div className="py-4">
+        <div className="flex items-center gap-2 mb-3">
+          <div className="w-2 h-2 rounded-full bg-text-gray/50" />
+          <span className="text-xs uppercase tracking-wider text-text-gray">Cancelled</span>
+        </div>
+        <p className="text-text-gray text-sm mb-4">
+          {stillActive && expiresAt
+            ? `Your membership is cancelled but you still have access until ${expiresAt.toLocaleDateString()}.`
+            : "Your membership has ended."}
+        </p>
+        <Link
+          href="/inner-circle"
+          className="inline-flex items-center gap-2 px-4 py-2 bg-accent-gold text-deep-black rounded-full text-sm font-medium hover:bg-accent-gold/90 transition-all"
+        >
+          Re-join
+          <ArrowRight size={14} />
+        </Link>
+      </div>
+    );
+  }
+
+  // EXPIRED or unknown — fallback
+  return (
+    <div className="text-center py-6">
+      <p className="text-text-gray mb-4">Your membership has expired.</p>
+      <Link
+        href="/inner-circle"
+        className="inline-flex items-center gap-2 px-6 py-2 bg-accent-gold text-deep-black rounded-full font-medium hover:bg-accent-gold/90 transition-all"
+      >
+        Re-apply
+        <ArrowRight size={16} />
+      </Link>
+    </div>
+  );
+}

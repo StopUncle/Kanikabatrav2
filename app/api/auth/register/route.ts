@@ -2,9 +2,14 @@ import { NextRequest, NextResponse } from "next/server";
 import { PrismaUserDatabase } from "@/lib/auth/prisma-database";
 import { generateTokenPair } from "@/lib/auth/jwt";
 import { CreateUserData } from "@/lib/auth/types";
+import { enforceRateLimit, getClientIp, limits } from "@/lib/rate-limit";
 
 export async function POST(request: NextRequest) {
   try {
+    const ip = getClientIp(request);
+    const rateLimited = await enforceRateLimit(limits.authRegister, ip);
+    if (rateLimited) return rateLimited;
+
     const body: CreateUserData = await request.json();
 
     // Validate input

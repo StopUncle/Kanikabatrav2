@@ -15,6 +15,15 @@ model User {
   displayName      String?
   avatarUrl        String?
   gender           Gender?
+  // Incremented on every successful password reset. Reset tokens embed this
+  // value at issue time; if the two don't match, the token is rejected.
+  // This is what makes reset tokens single-use without needing a separate
+  // blacklist table.
+  tokenVersion     Int                @default(0)
+  // When the user dismissed the Inner Circle onboarding tour. Null means
+  // they haven't seen it yet — the feed renders the welcome modal on
+  // their first visit after activation.
+  onboardingSeenAt DateTime?
   emailPreferences Json?
   role             UserRole           @default(MEMBER)
   createdAt        DateTime           @default(now())
@@ -723,6 +732,34 @@ model DailyInsight {
   @@index([dayOfYear])
   @@index([category])
   @@index([personalityType])
+}
+
+/// Sliding-window rate limit counters.
+///
+/// Each row is a "bucket" identified by a composite key of the action being
+/// limited (e.g. "auth:login") and the subject (IP address, userId, or
+/// email). The `windowStart` is the start of the current window; `count` is
+/// how many requests have been made in that window.
+///
+/// The helper in lib/rate-limit.ts handles read-modify-write atomically via
+/// prisma.$transaction + an upsert. A cleanup cron should periodically
+/// delete rows older than their window — not critical since stale rows are
+/// just harmless clutter, but nice to have.
+model RateLimit {
+  id          String   @id @default(cuid())
+  /// Namespace + action being limited, e.g. "auth:login" or "feed:comment"
+  action      String
+  /// Subject being limited: IP, userId, or email depending on the action
+  subject     String
+  /// Current count within the window
+  count       Int      @default(0)
+  /// When the current window started (UTC)
+  windowStart DateTime @default(now())
+  /// Last update, for GC
+  updatedAt   DateTime @updatedAt
+
+  @@unique([action, subject])
+  @@index([windowStart])
 }
 
 model DiscussionPrompt {

@@ -5,9 +5,16 @@ import {
   getPersonalityTypes,
   PersonalityType,
 } from "@/lib/quiz-data";
+import { enforceRateLimit, getClientIp, limits } from "@/lib/rate-limit";
 
 export async function POST(request: NextRequest) {
   try {
+    // Quiz is public (no auth) so limit by IP. 10/day is more than enough
+    // for legitimate retakes but stops bot farms from spamming the DB.
+    const ip = getClientIp(request);
+    const rateLimited = await enforceRateLimit(limits.quizSubmit, ip);
+    if (rateLimited) return rateLimited;
+
     const { answers, email } = await request.json();
 
     if (!answers || typeof answers !== "object") {

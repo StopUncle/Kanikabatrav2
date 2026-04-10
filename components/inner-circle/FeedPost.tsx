@@ -5,6 +5,9 @@ import { motion } from "framer-motion";
 import { Heart, MessageCircle, Pin, Mic } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import Link from "next/link";
+import Image from "next/image";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 import VoiceNotePlayer from "./VoiceNotePlayer";
 
 interface FeedPostAuthor {
@@ -93,10 +96,13 @@ export default function FeedPost({ post, isDetail = false }: FeedPostProps) {
           }`}
         >
           {post.author?.avatarUrl ? (
-            <img
+            <Image
               src={post.author.avatarUrl}
-              alt=""
+              alt={post.author.name || "Member avatar"}
+              width={32}
+              height={32}
               className="w-8 h-8 rounded-full object-cover"
+              unoptimized={post.author.avatarUrl.startsWith("data:")}
             />
           ) : (
             authorInitial
@@ -117,17 +123,65 @@ export default function FeedPost({ post, isDetail = false }: FeedPostProps) {
 
       <h3 className="text-lg font-medium text-text-light mb-2">{post.title}</h3>
 
-      <div className="text-text-gray text-sm leading-relaxed mb-4">
-        <div
-          className="whitespace-pre-wrap"
-          dangerouslySetInnerHTML={{
-            __html: displayContent
-              .replace(/&/g, "&amp;")
-              .replace(/</g, "&lt;")
-              .replace(/>/g, "&gt;")
-              .replace(/\*\*(.*?)\*\*/g, "<strong class=\"text-text-light\">$1</strong>")
+      <div className="text-text-gray text-sm leading-relaxed mb-4 feed-markdown">
+        {/*
+          react-markdown sanitizes by default (no dangerouslySetInnerHTML,
+          no raw HTML). remark-gfm adds lists, tables, strikethrough, and
+          task lists. Component overrides give each element the right
+          dark-luxury styling without re-inventing a parser.
+        */}
+        <ReactMarkdown
+          remarkPlugins={[remarkGfm]}
+          components={{
+            p: ({ children }) => (
+              <p className="mb-2 last:mb-0 whitespace-pre-wrap">{children}</p>
+            ),
+            strong: ({ children }) => (
+              <strong className="text-text-light font-semibold">{children}</strong>
+            ),
+            em: ({ children }) => (
+              <em className="text-text-light/90 italic">{children}</em>
+            ),
+            a: ({ href, children }) => (
+              <a
+                href={href}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-accent-gold hover:text-accent-gold/80 underline"
+              >
+                {children}
+              </a>
+            ),
+            ul: ({ children }) => (
+              <ul className="list-disc pl-5 mb-2 space-y-1">{children}</ul>
+            ),
+            ol: ({ children }) => (
+              <ol className="list-decimal pl-5 mb-2 space-y-1">{children}</ol>
+            ),
+            li: ({ children }) => <li className="text-text-gray">{children}</li>,
+            blockquote: ({ children }) => (
+              <blockquote className="border-l-2 border-accent-gold/40 pl-4 italic text-text-gray/90 my-2">
+                {children}
+              </blockquote>
+            ),
+            code: ({ children }) => (
+              <code className="bg-white/5 text-accent-gold/90 px-1.5 py-0.5 rounded text-xs font-mono">
+                {children}
+              </code>
+            ),
+            h1: ({ children }) => (
+              <h1 className="text-text-light text-base font-semibold mt-3 mb-1">{children}</h1>
+            ),
+            h2: ({ children }) => (
+              <h2 className="text-text-light text-sm font-semibold mt-3 mb-1">{children}</h2>
+            ),
+            h3: ({ children }) => (
+              <h3 className="text-text-light text-sm font-medium mt-2 mb-1">{children}</h3>
+            ),
           }}
-        />
+        >
+          {displayContent}
+        </ReactMarkdown>
         {shouldTruncate && (
           <Link
             href={`/inner-circle/feed/${post.id}`}

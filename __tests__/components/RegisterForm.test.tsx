@@ -3,6 +3,19 @@ import RegisterForm from "@/components/RegisterForm";
 
 global.fetch = jest.fn();
 
+// RegisterForm calls useRouter() + useSearchParams() at top level. The
+// real next/navigation hooks throw outside of an App Router context,
+// so the test environment needs explicit stubs.
+jest.mock("next/navigation", () => ({
+  useRouter: () => ({
+    push: jest.fn(),
+    replace: jest.fn(),
+    refresh: jest.fn(),
+  }),
+  useSearchParams: () => new URLSearchParams(),
+  usePathname: () => "/register",
+}));
+
 jest.mock("framer-motion", () => ({
   motion: {
     div: ({

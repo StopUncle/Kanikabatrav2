@@ -8,6 +8,8 @@ export interface MockUser {
   displayName: string | null;
   avatarUrl: string | null;
   gender: Gender | null;
+  tokenVersion: number;
+  onboardingSeenAt: Date | null;
   emailPreferences: Prisma.JsonValue;
   role: UserRole;
   points: number;
@@ -27,6 +29,8 @@ export function createMockUser(overrides: Partial<MockUser> = {}): MockUser {
     displayName: null,
     avatarUrl: null,
     gender: null,
+    tokenVersion: 0,
+    onboardingSeenAt: null,
     emailPreferences: null,
     role: "USER" as UserRole,
     points: 0,

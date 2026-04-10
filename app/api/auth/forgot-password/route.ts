@@ -1,7 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import jwt from "jsonwebtoken";
 import { PrismaUserDatabase } from "@/lib/auth/prisma-database";
+import { prisma } from "@/lib/prisma";
 import { sendEmail } from "@/lib/email";
+import { enforceRateLimit, getClientIp, limits } from "@/lib/rate-limit";
 
 function getJwtSecret(): string {
   const secret = process.env.JWT_SECRET;
@@ -93,11 +95,32 @@ export async function POST(request: NextRequest) {
 
     // Normalize for lookup — register stores lowercase, so we must too.
     const normalizedEmail = email.toLowerCase().trim();
+
+    // Rate limit by IP + email (prevents both IP-based flooding AND
+    // targeted attacks against a single account from distributed IPs).
+    const ip = getClientIp(request);
+    const ipLimited = await enforceRateLimit(limits.authForgot, ip);
+    if (ipLimited) return ipLimited;
+    const emailLimited = await enforceRateLimit(
+      limits.authForgot,
+      `email:${normalizedEmail}`,
+    );
+    if (emailLimited) return emailLimited;
     const user = await PrismaUserDatabase.findByEmail(normalizedEmail);
 
     if (user) {
+      // Look up the current tokenVersion so the issued token can be
+      // invalidated after first use (reset-password increments it).
+      const fullUser = await prisma.user.findUnique({
+        where: { id: user.id },
+        select: { tokenVersion: true },
+      });
       const resetToken = jwt.sign(
-        { userId: user.id, type: "password-reset" },
+        {
+          userId: user.id,
+          type: "password-reset",
+          v: fullUser?.tokenVersion ?? 0,
+        },
         getJwtSecret(),
         { expiresIn: "1h" },
       );

@@ -1,6 +1,7 @@
 import nodemailer from "nodemailer";
 import type { Transporter } from "nodemailer";
 import { Resend } from "resend";
+import { escapeHtml as esc } from "@/lib/escape-html";
 
 const logger = {
   info: (message: string) => console.log(`[EMAIL INFO] ${message}`),
@@ -233,13 +234,13 @@ export const sendContactNotification = async (
       <div style="background: #050511; padding: 30px; border: 1px solid #d4af37; border-top: none;">
         <h2 style="color: #f5f0ed; margin-top: 0;">Contact Details</h2>
         <div style="background: #0a0a0a; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
-          <p style="color: #94a3b8; margin: 10px 0;"><strong style="color: #d4af37;">Name:</strong> ${data.name}</p>
-          <p style="color: #94a3b8; margin: 10px 0;"><strong style="color: #d4af37;">Email:</strong> ${data.email}</p>
-          <p style="color: #94a3b8; margin: 10px 0;"><strong style="color: #d4af37;">Subject:</strong> ${data.subject}</p>
+          <p style="color: #94a3b8; margin: 10px 0;"><strong style="color: #d4af37;">Name:</strong> ${esc(data.name)}</p>
+          <p style="color: #94a3b8; margin: 10px 0;"><strong style="color: #d4af37;">Email:</strong> ${esc(data.email)}</p>
+          <p style="color: #94a3b8; margin: 10px 0;"><strong style="color: #d4af37;">Subject:</strong> ${esc(data.subject)}</p>
         </div>
         <h3 style="color: #f5f0ed;">Message:</h3>
         <div style="background: #0a0a0a; padding: 20px; border-radius: 8px;">
-          <p style="color: #94a3b8; line-height: 1.6; white-space: pre-wrap;">${data.message}</p>
+          <p style="color: #94a3b8; line-height: 1.6; white-space: pre-wrap;">${esc(data.message)}</p>
         </div>
         <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #333;">
           <p style="color: #666; font-size: 12px; margin: 0;">
@@ -252,7 +253,9 @@ export const sendContactNotification = async (
 
   await sendEmail({
     to: adminEmail,
-    subject: `[Contact Form] ${data.subject} - from ${data.name}`,
+    // Subject lines don't render HTML but we still want to strip any
+    // control chars that might break the email client header parser.
+    subject: `[Contact Form] ${data.subject.replace(/[\r\n]/g, " ")} - from ${data.name.replace(/[\r\n]/g, " ")}`,
     html,
     replyTo: data.email,
   });
@@ -264,7 +267,7 @@ export const sendContactNotification = async (
       </div>
       <div style="background: #050511; padding: 30px; border: 1px solid #d4af37; border-top: none;">
         <p style="color: #f5f0ed; font-size: 16px; line-height: 1.6;">
-          Dear ${data.name},
+          Dear ${esc(data.name)},
         </p>
         <p style="color: #94a3b8; line-height: 1.6;">
           Thank you for reaching out. I've received your message and will respond within 24-48 hours.
@@ -274,7 +277,7 @@ export const sendContactNotification = async (
         </p>
         <div style="background: #0a0a0a; padding: 20px; border-radius: 8px; margin: 20px 0;">
           <p style="color: #666; margin: 5px 0;"><strong>Your Message:</strong></p>
-          <p style="color: #94a3b8; white-space: pre-wrap;">${data.message.substring(0, 500)}${data.message.length > 500 ? "..." : ""}</p>
+          <p style="color: #94a3b8; white-space: pre-wrap;">${esc(data.message.substring(0, 500))}${data.message.length > 500 ? "..." : ""}</p>
         </div>
         <p style="color: #d4af37; font-style: italic; margin-top: 30px;">
           - Kanika Batra<br>
@@ -303,7 +306,7 @@ export const sendOrderConfirmation = async (
       </div>
       <div style="background: #050511; padding: 30px; border: 1px solid #d4af37; border-top: none;">
         <p style="color: #f5f0ed; font-size: 16px; line-height: 1.6;">
-          Dear ${data.customerName},
+          Dear ${esc(data.customerName)},
         </p>
         <p style="color: #94a3b8; line-height: 1.6;">
           Your payment has been successfully processed.
@@ -447,7 +450,7 @@ export const sendBookDelivery = async (
                 <td style="padding: 40px 30px; border-left: 1px solid #d4af37; border-right: 1px solid #d4af37; border-bottom: 1px solid #d4af37;">
 
                   <p style="color: #f5f0ed; font-size: 18px; margin: 0 0 20px 0; line-height: 1.6;">
-                    Dear ${customerName},
+                    Dear ${esc(customerName)},
                   </p>
 
                   <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 30px 0; font-size: 15px;">
@@ -666,34 +669,34 @@ export const sendCoachingQuestionnaire = async (data: {
 
         <div style="background: #0a0a0a; padding: 20px; border-radius: 8px; margin-bottom: 30px;">
           <h2 style="color: #d4af37; margin-top: 0;">Client Overview</h2>
-          <p style="color: #94a3b8; margin: 10px 0;"><strong style="color: #d4af37;">Name:</strong> ${data.customerName}</p>
-          <p style="color: #94a3b8; margin: 10px 0;"><strong style="color: #d4af37;">Email:</strong> ${data.customerEmail}</p>
-          <p style="color: #94a3b8; margin: 10px 0;"><strong style="color: #d4af37;">Package:</strong> ${data.packageName}</p>
-          <p style="color: #94a3b8; margin: 10px 0;"><strong style="color: #d4af37;">Order ID:</strong> ${data.orderId}</p>
-          <p style="color: #94a3b8; margin: 10px 0;"><strong style="color: #d4af37;">Urgency:</strong> ${data.questionnaire.urgency}</p>
+          <p style="color: #94a3b8; margin: 10px 0;"><strong style="color: #d4af37;">Name:</strong> ${esc(data.customerName)}</p>
+          <p style="color: #94a3b8; margin: 10px 0;"><strong style="color: #d4af37;">Email:</strong> ${esc(data.customerEmail)}</p>
+          <p style="color: #94a3b8; margin: 10px 0;"><strong style="color: #d4af37;">Package:</strong> ${esc(data.packageName)}</p>
+          <p style="color: #94a3b8; margin: 10px 0;"><strong style="color: #d4af37;">Order ID:</strong> ${esc(data.orderId)}</p>
+          <p style="color: #94a3b8; margin: 10px 0;"><strong style="color: #d4af37;">Urgency:</strong> ${esc(data.questionnaire.urgency)}</p>
         </div>
 
         <div style="background: #0a0a0a; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
           <h3 style="color: #d4af37; margin-top: 0;">Basic Information</h3>
-          <p style="color: #94a3b8;"><strong>Preferred Name:</strong> ${data.questionnaire.preferredName}</p>
-          <p style="color: #94a3b8;"><strong>Age:</strong> ${data.questionnaire.age}</p>
-          <p style="color: #94a3b8;"><strong>Timezone:</strong> ${data.questionnaire.timezone}</p>
-          <p style="color: #94a3b8;"><strong>Available Times:</strong> ${data.questionnaire.availability.join(", ")}</p>
+          <p style="color: #94a3b8;"><strong>Preferred Name:</strong> ${esc(data.questionnaire.preferredName)}</p>
+          <p style="color: #94a3b8;"><strong>Age:</strong> ${esc(data.questionnaire.age)}</p>
+          <p style="color: #94a3b8;"><strong>Timezone:</strong> ${esc(data.questionnaire.timezone)}</p>
+          <p style="color: #94a3b8;"><strong>Available Times:</strong> ${esc(data.questionnaire.availability.join(", "))}</p>
         </div>
 
         <div style="background: #0a0a0a; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
           <h3 style="color: #d4af37; margin-top: 0;">Current Situation & Challenges</h3>
           <div style="margin-bottom: 15px;">
             <strong style="color: #d4af37;">Current Situation:</strong>
-            <p style="color: #94a3b8; margin: 5px 0; padding: 10px; background: #1a1a1a; border-radius: 4px;">${data.questionnaire.currentSituation}</p>
+            <p style="color: #94a3b8; margin: 5px 0; padding: 10px; background: #1a1a1a; border-radius: 4px;">${esc(data.questionnaire.currentSituation)}</p>
           </div>
           <div style="margin-bottom: 15px;">
             <strong style="color: #d4af37;">Primary Challenges:</strong>
-            <p style="color: #94a3b8; margin: 5px 0; padding: 10px; background: #1a1a1a; border-radius: 4px;">${data.questionnaire.primaryChallenges}</p>
+            <p style="color: #94a3b8; margin: 5px 0; padding: 10px; background: #1a1a1a; border-radius: 4px;">${esc(data.questionnaire.primaryChallenges)}</p>
           </div>
           <div>
             <strong style="color: #d4af37;">Previous Therapy/Coaching:</strong>
-            <p style="color: #94a3b8; margin: 5px 0; padding: 10px; background: #1a1a1a; border-radius: 4px;">${data.questionnaire.previousTherapy}</p>
+            <p style="color: #94a3b8; margin: 5px 0; padding: 10px; background: #1a1a1a; border-radius: 4px;">${esc(data.questionnaire.previousTherapy)}</p>
           </div>
         </div>
 
@@ -703,21 +706,21 @@ export const sendCoachingQuestionnaire = async (data: {
             ? `
         <div style="background: #2d1b1b; padding: 20px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #8b0000;">
           <h3 style="color: #ff6b6b; margin-top: 0;">⚠️ Mental Health Screening - ATTENTION REQUIRED</h3>
-          <p style="color: #ffccd5;"><strong>Mental Health History:</strong> ${data.questionnaire.mentalHealthHistory}</p>
-          <p style="color: #ffccd5;"><strong>Current Medication:</strong> ${data.questionnaire.currentMedication}</p>
-          <p style="color: #ffccd5;"><strong>Suicidal Thoughts:</strong> <span style="color: ${data.questionnaire.suicidalThoughts === "Currently" ? "#ff4757" : "#ff6b6b"};">${data.questionnaire.suicidalThoughts}</span></p>
-          <p style="color: #ffccd5;"><strong>Substance Use:</strong> ${data.questionnaire.substanceUse}</p>
-          <p style="color: #ffccd5;"><strong>Trauma History:</strong> ${data.questionnaire.traumaHistory}</p>
+          <p style="color: #ffccd5;"><strong>Mental Health History:</strong> ${esc(data.questionnaire.mentalHealthHistory)}</p>
+          <p style="color: #ffccd5;"><strong>Current Medication:</strong> ${esc(data.questionnaire.currentMedication)}</p>
+          <p style="color: #ffccd5;"><strong>Suicidal Thoughts:</strong> <span style="color: ${data.questionnaire.suicidalThoughts === "Currently" ? "#ff4757" : "#ff6b6b"};">${esc(data.questionnaire.suicidalThoughts)}</span></p>
+          <p style="color: #ffccd5;"><strong>Substance Use:</strong> ${esc(data.questionnaire.substanceUse)}</p>
+          <p style="color: #ffccd5;"><strong>Trauma History:</strong> ${esc(data.questionnaire.traumaHistory)}</p>
         </div>
         `
             : `
         <div style="background: #0a0a0a; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
           <h3 style="color: #d4af37; margin-top: 0;">Mental Health Screening</h3>
-          <p style="color: #94a3b8;"><strong>Mental Health History:</strong> ${data.questionnaire.mentalHealthHistory}</p>
-          <p style="color: #94a3b8;"><strong>Current Medication:</strong> ${data.questionnaire.currentMedication}</p>
-          <p style="color: #94a3b8;"><strong>Suicidal Thoughts:</strong> ${data.questionnaire.suicidalThoughts}</p>
-          <p style="color: #94a3b8;"><strong>Substance Use:</strong> ${data.questionnaire.substanceUse}</p>
-          <p style="color: #94a3b8;"><strong>Trauma History:</strong> ${data.questionnaire.traumaHistory}</p>
+          <p style="color: #94a3b8;"><strong>Mental Health History:</strong> ${esc(data.questionnaire.mentalHealthHistory)}</p>
+          <p style="color: #94a3b8;"><strong>Current Medication:</strong> ${esc(data.questionnaire.currentMedication)}</p>
+          <p style="color: #94a3b8;"><strong>Suicidal Thoughts:</strong> ${esc(data.questionnaire.suicidalThoughts)}</p>
+          <p style="color: #94a3b8;"><strong>Substance Use:</strong> ${esc(data.questionnaire.substanceUse)}</p>
+          <p style="color: #94a3b8;"><strong>Trauma History:</strong> ${esc(data.questionnaire.traumaHistory)}</p>
         </div>
         `
         }
@@ -726,32 +729,32 @@ export const sendCoachingQuestionnaire = async (data: {
           <h3 style="color: #d4af37; margin-top: 0;">Goals & Psychology Interest</h3>
           <div style="margin-bottom: 15px;">
             <strong style="color: #d4af37;">Specific Goals:</strong>
-            <p style="color: #94a3b8; margin: 5px 0; padding: 10px; background: #1a1a1a; border-radius: 4px;">${data.questionnaire.specificGoals}</p>
+            <p style="color: #94a3b8; margin: 5px 0; padding: 10px; background: #1a1a1a; border-radius: 4px;">${esc(data.questionnaire.specificGoals)}</p>
           </div>
           <div style="margin-bottom: 15px;">
             <strong style="color: #d4af37;">Success Measures:</strong>
-            <p style="color: #94a3b8; margin: 5px 0; padding: 10px; background: #1a1a1a; border-radius: 4px;">${data.questionnaire.successMeasures}</p>
+            <p style="color: #94a3b8; margin: 5px 0; padding: 10px; background: #1a1a1a; border-radius: 4px;">${esc(data.questionnaire.successMeasures)}</p>
           </div>
           <div style="margin-bottom: 15px;">
             <strong style="color: #d4af37;">Dark Psychology Interest:</strong>
-            <p style="color: #94a3b8; margin: 5px 0; padding: 10px; background: #1a1a1a; border-radius: 4px;">${data.questionnaire.psychologyInterest}</p>
+            <p style="color: #94a3b8; margin: 5px 0; padding: 10px; background: #1a1a1a; border-radius: 4px;">${esc(data.questionnaire.psychologyInterest)}</p>
           </div>
           <div>
             <strong style="color: #d4af37;">Manipulation Experience:</strong>
-            <p style="color: #94a3b8; margin: 5px 0; padding: 10px; background: #1a1a1a; border-radius: 4px;">${data.questionnaire.manipulationExperience}</p>
+            <p style="color: #94a3b8; margin: 5px 0; padding: 10px; background: #1a1a1a; border-radius: 4px;">${esc(data.questionnaire.manipulationExperience)}</p>
           </div>
         </div>
 
         <div style="background: #0a0a0a; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
           <h3 style="color: #d4af37; margin-top: 0;">Expectations & Commitment</h3>
-          <p style="color: #94a3b8;"><strong>Time Commitment:</strong> ${data.questionnaire.timeCommitment}</p>
+          <p style="color: #94a3b8;"><strong>Time Commitment:</strong> ${esc(data.questionnaire.timeCommitment)}</p>
           <div style="margin: 15px 0;">
             <strong style="color: #d4af37;">Expectations from You:</strong>
-            <p style="color: #94a3b8; margin: 5px 0; padding: 10px; background: #1a1a1a; border-radius: 4px;">${data.questionnaire.expectations}</p>
+            <p style="color: #94a3b8; margin: 5px 0; padding: 10px; background: #1a1a1a; border-radius: 4px;">${esc(data.questionnaire.expectations)}</p>
           </div>
           <div>
             <strong style="color: #d4af37;">Ethical Use Commitment:</strong>
-            <p style="color: #94a3b8; margin: 5px 0; padding: 10px; background: #1a1a1a; border-radius: 4px;">${data.questionnaire.ethicalUse}</p>
+            <p style="color: #94a3b8; margin: 5px 0; padding: 10px; background: #1a1a1a; border-radius: 4px;">${esc(data.questionnaire.ethicalUse)}</p>
           </div>
         </div>
 
@@ -760,7 +763,7 @@ export const sendCoachingQuestionnaire = async (data: {
             ? `
         <div style="background: #0a0a0a; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
           <h3 style="color: #d4af37; margin-top: 0;">Additional Information</h3>
-          <p style="color: #94a3b8; padding: 10px; background: #1a1a1a; border-radius: 4px;">${data.questionnaire.additionalInfo}</p>
+          <p style="color: #94a3b8; padding: 10px; background: #1a1a1a; border-radius: 4px;">${esc(data.questionnaire.additionalInfo)}</p>
         </div>
         `
             : ""
@@ -788,7 +791,8 @@ export const sendCoachingQuestionnaire = async (data: {
 
   return await sendEmail({
     to: adminEmail,
-    subject: `🎯 New ${data.packageName} Questionnaire - ${data.customerName} [${data.questionnaire.urgency}]`,
+    // Strip CRLF from any user-supplied strings to prevent header injection
+    subject: `🎯 New ${data.packageName} Questionnaire - ${data.customerName.replace(/[\r\n]/g, " ")} [${data.questionnaire.urgency}]`,
     html,
     replyTo: data.customerEmail,
   });
@@ -807,10 +811,10 @@ export const sendCoachingScheduling = async (
       </div>
       <div style="background: #050511; padding: 30px; border: 1px solid #d4af37; border-top: none;">
         <p style="color: #f5f0ed; font-size: 16px; line-height: 1.6;">
-          ${customerName},
+          ${esc(customerName)},
         </p>
         <p style="color: #94a3b8; line-height: 1.6;">
-          Your <strong style="color: #d4af37;">${packageName}</strong> session is ready to be scheduled.
+          Your <strong style="color: #d4af37;">${esc(packageName)}</strong> session is ready to be scheduled.
         </p>
 
         <div style="text-align: center; margin: 30px 0;">
@@ -1320,7 +1324,7 @@ export const sendApplicationConfirmation = async (
 ): Promise<boolean> => {
   const inner = `
     <p style="color: #f5f0ed; font-size: 18px; margin: 0 0 20px 0; line-height: 1.6;">
-      Dear ${applicantName},
+      Dear ${esc(applicantName)},
     </p>
     <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 20px 0; font-size: 15px;">
       Your application to The Inner Circle has been received. Every applicant is reviewed personally — this is not a community you can buy your way into.
@@ -1362,19 +1366,19 @@ export const sendAdminApplicationAlert = async (
     <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="margin: 0 0 25px 0;">
       <tr>
         <td bgcolor="#1a0d11" style="padding: 22px; border-radius: 10px; border: 1px solid #d4af37;">
-          <p style="color: #94a3b8; margin: 0 0 8px 0; font-size: 13px;"><strong style="color: #d4af37;">Name:</strong> ${details.applicantName}</p>
-          <p style="color: #94a3b8; margin: 0 0 8px 0; font-size: 13px;"><strong style="color: #d4af37;">Email:</strong> ${details.applicantEmail}</p>
-          <p style="color: #94a3b8; margin: 0; font-size: 13px;"><strong style="color: #d4af37;">How they found us:</strong> ${details.howFound}</p>
+          <p style="color: #94a3b8; margin: 0 0 8px 0; font-size: 13px;"><strong style="color: #d4af37;">Name:</strong> ${esc(details.applicantName)}</p>
+          <p style="color: #94a3b8; margin: 0 0 8px 0; font-size: 13px;"><strong style="color: #d4af37;">Email:</strong> ${esc(details.applicantEmail)}</p>
+          <p style="color: #94a3b8; margin: 0; font-size: 13px;"><strong style="color: #d4af37;">How they found us:</strong> ${esc(details.howFound)}</p>
         </td>
       </tr>
     </table>
     <h3 style="color: #d4af37; margin: 25px 0 10px 0; font-size: 14px; text-transform: uppercase; letter-spacing: 1px;">Why They Want To Join</h3>
     <div style="background: #0a0a0a; padding: 18px; border-radius: 8px; border-left: 3px solid #d4af37;">
-      <p style="color: #f5f0ed; margin: 0; font-size: 14px; line-height: 1.7; white-space: pre-wrap;">${details.whyJoin}</p>
+      <p style="color: #f5f0ed; margin: 0; font-size: 14px; line-height: 1.7; white-space: pre-wrap;">${esc(details.whyJoin)}</p>
     </div>
     <h3 style="color: #d4af37; margin: 25px 0 10px 0; font-size: 14px; text-transform: uppercase; letter-spacing: 1px;">What They Hope To Gain</h3>
     <div style="background: #0a0a0a; padding: 18px; border-radius: 8px; border-left: 3px solid #d4af37;">
-      <p style="color: #f5f0ed; margin: 0; font-size: 14px; line-height: 1.7; white-space: pre-wrap;">${details.whatHope}</p>
+      <p style="color: #f5f0ed; margin: 0; font-size: 14px; line-height: 1.7; white-space: pre-wrap;">${esc(details.whatHope)}</p>
     </div>
     <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="margin: 30px 0 0 0;">
       <tr>
@@ -1393,9 +1397,204 @@ export const sendAdminApplicationAlert = async (
 
   return await sendEmail({
     to: adminEmail,
-    subject: `[Inner Circle] New application from ${details.applicantName}`,
-    html: luxuryEmailShell(inner, "New Application", `From ${details.applicantName}`),
+    // Strip CRLF from user-supplied names to prevent header injection.
+    subject: `[Inner Circle] New application from ${details.applicantName.replace(/[\r\n]/g, " ")}`,
+    html: luxuryEmailShell(inner, "New Application", `From ${esc(details.applicantName)}`),
     replyTo: details.applicantEmail,
+  });
+};
+
+// ============================================
+// Weekly digest for Inner Circle members
+// ============================================
+
+interface DigestPost {
+  id: string;
+  title: string;
+  type: string;
+  excerpt: string;
+  commentCount: number;
+}
+
+interface DigestVoiceNote {
+  id: string;
+  title: string;
+}
+
+interface DigestCourse {
+  id: string;
+  title: string;
+  slug: string;
+}
+
+interface WeeklyDigestData {
+  memberEmail: string;
+  memberName: string;
+  weekStart: Date;
+  weekEnd: Date;
+  newPosts: DigestPost[];
+  newVoiceNotes: DigestVoiceNote[];
+  newCourses: DigestCourse[];
+  newCommentsOnYourPosts: number;
+  // One-click unsubscribe URL (signed token, no login required). Built
+  // by lib/unsubscribe-token.ts buildUnsubscribeUrl. Optional only so
+  // existing test fixtures don't have to construct it.
+  unsubscribeUrl?: string;
+}
+
+export const sendWeeklyDigest = async (
+  data: WeeklyDigestData,
+): Promise<boolean> => {
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://kanikarose.com";
+
+  // If there's nothing new this week, send a lightweight nudge instead of
+  // a full digest — still valuable for retention but doesn't pretend
+  // there's content when there isn't.
+  const hasContent =
+    data.newPosts.length > 0 ||
+    data.newVoiceNotes.length > 0 ||
+    data.newCourses.length > 0;
+
+  const weekRange = `${data.weekStart.toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+  })} – ${data.weekEnd.toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+  })}`;
+
+  const postsBlock =
+    data.newPosts.length > 0
+      ? `
+    <h3 style="color: #d4af37; margin: 25px 0 12px 0; font-size: 14px; text-transform: uppercase; letter-spacing: 1px;">New in the feed</h3>
+    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0">
+      ${data.newPosts
+        .slice(0, 5)
+        .map(
+          (post) => `
+        <tr>
+          <td style="padding: 0 0 14px 0;">
+            <a href="${baseUrl}/inner-circle/feed/${post.id}" style="text-decoration: none; color: inherit;">
+              <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="background: #1a0d11; border: 1px solid rgba(212,175,55,0.15); border-radius: 10px;">
+                <tr>
+                  <td style="padding: 16px 18px;">
+                    <p style="color: #f5f0ed; margin: 0 0 6px 0; font-size: 15px; font-weight: 500;">${esc(post.title)}</p>
+                    <p style="color: #94a3b8; margin: 0; font-size: 13px; line-height: 1.5;">${esc(post.excerpt)}</p>
+                    ${post.commentCount > 0 ? `<p style="color: #d4af37; margin: 8px 0 0 0; font-size: 11px;">${post.commentCount} comment${post.commentCount === 1 ? "" : "s"}</p>` : ""}
+                  </td>
+                </tr>
+              </table>
+            </a>
+          </td>
+        </tr>
+      `,
+        )
+        .join("")}
+    </table>
+  `
+      : "";
+
+  const voiceNotesBlock =
+    data.newVoiceNotes.length > 0
+      ? `
+    <h3 style="color: #d4af37; margin: 25px 0 12px 0; font-size: 14px; text-transform: uppercase; letter-spacing: 1px;">New voice notes</h3>
+    <ul style="color: #f5f0ed; font-size: 14px; line-height: 1.8; margin: 0; padding-left: 20px;">
+      ${data.newVoiceNotes
+        .map(
+          (vn) => `
+        <li><a href="${baseUrl}/inner-circle/voice-notes" style="color: #d4af37; text-decoration: none;">${esc(vn.title)}</a></li>
+      `,
+        )
+        .join("")}
+    </ul>
+  `
+      : "";
+
+  const coursesBlock =
+    data.newCourses.length > 0
+      ? `
+    <h3 style="color: #d4af37; margin: 25px 0 12px 0; font-size: 14px; text-transform: uppercase; letter-spacing: 1px;">New in the classroom</h3>
+    <ul style="color: #f5f0ed; font-size: 14px; line-height: 1.8; margin: 0; padding-left: 20px;">
+      ${data.newCourses
+        .map(
+          (c) => `
+        <li><a href="${baseUrl}/inner-circle/classroom/${esc(c.slug)}" style="color: #d4af37; text-decoration: none;">${esc(c.title)}</a></li>
+      `,
+        )
+        .join("")}
+    </ul>
+  `
+      : "";
+
+  const nudgeBlock = !hasContent
+    ? `
+    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="margin: 25px 0;">
+      <tr>
+        <td bgcolor="#1a0d11" style="padding: 22px; border-radius: 10px; border: 1px solid rgba(212,175,55,0.2); text-align: center;">
+          <p style="color: #94a3b8; margin: 0; font-size: 14px; line-height: 1.6;">
+            A quiet week inside. Still worth stopping by to catch up on
+            conversations in the feed and check on your classroom progress.
+          </p>
+        </td>
+      </tr>
+    </table>
+  `
+    : "";
+
+  const commentsNote =
+    data.newCommentsOnYourPosts > 0
+      ? `
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 18px 0; font-size: 13px;">
+      You have <strong style="color: #d4af37;">${data.newCommentsOnYourPosts}</strong> new reply${data.newCommentsOnYourPosts === 1 ? "" : "s"} on your comments this week.
+    </p>
+  `
+      : "";
+
+  const inner = `
+    <p style="color: #f5f0ed; font-size: 18px; margin: 0 0 10px 0; line-height: 1.6;">
+      Hi ${esc(data.memberName)},
+    </p>
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 25px 0; font-size: 14px;">
+      Here's what happened inside The Inner Circle this past week (${weekRange}).
+    </p>
+
+    ${commentsNote}
+    ${postsBlock}
+    ${voiceNotesBlock}
+    ${coursesBlock}
+    ${nudgeBlock}
+
+    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="margin: 30px 0 0 0;">
+      <tr>
+        <td align="center">
+          <table role="presentation" cellspacing="0" cellpadding="0" border="0">
+            <tr>
+              <td bgcolor="#d4af37" style="border-radius: 50px;" align="center">
+                <a href="${baseUrl}/inner-circle/feed" target="_blank" style="display: inline-block; color: #050511; padding: 16px 42px; text-decoration: none; font-weight: 700; font-size: 14px; letter-spacing: 1px; text-transform: uppercase; border-radius: 50px;">Open the feed</a>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+
+    <p style="color: #666; line-height: 1.6; margin: 30px 0 0 0; font-size: 11px; text-align: center;">
+      You're receiving this because you're an active member of The Inner Circle.
+      <br>
+      <a href="${baseUrl}/profile" style="color: #888; text-decoration: underline;">Manage preferences</a>${
+        data.unsubscribeUrl
+          ? `
+      &nbsp;·&nbsp;
+      <a href="${data.unsubscribeUrl}" style="color: #888; text-decoration: underline;">Unsubscribe from weekly digest</a>`
+          : ""
+      }
+    </p>
+  `;
+
+  return await sendEmail({
+    to: data.memberEmail,
+    subject: `The Inner Circle — this week in review`,
+    html: luxuryEmailShell(inner, "Weekly Digest", weekRange),
   });
 };
 
@@ -1409,7 +1608,7 @@ export const sendInnerCircleWelcomeNewUser = async (
 
   const inner = `
     <p style="color: #f5f0ed; font-size: 18px; margin: 0 0 20px 0; line-height: 1.6;">
-      Welcome ${userName.replace(/[<>&"']/g, "")},
+      Welcome ${esc(userName)},
     </p>
     <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 25px 0; font-size: 15px;">
       Your subscription to The Inner Circle is active. Because you checked out
@@ -1420,7 +1619,7 @@ export const sendInnerCircleWelcomeNewUser = async (
       <tr>
         <td bgcolor="#1a0d11" style="padding: 22px; border-radius: 10px; border: 1px solid #d4af37;">
           <p style="color: #d4af37; margin: 0 0 8px 0; font-size: 13px; text-transform: uppercase; letter-spacing: 1px;">Your Login</p>
-          <p style="color: #f5f0ed; margin: 0; font-size: 15px; word-break: break-all;">${userEmail}</p>
+          <p style="color: #f5f0ed; margin: 0; font-size: 15px; word-break: break-all;">${esc(userEmail)}</p>
         </td>
       </tr>
     </table>
@@ -1461,7 +1660,7 @@ export const sendApplicationApproved = async (
 
   const inner = `
     <p style="color: #f5f0ed; font-size: 18px; margin: 0 0 20px 0; line-height: 1.6;">
-      Dear ${applicantName},
+      Dear ${esc(applicantName)},
     </p>
     <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 25px 0; font-size: 15px;">
       You've been approved for The Inner Circle. Welcome to the room you've been trying to enter.

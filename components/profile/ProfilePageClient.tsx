@@ -17,6 +17,7 @@ import {
   Shield,
   Settings,
   ChevronRight,
+  Download,
 } from "lucide-react";
 import Header from "@/components/Header";
 import BackgroundEffects from "@/components/BackgroundEffects";
@@ -487,6 +488,25 @@ export default function ProfilePageClient({ userId: _userId, email }: ProfilePag
                 </div>
                 <ChevronRight size={16} className="text-text-gray group-hover:text-accent-gold transition-colors" />
               </Link>
+
+              {/* Privacy & data — GDPR export.
+                  Hits /api/user/export which builds a JSON of everything
+                  Kanika Rose holds about the viewer, then streams it as
+                  a file download. */}
+              <a
+                href="/api/user/export"
+                download
+                className="flex items-center gap-4 p-5 bg-deep-black/50 border border-accent-gold/10 rounded-xl hover:border-accent-gold/30 transition-all group"
+              >
+                <div className="w-10 h-10 rounded-full bg-accent-gold/10 flex items-center justify-center group-hover:bg-accent-gold/20 transition-colors">
+                  <Download size={18} className="text-accent-gold" />
+                </div>
+                <div className="flex-1">
+                  <p className="text-text-light font-light">Download my data</p>
+                  <p className="text-text-gray text-xs">GDPR data export — everything we hold about you as JSON</p>
+                </div>
+                <ChevronRight size={16} className="text-text-gray group-hover:text-accent-gold transition-colors" />
+              </a>
             </div>
           </motion.div>
         </div>

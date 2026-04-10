@@ -1,0 +1,132 @@
+name: Scheduled crons
+
+# Hits the cron endpoints on a schedule. Without this workflow the
+# /api/cron/* endpoints in the app exist but nothing calls them, so
+# daily content, retry emails, and queued email sequences all sit dead.
+#
+# Secrets required in the GitHub repo settings:
+#   CRON_SECRET           — must match process.env.CRON_SECRET on Railway
+#   ADMIN_SECRET          — only used as a fallback bearer for retry-emails
+#                           and email-queue/process, which currently fall
+#                           back to ADMIN_SECRET if CRON_SECRET is unset
+#
+# GitHub Actions cron note: scheduled workflows can be delayed up to ~15
+# minutes during high-load periods on the shared runner pool. That's fine
+# for daily content, retry queues, and email processing — it's NOT fine
+# for anything latency-sensitive. If you need precise timing, move that
+# particular endpoint off GitHub Actions and onto a Railway cron service.
+
+on:
+  schedule:
+    # Daily insight — 09:00 UTC (adjust to match your audience's morning)
+    - cron: '0 9 * * *'
+    # Discussion prompt — 10:00 UTC (one hour after insight so they don't collide)
+    - cron: '0 10 * * *'
+    # Retry failed book-delivery emails — every 30 minutes
+    - cron: '*/30 * * * *'
+    # Process the email queue — every 15 minutes
+    - cron: '*/15 * * * *'
+    # Weekly member digest — Sunday 08:00 UTC (one hour before daily-insight
+    # so the two jobs don't collide on Sundays)
+    - cron: '0 8 * * 0'
+  workflow_dispatch:
+    # Allow manual triggering from the GitHub Actions UI. Useful for
+    # testing or firing a cron out-of-band without waiting for the next
+    # scheduled run.
+    inputs:
+      target:
+        description: 'Which cron to run'
+        required: true
+        default: 'all'
+        type: choice
+        options:
+          - all
+          - daily-insight
+          - discussion-prompt
+          - retry-emails
+          - email-queue
+          - weekly-digest
+
+env:
+  BASE_URL: https://kanikarose.com
+
+jobs:
+  daily-insight:
+    # Run on the 09:00 schedule OR when manually dispatched with the right target
+    if: >-
+      github.event.schedule == '0 9 * * *' ||
+      (github.event_name == 'workflow_dispatch' &&
+       (github.event.inputs.target == 'all' || github.event.inputs.target == 'daily-insight'))
+    runs-on: ubuntu-latest
+    steps:
+      - name: Hit /api/cron/daily-insight
+        run: |
+          curl -fsS -X POST "$BASE_URL/api/cron/daily-insight" \
+            -H "x-cron-secret: ${{ secrets.CRON_SECRET }}" \
+            -H "Content-Type: application/json" \
+            --max-time 60
+
+  discussion-prompt:
+    if: >-
+      github.event.schedule == '0 10 * * *' ||
+      (github.event_name == 'workflow_dispatch' &&
+       (github.event.inputs.target == 'all' || github.event.inputs.target == 'discussion-prompt'))
+    runs-on: ubuntu-latest
+    steps:
+      - name: Hit /api/cron/discussion-prompt
+        run: |
+          curl -fsS -X POST "$BASE_URL/api/cron/discussion-prompt" \
+            -H "x-cron-secret: ${{ secrets.CRON_SECRET }}" \
+            -H "Content-Type: application/json" \
+            --max-time 60
+
+  retry-emails:
+    if: >-
+      github.event.schedule == '*/30 * * * *' ||
+      (github.event_name == 'workflow_dispatch' &&
+       (github.event.inputs.target == 'all' || github.event.inputs.target == 'retry-emails'))
+    runs-on: ubuntu-latest
+    steps:
+      - name: Hit /api/cron/retry-emails
+        # retry-emails uses Authorization: Bearer <secret>. Its server-side
+        # code accepts CRON_SECRET or ADMIN_SECRET as a fallback.
+        run: |
+          curl -fsS -X POST "$BASE_URL/api/cron/retry-emails" \
+            -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" \
+            -H "Content-Type: application/json" \
+            --max-time 120
+
+  email-queue:
+    if: >-
+      github.event.schedule == '*/15 * * * *' ||
+      (github.event_name == 'workflow_dispatch' &&
+       (github.event.inputs.target == 'all' || github.event.inputs.target == 'email-queue'))
+    runs-on: ubuntu-latest
+    steps:
+      - name: Hit /api/admin/email-queue/process
+        # Endpoint accepts either the admin_session cookie (for manual
+        # admin-panel triggering) or x-cron-secret (for scheduled callers
+        # like this one). See app/api/admin/email-queue/process/route.ts
+        # `authorize()` for the dual-auth logic.
+        run: |
+          curl -fsS -X POST "$BASE_URL/api/admin/email-queue/process" \
+            -H "x-cron-secret: ${{ secrets.CRON_SECRET }}" \
+            -H "Content-Type: application/json" \
+            -d '{"dryRun":false}' \
+            --max-time 120
+
+  weekly-digest:
+    if: >-
+      github.event.schedule == '0 8 * * 0' ||
+      (github.event_name == 'workflow_dispatch' &&
+       (github.event.inputs.target == 'all' || github.event.inputs.target == 'weekly-digest'))
+    runs-on: ubuntu-latest
+    steps:
+      - name: Hit /api/cron/weekly-digest
+        # Sends a weekly summary email to every ACTIVE Inner Circle member.
+        # Long timeout because it loops through all active members serially.
+        run: |
+          curl -fsS -X POST "$BASE_URL/api/cron/weekly-digest" \
+            -H "x-cron-secret: ${{ secrets.CRON_SECRET }}" \
+            -H "Content-Type: application/json" \
+            --max-time 300

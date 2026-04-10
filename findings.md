@@ -1,46 +1,77 @@
-# Findings — Rounding Out Session (April 2026)
+# Findings — Weekly Digest Opt-Out
 
-## Quiz → Dashboard Flow
+## What already exists (and is wired)
 
-**Current state:**
-- QuizResult model has `userId` — results ARE linked to users
-- `/api/quiz/my-results` fetches user's latest quiz result, checks if unlocked (paid or has book purchase)
-- `QuizDashboardCard` shows primary/secondary type + "View Full Profile" link
-- **Missing:** No radar chart on dashboard. No scores breakdown. Just text labels.
-- **Missing:** The `completedAt` field in the QuizPreview interface is never populated by the API
-- The quiz card is functional but visually basic — just text, no chart, no visual personality breakdown
+### Schema
+- `prisma/schema.prisma:27` — `emailPreferences Json?` on User model
+- Migration applied: `prisma/migrations/20260330000001_add_missing_columns/migration.sql:7`
 
-## Application → Admin Notification Flow
+### API
+- `app/api/user/settings/route.ts`
+  - `GET` returns `{ emailPreferences }`. Falls back to `DEFAULT_PREFERENCES = { marketing: true, productUpdates: true, sessionReminders: true, weeklyDigest: false }` when null.
+  - `PUT` accepts `{ emailPreferences }` and writes via raw SQL `UPDATE "User" SET "emailPreferences" = $1::jsonb`.
+  - Both gated behind the `accessToken` cookie + `verifyAccessToken`.
 
-**Current state:**
-- Application POST at `/api/inner-circle/apply/route.ts` creates PENDING membership
-- Application data stored: whyJoin, whatHope, howFound, agreeToGuidelines
-- **NO email notification to admin** when someone applies
-- Admin must manually check `/admin/applications` to find new applications
-- No email to the applicant confirming receipt either
-- Application review in admin panel works (approve/reject buttons)
-- APPROVED state now shows payment button (fixed earlier)
+### UI
+- `components/dashboard/settings/PreferencesSettings.tsx` — full toggle component, 4 keys, save button, error state, optimistic state.
+- `components/dashboard/SettingsModal.tsx` — hosts PreferencesSettings on the "Notifications" tab (line 25, 123).
+- `components/dashboard/AccountSection.tsx` — opens the modal from the dashboard.
 
-## Book Content Available for Feed Posts
+### Cron (the gap)
+- `app/api/cron/weekly-digest/route.ts`
+  - Loops `prisma.communityMembership.findMany({ where: { status: "ACTIVE" } })`
+  - Sends `sendWeeklyDigest()` to **every** active member
+  - **Does NOT check `user.emailPreferences.weeklyDigest`**
+  - Comment on line 27 even claims "members can opt out via email preferences" — aspirational, not actually wired
 
-**From lib/constants.ts + BookPageClient.tsx:**
-- 15 chapter titles with descriptions (The Doctrine of Cold, Love Bombing Mastery, etc.)
-- 6+ viral quotes rotating in the hero
-- Each chapter could become a "Book Insight" automated post in the feed
-- Chapter descriptions are 1-2 sentences — perfect length for feed cards
+### Email template
+- `lib/email.ts` `sendWeeklyDigest` — composes the dark luxury shell, no unsubscribe link in the footer.
 
-## Auto-Posting from Book Purchases
+---
 
-**Current state:**
-- Book buyer email sequence exists (Welcome → Free Month → Reminder)
-- New purchases auto-enroll in the sequence via capture-order webhook
-- **Missing:** No automated content generation from book data
-- Could auto-post "chapter insights" to the Inner Circle feed from book chapter data
+## The contradictions
 
-## Key Gaps Identified
+| What user sees | What actually happens |
+|---|---|
+| Settings modal toggle "Weekly Digest" defaults to OFF | Cron sends digest to everyone |
+| User toggles OFF and saves | Cron still sends digest to them |
+| User toggles ON | Cron behavior identical |
+| New user with no saved prefs | API says "off", cron sends anyway |
 
-1. Dashboard quiz card has no visual radar chart — just text
-2. No admin email notification on new applications
-3. No applicant confirmation email
-4. Book chapter data not being used as feed content
-5. The quiz scores are returned by the API but the dashboard card doesn't display them
+So the toggle is purely cosmetic right now. Fix is to either (a) flip the default to ON to match reality, or (b) honor the existing OFF default and skip sends. The plan picks **(a) + honor OFF when explicitly set** because we just shipped the digest and want active members on it by default, but explicit opt-outs should always win.
+
+---
+
+## Unsubscribe token design
+
+**Goal:** A link in the digest email that, when clicked, immediately opts the user out without requiring login.
+
+**Threat model:**
+- An attacker who guesses or forges the token could opt other users out of emails. Annoying, but not catastrophic. HMAC-SHA256 with `JWT_SECRET` makes guessing infeasible.
+- An attacker who intercepts the email (mailbox compromise) already has worse problems than digest opt-out.
+- Token replay (clicking the same link twice) is a no-op since it just sets `weeklyDigest: false`.
+
+**Format:**
+```
+<base64url(JSON({userId, type, exp}))>.<base64url(HMAC-SHA256(payload, JWT_SECRET))>
+```
+- `type` is the EmailPreferences key (e.g. `"weeklyDigest"`) — keeps the same helper reusable for future per-type opt-outs.
+- `exp` is unix-seconds, set to ~1 year out (unsubscribe links must work on old emails — 30 days is too short).
+- URL: `https://kanikarose.com/api/unsubscribe?token=<token>`
+
+**Why not just signed JWTs via `jsonwebtoken`?**
+- Already in the codebase (`lib/auth/jwt.ts`) — could reuse `signAccessToken` shape, but that ties the unsubscribe lifetime to the auth secret rotation. Acceptable trade-off; using `jsonwebtoken` directly is simpler than rolling our own HMAC and matches the rest of the code.
+
+**Decision: use `jsonwebtoken` with a dedicated `aud: "unsubscribe"` claim** so unsubscribe tokens cannot be confused with auth tokens, and lifetime is independent.
+
+---
+
+## CAN-SPAM and GDPR notes
+- CAN-SPAM §316.5 requires a clear, conspicuous unsubscribe mechanism in commercial emails, processed within 10 business days. One-click satisfies this.
+- GDPR Recital 32 + Art. 7(3) requires withdrawal of consent be as easy as giving it. Toggle in settings + one-click in email both satisfy this.
+- The "weeklyDigest" digest is **promotional**, not transactional. It needs opt-out. The existing `sendBookDelivery`, password resets, and application status emails are **transactional** and do NOT need opt-out (and shouldn't have one).
+
+---
+
+## Risk: existing toggle behavior
+After this change, anyone who has explicitly toggled `weeklyDigest: false` in the past will be skipped by the cron. If the cron has already run once and sent to people with `weeklyDigest: false` in the DB, those people may have been confused — but since the cron is brand new (just shipped this week), the realistic blast radius is zero. Worth confirming via a one-shot SQL count of users with `emailPreferences->>'weeklyDigest' = 'false'` after deploy, but not blocking.

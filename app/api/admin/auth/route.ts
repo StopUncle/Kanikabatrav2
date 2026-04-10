@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import crypto from "crypto";
 import jwt from "jsonwebtoken";
 import { logger } from "@/lib/logger";
+import { enforceRateLimit, getClientIp, limits } from "@/lib/rate-limit";
 
 function getJwtSecret(): string {
   const secret = process.env.JWT_SECRET;
@@ -16,6 +17,17 @@ function getJwtSecret(): string {
 
 export async function POST(request: NextRequest) {
   try {
+    // The 6-digit PIN is trivially brute-forceable (1M combinations) without
+    // rate limiting. 5 attempts per hour per IP turns that into a realistic
+    // 22,800-year timeline for a single IP. Attackers using distributed IPs
+    // are a separate problem; this is the floor.
+    const ip = getClientIp(request);
+    const rateLimited = await enforceRateLimit(limits.adminPin, ip);
+    if (rateLimited) {
+      logger.warn("[admin-auth] rate limit hit", { ip });
+      return rateLimited;
+    }
+
     const { pin } = await request.json();
 
     if (!pin || typeof pin !== "string" || pin.length !== 6) {

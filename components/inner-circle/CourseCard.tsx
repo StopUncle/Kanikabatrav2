@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { motion } from "framer-motion";
 import { BookOpen, Layers, CheckCircle } from "lucide-react";
 
@@ -30,10 +31,12 @@ export default function CourseCard({ course }: CourseCardProps) {
       >
         {course.thumbnailUrl ? (
           <div className="aspect-video relative overflow-hidden">
-            <img
+            <Image
               src={course.thumbnailUrl}
               alt={course.title}
-              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+              fill
+              sizes="(max-width: 768px) 100vw, 33vw"
+              className="object-cover group-hover:scale-105 transition-transform duration-500"
             />
           </div>
         ) : (

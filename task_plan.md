@@ -1,46 +1,40 @@
-# Task Plan — Rounding Out (Quiz, Application Flow, Auto-Content)
+# Task Plan — Weekly Digest Opt-Out (one-click unsubscribe)
 
 ## Goal
-Make quiz results show beautifully in the dashboard with radar chart. Ensure the full application → approval → notification flow works. Auto-generate Inner Circle feed content from book data. Trace and verify every user flow end-to-end.
+Wire the **already-existing** email preferences UI into the **already-shipped** weekly-digest cron, and add a **one-click unsubscribe** link to the digest email so members can opt out without logging in. This closes the loop on the weekly-digest feature shipped earlier in `audit/round-3-polish`.
+
+## Why this scope (not "build the UI")
+The earlier session summary said "email preferences UI is half-wired — JSON field exists but no UI." That turned out to be wrong:
+- `User.emailPreferences` JSON field exists ✓
+- `GET/PUT /api/user/settings` endpoints exist ✓
+- `PreferencesSettings.tsx` component exists with 4 toggles (marketing, productUpdates, sessionReminders, weeklyDigest) ✓
+- Mounted in `SettingsModal.tsx` → `AccountSection.tsx` → reachable from the dashboard ✓
+
+The **actual** gap is:
+1. The new `weekly-digest` cron sends to **every** active member regardless of `emailPreferences.weeklyDigest`. The comment in the file even claims "members can opt out via email preferences" but the code never checks.
+2. The default for `weeklyDigest` is `false` — meaning the API tells new users they're opted out, but the cron sends them the digest anyway. Contradictory.
+3. The digest email has **no unsubscribe link**. Opt-out requires logging in → dashboard → settings modal → notifications tab → toggle. CAN-SPAM and GDPR both expect a one-click link in the email itself.
 
 ---
 
-## Phase 1: Quiz Results in Dashboard (Beautiful Display)
+## Phase 1: Honor the existing preference
+- [ ] **1.1** Flip `DEFAULT_PREFERENCES.weeklyDigest` from `false` to `true` in `app/api/user/settings/route.ts`. New users without saved prefs are treated as opted-in (matches what the cron currently does anyway, and unifies the contradictory state).
+- [ ] **1.2** In `app/api/cron/weekly-digest/route.ts`, after fetching active memberships, **filter out** any user whose `emailPreferences.weeklyDigest === false`. Treat `null`/missing as opted-in.
 
-- [x] **1.1** QuizDashboardCard rebuilt — inline SVG radar (6 axes, gold polygon, hexagon grid), no chart lib
-- [x] **1.2** Score breakdown bars (sorted highest first, primary type highlighted gold, percent of total)
-- [x] **1.3** Personality profile summary pulled from PERSONALITY_PROFILES (name + tagline + description)
-- [x] **1.4** Expandable card — radar always visible, breakdown + summary collapse behind "Show Score Breakdown"
-- [x] **1.5** Confirmed `/api/quiz/my-results` returns scores in unlocked response
+## Phase 2: One-click unsubscribe
+- [ ] **2.1** Create `lib/email/unsubscribe-token.ts` — HMAC-SHA256-signed token containing `{ userId, type, exp }`. Sign with `JWT_SECRET`. 1-year expiry (unsubscribe links must work on old emails).
+- [ ] **2.2** Build `GET /api/unsubscribe?token=xxx` — verifies the token, sets `emailPreferences[type] = false` for that user via raw SQL (matches existing pattern in `/api/user/settings`), returns a styled HTML confirmation page. No login required — the signed token IS the auth.
+- [ ] **2.3** In `lib/email.ts` `sendWeeklyDigest`, accept `unsubscribeUrl` in `WeeklyDigestData` and render a low-emphasis footer link in the email shell.
+- [ ] **2.4** In `app/api/cron/weekly-digest/route.ts`, generate a per-member unsubscribe token + URL and pass it into `sendWeeklyDigest`.
 
-## Phase 2: Application → Notification Flow
-
-- [x] **2.1** Admin alert email — `sendAdminApplicationAlert` hooked into `/api/inner-circle/apply` POST. Includes name, email, why-join, what-hope, how-found, "Review Application" CTA.
-- [x] **2.2** Applicant confirmation — `sendApplicationConfirmation` fires alongside admin alert. "What happens next" 24h promise.
-- [x] **2.3** Approval email — `sendApplicationApproved` hooked into `/api/admin/applications/[id]` approve branch. Lists 4 benefits, "Activate Membership" → /dashboard.
-- [x] **2.4** Admin panel already renders applicationData JSON (verified at /admin/applications).
-
-## Phase 3: Book Content → Inner Circle Feed
-
-- [x] **3.1** `prisma/seeds/book-insights.ts` — 15 chapter insights, dayOfYear 61-75, category "book-chapter"
-- [x] **3.2** `scripts/seed-insights.ts` extended to seed bookInsights (idempotent)
-- [x] **3.3** `prisma/seeds/viral-quote-prompts.ts` — 6 viral quote discussion prompts (Saturday slot)
-
-## Phase 4: End-to-End Flow Verification
-
-- [x] **4.1** Quiz → results → dashboard: working. Quiz submit → /api/quiz/submit stores by email+userId. /api/quiz/my-results unlocks when paid OR hasBookPurchase.
-- [x] **4.2** Register → apply → approve → Stripe → active: working. APPROVED state is handled on /inner-circle/apply?status=approved (ApplicationForm.tsx renders Subscribe button → /api/inner-circle/subscription/create → Stripe checkout → webhook flips membership ACTIVE).
-- [x] **4.3** Book → success → email → quiz unlock: now working. Webhook fires sendBookDelivery + email sequence enrollment + auto-unlocks any unpaid QuizResult for that email.
-- [x] **4.4** Inner Circle daily experience: feed/comments/reactions/classroom/voice-notes routes all exist. No daily-insights→feed cron exists yet (insights are seeded data, not auto-rendered as feed posts) — flagged but not in scope for this session.
-
-### Phase 4 fixes applied
-- Approval email CTA now points to /inner-circle/apply?status=approved (was /dashboard, where there's no checkout button — that's only on the apply page)
-- Book webhook auto-unlocks QuizResult by email (was previously only fired by /api/quiz/my-results' second-order Purchase lookup)
+## Phase 3: Verify and ship
+- [ ] **3.1** `npm run type-check` passes
+- [ ] **3.2** `npm run lint` passes
+- [ ] **3.3** Commit on `audit/round-3-polish`, push to update PR #9
 
 ---
 
-## Implementation Order
-1. Phase 2 (notifications) — quick, high impact, catches lost applicants
-2. Phase 1 (quiz display) — visual upgrade, makes dashboard look premium  
-3. Phase 3 (book content) — fills the feed with more auto-content
-4. Phase 4 (verification) — confirm everything works end-to-end
+## Out of scope (deferred)
+- Other email types (book buyer welcome, application alerts) — they should also support opt-out for promotional ones, but this PR is scoped to closing the digest loop.
+- A "one-click List-Unsubscribe header" (RFC 8058) — that's the standards-compliant version for inbox providers like Gmail. Adding it would mean setting `List-Unsubscribe` and `List-Unsubscribe-Post` headers in nodemailer/Resend. **Worth a follow-up** but the body link is the user-facing requirement.
+- An admin "who opted out of what" dashboard — not needed yet.

@@ -3,8 +3,9 @@ import { requireServerAuth } from "@/lib/auth/server-auth";
 import { checkMembership } from "@/lib/community/membership";
 import { getViewerGender, feedPostGenderWhere } from "@/lib/community/gender-filter";
 import { prisma } from "@/lib/prisma";
-import FeedPost from "@/components/inner-circle/FeedPost";
+import FeedList from "@/components/inner-circle/FeedList";
 import InnerCircleNav from "@/components/inner-circle/InnerCircleNav";
+import OnboardingModal from "@/components/inner-circle/OnboardingModal";
 import Header from "@/components/Header";
 import BackgroundEffects from "@/components/BackgroundEffects";
 import { MessageCircle } from "lucide-react";
@@ -27,15 +28,26 @@ export default async function FeedPage() {
     redirect("/inner-circle");
   }
 
+  // Check onboarding state — show the welcome modal on first visit
+  // after activation. Null timestamp = hasn't dismissed yet.
+  const viewerRecord = await prisma.user.findUnique({
+    where: { id: userId },
+    select: { onboardingSeenAt: true },
+  });
+  const showOnboarding = viewerRecord?.onboardingSeenAt == null;
+
   // Gender-split: cron-automated posts (authorId null) and admin posts stay
   // visible to everyone. Member-authored welcome posts and the like only
   // appear for same-gender viewers.
   const viewerGender = await getViewerGender(userId);
   const genderWhere = feedPostGenderWhere(viewerGender);
 
-  const posts = await prisma.feedPost.findMany({
+  // Fetch PAGE_SIZE + 1 posts so we can detect whether there are more pages
+  // to load without a second query. The extra post becomes the cursor.
+  const PAGE_SIZE = 20;
+  const rows = await prisma.feedPost.findMany({
     where: genderWhere,
-    take: 20,
+    take: PAGE_SIZE + 1,
     orderBy: [{ isPinned: "desc" }, { createdAt: "desc" }],
     include: {
       author: {
@@ -53,6 +65,14 @@ export default async function FeedPage() {
       },
     },
   });
+
+  const hasMore = rows.length > PAGE_SIZE;
+  const posts = hasMore ? rows.slice(0, PAGE_SIZE) : rows;
+  // Cursor for the client is the createdAt of the LAST (oldest) post shown;
+  // /api/inner-circle/feed/posts returns rows with createdAt < cursor.
+  const initialNextCursor = hasMore
+    ? posts[posts.length - 1].createdAt.toISOString()
+    : null;
 
   const formatted = posts.map((post) => ({
     id: post.id,
@@ -80,6 +100,7 @@ export default async function FeedPage() {
     <div className="min-h-screen bg-deep-black text-text-light">
       <BackgroundEffects />
       <Header />
+      {showOnboarding && <OnboardingModal />}
 
       <div className="relative z-10 max-w-2xl mx-auto px-4 pt-32 pb-16">
         <div className="text-center mb-12">
@@ -104,11 +125,10 @@ export default async function FeedPage() {
             </p>
           </div>
         ) : (
-          <div className="space-y-4">
-            {formatted.map((post) => (
-              <FeedPost key={post.id} post={post} />
-            ))}
-          </div>
+          <FeedList
+            initialPosts={formatted}
+            initialNextCursor={initialNextCursor}
+          />
         )}
       </div>
     </div>
