@@ -91,13 +91,33 @@ export async function POST(request: NextRequest) {
             },
           });
 
-          await sendBookDelivery(
+          const emailSent = await sendBookDelivery(
             email,
             name || "Customer",
             downloadToken,
             null,
             expiresAt,
           );
+
+          // Flag the purchase if book delivery email silently failed so
+          // cron/retry-emails can pick it up. sendBookDelivery returns
+          // false (doesn't throw) after exhausting 3 retries.
+          if (!emailSent) {
+            await prisma.purchase.update({
+              where: { paypalOrderId: idempotencyKey },
+              data: {
+                metadata: {
+                  source: "stripe",
+                  sessionId,
+                  productKey,
+                  emailDeliveryFailed: true,
+                },
+              },
+            });
+            console.error(
+              `[stripe-webhook] BOOK delivery email failed for ${email} (session ${sessionId}) — flagged for retry`,
+            );
+          }
 
           // Auto-unlock any existing quiz result for this buyer.
           // Without this, a logged-out quiz taker who later buys the book
@@ -140,15 +160,43 @@ export async function POST(request: NextRequest) {
               err,
             );
           }
-        } else if (productKey === "QUIZ") {
+        } else if (productKey === "QUIZ" || productKey === "DARK_MIRROR") {
+          // Idempotency: create a Purchase row (just like BOOK/COACHING) so
+          // Stripe retries don't double-unlock quizzes and so the refund
+          // handler can find the purchase. The old code skipped this, meaning
+          // a retry would find the original quiz already paid and fall through
+          // to the fallback which would unlock a DIFFERENT unpaid quiz.
+          const idempotencyKey = `ST-${sessionId}`;
+          const existingQuizPurchase = await prisma.purchase.findUnique({
+            where: { paypalOrderId: idempotencyKey },
+          });
+          if (existingQuizPurchase) {
+            console.log(
+              `[stripe-webhook] QUIZ purchase ${idempotencyKey} already processed — skipping`,
+            );
+            break;
+          }
+
+          await prisma.purchase.create({
+            data: {
+              type: "BOOK",
+              productVariant: productKey,
+              customerEmail: email,
+              customerName: name || "Customer",
+              amount,
+              status: "COMPLETED",
+              paypalOrderId: idempotencyKey,
+              metadata: { source: "stripe", sessionId, productKey },
+            },
+          });
+
           const quizResultId = session.metadata?.quizResultId;
           if (quizResultId) {
             await prisma.quizResult.update({
               where: { id: quizResultId },
-              data: { paid: true, paypalOrderId: `ST-${sessionId}` },
+              data: { paid: true, paypalOrderId: idempotencyKey },
             });
           } else {
-            // Fallback: find most recent unpaid quiz for this email
             const quizResult = await prisma.quizResult.findFirst({
               where: { email, paid: false },
               orderBy: { createdAt: "desc" },
@@ -156,7 +204,7 @@ export async function POST(request: NextRequest) {
             if (quizResult) {
               await prisma.quizResult.update({
                 where: { id: quizResult.id },
-                data: { paid: true, paypalOrderId: `ST-${sessionId}` },
+                data: { paid: true, paypalOrderId: idempotencyKey },
               });
             }
           }
@@ -411,7 +459,16 @@ export async function POST(request: NextRequest) {
 
         // Don't blindly flip SUSPENDED→ACTIVE — if the user paused, we want
         // to leave them paused. Only re-activate from a payment-failed
-        // suspension or from CANCELLED-with-grace-period.
+        // suspension. And NEVER extend a CANCELLED membership — the sub was
+        // cancelled (by user or refund) and a late invoice event shouldn't
+        // grant extra access.
+        if (membership.status === "CANCELLED") {
+          console.log(
+            `[stripe-webhook] ignoring renewal for CANCELLED membership ${membership.id}`,
+          );
+          break;
+        }
+
         const shouldReactivate =
           membership.status === "ACTIVE" ||
           membership.suspendReason === "payment-failed";

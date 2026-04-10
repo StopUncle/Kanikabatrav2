@@ -61,21 +61,34 @@ export async function POST(request: NextRequest) {
 
     for (const email of pendingEmails) {
       try {
-        await sendEmail({
+        const ok = await sendEmail({
           to: email.recipientEmail,
           subject: email.subject,
           html: email.htmlBody,
         });
 
-        await prisma.emailQueue.update({
-          where: { id: email.id },
-          data: { status: "SENT", sentAt: new Date() },
-        });
-
-        sent++;
+        if (ok) {
+          await prisma.emailQueue.update({
+            where: { id: email.id },
+            data: { status: "SENT", sentAt: new Date() },
+          });
+          sent++;
+        } else {
+          // sendEmail returns false (doesn't throw) when all retries
+          // are exhausted. Previously this was not caught, so the row
+          // was marked SENT despite zero delivery.
+          console.error(
+            `[email-queue] sendEmail returned false for ${email.id} to ${email.recipientEmail}`,
+          );
+          await prisma.emailQueue.update({
+            where: { id: email.id },
+            data: { status: "FAILED" },
+          });
+          failed++;
+        }
       } catch (error) {
         console.error(
-          `Failed to send email ${email.id} to ${email.recipientEmail}:`,
+          `[email-queue] exception sending ${email.id} to ${email.recipientEmail}:`,
           error,
         );
 

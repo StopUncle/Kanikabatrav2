@@ -159,7 +159,7 @@ export async function POST(request: NextRequest) {
                 .replace(/[*_#`>\[\]]/g, "")
                 .replace(/\s+/g, " ")
                 .trim()
-                .slice(0, 140) + (p.content.length > 140 ? "…" : ""),
+                .slice(0, 140) + (p.content.replace(/[*_#`>\[\]]/g, "").replace(/\s+/g, " ").trim().length > 140 ? "…" : ""),
             commentCount: p._count.comments,
           })),
           newVoiceNotes,
