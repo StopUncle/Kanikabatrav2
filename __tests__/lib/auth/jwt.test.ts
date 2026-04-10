@@ -4,7 +4,6 @@ import {
   generateTokenPair,
   verifyAccessToken,
   verifyRefreshToken,
-  decodeToken,
 } from "@/lib/auth/jwt";
 
 describe("JWT Utilities", () => {
@@ -20,10 +19,10 @@ describe("JWT Utilities", () => {
 
     it("includes payload in token", () => {
       const token = generateAccessToken(testPayload);
-      const decoded = decodeToken(token);
+      const payload = verifyAccessToken(token);
 
-      expect(decoded?.userId).toBe(testPayload.userId);
-      expect(decoded?.email).toBe(testPayload.email);
+      expect(payload.userId).toBe(testPayload.userId);
+      expect(payload.email).toBe(testPayload.email);
     });
   });
 
@@ -105,27 +104,13 @@ describe("JWT Utilities", () => {
     });
   });
 
-  describe("decodeToken", () => {
-    it("decodes token without verification", () => {
-      const token = generateAccessToken(testPayload);
-      const payload = decodeToken(token);
-
-      expect(payload?.userId).toBe(testPayload.userId);
-      expect(payload?.email).toBe(testPayload.email);
-    });
-
-    it("returns null for invalid token", () => {
-      const payload = decodeToken("invalid");
-
-      expect(payload).toBeNull();
-    });
-
+  describe("token claims", () => {
     it("includes exp and iat claims", () => {
       const token = generateAccessToken(testPayload);
-      const payload = decodeToken(token);
+      const payload = verifyAccessToken(token);
 
-      expect(payload?.exp).toBeDefined();
-      expect(payload?.iat).toBeDefined();
+      expect(payload.exp).toBeDefined();
+      expect(payload.iat).toBeDefined();
     });
   });
 });

@@ -1,10 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
-import { verifyRefreshToken, generateAccessToken } from "@/lib/auth/jwt";
+import {
+  verifyRefreshToken,
+  generateAccessToken,
+  generateRefreshToken,
+} from "@/lib/auth/jwt";
 import { PrismaUserDatabase } from "@/lib/auth/prisma-database";
 
 export async function POST(request: NextRequest) {
   try {
-    // Get refresh token from cookies
     const refreshToken = request.cookies.get("refreshToken")?.value;
 
     if (!refreshToken) {
@@ -14,40 +17,57 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Verify refresh token
     let payload;
     try {
       payload = verifyRefreshToken(refreshToken);
-    } catch (_error: unknown) {
+    } catch {
       return NextResponse.json(
         { error: "Invalid refresh token" },
         { status: 401 },
       );
     }
 
-    // Verify user still exists
     const user = await PrismaUserDatabase.findById(payload.userId);
     if (!user) {
       return NextResponse.json({ error: "User not found" }, { status: 401 });
     }
 
-    // Generate new access token
-    const newAccessToken = generateAccessToken({
+    // Reject tokens signed before the last password reset or logout.
+    if (payload.v !== undefined && payload.v !== user.tokenVersion) {
+      return NextResponse.json(
+        { error: "Token has been revoked" },
+        { status: 401 },
+      );
+    }
+
+    const tokenPayload = {
       userId: user.id,
       email: user.email,
-    });
+      v: user.tokenVersion,
+    };
 
-    // Create response
-    const response = NextResponse.json({
-      success: true,
-    });
+    // Rotate: issue BOTH a new access token AND a new refresh token.
+    // The old refresh token is still cryptographically valid until its
+    // TTL expires, but the tokenVersion check above prevents replaying
+    // it after a logout or password change.
+    const newAccessToken = generateAccessToken(tokenPayload);
+    const newRefreshToken = generateRefreshToken(tokenPayload);
 
-    // Set new access token cookie
+    const response = NextResponse.json({ success: true });
+
     response.cookies.set("accessToken", newAccessToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "strict",
-      maxAge: 15 * 60, // 15 minutes
+      maxAge: 15 * 60,
+      path: "/",
+    });
+
+    response.cookies.set("refreshToken", newRefreshToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+      maxAge: 7 * 24 * 60 * 60,
       path: "/",
     });
 

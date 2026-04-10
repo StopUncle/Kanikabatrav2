@@ -3,6 +3,7 @@ export interface User {
   email: string;
   password: string;
   name?: string | null;
+  tokenVersion: number;
   createdAt: Date;
   updatedAt: Date;
 }
