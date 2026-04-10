@@ -40,7 +40,12 @@ export async function POST(request: NextRequest) {
     switch (event.type) {
       case "checkout.session.completed": {
         const session = event.data.object;
-        const email = session.customer_email || session.customer_details?.email;
+        // Normalize email to lowercase — register/login do this, but Stripe
+        // preserves whatever casing the buyer typed at checkout. Without this,
+        // a buyer who registered as alice@gmail.com but typed Alice@Gmail.com
+        // at checkout would get a duplicate user or a missed findUnique.
+        const rawEmail = session.customer_email || session.customer_details?.email;
+        const email = rawEmail?.toLowerCase();
         const name = session.customer_details?.name || email;
         const productKey = session.metadata?.product_key;
         const sessionId = session.id;

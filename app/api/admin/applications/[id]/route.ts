@@ -35,6 +35,16 @@ export async function POST(
     }
 
     if (action === "approve") {
+      // Guard: only PENDING memberships can be approved. Without this,
+      // clicking approve on an ACTIVE member flips them to APPROVED and
+      // locks them out of the feed/courses until another webhook fires.
+      if (membership.status !== "PENDING") {
+        return NextResponse.json(
+          { error: `Cannot approve — membership is ${membership.status}, not PENDING` },
+          { status: 400 },
+        );
+      }
+
       const updated = await prisma.communityMembership.update({
         where: { id },
         data: {
