@@ -122,19 +122,19 @@ export async function GET(request: NextRequest) {
           createdAt: true,
         },
       });
-      feedPosts = feedRows.map((row) => ({
-        id: row.id,
-        title: row.title,
-        // Trim markdown + cap for preview
-        excerpt:
-          row.content
-            .replace(/[*_#`>\[\]]/g, "")
-            .replace(/\s+/g, " ")
-            .trim()
-            .slice(0, 200) + (row.content.length > 200 ? "…" : ""),
-        type: row.type,
-        createdAt: row.createdAt.toISOString(),
-      }));
+      feedPosts = feedRows.map((row) => {
+        const stripped = row.content
+          .replace(/[*_#`>\[\]]/g, "")
+          .replace(/\s+/g, " ")
+          .trim();
+        return {
+          id: row.id,
+          title: row.title,
+          excerpt: stripped.slice(0, 200) + (stripped.length > 200 ? "…" : ""),
+          type: row.type,
+          createdAt: row.createdAt.toISOString(),
+        };
+      });
     }
 
     // ---------- Blog posts ----------

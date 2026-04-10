@@ -25,23 +25,13 @@ export async function POST(request: NextRequest) {
       receivedAt: new Date().toISOString(),
     };
 
-    // Log to console for development
-    if (process.env.NODE_ENV === "development") {
-      console.error("Error Report:", JSON.stringify(enhancedLog, null, 2));
-    }
-
-    // In production, you would:
-    // 1. Send to error monitoring service (Sentry, LogRocket, etc.)
-    // 2. Store in database
-    // 3. Send alerts for critical errors
-    // 4. Aggregate and analyze error patterns
-
-    // Example: Send to external monitoring service
-    // if (process.env.NODE_ENV === 'production') {
-    //   await sendToMonitoringService(enhancedLog)
-    // }
-
-    // For now, just acknowledge receipt
+    // Always log to stderr so Railway's log capture can see client errors.
+    // In dev mode the extra formatting is helpful; in prod the raw JSON is
+    // sufficient for searching/filtering in log aggregation tools.
+    console.error(
+      "[client-error]",
+      JSON.stringify(enhancedLog, null, process.env.NODE_ENV === "development" ? 2 : 0),
+    );
     return NextResponse.json({
       success: true,
       message: "Error logged successfully",

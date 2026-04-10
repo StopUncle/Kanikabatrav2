@@ -39,6 +39,12 @@ const JWT_REFRESH_SECRET = getJwtRefreshSecret();
 export interface JWTPayload {
   userId: string;
   email: string;
+  // Token version — embedded at sign time, checked on verify against
+  // the user's current tokenVersion. Bumped on password reset and
+  // logout to invalidate all outstanding tokens. Optional for backward
+  // compat with tokens signed before this was added (they'll expire
+  // naturally within their TTL).
+  v?: number;
   iat?: number;
   exp?: number;
 }
@@ -90,11 +96,3 @@ export function verifyRefreshToken(token: string): JWTPayload {
   }
 }
 
-// Decode token without verification (for expired tokens)
-export function decodeToken(token: string): JWTPayload | null {
-  try {
-    return jwt.decode(token) as JWTPayload;
-  } catch {
-    return null;
-  }
-}

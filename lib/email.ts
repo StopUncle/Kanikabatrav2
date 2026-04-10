@@ -251,10 +251,11 @@ export const sendContactNotification = async (
     </div>
   `;
 
-  await sendEmail({
+  // Send admin notification AND user auto-reply. Both must succeed for
+  // the function to return true. Previously the admin result was discarded,
+  // meaning Kanika could silently miss contact submissions.
+  const adminOk = await sendEmail({
     to: adminEmail,
-    // Subject lines don't render HTML but we still want to strip any
-    // control chars that might break the email client header parser.
     subject: `[Contact Form] ${data.subject.replace(/[\r\n]/g, " ")} - from ${data.name.replace(/[\r\n]/g, " ")}`,
     html,
     replyTo: data.email,
@@ -287,11 +288,13 @@ export const sendContactNotification = async (
     </div>
   `;
 
-  return await sendEmail({
+  const userOk = await sendEmail({
     to: data.email,
     subject: "Message Received - Kanika Batra",
     html: userHtml,
   });
+
+  return adminOk && userOk;
 };
 
 export const sendOrderConfirmation = async (

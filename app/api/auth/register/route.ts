@@ -44,10 +44,12 @@ export async function POST(request: NextRequest) {
       name: body.name,
     });
 
-    // Generate tokens
+    // Generate tokens — embed tokenVersion (0 for new users) so password
+    // resets and logouts can invalidate them immediately.
     const tokens = generateTokenPair({
       userId: user.id,
       email: user.email,
+      v: user.tokenVersion,
     });
 
     // Create response

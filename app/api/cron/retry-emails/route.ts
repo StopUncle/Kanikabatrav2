@@ -24,8 +24,8 @@ export async function POST(request: NextRequest) {
           equals: true,
         },
       },
-      orderBy: { createdAt: "desc" },
-      take: 5,
+      orderBy: { createdAt: "asc" },
+      take: 10,
     });
 
     const results: { id: string; email: string; success: boolean }[] = [];

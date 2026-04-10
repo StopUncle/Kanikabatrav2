@@ -97,37 +97,35 @@ export async function GET(request: NextRequest) {
 
     try {
       await fs.access(bookPath);
-
-      // Only increment download count AFTER confirming file exists
-      await prisma.purchase.update({
-        where: { id: purchase.id },
-        data: {
-          downloadCount: { increment: 1 },
-          lastDownloadAt: new Date(),
-        },
-      });
-
-      const fileBuffer = await fs.readFile(bookPath);
-
-      return new NextResponse(fileBuffer as BodyInit, {
-        status: 200,
-        headers: {
-          "Content-Type": contentType,
-          "Content-Disposition": `attachment; filename="${displayName}"`,
-          "Content-Length": fileBuffer.length.toString(),
-          "Cache-Control": "private, no-cache, no-store, must-revalidate",
-        },
-      });
     } catch {
-      // Do NOT leak file paths in the response
+      console.error(`[download] file not found: ${bookFilename}`);
       return NextResponse.json(
-        {
-          error:
-            "Book file is temporarily unavailable. Please try again in a few minutes or contact Kanika@kanikarose.com",
-        },
+        { error: "Book file is temporarily unavailable. Please try again in a few minutes or contact Kanika@kanikarose.com" },
         { status: 503 },
       );
     }
+
+    // Read the file BEFORE incrementing download count so a readFile
+    // failure doesn't burn one of the user's 10 allowed downloads.
+    const fileBuffer = await fs.readFile(bookPath);
+
+    await prisma.purchase.update({
+      where: { id: purchase.id },
+      data: {
+        downloadCount: { increment: 1 },
+        lastDownloadAt: new Date(),
+      },
+    });
+
+    return new NextResponse(fileBuffer as BodyInit, {
+      status: 200,
+      headers: {
+        "Content-Type": contentType,
+        "Content-Disposition": `attachment; filename="${displayName}"`,
+        "Content-Length": fileBuffer.length.toString(),
+        "Cache-Control": "private, no-cache, no-store, must-revalidate",
+      },
+    });
   } catch (error) {
     console.error("Download error:", error);
     return NextResponse.json(

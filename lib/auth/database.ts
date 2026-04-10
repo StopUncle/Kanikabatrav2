@@ -47,6 +47,7 @@ export class UserDatabase {
       id: userIdCounter.toString(),
       email: userData.email,
       password: hashedPassword,
+      tokenVersion: 0,
       createdAt: now,
       updatedAt: now,
     };

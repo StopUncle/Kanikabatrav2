@@ -32,10 +32,15 @@ export async function checkMembership(userId: string | null): Promise<Membership
   });
 
   if (user?.isBanned) {
+    // Still look up the real membership so callers reading
+    // check.membership.expiresAt don't crash on null.
+    const bannedMembership = await prisma.communityMembership.findUnique({
+      where: { userId },
+    });
     return {
       isMember: false,
       status: "SUSPENDED" as MembershipStatus,
-      membership: null,
+      membership: bannedMembership,
       reason: user.banReason || "Your account has been suspended",
     };
   }
@@ -84,10 +89,12 @@ export async function checkMembership(userId: string | null): Promise<Membership
     };
   }
 
-  // Lazy expiry: active membership past expiresAt
+  // Lazy expiry: active membership past expiresAt. Use an optimistic
+  // WHERE guard so a concurrent webhook renewal (which may have just
+  // set status=ACTIVE + future expiresAt) doesn't get stomped to EXPIRED.
   if (membership.expiresAt && membership.expiresAt < new Date()) {
-    await prisma.communityMembership.update({
-      where: { id: membership.id },
+    await prisma.communityMembership.updateMany({
+      where: { id: membership.id, status: "ACTIVE" },
       data: { status: "EXPIRED" },
     });
 

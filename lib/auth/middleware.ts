@@ -23,6 +23,13 @@ export async function authenticateUser(
       return null;
     }
 
+    // Reject tokens signed before the last password reset or logout.
+    // Legacy tokens without `v` are accepted (they'll expire naturally
+    // within their 15-min TTL).
+    if (payload.v !== undefined && payload.v !== user.tokenVersion) {
+      return null;
+    }
+
     return {
       id: user.id,
       email: user.email,

@@ -42,6 +42,13 @@ export async function POST(request: NextRequest) {
       if (existing.status === "PENDING") {
         return NextResponse.json({ error: "Application already submitted — we'll review it soon" }, { status: 400 });
       }
+      if (existing.status === "APPROVED") {
+        return NextResponse.json({ error: "Your application is already approved — complete payment to activate" }, { status: 400 });
+      }
+      if (existing.status === "CANCELLED") {
+        return NextResponse.json({ error: "Your previous application was not approved. Please contact us to re-apply." }, { status: 403 });
+      }
+      // EXPIRED falls through — natural expiration allows re-application
     }
 
     // Save gender on the user record (drives the gender-split content filter

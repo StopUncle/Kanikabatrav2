@@ -10,6 +10,17 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Invalid product" }, { status: 400 });
     }
 
+    // INNER_CIRCLE checkout must go through /api/inner-circle/subscription/create
+    // which verifies the applicant has APPROVED status. Allowing it here would
+    // let anyone bypass the manual application review by hitting this endpoint
+    // directly with priceKey: "INNER_CIRCLE".
+    if (priceKey === "INNER_CIRCLE") {
+      return NextResponse.json(
+        { error: "Membership checkout requires an approved application" },
+        { status: 400 },
+      );
+    }
+
     const priceId = STRIPE_PRICES[priceKey];
     if (!priceId) {
       return NextResponse.json(

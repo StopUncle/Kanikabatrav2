@@ -15,6 +15,30 @@ export async function POST(request: NextRequest) {
     const diff = now.getTime() - start.getTime();
     const dayOfYear = Math.floor(diff / (1000 * 60 * 60 * 24));
 
+    // Idempotency: if a post with today's date was already created (e.g.
+    // GitHub Actions retried after a timeout), skip to avoid duplicates.
+    const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const todayEnd = new Date(todayStart.getTime() + 86_400_000);
+    const alreadyPosted = await prisma.feedPost.findFirst({
+      where: {
+        type: "AUTOMATED",
+        title: "Today's Dark Insight",
+        createdAt: { gte: todayStart, lt: todayEnd },
+      },
+    });
+    if (alreadyPosted) {
+      return NextResponse.json({ success: true, message: "Already posted today", skipped: true });
+    }
+
+    // Year-cycle reset: if ALL insights are used, reset the pool. This
+    // prevents the queue from permanently exhausting after ~60 days. The
+    // rotation restarts with the same content in a new year.
+    const unusedCount = await prisma.dailyInsight.count({ where: { isUsed: false } });
+    if (unusedCount === 0) {
+      await prisma.dailyInsight.updateMany({ data: { isUsed: false, postedAt: null } });
+      logger.info("[cron daily-insight] all insights used — reset pool for new cycle");
+    }
+
     let insight = await prisma.dailyInsight.findFirst({
       where: { dayOfYear, isUsed: false },
     });

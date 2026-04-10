@@ -25,15 +25,30 @@ export class PrismaUserDatabase {
 
     const hashedPassword = await hashPassword(userData.password);
 
-    const user = await prisma.user.create({
-      data: {
-        email: userData.email,
-        password: hashedPassword,
-        name: userData.name,
-      },
-    });
+    try {
+      const user = await prisma.user.create({
+        data: {
+          email: userData.email,
+          password: hashedPassword,
+          name: userData.name,
+        },
+      });
 
-    return user;
+      return user;
+    } catch (error: unknown) {
+      // Race condition: another request created the user between our
+      // findByEmail check and the create call. Prisma throws P2002 for
+      // unique constraint violations on the email field.
+      if (
+        error &&
+        typeof error === "object" &&
+        "code" in error &&
+        error.code === "P2002"
+      ) {
+        throw new Error("User already exists");
+      }
+      throw error;
+    }
   }
 
   static async validateUser(

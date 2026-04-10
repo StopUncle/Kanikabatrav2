@@ -38,10 +38,12 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Generate tokens
+    // Generate tokens — embed tokenVersion so password resets and logouts
+    // invalidate outstanding tokens immediately.
     const tokens = generateTokenPair({
       userId: user.id,
       email: user.email,
+      v: user.tokenVersion,
     });
 
     // Create response
