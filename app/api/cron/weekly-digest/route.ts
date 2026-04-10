@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { sendWeeklyDigest } from "@/lib/email";
 import { feedPostGenderWhere } from "@/lib/community/gender-filter";
+import { buildUnsubscribeUrl } from "@/lib/unsubscribe-token";
 import { logger } from "@/lib/logger";
 
 /**
@@ -24,7 +25,12 @@ import { logger } from "@/lib/logger";
  * Idempotency: the cron fires once per week per the schedule, but if it
  * runs twice within the same week (manual dispatch, retry) members get
  * two emails. That's acceptable — the content is the same, and members
- * can opt out via email preferences.
+ * can opt out via email preferences (toggle in /dashboard settings, or
+ * one-click via the unsubscribe link in the digest itself).
+ *
+ * Opt-out: members whose `emailPreferences.weeklyDigest === false` are
+ * skipped entirely. Members with null/missing prefs are treated as
+ * opted-in (matches DEFAULT_PREFERENCES in /api/user/settings).
  */
 
 const ONE_WEEK_MS = 7 * 24 * 60 * 60 * 1000;
@@ -41,7 +47,7 @@ export async function POST(request: NextRequest) {
 
   try {
     // Fetch all ACTIVE members. Join the user so we have email + gender
-    // + name in one query.
+    // + name + emailPreferences in one query.
     const members = await prisma.communityMembership.findMany({
       where: { status: "ACTIVE" },
       include: {
@@ -52,6 +58,7 @@ export async function POST(request: NextRequest) {
             name: true,
             displayName: true,
             gender: true,
+            emailPreferences: true,
           },
         },
       },
@@ -59,11 +66,23 @@ export async function POST(request: NextRequest) {
 
     let sent = 0;
     let failed = 0;
+    let skipped = 0;
     const failures: Array<{ userId: string; error: string }> = [];
 
     for (const membership of members) {
       const user = membership.user;
       if (!user.email) continue;
+
+      // Honor opt-out: only skip if the user has explicitly set
+      // weeklyDigest to false. Null / missing prefs default to opted-in.
+      const prefs =
+        user.emailPreferences && typeof user.emailPreferences === "object"
+          ? (user.emailPreferences as Record<string, unknown>)
+          : null;
+      if (prefs && prefs.weeklyDigest === false) {
+        skipped++;
+        continue;
+      }
 
       try {
         // Gender-scoped FeedPost fetch — same filter the live feed uses.
@@ -120,6 +139,11 @@ export async function POST(request: NextRequest) {
           },
         });
 
+        const unsubscribeUrl = buildUnsubscribeUrl({
+          userId: user.id,
+          type: "weeklyDigest",
+        });
+
         const ok = await sendWeeklyDigest({
           memberEmail: user.email,
           memberName: user.displayName || user.name || "Member",
@@ -141,6 +165,7 @@ export async function POST(request: NextRequest) {
           newVoiceNotes,
           newCourses,
           newCommentsOnYourPosts,
+          unsubscribeUrl,
         });
 
         if (ok) {
@@ -164,13 +189,14 @@ export async function POST(request: NextRequest) {
     }
 
     logger.info(
-      `[cron weekly-digest] completed: ${sent} sent, ${failed} failed of ${members.length} active members`,
+      `[cron weekly-digest] completed: ${sent} sent, ${skipped} skipped (opted out), ${failed} failed of ${members.length} active members`,
     );
 
     return NextResponse.json({
       success: true,
       totalMembers: members.length,
       sent,
+      skipped,
       failed,
       failures: failed > 0 ? failures : undefined,
     });

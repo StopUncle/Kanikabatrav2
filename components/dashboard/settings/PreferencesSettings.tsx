@@ -23,7 +23,7 @@ export default function PreferencesSettings({
     marketing: true,
     productUpdates: true,
     sessionReminders: true,
-    weeklyDigest: false,
+    weeklyDigest: true,
   });
   const [hasChanges, setHasChanges] = useState(false);
   const [error, setError] = useState("");

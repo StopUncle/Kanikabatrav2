@@ -1436,6 +1436,10 @@ interface WeeklyDigestData {
   newVoiceNotes: DigestVoiceNote[];
   newCourses: DigestCourse[];
   newCommentsOnYourPosts: number;
+  // One-click unsubscribe URL (signed token, no login required). Built
+  // by lib/unsubscribe-token.ts buildUnsubscribeUrl. Optional only so
+  // existing test fixtures don't have to construct it.
+  unsubscribeUrl?: string;
 }
 
 export const sendWeeklyDigest = async (
@@ -1577,7 +1581,13 @@ export const sendWeeklyDigest = async (
     <p style="color: #666; line-height: 1.6; margin: 30px 0 0 0; font-size: 11px; text-align: center;">
       You're receiving this because you're an active member of The Inner Circle.
       <br>
-      <a href="${baseUrl}/profile" style="color: #888; text-decoration: underline;">Manage preferences</a>
+      <a href="${baseUrl}/profile" style="color: #888; text-decoration: underline;">Manage preferences</a>${
+        data.unsubscribeUrl
+          ? `
+      &nbsp;·&nbsp;
+      <a href="${data.unsubscribeUrl}" style="color: #888; text-decoration: underline;">Unsubscribe from weekly digest</a>`
+          : ""
+      }
     </p>
   `;
 
