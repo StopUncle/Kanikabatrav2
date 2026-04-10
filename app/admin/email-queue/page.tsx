@@ -117,7 +117,7 @@ export default function EmailQueuePage() {
         </div>
       ) : (
         <>
-          <div className="grid grid-cols-3 gap-4 mb-8">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
             {statCards.map(({ label, value, icon: Icon, color, bg }) => (
               <div key={label} className="glass-card rounded-lg p-5">
                 <div className="flex items-center gap-3 mb-2">
