@@ -3,6 +3,19 @@ import LoginForm from "@/components/LoginForm";
 
 global.fetch = jest.fn();
 
+// LoginForm calls useRouter() + useSearchParams() at top level. The real
+// next/navigation hooks throw outside of an App Router context, so the
+// test environment needs explicit stubs.
+jest.mock("next/navigation", () => ({
+  useRouter: () => ({
+    push: jest.fn(),
+    replace: jest.fn(),
+    refresh: jest.fn(),
+  }),
+  useSearchParams: () => new URLSearchParams(),
+  usePathname: () => "/login",
+}));
+
 jest.mock("framer-motion", () => ({
   motion: {
     div: ({

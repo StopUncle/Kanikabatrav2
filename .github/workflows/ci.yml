@@ -69,10 +69,13 @@ jobs:
         env:
           # Stub env vars that would otherwise make the build bail at module
           # load time. Real values live on Railway; these are just enough to
-          # let the build graph resolve.
+          # let the build graph resolve. Both JWT secrets are required because
+          # lib/auth/jwt.ts throws at module-load time in production mode if
+          # either is missing, and the page-data collector loads /api/auth/*.
           NODE_ENV: production
           DATABASE_URL: postgresql://stub:stub@localhost:5432/stub
           JWT_SECRET: ci-stub-jwt-secret-at-least-32-characters-long
+          JWT_REFRESH_SECRET: ci-stub-jwt-refresh-secret-at-least-32-chars
           STRIPE_SECRET_KEY: sk_test_stub
           STRIPE_WEBHOOK_SECRET: whsec_stub
           NEXT_PUBLIC_BASE_URL: https://kanikarose.com
