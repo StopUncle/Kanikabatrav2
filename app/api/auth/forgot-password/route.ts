@@ -129,12 +129,20 @@ export async function POST(request: NextRequest) {
         process.env.NEXT_PUBLIC_BASE_URL || "https://kanikarose.com";
       const resetUrl = `${baseUrl}/reset-password?token=${resetToken}`;
 
-      await sendEmail({
-        to: user.email,
-        subject: "Reset Your Password \u2014 Kanika Batra",
-        html: buildResetEmail(resetUrl),
-        text: `Reset your password by visiting: ${resetUrl}\n\nThis link expires in 1 hour.\n\nIf you didn't request this, you can safely ignore this email.`,
-      });
+      // Wrap in try/catch so a sendEmail failure (SMTP down) returns
+      // the same 200 as a nonexistent email — preventing an attacker
+      // from distinguishing known vs unknown accounts by observing
+      // 500 vs 200 response codes.
+      try {
+        await sendEmail({
+          to: user.email,
+          subject: "Reset Your Password \u2014 Kanika Batra",
+          html: buildResetEmail(resetUrl),
+          text: `Reset your password by visiting: ${resetUrl}\n\nThis link expires in 1 hour.\n\nIf you didn't request this, you can safely ignore this email.`,
+        });
+      } catch (err) {
+        console.error("[forgot-password] failed to send reset email:", err);
+      }
     }
 
     return NextResponse.json({
