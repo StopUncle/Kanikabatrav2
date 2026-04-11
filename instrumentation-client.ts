@@ -43,6 +43,13 @@ if (process.env.NEXT_PUBLIC_SENTRY_DSN) {
       "Failed to fetch",
       // Ad/tracker blockers
       "Blocked by client",
+      // React hydration mismatches — almost always caused by browser
+      // extensions (Grammarly, translate, reading mode) injecting DOM
+      // nodes before React hydrates. Not actionable code bugs.
+      "Hydration",
+      "Minified React error #418",
+      "Minified React error #423",
+      "Minified React error #425",
     ],
   });
 }
