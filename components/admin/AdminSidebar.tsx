@@ -18,6 +18,7 @@ import {
   Loader2,
   Menu,
   X,
+  Eye,
 } from "lucide-react";
 
 const NAV_ITEMS = [
@@ -90,6 +91,13 @@ export default function AdminSidebar() {
       </nav>
 
       <div className="px-6 py-4 border-t border-accent-gold/10 space-y-3">
+        <Link
+          href="/inner-circle/feed"
+          className="flex items-center gap-3 text-sm font-light tracking-wide text-accent-gold hover:text-accent-gold/80 transition-colors duration-200"
+        >
+          <Eye size={18} strokeWidth={1.5} />
+          Preview Inner Circle
+        </Link>
         <Link
           href="/dashboard"
           className="flex items-center gap-3 text-sm font-light tracking-wide text-text-gray hover:text-accent-gold transition-colors duration-200"

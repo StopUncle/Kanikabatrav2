@@ -1,5 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import { MembershipStatus } from "@prisma/client";
+import { cookies } from "next/headers";
+import jwt from "jsonwebtoken";
 
 export interface MembershipCheck {
   isMember: boolean;
@@ -16,6 +18,42 @@ export interface MembershipCheck {
 }
 
 export async function checkMembership(userId: string | null): Promise<MembershipCheck> {
+  // Admin bypass: admins with a valid admin_session cookie can preview
+  // the Inner Circle as members would see it. The bypass returns a
+  // synthetic ACTIVE result so all gated pages (feed, classroom, voice
+  // notes) render normally.
+  try {
+    const cookieStore = await cookies();
+    const adminSession = cookieStore.get("admin_session")?.value;
+    if (adminSession) {
+      const secret = process.env.JWT_SECRET;
+      if (secret) {
+        const payload = jwt.verify(adminSession, secret) as { role?: string };
+        if (payload.role === "admin") {
+          const membership = userId
+            ? await prisma.communityMembership.findUnique({
+                where: { userId },
+                select: { id: true, status: true, billingCycle: true, activatedAt: true, expiresAt: true },
+              })
+            : null;
+          return {
+            isMember: true,
+            status: "ACTIVE",
+            membership: membership || {
+              id: "admin-preview",
+              status: "ACTIVE" as MembershipStatus,
+              billingCycle: "MONTHLY",
+              activatedAt: new Date(),
+              expiresAt: new Date(Date.now() + 365 * 86_400_000),
+            },
+          };
+        }
+      }
+    }
+  } catch {
+    // Admin cookie invalid/expired — fall through to normal check
+  }
+
   if (!userId) {
     return {
       isMember: false,
