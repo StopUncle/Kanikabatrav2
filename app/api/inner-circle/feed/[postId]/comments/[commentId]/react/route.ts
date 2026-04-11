@@ -1,24 +1,25 @@
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { verifyAccessToken } from "@/lib/auth/jwt";
+import { getAdminUserId } from "@/lib/auth/server-auth";
 import { checkMembership } from "@/lib/community/membership";
 import { prisma } from "@/lib/prisma";
+
+async function resolveUserId(): Promise<string | null> {
+  const cookieStore = await cookies();
+  const token = cookieStore.get("accessToken")?.value;
+  if (token) {
+    try { return verifyAccessToken(token).userId; } catch { /* fall through */ }
+  }
+  return await getAdminUserId();
+}
 
 export async function POST(
   _request: Request,
   { params }: { params: Promise<{ postId: string; commentId: string }> },
 ) {
-  const cookieStore = await cookies();
-  const token = cookieStore.get("accessToken")?.value;
-  if (!token) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
-
-  let userId: string;
-  try {
-    const payload = verifyAccessToken(token);
-    userId = payload.userId;
-  } catch {
+  const userId = await resolveUserId();
+  if (!userId) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 

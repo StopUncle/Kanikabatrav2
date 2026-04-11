@@ -1,12 +1,22 @@
 import { NextRequest, NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { verifyAccessToken } from "@/lib/auth/jwt";
+import { getAdminUserId } from "@/lib/auth/server-auth";
 import { checkMembership } from "@/lib/community/membership";
 import {
   getViewerGender,
   feedPostGenderWhere,
 } from "@/lib/community/gender-filter";
 import { prisma } from "@/lib/prisma";
+
+async function resolveUserId(): Promise<string | null> {
+  const cookieStore = await cookies();
+  const token = cookieStore.get("accessToken")?.value;
+  if (token) {
+    try { return verifyAccessToken(token).userId; } catch { /* fall through */ }
+  }
+  return await getAdminUserId();
+}
 
 /**
  * Cursor-paginated feed fetch. Used by the client-side "Load more" button
@@ -19,17 +29,8 @@ import { prisma } from "@/lib/prisma";
  * initial render — otherwise they'd re-appear on every "load more".
  */
 export async function GET(request: NextRequest) {
-  const cookieStore = await cookies();
-  const token = cookieStore.get("accessToken")?.value;
-  if (!token) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
-
-  let userId: string;
-  try {
-    const payload = verifyAccessToken(token);
-    userId = payload.userId;
-  } catch {
+  const userId = await resolveUserId();
+  if (!userId) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 

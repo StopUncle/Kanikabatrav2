@@ -3,25 +3,34 @@ import { cookies } from "next/headers";
 import { verifyAccessToken } from "@/lib/auth/jwt";
 import { checkMembership } from "@/lib/community/membership";
 import { isAdmin } from "@/lib/community/membership";
+import { getAdminUserId } from "@/lib/auth/server-auth";
 import { getViewerGender, authorGenderWhere } from "@/lib/community/gender-filter";
 import { enforceRateLimit, limits } from "@/lib/rate-limit";
 import { prisma } from "@/lib/prisma";
+
+/**
+ * Resolve the caller's userId from either the member accessToken or
+ * the admin_session cookie. Returns null if neither is valid.
+ */
+async function resolveUserId(): Promise<string | null> {
+  const cookieStore = await cookies();
+  const token = cookieStore.get("accessToken")?.value;
+  if (token) {
+    try {
+      return verifyAccessToken(token).userId;
+    } catch {
+      // fall through to admin check
+    }
+  }
+  return await getAdminUserId();
+}
 
 export async function GET(
   _request: Request,
   { params }: { params: Promise<{ postId: string }> },
 ) {
-  const cookieStore = await cookies();
-  const token = cookieStore.get("accessToken")?.value;
-  if (!token) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
-
-  let userId: string;
-  try {
-    const payload = verifyAccessToken(token);
-    userId = payload.userId;
-  } catch {
+  const userId = await resolveUserId();
+  if (!userId) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
@@ -119,17 +128,8 @@ export async function POST(
   request: Request,
   { params }: { params: Promise<{ postId: string }> },
 ) {
-  const cookieStore = await cookies();
-  const token = cookieStore.get("accessToken")?.value;
-  if (!token) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
-
-  let userId: string;
-  try {
-    const payload = verifyAccessToken(token);
-    userId = payload.userId;
-  } catch {
+  const userId = await resolveUserId();
+  if (!userId) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 

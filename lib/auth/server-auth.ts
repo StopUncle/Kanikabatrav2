@@ -1,6 +1,7 @@
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { verifyAccessToken } from "./jwt";
+import { prisma } from "@/lib/prisma";
 import jwt from "jsonwebtoken";
 
 if (process.env.NODE_ENV === "production" && process.env.DEV_BYPASS_AUTH === "true") {
@@ -12,19 +13,28 @@ if (process.env.NODE_ENV === "production" && process.env.DEV_BYPASS_AUTH === "tr
  * requireServerAuth to let admins preview member-only pages without
  * needing a separate member login.
  */
-async function getAdminUserId(): Promise<string | null> {
+/**
+ * Resolve a valid admin_session cookie to a real User ID. Looks up the
+ * first user with role=ADMIN in the database so comments, likes, and
+ * other actions are attributed to a real account (not a synthetic ID).
+ * Exported so API routes can reuse the same logic.
+ */
+export async function getAdminUserId(): Promise<string | null> {
   try {
     const cookieStore = await cookies();
     const adminSession = cookieStore.get("admin_session")?.value;
     if (!adminSession) return null;
     const secret = process.env.JWT_SECRET;
     if (!secret) return null;
-    const payload = jwt.verify(adminSession, secret) as { role?: string; adminId?: string };
+    const payload = jwt.verify(adminSession, secret) as { role?: string };
     if (payload.role !== "admin") return null;
-    // Return a stable admin user ID so downstream code has something
-    // to query with. "admin-preview" is synthetic — checkMembership
-    // handles the bypass separately.
-    return payload.adminId || "admin-preview";
+
+    // Find the real ADMIN user so actions are attributed correctly.
+    const adminUser = await prisma.user.findFirst({
+      where: { role: "ADMIN" },
+      select: { id: true },
+    });
+    return adminUser?.id || "admin-preview";
   } catch {
     return null;
   }
