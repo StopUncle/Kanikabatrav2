@@ -46,7 +46,17 @@ const CSP_DIRECTIVES = [
   "upgrade-insecure-requests",
 ].join("; ");
 
-export function middleware(_request: NextRequest) {
+export function middleware(request: NextRequest) {
+  // Canonical URL: redirect www → non-www. Without this, www.kanikarose.com
+  // serves the same content but client-side origin checks (Pusher, CORS)
+  // fail because the app is configured for kanikarose.com only.
+  const host = request.headers.get("host") || "";
+  if (host.startsWith("www.")) {
+    const url = request.nextUrl.clone();
+    url.host = host.replace(/^www\./, "");
+    return NextResponse.redirect(url, 301);
+  }
+
   const response = NextResponse.next();
 
   // Report-only mode — violations will log to the browser console and to
