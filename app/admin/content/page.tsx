@@ -93,12 +93,18 @@ function IdeasTab() {
 
   const fetchIdeas = useCallback(async () => {
     setLoading(true);
-    const params = new URLSearchParams({ status: filter });
-    if (sourceFilter) params.set("source", sourceFilter);
-    const res = await fetch(`/api/admin/content/ideas?${params}`);
-    const data = await res.json();
-    setIdeas(data.ideas || []);
-    setCounts(data.counts || {});
+    try {
+      const params = new URLSearchParams({ status: filter });
+      if (sourceFilter) params.set("source", sourceFilter);
+      const res = await fetch(`/api/admin/content/ideas?${params}`);
+      if (!res.ok) throw new Error(`${res.status}`);
+      const data = await res.json();
+      setIdeas(data.ideas || []);
+      setCounts(data.counts || {});
+    } catch {
+      setIdeas([]);
+      setCounts({});
+    }
     setLoading(false);
   }, [filter, sourceFilter]);
 
@@ -335,9 +341,14 @@ function ResearchTab() {
   const [expanded, setExpanded] = useState<string | null>(null);
 
   const fetchNotes = useCallback(async () => {
-    const res = await fetch("/api/admin/content/research");
-    const data = await res.json();
-    setNotes(data.notes || []);
+    try {
+      const res = await fetch("/api/admin/content/research");
+      if (!res.ok) throw new Error(`${res.status}`);
+      const data = await res.json();
+      setNotes(data.notes || []);
+    } catch {
+      setNotes([]);
+    }
     setLoading(false);
   }, []);
 
@@ -487,9 +498,14 @@ function AnalysisTab() {
   const [expanded, setExpanded] = useState<string | null>(null);
 
   const fetchAnalyses = useCallback(async () => {
-    const res = await fetch("/api/admin/content/analyze");
-    const data = await res.json();
-    setAnalyses(data.analyses || []);
+    try {
+      const res = await fetch("/api/admin/content/analyze");
+      if (!res.ok) throw new Error(`${res.status}`);
+      const data = await res.json();
+      setAnalyses(data.analyses || []);
+    } catch {
+      setAnalyses([]);
+    }
     setLoading(false);
   }, []);
 
