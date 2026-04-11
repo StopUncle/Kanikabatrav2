@@ -52,9 +52,13 @@ export function middleware(request: NextRequest) {
   // fail because the app is configured for kanikarose.com only.
   const host = request.headers.get("host") || "";
   if (host.startsWith("www.")) {
-    const url = request.nextUrl.clone();
-    url.host = host.replace(/^www\./, "");
-    return NextResponse.redirect(url, 301);
+    // Build the redirect URL from scratch instead of cloning nextUrl.
+    // Behind Railway's reverse proxy, nextUrl.clone() can leak the
+    // internal container port (8080) into the redirect, sending users
+    // to kanikarose.com:8080 which doesn't resolve.
+    const nonWwwHost = host.replace(/^www\./, "");
+    const redirectUrl = `https://${nonWwwHost}${request.nextUrl.pathname}${request.nextUrl.search}`;
+    return NextResponse.redirect(redirectUrl, 301);
   }
 
   const response = NextResponse.next();
