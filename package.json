@@ -5,8 +5,8 @@
   "scripts": {
     "dev": "next dev",
     "prebuild": "node scripts/prebuild.js",
-    "build": "npx prisma generate && npx prisma db push --skip-generate && npm run prebuild && next build",
-    "start": "next start",
+    "build": "npx prisma generate && npm run prebuild && next build",
+    "start": "npx prisma db push --skip-generate && next start",
     "lint": "next lint",
     "type-check": "tsc --noEmit",
     "railway-build": "npm run prebuild && next build",
