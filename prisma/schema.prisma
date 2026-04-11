@@ -777,3 +777,49 @@ model DiscussionPrompt {
   @@index([theme])
   @@index([isUsed])
 }
+
+// ── Content Dashboard ──
+
+enum ContentIdeaStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+model ContentIdea {
+  id        String             @id @default(cuid())
+  title     String
+  hook      String?            @db.Text
+  format    String?
+  source    String
+  category  String?
+  status    ContentIdeaStatus  @default(PENDING)
+  notes     String?            @db.Text
+  sortOrder Int                @default(0)
+  createdAt DateTime           @default(now())
+  updatedAt DateTime           @updatedAt
+
+  @@index([status])
+  @@index([source])
+}
+
+model ResearchNote {
+  id        String   @id @default(cuid())
+  content   String   @db.Text
+  source    String?
+  tags      String[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model VideoAnalysis {
+  id         String   @id @default(cuid())
+  url        String
+  title      String?
+  platform   String   @default("youtube")
+  transcript String?  @db.Text
+  analysis   Json?
+  createdAt  DateTime @default(now())
+
+  @@index([platform])
+}
