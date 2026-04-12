@@ -65,10 +65,10 @@ export default function BackgroundEffects() {
         />
       </div>
 
-      {/* Particle field */}
+      {/* Particle field — desktop only (useEffect already skips mobile). */}
       <div
         ref={particlesRef}
-        className="fixed inset-0 z-0 overflow-hidden pointer-events-none"
+        className="fixed inset-0 z-0 overflow-hidden pointer-events-none hidden md:block"
       >
         <style jsx>{`
           .particle {
