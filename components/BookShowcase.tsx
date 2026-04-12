@@ -46,10 +46,12 @@ export default function BookShowcase() {
     >
       <div className="max-w-7xl mx-auto">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 sm:gap-12 lg:gap-16 items-center">
-          {/* Book 3D Display */}
+          {/* Book 3D Display — transform removed (was x: -50 → 0), SSR now
+              matches final layout so Lighthouse stops counting the slide-in
+              animation as a layout shift. */}
           <motion.div
-            initial={{ opacity: 0, x: -50 }}
-            whileInView={{ opacity: 1, x: 0 }}
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
             transition={{ duration: 0.8 }}
             viewport={{ once: true }}
             className="flex justify-center"
@@ -88,8 +90,8 @@ export default function BookShowcase() {
 
           {/* Book Information */}
           <motion.div
-            initial={{ opacity: 0, x: 50 }}
-            whileInView={{ opacity: 1, x: 0 }}
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
             transition={{ duration: 0.8 }}
             viewport={{ once: true }}
             className="space-y-8"
@@ -114,8 +116,8 @@ export default function BookShowcase() {
               {BOOK_INFO.features.slice(0, 4).map((feature, index) => (
                 <motion.div
                   key={index}
-                  initial={{ opacity: 0, x: 20 }}
-                  whileInView={{ opacity: 1, x: 0 }}
+                  initial={{ opacity: 0 }}
+                  whileInView={{ opacity: 1 }}
                   transition={{ duration: 0.5, delay: index * 0.1 }}
                   viewport={{ once: true }}
                   className="flex items-start gap-3 sm:gap-4 p-3 sm:p-4 bg-gradient-to-r from-accent-burgundy/10 to-accent-sapphire/5 border-l-2 sm:border-l-4 border-accent-gold hover:translate-x-1 sm:hover:translate-x-2 transition-transform"
