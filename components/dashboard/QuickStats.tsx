@@ -20,28 +20,32 @@ const QuickStats = ({
       label: "Purchases",
       value: totalPurchases,
       icon: BookOpen,
-      color: "from-accent-gold to-accent-gold",
+      iconColor: "text-accent-gold",
+      valueColor: "text-accent-gold",
       bgColor: "bg-accent-gold/10",
     },
     {
       label: "Upcoming Sessions",
       value: upcomingSessions,
       icon: Calendar,
-      color: "from-green-400 to-green-600",
+      iconColor: "text-green-400",
+      valueColor: "text-green-400",
       bgColor: "bg-green-500/10",
     },
     {
       label: "Completed",
       value: completedSessions,
       icon: Trophy,
-      color: "from-accent-burgundy to-accent-sapphire",
+      iconColor: "text-accent-burgundy",
+      valueColor: "text-accent-burgundy",
       bgColor: "bg-accent-burgundy/10",
     },
     {
       label: "Days Active",
       value: daysActive,
       icon: TrendingUp,
-      color: "from-accent-sapphire to-accent-burgundy",
+      iconColor: "text-accent-sapphire",
+      valueColor: "text-accent-sapphire",
       bgColor: "bg-accent-sapphire/10",
     },
   ];
@@ -59,11 +63,12 @@ const QuickStats = ({
             >
               <stat.icon
                 size={20}
-                className={`bg-gradient-to-r ${stat.color} bg-clip-text text-transparent`}
+                strokeWidth={1.5}
+                className={stat.iconColor}
               />
             </div>
             <span
-              className={`text-2xl font-bold bg-gradient-to-r ${stat.color} bg-clip-text text-transparent`}
+              className={`text-2xl font-bold ${stat.valueColor}`}
             >
               {stat.value}
             </span>
