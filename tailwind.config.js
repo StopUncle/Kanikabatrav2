@@ -13,7 +13,7 @@ module.exports = {
         "deep-navy": "#0a1628",
         "accent-burgundy": "#720921",
         "accent-sapphire": "#6366f1",
-        "accent-gold": "#d4af37",
+        "accent-gold": "#B76E79",
         "text-light": "#f5f0ed",
         "text-purple": "#a5b4fc",
         "text-gray": "#94a3b8",
