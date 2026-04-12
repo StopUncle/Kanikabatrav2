@@ -1,31 +1,29 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import { SITE_CONFIG, SOCIAL_METRICS } from "@/lib/constants";
 
-// Removed:
-// - useState / useEffect / setInterval rotating quotes — auto-changing
-//   DOM every 4s made Lighthouse count each change as a layout shift
-//   during its observation window. Now shows a single curated line.
-// - initial={{ y: N }} transforms on the motion containers — when SSR
-//   positioned the elements at y:N and the client then animated them
-//   back to y:0, framer-motion + font-swap timing was interacting
-//   badly. Kept only the opacity fade. Server and client now agree on
-//   layout; the animation is purely a paint-level effect.
-
 export default function Hero() {
-  const heroQuote = SITE_CONFIG.viralQuotes[0];
+  const [quoteIndex, setQuoteIndex] = useState(0);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setQuoteIndex((prev) => (prev + 1) % SITE_CONFIG.viralQuotes.length);
+    }, 4000);
+    return () => clearInterval(interval);
+  }, []);
 
   return (
     <section className="min-h-[100dvh] flex items-center justify-center pt-20 pb-20 px-4 sm:px-6 lg:px-8 relative">
       <div className="max-w-7xl mx-auto text-center w-full">
         <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
         >
-          <p className="text-accent-burgundy uppercase tracking-[0.2em] sm:tracking-[0.3em] lg:tracking-[0.4em] text-xs sm:text-sm mb-4 sm:mb-6 px-2">
+          <p className="text-accent-burgundy uppercase tracking-[0.2em] sm:tracking-[0.3em] lg:tracking-[0.4em] text-xs sm:text-sm mb-4 sm:mb-6 animate-glow px-2">
             <span className="block sm:inline">As seen on LADbible, Unilad &amp; Yahoo</span>
             <span className="hidden sm:inline mx-1 sm:mx-2">&middot;</span>
             <span className="block sm:inline">
@@ -35,12 +33,12 @@ export default function Hero() {
         </motion.div>
 
         <motion.h1
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.2 }}
           className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-light leading-tight mb-6 sm:mb-8"
         >
-          <span className="block gradient-text text-5xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-9xl">
+          <span className="block gradient-text animate-gradient text-5xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-9xl">
             Sociopathic Dating Bible
           </span>
           <span className="block text-text-light text-2xl sm:text-3xl md:text-4xl mt-2">
@@ -51,18 +49,30 @@ export default function Hero() {
           </span>
         </motion.h1>
 
-        <motion.p
+        {/* Rotating Quotes — now outcome-driven */}
+        <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.8, delay: 0.3 }}
-          className="text-gold-400 text-lg sm:text-xl md:text-2xl italic font-light px-4 mb-8 sm:mb-12 max-w-3xl mx-auto"
+          className="h-16 mb-8 sm:mb-12"
         >
-          &quot;{heroQuote}&quot;
-        </motion.p>
+          <AnimatePresence mode="wait">
+            <motion.p
+              key={quoteIndex}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.5 }}
+              className="text-gold-400 text-lg sm:text-xl md:text-2xl italic font-light px-4"
+            >
+              &quot;{SITE_CONFIG.viralQuotes[quoteIndex]}&quot;
+            </motion.p>
+          </AnimatePresence>
+        </motion.div>
 
         <motion.p
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.4 }}
           className="text-text-gray text-base sm:text-lg md:text-xl max-w-2xl lg:max-w-3xl mx-auto mb-8 sm:mb-12 font-light px-4"
         >
@@ -71,8 +81,8 @@ export default function Hero() {
         </motion.p>
 
         <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.6 }}
           className="flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center items-center px-4"
         >
