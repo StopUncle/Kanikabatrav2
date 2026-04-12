@@ -1,13 +1,8 @@
-import { redirect } from "next/navigation";
 import { requireServerAuth } from "@/lib/auth/server-auth";
-import { checkMembership } from "@/lib/community/membership";
 import { getViewerGender, feedPostGenderWhere } from "@/lib/community/gender-filter";
 import { prisma } from "@/lib/prisma";
 import FeedList from "@/components/inner-circle/FeedList";
-import InnerCircleNav from "@/components/inner-circle/InnerCircleNav";
 import OnboardingModal from "@/components/inner-circle/OnboardingModal";
-import Header from "@/components/Header";
-import BackgroundEffects from "@/components/BackgroundEffects";
 import { MessageCircle } from "lucide-react";
 
 export const metadata = {
@@ -18,32 +13,15 @@ export const metadata = {
 export default async function FeedPage() {
   const userId = await requireServerAuth("/inner-circle/feed");
 
-  const { isMember, redirectUrl } = await checkMembership(userId);
-
-  if (!isMember && redirectUrl) {
-    redirect(redirectUrl);
-  }
-
-  if (!isMember) {
-    redirect("/inner-circle");
-  }
-
-  // Check onboarding state — show the welcome modal on first visit
-  // after activation. Null timestamp = hasn't dismissed yet.
   const viewerRecord = await prisma.user.findUnique({
     where: { id: userId },
     select: { onboardingSeenAt: true },
   });
   const showOnboarding = viewerRecord?.onboardingSeenAt == null;
 
-  // Gender-split: cron-automated posts (authorId null) and admin posts stay
-  // visible to everyone. Member-authored welcome posts and the like only
-  // appear for same-gender viewers.
   const viewerGender = await getViewerGender(userId);
   const genderWhere = feedPostGenderWhere(viewerGender);
 
-  // Fetch PAGE_SIZE + 1 posts so we can detect whether there are more pages
-  // to load without a second query. The extra post becomes the cursor.
   const PAGE_SIZE = 20;
   const rows = await prisma.feedPost.findMany({
     where: genderWhere,
@@ -68,8 +46,6 @@ export default async function FeedPage() {
 
   const hasMore = rows.length > PAGE_SIZE;
   const posts = hasMore ? rows.slice(0, PAGE_SIZE) : rows;
-  // Cursor for the client is the createdAt of the LAST (oldest) post shown;
-  // /api/inner-circle/feed/posts returns rows with createdAt < cursor.
   const initialNextCursor = hasMore
     ? posts[posts.length - 1].createdAt.toISOString()
     : null;
@@ -97,24 +73,18 @@ export default async function FeedPage() {
   }));
 
   return (
-    <div className="min-h-screen bg-deep-black text-text-light">
-      <BackgroundEffects />
-      <Header />
+    <>
       {showOnboarding && <OnboardingModal />}
 
-      <div className="relative z-10 max-w-2xl mx-auto px-4 pt-32 pb-16">
-        <div className="text-center mb-12">
-          <p className="text-accent-gold text-sm uppercase tracking-[0.3em] mb-4">Members Only</p>
-          <h1 className="text-4xl sm:text-5xl font-extralight tracking-widest uppercase gradient-text-gold mb-4">
+      <div className="max-w-2xl mx-auto px-4 py-8 lg:py-12">
+        <div className="mb-8">
+          <h1 className="text-2xl sm:text-3xl font-extralight tracking-wider uppercase gradient-text-gold mb-2">
             The Feed
           </h1>
-          <div className="w-16 h-px bg-accent-gold/40 mx-auto mb-4" />
-          <p className="text-text-gray">
-            Posts, voice notes, and announcements from the inner circle.
+          <p className="text-text-gray text-sm">
+            Posts, insights, and discussions from the inner circle.
           </p>
         </div>
-
-        <InnerCircleNav active="feed" />
 
         {formatted.length === 0 ? (
           <div className="text-center py-16">
@@ -131,6 +101,6 @@ export default async function FeedPage() {
           />
         )}
       </div>
-    </div>
+    </>
   );
 }

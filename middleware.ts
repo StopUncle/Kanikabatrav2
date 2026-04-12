@@ -61,6 +61,19 @@ export function middleware(request: NextRequest) {
     return NextResponse.redirect(redirectUrl, 301);
   }
 
+  // Community → Inner Circle redirects. The community section was merged
+  // into the Inner Circle in April 2026. Old links and bookmarks should
+  // land in the right place.
+  const { pathname } = request.nextUrl;
+  if (pathname.startsWith("/community")) {
+    const newPath = pathname
+      .replace(/^\/community\/forum/, "/inner-circle/forum")
+      .replace(/^\/community\/chat/, "/inner-circle/chat")
+      .replace(/^\/community$/, "/inner-circle/feed");
+    const base = `https://${host}`;
+    return NextResponse.redirect(`${base}${newPath}${request.nextUrl.search}`, 301);
+  }
+
   const response = NextResponse.next();
 
   // Report-only mode — violations will log to the browser console and to
