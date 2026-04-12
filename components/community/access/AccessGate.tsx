@@ -115,10 +115,10 @@ export default function AccessGate({
           )}
 
           <Link
-            href="/community"
+            href="/inner-circle/feed"
             className="block text-sm text-gray-400 hover:text-white transition-colors"
           >
-            Back to Community
+            Back to The Inner Circle
           </Link>
         </div>
       </div>

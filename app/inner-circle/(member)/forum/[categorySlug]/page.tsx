@@ -2,6 +2,7 @@ import { cookies } from "next/headers";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { verifyAccessToken } from "@/lib/auth/jwt";
+import { getAdminUserId } from "@/lib/auth/server-auth";
 import { prisma } from "@/lib/prisma";
 import { checkAccessTier } from "@/lib/community/access";
 import { getViewerGender, authorGenderWhere } from "@/lib/community/gender-filter";
@@ -35,14 +36,19 @@ export default async function CategoryPage({ params, searchParams }: Props) {
   const { sort = "latest" } = await searchParams;
 
   const cookieStore = await cookies();
-  const accessToken = cookieStore.get("access_token")?.value;
+  const accessToken = cookieStore.get("accessToken")?.value;
   let userId: string | null = null;
 
   if (accessToken) {
-    const payload = verifyAccessToken(accessToken);
-    if (payload) {
-      userId = payload.userId;
+    try {
+      const payload = verifyAccessToken(accessToken);
+      if (payload) userId = payload.userId;
+    } catch {
+      /* fall through to admin check */
     }
+  }
+  if (!userId) {
+    userId = await getAdminUserId();
   }
 
   const category = await prisma.forumCategory.findUnique({
@@ -113,36 +119,38 @@ export default async function CategoryPage({ params, searchParams }: Props) {
   }));
 
   return (
-    <div>
+    <div className="max-w-4xl mx-auto px-4 py-8 lg:py-12">
       <div className="mb-8">
         <Link
           href="/inner-circle/forum"
-          className="flex items-center gap-2 text-gray-400 hover:text-white mb-4"
+          className="inline-flex items-center gap-1.5 text-sm text-text-gray hover:text-accent-gold transition-colors mb-6"
         >
           <ArrowLeft className="w-4 h-4" />
           Back to Forum
         </Link>
 
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between gap-4">
           <div>
             <div className="flex items-center gap-3">
               {category.icon && (
                 <span className="text-3xl">{category.icon}</span>
               )}
-              <h1 className="text-3xl font-bold text-white">{category.name}</h1>
+              <h1 className="text-2xl sm:text-3xl font-extralight tracking-wider uppercase gradient-text-gold">
+                {category.name}
+              </h1>
             </div>
             {category.description && (
-              <p className="text-gray-400 mt-2">{category.description}</p>
+              <p className="text-text-gray text-sm mt-2">{category.description}</p>
             )}
           </div>
 
           {userId && (
             <Link
               href={`/inner-circle/forum/${categorySlug}/new`}
-              className="flex items-center gap-2 px-4 py-2 bg-accent-gold text-deep-black rounded-lg font-medium hover:bg-accent-gold/90"
+              className="flex items-center gap-2 px-4 py-2 bg-accent-gold text-deep-black rounded-lg font-medium hover:bg-accent-gold/90 flex-shrink-0"
             >
               <Plus className="w-5 h-5" />
-              New Post
+              <span className="hidden sm:inline">New Post</span>
             </Link>
           )}
         </div>
@@ -168,8 +176,8 @@ export default async function CategoryPage({ params, searchParams }: Props) {
       </div>
 
       {formattedPosts.length === 0 ? (
-        <div className="text-center py-16 bg-deep-navy/30 border border-gray-800 rounded-xl">
-          <p className="text-gray-500 mb-4">No posts yet in this category</p>
+        <div className="text-center py-16 bg-deep-black/50 backdrop-blur-sm border border-accent-gold/10 rounded-2xl">
+          <p className="text-text-gray mb-4">No posts yet in this category</p>
           {userId && (
             <Link
               href={`/inner-circle/forum/${categorySlug}/new`}

@@ -76,3 +76,4 @@ lib/dev-mode.ts
 # Prevent document.tsx in app directory (App Router incompatible)
 app/document.tsx
 app/_document.tsxnul
+.gstack/

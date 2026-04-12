@@ -40,8 +40,10 @@ export default function BackgroundEffects() {
         <div className="absolute inset-0 bg-gradient-to-b from-deep-black via-deep-burgundy to-deep-navy" />
       </div>
 
-      {/* Aurora effect - reduced on prefers-reduced-motion */}
-      <div className="fixed inset-0 z-0 opacity-40">
+      {/* Aurora effect — hidden on mobile to protect LCP. blur-3xl + animation
+          is expensive and invisible enough on small screens that cutting it
+          is worth the perf win. Desktop keeps the full effect. */}
+      <div className="fixed inset-0 z-0 opacity-40 hidden md:block">
         <div
           className={`absolute inset-0 ${prefersReducedMotion ? "" : "animate-aurora"}`}
         >
@@ -50,8 +52,8 @@ export default function BackgroundEffects() {
         </div>
       </div>
 
-      {/* Floating orbs - static when prefers-reduced-motion */}
-      <div className="fixed inset-0 z-0 overflow-hidden">
+      {/* Floating orbs — hidden on mobile (same reason as aurora). */}
+      <div className="fixed inset-0 z-0 overflow-hidden hidden md:block">
         <div
           className={`absolute -top-32 -left-32 w-64 h-64 bg-accent-burgundy/20 rounded-full blur-3xl ${prefersReducedMotion ? "" : "animate-float-element"}`}
         />
@@ -73,7 +75,7 @@ export default function BackgroundEffects() {
             position: absolute;
             width: 2px;
             height: 2px;
-            background: #d4af37;
+            background: #B76E79;
             border-radius: 50%;
             opacity: 0;
             animation: drift 20s infinite linear;

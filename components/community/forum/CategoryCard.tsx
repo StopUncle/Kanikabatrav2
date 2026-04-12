@@ -24,7 +24,7 @@ export default function CategoryCard({ category }: CategoryCardProps) {
 
   return (
     <Link
-      href={category.hasAccess ? `/community/forum/${category.slug}` : "#"}
+      href={category.hasAccess ? `/inner-circle/forum/${category.slug}` : "#"}
       className={`
         block p-6 rounded-xl border transition-all
         ${

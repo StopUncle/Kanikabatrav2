@@ -79,7 +79,7 @@ export default function ForumPostList({
       {posts.map((post) => (
         <Link
           key={post.id}
-          href={`/community/${categorySlug}/${post.slug}`}
+          href={`/inner-circle/forum/${categorySlug}/post/${post.slug}`}
           className="block bg-deep-black/40 backdrop-blur-sm border border-accent-gold/10 rounded-xl p-4 sm:p-5 hover:border-accent-gold/30 transition-all group"
         >
           <div className="flex items-start gap-4">

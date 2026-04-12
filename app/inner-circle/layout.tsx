@@ -2,6 +2,7 @@ import { Metadata } from "next";
 import { cookies } from "next/headers";
 import { verifyAccessToken } from "@/lib/auth/jwt";
 import { prisma } from "@/lib/prisma";
+import TrialSubscribeButton from "@/components/inner-circle/TrialSubscribeButton";
 
 export const metadata: Metadata = {
   title: "The Inner Circle | Kanika Batra",
@@ -40,7 +41,7 @@ export default async function InnerCircleLayout({
         <div className="fixed top-20 left-0 right-0 z-40 bg-accent-gold/10 border-b border-accent-gold/20 px-4 py-2 text-center">
           <p className="text-sm text-text-light">
             <span className="text-accent-gold font-medium">Free trial:</span> {trialBanner.daysLeft} days remaining &mdash;
-            <a href="/api/inner-circle/subscription/create" className="text-accent-gold underline hover:text-accent-gold/80 ml-1">Subscribe to keep access</a>
+            <TrialSubscribeButton />
           </p>
         </div>
       )}

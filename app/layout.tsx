@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import Script from "next/script";
-import { SpeedInsights } from "@vercel/speed-insights/next";
 import Footer from "@/components/Footer";
+import LazySpeedInsights from "@/components/LazySpeedInsights";
 import JsonLd from "@/components/JsonLd";
 import {
   generateOrganizationSchema,
@@ -87,7 +87,7 @@ export default function RootLayout({
       <body className={inter.className}>
         <main>{children}</main>
         <Footer />
-        <SpeedInsights />
+        <LazySpeedInsights />
       </body>
     </html>
   );

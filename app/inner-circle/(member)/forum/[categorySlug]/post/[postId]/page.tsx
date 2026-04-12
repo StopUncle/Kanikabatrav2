@@ -2,6 +2,7 @@ import { cookies } from "next/headers";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { verifyAccessToken } from "@/lib/auth/jwt";
+import { getAdminUserId } from "@/lib/auth/server-auth";
 import { prisma } from "@/lib/prisma";
 import { checkAccessTier } from "@/lib/community/access";
 import { getViewerGender } from "@/lib/community/gender-filter";
@@ -34,14 +35,19 @@ export default async function PostPage({ params }: Props) {
   const { categorySlug, postId } = await params;
 
   const cookieStore = await cookies();
-  const accessToken = cookieStore.get("access_token")?.value;
+  const accessToken = cookieStore.get("accessToken")?.value;
   let userId: string | null = null;
 
   if (accessToken) {
-    const payload = verifyAccessToken(accessToken);
-    if (payload) {
-      userId = payload.userId;
+    try {
+      const payload = verifyAccessToken(accessToken);
+      if (payload) userId = payload.userId;
+    } catch {
+      /* fall through to admin check */
     }
+  }
+  if (!userId) {
+    userId = await getAdminUserId();
   }
 
   const post = await prisma.forumPost.findUnique({
@@ -137,10 +143,10 @@ export default async function PostPage({ params }: Props) {
   };
 
   return (
-    <div>
+    <div className="max-w-4xl mx-auto px-4 py-8 lg:py-12">
       <Link
         href={`/inner-circle/forum/${categorySlug}`}
-        className="flex items-center gap-2 text-gray-400 hover:text-white mb-6"
+        className="inline-flex items-center gap-1.5 text-sm text-text-gray hover:text-accent-gold transition-colors mb-6"
       >
         <ArrowLeft className="w-4 h-4" />
         Back to {post.category.name}

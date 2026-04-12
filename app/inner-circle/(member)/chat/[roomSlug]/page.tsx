@@ -2,6 +2,7 @@ import { cookies } from "next/headers";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { verifyAccessToken } from "@/lib/auth/jwt";
+import { getAdminUserId } from "@/lib/auth/server-auth";
 import { prisma } from "@/lib/prisma";
 import { checkAccessTier } from "@/lib/community/access";
 import ChatRoom from "@/components/community/chat/ChatRoom";
@@ -33,14 +34,19 @@ export default async function ChatRoomPage({ params }: Props) {
   const { roomSlug } = await params;
 
   const cookieStore = await cookies();
-  const accessToken = cookieStore.get("access_token")?.value;
+  const accessToken = cookieStore.get("accessToken")?.value;
   let userId: string | null = null;
 
   if (accessToken) {
-    const payload = verifyAccessToken(accessToken);
-    if (payload) {
-      userId = payload.userId;
+    try {
+      const payload = verifyAccessToken(accessToken);
+      if (payload) userId = payload.userId;
+    } catch {
+      /* fall through to admin check */
     }
+  }
+  if (!userId) {
+    userId = await getAdminUserId();
   }
 
   const room = await prisma.chatRoom.findUnique({
@@ -79,14 +85,16 @@ export default async function ChatRoomPage({ params }: Props) {
 
   if (!room.isActive) {
     return (
-      <div className="text-center py-16">
-        <p className="text-gray-500">This chat room is currently inactive</p>
-        <Link
-          href="/inner-circle/chat"
-          className="text-accent-gold hover:underline mt-4 inline-block"
-        >
-          Back to Chat Rooms
-        </Link>
+      <div className="max-w-4xl mx-auto px-4 py-8 lg:py-12">
+        <div className="text-center py-16 bg-deep-black/50 backdrop-blur-sm border border-accent-gold/10 rounded-2xl">
+          <p className="text-text-gray">This chat room is currently inactive</p>
+          <Link
+            href="/inner-circle/chat"
+            className="text-accent-gold hover:underline mt-4 inline-block"
+          >
+            Back to Chat Rooms
+          </Link>
+        </div>
       </div>
     );
   }
@@ -132,10 +140,10 @@ export default async function ChatRoomPage({ params }: Props) {
   };
 
   return (
-    <div>
+    <div className="max-w-4xl mx-auto px-4 py-8 lg:py-12">
       <Link
         href="/inner-circle/chat"
-        className="flex items-center gap-2 text-gray-400 hover:text-white mb-6"
+        className="inline-flex items-center gap-1.5 text-sm text-text-gray hover:text-accent-gold transition-colors mb-6"
       >
         <ArrowLeft className="w-4 h-4" />
         Back to Chat Rooms

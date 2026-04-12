@@ -1,6 +1,7 @@
 import { cookies } from "next/headers";
 import Link from "next/link";
 import { verifyAccessToken } from "@/lib/auth/jwt";
+import { getAdminUserId } from "@/lib/auth/server-auth";
 import { prisma } from "@/lib/prisma";
 import { checkAccessTier } from "@/lib/community/access";
 import { Users, Lock, Crown, MessageSquare } from "lucide-react";
@@ -12,14 +13,19 @@ export const metadata = {
 
 export default async function ChatRoomsPage() {
   const cookieStore = await cookies();
-  const accessToken = cookieStore.get("access_token")?.value;
+  const accessToken = cookieStore.get("accessToken")?.value;
   let userId: string | null = null;
 
   if (accessToken) {
-    const payload = verifyAccessToken(accessToken);
-    if (payload) {
-      userId = payload.userId;
+    try {
+      const payload = verifyAccessToken(accessToken);
+      if (payload) userId = payload.userId;
+    } catch {
+      /* fall through to admin check */
     }
+  }
+  if (!userId) {
+    userId = await getAdminUserId();
   }
 
   const rooms = await prisma.chatRoom.findMany({
@@ -65,11 +71,13 @@ export default async function ChatRoomsPage() {
   );
 
   return (
-    <div>
+    <div className="max-w-4xl mx-auto px-4 py-8 lg:py-12">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-white mb-2">Chat Rooms</h1>
-        <p className="text-gray-400">
-          Join live discussions and connect with community members in real-time
+        <h1 className="text-2xl sm:text-3xl font-extralight tracking-wider uppercase gradient-text-gold mb-2">
+          Chat Rooms
+        </h1>
+        <p className="text-text-gray text-sm">
+          Join live discussions and connect with members in real-time.
         </p>
       </div>
 
@@ -213,9 +221,9 @@ export default async function ChatRoomsPage() {
       )}
 
       {roomsWithAccess.length === 0 && (
-        <div className="text-center py-16 bg-deep-navy/30 border border-gray-800 rounded-xl">
-          <Users className="w-12 h-12 text-gray-600 mx-auto mb-4" />
-          <p className="text-gray-500">No chat rooms available yet</p>
+        <div className="text-center py-16 bg-deep-black/50 backdrop-blur-sm border border-accent-gold/10 rounded-2xl">
+          <Users className="w-12 h-12 text-text-gray/30 mx-auto mb-4" />
+          <p className="text-text-gray">No chat rooms available yet</p>
         </div>
       )}
     </div>

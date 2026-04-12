@@ -71,7 +71,7 @@ export function BookProductSchema() {
     "@type": "Product",
     name: BOOK_INFO.title,
     description: BOOK_INFO.description,
-    image: `${SITE_CONFIG.url}/images/book-cover.jpg`,
+    image: `${SITE_CONFIG.url}/books/book-cover.webp`,
     brand: {
       "@type": "Brand",
       name: "Kanika Batra",
