@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
-import { motion, AnimatePresence } from "framer-motion";
+import { m, AnimatePresence } from "framer-motion";
 import {
   MessageCircle,
   Mic,
@@ -125,7 +125,7 @@ export default function AskPageClient() {
       <AnimatePresence mode="wait">
         {/* Step 1: Choose Format */}
         {step === 0 && (
-          <motion.div
+          <m.div
             key="step-0"
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
@@ -237,12 +237,12 @@ export default function AskPageClient() {
                 <ChevronRight size={18} />
               </button>
             </div>
-          </motion.div>
+          </m.div>
         )}
 
         {/* Step 2: Questions */}
         {step === 1 && (
-          <motion.div
+          <m.div
             key="step-1"
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
@@ -319,12 +319,12 @@ export default function AskPageClient() {
                 <ChevronRight size={18} />
               </button>
             </div>
-          </motion.div>
+          </m.div>
         )}
 
         {/* Step 3: Payment */}
         {step === 2 && (
-          <motion.div
+          <m.div
             key="step-2"
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
@@ -411,7 +411,7 @@ export default function AskPageClient() {
                 Secure payment via Stripe
               </div>
             </div>
-          </motion.div>
+          </m.div>
         )}
       </AnimatePresence>
     </div>

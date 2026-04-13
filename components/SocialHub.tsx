@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { m } from "framer-motion";
 import Link from "next/link";
 import { SOCIAL_METRICS } from "@/lib/constants";
 import { ReactNode } from "react";
@@ -66,7 +66,7 @@ export default function SocialHub() {
       <div className="absolute inset-0 bg-gradient-to-b from-black/0 via-burgundy-900/10 to-black/0" />
 
       <div className="max-w-6xl mx-auto relative z-10">
-        <motion.div
+        <m.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
@@ -86,11 +86,11 @@ export default function SocialHub() {
             </span>{" "}
             views across {SOCIAL_METRICS.combined.platforms} platforms
           </p>
-        </motion.div>
+        </m.div>
 
         <div className="grid md:grid-cols-3 gap-8">
           {platforms.map((platform, index) => (
-            <motion.div
+            <m.div
               key={platform.name}
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -181,11 +181,11 @@ export default function SocialHub() {
                   </div>
                 </div>
               </Link>
-            </motion.div>
+            </m.div>
           ))}
         </div>
 
-        <motion.div
+        <m.div
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
@@ -195,7 +195,7 @@ export default function SocialHub() {
           <p className="text-gray-500 text-sm">
             Previously grew TikTok to 500K in ONE MONTH before being hacked
           </p>
-        </motion.div>
+        </m.div>
       </div>
     </section>
   );

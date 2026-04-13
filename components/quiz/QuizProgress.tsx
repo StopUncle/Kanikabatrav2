@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { m } from "framer-motion";
 
 interface QuizProgressProps {
   current: number;
@@ -19,7 +19,7 @@ export default function QuizProgress({ current, total }: QuizProgressProps) {
         <span>{Math.round(progress)}% Complete</span>
       </div>
       <div className="h-2 bg-white/10 rounded-full overflow-hidden">
-        <motion.div
+        <m.div
           className="h-full bg-gradient-to-r from-accent-gold to-accent-burgundy"
           initial={{ width: 0 }}
           animate={{ width: `${progress}%` }}

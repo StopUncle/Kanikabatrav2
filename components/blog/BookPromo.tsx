@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { motion } from "framer-motion";
+import { m } from "framer-motion";
 import { BOOK_INFO } from "@/lib/constants";
 
 interface BookPromoProps {
@@ -41,7 +41,7 @@ export default function BookPromo({
   }
 
   return (
-    <motion.div
+    <m.div
       initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
@@ -123,6 +123,6 @@ export default function BookPromo({
         </svg>
         <span>Written by a clinically diagnosed sociopath</span>
       </div>
-    </motion.div>
+    </m.div>
   );
 }

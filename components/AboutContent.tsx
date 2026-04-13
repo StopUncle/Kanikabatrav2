@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { m } from "framer-motion";
 import { SITE_CONFIG, SOCIAL_METRICS, CONTENT_THEMES } from "@/lib/constants";
 import SocialHub from "./SocialHub";
 import Disclaimer from "./Disclaimer";
@@ -11,7 +11,7 @@ export default function AboutContent() {
     <div className="min-h-screen pt-32 pb-16 px-4 relative z-10">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
-        <motion.div
+        <m.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
@@ -26,10 +26,10 @@ export default function AboutContent() {
           <p className="text-gold-400 text-xl italic">
             &quot;{SITE_CONFIG.tagline}&quot;
           </p>
-        </motion.div>
+        </m.div>
 
         {/* Quick Stats Bar */}
-        <motion.div
+        <m.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.1 }}
@@ -55,12 +55,12 @@ export default function AboutContent() {
             <div className="text-3xl font-light text-white">21</div>
             <div className="text-gray-500 text-sm">Age of ASPD Diagnosis</div>
           </div>
-        </motion.div>
+        </m.div>
 
         {/* Main Content */}
         <div className="grid lg:grid-cols-2 gap-12 mb-16">
           {/* Story */}
-          <motion.div
+          <m.div
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.6, delay: 0.2 }}
@@ -101,10 +101,10 @@ export default function AboutContent() {
                 </p>
               </div>
             </div>
-          </motion.div>
+          </m.div>
 
           {/* Credentials */}
-          <motion.div
+          <m.div
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.6, delay: 0.4 }}
@@ -177,11 +177,11 @@ export default function AboutContent() {
                 </div>
               </div>
             </div>
-          </motion.div>
+          </m.div>
         </div>
 
         {/* Philosophy Section */}
-        <motion.div
+        <m.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.6 }}
@@ -214,13 +214,13 @@ export default function AboutContent() {
               to heal, I&apos;m teaching you to win.
             </p>
           </div>
-        </motion.div>
+        </m.div>
 
         {/* Social Hub */}
         <SocialHub />
 
         {/* Why Listen to Kanika - E-E-A-T Section */}
-        <motion.div
+        <m.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.7 }}
@@ -268,10 +268,10 @@ export default function AboutContent() {
               </p>
             </div>
           </div>
-        </motion.div>
+        </m.div>
 
         {/* Content Topics */}
-        <motion.div
+        <m.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.75 }}
@@ -293,10 +293,10 @@ export default function AboutContent() {
               </div>
             ))}
           </div>
-        </motion.div>
+        </m.div>
 
         {/* FAQ Section */}
-        <motion.div
+        <m.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.8 }}
@@ -335,10 +335,10 @@ export default function AboutContent() {
               },
             ]}
           />
-        </motion.div>
+        </m.div>
 
         {/* CTA Section */}
-        <motion.div
+        <m.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.85 }}
@@ -366,17 +366,17 @@ export default function AboutContent() {
               Private Coaching
             </a>
           </div>
-        </motion.div>
+        </m.div>
 
         {/* Disclaimer */}
-        <motion.div
+        <m.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.6, delay: 0.9 }}
           className="mt-16"
         >
           <Disclaimer variant="full" />
-        </motion.div>
+        </m.div>
       </div>
     </div>
   );

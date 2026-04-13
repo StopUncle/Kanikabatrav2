@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { m, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import BackgroundEffects from "@/components/BackgroundEffects";
 import Header from "@/components/Header";
@@ -74,7 +74,7 @@ export default function CoachingPage() {
       <div className="min-h-screen pt-24 sm:pt-32 pb-20 px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="max-w-5xl mx-auto">
           {/* ── HEADLINE ── */}
-          <motion.div
+          <m.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
@@ -91,10 +91,10 @@ export default function CoachingPage() {
             <p className="text-accent-gold/60 text-sm mt-4 tracking-wider">
               1:1 coaching &middot; Limited spots each month
             </p>
-          </motion.div>
+          </m.div>
 
           {/* ── WHO THIS IS FOR ── */}
-          <motion.div
+          <m.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
@@ -109,7 +109,7 @@ export default function CoachingPage() {
                 "You're done being the person who gets blindsided",
                 "You want to think differently — not just feel better",
               ].map((line, i) => (
-                <motion.p
+                <m.p
                   key={i}
                   initial={{ opacity: 0, x: -10 }}
                   whileInView={{ opacity: 1, x: 0 }}
@@ -118,13 +118,13 @@ export default function CoachingPage() {
                   className="text-text-light text-base sm:text-lg font-light leading-relaxed pl-5 border-l-2 border-accent-gold/30"
                 >
                   {line}
-                </motion.p>
+                </m.p>
               ))}
             </div>
-          </motion.div>
+          </m.div>
 
           {/* ── WHO THIS IS NOT FOR ── */}
-          <motion.div
+          <m.div
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
             transition={{ duration: 0.5 }}
@@ -141,11 +141,11 @@ export default function CoachingPage() {
                 see, whether you like it or not.
               </p>
             </div>
-          </motion.div>
+          </m.div>
 
           {/* ── PRICING TIERS ── */}
           <div className="mb-20 sm:mb-28">
-            <motion.h2
+            <m.h2
               initial={{ opacity: 0, y: 15 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5 }}
@@ -153,7 +153,7 @@ export default function CoachingPage() {
               className="text-center text-3xl sm:text-4xl font-light mb-14"
             >
               <span className="gradient-text-gold">How It Works</span>
-            </motion.h2>
+            </m.h2>
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-5 sm:gap-6">
               {COACHING_PACKAGES.map((pkg, index) => {
@@ -164,7 +164,7 @@ export default function CoachingPage() {
                   | null;
 
                 return (
-                  <motion.div
+                  <m.div
                     key={pkg.id}
                     id={pkg.id}
                     initial={{ opacity: 0, y: 25 }}
@@ -298,14 +298,14 @@ export default function CoachingPage() {
                         </div>
                       </div>
                     </div>
-                  </motion.div>
+                  </m.div>
                 );
               })}
             </div>
           </div>
 
           {/* ── COMPARISON TABLE ── */}
-          <motion.div
+          <m.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
@@ -345,10 +345,10 @@ export default function CoachingPage() {
             <p className="text-center text-text-gray/40 text-xs mt-6 tracking-wider">
               Limited to 8 clients per month
             </p>
-          </motion.div>
+          </m.div>
 
           {/* ── THE PROCESS ── */}
-          <motion.div
+          <m.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
@@ -396,10 +396,10 @@ export default function CoachingPage() {
                 </div>
               ))}
             </div>
-          </motion.div>
+          </m.div>
 
           {/* ── FAQ ── */}
-          <motion.div
+          <m.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
@@ -434,7 +434,7 @@ export default function CoachingPage() {
                   </button>
                   <AnimatePresence>
                     {openFaq === index && (
-                      <motion.div
+                      <m.div
                         initial={{ opacity: 0, height: 0 }}
                         animate={{ opacity: 1, height: "auto" }}
                         exit={{ opacity: 0, height: 0 }}
@@ -443,13 +443,13 @@ export default function CoachingPage() {
                         <p className="px-5 pb-5 text-text-gray/60 text-sm leading-relaxed">
                           {item.answer}
                         </p>
-                      </motion.div>
+                      </m.div>
                     )}
                   </AnimatePresence>
                 </div>
               ))}
             </div>
-          </motion.div>
+          </m.div>
 
           {/* ── INNER CIRCLE MENTION ── */}
           <div className="mt-8 text-center">
@@ -463,7 +463,7 @@ export default function CoachingPage() {
           </div>
 
           {/* ── SOCIAL PROOF ── */}
-          <motion.div
+          <m.div
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
             transition={{ duration: 0.5 }}
@@ -474,10 +474,10 @@ export default function CoachingPage() {
               As seen on LADbible &middot; 278K Instagram &middot; 157K YouTube
               &middot; Author of The Sociopathic Dating Bible
             </p>
-          </motion.div>
+          </m.div>
 
           {/* ── FINAL CTA ── */}
-          <motion.div
+          <m.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
@@ -512,7 +512,7 @@ export default function CoachingPage() {
               Questions? Contact us
               <ArrowRight size={14} />
             </a>
-          </motion.div>
+          </m.div>
         </div>
       </div>
     </>

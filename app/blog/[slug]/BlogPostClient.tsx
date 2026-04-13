@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { m } from "framer-motion";
 import Link from "next/link";
 import Header from "@/components/Header";
 import AuthorBio from "@/components/AuthorBio";
@@ -84,7 +84,7 @@ export default function BlogPostClient({
 
       <article className="pt-24 pb-24">
         <div className="max-w-4xl mx-auto px-6 lg:px-8">
-          <motion.div
+          <m.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
@@ -208,7 +208,7 @@ export default function BlogPostClient({
                 </footer>
               </div>
             </div>
-          </motion.div>
+          </m.div>
         </div>
       </article>
 

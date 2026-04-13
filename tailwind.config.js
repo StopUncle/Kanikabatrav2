@@ -35,7 +35,6 @@ module.exports = {
         "count-up": "count-up 0.5s ease-out",
         "progress-fill": "progress-fill 0.6s ease-out",
         "badge-unlock": "badge-unlock 0.5s ease-out",
-        "scale-in": "scale-in 0.2s ease-out",
       },
       keyframes: {
         "aurora-shift": {
@@ -133,16 +132,6 @@ module.exports = {
             transform: "scale(1.1)",
           },
           "100%": {
-            transform: "scale(1)",
-            opacity: "1",
-          },
-        },
-        "scale-in": {
-          from: {
-            transform: "scale(0.95)",
-            opacity: "0",
-          },
-          to: {
             transform: "scale(1)",
             opacity: "1",
           },

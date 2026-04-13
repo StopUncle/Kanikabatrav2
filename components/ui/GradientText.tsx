@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { m } from "framer-motion";
 import { cn } from "@/lib/utils";
 
 interface GradientTextProps {
@@ -24,7 +24,7 @@ const GradientText = ({
   };
 
   return (
-    <motion.span
+    <m.span
       className={cn(
         "bg-gradient-to-r bg-clip-text text-transparent",
         gradients[gradient],
@@ -36,7 +36,7 @@ const GradientText = ({
       transition={{ duration: 0.8 }}
     >
       {children}
-    </motion.span>
+    </m.span>
   );
 };
 

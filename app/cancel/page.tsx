@@ -2,7 +2,7 @@
 
 import { useEffect, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
-import { motion } from "framer-motion";
+import { m } from "framer-motion";
 import Link from "next/link";
 import BackgroundEffects from "@/components/BackgroundEffects";
 import Header from "@/components/Header";
@@ -31,7 +31,7 @@ function CancelContent() {
     <div className="min-h-screen pt-20 sm:pt-24 pb-16">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-4xl">
         <div className="text-center mb-12 sm:mb-16">
-          <motion.div
+          <m.div
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
             transition={{ type: "spring", stiffness: 100, damping: 15 }}
@@ -48,9 +48,9 @@ function CancelContent() {
                 clipRule="evenodd"
               />
             </svg>
-          </motion.div>
+          </m.div>
 
-          <motion.div
+          <m.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.2 }}
@@ -61,12 +61,12 @@ function CancelContent() {
             <p className="text-lg sm:text-xl text-text-muted max-w-2xl mx-auto leading-relaxed">
               Your payment was cancelled. No charges were made to your account.
             </p>
-          </motion.div>
+          </m.div>
         </div>
 
         <div className="grid md:grid-cols-2 gap-8 mb-12">
           {/* What Happened */}
-          <motion.div
+          <m.div
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.6, delay: 0.3 }}
@@ -113,10 +113,10 @@ function CancelContent() {
                 </div>
               </div>
             </Card>
-          </motion.div>
+          </m.div>
 
           {/* Common Questions */}
-          <motion.div
+          <m.div
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.6, delay: 0.4 }}
@@ -164,11 +164,11 @@ function CancelContent() {
                 </div>
               </div>
             </Card>
-          </motion.div>
+          </m.div>
         </div>
 
         {/* Suggestions */}
-        <motion.div
+        <m.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.5 }}
@@ -213,10 +213,10 @@ function CancelContent() {
               </div>
             </div>
           </Card>
-        </motion.div>
+        </m.div>
 
         {/* Action Buttons */}
-        <motion.div
+        <m.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.6 }}
@@ -239,10 +239,10 @@ function CancelContent() {
               Contact Support
             </Button>
           </Link>
-        </motion.div>
+        </m.div>
 
         {/* Reassurance */}
-        <motion.div
+        <m.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.6, delay: 0.7 }}
@@ -252,7 +252,7 @@ function CancelContent() {
             🔒 All payments are processed securely • No hidden fees • 24/7
             Support
           </p>
-        </motion.div>
+        </m.div>
       </div>
     </div>
   );

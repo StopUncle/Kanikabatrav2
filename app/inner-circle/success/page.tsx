@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, useRef, Suspense } from "react";
-import { motion } from "framer-motion";
+import { m } from "framer-motion";
 import { CheckCircle, ArrowRight, Loader2, AlertCircle } from "lucide-react";
 import Link from "next/link";
 import Header from "@/components/Header";
@@ -67,7 +67,7 @@ function SuccessContent() {
       <BackgroundEffects />
       <Header />
       <main className="min-h-screen flex items-center justify-center px-4 pt-28 pb-16 relative z-10">
-        <motion.div
+        <m.div
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
           className="text-center max-w-lg"
@@ -118,7 +118,7 @@ function SuccessContent() {
               </Link>
             </>
           )}
-        </motion.div>
+        </m.div>
       </main>
     </>
   );

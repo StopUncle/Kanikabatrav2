@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { motion } from "framer-motion";
+import { m } from "framer-motion";
 import { Send, CheckCircle, Clock } from "lucide-react";
 
 const schema = z.object({
@@ -119,7 +119,7 @@ export default function ApplicationForm({ existingStatus }: ApplicationFormProps
   };
 
   return (
-    <motion.form
+    <m.form
       onSubmit={handleSubmit(onSubmit)}
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
@@ -230,6 +230,6 @@ export default function ApplicationForm({ existingStatus }: ApplicationFormProps
         <Send className="w-4 h-4" />
         {submitStatus === "submitting" ? "Submitting..." : "Submit Application"}
       </button>
-    </motion.form>
+    </m.form>
   );
 }

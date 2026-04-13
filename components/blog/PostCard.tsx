@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { motion } from "framer-motion";
+import { m } from "framer-motion";
 import type { PostMeta } from "@/lib/mdx";
 
 interface PostCardProps {
@@ -11,7 +11,7 @@ interface PostCardProps {
 
 export default function PostCard({ post, index }: PostCardProps) {
   return (
-    <motion.article
+    <m.article
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, delay: index * 0.1 }}
@@ -83,6 +83,6 @@ export default function PostCard({ post, index }: PostCardProps) {
           <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-accent-gold/0 to-accent-burgundy/0 group-hover:from-accent-gold/5 group-hover:to-accent-burgundy/5 transition-all duration-500 pointer-events-none" />
         </div>
       </Link>
-    </motion.article>
+    </m.article>
   );
 }

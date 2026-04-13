@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { motion } from "framer-motion";
+import { m } from "framer-motion";
 import Button from "@/components/ui/Button";
 import { PAYPAL_CONFIG } from "@/lib/constants";
 
@@ -342,7 +342,7 @@ export default function PayPalButton({
 
   if (error) {
     return (
-      <motion.div
+      <m.div
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         className="space-y-4"
@@ -394,7 +394,7 @@ export default function PayPalButton({
         >
           Try Again
         </Button>
-      </motion.div>
+      </m.div>
     );
   }
 
@@ -422,7 +422,7 @@ export default function PayPalButton({
 
       {/* Purchase Summary */}
       {isScriptLoaded && !isProcessing && (
-        <motion.div
+        <m.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           className="text-center text-sm text-text-muted border-t border-gray-800 pt-4"
@@ -436,7 +436,7 @@ export default function PayPalButton({
           <p className="mt-2 text-xs">
             Secure payment processed by PayPal • SSL Encrypted
           </p>
-        </motion.div>
+        </m.div>
       )}
 
       {/* Fallback Manual Button */}

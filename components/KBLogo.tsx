@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { m } from "framer-motion";
 
 interface KBLogoProps {
   size?: "sm" | "md" | "lg" | "xl";
@@ -112,14 +112,14 @@ const KBLogo = ({
 
   if (animate) {
     return (
-      <motion.div
+      <m.div
         initial={{ rotate: 0 }}
         animate={{ rotate: 360 }}
         transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
         className="inline-block"
       >
         {logoContent}
-      </motion.div>
+      </m.div>
     );
   }
 

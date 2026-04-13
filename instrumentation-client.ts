@@ -18,21 +18,14 @@ if (process.env.NEXT_PUBLIC_SENTRY_DSN) {
 
     environment: process.env.NODE_ENV || "development",
 
-    // Session replay on errors only — captures the last ~30s of interaction
-    // when something breaks so you can see what the user was doing. Zero
-    // replay on successful sessions to keep quota low.
-    replaysOnErrorSampleRate: 1.0,
+    // Session Replay removed — the replay integration adds a large chunk
+    // to the client bundle that was showing up in Lighthouse's "reduce
+    // unused JS" warnings. We weren't regularly reviewing replays anyway.
+    // Errors still report normally; just no DOM recording attached.
+    replaysOnErrorSampleRate: 0,
     replaysSessionSampleRate: 0,
 
-    integrations: [
-      Sentry.replayIntegration({
-        // Mask all inputs and text by default — avoids leaking PII from
-        // form fields into replay recordings.
-        maskAllText: true,
-        maskAllInputs: true,
-        blockAllMedia: true,
-      }),
-    ],
+    integrations: [],
 
     ignoreErrors: [
       // Browser extensions throwing into window.onerror

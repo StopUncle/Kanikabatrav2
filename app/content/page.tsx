@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { motion } from "framer-motion";
+import { m } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
 import { FEATURED_VIDEOS, SOCIAL_METRICS, SOCIAL_LINKS } from "@/lib/constants";
@@ -23,7 +23,7 @@ export default function ContentPage() {
       <main className="relative z-10 pt-24 pb-20 px-4">
         <div className="max-w-7xl mx-auto">
           {/* Hero Section */}
-          <motion.div
+          <m.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             className="text-center mb-16"
@@ -42,10 +42,10 @@ export default function ContentPage() {
               <span className="text-gold-400">|</span>
               <span>{SOCIAL_METRICS.youtube.dailyGrowth}</span>
             </div>
-          </motion.div>
+          </m.div>
 
           {/* Category Filter */}
-          <motion.div
+          <m.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
@@ -74,12 +74,12 @@ export default function ContentPage() {
                 {cat.title}
               </button>
             ))}
-          </motion.div>
+          </m.div>
 
           {/* Video Grid */}
           <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-16">
             {filteredVideos.map((video, index) => (
-              <motion.div
+              <m.div
                 key={video.id}
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -134,12 +134,12 @@ export default function ContentPage() {
                     </p>
                   </div>
                 </div>
-              </motion.div>
+              </m.div>
             ))}
           </div>
 
           {/* Subscribe CTA */}
-          <motion.div
+          <m.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.3 }}
@@ -176,12 +176,12 @@ export default function ContentPage() {
                 Take the Dark Triad Quiz
               </Link>
             </div>
-          </motion.div>
+          </m.div>
 
           {/* Category Descriptions */}
           <div className="mt-20 grid md:grid-cols-2 gap-8">
             {FEATURED_VIDEOS.categories.map((category, index) => (
-              <motion.div
+              <m.div
                 key={category.id}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -215,7 +215,7 @@ export default function ContentPage() {
                     />
                   </svg>
                 </div>
-              </motion.div>
+              </m.div>
             ))}
           </div>
         </div>

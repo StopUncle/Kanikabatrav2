@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { motion } from "framer-motion";
+import { m } from "framer-motion";
 import { ShoppingCart, Loader2, CreditCard } from "lucide-react";
 
 interface LemonSqueezyButtonProps {
@@ -77,7 +77,7 @@ export default function LemonSqueezyButton({
 
   return (
     <div>
-      <motion.button
+      <m.button
         whileHover={{ scale: 1.02 }}
         whileTap={{ scale: 0.98 }}
         onClick={handleClick}
@@ -94,7 +94,7 @@ export default function LemonSqueezyButton({
             {price && <span className="opacity-80">— {price}</span>}
           </>
         )}
-      </motion.button>
+      </m.button>
 
       {error && (
         <p className="text-red-400 text-sm mt-2 text-center">{error}</p>

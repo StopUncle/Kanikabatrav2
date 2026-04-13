@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { m, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import { SITE_CONFIG, SOCIAL_METRICS } from "@/lib/constants";
 
@@ -16,9 +16,9 @@ export default function Hero() {
   }, []);
 
   return (
-    <section className="min-h-[100dvh] flex items-center justify-center pt-20 pb-20 px-4 sm:px-6 lg:px-8 relative">
+    <section className="hero-viewport min-h-screen flex items-center justify-center pt-20 pb-20 px-4 sm:px-6 lg:px-8 relative">
       <div className="max-w-7xl mx-auto text-center w-full">
-        <motion.div
+        <m.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
@@ -30,9 +30,9 @@ export default function Hero() {
               {SOCIAL_METRICS.combined.totalFollowers} Followers
             </span>
           </p>
-        </motion.div>
+        </m.div>
 
-        <motion.h1
+        <m.h1
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.2 }}
@@ -47,17 +47,17 @@ export default function Hero() {
           <span className="block text-accent-gold text-2xl sm:text-3xl md:text-4xl mt-2">
             Now Available
           </span>
-        </motion.h1>
+        </m.h1>
 
         {/* Rotating Quotes — now outcome-driven */}
-        <motion.div
+        <m.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.8, delay: 0.3 }}
           className="h-16 mb-8 sm:mb-12"
         >
           <AnimatePresence mode="wait">
-            <motion.p
+            <m.p
               key={quoteIndex}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -66,11 +66,11 @@ export default function Hero() {
               className="text-gold-400 text-lg sm:text-xl md:text-2xl italic font-light px-4"
             >
               &quot;{SITE_CONFIG.viralQuotes[quoteIndex]}&quot;
-            </motion.p>
+            </m.p>
           </AnimatePresence>
-        </motion.div>
+        </m.div>
 
-        <motion.p
+        <m.p
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.4 }}
@@ -78,9 +78,9 @@ export default function Hero() {
         >
           The dating guide written by a clinically diagnosed sociopath.
           The psychology they don&apos;t teach you — now in your hands.
-        </motion.p>
+        </m.p>
 
-        <motion.div
+        <m.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.6 }}
@@ -104,17 +104,17 @@ export default function Hero() {
           >
             Take The Quiz
           </Link>
-        </motion.div>
+        </m.div>
 
         {/* Scroll Indicator */}
-        <motion.div
+        <m.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 1, delay: 1 }}
           className="absolute bottom-5 sm:bottom-10 left-1/2 transform -translate-x-1/2"
         >
           <div className="w-0.5 h-16 bg-gradient-to-b from-accent-gold to-transparent animate-pulse" />
-        </motion.div>
+        </m.div>
       </div>
     </section>
   );

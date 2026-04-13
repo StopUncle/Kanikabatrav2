@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { motion } from "framer-motion";
+import { m } from "framer-motion";
 import Link from "next/link";
 import {
   Lock,
@@ -210,7 +210,7 @@ export default function QuizResultsPage() {
         <Header />
         <main className="min-h-screen pt-24 pb-16 relative z-10">
           <div className="container mx-auto px-4 max-w-4xl">
-            <motion.div
+            <m.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               className="text-center mb-12"
@@ -229,10 +229,10 @@ export default function QuizResultsPage() {
                   </span>
                 </h1>
               )}
-            </motion.div>
+            </m.div>
 
             {/* Auth Gate */}
-            <motion.div
+            <m.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 }}
@@ -268,10 +268,10 @@ export default function QuizResultsPage() {
                   </Link>
                 </div>
               </div>
-            </motion.div>
+            </m.div>
 
             {/* Blurred preview teaser */}
-            <motion.div
+            <m.div
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 0.4 }}
@@ -293,7 +293,7 @@ export default function QuizResultsPage() {
                   </div>
                 </div>
               </div>
-            </motion.div>
+            </m.div>
           </div>
         </main>
       </>
@@ -315,7 +315,7 @@ export default function QuizResultsPage() {
         <main className="min-h-screen pt-24 pb-16 relative z-10">
           <div className="container mx-auto px-4 max-w-4xl">
             {/* Results Header */}
-            <motion.div
+            <m.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               className="text-center mb-12"
@@ -355,10 +355,10 @@ export default function QuizResultsPage() {
                   </span>
                 </div>
               </div>
-            </motion.div>
+            </m.div>
 
             {/* Locked Radar Chart Preview */}
-            <motion.div
+            <m.div
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 0.2 }}
@@ -380,10 +380,10 @@ export default function QuizResultsPage() {
                   </div>
                 </div>
               </div>
-            </motion.div>
+            </m.div>
 
             {/* What You'll Get */}
-            <motion.div
+            <m.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3 }}
@@ -426,7 +426,7 @@ export default function QuizResultsPage() {
                     Icon: LayoutDashboard,
                   },
                 ].map((item, index) => (
-                  <motion.div
+                  <m.div
                     key={item.title}
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -438,13 +438,13 @@ export default function QuizResultsPage() {
                       <div className="text-white font-light">{item.title}</div>
                       <div className="text-text-gray text-sm">{item.desc}</div>
                     </div>
-                  </motion.div>
+                  </m.div>
                 ))}
               </div>
-            </motion.div>
+            </m.div>
 
             {/* Unlock Options */}
-            <motion.div
+            <m.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.5 }}
@@ -529,10 +529,10 @@ export default function QuizResultsPage() {
                   </button>
                 </div>
               )}
-            </motion.div>
+            </m.div>
 
             {/* Personalized Recommendation */}
-            <motion.div
+            <m.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.55 }}
@@ -588,10 +588,10 @@ export default function QuizResultsPage() {
                   Explore The Inner Circle — $29/mo
                 </Link>
               </div>
-            </motion.div>
+            </m.div>
 
             {/* Retake Option */}
-            <motion.div
+            <m.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.7 }}
@@ -603,7 +603,7 @@ export default function QuizResultsPage() {
               >
                 &larr; Retake Assessment
               </Link>
-            </motion.div>
+            </m.div>
           </div>
         </main>
       </>
@@ -623,7 +623,7 @@ export default function QuizResultsPage() {
         <main className="min-h-screen pt-24 pb-16 relative z-10">
           <div className="container mx-auto px-4 max-w-4xl">
             {/* Results Header */}
-            <motion.div
+            <m.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               className="text-center mb-12"
@@ -649,10 +649,10 @@ export default function QuizResultsPage() {
                   {diagnosis?.clinicalLabel || "Clinical diagnosis"}
                 </p>
               </div>
-            </motion.div>
+            </m.div>
 
             {/* Radar Chart */}
-            <motion.div
+            <m.div
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 0.2 }}
@@ -661,10 +661,10 @@ export default function QuizResultsPage() {
               <div className="p-8 bg-deep-black/50 border border-accent-gold/20 rounded-lg">
                 <RadarChart scores={fullResults.scores} />
               </div>
-            </motion.div>
+            </m.div>
 
             {/* Primary Type Deep Dive */}
-            <motion.div
+            <m.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3 }}
@@ -683,11 +683,11 @@ export default function QuizResultsPage() {
                   {primaryProfile.description}
                 </p>
               </div>
-            </motion.div>
+            </m.div>
 
             {/* Secondary Type */}
             {secondaryProfile && (
-              <motion.div
+              <m.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.4 }}
@@ -706,12 +706,12 @@ export default function QuizResultsPage() {
                     {secondaryProfile.description}
                   </p>
                 </div>
-              </motion.div>
+              </m.div>
             )}
 
             {/* Functioning Level */}
             {diagnosis?.functioningLevel && (
-              <motion.div
+              <m.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.5 }}
@@ -725,11 +725,11 @@ export default function QuizResultsPage() {
                     {diagnosis.functioningLevel} Adaptive Function
                   </p>
                 </div>
-              </motion.div>
+              </m.div>
             )}
 
             {/* Personalized Recommendation */}
-            <motion.div
+            <m.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.55 }}
@@ -784,10 +784,10 @@ export default function QuizResultsPage() {
                   Explore The Inner Circle — $29/mo
                 </Link>
               </div>
-            </motion.div>
+            </m.div>
 
             {/* Retake Option */}
-            <motion.div
+            <m.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.7 }}
@@ -799,7 +799,7 @@ export default function QuizResultsPage() {
               >
                 &larr; Retake Assessment
               </Link>
-            </motion.div>
+            </m.div>
           </div>
         </main>
       </>

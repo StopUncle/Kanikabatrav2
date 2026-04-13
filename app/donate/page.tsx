@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { m, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import BackgroundEffects from "@/components/BackgroundEffects";
 import Header from "@/components/Header";
@@ -53,7 +53,7 @@ export default function DonatePage() {
         <BackgroundEffects />
         <Header />
         <div className="min-h-screen pt-32 pb-16 px-4 relative z-10 flex items-center justify-center">
-          <motion.div
+          <m.div
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             className="max-w-md w-full text-center"
@@ -80,7 +80,7 @@ export default function DonatePage() {
                 Get the Sociopathic Dating Bible →
               </Link>
             </div>
-          </motion.div>
+          </m.div>
         </div>
       </>
     );
@@ -93,7 +93,7 @@ export default function DonatePage() {
       <div className="min-h-screen pt-24 sm:pt-32 pb-20 px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="max-w-xl mx-auto">
           {/* Header */}
-          <motion.div
+          <m.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
@@ -107,10 +107,10 @@ export default function DonatePage() {
               Your support keeps the content free, the truth unfiltered, and the
               mission alive.
             </p>
-          </motion.div>
+          </m.div>
 
           {/* Donation Card */}
-          <motion.div
+          <m.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.1 }}
@@ -202,7 +202,7 @@ export default function DonatePage() {
             {/* Proceed / PayPal */}
             <AnimatePresence mode="wait">
               {!showPayPal ? (
-                <motion.button
+                <m.button
                   key="proceed"
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
@@ -212,9 +212,9 @@ export default function DonatePage() {
                   className="w-full py-4 rounded-xl text-sm font-medium tracking-wider uppercase bg-gradient-to-r from-[#720921] to-[#4a0616] text-white hover:shadow-lg disabled:opacity-40 disabled:cursor-not-allowed transition-all"
                 >
                   Donate ${amount.toFixed(2)}
-                </motion.button>
+                </m.button>
               ) : (
-                <motion.div
+                <m.div
                   key="paypal"
                   initial={{ opacity: 0, height: 0 }}
                   animate={{ opacity: 1, height: "auto" }}
@@ -231,7 +231,7 @@ export default function DonatePage() {
                     }}
                     onCancel={() => setShowPayPal(false)}
                   />
-                </motion.div>
+                </m.div>
               )}
             </AnimatePresence>
 
@@ -239,10 +239,10 @@ export default function DonatePage() {
             <p className="text-center text-text-gray/40 text-xs mt-6">
               Secure payment via PayPal &middot; SSL encrypted
             </p>
-          </motion.div>
+          </m.div>
 
           {/* Why Donate */}
-          <motion.div
+          <m.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.2 }}
@@ -253,7 +253,7 @@ export default function DonatePage() {
               people, and keep the message uncompromised. No sponsors. No
               filters. Just truth.
             </p>
-          </motion.div>
+          </m.div>
         </div>
       </div>
     </>

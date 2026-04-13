@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { motion } from "framer-motion";
+import { m } from "framer-motion";
 import { Heart, MessageCircle, Pin, Mic } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import Link from "next/link";
@@ -75,7 +75,7 @@ export default function FeedPost({ post, isDetail = false }: FeedPostProps) {
   const timeAgo = formatDistanceToNow(new Date(post.createdAt), { addSuffix: true });
 
   return (
-    <motion.article
+    <m.article
       initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
       className="bg-deep-black/50 backdrop-blur-sm border border-accent-gold/10 rounded-2xl p-6 hover:border-accent-gold/25 transition-all duration-300"
@@ -231,6 +231,6 @@ export default function FeedPost({ post, isDetail = false }: FeedPostProps) {
           <span>{post.commentCount}</span>
         </Link>
       </div>
-    </motion.article>
+    </m.article>
   );
 }

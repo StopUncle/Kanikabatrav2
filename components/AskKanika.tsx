@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { m } from "framer-motion";
 import { MessageCircle, Mic, ArrowRight } from "lucide-react";
 import Link from "next/link";
 
@@ -15,7 +15,7 @@ export default function AskKanika() {
 
       <div className="max-w-4xl mx-auto relative z-10">
         {/* Header */}
-        <motion.div
+        <m.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
@@ -34,12 +34,12 @@ export default function AskKanika() {
             One question. One honest answer from someone who doesn&apos;t
             sugarcoat. Written or voice — your choice.
           </p>
-        </motion.div>
+        </m.div>
 
         {/* Two Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-6">
           {/* Written Answer Card */}
-          <motion.div
+          <m.div
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
@@ -103,10 +103,10 @@ export default function AskKanika() {
                 </Link>
               </div>
             </div>
-          </motion.div>
+          </m.div>
 
           {/* Voice Answer Card */}
-          <motion.div
+          <m.div
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.1 }}
@@ -174,11 +174,11 @@ export default function AskKanika() {
                 </Link>
               </div>
             </div>
-          </motion.div>
+          </m.div>
         </div>
 
         {/* Bottom text */}
-        <motion.p
+        <m.p
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           transition={{ duration: 0.6, delay: 0.3 }}
@@ -186,7 +186,7 @@ export default function AskKanika() {
           className="text-center text-text-gray/40 text-xs tracking-wider mt-10"
         >
           Responses within 48 hours &middot; All questions are confidential
-        </motion.p>
+        </m.p>
       </div>
     </section>
   );

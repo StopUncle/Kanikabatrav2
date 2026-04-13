@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { motion } from "framer-motion";
+import { m } from "framer-motion";
 import { Check, ShieldCheck, Bell } from "lucide-react";
 // PayPal — kept as fallback
 // import PayPalButton from "./PayPalButton";
@@ -49,7 +49,7 @@ export default function BookShowcase() {
           {/* Book 3D Display — transform removed (was x: -50 → 0), SSR now
               matches final layout so Lighthouse stops counting the slide-in
               animation as a layout shift. */}
-          <motion.div
+          <m.div
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
             transition={{ duration: 0.8 }}
@@ -86,10 +86,10 @@ export default function BookShowcase() {
                 <div className="absolute inset-0 bg-black/50 transform translateZ-10 rounded-r-2xl blur-xl" />
               </div>
             </div>
-          </motion.div>
+          </m.div>
 
           {/* Book Information */}
-          <motion.div
+          <m.div
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
             transition={{ duration: 0.8 }}
@@ -114,7 +114,7 @@ export default function BookShowcase() {
 
             <div className="space-y-3">
               {BOOK_INFO.features.slice(0, 4).map((feature, index) => (
-                <motion.div
+                <m.div
                   key={index}
                   initial={{ opacity: 0 }}
                   whileInView={{ opacity: 1 }}
@@ -124,7 +124,7 @@ export default function BookShowcase() {
                 >
                   <Check className="text-accent-gold mt-0.5 shrink-0" size={20} />
                   <span className="text-text-light">{feature}</span>
-                </motion.div>
+                </m.div>
               ))}
             </div>
 
@@ -225,7 +225,7 @@ export default function BookShowcase() {
                 </div>
               )}
             </div>
-          </motion.div>
+          </m.div>
         </div>
       </div>
 

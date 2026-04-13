@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { m } from "framer-motion";
 import BackgroundEffects from "@/components/BackgroundEffects";
 import Header from "@/components/Header";
 
@@ -11,7 +11,7 @@ export default function RefundPage() {
       <Header />
       <div className="min-h-screen pt-32 pb-16 px-4 relative z-10">
         <div className="max-w-4xl mx-auto">
-          <motion.div
+          <m.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
@@ -21,9 +21,9 @@ export default function RefundPage() {
               <span className="gradient-text">Refund Policy</span>
             </h1>
             <p className="text-text-gray text-lg">Last updated: April 8, 2026</p>
-          </motion.div>
+          </m.div>
 
-          <motion.div
+          <m.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.2 }}
@@ -117,7 +117,7 @@ export default function RefundPage() {
                 We aim to respond to all refund requests within 2 business days. Approved refunds are processed within 5-10 business days to the original payment method.
               </p>
             </section>
-          </motion.div>
+          </m.div>
         </div>
       </div>
     </>

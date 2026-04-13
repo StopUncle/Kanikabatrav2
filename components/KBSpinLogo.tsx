@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { m } from "framer-motion";
 
 interface KBSpinLogoProps {
   size?: "sm" | "md" | "lg" | "xl";
@@ -56,14 +56,14 @@ const KBSpinLogo = ({
   if (animate && size === "xl") {
     // For XL size with animation, wrap in motion for smooth rotation
     return (
-      <motion.div
+      <m.div
         initial={{ opacity: 0, scale: 0.8 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.3 }}
         className="inline-block"
       >
         {content}
-      </motion.div>
+      </m.div>
     );
   }
 

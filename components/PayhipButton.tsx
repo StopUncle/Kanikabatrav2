@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { m } from "framer-motion";
 import { CreditCard, ShoppingCart, Loader2 } from "lucide-react";
 import { useState } from "react";
 import { getPayhipCheckoutUrl } from "@/lib/payhip";
@@ -45,7 +45,7 @@ export default function PayhipButton({
   };
 
   return (
-    <motion.button
+    <m.button
       whileHover={{ scale: 1.02 }}
       whileTap={{ scale: 0.98 }}
       onClick={handleClick}
@@ -62,6 +62,6 @@ export default function PayhipButton({
           {price && <span className="opacity-80">— {price}</span>}
         </>
       )}
-    </motion.button>
+    </m.button>
   );
 }

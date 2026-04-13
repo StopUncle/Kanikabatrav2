@@ -2,7 +2,7 @@
 
 import { useEffect, useState, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
-import { motion } from "framer-motion";
+import { m } from "framer-motion";
 import Link from "next/link";
 import Header from "@/components/Header";
 import BackgroundEffects from "@/components/BackgroundEffects";
@@ -96,7 +96,7 @@ function QuizSuccessContent() {
           <div className="text-accent-gold mb-4">Unlocking your results...</div>
           <div className="flex justify-center gap-2">
             {[0, 1, 2].map((i) => (
-              <motion.div
+              <m.div
                 key={i}
                 className="w-2 h-2 bg-accent-gold rounded-full"
                 animate={{ scale: [1, 1.5, 1], opacity: [0.5, 1, 0.5] }}
@@ -165,7 +165,7 @@ function QuizSuccessContent() {
       <Header />
       <main className="min-h-screen pt-24 pb-16 relative z-10">
         <div className="container mx-auto px-4 max-w-4xl">
-          <motion.div
+          <m.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             className="text-center mb-12"
@@ -186,7 +186,7 @@ function QuizSuccessContent() {
             </p>
 
             {diagnosis && (
-              <motion.div
+              <m.div
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: 0.2 }}
@@ -205,11 +205,11 @@ function QuizSuccessContent() {
                     {getFunctioningLabel(diagnosis.functioningLevel)}
                   </div>
                 </div>
-              </motion.div>
+              </m.div>
             )}
-          </motion.div>
+          </m.div>
 
-          <motion.div
+          <m.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: 0.2 }}
@@ -218,10 +218,10 @@ function QuizSuccessContent() {
             <div className="p-8 bg-deep-black/50 border border-accent-gold/20 rounded-lg">
               <RadarChart scores={result.scores} showLabels showValues />
             </div>
-          </motion.div>
+          </m.div>
 
           {diagnosis && (
-            <motion.div
+            <m.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3 }}
@@ -235,10 +235,10 @@ function QuizSuccessContent() {
                   {diagnosis.description}
                 </p>
               </div>
-            </motion.div>
+            </m.div>
           )}
 
-          <motion.div
+          <m.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.4 }}
@@ -282,9 +282,9 @@ function QuizSuccessContent() {
                 </div>
               ))}
             </div>
-          </motion.div>
+          </m.div>
 
-          <motion.div
+          <m.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.5 }}
@@ -373,9 +373,9 @@ function QuizSuccessContent() {
                 </p>
               </div>
             </div>
-          </motion.div>
+          </m.div>
 
-          <motion.div
+          <m.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.6 }}
@@ -402,9 +402,9 @@ function QuizSuccessContent() {
                 {secondaryProfile.description}
               </p>
             </div>
-          </motion.div>
+          </m.div>
 
-          <motion.div
+          <m.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.7 }}
@@ -439,9 +439,9 @@ function QuizSuccessContent() {
                 </div>
               </Link>
             </div>
-          </motion.div>
+          </m.div>
 
-          <motion.div
+          <m.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.8 }}
@@ -453,7 +453,7 @@ function QuizSuccessContent() {
             >
               ← Retake Assessment
             </Link>
-          </motion.div>
+          </m.div>
         </div>
       </main>
     </>

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useCallback, useMemo } from "react";
-import { motion } from "framer-motion";
+import { m } from "framer-motion";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import DOMPurify from "dompurify";
@@ -165,7 +165,7 @@ export default function LessonPageClient({
             </Link>
           </div>
 
-          <motion.div
+          <m.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             className="mb-6"
@@ -198,9 +198,9 @@ export default function LessonPageClient({
             >
               {lesson.title}
             </h1>
-          </motion.div>
+          </m.div>
 
-          <motion.div
+          <m.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
@@ -214,10 +214,10 @@ export default function LessonPageClient({
               initialPosition={initialProgress.watchedSeconds}
               duration={lesson.duration || undefined}
             />
-          </motion.div>
+          </m.div>
 
           {lesson.textContent && (
-            <motion.div
+            <m.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 }}
@@ -232,11 +232,11 @@ export default function LessonPageClient({
                   dangerouslySetInnerHTML={{ __html: sanitizedTextContent }}
                 />
               </div>
-            </motion.div>
+            </m.div>
           )}
 
           {lesson.description && !lesson.textContent && (
-            <motion.div
+            <m.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 }}
@@ -246,11 +246,11 @@ export default function LessonPageClient({
                 About This Lesson
               </h2>
               <p className="text-text-gray">{lesson.description}</p>
-            </motion.div>
+            </m.div>
           )}
 
           {hasAccess && !isCompleted && (
-            <motion.div
+            <m.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3 }}
@@ -265,10 +265,10 @@ export default function LessonPageClient({
                 </div>
                 Mark as Complete
               </button>
-            </motion.div>
+            </m.div>
           )}
 
-          <motion.div
+          <m.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.4 }}
@@ -295,10 +295,10 @@ export default function LessonPageClient({
                 </p>
               </Link>
             )}
-          </motion.div>
+          </m.div>
 
           {!hasAccess && (
-            <motion.div
+            <m.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.5 }}
@@ -318,11 +318,11 @@ export default function LessonPageClient({
               >
                 View Subscription Options
               </Link>
-            </motion.div>
+            </m.div>
           )}
 
           {hasAccess && (
-            <motion.div
+            <m.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.5 }}
@@ -342,7 +342,7 @@ export default function LessonPageClient({
                   </Link>
                 </div>
               </div>
-            </motion.div>
+            </m.div>
           )}
         </div>
       </div>

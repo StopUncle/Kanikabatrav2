@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { motion } from "framer-motion";
+import { m } from "framer-motion";
 import {
   Crown,
   Check,
@@ -77,7 +77,7 @@ export default function SubscriptionCard({
   }
 
   return (
-    <motion.div
+    <m.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       className={`bg-deep-black/40 backdrop-blur-sm border rounded-2xl p-6 ${
@@ -133,6 +133,6 @@ export default function SubscriptionCard({
       <p className="text-center text-xs text-text-muted mt-4">
         Secure payment via PayPal. Cancel anytime.
       </p>
-    </motion.div>
+    </m.div>
   );
 }

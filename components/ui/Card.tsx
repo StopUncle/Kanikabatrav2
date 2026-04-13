@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { m } from "framer-motion";
 import { cn } from "@/lib/utils";
 
 interface CardProps {
@@ -19,7 +19,7 @@ const Card = ({
   popular = false,
 }: CardProps) => {
   return (
-    <motion.div
+    <m.div
       whileHover={hover ? { y: -10, scale: 1.02 } : undefined}
       transition={{ duration: 0.3 }}
       className={cn(
@@ -48,7 +48,7 @@ const Card = ({
 
       {/* Content */}
       <div className="relative z-10">{children}</div>
-    </motion.div>
+    </m.div>
   );
 };
 

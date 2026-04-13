@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { motion } from "framer-motion";
+import { m } from "framer-motion";
 import { CreditCard, ShoppingCart, Loader2 } from "lucide-react";
 
 interface StripeButtonProps {
@@ -76,7 +76,7 @@ export default function StripeButton({
 
   return (
     <div>
-      <motion.button
+      <m.button
         whileHover={{ scale: 1.02 }}
         whileTap={{ scale: 0.98 }}
         onClick={handleClick}
@@ -93,7 +93,7 @@ export default function StripeButton({
             {price && <span className="opacity-80">— {price}</span>}
           </>
         )}
-      </motion.button>
+      </m.button>
 
       {error && (
         <p className="text-red-400 text-sm mt-2 text-center">{error}</p>

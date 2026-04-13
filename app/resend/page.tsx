@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { motion } from "framer-motion";
+import { m } from "framer-motion";
 import Link from "next/link";
 import BackgroundEffects from "@/components/BackgroundEffects";
 import Header from "@/components/Header";
@@ -56,7 +56,7 @@ export default function ResendPage() {
       <Header />
       <div className="min-h-screen pt-32 pb-16 px-4 relative z-10">
         <div className="max-w-lg mx-auto">
-          <motion.div
+          <m.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
@@ -70,9 +70,9 @@ export default function ResendPage() {
               Didn&apos;t receive your book? Enter the email you used on PayPal
               and we&apos;ll send a fresh download link.
             </p>
-          </motion.div>
+          </m.div>
 
-          <motion.div
+          <m.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.2 }}
@@ -136,7 +136,7 @@ export default function ResendPage() {
                 </div>
 
                 {useDifferentEmail && (
-                  <motion.div
+                  <m.div
                     initial={{ opacity: 0, height: 0 }}
                     animate={{ opacity: 1, height: "auto" }}
                     transition={{ duration: 0.2 }}
@@ -155,7 +155,7 @@ export default function ResendPage() {
                       placeholder="Your preferred email address"
                       className="w-full px-4 py-3 bg-deep-black/50 border border-accent-gold/20 rounded-lg text-text-light placeholder:text-text-gray/50 focus:outline-none focus:border-accent-gold/50 transition-colors"
                     />
-                  </motion.div>
+                  </m.div>
                 )}
 
                 {status === "error" && (
@@ -184,9 +184,9 @@ export default function ResendPage() {
                 </button>
               </form>
             )}
-          </motion.div>
+          </m.div>
 
-          <motion.div
+          <m.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.6, delay: 0.4 }}
@@ -205,7 +205,7 @@ export default function ResendPage() {
             <Link href="/" className="text-accent-gold hover:underline text-sm">
               &larr; Back to Home
             </Link>
-          </motion.div>
+          </m.div>
         </div>
       </div>
     </>

@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { m } from "framer-motion";
 import BackgroundEffects from "@/components/BackgroundEffects";
 import Header from "@/components/Header";
 import { SITE_CONFIG } from "@/lib/constants";
@@ -13,7 +13,7 @@ export default function TermsPage() {
       <div className="min-h-screen pt-32 pb-16 px-4 relative z-10">
         <div className="max-w-4xl mx-auto">
           {/* Header */}
-          <motion.div
+          <m.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
@@ -25,11 +25,11 @@ export default function TermsPage() {
             <p className="text-text-gray text-lg">
               Last updated: {new Date().toLocaleDateString()}
             </p>
-          </motion.div>
+          </m.div>
 
           {/* Terms Content */}
           <div className="space-y-8">
-            <motion.div
+            <m.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.1 }}
@@ -51,9 +51,9 @@ export default function TermsPage() {
                   </p>
                 </div>
               </div>
-            </motion.div>
+            </m.div>
 
-            <motion.div
+            <m.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.2 }}
@@ -101,9 +101,9 @@ export default function TermsPage() {
                   </div>
                 </div>
               </div>
-            </motion.div>
+            </m.div>
 
-            <motion.div
+            <m.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.3 }}
@@ -142,9 +142,9 @@ export default function TermsPage() {
                   </div>
                 </div>
               </div>
-            </motion.div>
+            </m.div>
 
-            <motion.div
+            <m.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.4 }}
@@ -182,9 +182,9 @@ export default function TermsPage() {
                   </div>
                 </div>
               </div>
-            </motion.div>
+            </m.div>
 
-            <motion.div
+            <m.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.5 }}
@@ -240,9 +240,9 @@ export default function TermsPage() {
                   </div>
                 </div>
               </div>
-            </motion.div>
+            </m.div>
 
-            <motion.div
+            <m.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.6 }}
@@ -288,9 +288,9 @@ export default function TermsPage() {
                   </div>
                 </div>
               </div>
-            </motion.div>
+            </m.div>
 
-            <motion.div
+            <m.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.7 }}
@@ -316,9 +316,9 @@ export default function TermsPage() {
                   </p>
                 </div>
               </div>
-            </motion.div>
+            </m.div>
 
-            <motion.div
+            <m.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.8 }}
@@ -355,7 +355,7 @@ export default function TermsPage() {
                   </div>
                 </div>
               </div>
-            </motion.div>
+            </m.div>
           </div>
         </div>
       </div>

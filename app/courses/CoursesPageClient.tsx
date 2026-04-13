@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { m } from "framer-motion";
 import BackgroundEffects from "@/components/BackgroundEffects";
 import Header from "@/components/Header";
 import CourseCard from "@/components/course/CourseCard";
@@ -46,7 +46,7 @@ export default function CoursesPageClient({
       <Header />
       <div className="min-h-screen pt-20 sm:pt-24 lg:pt-32 pb-16 px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="max-w-7xl mx-auto">
-          <motion.div
+          <m.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
@@ -75,10 +75,10 @@ export default function CoursesPageClient({
                 <span>Community Access</span>
               </div>
             </div>
-          </motion.div>
+          </m.div>
 
           {courses.length === 0 ? (
-            <motion.div
+            <m.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.2 }}
@@ -100,11 +100,11 @@ export default function CoursesPageClient({
                   Get Notified
                 </a>
               </div>
-            </motion.div>
+            </m.div>
           ) : (
             <>
               {standardCourses.length > 0 && (
-                <motion.section
+                <m.section
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.6, delay: 0.2 }}
@@ -127,11 +127,11 @@ export default function CoursesPageClient({
                       );
                     })}
                   </div>
-                </motion.section>
+                </m.section>
               )}
 
               {goldCourses.length > 0 && (
-                <motion.section
+                <m.section
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.6, delay: 0.4 }}
@@ -164,12 +164,12 @@ export default function CoursesPageClient({
                       </div>
                     </div>
                   </div>
-                </motion.section>
+                </m.section>
               )}
             </>
           )}
 
-          <motion.div
+          <m.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.6 }}
@@ -214,7 +214,7 @@ export default function CoursesPageClient({
                 </div>
               ))}
             </div>
-          </motion.div>
+          </m.div>
         </div>
       </div>
     </>

@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { m } from "framer-motion";
 import Link from "next/link";
 import Header from "@/components/Header";
 import BackgroundEffects from "@/components/BackgroundEffects";
@@ -22,7 +22,7 @@ export default function QuizLanding() {
       <main className="min-h-screen pt-24 pb-16 relative z-10">
         <div className="container mx-auto px-4 max-w-4xl">
           {/* Hero Section */}
-          <motion.div
+          <m.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
@@ -74,18 +74,18 @@ export default function QuizLanding() {
 
             {/* CTA Button */}
             <Link href="/quiz/take">
-              <motion.button
+              <m.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.98 }}
                 className="px-12 py-4 bg-gradient-to-r from-accent-gold to-accent-gold/80 text-deep-black font-medium text-lg tracking-wider uppercase rounded transition-all hover:shadow-lg hover:shadow-accent-gold/20"
               >
                 Begin Assessment
-              </motion.button>
+              </m.button>
             </Link>
-          </motion.div>
+          </m.div>
 
           {/* The Six Personality Types */}
-          <motion.div
+          <m.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
@@ -124,7 +124,7 @@ export default function QuizLanding() {
                   Icon: Scale,
                 },
               ].map((type, index) => (
-                <motion.div
+                <m.div
                   key={type.name}
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
@@ -150,13 +150,13 @@ export default function QuizLanding() {
                     {type.name}
                   </div>
                   <div className="text-text-gray text-xs">{type.trait}</div>
-                </motion.div>
+                </m.div>
               ))}
             </div>
-          </motion.div>
+          </m.div>
 
           {/* How It Works */}
-          <motion.div
+          <m.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.4 }}
@@ -186,7 +186,7 @@ export default function QuizLanding() {
                   description: `Clinical-style diagnosis with functioning level and detailed analysis delivered to your email for $${QUIZ_INFO.price}.`,
                 },
               ].map((item, index) => (
-                <motion.div
+                <m.div
                   key={item.step}
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
@@ -200,13 +200,13 @@ export default function QuizLanding() {
                     {item.title}
                   </h3>
                   <p className="text-text-gray text-sm">{item.description}</p>
-                </motion.div>
+                </m.div>
               ))}
             </div>
-          </motion.div>
+          </m.div>
 
           {/* Why This Quiz */}
-          <motion.div
+          <m.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.5 }}
@@ -223,10 +223,10 @@ export default function QuizLanding() {
                 your psychology actually operates when it matters.
               </p>
             </div>
-          </motion.div>
+          </m.div>
 
           {/* Disclaimer */}
-          <motion.div
+          <m.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.8, delay: 0.6 }}
@@ -237,28 +237,28 @@ export default function QuizLanding() {
                 {QUIZ_INFO.disclaimer}
               </p>
             </div>
-          </motion.div>
+          </m.div>
 
           {/* Bottom CTA */}
-          <motion.div
+          <m.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.7 }}
             className="text-center mt-12"
           >
             <Link href="/quiz/take">
-              <motion.button
+              <m.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.98 }}
                 className="px-12 py-4 border border-accent-gold text-accent-gold font-medium tracking-wider uppercase rounded transition-all hover:bg-accent-gold/10"
               >
                 Start Now →
-              </motion.button>
+              </m.button>
             </Link>
             <p className="mt-4 text-text-gray text-sm">
               Free to take. Pay only to unlock your full report.
             </p>
-          </motion.div>
+          </m.div>
         </div>
       </main>
     </>

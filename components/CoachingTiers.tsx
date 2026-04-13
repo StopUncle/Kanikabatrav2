@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { m } from "framer-motion";
 import { Check } from "lucide-react";
 import { COACHING_PACKAGES } from "@/lib/constants";
 
@@ -18,7 +18,7 @@ const CoachingTiers = ({ showButton = true, onSelect }: CoachingTiersProps) => {
           pkg.ctaLabel || `Book ${pkg.name}`;
 
         return (
-          <motion.div
+          <m.div
             key={pkg.id}
             initial={{ opacity: 0, y: 25 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -99,7 +99,7 @@ const CoachingTiers = ({ showButton = true, onSelect }: CoachingTiersProps) => {
                 )}
               </div>
             </div>
-          </motion.div>
+          </m.div>
         );
       })}
     </div>

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { m, AnimatePresence } from "framer-motion";
 
 export default function NewsletterForm() {
   const [email, setEmail] = useState("");
@@ -48,7 +48,7 @@ export default function NewsletterForm() {
     <div className="max-w-md mx-auto">
       <AnimatePresence mode="wait">
         {status === "success" ? (
-          <motion.div
+          <m.div
             key="success"
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
@@ -62,9 +62,9 @@ export default function NewsletterForm() {
             >
               Subscribe another email
             </button>
-          </motion.div>
+          </m.div>
         ) : (
-          <motion.form
+          <m.form
             key="form"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -88,7 +88,7 @@ export default function NewsletterForm() {
             >
               {status === "loading" ? (
                 <span className="flex items-center justify-center gap-2">
-                  <motion.span
+                  <m.span
                     animate={{ rotate: 360 }}
                     transition={{
                       duration: 1,
@@ -103,18 +103,18 @@ export default function NewsletterForm() {
                 "Subscribe"
               )}
             </button>
-          </motion.form>
+          </m.form>
         )}
       </AnimatePresence>
 
       {status === "error" && (
-        <motion.p
+        <m.p
           initial={{ opacity: 0, y: 5 }}
           animate={{ opacity: 1, y: 0 }}
           className="text-red-400 text-sm text-center mt-3"
         >
           {message}
-        </motion.p>
+        </m.p>
       )}
     </div>
   );

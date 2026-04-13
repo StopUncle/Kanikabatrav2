@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { motion } from "framer-motion";
+import { m } from "framer-motion";
 import Link from "next/link";
 import {
   CheckCircle,
@@ -37,14 +37,14 @@ export default function CoachingSuccessPage() {
     return (
       <div className="min-h-screen flex items-center justify-center bg-deep-black">
         <BackgroundEffects />
-        <motion.div
+        <m.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           className="text-center z-10"
         >
           <div className="animate-spin w-16 h-16 border-4 border-gold border-t-transparent rounded-full mx-auto mb-6" />
           <p className="text-gold text-lg">Processing your transformation...</p>
-        </motion.div>
+        </m.div>
       </div>
     );
   }
@@ -54,20 +54,20 @@ export default function CoachingSuccessPage() {
       <BackgroundEffects />
 
       {/* Success Header */}
-      <motion.div
+      <m.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         className="relative z-10 pt-20 pb-10"
       >
         <div className="max-w-4xl mx-auto px-4 text-center">
-          <motion.div
+          <m.div
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
             transition={{ delay: 0.2, type: "spring" }}
             className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-green-500 to-emerald-600 rounded-full mb-6"
           >
             <CheckCircle className="w-12 h-12 text-white" />
-          </motion.div>
+          </m.div>
 
           <h1 className="text-5xl md:text-6xl font-light mb-4 bg-gradient-to-r from-gold to-amber-300 bg-clip-text text-transparent">
             Welcome to Your Transformation
@@ -76,11 +76,11 @@ export default function CoachingSuccessPage() {
             Your coaching session has been confirmed
           </p>
         </div>
-      </motion.div>
+      </m.div>
 
       {/* Main Content */}
       <div className="relative z-10 max-w-4xl mx-auto px-4 pb-20">
-        <motion.div
+        <m.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4 }}
@@ -153,10 +153,10 @@ export default function CoachingSuccessPage() {
               </div>
             </div>
           </div>
-        </motion.div>
+        </m.div>
 
         {/* Preparation Tips */}
-        <motion.div
+        <m.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.6 }}
@@ -190,10 +190,10 @@ export default function CoachingSuccessPage() {
               <span>Set aside a quiet, private space for our session</span>
             </li>
           </ul>
-        </motion.div>
+        </m.div>
 
         {/* Contact Support */}
-        <motion.div
+        <m.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.8 }}
@@ -218,10 +218,10 @@ export default function CoachingSuccessPage() {
               </Button>
             </a>
           </div>
-        </motion.div>
+        </m.div>
 
         {/* Action Buttons */}
-        <motion.div
+        <m.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 1 }}
@@ -237,10 +237,10 @@ export default function CoachingSuccessPage() {
               Return to Home
             </Button>
           </Link>
-        </motion.div>
+        </m.div>
 
         {/* Inspirational Quote */}
-        <motion.div
+        <m.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 1.2 }}
@@ -251,7 +251,7 @@ export default function CoachingSuccessPage() {
             power.&rdquo;
           </p>
           <p className="text-text-muted mt-2">- Kanika Batra</p>
-        </motion.div>
+        </m.div>
       </div>
     </div>
   );

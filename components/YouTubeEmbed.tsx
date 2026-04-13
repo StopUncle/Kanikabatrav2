@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useCallback } from "react";
-import { motion } from "framer-motion";
+import { m } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
 import { FEATURED_VIDEOS, SITE_CONFIG } from "@/lib/constants";
@@ -118,7 +118,7 @@ export function YouTubeFeaturedSection() {
       <div className="absolute inset-0 bg-gradient-to-b from-black/0 via-deep-navy/20 to-black/0" />
 
       <div className="max-w-6xl mx-auto relative z-10">
-        <motion.div
+        <m.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
@@ -132,11 +132,11 @@ export function YouTubeFeaturedSection() {
             31.7M+ views and counting. See why the internet can&apos;t look
             away.
           </p>
-        </motion.div>
+        </m.div>
 
         <div className="grid md:grid-cols-3 gap-8">
           {featuredVideos.map((video, index) => (
-            <motion.div
+            <m.div
               key={video.id + index}
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -172,11 +172,11 @@ export function YouTubeFeaturedSection() {
                   )}
                 </div>
               </div>
-            </motion.div>
+            </m.div>
           ))}
         </div>
 
-        <motion.div
+        <m.div
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
@@ -213,7 +213,7 @@ export function YouTubeFeaturedSection() {
             </svg>
             Subscribe on YouTube
           </a>
-        </motion.div>
+        </m.div>
       </div>
     </section>
   );

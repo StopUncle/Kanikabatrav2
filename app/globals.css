@@ -32,6 +32,23 @@
   h6 {
     font-family: "Didot", "Bodoni MT", "Georgia", serif;
   }
+
+  /* Hero section sizing — lives in the base CSS (not a Tailwind arbitrary
+     value) so the rule is present in the critical stylesheet at first
+     paint. Previously `min-h-[100dvh]` was generated as a JIT arbitrary
+     class that seemed to apply slightly late on desktop, causing the
+     section to grow after FCP and push the Footer down by ~50% of the
+     viewport (CLS 0.56). min-h-screen is the stable fallback; the
+     @supports rule upgrades modern browsers to dvh so the mobile
+     address-bar fix is preserved. */
+  .hero-viewport {
+    min-height: 100vh;
+  }
+  @supports (min-height: 100dvh) {
+    .hero-viewport {
+      min-height: 100dvh;
+    }
+  }
 }
 
 @layer components {

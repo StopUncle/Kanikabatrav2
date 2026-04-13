@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { motion } from "framer-motion";
+import { m } from "framer-motion";
 import Link from "next/link";
 import Header from "@/components/Header";
 import PostCard from "@/components/blog/PostCard";
@@ -18,7 +18,7 @@ interface BlogClientProps {
 
 function FeaturedPost({ post }: { post: PostMeta }) {
   return (
-    <motion.article
+    <m.article
       initial={{ opacity: 0, y: 30 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.7 }}
@@ -100,7 +100,7 @@ function FeaturedPost({ post }: { post: PostMeta }) {
           <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-accent-gold/0 to-accent-burgundy/0 group-hover:from-accent-gold/5 group-hover:to-accent-burgundy/5 transition-all duration-500 pointer-events-none" />
         </div>
       </Link>
-    </motion.article>
+    </m.article>
   );
 }
 
@@ -134,7 +134,7 @@ export default function BlogClient({
 
       <main className="pt-32 pb-24">
         <div className="max-w-7xl mx-auto px-6 lg:px-8">
-          <motion.div
+          <m.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
@@ -150,9 +150,9 @@ export default function BlogClient({
               Forbidden insights into human psychology, manipulation, and
               the art of strategic influence.
             </p>
-          </motion.div>
+          </m.div>
 
-          <motion.div
+          <m.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.2 }}
@@ -162,7 +162,7 @@ export default function BlogClient({
               activeCategory={activeCategory}
               onCategoryChange={setActiveCategory}
             />
-          </motion.div>
+          </m.div>
 
           {filteredPosts.length > 0 ? (
             <>
@@ -177,7 +177,7 @@ export default function BlogClient({
               </div>
 
               {hasMore && (
-                <motion.div
+                <m.div
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   className="text-center mt-16"
@@ -190,21 +190,21 @@ export default function BlogClient({
                   >
                     Load More Articles
                   </button>
-                </motion.div>
+                </m.div>
               )}
 
               {remainingPosts.length === 0 && !activeCategory && (
-                <motion.p
+                <m.p
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   className="text-center text-text-gray mt-12"
                 >
                   More articles coming soon...
-                </motion.p>
+                </m.p>
               )}
             </>
           ) : (
-            <motion.div
+            <m.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               className="text-center py-24"
@@ -233,10 +233,10 @@ export default function BlogClient({
               >
                 View all posts
               </button>
-            </motion.div>
+            </m.div>
           )}
 
-          <motion.section
+          <m.section
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
@@ -254,7 +254,7 @@ export default function BlogClient({
               Delivered weekly. No spam. Unsubscribe anytime.
             </p>
             <NewsletterForm />
-          </motion.section>
+          </m.section>
         </div>
       </main>
 

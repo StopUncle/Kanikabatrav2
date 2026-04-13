@@ -5,7 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { motion } from "framer-motion";
+import { m } from "framer-motion";
 import { Eye, EyeOff, Mail, Lock, UserPlus } from "lucide-react";
 
 const registerSchema = z
@@ -71,7 +71,7 @@ export default function RegisterForm() {
   };
 
   return (
-    <motion.div
+    <m.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6 }}
@@ -79,27 +79,27 @@ export default function RegisterForm() {
     >
       <div className="bg-deep-black/50 backdrop-blur-sm rounded-2xl border border-accent-gold/20 p-8 shadow-2xl">
         <div className="text-center mb-8">
-          <motion.div
+          <m.div
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
             transition={{ delay: 0.2, duration: 0.5 }}
             className="w-16 h-16 bg-gradient-to-r from-deep-burgundy to-royal-sapphire rounded-full flex items-center justify-center mx-auto mb-4"
           >
             <UserPlus className="w-8 h-8 text-white" />
-          </motion.div>
+          </m.div>
           <h2 className="text-2xl font-light gradient-text-gold mb-2">Create Account</h2>
           <p className="text-text-gray">Join the dark psychology mastery</p>
         </div>
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
           {error && (
-            <motion.div
+            <m.div
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               className="p-4 bg-red-900/50 border border-red-500 rounded-lg text-red-200 text-sm"
             >
               {error}
-            </motion.div>
+            </m.div>
           )}
 
           <div>
@@ -184,7 +184,7 @@ export default function RegisterForm() {
             )}
           </div>
 
-          <motion.button
+          <m.button
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
             type="submit"
@@ -199,7 +199,7 @@ export default function RegisterForm() {
                 <span>Create Account</span>
               </>
             )}
-          </motion.button>
+          </m.button>
         </form>
 
         <div className="mt-8 text-center">
@@ -220,6 +220,6 @@ export default function RegisterForm() {
           </p>
         </div>
       </div>
-    </motion.div>
+    </m.div>
   );
 }

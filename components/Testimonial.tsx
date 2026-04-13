@@ -1,13 +1,13 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { m } from "framer-motion";
 
 export default function Testimonial() {
   return (
     <section className="py-16 sm:py-24 lg:py-32 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
       <div className="absolute inset-0 bg-gradient-to-b from-transparent via-accent-burgundy/10 to-transparent" />
 
-      <motion.div
+      <m.div
         initial={{ opacity: 0, y: 30 }}
         whileInView={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8 }}
@@ -29,7 +29,7 @@ export default function Testimonial() {
             — Verified Reader
           </footer>
         </blockquote>
-      </motion.div>
+      </m.div>
     </section>
   );
 }

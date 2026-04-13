@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { m, AnimatePresence } from "framer-motion";
 import { X, BookOpen, Mail, Crown, ShoppingCart } from "lucide-react";
 import { BOOK_INFO } from "@/lib/constants";
 
@@ -58,7 +58,7 @@ export default function PresaleModal({
     <AnimatePresence>
       {isOpen && (
         <>
-          <motion.div
+          <m.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -66,7 +66,7 @@ export default function PresaleModal({
             onClick={onClose}
           />
 
-          <motion.div
+          <m.div
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.9 }}
@@ -81,7 +81,7 @@ export default function PresaleModal({
             </button>
 
             {submitted ? (
-              <motion.div
+              <m.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 className="text-center py-8"
@@ -94,7 +94,7 @@ export default function PresaleModal({
                   We&apos;ll notify you the moment the book launches on{" "}
                   {formattedDate}
                 </p>
-              </motion.div>
+              </m.div>
             ) : (
               <>
                 <h2 className="text-3xl font-light gradient-text mb-2">
@@ -248,7 +248,7 @@ export default function PresaleModal({
                 </form>
               </>
             )}
-          </motion.div>
+          </m.div>
         </>
       )}
     </AnimatePresence>

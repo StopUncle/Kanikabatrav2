@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { motion } from "framer-motion";
+import { m } from "framer-motion";
 import { BookOpen, Layers, CheckCircle } from "lucide-react";
 
 interface CourseCardProps {
@@ -24,7 +24,7 @@ export default function CourseCard({ course }: CourseCardProps) {
 
   return (
     <Link href={`/inner-circle/classroom/${course.slug}`}>
-      <motion.div
+      <m.div
         whileHover={{ y: -4, scale: 1.01 }}
         transition={{ duration: 0.2 }}
         className="group bg-deep-black/50 backdrop-blur-sm border border-accent-gold/10 rounded-2xl overflow-hidden hover:border-accent-gold/25 transition-all duration-300"
@@ -95,7 +95,7 @@ export default function CourseCard({ course }: CourseCardProps) {
             </div>
           )}
         </div>
-      </motion.div>
+      </m.div>
     </Link>
   );
 }

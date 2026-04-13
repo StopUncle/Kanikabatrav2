@@ -1,7 +1,7 @@
 "use client";
 
 import { ButtonHTMLAttributes, forwardRef } from "react";
-import { motion } from "framer-motion";
+import { m } from "framer-motion";
 import { cn } from "@/lib/utils";
 
 interface ButtonProps extends Omit<
@@ -56,7 +56,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
 
     if (animated) {
       return (
-        <motion.button
+        <m.button
           ref={ref}
           className={cn(
             baseStyles,
@@ -101,7 +101,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
             )}
             {children}
           </span>
-        </motion.button>
+        </m.button>
       );
     }
 

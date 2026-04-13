@@ -5,7 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { motion } from "framer-motion";
+import { m } from "framer-motion";
 import { Eye, EyeOff, Lock, ShieldCheck } from "lucide-react";
 
 const resetPasswordSchema = z
@@ -50,7 +50,7 @@ function ResetPasswordFormInner() {
 
   if (!token) {
     return (
-      <motion.div
+      <m.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
@@ -67,7 +67,7 @@ function ResetPasswordFormInner() {
             Request new reset link
           </button>
         </div>
-      </motion.div>
+      </m.div>
     );
   }
 
@@ -104,7 +104,7 @@ function ResetPasswordFormInner() {
   };
 
   return (
-    <motion.div
+    <m.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6 }}
@@ -112,14 +112,14 @@ function ResetPasswordFormInner() {
     >
       <div className="bg-gradient-to-br from-deep-navy/80 to-deep-burgundy/80 backdrop-blur-xl rounded-2xl border border-accent-sapphire/20 p-8 shadow-2xl">
         <div className="text-center mb-8">
-          <motion.div
+          <m.div
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
             transition={{ delay: 0.2, duration: 0.5 }}
             className="w-16 h-16 bg-gradient-to-r from-deep-burgundy to-royal-sapphire rounded-full flex items-center justify-center mx-auto mb-4"
           >
             <ShieldCheck className="w-8 h-8 text-white" />
-          </motion.div>
+          </m.div>
           <h2 className="text-2xl font-light gradient-text mb-2">
             Reset Password
           </h2>
@@ -127,7 +127,7 @@ function ResetPasswordFormInner() {
         </div>
 
         {isSuccess ? (
-          <motion.div
+          <m.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             className="text-center space-y-4"
@@ -137,17 +137,17 @@ function ResetPasswordFormInner() {
                 Password reset successfully. Redirecting to login...
               </p>
             </div>
-          </motion.div>
+          </m.div>
         ) : (
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
             {error && (
-              <motion.div
+              <m.div
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
                 className="p-4 bg-red-900/50 border border-red-500 rounded-lg text-red-200 text-sm"
               >
                 {error}
-              </motion.div>
+              </m.div>
             )}
 
             <div>
@@ -212,7 +212,7 @@ function ResetPasswordFormInner() {
               )}
             </div>
 
-            <motion.button
+            <m.button
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
               type="submit"
@@ -228,7 +228,7 @@ function ResetPasswordFormInner() {
                   <span>Reset Password</span>
                 </>
               )}
-            </motion.button>
+            </m.button>
           </form>
         )}
 
@@ -244,7 +244,7 @@ function ResetPasswordFormInner() {
           </p>
         </div>
       </div>
-    </motion.div>
+    </m.div>
   );
 }
 

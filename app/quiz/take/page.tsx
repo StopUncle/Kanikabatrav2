@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { motion, AnimatePresence } from "framer-motion";
+import { m, AnimatePresence } from "framer-motion";
 import {
   QUIZ_QUESTIONS,
   PersonalityType,
@@ -70,20 +70,20 @@ export default function QuizTakePage() {
   if (isProcessing) {
     return (
       <div className="min-h-screen bg-deep-black flex items-center justify-center">
-        <motion.div
+        <m.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           className="text-center px-4"
         >
-          <motion.div
+          <m.div
             animate={{ rotate: 360 }}
             transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
             className="mb-8 flex justify-center"
           >
             <DoubleEchoLogo size="xl" animate />
-          </motion.div>
+          </m.div>
 
-          <motion.div
+          <m.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3 }}
@@ -98,7 +98,7 @@ export default function QuizTakePage() {
             {/* Processing animation */}
             <div className="flex justify-center gap-2">
               {[0, 1, 2, 3, 4].map((i) => (
-                <motion.div
+                <m.div
                   key={i}
                   className="w-2 h-2 bg-accent-gold rounded-full"
                   animate={{
@@ -113,8 +113,8 @@ export default function QuizTakePage() {
                 />
               ))}
             </div>
-          </motion.div>
-        </motion.div>
+          </m.div>
+        </m.div>
       </div>
     );
   }
@@ -123,7 +123,7 @@ export default function QuizTakePage() {
     <div className="min-h-screen bg-deep-black flex flex-col">
       {/* Progress Bar */}
       <div className="fixed top-0 left-0 right-0 z-50 h-1 bg-deep-black/50">
-        <motion.div
+        <m.div
           className="h-full bg-gradient-to-r from-accent-gold to-accent-gold/60"
           initial={{ width: 0 }}
           animate={{ width: `${progress}%` }}
@@ -160,7 +160,7 @@ export default function QuizTakePage() {
       <div className="flex-1 flex items-center justify-center px-4 py-8">
         <div className="w-full max-w-2xl">
           <AnimatePresence mode="wait">
-            <motion.div
+            <m.div
               key={question.id}
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
@@ -180,7 +180,7 @@ export default function QuizTakePage() {
               {/* Answer Options */}
               <div className="space-y-3">
                 {question.answers.map((answer, index) => (
-                  <motion.button
+                  <m.button
                     key={answer.id}
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -207,10 +207,10 @@ export default function QuizTakePage() {
                       </span>
                       <span className="pt-1">{answer.text}</span>
                     </div>
-                  </motion.button>
+                  </m.button>
                 ))}
               </div>
-            </motion.div>
+            </m.div>
           </AnimatePresence>
         </div>
       </div>

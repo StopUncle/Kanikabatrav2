@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { motion } from "framer-motion";
+import { m } from "framer-motion";
 import {
   Loader2,
   ArrowRight,
@@ -116,7 +116,7 @@ export default function ProfilePageClient({ userId: _userId, email }: ProfilePag
         <div className="container mx-auto px-4 max-w-5xl">
 
           {/* Profile Hero */}
-          <motion.div
+          <m.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             className="text-center mb-12"
@@ -156,13 +156,13 @@ export default function ProfilePageClient({ userId: _userId, email }: ProfilePag
                 </div>
               )}
             </div>
-          </motion.div>
+          </m.div>
 
           {/* Personality Profile Section */}
           {profile && isUnlocked && quiz?.result ? (
             <>
               {/* Type Header Card */}
-              <motion.div
+              <m.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.1 }}
@@ -202,12 +202,12 @@ export default function ProfilePageClient({ userId: _userId, email }: ProfilePag
                     </span>
                   </div>
                 </div>
-              </motion.div>
+              </m.div>
 
               {/* Radar Chart + Description Grid */}
               <div className="grid lg:grid-cols-2 gap-8 mb-8">
                 {/* Radar Chart */}
-                <motion.div
+                <m.div
                   initial={{ opacity: 0, scale: 0.95 }}
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ delay: 0.2 }}
@@ -215,10 +215,10 @@ export default function ProfilePageClient({ userId: _userId, email }: ProfilePag
                   <div className="p-6 bg-deep-black/50 border border-accent-gold/10 rounded-2xl h-full flex items-center justify-center">
                     <RadarChart scores={quiz.result.scores} showValues={true} />
                   </div>
-                </motion.div>
+                </m.div>
 
                 {/* Description + Relationship Pattern */}
-                <motion.div
+                <m.div
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.3 }}
@@ -237,13 +237,13 @@ export default function ProfilePageClient({ userId: _userId, email }: ProfilePag
                       {profile.relationshipPattern}
                     </p>
                   </div>
-                </motion.div>
+                </m.div>
               </div>
 
               {/* Traits + Strengths + Blind Spots */}
               <div className="grid sm:grid-cols-3 gap-6 mb-8">
                 {/* Defining Traits */}
-                <motion.div
+                <m.div
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.35 }}
@@ -258,10 +258,10 @@ export default function ProfilePageClient({ userId: _userId, email }: ProfilePag
                       </li>
                     ))}
                   </ul>
-                </motion.div>
+                </m.div>
 
                 {/* Strengths */}
-                <motion.div
+                <m.div
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.4 }}
@@ -276,10 +276,10 @@ export default function ProfilePageClient({ userId: _userId, email }: ProfilePag
                       </li>
                     ))}
                   </ul>
-                </motion.div>
+                </m.div>
 
                 {/* Blind Spots */}
-                <motion.div
+                <m.div
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.45 }}
@@ -294,12 +294,12 @@ export default function ProfilePageClient({ userId: _userId, email }: ProfilePag
                       </li>
                     ))}
                   </ul>
-                </motion.div>
+                </m.div>
               </div>
 
               {/* Secondary Type */}
               {secondaryProfile && (
-                <motion.div
+                <m.div
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.5 }}
@@ -324,11 +324,11 @@ export default function ProfilePageClient({ userId: _userId, email }: ProfilePag
                       {secondaryProfile.description}
                     </p>
                   </div>
-                </motion.div>
+                </m.div>
               )}
 
               {/* Retake CTA */}
-              <motion.div
+              <m.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.55 }}
@@ -340,11 +340,11 @@ export default function ProfilePageClient({ userId: _userId, email }: ProfilePag
                 >
                   Retake Assessment →
                 </Link>
-              </motion.div>
+              </m.div>
             </>
           ) : profile && !isUnlocked ? (
             /* Locked State — quiz taken but not unlocked */
-            <motion.div
+            <m.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 }}
@@ -394,10 +394,10 @@ export default function ProfilePageClient({ userId: _userId, email }: ProfilePag
                   </Link>
                 </div>
               </div>
-            </motion.div>
+            </m.div>
           ) : (
             /* No quiz taken */
-            <motion.div
+            <m.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 }}
@@ -423,11 +423,11 @@ export default function ProfilePageClient({ userId: _userId, email }: ProfilePag
                   <ArrowRight size={20} />
                 </Link>
               </div>
-            </motion.div>
+            </m.div>
           )}
 
           {/* Quick Links */}
-          <motion.div
+          <m.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.6 }}
@@ -508,7 +508,7 @@ export default function ProfilePageClient({ userId: _userId, email }: ProfilePag
                 <ChevronRight size={16} className="text-text-gray group-hover:text-accent-gold transition-colors" />
               </a>
             </div>
-          </motion.div>
+          </m.div>
         </div>
       </main>
     </>

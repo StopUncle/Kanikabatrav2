@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { motion } from "framer-motion";
+import { m } from "framer-motion";
 import { useRouter } from "next/navigation";
 import BackgroundEffects from "@/components/BackgroundEffects";
 import Header from "@/components/Header";
@@ -116,7 +116,7 @@ export default function CourseDetailClient({
 
           <div className="grid lg:grid-cols-3 gap-8">
             <div className="lg:col-span-2">
-              <motion.div
+              <m.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 className="mb-8"
@@ -160,10 +160,10 @@ export default function CourseDetailClient({
                     </div>
                   )}
                 </div>
-              </motion.div>
+              </m.div>
 
               {hasAccess && progress > 0 && (
-                <motion.div
+                <m.div
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.1 }}
@@ -197,10 +197,10 @@ export default function CourseDetailClient({
                     showLabel={false}
                     size="lg"
                   />
-                </motion.div>
+                </m.div>
               )}
 
-              <motion.div
+              <m.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.2 }}
@@ -213,10 +213,10 @@ export default function CourseDetailClient({
                   courseSlug={course.slug}
                   hasAccess={hasAccess}
                 />
-              </motion.div>
+              </m.div>
 
               {hasAccess && (
-                <motion.div
+                <m.div
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.3 }}
@@ -242,13 +242,13 @@ export default function CourseDetailClient({
                       </button>
                     </div>
                   </div>
-                </motion.div>
+                </m.div>
               )}
             </div>
 
             <div className="lg:col-span-1">
               <div className="lg:sticky lg:top-28">
-                <motion.div
+                <m.div
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.3 }}
@@ -260,10 +260,10 @@ export default function CourseDetailClient({
                     subscriptionStatus={subscriptionStatus}
                     onSubscribe={handleSubscribe}
                   />
-                </motion.div>
+                </m.div>
 
                 {!hasAccess && (
-                  <motion.div
+                  <m.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.4 }}
@@ -279,7 +279,7 @@ export default function CourseDetailClient({
                       <li>• Mobile-friendly video player</li>
                       <li>• Track your progress</li>
                     </ul>
-                  </motion.div>
+                  </m.div>
                 )}
               </div>
             </div>

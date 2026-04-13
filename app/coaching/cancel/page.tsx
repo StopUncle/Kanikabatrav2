@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { m } from "framer-motion";
 import Link from "next/link";
 import { XCircle, ArrowLeft, MessageCircle, RefreshCw } from "lucide-react";
 import Button from "@/components/ui/Button";
@@ -12,20 +12,20 @@ export default function CoachingCancelPage() {
       <BackgroundEffects />
 
       {/* Cancel Header */}
-      <motion.div
+      <m.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         className="relative z-10 pt-20 pb-10"
       >
         <div className="max-w-4xl mx-auto px-4 text-center">
-          <motion.div
+          <m.div
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
             transition={{ delay: 0.2, type: "spring" }}
             className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-red-500 to-red-700 rounded-full mb-6"
           >
             <XCircle className="w-12 h-12 text-white" />
-          </motion.div>
+          </m.div>
 
           <h1 className="text-5xl md:text-6xl font-light mb-4 bg-gradient-to-r from-red-400 to-red-600 bg-clip-text text-transparent">
             Session Cancelled
@@ -34,11 +34,11 @@ export default function CoachingCancelPage() {
             Your transformation awaits when you&apos;re ready
           </p>
         </div>
-      </motion.div>
+      </m.div>
 
       {/* Main Content */}
       <div className="relative z-10 max-w-4xl mx-auto px-4 pb-20">
-        <motion.div
+        <m.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4 }}
@@ -69,10 +69,10 @@ export default function CoachingCancelPage() {
             Most people spend their entire lives afraid of their own shadow.
             Don&apos;t be most people.
           </p>
-        </motion.div>
+        </m.div>
 
         {/* Reasons for Cancellation */}
-        <motion.div
+        <m.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.6 }}
@@ -110,10 +110,10 @@ export default function CoachingCancelPage() {
               </p>
             </div>
           </div>
-        </motion.div>
+        </m.div>
 
         {/* Alternative Options */}
-        <motion.div
+        <m.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.8 }}
@@ -139,10 +139,10 @@ export default function CoachingCancelPage() {
               </Button>
             </Link>
           </div>
-        </motion.div>
+        </m.div>
 
         {/* Action Buttons */}
-        <motion.div
+        <m.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 1 }}
@@ -166,10 +166,10 @@ export default function CoachingCancelPage() {
               Ask Questions
             </Button>
           </Link>
-        </motion.div>
+        </m.div>
 
         {/* Final Message */}
-        <motion.div
+        <m.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 1.2 }}
@@ -183,7 +183,7 @@ export default function CoachingCancelPage() {
           <p className="text-text-muted mt-6 text-sm">
             When you&apos;re ready to stop pretending, I&apos;ll be here.
           </p>
-        </motion.div>
+        </m.div>
       </div>
     </div>
   );

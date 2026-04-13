@@ -2,7 +2,7 @@
 
 import { useEffect, useState, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
-import { motion } from "framer-motion";
+import { m } from "framer-motion";
 import Link from "next/link";
 import BackgroundEffects from "@/components/BackgroundEffects";
 import Header from "@/components/Header";
@@ -114,7 +114,7 @@ function SuccessContent() {
       <Header />
       <div className="min-h-screen pt-32 pb-16 px-4 relative z-10">
         <div className="max-w-4xl mx-auto text-center">
-          <motion.div
+          <m.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
@@ -128,10 +128,10 @@ function SuccessContent() {
             <p className="text-text-gray text-lg md:text-xl mb-12">
               Your order has been processed successfully. Welcome aboard.
             </p>
-          </motion.div>
+          </m.div>
 
           {orderDetails && (
-            <motion.div
+            <m.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.2 }}
@@ -166,12 +166,12 @@ function SuccessContent() {
                   </div>
                 )}
               </div>
-            </motion.div>
+            </m.div>
           )}
 
           <div className="grid md:grid-cols-2 gap-8 mb-12">
             {isBookPurchase && (
-              <motion.div
+              <m.div
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.6, delay: 0.3 }}
@@ -251,11 +251,11 @@ function SuccessContent() {
                     </a>
                   </p>
                 </div>
-              </motion.div>
+              </m.div>
             )}
 
             {isCoachingPurchase && (
-              <motion.div
+              <m.div
                 initial={{ opacity: 0, x: 20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.6, delay: 0.4 }}
@@ -283,11 +283,11 @@ function SuccessContent() {
                     we address your specific needs effectively.
                   </p>
                 </div>
-              </motion.div>
+              </m.div>
             )}
 
             {!isBookPurchase && !isCoachingPurchase && (
-              <motion.div
+              <m.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.3 }}
@@ -301,13 +301,13 @@ function SuccessContent() {
                   instructions within the next few minutes. Check your inbox and
                   spam folder.
                 </p>
-              </motion.div>
+              </m.div>
             )}
           </div>
 
           {/* Your Purchase Unlocks */}
           {isBookPurchase && (
-            <motion.div
+            <m.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.45 }}
@@ -340,10 +340,10 @@ function SuccessContent() {
                   <ArrowRight size={18} className="text-accent-gold" />
                 </div>
               </Link>
-            </motion.div>
+            </m.div>
           )}
 
-          <motion.div
+          <m.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.5 }}
@@ -361,9 +361,9 @@ function SuccessContent() {
             >
               Contact Support
             </a>
-          </motion.div>
+          </m.div>
 
-          <motion.div
+          <m.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.6, delay: 0.6 }}
@@ -374,7 +374,7 @@ function SuccessContent() {
               now.&rdquo;
             </p>
             <p className="text-accent-gold text-sm mt-2">- Kanika Batra</p>
-          </motion.div>
+          </m.div>
         </div>
       </div>
 

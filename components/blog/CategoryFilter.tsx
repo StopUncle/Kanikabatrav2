@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { m } from "framer-motion";
 
 interface CategoryFilterProps {
   categories: string[];
@@ -15,7 +15,7 @@ export default function CategoryFilter({
 }: CategoryFilterProps) {
   return (
     <div className="flex flex-wrap gap-3 justify-center mb-16">
-      <motion.button
+      <m.button
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
         onClick={() => onCategoryChange(null)}
@@ -26,10 +26,10 @@ export default function CategoryFilter({
         }`}
       >
         All Posts
-      </motion.button>
+      </m.button>
 
       {categories.map((category) => (
-        <motion.button
+        <m.button
           key={category}
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
@@ -41,7 +41,7 @@ export default function CategoryFilter({
           }`}
         >
           {category}
-        </motion.button>
+        </m.button>
       ))}
     </div>
   );

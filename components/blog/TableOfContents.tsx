@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { motion } from "framer-motion";
+import { m } from "framer-motion";
 import { List } from "lucide-react";
 
 interface TocItem {
@@ -129,7 +129,7 @@ export default function TableOfContents({ content }: TableOfContentsProps) {
         </button>
 
         {isOpen && (
-          <motion.ul
+          <m.ul
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: "auto" }}
             className="space-y-1 pt-3 pb-4"
@@ -153,7 +153,7 @@ export default function TableOfContents({ content }: TableOfContentsProps) {
                 </a>
               </li>
             ))}
-          </motion.ul>
+          </m.ul>
         )}
       </div>
     </>

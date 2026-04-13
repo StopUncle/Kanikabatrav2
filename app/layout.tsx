@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import Script from "next/script";
 import Footer from "@/components/Footer";
 import LazySpeedInsights from "@/components/LazySpeedInsights";
+import MotionProvider from "@/components/providers/MotionProvider";
 import JsonLd from "@/components/JsonLd";
 import {
   generateOrganizationSchema,
@@ -73,9 +74,9 @@ export default function RootLayout({
         />
         <Script
           src="https://www.googletagmanager.com/gtag/js?id=G-DTNLQQ321K"
-          strategy="afterInteractive"
+          strategy="lazyOnload"
         />
-        <Script id="google-analytics" strategy="afterInteractive">
+        <Script id="google-analytics" strategy="lazyOnload">
           {`
             window.dataLayer = window.dataLayer || [];
             function gtag(){dataLayer.push(arguments);}
@@ -85,8 +86,10 @@ export default function RootLayout({
         </Script>
       </head>
       <body className={inter.className}>
-        <main>{children}</main>
-        <Footer />
+        <MotionProvider>
+          <main>{children}</main>
+          <Footer />
+        </MotionProvider>
         <LazySpeedInsights />
       </body>
     </html>
