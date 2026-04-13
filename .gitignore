@@ -75,5 +75,16 @@ lib/dev-mode.ts
 
 # Prevent document.tsx in app directory (App Router incompatible)
 app/document.tsx
-app/_document.tsxnul
+app/_document.tsx
+
+# Windows accidental `> nul` file
+nul
+
+# Local tooling / scratch
 .gstack/
+.claude/settings.local.json
+logs/
+supabase/
+docs/
+CONTENT-IDEAS.md
+HOW-AI-ACTUALLY-WORKS.md
