@@ -29,6 +29,8 @@ on:
     # Weekly member digest — Sunday 08:00 UTC (one hour before daily-insight
     # so the two jobs don't collide on Sundays)
     - cron: '0 8 * * 0'
+    # Trial expiry nudge — daily at 09:30 UTC (right after daily-insight)
+    - cron: '30 9 * * *'
   workflow_dispatch:
     # Allow manual triggering from the GitHub Actions UI. Useful for
     # testing or firing a cron out-of-band without waiting for the next
@@ -46,6 +48,7 @@ on:
           - retry-emails
           - email-queue
           - weekly-digest
+          - trial-expiry
 
 env:
   BASE_URL: https://kanikarose.com
@@ -130,3 +133,17 @@ jobs:
             -H "x-cron-secret: ${{ secrets.CRON_SECRET }}" \
             -H "Content-Type: application/json" \
             --max-time 300
+
+  trial-expiry:
+    if: >-
+      github.event.schedule == '30 9 * * *' ||
+      (github.event_name == 'workflow_dispatch' &&
+       (github.event.inputs.target == 'all' || github.event.inputs.target == 'trial-expiry'))
+    runs-on: ubuntu-latest
+    steps:
+      - name: Hit /api/cron/trial-expiry
+        run: |
+          curl -fsS -X POST "$BASE_URL/api/cron/trial-expiry" \
+            -H "x-cron-secret: ${{ secrets.CRON_SECRET }}" \
+            -H "Content-Type: application/json" \
+            --max-time 60

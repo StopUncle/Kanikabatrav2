@@ -1840,3 +1840,45 @@ export const sendMembershipCancelled = async (
     html: luxuryEmailShell(inner, "Membership Cancelled", "The Inner Circle"),
   });
 };
+
+export const sendTrialExpiringSoon = async (
+  memberEmail: string,
+  memberName: string,
+  daysLeft: number,
+): Promise<boolean> => {
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://kanikarose.com";
+
+  const inner = `
+    <p style="color: #f5f0ed; font-size: 18px; margin: 0 0 20px 0; line-height: 1.6;">
+      ${esc(memberName)},
+    </p>
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 25px 0; font-size: 15px;">
+      Your free trial of The Inner Circle ends in <strong style="color: #B76E79;">${daysLeft} day${daysLeft === 1 ? "" : "s"}</strong>.
+    </p>
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 25px 0; font-size: 15px;">
+      After that, access to the feed, voice notes, classroom, and community goes away. If you&rsquo;ve found value in what&rsquo;s here, subscribe to keep it.
+    </p>
+    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="margin: 0 0 25px 0;">
+      <tr>
+        <td align="center">
+          <table role="presentation" cellspacing="0" cellpadding="0" border="0">
+            <tr>
+              <td bgcolor="#B76E79" style="border-radius: 50px;" align="center">
+                <a href="${baseUrl}/inner-circle/feed" target="_blank" style="display: inline-block; color: #050511; padding: 16px 40px; text-decoration: none; font-weight: 700; font-size: 15px; letter-spacing: 1px; text-transform: uppercase; border-radius: 50px;">Keep My Access</a>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0; font-size: 13px; font-style: italic;">
+      No pressure. But the door closes in ${daysLeft} day${daysLeft === 1 ? "" : "s"}.
+    </p>
+  `;
+
+  return await sendEmail({
+    to: memberEmail,
+    subject: `Your Inner Circle trial ends in ${daysLeft} day${daysLeft === 1 ? "" : "s"}`,
+    html: luxuryEmailShell(inner, "Trial Ending Soon", "The Inner Circle"),
+  });
+};
