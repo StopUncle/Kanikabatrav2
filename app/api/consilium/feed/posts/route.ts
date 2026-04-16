@@ -9,6 +9,7 @@ import {
 } from "@/lib/community/gender-filter";
 import { prisma } from "@/lib/prisma";
 import { memberSafeName } from "@/lib/community/privacy";
+import { tierForMember } from "@/components/consilium/badge-tiers";
 
 async function resolveUserId(): Promise<string | null> {
   const cookieStore = await cookies();
@@ -69,8 +70,8 @@ export async function GET(request: NextRequest) {
           id: true,
           name: true,
           displayName: true,
-          avatarUrl: true,
           role: true,
+          communityMembership: { select: { activatedAt: true } },
         },
       },
       _count: {
@@ -105,8 +106,12 @@ export async function GET(request: NextRequest) {
       ? {
           id: post.author.id,
           name: memberSafeName(post.author),
-          avatarUrl: post.author.avatarUrl,
           role: post.author.role,
+          tier: tierForMember({
+            role: post.author.role,
+            activatedAt:
+              post.author.communityMembership?.activatedAt ?? null,
+          }),
         }
       : null,
   }));

@@ -5,10 +5,7 @@ import Header from "@/components/Header";
 import BackgroundEffects from "@/components/BackgroundEffects";
 import InnerCircleSidebar from "@/components/consilium/InnerCircleSidebar";
 import { prisma } from "@/lib/prisma";
-import {
-  monthsSince,
-  tierFromMonths,
-} from "@/components/consilium/badge-tiers";
+import { tierForMember } from "@/components/consilium/badge-tiers";
 
 export default async function MemberLayout({
   children,
@@ -35,6 +32,7 @@ export default async function MemberLayout({
       where: { id: userId },
       select: {
         displayName: true,
+        role: true,
         communityMembership: {
           select: { activatedAt: true },
         },
@@ -42,10 +40,13 @@ export default async function MemberLayout({
     }),
   ]);
 
-  // Current tier is a pure function of the activatedAt timestamp — no
-  // DB column to keep in sync, no cron to run, no drift.
-  const months = monthsSince(me?.communityMembership?.activatedAt ?? null);
-  const currentTier = tierFromMonths(months);
+  // Current tier is pure function of (role, activatedAt) — no DB
+  // column to keep in sync, no cron to run, no drift. Admins always
+  // read as Queen regardless of tenure.
+  const currentTier = tierForMember({
+    role: me?.role,
+    activatedAt: me?.communityMembership?.activatedAt ?? null,
+  });
   const displayName = me?.displayName || "Counselor";
 
   return (

@@ -5,7 +5,7 @@ import {
   BADGE_TIERS,
   getBadge,
   monthsSince,
-  tierFromMonths,
+  tierForMember,
   daysToNextTier,
 } from "@/components/consilium/badge-tiers";
 import { Lock, CheckCircle2, Clock, Crown } from "lucide-react";
@@ -20,13 +20,22 @@ export const metadata = {
 export default async function ConsiliumBadgesPage() {
   const userId = await requireServerAuth("/consilium/badges");
 
-  const membership = await prisma.communityMembership.findUnique({
-    where: { userId },
-    select: { activatedAt: true },
-  });
+  const [membership, me] = await Promise.all([
+    prisma.communityMembership.findUnique({
+      where: { userId },
+      select: { activatedAt: true },
+    }),
+    prisma.user.findUnique({
+      where: { id: userId },
+      select: { role: true },
+    }),
+  ]);
 
   const months = monthsSince(membership?.activatedAt ?? null);
-  const currentTier = tierFromMonths(months);
+  const currentTier = tierForMember({
+    role: me?.role,
+    activatedAt: membership?.activatedAt ?? null,
+  });
   const currentBadge = getBadge(currentTier);
   const daysToNext = daysToNextTier(membership?.activatedAt ?? null);
   const isQueen = currentTier === 12;

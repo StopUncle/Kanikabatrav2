@@ -5,6 +5,7 @@ import { memberSafeName } from "@/lib/community/privacy";
 import FeedList from "@/components/consilium/FeedList";
 import OnboardingModal from "@/components/consilium/OnboardingModal";
 import { MessageCircle } from "lucide-react";
+import { tierForMember } from "@/components/consilium/badge-tiers";
 
 export const metadata = {
   title: "Feed — The Consilium | Kanika Batra",
@@ -30,7 +31,13 @@ export default async function FeedPage() {
     orderBy: [{ isPinned: "desc" }, { createdAt: "desc" }],
     include: {
       author: {
-        select: { id: true, name: true, displayName: true, avatarUrl: true, role: true },
+        select: {
+          id: true,
+          name: true,
+          displayName: true,
+          role: true,
+          communityMembership: { select: { activatedAt: true } },
+        },
       },
       _count: {
         select: {
@@ -67,8 +74,12 @@ export default async function FeedPage() {
       ? {
           id: post.author.id,
           name: memberSafeName(post.author),
-          avatarUrl: post.author.avatarUrl,
           role: post.author.role,
+          tier: tierForMember({
+            role: post.author.role,
+            activatedAt:
+              post.author.communityMembership?.activatedAt ?? null,
+          }),
         }
       : null,
   }));

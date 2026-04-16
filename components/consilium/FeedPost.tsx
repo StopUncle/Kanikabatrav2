@@ -5,16 +5,17 @@ import { m } from "framer-motion";
 import { Heart, MessageCircle, Pin, Mic } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import Link from "next/link";
-import Image from "next/image";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import VoiceNotePlayer from "./VoiceNotePlayer";
+import MemberBadge from "./MemberBadge";
 
 interface FeedPostAuthor {
   id: string;
   name: string | null;
-  avatarUrl: string | null;
   role: string;
+  /** 1..12 — rank badge used in place of a photo avatar. */
+  tier: number;
 }
 
 export interface FeedPostData {
@@ -68,8 +69,8 @@ export default function FeedPost({ post, isDetail = false }: FeedPostProps) {
     }
   };
 
-  const authorInitial = post.author?.name?.charAt(0)?.toUpperCase() || "K";
   const isAdminAuthor = post.author?.role === "ADMIN";
+  const authorTier = post.author?.tier ?? (isAdminAuthor ? 12 : 1);
   const shouldTruncate = !isDetail && post.content.length > 500;
   const displayContent = shouldTruncate ? post.content.slice(0, 500) : post.content;
   const timeAgo = formatDistanceToNow(new Date(post.createdAt), { addSuffix: true });
@@ -81,25 +82,9 @@ export default function FeedPost({ post, isDetail = false }: FeedPostProps) {
       className="bg-deep-black/50 backdrop-blur-sm border border-accent-gold/10 rounded-xl sm:rounded-2xl p-4 sm:p-6 hover:border-accent-gold/25 transition-all duration-300"
     >
       <div className="flex items-center gap-3 mb-3 sm:mb-4 flex-wrap">
-        <div
-          className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium shrink-0 ${
-            isAdminAuthor
-              ? "bg-accent-gold/10 text-accent-gold"
-              : "bg-deep-black/30 text-text-gray"
-          }`}
-        >
-          {post.author?.avatarUrl ? (
-            <Image
-              src={post.author.avatarUrl}
-              alt={post.author.name || "Member avatar"}
-              width={32}
-              height={32}
-              className="w-8 h-8 rounded-full object-cover"
-              unoptimized={post.author.avatarUrl.startsWith("data:")}
-            />
-          ) : (
-            authorInitial
-          )}
+        {/* Rank badge IS the avatar — the member's tenure is their identity. */}
+        <div className="shrink-0">
+          <MemberBadge tier={authorTier} size="xs" />
         </div>
         <div className="flex items-center gap-2 min-w-0 flex-1">
           <span className="text-sm font-medium text-text-light truncate">

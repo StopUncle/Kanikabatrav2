@@ -8,6 +8,35 @@ import { getViewerGender, authorGenderWhere } from "@/lib/community/gender-filte
 import { enforceRateLimit, limits } from "@/lib/rate-limit";
 import { prisma } from "@/lib/prisma";
 import { memberSafeName } from "@/lib/community/privacy";
+import { tierForMember } from "@/components/consilium/badge-tiers";
+
+type CommentAuthorRow = {
+  id: string;
+  name: string | null;
+  displayName: string | null;
+  role: string;
+  communityMembership: { activatedAt: Date | null } | null;
+};
+
+function formatAuthor(a: CommentAuthorRow) {
+  return {
+    id: a.id,
+    name: memberSafeName(a),
+    role: a.role,
+    tier: tierForMember({
+      role: a.role,
+      activatedAt: a.communityMembership?.activatedAt ?? null,
+    }),
+  };
+}
+
+const authorSelect = {
+  id: true,
+  name: true,
+  displayName: true,
+  role: true,
+  communityMembership: { select: { activatedAt: true } },
+} as const;
 
 /**
  * Resolve the caller's userId from either the member accessToken or
@@ -66,9 +95,7 @@ export async function GET(
     },
     orderBy: { createdAt: "asc" },
     include: {
-      author: {
-        select: { id: true, name: true, displayName: true, avatarUrl: true, role: true },
-      },
+      author: { select: authorSelect },
       likes: {
         where: { userId },
         select: { id: true },
@@ -80,9 +107,7 @@ export async function GET(
         },
         orderBy: { createdAt: "asc" },
         include: {
-          author: {
-            select: { id: true, name: true, displayName: true, avatarUrl: true, role: true },
-          },
+          author: { select: authorSelect },
           likes: {
             where: { userId },
             select: { id: true },
@@ -99,12 +124,7 @@ export async function GET(
     likeCount: comment.likeCount,
     isLiked: comment.likes.length > 0,
     createdAt: comment.createdAt.toISOString(),
-    author: {
-      id: comment.author.id,
-      name: memberSafeName(comment.author),
-      avatarUrl: comment.author.avatarUrl,
-      role: comment.author.role,
-    },
+    author: formatAuthor(comment.author),
     children: comment.children.map((child) => ({
       id: child.id,
       content: child.content,
@@ -112,12 +132,7 @@ export async function GET(
       likeCount: child.likeCount,
       isLiked: child.likes.length > 0,
       createdAt: child.createdAt.toISOString(),
-      author: {
-        id: child.author.id,
-        name: memberSafeName(child.author),
-        avatarUrl: child.author.avatarUrl,
-        role: child.author.role,
-      },
+      author: formatAuthor(child.author),
       children: [],
     })),
   }));
@@ -198,9 +213,7 @@ export async function POST(
           parentId: body.parentId || null,
         },
         include: {
-          author: {
-            select: { id: true, name: true, displayName: true, avatarUrl: true, role: true },
-          },
+          author: { select: authorSelect },
         },
       }),
       prisma.feedPost.update({
@@ -217,12 +230,7 @@ export async function POST(
         likeCount: 0,
         isLiked: false,
         createdAt: comment.createdAt.toISOString(),
-        author: {
-          id: comment.author.id,
-          name: memberSafeName(comment.author),
-          avatarUrl: comment.author.avatarUrl,
-          role: comment.author.role,
-        },
+        author: formatAuthor(comment.author),
         children: [],
       },
     }, { status: 201 });
@@ -237,9 +245,7 @@ export async function POST(
       parentId: body.parentId || null,
     },
     include: {
-      author: {
-        select: { id: true, name: true, displayName: true, avatarUrl: true, role: true },
-      },
+      author: { select: authorSelect },
     },
   });
 
@@ -251,12 +257,7 @@ export async function POST(
       likeCount: 0,
       isLiked: false,
       createdAt: comment.createdAt.toISOString(),
-      author: {
-        id: comment.author.id,
-        name: memberSafeName(comment.author),
-        avatarUrl: comment.author.avatarUrl,
-        role: comment.author.role,
-      },
+      author: formatAuthor(comment.author),
       children: [],
     },
   }, { status: 201 });

@@ -231,3 +231,20 @@ export function getBadge(tier: number): BadgeTier {
   const clamped = Math.min(Math.max(tier, 1), 12);
   return BADGE_TIERS[clamped - 1];
 }
+
+/**
+ * Tier for a given member. Admins always show as Queen (tier 12) — the
+ * tenure math doesn't apply to Kanika. For everyone else, tier is
+ * derived from CommunityMembership.activatedAt.
+ *
+ * Pass the member's role and the activation date. Both may be null
+ * (anonymous / applied-but-not-activated accounts) — we default to
+ * tier 1 (Initiate) in that case.
+ */
+export function tierForMember(input: {
+  role?: string | null;
+  activatedAt?: Date | null;
+}): number {
+  if (input.role === "ADMIN") return 12;
+  return tierFromMonths(monthsSince(input.activatedAt ?? null));
+}

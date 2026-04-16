@@ -5,7 +5,7 @@ import {
   BADGE_TIERS,
   getBadge,
   monthsSince,
-  tierFromMonths,
+  tierForMember,
   daysToNextTier,
 } from "@/components/consilium/badge-tiers";
 import { Lock, CheckCircle2, Calendar, MessageSquare, Heart, BookOpen, type LucideIcon } from "lucide-react";
@@ -50,7 +50,10 @@ export default async function ConsiliumProfilePage() {
 
   const handle = user?.displayName || "Counselor";
   const months = monthsSince(membership?.activatedAt ?? null);
-  const currentTier = tierFromMonths(months);
+  const currentTier = tierForMember({
+    role: user?.role,
+    activatedAt: membership?.activatedAt ?? null,
+  });
   const currentBadge = getBadge(currentTier);
   const isQueen = currentTier === 12;
   const nextBadge = isQueen ? null : getBadge(currentTier + 1);

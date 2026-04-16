@@ -1,16 +1,17 @@
 "use client";
 
 import { useState } from "react";
-import Image from "next/image";
 import { Heart, Reply } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import FeedCommentForm from "./FeedCommentForm";
+import MemberBadge from "./MemberBadge";
 
 interface CommentAuthor {
   id: string;
   name: string | null;
-  avatarUrl: string | null;
   role: string;
+  /** 1..12 — rank badge used as the avatar. */
+  tier: number;
 }
 
 export interface CommentData {
@@ -41,8 +42,8 @@ export default function FeedComment({
   const [likeCount, setLikeCount] = useState(comment.likeCount);
   const [showReply, setShowReply] = useState(false);
 
-  const authorInitial = comment.author.name?.charAt(0)?.toUpperCase() || "?";
   const isAdminAuthor = comment.author.role === "ADMIN";
+  const authorTier = comment.author.tier ?? (isAdminAuthor ? 12 : 1);
   const timeAgo = formatDistanceToNow(new Date(comment.createdAt), { addSuffix: true });
 
   const handleLike = async () => {
@@ -73,32 +74,16 @@ export default function FeedComment({
   return (
     <div className={depth > 0 ? "pl-4 border-l border-accent-gold/10" : ""}>
       <div className="py-3">
-        <div className="flex items-center gap-2 mb-1.5">
-          <div
-            className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-medium shrink-0 ${
-              isAdminAuthor
-                ? "bg-accent-gold/20 text-accent-gold"
-                : "bg-deep-black/30 text-text-gray"
-            }`}
-          >
-            {comment.author.avatarUrl ? (
-              <Image
-                src={comment.author.avatarUrl}
-                alt={comment.author.name || "Member avatar"}
-                width={24}
-                height={24}
-                className="w-6 h-6 rounded-full object-cover"
-                unoptimized={comment.author.avatarUrl.startsWith("data:")}
-              />
-            ) : (
-              authorInitial
-            )}
+        <div className="flex items-center gap-2.5 mb-1.5 flex-wrap">
+          {/* Rank badge replaces the avatar. */}
+          <div className="shrink-0">
+            <MemberBadge tier={authorTier} size="xs" />
           </div>
           <span className="text-sm font-medium text-text-light">
             {comment.author.name || "Member"}
           </span>
           {isAdminAuthor && (
-            <span className="text-[10px] bg-accent-gold/20 text-accent-gold px-1.5 py-0.5 rounded-full uppercase tracking-wider">
+            <span className="text-[10px] bg-warm-gold/15 text-warm-gold border border-warm-gold/30 px-1.5 py-0.5 rounded-full uppercase tracking-wider">
               Kanika
             </span>
           )}
@@ -110,11 +95,11 @@ export default function FeedComment({
           <span className="text-xs text-text-gray">{timeAgo}</span>
         </div>
 
-        <p className="text-sm text-text-light leading-relaxed ml-8 whitespace-pre-wrap">
+        <p className="text-sm text-text-light leading-relaxed ml-[52px] whitespace-pre-wrap">
           {comment.content}
         </p>
 
-        <div className="flex items-center gap-1 ml-8 mt-1">
+        <div className="flex items-center gap-1 ml-[52px] mt-1">
           <button
             onClick={handleLike}
             aria-label={liked ? "Unlike comment" : "Like comment"}
@@ -146,7 +131,7 @@ export default function FeedComment({
         </div>
 
         {showReply && (
-          <div className="ml-8 mt-3">
+          <div className="ml-[52px] mt-3">
             <FeedCommentForm
               postId={postId}
               parentId={comment.id}

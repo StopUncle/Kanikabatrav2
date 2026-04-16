@@ -50,6 +50,7 @@ export type { BadgeTier, MetalKey } from "./badge-tiers";
 // ---------------------------------------------------------------------------
 
 const SIZE_MAP = {
+  xs: 40, // inline avatars on feed posts + comments
   sm: 64,
   md: 96,
   lg: 128,

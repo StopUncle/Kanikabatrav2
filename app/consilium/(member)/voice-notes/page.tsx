@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { memberSafeName } from "@/lib/community/privacy";
 import FeedPost from "@/components/consilium/FeedPost";
 import { Mic } from "lucide-react";
+import { tierForMember } from "@/components/consilium/badge-tiers";
 
 export const metadata = {
   title: "Voice Notes — The Consilium | Kanika Batra",
@@ -16,7 +17,13 @@ export default async function VoiceNotesPage() {
     orderBy: { createdAt: "desc" },
     include: {
       author: {
-        select: { id: true, name: true, displayName: true, avatarUrl: true, role: true },
+        select: {
+          id: true,
+          name: true,
+          displayName: true,
+          role: true,
+          communityMembership: { select: { activatedAt: true } },
+        },
       },
       _count: {
         select: {
@@ -47,8 +54,12 @@ export default async function VoiceNotesPage() {
       ? {
           id: post.author.id,
           name: memberSafeName(post.author),
-          avatarUrl: post.author.avatarUrl,
           role: post.author.role,
+          tier: tierForMember({
+            role: post.author.role,
+            activatedAt:
+              post.author.communityMembership?.activatedAt ?? null,
+          }),
         }
       : null,
   }));

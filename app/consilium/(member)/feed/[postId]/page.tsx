@@ -7,6 +7,7 @@ import { memberSafeName } from "@/lib/community/privacy";
 import FeedPost from "@/components/consilium/FeedPost";
 import FeedCommentSection from "@/components/consilium/FeedCommentSection";
 import { ArrowLeft } from "lucide-react";
+import { tierForMember } from "@/components/consilium/badge-tiers";
 
 export async function generateMetadata({ params }: { params: Promise<{ postId: string }> }) {
   const { postId } = await params;
@@ -30,7 +31,13 @@ export default async function PostDetailPage({ params }: { params: Promise<{ pos
     where: { id: postId, ...feedPostGenderWhere(viewerGender) },
     include: {
       author: {
-        select: { id: true, name: true, displayName: true, avatarUrl: true, role: true },
+        select: {
+          id: true,
+          name: true,
+          displayName: true,
+          role: true,
+          communityMembership: { select: { activatedAt: true } },
+        },
       },
       likes: {
         where: { userId },
@@ -65,8 +72,12 @@ export default async function PostDetailPage({ params }: { params: Promise<{ pos
       ? {
           id: post.author.id,
           name: memberSafeName(post.author),
-          avatarUrl: post.author.avatarUrl,
           role: post.author.role,
+          tier: tierForMember({
+            role: post.author.role,
+            activatedAt:
+              post.author.communityMembership?.activatedAt ?? null,
+          }),
         }
       : null,
   };
