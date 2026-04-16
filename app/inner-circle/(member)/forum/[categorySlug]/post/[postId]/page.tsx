@@ -6,6 +6,7 @@ import { getAdminUserId } from "@/lib/auth/server-auth";
 import { prisma } from "@/lib/prisma";
 import { checkAccessTier } from "@/lib/community/access";
 import { getViewerGender } from "@/lib/community/gender-filter";
+import { memberSafeName } from "@/lib/community/privacy";
 import PostDetail from "@/components/community/forum/PostDetail";
 import AccessGate from "@/components/community/access/AccessGate";
 import { ArrowLeft } from "lucide-react";
@@ -134,7 +135,12 @@ export default async function PostPage({ params }: Props) {
     userLiked,
     createdAt: post.createdAt.toISOString(),
     updatedAt: post.updatedAt.toISOString(),
-    author: post.author,
+    author: {
+      id: post.author.id,
+      displayName: memberSafeName(post.author),
+      name: null,
+      avatarUrl: post.author.avatarUrl,
+    },
     category: {
       id: post.category.id,
       name: post.category.name,

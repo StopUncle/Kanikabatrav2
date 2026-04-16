@@ -65,6 +65,37 @@ export default function CommentsPage() {
     }
   }
 
+  async function handleBulkApprove() {
+    const pending = comments.filter((c) => c.status === "PENDING_REVIEW");
+    if (pending.length === 0) return;
+    if (
+      !confirm(
+        `Approve all ${pending.length} pending comments? This will make them visible to all members.`,
+      )
+    )
+      return;
+    setActionLoading("bulk");
+    try {
+      // Fire sequentially rather than in parallel so we don't hammer the
+      // API with a burst if there are many pending. Fast enough in
+      // practice — each call is a simple DB update.
+      for (const c of pending) {
+        await fetch(`/api/admin/comments/${c.id}`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ action: "approve" }),
+        });
+      }
+      fetchComments(activeTab);
+    } catch (err) {
+      console.error("Bulk approve failed:", err);
+    } finally {
+      setActionLoading(null);
+    }
+  }
+
+  const pendingCount = comments.filter((c) => c.status === "PENDING_REVIEW").length;
+
   const tabs: { value: FilterTab; label: string; icon: typeof Clock }[] = [
     { value: "PENDING_REVIEW", label: "Pending", icon: Clock },
     { value: "APPROVED", label: "Approved", icon: CheckCircle },
@@ -93,6 +124,26 @@ export default function CommentsPage() {
           </button>
         ))}
       </div>
+
+      {activeTab === "PENDING_REVIEW" && pendingCount > 1 && (
+        <div className="flex items-center justify-between mb-4 p-3 bg-accent-gold/5 border border-accent-gold/20 rounded-lg">
+          <span className="text-sm text-text-gray">
+            <strong className="text-accent-gold">{pendingCount}</strong> comments waiting for review
+          </span>
+          <button
+            onClick={handleBulkApprove}
+            disabled={actionLoading === "bulk"}
+            className="flex items-center gap-2 px-4 py-2 text-sm font-light tracking-wide bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 rounded hover:bg-emerald-500/20 transition-all duration-200 disabled:opacity-50"
+          >
+            {actionLoading === "bulk" ? (
+              <Loader2 size={14} className="animate-spin" />
+            ) : (
+              <Check size={14} />
+            )}
+            Approve all
+          </button>
+        </div>
+      )}
 
       {loading ? (
         <div className="flex items-center justify-center py-20">

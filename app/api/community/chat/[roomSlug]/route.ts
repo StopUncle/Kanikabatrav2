@@ -4,6 +4,7 @@ import { checkAccessTier } from "@/lib/community/access";
 import { requireAuth } from "@/lib/auth/middleware";
 import { verifyAccessToken } from "@/lib/auth/jwt";
 import { cookies } from "next/headers";
+import { memberSafeName } from "@/lib/community/privacy";
 
 export async function GET(
   request: NextRequest,
@@ -41,6 +42,7 @@ export async function GET(
                 name: true,
                 displayName: true,
                 avatarUrl: true,
+                role: true,
               },
             },
           },
@@ -101,7 +103,7 @@ export async function GET(
         memberCount: room._count.members,
         members: room.members.map((m) => ({
           id: m.user.id,
-          name: m.user.displayName || m.user.name,
+          name: memberSafeName(m.user),
           avatar: m.user.avatarUrl,
           role: m.role,
           joinedAt: m.joinedAt,

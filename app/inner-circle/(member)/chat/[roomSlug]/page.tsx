@@ -5,6 +5,7 @@ import { verifyAccessToken } from "@/lib/auth/jwt";
 import { getAdminUserId } from "@/lib/auth/server-auth";
 import { prisma } from "@/lib/prisma";
 import { checkAccessTier } from "@/lib/community/access";
+import { memberSafeName } from "@/lib/community/privacy";
 import ChatRoom from "@/components/community/chat/ChatRoom";
 import AccessGate from "@/components/community/access/AccessGate";
 import { ArrowLeft } from "lucide-react";
@@ -67,6 +68,7 @@ export default async function ChatRoomPage({ params }: Props) {
               name: true,
               displayName: true,
               avatarUrl: true,
+              role: true,
             },
           },
         },
@@ -131,7 +133,7 @@ export default async function ChatRoomPage({ params }: Props) {
     memberCount: room._count.members,
     members: room.members.map((m) => ({
       id: m.user.id,
-      name: m.user.displayName || m.user.name || "Anonymous",
+      name: memberSafeName(m.user),
       avatar: m.user.avatarUrl || undefined,
       role: m.role,
     })),

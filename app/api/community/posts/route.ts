@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { requireAuth } from "@/lib/auth/middleware";
 import { checkAccessTier } from "@/lib/community/access";
+import { memberSafeName } from "@/lib/community/privacy";
 
 function generateSlug(title: string): string {
   return title
@@ -86,6 +87,7 @@ export async function POST(request: NextRequest) {
               name: true,
               displayName: true,
               avatarUrl: true,
+              role: true,
             },
           },
           category: {
@@ -100,7 +102,15 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         {
           success: true,
-          post,
+          post: {
+            ...post,
+            author: {
+              id: post.author.id,
+              displayName: memberSafeName(post.author),
+              name: null,
+              avatarUrl: post.author.avatarUrl,
+            },
+          },
         },
         { status: 201 },
       );

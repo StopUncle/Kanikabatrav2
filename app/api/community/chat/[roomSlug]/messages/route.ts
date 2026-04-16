@@ -5,6 +5,7 @@ import { requireAuth } from "@/lib/auth/middleware";
 import { verifyAccessToken } from "@/lib/auth/jwt";
 import { cookies } from "next/headers";
 import { pusherServer } from "@/lib/pusher/server";
+import { memberSafeName } from "@/lib/community/privacy";
 
 export async function GET(
   request: NextRequest,
@@ -55,6 +56,7 @@ export async function GET(
             name: true,
             displayName: true,
             avatarUrl: true,
+            role: true,
           },
         },
       },
@@ -73,7 +75,7 @@ export async function GET(
         createdAt: msg.createdAt,
         author: {
           id: msg.author.id,
-          name: msg.author.displayName || msg.author.name,
+          name: memberSafeName(msg.author),
           avatar: msg.author.avatarUrl,
         },
       })),
@@ -159,6 +161,7 @@ export async function POST(
           name: true,
           displayName: true,
           avatarUrl: true,
+          role: true,
         },
       });
 
@@ -183,7 +186,7 @@ export async function POST(
           type: message.type,
           createdAt: message.createdAt.toISOString(),
           authorId: user.id,
-          authorName: userData?.displayName || userData?.name || "Anonymous",
+          authorName: memberSafeName(userData),
           authorAvatar: userData?.avatarUrl,
         });
       } catch (pusherError) {
@@ -200,7 +203,7 @@ export async function POST(
             createdAt: message.createdAt,
             author: {
               id: user.id,
-              name: userData?.displayName || userData?.name,
+              name: memberSafeName(userData),
               avatar: userData?.avatarUrl,
             },
           },

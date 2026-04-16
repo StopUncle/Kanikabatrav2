@@ -7,6 +7,7 @@ import { getAdminUserId } from "@/lib/auth/server-auth";
 import { getViewerGender, authorGenderWhere } from "@/lib/community/gender-filter";
 import { enforceRateLimit, limits } from "@/lib/rate-limit";
 import { prisma } from "@/lib/prisma";
+import { memberSafeName } from "@/lib/community/privacy";
 
 /**
  * Resolve the caller's userId from either the member accessToken or
@@ -100,7 +101,7 @@ export async function GET(
     createdAt: comment.createdAt.toISOString(),
     author: {
       id: comment.author.id,
-      name: comment.author.displayName || comment.author.name,
+      name: memberSafeName(comment.author),
       avatarUrl: comment.author.avatarUrl,
       role: comment.author.role,
     },
@@ -113,7 +114,7 @@ export async function GET(
       createdAt: child.createdAt.toISOString(),
       author: {
         id: child.author.id,
-        name: child.author.displayName || child.author.name,
+        name: memberSafeName(child.author),
         avatarUrl: child.author.avatarUrl,
         role: child.author.role,
       },
@@ -218,7 +219,7 @@ export async function POST(
         createdAt: comment.createdAt.toISOString(),
         author: {
           id: comment.author.id,
-          name: comment.author.displayName || comment.author.name,
+          name: memberSafeName(comment.author),
           avatarUrl: comment.author.avatarUrl,
           role: comment.author.role,
         },
@@ -252,7 +253,7 @@ export async function POST(
       createdAt: comment.createdAt.toISOString(),
       author: {
         id: comment.author.id,
-        name: comment.author.displayName || comment.author.name,
+        name: memberSafeName(comment.author),
         avatarUrl: comment.author.avatarUrl,
         role: comment.author.role,
       },

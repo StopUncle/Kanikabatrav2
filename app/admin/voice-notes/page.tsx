@@ -12,6 +12,7 @@ import {
   ChevronUp,
   ExternalLink,
 } from "lucide-react";
+import VoiceRecorder from "@/components/admin/VoiceRecorder";
 
 interface VoiceNotePost {
   id: string;
@@ -208,7 +209,23 @@ export default function VoiceNotesPage() {
 
           <div>
             <label className="block text-text-gray text-xs uppercase tracking-wider mb-2">
-              Audio File
+              Record Voice Note
+            </label>
+            <VoiceRecorder
+              onRecorded={(f) => setFile(f)}
+              disabled={submitting}
+            />
+          </div>
+
+          <div className="flex items-center gap-3">
+            <div className="flex-1 h-px bg-white/10" />
+            <span className="text-xs text-text-gray/40 uppercase tracking-wider">or</span>
+            <div className="flex-1 h-px bg-white/10" />
+          </div>
+
+          <div>
+            <label className="block text-text-gray text-xs uppercase tracking-wider mb-2">
+              Upload File
             </label>
             <div
               onDragOver={(e) => {

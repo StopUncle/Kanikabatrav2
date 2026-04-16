@@ -3,6 +3,7 @@ import Link from "next/link";
 import { requireServerAuth } from "@/lib/auth/server-auth";
 import { getViewerGender, feedPostGenderWhere } from "@/lib/community/gender-filter";
 import { prisma } from "@/lib/prisma";
+import { memberSafeName } from "@/lib/community/privacy";
 import FeedPost from "@/components/inner-circle/FeedPost";
 import FeedCommentSection from "@/components/inner-circle/FeedCommentSection";
 import { ArrowLeft } from "lucide-react";
@@ -63,7 +64,7 @@ export default async function PostDetailPage({ params }: { params: Promise<{ pos
     author: post.author
       ? {
           id: post.author.id,
-          name: post.author.displayName || post.author.name,
+          name: memberSafeName(post.author),
           avatarUrl: post.author.avatarUrl,
           role: post.author.role,
         }

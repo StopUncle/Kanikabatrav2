@@ -5,6 +5,7 @@ import { checkAccessTier } from "@/lib/community/access";
 import { getViewerGender, authorGenderWhere } from "@/lib/community/gender-filter";
 import { verifyAccessToken } from "@/lib/auth/jwt";
 import { cookies } from "next/headers";
+import { memberSafeName } from "@/lib/community/privacy";
 
 export async function GET(
   request: NextRequest,
@@ -65,6 +66,7 @@ export async function GET(
             name: true,
             displayName: true,
             avatarUrl: true,
+            role: true,
           },
         },
         children: {
@@ -97,9 +99,23 @@ export async function GET(
     const formattedReplies = results.map((reply) => ({
       ...reply,
       likeCount: reply._count.likes,
+      // Privacy: replace author with a member-safe projection so real
+      // names never ride out in the API response.
+      author: {
+        id: reply.author.id,
+        displayName: memberSafeName(reply.author),
+        name: null,
+        avatarUrl: reply.author.avatarUrl,
+      },
       children: reply.children.map((child) => ({
         ...child,
         likeCount: child._count.likes,
+        author: {
+          id: child.author.id,
+          displayName: memberSafeName(child.author),
+          name: null,
+          avatarUrl: child.author.avatarUrl,
+        },
         _count: undefined,
       })),
       _count: undefined,
@@ -189,6 +205,7 @@ export async function POST(
                 name: true,
                 displayName: true,
                 avatarUrl: true,
+                role: true,
               },
             },
           },
@@ -209,6 +226,12 @@ export async function POST(
             ...reply,
             likeCount: 0,
             children: [],
+            author: {
+              id: reply.author.id,
+              displayName: memberSafeName(reply.author),
+              name: null,
+              avatarUrl: reply.author.avatarUrl,
+            },
           },
         },
         { status: 201 },

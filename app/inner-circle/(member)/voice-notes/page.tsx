@@ -1,5 +1,6 @@
 import { requireServerAuth } from "@/lib/auth/server-auth";
 import { prisma } from "@/lib/prisma";
+import { memberSafeName } from "@/lib/community/privacy";
 import FeedPost from "@/components/inner-circle/FeedPost";
 import { Mic } from "lucide-react";
 
@@ -45,7 +46,7 @@ export default async function VoiceNotesPage() {
     author: post.author
       ? {
           id: post.author.id,
-          name: post.author.displayName || post.author.name,
+          name: memberSafeName(post.author),
           avatarUrl: post.author.avatarUrl,
           role: post.author.role,
         }
@@ -53,8 +54,8 @@ export default async function VoiceNotesPage() {
   }));
 
   return (
-    <div className="max-w-2xl mx-auto px-4 py-8 lg:py-12">
-      <div className="mb-8">
+    <div className="max-w-2xl mx-auto px-3 sm:px-4 py-6 sm:py-8 lg:py-12">
+      <div className="mb-6 sm:mb-8">
         <h1 className="text-2xl sm:text-3xl font-extralight tracking-wider uppercase gradient-text-gold mb-2">
           Voice Notes
         </h1>

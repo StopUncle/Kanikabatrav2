@@ -11,6 +11,15 @@ const schema = z.object({
   gender: z.enum(["MALE", "FEMALE"], {
     errorMap: () => ({ message: "Please select your gender" }),
   }),
+  // Pseudonym the member uses inside the community. Real names are never
+  // shown to other members — only this. 2-30 chars keeps it usable as a
+  // display handle while avoiding empty/abusive names.
+  displayName: z
+    .string()
+    .trim()
+    .min(2, "Must be at least 2 characters")
+    .max(30, "Keep it under 30 characters")
+    .regex(/^[a-zA-Z0-9_.\- ]+$/, "Letters, numbers, spaces, hyphens, and underscores only"),
   whyJoin: z.string().min(20, "Tell us a bit more (at least 20 characters)").max(1000),
   whatHope: z.string().min(20, "Tell us a bit more (at least 20 characters)").max(1000),
   howFound: z.string().min(1, "Required").max(500),
@@ -154,6 +163,25 @@ export default function ApplicationForm({ existingStatus }: ApplicationFormProps
         )}
         <p className="mt-2 text-xs text-text-gray/60">
           The community is split into two groups. You&apos;ll only see messages from members who share your gender.
+        </p>
+      </div>
+
+      <div>
+        <label className="block text-sm font-light text-text-gray mb-2">
+          Your display name
+        </label>
+        <input
+          type="text"
+          {...register("displayName")}
+          placeholder="What members will see (not your real name)"
+          className="w-full px-4 py-3 bg-deep-black/50 border border-accent-gold/20 rounded-lg text-text-light placeholder-text-gray/40 focus:border-accent-gold/60 focus:outline-none transition-colors"
+          autoComplete="off"
+        />
+        {errors.displayName && (
+          <p className="mt-2 text-sm text-red-400">{errors.displayName.message}</p>
+        )}
+        <p className="mt-2 text-xs text-text-gray/60">
+          This is what other members see on your posts, comments, and chat messages. Pick something anonymous — your real name is never shown to other members.
         </p>
       </div>
 

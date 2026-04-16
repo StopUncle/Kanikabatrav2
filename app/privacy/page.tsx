@@ -79,18 +79,24 @@ export default function PrivacyPage() {
                 We do not sell your personal information. We share your data only with:
               </p>
               <ul className="text-text-gray space-y-2 list-disc list-inside">
-                <li><strong className="text-text-light">Payment processors</strong> — to process transactions securely (PayPal, Paddle, or other payment providers)</li>
-                <li><strong className="text-text-light">Email service providers</strong> — to send transactional and marketing emails</li>
-                <li><strong className="text-text-light">Analytics providers</strong> — to understand Site usage (Google Analytics)</li>
-                <li><strong className="text-text-light">Hosting providers</strong> — to serve our Site (Railway, Vercel)</li>
+                <li><strong className="text-text-light">Payment processor</strong> — Stripe (stripe.com) handles all payments and stores card details on our behalf</li>
+                <li><strong className="text-text-light">Email providers</strong> — Resend and Nodemailer SMTP deliver transactional and marketing emails; open/click tracking may be enabled</li>
+                <li><strong className="text-text-light">Real-time chat</strong> — Pusher (pusher.com) powers Inner Circle chat rooms and receives message content in transit</li>
+                <li><strong className="text-text-light">Media storage</strong> — Cloudflare R2 stores voice notes and member avatars</li>
+                <li><strong className="text-text-light">Analytics</strong> — Google Analytics (anonymised IP) tracks aggregate site usage</li>
+                <li><strong className="text-text-light">Error tracking</strong> — Sentry captures application errors (personal data masked by default)</li>
+                <li><strong className="text-text-light">Hosting</strong> — Railway serves the application and database</li>
                 <li><strong className="text-text-light">Legal authorities</strong> — if required by law, court order, or to protect our rights</li>
               </ul>
             </section>
 
             <section className="bg-deep-black/50 border border-accent-gold/10 rounded-2xl p-8">
               <h2 className="text-2xl font-light text-accent-gold mb-4">5. Data Retention</h2>
+              <p className="text-text-gray leading-relaxed mb-4">
+                We retain your personal information for as long as your account is active or as needed to provide services. Purchase records are retained for 7 years for accounting and tax compliance. You may request deletion of your account and associated data at any time by emailing Kanika@kanikarose.com.
+              </p>
               <p className="text-text-gray leading-relaxed">
-                We retain your personal information for as long as your account is active or as needed to provide services. Purchase records are retained for accounting and legal compliance purposes. You may request deletion of your account and associated data at any time by contacting us at Kanika@kanikarose.com. Community posts and comments may be retained in anonymised form after account deletion.
+                If you cancel your Inner Circle subscription, your posts, comments, and chat messages remain visible to other members under your pseudonym. If you request full deletion, your content is either removed or anonymised at our discretion. Voice note files you received continue to be accessible via your original email delivery links until they expire.
               </p>
             </section>
 

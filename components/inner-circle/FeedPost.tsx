@@ -78,16 +78,9 @@ export default function FeedPost({ post, isDetail = false }: FeedPostProps) {
     <m.article
       initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
-      className="bg-deep-black/50 backdrop-blur-sm border border-accent-gold/10 rounded-2xl p-6 hover:border-accent-gold/25 transition-all duration-300"
+      className="bg-deep-black/50 backdrop-blur-sm border border-accent-gold/10 rounded-xl sm:rounded-2xl p-4 sm:p-6 hover:border-accent-gold/25 transition-all duration-300"
     >
-      {post.isPinned && (
-        <div className="flex items-center gap-1.5 text-warm-gold text-xs mb-3">
-          <Pin className="w-3 h-3" />
-          <span className="uppercase tracking-wider font-medium bg-warm-gold/10 border border-warm-gold/25 px-2 py-0.5 rounded-full">Pinned</span>
-        </div>
-      )}
-
-      <div className="flex items-center gap-3 mb-4">
+      <div className="flex items-center gap-3 mb-3 sm:mb-4 flex-wrap">
         <div
           className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium shrink-0 ${
             isAdminAuthor
@@ -108,7 +101,7 @@ export default function FeedPost({ post, isDetail = false }: FeedPostProps) {
             authorInitial
           )}
         </div>
-        <div className="flex items-center gap-2 min-w-0">
+        <div className="flex items-center gap-2 min-w-0 flex-1">
           <span className="text-sm font-medium text-text-light truncate">
             {post.author?.name || "Kanika"}
           </span>
@@ -119,9 +112,15 @@ export default function FeedPost({ post, isDetail = false }: FeedPostProps) {
           )}
           <span className="text-xs text-text-gray/70 shrink-0">{timeAgo}</span>
         </div>
+        {post.isPinned && (
+          <span className="inline-flex items-center gap-1 text-[10px] text-warm-gold uppercase tracking-wider font-medium bg-warm-gold/10 border border-warm-gold/25 px-2 py-0.5 rounded-full shrink-0">
+            <Pin className="w-2.5 h-2.5" />
+            Pinned
+          </span>
+        )}
       </div>
 
-      <h3 className="text-lg font-medium text-text-light mb-2">{post.title}</h3>
+      <h3 className="text-base sm:text-lg font-medium text-text-light mb-2">{post.title}</h3>
 
       <div className="text-text-gray text-sm leading-relaxed mb-4 feed-markdown">
         {/*

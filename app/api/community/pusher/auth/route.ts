@@ -4,6 +4,7 @@ import { verifyAccessToken } from "@/lib/auth/jwt";
 import { cookies } from "next/headers";
 import { prisma } from "@/lib/prisma";
 import { checkAccessTier } from "@/lib/community/access";
+import { memberSafeName } from "@/lib/community/privacy";
 
 export async function POST(request: NextRequest) {
   try {
@@ -37,6 +38,7 @@ export async function POST(request: NextRequest) {
         name: true,
         displayName: true,
         avatarUrl: true,
+        role: true,
       },
     });
 
@@ -84,7 +86,7 @@ export async function POST(request: NextRequest) {
       const presenceData = {
         user_id: user.id,
         user_info: {
-          name: user.displayName || user.name,
+          name: memberSafeName(user),
           avatar: user.avatarUrl,
         },
       };

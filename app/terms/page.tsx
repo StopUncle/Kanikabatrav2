@@ -119,9 +119,49 @@ export default function TermsPage() {
                     </h3>
                     <p className="text-text-gray leading-relaxed">
                       All payments must be made in advance of receiving
-                      services. We accept payment via PayPal and other approved
-                      payment methods. Prices are subject to change without
-                      notice.
+                      services. We process payments via Stripe. Prices are
+                      subject to change without notice.
+                    </p>
+                  </div>
+
+                  <div>
+                    <h3 className="text-lg font-light text-accent-gold mb-3">
+                      Subscription Billing (The Inner Circle)
+                    </h3>
+                    <p className="text-text-gray leading-relaxed mb-4">
+                      The Inner Circle is a paid monthly subscription at
+                      $29/month. Your subscription will automatically renew each
+                      month until you cancel. You can cancel anytime from your
+                      dashboard or by emailing Kanika@kanikarose.com — your
+                      access continues until the end of the paid period.
+                    </p>
+                    <p className="text-text-gray leading-relaxed mb-4">
+                      Book purchasers may receive a 30-day free trial to The
+                      Inner Circle via email. The trial includes full access;
+                      at the end of the trial your access expires unless you
+                      subscribe. No charges are made during the trial.
+                    </p>
+                  </div>
+
+                  <div>
+                    <h3 className="text-lg font-light text-accent-gold mb-3">
+                      Community Rules & Content
+                    </h3>
+                    <p className="text-text-gray leading-relaxed mb-4">
+                      Posts, comments, forum threads, and chat messages you
+                      create in The Inner Circle remain your own content. By
+                      posting, you grant us a license to display that content
+                      within the community. We may remove content that
+                      violates the community guidelines (harassment, doxxing,
+                      explicit content, spam) and suspend or ban accounts at
+                      our sole discretion.
+                    </p>
+                    <p className="text-text-gray leading-relaxed">
+                      Members must use a pseudonym (display name) and are
+                      expected to protect the privacy of other members. Sharing
+                      another member&apos;s real identity, screenshots, or
+                      private messages outside the community is grounds for
+                      immediate ban without refund.
                     </p>
                   </div>
 

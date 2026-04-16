@@ -6,6 +6,7 @@ import { getAdminUserId } from "@/lib/auth/server-auth";
 import { prisma } from "@/lib/prisma";
 import { checkAccessTier } from "@/lib/community/access";
 import { getViewerGender, authorGenderWhere } from "@/lib/community/gender-filter";
+import { memberSafeName } from "@/lib/community/privacy";
 import PostCard from "@/components/community/forum/PostCard";
 import AccessGate from "@/components/community/access/AccessGate";
 import { Plus, ArrowLeft } from "lucide-react";
@@ -96,6 +97,7 @@ export default async function CategoryPage({ params, searchParams }: Props) {
           name: true,
           displayName: true,
           avatarUrl: true,
+          role: true,
         },
       },
       _count: {
@@ -115,7 +117,15 @@ export default async function CategoryPage({ params, searchParams }: Props) {
     likeCount: post.likeCount,
     replyCount: post._count.replies,
     createdAt: post.createdAt.toISOString(),
-    author: post.author,
+    // Privacy: strip the real `name` field — client components must only
+    // see displayName (with a generic fallback) so a malicious member can
+    // never harvest identities from network responses or SSR'd HTML.
+    author: {
+      id: post.author.id,
+      displayName: memberSafeName(post.author),
+      name: null,
+      avatarUrl: post.author.avatarUrl,
+    },
   }));
 
   return (

@@ -42,18 +42,21 @@ export async function POST(request: NextRequest) {
             const adminEmail = process.env.ADMIN_EMAIL || "Kanika@kanikarose.com";
             await sendEmail({
               to: adminEmail,
-              subject: `[ACTION REQUIRED] Book delivery permanently failed for ${purchase.customerEmail}`,
+              subject: `Customer hasn't received their book — ${purchase.customerName}`,
               html: `
-                <p>The retry-emails cron has exhausted 5 attempts to deliver the book to:</p>
-                <ul>
-                  <li><strong>Customer:</strong> ${purchase.customerName}</li>
-                  <li><strong>Email:</strong> ${purchase.customerEmail}</li>
-                  <li><strong>Purchase ID:</strong> ${purchase.id}</li>
-                  <li><strong>Amount:</strong> $${purchase.amount}</li>
-                  <li><strong>Created:</strong> ${purchase.createdAt}</li>
-                </ul>
-                <p>Manual follow-up required. The customer paid but never received the download link.</p>
-                <p>Use <code>/admin/purchases</code> or <code>/api/admin/send-download-link</code> to resend manually.</p>
+                <p style="font-family: Georgia, serif; font-size: 16px; color: #f5f0ed;">Hey Kanika,</p>
+                <p style="font-family: Georgia, serif; font-size: 15px; color: #94a3b8; line-height: 1.6;">
+                  A customer paid for the book but we couldn't get the download email delivered after several tries. They've been waiting.
+                </p>
+                <table style="font-family: Georgia, serif; font-size: 14px; color: #94a3b8; background: #1a0d11; padding: 16px; border-radius: 8px; margin: 16px 0;">
+                  <tr><td style="padding: 4px 12px 4px 0;"><strong style="color: #d4af37;">Name:</strong></td><td>${purchase.customerName}</td></tr>
+                  <tr><td style="padding: 4px 12px 4px 0;"><strong style="color: #d4af37;">Email:</strong></td><td>${purchase.customerEmail}</td></tr>
+                  <tr><td style="padding: 4px 12px 4px 0;"><strong style="color: #d4af37;">Amount:</strong></td><td>$${purchase.amount}</td></tr>
+                  <tr><td style="padding: 4px 12px 4px 0;"><strong style="color: #d4af37;">Ordered:</strong></td><td>${new Date(purchase.createdAt).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })}</td></tr>
+                </table>
+                <p style="font-family: Georgia, serif; font-size: 15px; color: #94a3b8; line-height: 1.6;">
+                  Go to the <strong>Admin → Purchases</strong> page and click "Resend Download" next to their name to manually send it. Or reply to their email directly.
+                </p>
               `,
             });
             await prisma.purchase.update({

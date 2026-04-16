@@ -58,8 +58,19 @@ export async function POST(request: NextRequest) {
         const adminEmail = process.env.ADMIN_EMAIL || "Kanika@kanikarose.com";
         await sendEmail({
           to: adminEmail,
-          subject: "[Inner Circle] Discussion prompt queue is empty",
-          html: `<p>The discussion-prompt cron found no unused DiscussionPrompt rows. The feed will stop receiving discussion content until more are seeded.</p><p>Add more rows to <code>prisma/seeds/discussion-prompts.ts</code> and re-run the seed script.</p>`,
+          subject: "Heads up — your discussion prompt library is running low",
+          html: `
+            <p style="font-family: Georgia, serif; font-size: 16px; color: #f5f0ed;">Hey Kanika,</p>
+            <p style="font-family: Georgia, serif; font-size: 15px; color: #94a3b8; line-height: 1.6;">
+              The weekly discussion prompts that auto-post to the Inner Circle feed (Manipulation Monday, etc.) have run out. No prompt will post today.
+            </p>
+            <p style="font-family: Georgia, serif; font-size: 15px; color: #94a3b8; line-height: 1.6;">
+              Ask your developer to add more — no action needed from you, just a heads up.
+            </p>
+            <p style="font-family: Georgia, serif; font-size: 13px; color: #94a3b8; margin-top: 24px; font-style: italic;">
+              You're getting this because the system sends a one-time alert when the automated content queue is empty.
+            </p>
+          `,
         });
       } catch (err) {
         logger.error("[cron discussion-prompt] failed to send empty-queue alert", err as Error);

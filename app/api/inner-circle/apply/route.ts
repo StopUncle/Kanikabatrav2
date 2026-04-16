@@ -10,6 +10,12 @@ import { z } from "zod";
 
 const applicationSchema = z.object({
   gender: z.enum(["MALE", "FEMALE"]),
+  displayName: z
+    .string()
+    .trim()
+    .min(2)
+    .max(30)
+    .regex(/^[a-zA-Z0-9_.\- ]+$/),
   whyJoin: z.string().min(20).max(1000),
   whatHope: z.string().min(20).max(1000),
   howFound: z.string().min(1).max(500),
@@ -58,12 +64,16 @@ export async function POST(request: NextRequest) {
       // EXPIRED falls through — natural expiration allows re-application
     }
 
-    // Save gender on the user record (drives the gender-split content filter
-    // across the rest of the inner circle). Always overwrite — if the user
-    // re-applies with a different selection, the latest pick wins.
+    // Save gender + displayName on the user record. Gender drives the
+    // gender-split content filter; displayName is what other members see
+    // everywhere (posts, comments, forum, chat) — real name is never
+    // exposed to other members.
     await prisma.user.update({
       where: { id: user.id },
-      data: { gender: parsed.data.gender },
+      data: {
+        gender: parsed.data.gender,
+        displayName: parsed.data.displayName,
+      },
     });
 
     const membership = await prisma.communityMembership.upsert({

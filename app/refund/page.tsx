@@ -72,13 +72,16 @@ export default function RefundPage() {
             <section className="bg-deep-black/50 border border-accent-gold/10 rounded-2xl p-8">
               <h2 className="text-2xl font-light text-accent-gold mb-4">The Inner Circle (Subscription)</h2>
               <p className="text-text-gray leading-relaxed mb-4">
-                The Inner Circle is a monthly subscription at $29/month.
+                The Inner Circle is a monthly subscription at $29/month. <strong className="text-text-light">Your subscription renews automatically each month until you cancel.</strong>
               </p>
               <ul className="text-text-gray space-y-3 list-disc list-inside">
-                <li><strong className="text-text-light">Cancellation:</strong> You may cancel your subscription at any time. Access continues until the end of your current billing period</li>
+                <li><strong className="text-text-light">Auto-renewal:</strong> Billing is charged to your payment method on the same day each month. You&apos;ll receive a renewal confirmation email each time it renews successfully</li>
+                <li><strong className="text-text-light">Cancellation:</strong> Cancel anytime from your dashboard, or email Kanika@kanikarose.com. Access continues until the end of your current billing period</li>
                 <li><strong className="text-text-light">Pause:</strong> You may pause your membership for up to 30 days instead of cancelling</li>
                 <li><strong className="text-text-light">Refunds:</strong> We do not offer partial-month refunds for subscription cancellations. If you cancel mid-cycle, you retain access until the end of the period you&apos;ve already paid for</li>
                 <li><strong className="text-text-light">First month:</strong> If you cancel within 7 days of your first subscription payment and have not accessed community content, we will issue a full refund</li>
+                <li><strong className="text-text-light">Free trial (book buyers):</strong> If you received a 30-day free trial via the book purchase email sequence, no payment is taken during the trial. At the end of the 30 days your access expires unless you subscribe — nothing is auto-charged</li>
+                <li><strong className="text-text-light">Payment failures:</strong> If we can&apos;t charge your card on renewal, your membership is paused and you&apos;ll be emailed to update your payment method. No grace period access after suspension</li>
               </ul>
             </section>
 

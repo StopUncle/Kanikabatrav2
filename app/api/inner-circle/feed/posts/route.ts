@@ -8,6 +8,7 @@ import {
   feedPostGenderWhere,
 } from "@/lib/community/gender-filter";
 import { prisma } from "@/lib/prisma";
+import { memberSafeName } from "@/lib/community/privacy";
 
 async function resolveUserId(): Promise<string | null> {
   const cookieStore = await cookies();
@@ -103,7 +104,7 @@ export async function GET(request: NextRequest) {
     author: post.author
       ? {
           id: post.author.id,
-          name: post.author.displayName || post.author.name,
+          name: memberSafeName(post.author),
           avatarUrl: post.author.avatarUrl,
           role: post.author.role,
         }
