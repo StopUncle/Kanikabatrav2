@@ -35,7 +35,7 @@ taskkill //F //PID [PID]           # Kill process on port
   - **Email transport:** Resend (preferred when `RESEND_API_KEY` set) → Nodemailer SMTP fallback. Microsoft Outlook routing has its own transport. Sequenced campaigns queued in the `EmailQueue` table (processor at `/api/admin/email-queue/process` — currently no scheduled trigger, see TODO).
   - **Real-time:** Pusher configured (lib/pusher/server.ts + client.ts), used by chat rooms. Inner Circle feed is currently server-rendered without real-time.
   - **Deployment:** **Railway** (Nixpacks builder, `npx prisma generate && npm run build`). Domain: `kanikarose.com`. Push to `master` auto-deploys.
-  - **Storage:** Local filesystem under `private/books/` for book files (gitignored, deployed via git for now). Voice notes currently use ephemeral `public/uploads/voice-notes/` — **broken on Railway redeploys, needs cloud storage.**
+  - **Storage:** Local filesystem under `private/books/` for book files (gitignored, deployed via git for now). Voice notes and member avatars on **Cloudflare R2** (`kanika-media` bucket, via `lib/storage/r2.ts`, S3-compatible).
 
 ## 💳 Payment Processor: Stripe
 
@@ -278,7 +278,7 @@ These came out of the April 2026 audit. Critical/high items only — see `findin
 
 ### Infrastructure (need decisions)
 - [ ] **Cron triggers for `/api/cron/*`** — daily-insight, discussion-prompt, retry-emails, AND `/api/admin/email-queue/process`. None of them fire on a schedule. Pick one: Railway Cron service, GitHub Actions on a schedule, or external (e.g. cron-job.org) hitting the endpoints with `x-cron-secret`.
-- [ ] **Voice notes cloud storage** — `app/api/inner-circle/voice-notes/upload/route.ts` writes to `public/uploads/voice-notes/` which is wiped on every Railway redeploy. Move to Cloudinary, S3, or R2.
+- [x] **Voice notes cloud storage** — DONE. Uses Cloudflare R2 (`kanika-media` bucket) via `lib/storage/r2.ts`. All R2 env vars configured on Railway. Files persist across redeploys.
 - [ ] **Add `prisma migrate deploy` to nixpacks build** — Railway currently doesn't apply migrations on deploy. Schema changes have to be applied manually before pushing the code that references them.
 
 ### Outstanding bugs
