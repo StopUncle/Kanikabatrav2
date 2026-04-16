@@ -46,7 +46,14 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ error: "Your application is already approved — complete payment to activate" }, { status: 400 });
       }
       if (existing.status === "CANCELLED") {
-        return NextResponse.json({ error: "Your previous application was not approved. Please contact us to re-apply." }, { status: 403 });
+        // Allow re-application for rejected users — reset their membership
+        // to PENDING so they go through the approval flow again. The admin
+        // can see prior rejection history in applicationData.
+        await prisma.communityMembership.update({
+          where: { userId: user.id },
+          data: { status: "EXPIRED" },
+        });
+        // Fall through to the upsert below, which will set it to PENDING
       }
       // EXPIRED falls through — natural expiration allows re-application
     }

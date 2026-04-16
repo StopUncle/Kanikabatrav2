@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { stripe } from "@/lib/stripe";
 import { prisma } from "@/lib/prisma";
-import { sendBookDelivery, sendInnerCircleWelcomeNewUser } from "@/lib/email";
+import { sendBookDelivery, sendInnerCircleWelcomeNewUser, sendMembershipRenewed, sendMembershipSuspended, sendMembershipCancelled } from "@/lib/email";
 import jwt from "jsonwebtoken";
 import crypto from "crypto";
 
@@ -370,6 +370,41 @@ export async function POST(request: NextRequest) {
             },
           });
 
+          // Inner Circle members get the premium book bundled. Create a
+          // download token + Purchase row just like the standalone BOOK
+          // branch so they get working download links.
+          try {
+            const bookToken = crypto.randomBytes(32).toString("hex");
+            const bookExpiry = new Date();
+            bookExpiry.setDate(bookExpiry.getDate() + 30);
+
+            await prisma.purchase.create({
+              data: {
+                type: "BOOK",
+                customerEmail: user.email,
+                customerName: user.name || "Member",
+                amount: 0,
+                status: "COMPLETED",
+                paypalOrderId: `IC-BOOK-${sessionId}`,
+                downloadToken: bookToken,
+                expiresAt: bookExpiry,
+                maxDownloads: 10,
+                metadata: { source: "inner-circle-bundle", sessionId },
+              },
+            });
+
+            await sendBookDelivery(
+              user.email,
+              user.name || "Member",
+              bookToken,
+              "PREMIUM",
+              bookExpiry,
+            );
+            console.log(`[stripe-webhook] book delivery sent to INNER_CIRCLE member ${user.email}`);
+          } catch (err) {
+            console.error("[stripe-webhook] INNER_CIRCLE book delivery failed:", err);
+          }
+
           // If we just created the account, the user has no idea they have
           // one. Send them a welcome email containing their login email and
           // a password-reset link so they can set their own password.
@@ -482,6 +517,21 @@ export async function POST(request: NextRequest) {
               : {}),
           },
         });
+
+        // Notify the member their subscription renewed successfully.
+        try {
+          const user = await prisma.user.findUnique({
+            where: { id: membership.userId },
+            select: { email: true, name: true },
+          });
+          if (user?.email) {
+            const formattedDate = newExpiresAt.toLocaleDateString("en-US", {
+              month: "long", day: "numeric", year: "numeric",
+            });
+            sendMembershipRenewed(user.email, user.name || "Member", formattedDate)
+              .catch((err) => console.error("[stripe-webhook] renewal email failed:", err));
+          }
+        } catch { /* non-blocking */ }
         break;
       }
 
@@ -495,6 +545,22 @@ export async function POST(request: NextRequest) {
             where: { id: membership.id },
             data: { status: "CANCELLED", cancelledAt: new Date() },
           });
+
+          try {
+            const user = await prisma.user.findUnique({
+              where: { id: membership.userId },
+              select: { email: true, name: true },
+            });
+            if (user?.email) {
+              const accessUntil = membership.expiresAt
+                ? membership.expiresAt.toLocaleDateString("en-US", {
+                    month: "long", day: "numeric", year: "numeric",
+                  })
+                : undefined;
+              sendMembershipCancelled(user.email, user.name || "Member", accessUntil)
+                .catch((err) => console.error("[stripe-webhook] cancellation email failed:", err));
+            }
+          } catch { /* non-blocking */ }
         }
         break;
       }
@@ -613,6 +679,18 @@ export async function POST(request: NextRequest) {
           console.log(
             `[stripe-webhook] suspended membership ${membership.id} after payment_failed`,
           );
+
+          // Let the member know their payment failed so they can fix it.
+          try {
+            const user = await prisma.user.findUnique({
+              where: { id: membership.userId },
+              select: { email: true, name: true },
+            });
+            if (user?.email) {
+              sendMembershipSuspended(user.email, user.name || "Member")
+                .catch((err) => console.error("[stripe-webhook] suspension email failed:", err));
+            }
+          } catch { /* non-blocking */ }
         }
         break;
       }

@@ -21,7 +21,12 @@ export const metadata = {
     "Private community for dark psychology education — courses, voice notes, and a community of people who see through the bullshit",
 };
 
-export default async function InnerCircleLanding() {
+export default async function InnerCircleLanding({
+  searchParams,
+}: {
+  searchParams: Promise<{ status?: string }>;
+}) {
+  const { status: statusParam } = await searchParams;
   const userId = await optionalServerAuth();
 
   if (userId) {
@@ -89,6 +94,29 @@ export default async function InnerCircleLanding() {
       <Header />
       <main className="min-h-screen pt-28 pb-16 relative z-10">
         <div className="max-w-5xl mx-auto px-4">
+
+          {statusParam === "suspended" && (
+            <div className="mb-8 p-4 bg-red-900/20 border border-red-500/30 rounded-xl text-center">
+              <p className="text-red-300 text-sm">
+                Your membership has been suspended due to a payment issue. Please update your payment method or contact{" "}
+                <a href="mailto:Kanika@kanikarose.com" className="text-accent-gold hover:underline">Kanika@kanikarose.com</a> for help.
+              </p>
+            </div>
+          )}
+          {statusParam === "cancelled" && (
+            <div className="mb-8 p-4 bg-accent-gold/5 border border-accent-gold/20 rounded-xl text-center">
+              <p className="text-text-gray text-sm">
+                Your membership has ended. You can reapply below if you&apos;d like to rejoin.
+              </p>
+            </div>
+          )}
+          {statusParam === "expired" && (
+            <div className="mb-8 p-4 bg-accent-gold/5 border border-accent-gold/20 rounded-xl text-center">
+              <p className="text-text-gray text-sm">
+                Your membership or approval has expired. You&apos;re welcome to reapply below.
+              </p>
+            </div>
+          )}
 
           {/* Hero */}
           <div className="text-center mb-20">

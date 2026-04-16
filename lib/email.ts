@@ -1710,3 +1710,133 @@ export const sendApplicationApproved = async (
     html: luxuryEmailShell(inner, "Application Approved", "Welcome to The Inner Circle"),
   });
 };
+
+export const sendApplicationRejected = async (
+  applicantEmail: string,
+  applicantName: string,
+  reason?: string,
+): Promise<boolean> => {
+  const inner = `
+    <p style="color: #f5f0ed; font-size: 18px; margin: 0 0 20px 0; line-height: 1.6;">
+      Dear ${esc(applicantName)},
+    </p>
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 25px 0; font-size: 15px;">
+      Thank you for your interest in The Inner Circle. After reviewing your application, we&rsquo;re unable to offer you a spot at this time.
+    </p>
+    ${reason ? `
+    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="margin: 0 0 25px 0;">
+      <tr>
+        <td bgcolor="#1a0d11" style="padding: 20px; border-radius: 10px; border: 1px solid #2a1820;">
+          <p style="color: #94a3b8; line-height: 1.8; margin: 0; font-size: 14px; font-style: italic;">
+            &ldquo;${esc(reason)}&rdquo;
+          </p>
+        </td>
+      </tr>
+    </table>
+    ` : ""}
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 25px 0; font-size: 15px;">
+      This doesn&rsquo;t mean the door is closed forever. You&rsquo;re welcome to reapply in the future. If you have questions, reply to this email.
+    </p>
+    <p style="color: #94a3b8; line-height: 1.8; margin: 20px 0 0 0; font-size: 13px; font-style: italic;">
+      &mdash; Kanika
+    </p>
+  `;
+
+  return await sendEmail({
+    to: applicantEmail,
+    subject: "Your Inner Circle Application",
+    html: luxuryEmailShell(inner, "Application Update", "The Inner Circle"),
+  });
+};
+
+export const sendMembershipRenewed = async (
+  memberEmail: string,
+  memberName: string,
+  nextBillingDate: string,
+): Promise<boolean> => {
+  const inner = `
+    <p style="color: #f5f0ed; font-size: 18px; margin: 0 0 20px 0; line-height: 1.6;">
+      ${esc(memberName)},
+    </p>
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 25px 0; font-size: 15px;">
+      Your Inner Circle membership has been renewed. Your next billing date is <strong style="color: #d4af37;">${esc(nextBillingDate)}</strong>.
+    </p>
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0; font-size: 14px;">
+      The feed, classroom, and community are waiting for you.
+    </p>
+  `;
+
+  return await sendEmail({
+    to: memberEmail,
+    subject: "Membership renewed — The Inner Circle",
+    html: luxuryEmailShell(inner, "Membership Renewed", "The Inner Circle"),
+  });
+};
+
+export const sendMembershipSuspended = async (
+  memberEmail: string,
+  memberName: string,
+): Promise<boolean> => {
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://kanikarose.com";
+
+  const inner = `
+    <p style="color: #f5f0ed; font-size: 18px; margin: 0 0 20px 0; line-height: 1.6;">
+      ${esc(memberName)},
+    </p>
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 25px 0; font-size: 15px;">
+      We weren&rsquo;t able to process your latest payment for The Inner Circle. Your membership has been paused until the payment issue is resolved.
+    </p>
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 25px 0; font-size: 15px;">
+      Please update your payment method to restore access:
+    </p>
+    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="margin: 0 0 25px 0;">
+      <tr>
+        <td align="center">
+          <table role="presentation" cellspacing="0" cellpadding="0" border="0">
+            <tr>
+              <td bgcolor="#d4af37" style="border-radius: 50px;" align="center">
+                <a href="${baseUrl}/dashboard" target="_blank" style="display: inline-block; color: #050511; padding: 16px 40px; text-decoration: none; font-weight: 700; font-size: 15px; letter-spacing: 1px; text-transform: uppercase; border-radius: 50px;">Update Payment</a>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0; font-size: 13px; font-style: italic;">
+      If you need help, reply to this email.
+    </p>
+  `;
+
+  return await sendEmail({
+    to: memberEmail,
+    subject: "Action needed — Inner Circle payment failed",
+    html: luxuryEmailShell(inner, "Payment Issue", "The Inner Circle"),
+  });
+};
+
+export const sendMembershipCancelled = async (
+  memberEmail: string,
+  memberName: string,
+  accessUntil?: string,
+): Promise<boolean> => {
+  const inner = `
+    <p style="color: #f5f0ed; font-size: 18px; margin: 0 0 20px 0; line-height: 1.6;">
+      ${esc(memberName)},
+    </p>
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 25px 0; font-size: 15px;">
+      Your Inner Circle membership has been cancelled.${accessUntil ? ` You&rsquo;ll retain access until <strong style="color: #d4af37;">${esc(accessUntil)}</strong>.` : ""}
+    </p>
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 25px 0; font-size: 15px;">
+      If this was a mistake or you change your mind, you can resubscribe from your dashboard at any time.
+    </p>
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0; font-size: 13px; font-style: italic;">
+      &mdash; Kanika
+    </p>
+  `;
+
+  return await sendEmail({
+    to: memberEmail,
+    subject: "Inner Circle membership cancelled",
+    html: luxuryEmailShell(inner, "Membership Cancelled", "The Inner Circle"),
+  });
+};

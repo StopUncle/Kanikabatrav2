@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { sendApplicationApproved } from "@/lib/email";
+import { sendApplicationApproved, sendApplicationRejected } from "@/lib/email";
 import { logger } from "@/lib/logger";
 import { requireAdminSession } from "@/lib/admin/auth";
 
@@ -102,6 +102,14 @@ export async function POST(
         },
       },
     });
+
+    if (updated.user?.email) {
+      sendApplicationRejected(
+        updated.user.email,
+        updated.user.name || "there",
+        note || undefined,
+      ).catch((err) => logger.error("Failed to send rejection email", err));
+    }
 
     return NextResponse.json({
       success: true,

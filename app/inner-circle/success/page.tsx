@@ -15,7 +15,7 @@ function SuccessContent() {
   // Lemon Squeezy redirects here after checkout. The webhook activates
   // the membership asynchronously, so we poll until it's active.
   useEffect(() => {
-    const MAX_ATTEMPTS = 15;
+    const MAX_ATTEMPTS = 30;
     const POLL_INTERVAL = 2000;
 
     function checkActivation() {
@@ -97,25 +97,35 @@ function SuccessContent() {
             </>
           ) : (
             <>
-              <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-red-500/10 border border-red-500/20 flex items-center justify-center">
-                <AlertCircle className="w-10 h-10 text-red-400" />
+              <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-accent-gold/10 border border-accent-gold/20 flex items-center justify-center">
+                <AlertCircle className="w-10 h-10 text-accent-gold" />
               </div>
               <h1 className="text-3xl font-extralight text-text-light mb-4 tracking-wider uppercase">
-                Something Went Wrong
+                Payment Received
               </h1>
+              <p className="text-text-gray font-light mb-4">
+                Your payment went through successfully. Your membership is being activated &mdash; this can take up to a minute.
+              </p>
               <p className="text-text-gray font-light mb-8">
-                We couldn&apos;t activate your membership. Please contact{" "}
+                Check your email for a confirmation, or try accessing the Inner Circle in a moment. If you need help, contact{" "}
                 <a href="mailto:Kanika@kanikarose.com" className="text-accent-gold hover:text-accent-gold/80 transition-colors">
                   Kanika@kanikarose.com
-                </a>{" "}
-                for help.
+                </a>.
               </p>
-              <Link
-                href="/inner-circle"
-                className="text-text-gray text-sm hover:text-accent-gold transition-colors"
-              >
-                &larr; Back to Inner Circle
-              </Link>
+              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                <Link
+                  href="/inner-circle/feed"
+                  className="inline-flex items-center gap-2 py-3 px-8 rounded-full bg-accent-gold/10 border border-accent-gold/30 text-accent-gold font-medium hover:bg-accent-gold/20 transition-colors"
+                >
+                  Try Entering <ArrowRight className="w-4 h-4" />
+                </Link>
+                <Link
+                  href="/dashboard"
+                  className="text-text-gray text-sm hover:text-accent-gold transition-colors py-3 px-6"
+                >
+                  Go to Dashboard
+                </Link>
+              </div>
             </>
           )}
         </m.div>

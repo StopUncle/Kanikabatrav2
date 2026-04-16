@@ -109,6 +109,27 @@ export async function checkMembership(userId: string | null): Promise<Membership
     return { isMember: true, membership, status: membership.status };
   }
 
+  // APPROVED applications that sit untouched for 14+ days auto-expire.
+  // This prevents approved-but-abandoned applications from blocking the
+  // pipeline indefinitely.
+  if (membership.status === "APPROVED") {
+    const approvedAt = membership.activatedAt || new Date(0);
+    const fourteenDays = 14 * 24 * 60 * 60 * 1000;
+    if (Date.now() - approvedAt.getTime() > fourteenDays) {
+      await prisma.communityMembership.updateMany({
+        where: { id: membership.id, status: "APPROVED" },
+        data: { status: "EXPIRED" },
+      });
+      return {
+        isMember: false,
+        status: "EXPIRED",
+        membership,
+        reason: "Your approval has expired. Please reapply.",
+        redirectUrl: "/inner-circle?status=expired",
+      };
+    }
+  }
+
   if (membership.status !== "ACTIVE") {
     const redirectMap: Record<string, string> = {
       PENDING: "/inner-circle/apply?status=pending",
