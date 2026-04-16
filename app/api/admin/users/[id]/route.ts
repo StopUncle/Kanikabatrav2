@@ -21,9 +21,16 @@ export async function POST(
       role?: string;
     };
 
-    if (!action || !["ban", "unban", "set-role"].includes(action)) {
+    const VALID_ACTIONS = [
+      "ban",
+      "unban",
+      "set-role",
+      "restrict-messaging",
+      "unrestrict-messaging",
+    ] as const;
+    if (!action || !VALID_ACTIONS.includes(action as (typeof VALID_ACTIONS)[number])) {
       return NextResponse.json(
-        { error: "Invalid action. Must be 'ban', 'unban', or 'set-role'" },
+        { error: `Invalid action. Must be one of: ${VALID_ACTIONS.join(", ")}` },
         { status: 400 },
       );
     }
@@ -129,6 +136,53 @@ export async function POST(
       return NextResponse.json({
         success: true,
         message: `User role updated to ${role}`,
+        user: updated,
+      });
+    }
+
+    if (action === "restrict-messaging") {
+      const updated = await prisma.user.update({
+        where: { id },
+        data: {
+          messagingRestricted: true,
+          messagingRestrictedAt: new Date(),
+          messagingRestrictedReason: reason || "Restricted by admin",
+        },
+        select: {
+          id: true,
+          email: true,
+          name: true,
+          messagingRestricted: true,
+          messagingRestrictedReason: true,
+        },
+      });
+
+      return NextResponse.json({
+        success: true,
+        message: "Messaging restricted",
+        user: updated,
+      });
+    }
+
+    if (action === "unrestrict-messaging") {
+      const updated = await prisma.user.update({
+        where: { id },
+        data: {
+          messagingRestricted: false,
+          messagingRestrictedAt: null,
+          messagingRestrictedReason: null,
+        },
+        select: {
+          id: true,
+          email: true,
+          name: true,
+          messagingRestricted: true,
+        },
+      });
+
+      return NextResponse.json({
+        success: true,
+        message: "Messaging unrestricted",
         user: updated,
       });
     }

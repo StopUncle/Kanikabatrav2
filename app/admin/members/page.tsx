@@ -11,6 +11,8 @@ import {
   MoreVertical,
   UserX,
   UserCheck,
+  VolumeX,
+  MessageSquare,
 } from "lucide-react";
 
 interface Member {
@@ -21,6 +23,8 @@ interface Member {
   role: string;
   isBanned: boolean;
   banReason: string | null;
+  messagingRestricted: boolean;
+  messagingRestrictedReason: string | null;
   createdAt: string;
   membershipStatus: string | null;
 }
@@ -53,7 +57,12 @@ export default function MembersPage() {
 
   async function handleAction(
     userId: string,
-    action: "ban" | "unban" | "set-role",
+    action:
+      | "ban"
+      | "unban"
+      | "set-role"
+      | "restrict-messaging"
+      | "unrestrict-messaging",
     role?: string,
   ) {
     setActionLoading(userId);
@@ -167,15 +176,25 @@ export default function MembersPage() {
                     </span>
                   </td>
                   <td className="px-6 py-4">
-                    {member.isBanned ? (
-                      <span className="inline-flex items-center gap-1 text-xs text-red-400 bg-red-500/10 px-2 py-0.5 rounded-full">
-                        <Ban size={10} /> Banned
-                      </span>
-                    ) : (
-                      <span className="text-xs text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-full">
-                        Active
-                      </span>
-                    )}
+                    <div className="flex flex-col gap-1">
+                      {member.isBanned ? (
+                        <span className="inline-flex items-center gap-1 text-xs text-red-400 bg-red-500/10 px-2 py-0.5 rounded-full w-fit">
+                          <Ban size={10} /> Banned
+                        </span>
+                      ) : (
+                        <span className="text-xs text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-full w-fit">
+                          Active
+                        </span>
+                      )}
+                      {member.messagingRestricted && (
+                        <span
+                          className="inline-flex items-center gap-1 text-[10px] text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded-full w-fit"
+                          title={member.messagingRestrictedReason || undefined}
+                        >
+                          <VolumeX size={10} /> Muted
+                        </span>
+                      )}
+                    </div>
                   </td>
                   <td className="px-6 py-4">
                     {member.membershipStatus ? (
@@ -226,6 +245,25 @@ export default function MembersPage() {
                                 className="flex items-center gap-2 w-full px-4 py-2 text-sm text-left text-red-400 hover:bg-white/[0.03] transition-colors"
                               >
                                 <UserX size={14} /> Ban User
+                              </button>
+                            )}
+                            {member.messagingRestricted ? (
+                              <button
+                                onClick={() =>
+                                  handleAction(member.id, "unrestrict-messaging")
+                                }
+                                className="flex items-center gap-2 w-full px-4 py-2 text-sm text-left text-emerald-400 hover:bg-white/[0.03] transition-colors"
+                              >
+                                <MessageSquare size={14} /> Unmute Messaging
+                              </button>
+                            ) : (
+                              <button
+                                onClick={() =>
+                                  handleAction(member.id, "restrict-messaging")
+                                }
+                                className="flex items-center gap-2 w-full px-4 py-2 text-sm text-left text-amber-400 hover:bg-white/[0.03] transition-colors"
+                              >
+                                <VolumeX size={14} /> Mute Messaging
                               </button>
                             )}
                             <div className="border-t border-white/5 my-1" />

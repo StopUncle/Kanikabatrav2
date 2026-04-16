@@ -16,6 +16,9 @@ export interface MockUser {
   level: number;
   isBanned: boolean;
   banReason: string | null;
+  messagingRestricted: boolean;
+  messagingRestrictedAt: Date | null;
+  messagingRestrictedReason: string | null;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -37,6 +40,9 @@ export function createMockUser(overrides: Partial<MockUser> = {}): MockUser {
     level: 1,
     isBanned: false,
     banReason: null,
+    messagingRestricted: false,
+    messagingRestrictedAt: null,
+    messagingRestrictedReason: null,
     createdAt: new Date(),
     updatedAt: new Date(),
     ...overrides,

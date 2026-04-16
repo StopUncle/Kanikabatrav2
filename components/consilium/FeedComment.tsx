@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Heart, Reply } from "lucide-react";
+import { Heart, Reply, Flag, Check } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import FeedCommentForm from "./FeedCommentForm";
 import MemberBadge from "./MemberBadge";
@@ -41,6 +41,9 @@ export default function FeedComment({
   const [liked, setLiked] = useState(comment.isLiked);
   const [likeCount, setLikeCount] = useState(comment.likeCount);
   const [showReply, setShowReply] = useState(false);
+  const [reportState, setReportState] = useState<"idle" | "sending" | "done">(
+    "idle",
+  );
 
   const isAdminAuthor = comment.author.role === "ADMIN";
   const authorTier = comment.author.tier ?? (isAdminAuthor ? 12 : 1);
@@ -69,6 +72,25 @@ export default function FeedComment({
   const handleReplyPosted = () => {
     setShowReply(false);
     onCommentPosted();
+  };
+
+  const handleReport = async () => {
+    if (reportState !== "idle") return;
+    if (!window.confirm("Report this comment for Kanika to review?")) return;
+    setReportState("sending");
+    try {
+      const res = await fetch(
+        `/api/consilium/feed/${postId}/comments/${comment.id}/report`,
+        { method: "POST" },
+      );
+      if (res.ok) {
+        setReportState("done");
+      } else {
+        setReportState("idle");
+      }
+    } catch {
+      setReportState("idle");
+    }
   };
 
   return (
@@ -126,6 +148,34 @@ export default function FeedComment({
             >
               <Reply className="w-4 h-4" />
               Reply
+            </button>
+          )}
+
+          {/* Report — hidden on admin comments (can't report Kanika).
+              Once a report is filed, the button flips to a muted
+              "Reported" state and stays disabled for this session. */}
+          {!isAdminAuthor && (
+            <button
+              onClick={handleReport}
+              disabled={reportState !== "idle"}
+              aria-label="Report this comment"
+              className={`flex items-center gap-1 text-xs transition-colors px-2 py-2 rounded-lg active:bg-accent-gold/10 disabled:cursor-default ${
+                reportState === "done"
+                  ? "text-warm-gold/70"
+                  : "text-text-gray/70 hover:text-warm-gold"
+              }`}
+            >
+              {reportState === "done" ? (
+                <>
+                  <Check className="w-4 h-4" />
+                  Reported
+                </>
+              ) : (
+                <>
+                  <Flag className="w-4 h-4" />
+                  {reportState === "sending" ? "…" : "Report"}
+                </>
+              )}
             </button>
           )}
         </div>

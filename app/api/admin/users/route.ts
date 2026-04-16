@@ -33,6 +33,8 @@ export async function GET(request: NextRequest) {
         role: true,
         isBanned: true,
         banReason: true,
+        messagingRestricted: true,
+        messagingRestrictedReason: true,
         createdAt: true,
         communityMembership: {
           select: {
@@ -53,6 +55,8 @@ export async function GET(request: NextRequest) {
       role: user.role,
       isBanned: user.isBanned,
       banReason: user.banReason,
+      messagingRestricted: user.messagingRestricted,
+      messagingRestrictedReason: user.messagingRestrictedReason,
       createdAt: user.createdAt,
       membershipStatus: user.communityMembership?.status || null,
     }));

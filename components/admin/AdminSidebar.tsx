@@ -20,6 +20,7 @@ import {
   X,
   Eye,
   Lightbulb,
+  Flag,
 } from "lucide-react";
 
 const NAV_ITEMS = [
@@ -28,6 +29,7 @@ const NAV_ITEMS = [
   { href: "/admin/content", label: "Content", icon: Lightbulb },
   { href: "/admin/applications", label: "Applications", icon: UserCheck },
   { href: "/admin/comments", label: "Comments", icon: MessageSquare },
+  { href: "/admin/reports", label: "Reports", icon: Flag },
   { href: "/admin/posts", label: "Posts", icon: FileText },
   { href: "/admin/voice-notes", label: "Voice Notes", icon: Mic },
   { href: "/admin/courses", label: "Courses", icon: BookOpen },

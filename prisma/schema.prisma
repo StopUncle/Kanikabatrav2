@@ -50,6 +50,13 @@ model User {
   level               Int              @default(1)
   isBanned            Boolean          @default(false)
   banReason           String?
+  // Messaging restriction — softer than a ban. User can still read
+  // and browse, but cannot post comments. Toggled per-user by admin.
+  messagingRestricted      Boolean   @default(false)
+  messagingRestrictedAt    DateTime?
+  messagingRestrictedReason String?
+  reportsFiled        CommentReport[] @relation("ReportsFiled")
+  reportsResolved     CommentReport[] @relation("ReportsResolved")
 
   @@index([email])
 }
@@ -659,6 +666,7 @@ model FeedComment {
   parent    FeedComment?  @relation("CommentThread", fields: [parentId], references: [id], onDelete: Cascade)
   children  FeedComment[] @relation("CommentThread")
   likes     CommentLike[]
+  reports   CommentReport[]
 
   @@index([postId])
   @@index([authorId])
@@ -822,4 +830,26 @@ model VideoAnalysis {
   createdAt  DateTime @default(now())
 
   @@index([platform])
+}
+
+// Member-filed reports on feed comments. Each (commentId, reporterId)
+// is unique so a member can't spam the report button. When admin
+// "resolves" a report (approves the comment as fine, or hides it,
+// or restricts the author), resolvedAt + resolvedById are set.
+model CommentReport {
+  id           String      @id @default(cuid())
+  commentId    String
+  reporterId   String
+  reason       String?
+  createdAt    DateTime    @default(now())
+  resolvedAt   DateTime?
+  resolvedById String?
+  comment      FeedComment @relation(fields: [commentId], references: [id], onDelete: Cascade)
+  reporter     User        @relation("ReportsFiled", fields: [reporterId], references: [id], onDelete: Cascade)
+  resolver     User?       @relation("ReportsResolved", fields: [resolvedById], references: [id], onDelete: SetNull)
+
+  @@unique([commentId, reporterId])
+  @@index([commentId])
+  @@index([reporterId])
+  @@index([resolvedAt])
 }

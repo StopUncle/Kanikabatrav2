@@ -154,6 +154,23 @@ export async function POST(
     return NextResponse.json({ error: "Not a member" }, { status: 403 });
   }
 
+  // Messaging restriction — softer than a ban. Admin can toggle this
+  // per-user from /admin/members. Restricted users keep read access
+  // but can't post new comments.
+  const restriction = await prisma.user.findUnique({
+    where: { id: userId },
+    select: { messagingRestricted: true },
+  });
+  if (restriction?.messagingRestricted) {
+    return NextResponse.json(
+      {
+        error:
+          "Your messaging has been restricted. Contact Kanika if you think this is a mistake.",
+      },
+      { status: 403 },
+    );
+  }
+
   // Rate-limit by user (10 comments/hour) to prevent a compromised
   // account from spam-flooding every post.
   const rateLimited = await enforceRateLimit(limits.feedComment, `user:${userId}`);
