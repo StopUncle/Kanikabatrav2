@@ -14,6 +14,7 @@ import {
   ArrowLeft,
   Home,
   UserCircle2,
+  Award,
 } from "lucide-react";
 import ConsiliumSeal from "@/components/ConsiliumSeal";
 import MemberBadge, { getBadge } from "@/components/consilium/MemberBadge";
@@ -36,6 +37,7 @@ const MAIN_NAV = [
   { href: "/consilium/feed", label: "Feed", icon: Scroll },
   { href: "/consilium/voice-notes", label: "Voice Notes", icon: AudioLines },
   { href: "/consilium/classroom", label: "Classroom", icon: Library },
+  { href: "/consilium/badges", label: "Badges", icon: Award },
 ];
 
 export default function InnerCircleSidebar({

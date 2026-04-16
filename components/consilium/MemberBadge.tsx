@@ -30,6 +30,7 @@
  * getBadge without tripping the RSC boundary.
  */
 
+import { useId } from "react";
 import { METALS, getBadge } from "./badge-tiers";
 
 // Re-export so existing callers that did `import { BADGE_TIERS } from
@@ -82,11 +83,15 @@ export default function MemberBadge({
   const showSmallCrown = tier === 11;
   const showQueenCrown = tier === 12;
 
-  // Unique gradient ids per tier so multiple badges can render on the
-  // same page without clobbering each other's <defs>.
-  const gradId = `mb-metal-${tier}`;
-  const haloId = `mb-halo-${tier}`;
-  const crownId = `mb-crown-${tier}`;
+  // Unique gradient ids per INSTANCE. SVG <defs> IDs are document-global
+  // (fill="url(#id)" resolves across the whole page, not within a single
+  // <svg>), so two MemberBadges with the same tier would collide and
+  // render as untinted / invisible in most browsers. useId() is SSR-
+  // safe and gives each mounted instance its own stable id.
+  const uid = useId().replace(/:/g, "");
+  const gradId = `mb-metal-${uid}`;
+  const haloId = `mb-halo-${uid}`;
+  const crownId = `mb-crown-${uid}`;
 
   return (
     <figure className={`inline-flex flex-col items-center gap-2 ${className}`}>
