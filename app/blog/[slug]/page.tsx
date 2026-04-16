@@ -1,6 +1,10 @@
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { getPostBySlug, getAllPosts, getPostsByCategory } from "@/lib/mdx";
+import {
+  getPublicPostBySlug,
+  getAllPosts,
+  getPostsByCategory,
+} from "@/lib/mdx";
 import type { FaqEntry } from "@/lib/mdx";
 import BlogPostClient from "./BlogPostClient";
 import PostContent from "@/components/blog/PostContent";
@@ -38,7 +42,7 @@ export async function generateMetadata({
   params,
 }: PageProps): Promise<Metadata> {
   const { slug } = await params;
-  const post = getPostBySlug(slug);
+  const post = getPublicPostBySlug(slug);
 
   if (!post) {
     return {
@@ -88,7 +92,7 @@ export async function generateMetadata({
 
 export default async function BlogPostPage({ params }: PageProps) {
   const { slug } = await params;
-  const post = getPostBySlug(slug);
+  const post = getPublicPostBySlug(slug);
 
   if (!post) {
     notFound();

@@ -111,6 +111,56 @@ export function getAllPosts(): PostMeta[] {
   return posts;
 }
 
+/**
+ * Future-dated posts — scheduled but not yet public. Used for the
+ * Consilium "Previews" surface where members get a 1-to-3-week
+ * head start on everything the public will later read.
+ *
+ * Sorted by publishedAt ASC (soonest release first) because the
+ * UX is "what's landing next?". Capped at a configurable window
+ * (default 60 days) so the list stays focused on imminent drops.
+ */
+export function getUpcomingPosts(daysAhead = 60): PostMeta[] {
+  const now = Date.now();
+  const horizon = now + daysAhead * 24 * 60 * 60 * 1000;
+
+  const slugs = getPostSlugs();
+  return slugs
+    .map((slug) => {
+      const post = getPostBySlug(slug.replace(/\.mdx$/, ""));
+      if (!post) return null;
+      return {
+        slug: post.slug,
+        frontmatter: post.frontmatter,
+        readingTime: post.readingTime,
+      };
+    })
+    .filter((post): post is PostMeta => post !== null)
+    .filter((post) => {
+      const ts = new Date(post.frontmatter.publishedAt).getTime();
+      return ts > now && ts <= horizon;
+    })
+    .sort((a, b) => {
+      const dateA = new Date(a.frontmatter.publishedAt).getTime();
+      const dateB = new Date(b.frontmatter.publishedAt).getTime();
+      return dateA - dateB;
+    });
+}
+
+/**
+ * Public-safe post lookup. Returns null for posts whose publishedAt
+ * is in the future — prevents URL-guessing on the public blog. Use
+ * `getPostBySlug` directly inside the Consilium preview area where
+ * members are allowed to read upcoming posts.
+ */
+export function getPublicPostBySlug(slug: string): Post | null {
+  const post = getPostBySlug(slug);
+  if (!post) return null;
+  const publishDate = new Date(post.frontmatter.publishedAt);
+  if (publishDate > new Date()) return null;
+  return post;
+}
+
 export function getPostsByCategory(category: string): PostMeta[] {
   return getAllPosts().filter(
     (post) =>

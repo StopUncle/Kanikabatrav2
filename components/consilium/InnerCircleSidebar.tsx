@@ -16,6 +16,7 @@ import {
   UserCircle2,
   Award,
   Eye,
+  Clock,
 } from "lucide-react";
 import ConsiliumSeal from "@/components/ConsiliumSeal";
 import MemberBadge, { getBadge } from "@/components/consilium/MemberBadge";
@@ -37,6 +38,7 @@ interface ChatRoom {
 const MAIN_NAV = [
   { href: "/consilium/feed", label: "Feed", icon: Scroll },
   { href: "/consilium/voice-notes", label: "Voice Notes", icon: AudioLines },
+  { href: "/consilium/previews", label: "Previews", icon: Clock },
   { href: "/consilium/classroom", label: "Classroom", icon: Library },
   { href: "/consilium/badges", label: "Badges", icon: Award },
   { href: "/quiz", label: "Dark Mirror", icon: Eye },
