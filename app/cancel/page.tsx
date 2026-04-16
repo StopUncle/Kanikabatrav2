@@ -9,7 +9,7 @@ import Header from "@/components/Header";
 import GradientText from "@/components/ui/GradientText";
 import Card from "@/components/ui/Card";
 import Button from "@/components/ui/Button";
-import DoubleEchoLogo from "@/components/DoubleEchoLogo";
+import KanikaroseLogo from "@/components/KanikaroseLogo";
 import { logger } from "@/lib/logger";
 
 function CancelContent() {
@@ -267,9 +267,9 @@ export default function CancelPage() {
         fallback={
           <div className="min-h-screen pt-20 sm:pt-24 pb-16 flex items-center justify-center relative z-10">
             <div className="text-center">
-              <DoubleEchoLogo
+              <KanikaroseLogo
                 size="xl"
-                animate={true}
+                animate
                 className="mx-auto mb-8"
               />
               <p className="text-text-muted">Loading...</p>

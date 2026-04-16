@@ -11,7 +11,7 @@ import {
   generateDiagnosis,
   QUIZ_INFO,
 } from "@/lib/quiz-data";
-import DoubleEchoLogo from "@/components/DoubleEchoLogo";
+import KanikaroseLogo from "@/components/KanikaroseLogo";
 import { ChevronLeft } from "lucide-react";
 
 export default function QuizTakePage() {
@@ -75,13 +75,9 @@ export default function QuizTakePage() {
           animate={{ opacity: 1 }}
           className="text-center px-4"
         >
-          <m.div
-            animate={{ rotate: 360 }}
-            transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
-            className="mb-8 flex justify-center"
-          >
-            <DoubleEchoLogo size="xl" animate />
-          </m.div>
+          <div className="mb-8 flex justify-center">
+            <KanikaroseLogo size="xl" animate />
+          </div>
 
           <m.div
             initial={{ opacity: 0, y: 10 }}
