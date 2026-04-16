@@ -5,6 +5,11 @@ import readingTime from "reading-time";
 
 const postsDirectory = path.join(process.cwd(), "content/posts");
 
+export interface FaqEntry {
+  q: string;
+  a: string;
+}
+
 export interface PostFrontmatter {
   title: string;
   excerpt: string;
@@ -17,6 +22,7 @@ export interface PostFrontmatter {
   author?: string;
   readingTime?: string;
   isPillar?: boolean;
+  faq?: FaqEntry[];
 }
 
 export interface Post {
@@ -68,6 +74,7 @@ export function getPostBySlug(slug: string): Post | null {
     author: data.author || DEFAULT_AUTHOR,
     readingTime: data.readingTime,
     isPillar: data.isPillar || false,
+    faq: Array.isArray(data.faq) ? data.faq : undefined,
   };
 
   return {

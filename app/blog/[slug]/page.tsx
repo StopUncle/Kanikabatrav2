@@ -1,65 +1,26 @@
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getPostBySlug, getAllPosts, getPostsByCategory } from "@/lib/mdx";
+import type { FaqEntry } from "@/lib/mdx";
 import BlogPostClient from "./BlogPostClient";
 import PostContent from "@/components/blog/PostContent";
 import JsonLd from "@/components/JsonLd";
 import { SITE_CONFIG } from "@/lib/constants";
 
-const SOCIOPATH_FAQ_SCHEMA = {
-  "@context": "https://schema.org",
-  "@type": "FAQPage",
-  mainEntity: [
-    {
+function buildFaqSchema(faq: FaqEntry[]) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: faq.map((entry) => ({
       "@type": "Question",
-      name: "Do sociopaths feel anything?",
+      name: entry.q,
       acceptedAnswer: {
         "@type": "Answer",
-        text: "Yes, but not the full range of human emotions. Sociopaths typically feel anger, boredom, satisfaction, excitement, contempt, and possessiveness. They generally do not feel guilt, remorse, emotional empathy, or love in the traditional sense.",
+        text: entry.a,
       },
-    },
-    {
-      "@type": "Question",
-      name: "Can sociopaths love?",
-      acceptedAnswer: {
-        "@type": "Answer",
-        text: "Sociopaths experience attachment to certain people — individuals they want to keep in their life, whose company they prefer, whose wellbeing matters to them. Whether this constitutes love depends on your definition. It may be a form of possession, convenience, and habit rather than the warm, selfless feeling others describe.",
-      },
-    },
-    {
-      "@type": "Question",
-      name: "How is a sociopath diagnosed?",
-      acceptedAnswer: {
-        "@type": "Answer",
-        text: "The formal diagnosis is Antisocial Personality Disorder (ASPD). It requires a documented pattern of behavior from age 15+, evidence of conduct disorder before age 15, multiple assessments ruling out other conditions, and consistent presentation across different evaluators. It is not a diagnosis given lightly.",
-      },
-    },
-    {
-      "@type": "Question",
-      name: "Are sociopaths dangerous?",
-      acceptedAnswer: {
-        "@type": "Answer",
-        text: "It depends on context. Most sociopaths never commit violent crimes. They may be skilled manipulators and strategic thinkers, but 'dangerous' is contextual. In dating, they may not provide the emotional depth some partners need. Professionally, they can be formidable competitors.",
-      },
-    },
-    {
-      "@type": "Question",
-      name: "Can sociopathy be cured?",
-      acceptedAnswer: {
-        "@type": "Answer",
-        text: "No. ASPD is not an illness in the traditional sense — it's a different neurological operating system. Behavior can be modified through incentive structures, social strategies can be learned, and impulse control can be developed, but the underlying neurological differences remain.",
-      },
-    },
-    {
-      "@type": "Question",
-      name: "What should I do if I'm dating a sociopath?",
-      acceptedAnswer: {
-        "@type": "Answer",
-        text: "Decide what you actually need from a relationship. If you need deep emotional intimacy, traditional romantic love, or a partner who prioritizes your feelings, it likely won't work. If you want consistency, direct communication, and a partner who isn't emotionally needy, it might work. Know what you're getting and manage expectations.",
-      },
-    },
-  ],
-};
+    })),
+  };
+}
 
 
 interface PageProps {
@@ -164,11 +125,14 @@ export default async function BlogPostPage({ params }: PageProps) {
       publishedAt: p.frontmatter.publishedAt,
     }));
 
-  const hasFaqSchema = slug === "sociopath-questions-answered";
+  const faqSchema =
+    post.frontmatter.faq && post.frontmatter.faq.length > 0
+      ? buildFaqSchema(post.frontmatter.faq)
+      : null;
 
   return (
     <>
-      {hasFaqSchema && <JsonLd data={SOCIOPATH_FAQ_SCHEMA} />}
+      {faqSchema && <JsonLd data={faqSchema} />}
       <BlogPostClient
         post={{
           slug: post.slug,
