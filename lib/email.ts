@@ -1882,3 +1882,64 @@ export const sendTrialExpiringSoon = async (
     html: luxuryEmailShell(inner, "Trial Ending Soon", "The Consilium"),
   });
 };
+
+/**
+ * Gift-invite email for past book buyers — thank-you + claim button
+ * that grants 1 month of Consilium access. The claim link hits the
+ * existing /api/consilium/claim-trial endpoint with a token that
+ * unlocks membership only when clicked, so the 30-day clock starts
+ * when the buyer actually arrives, not on backfill day.
+ */
+export const sendConsiliumGiftInvite = async (
+  recipientEmail: string,
+  recipientName: string,
+  claimToken: string,
+): Promise<boolean> => {
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://kanikarose.com";
+  const claimUrl = `${baseUrl}/consilium/claim?token=${claimToken}`;
+
+  const inner = `
+    <p style="color: #f5f0ed; font-size: 18px; margin: 0 0 20px 0; line-height: 1.6;">
+      Dear ${esc(recipientName)},
+    </p>
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 20px 0; font-size: 15px;">
+      You bought the Sociopathic Dating Bible direct from kanikarose.com — not through Amazon, not through a middleman. That matters to me.
+    </p>
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 25px 0; font-size: 15px;">
+      As a thank-you, I'm giving you <strong style="color: #d4af37;">one month inside The Consilium, free</strong>. No card required. Your 30 days start the moment you claim — so claim when you're ready to actually use it.
+    </p>
+    <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
+      <tr>
+        <td align="center" style="padding: 10px 0 30px 0;">
+          <table role="presentation" cellpadding="0" cellspacing="0" border="0">
+            <tr>
+              <td style="background: #d4af37; border-radius: 999px; padding: 14px 32px;">
+                <a href="${claimUrl}" style="color: #050511; text-decoration: none; font-size: 14px; font-weight: 600; letter-spacing: 0.15em; text-transform: uppercase; display: inline-block;">
+                  Claim Your Free Month
+                </a>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 15px 0; font-size: 14px;">
+      What you'll get inside:
+    </p>
+    <ul style="color: #94a3b8; line-height: 1.8; margin: 0 0 25px 0; padding-left: 20px; font-size: 14px;">
+      <li>The full course library — dark psychology, pattern recognition, career power</li>
+      <li>Voice notes from me — raw, unfiltered, nothing I post publicly</li>
+      <li>The feed — daily insights and discussions from inside</li>
+      <li>Early-access post previews — the next blog posts, read before anyone else</li>
+    </ul>
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0; font-size: 13px; text-align: center;">
+      If the claim button doesn't work, copy-paste this into your browser: <a href="${claimUrl}" style="color: #d4af37; word-break: break-all;">${claimUrl}</a>
+    </p>
+  `;
+
+  return await sendEmail({
+    to: recipientEmail,
+    subject: "A month inside The Consilium — my thank-you to you",
+    html: luxuryEmailShell(inner, "Thank You", "One month on me"),
+  });
+};

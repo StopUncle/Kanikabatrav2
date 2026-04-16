@@ -289,6 +289,155 @@ export async function POST(request: NextRequest) {
               },
             },
           });
+        } else if (
+          productKey === "BOOK_CONSILIUM_1MO" ||
+          productKey === "BOOK_CONSILIUM_3MO"
+        ) {
+          // Book + timed Consilium bundle. One-time purchase that:
+          //   1. Creates a Purchase + delivers the book (same as BOOK)
+          //   2. Creates/upserts a User (same as INNER_CIRCLE if new)
+          //   3. Grants Consilium access with expiresAt = now + 30 or 90
+          //      days. NO Stripe subscription is created — the bundle
+          //      ends cleanly at expiresAt, no surprise charges.
+          const daysGranted =
+            productKey === "BOOK_CONSILIUM_1MO" ? 30 : 90;
+          const bundleLabel =
+            productKey === "BOOK_CONSILIUM_1MO" ? "bundle-1mo" : "bundle-3mo";
+
+          const idempotencyKey = `ST-${sessionId}`;
+          const existing = await prisma.purchase.findUnique({
+            where: { paypalOrderId: idempotencyKey },
+          });
+          if (existing) {
+            console.log(
+              `[stripe-webhook] ${productKey} purchase ${idempotencyKey} already processed — skipping`,
+            );
+            break;
+          }
+
+          const downloadToken = crypto.randomBytes(32).toString("hex");
+          const bookExpiresAt = new Date();
+          bookExpiresAt.setDate(bookExpiresAt.getDate() + 30);
+
+          await prisma.purchase.create({
+            data: {
+              type: "BOOK",
+              productVariant: productKey,
+              customerEmail: email,
+              customerName: name || "Customer",
+              amount,
+              status: "COMPLETED",
+              paypalOrderId: idempotencyKey,
+              downloadToken,
+              expiresAt: bookExpiresAt,
+              maxDownloads: 10,
+              metadata: { source: "stripe", sessionId, productKey },
+            },
+          });
+
+          const emailSent = await sendBookDelivery(
+            email,
+            name || "Customer",
+            downloadToken,
+            "PREMIUM",
+            bookExpiresAt,
+          );
+          if (!emailSent) {
+            await prisma.purchase.update({
+              where: { paypalOrderId: idempotencyKey },
+              data: {
+                metadata: {
+                  source: "stripe",
+                  sessionId,
+                  productKey,
+                  emailDeliveryFailed: true,
+                },
+              },
+            });
+            console.error(
+              `[stripe-webhook] ${productKey} book delivery email failed for ${email} — flagged for retry`,
+            );
+          }
+
+          // Auto-unlock quiz, same as the BOOK branch.
+          try {
+            await prisma.quizResult.updateMany({
+              where: { email, paid: false },
+              data: { paid: true },
+            });
+          } catch (err) {
+            console.error(
+              "Failed to auto-unlock quiz for bundle buyer:",
+              err,
+            );
+          }
+
+          // Find or create the user account.
+          let user = await prisma.user.findUnique({ where: { email } });
+          let isNewUser = false;
+          if (!user) {
+            const { hashPassword } = await import("@/lib/auth/password");
+            const tempPassword = crypto.randomBytes(12).toString("base64url");
+            user = await prisma.user.create({
+              data: {
+                email: email.toLowerCase(),
+                password: await hashPassword(tempPassword),
+                name: name || null,
+              },
+            });
+            isNewUser = true;
+          }
+
+          // Grant Consilium access — no Stripe subscription, just a
+          // dated membership row.
+          const consiliumExpiresAt = new Date();
+          consiliumExpiresAt.setDate(
+            consiliumExpiresAt.getDate() + daysGranted,
+          );
+
+          await prisma.communityMembership.upsert({
+            where: { userId: user.id },
+            create: {
+              userId: user.id,
+              status: "ACTIVE",
+              billingCycle: bundleLabel,
+              activatedAt: new Date(),
+              approvedAt: new Date(),
+              expiresAt: consiliumExpiresAt,
+            },
+            update: {
+              // If they already had an ACTIVE paying subscription, don't
+              // downgrade it to a bundle — just extend their access.
+              // Otherwise overwrite whatever state they were in.
+              status: "ACTIVE",
+              billingCycle: bundleLabel,
+              activatedAt: new Date(),
+              approvedAt: new Date(),
+              expiresAt: consiliumExpiresAt,
+            },
+          });
+
+          // If we just created the account, they don't know the password.
+          // Send the same welcome-new-user email pattern as INNER_CIRCLE.
+          if (isNewUser) {
+            try {
+              const resetToken = jwt.sign(
+                { userId: user.id, type: "password-reset", v: 0 },
+                getJwtSecretForReset(),
+                { expiresIn: "7d" },
+              );
+              await sendInnerCircleWelcomeNewUser(
+                user.email,
+                user.name || "Counselor",
+                resetToken,
+              );
+            } catch (err) {
+              console.error(
+                "[stripe-webhook] failed to send bundle welcome email:",
+                err,
+              );
+            }
+          }
         } else if (productKey === "INNER_CIRCLE") {
           // Subscription — Stripe webhook gives us the subscription id; we
           // upsert membership here for immediate access. Renewals are then

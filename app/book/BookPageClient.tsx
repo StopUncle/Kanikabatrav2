@@ -416,6 +416,29 @@ export default function BookPage() {
                   />
                 )}
 
+                {/* Upgrade bundles — book + Consilium community access.
+                    Smaller than the primary CTA above; more prominent
+                    than the Kindle option below. Only shown post-launch
+                    so we don't confuse the presale offer. */}
+                {!BOOK_INFO.isPresale && (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+                    <StripeButton
+                      priceKey="BOOK_CONSILIUM_1MO"
+                      label="+ 1 month Consilium"
+                      price="$39"
+                      icon="none"
+                      className="w-full py-3 px-5 rounded-full border border-warm-gold/40 bg-warm-gold/[0.04] text-warm-gold text-sm font-medium tracking-wider transition-all duration-300 hover:bg-warm-gold/[0.08] hover:border-warm-gold/70 disabled:opacity-50 flex items-center justify-center gap-2 whitespace-nowrap"
+                    />
+                    <StripeButton
+                      priceKey="BOOK_CONSILIUM_3MO"
+                      label="+ 3 months · save $33"
+                      price="$79"
+                      icon="none"
+                      className="w-full py-3 px-5 rounded-full border border-warm-gold/70 bg-warm-gold/10 text-warm-gold text-sm font-semibold tracking-wider transition-all duration-300 hover:bg-warm-gold/20 hover:border-warm-gold disabled:opacity-50 flex items-center justify-center gap-2 whitespace-nowrap shadow-[0_0_20px_-8px_rgba(212,175,55,0.4)]"
+                    />
+                  </div>
+                )}
+
                 <div className="flex items-center gap-3 p-4 rounded-xl bg-white/[0.03] border border-white/[0.06]">
                   <ShieldCheck size={24} className="text-accent-gold shrink-0" />
                   <div>

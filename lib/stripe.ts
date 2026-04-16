@@ -33,6 +33,12 @@ export const STRIPE_PRICES: Record<string, string> = {
   ASK_WRITTEN_3Q: "price_1TJug5Jv9vx5CHTwYYFHcu3f",
   ASK_VOICE_1Q: "price_1TJug6Jv9vx5CHTwEaZ0yyS7",
   ASK_VOICE_3Q: "price_1TJug6Jv9vx5CHTwK0OanIFn",
+  // Book + Consilium bundles. One-time purchase: book delivery +
+  // time-boxed community access, no Stripe subscription created.
+  // Membership is granted with expiresAt = now + N days and expires
+  // cleanly at end of term.
+  BOOK_CONSILIUM_1MO: "price_1TMpaDJv9vx5CHTwGzAnGrMz", // $39 USD, 30 days access
+  BOOK_CONSILIUM_3MO: "price_1TMpaEJv9vx5CHTwfYMIfOik", // $79 USD, 90 days access
 };
 
 export const STRIPE_PUBLISHABLE_KEY = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!;
