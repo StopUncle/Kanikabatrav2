@@ -66,7 +66,7 @@ export default function BookShowcase() {
                     <br />
                     BIBLE
                   </h3>
-                  <div className="w-12 sm:w-16 md:w-20 h-0.5 bg-gradient-to-r from-transparent via-accent-gold to-transparent mb-2 sm:mb-4" />
+                  <div className="w-12 sm:w-16 md:w-20 h-0.5 bg-gradient-to-r from-transparent via-warm-gold to-transparent mb-2 sm:mb-4" />
                   <p className="text-text-gray text-[10px] sm:text-xs tracking-[0.15em] sm:tracking-[0.2em] mb-2 sm:mb-4 italic">
                     A Cure For Empathy
                   </p>
@@ -77,7 +77,7 @@ export default function BookShowcase() {
 
                 <div className="absolute left-0 top-0 w-8 sm:w-10 md:w-12 h-full bg-gradient-to-r from-deep-black to-deep-burgundy transform rotateY-90 translateZ-24 rounded-l-md">
                   <div className="h-full flex items-center justify-center">
-                    <span className="text-accent-gold text-[10px] sm:text-xs tracking-[0.1em] sm:tracking-[0.2em] transform rotate-90 whitespace-nowrap">
+                    <span className="text-warm-gold text-[10px] sm:text-xs tracking-[0.1em] sm:tracking-[0.2em] transform rotate-90 whitespace-nowrap">
                       SOCIOPATHIC DATING BIBLE
                     </span>
                   </div>
@@ -120,7 +120,7 @@ export default function BookShowcase() {
                   whileInView={{ opacity: 1 }}
                   transition={{ duration: 0.5, delay: index * 0.1 }}
                   viewport={{ once: true }}
-                  className="flex items-start gap-3 sm:gap-4 p-3 sm:p-4 bg-gradient-to-r from-accent-burgundy/10 to-accent-sapphire/5 border-l-2 sm:border-l-4 border-accent-gold hover:translate-x-1 sm:hover:translate-x-2 transition-transform"
+                  className="flex items-start gap-3 sm:gap-4 p-3 sm:p-4 bg-gradient-to-r from-accent-burgundy/10 to-accent-sapphire/5 border-l-2 sm:border-l-4 border-warm-gold hover:translate-x-1 sm:hover:translate-x-2 transition-transform"
                 >
                   <Check className="text-accent-gold mt-0.5 shrink-0" size={20} />
                   <span className="text-text-light">{feature}</span>
@@ -129,7 +129,7 @@ export default function BookShowcase() {
             </div>
 
             {/* Social proof snippet */}
-            <div className="glass-card p-4 border-l-4 border-accent-gold">
+            <div className="glass-card p-4 border-l-4 border-warm-gold">
               <p className="text-text-light italic text-sm sm:text-base">
                 &ldquo;This book decoded the game I didn&apos;t even know I was losing. Within 3 weeks I went from being overlooked to being pursued.&rdquo;
               </p>
@@ -154,7 +154,7 @@ export default function BookShowcase() {
                 </div>
               )}
 
-              <p className="text-accent-gold uppercase tracking-[0.2em] text-xs mb-4">
+              <p className="text-warm-gold uppercase tracking-[0.2em] text-xs mb-4">
                 Premium Edition — What You Get
               </p>
 

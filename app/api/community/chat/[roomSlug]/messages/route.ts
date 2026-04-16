@@ -99,6 +99,14 @@ export async function POST(
       const body = await request.json();
       const { content, type = "TEXT" } = body;
 
+      const validTypes = ["TEXT", "IMAGE", "SYSTEM"];
+      if (!validTypes.includes(type)) {
+        return NextResponse.json(
+          { error: "Invalid message type" },
+          { status: 400 },
+        );
+      }
+
       if (!content || content.trim().length === 0) {
         return NextResponse.json(
           { error: "Message content is required" },

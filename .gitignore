@@ -82,6 +82,9 @@ nul
 
 # Local tooling / scratch
 .gstack/
+
+# Internal documentation (not for public repo)
+docs/
 .claude/settings.local.json
 logs/
 supabase/

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { requireAuth } from "@/lib/auth/middleware";
+import { checkAccessTier } from "@/lib/community/access";
 
 export async function POST(
   request: NextRequest,
@@ -12,10 +13,16 @@ export async function POST(
 
       const post = await prisma.forumPost.findUnique({
         where: { id: postId },
+        include: { category: { select: { accessTier: true } } },
       });
 
       if (!post) {
         return NextResponse.json({ error: "Post not found" }, { status: 404 });
+      }
+
+      const access = await checkAccessTier(user.id, post.category.accessTier);
+      if (!access.hasAccess) {
+        return NextResponse.json({ error: access.reason }, { status: 403 });
       }
 
       const existingLike = await prisma.postLike.findUnique({

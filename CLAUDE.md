@@ -80,6 +80,8 @@ Configured globally in `~/.claude.json`. Uses an OAuth flow with the Stripe acco
 
 ## 🎯 The Inner Circle (paid community)
 
+> **Full operations manual:** `docs/INNER-CIRCLE.md` (gitignored — covers membership lifecycle, Stripe integration, email flows, admin panel, content pipeline, cron jobs, security model, and key files)
+
 - **Price:** $29/month (Stripe subscription, productKey `INNER_CIRCLE`)
 - **Application required:** Every signup goes through PENDING → APPROVED → ACTIVE. Kanika reviews each application personally at `/admin/applications`.
 - **Membership state machine:** PENDING → APPROVED → ACTIVE → SUSPENDED / CANCELLED / EXPIRED. State transitions:

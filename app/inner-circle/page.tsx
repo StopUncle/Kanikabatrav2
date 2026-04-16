@@ -67,9 +67,9 @@ export default async function InnerCircleLanding({
     },
     {
       icon: Zap,
-      title: "Dark Mirror AI",
+      title: "Daily Psychology Drops",
       description:
-        "24/7 AI trained on Kanika's frameworks — ask questions, get personalized insights (coming soon)",
+        "Fresh insights on manipulation tactics, power dynamics, and strategic psychology — posted daily",
     },
     {
       icon: Lock,
@@ -82,8 +82,8 @@ export default async function InnerCircleLanding({
   const benefits = [
     "Full access to the course library — dark psychology, pattern recognition, career strategy",
     "Voice notes from Kanika — raw insights you won't hear anywhere else",
-    "Community feed — discuss, react, connect with other members",
-    "Dark Mirror AI — your 24/7 psychology assistant (coming soon)",
+    "Community feed — daily insights, discussion prompts, and posts from Kanika",
+    "Forum and live chat — connect with other members who see what you see",
     "New courses and content added regularly",
     "The Sociopathic Dating Bible (premium edition) included",
   ];
@@ -126,7 +126,7 @@ export default async function InnerCircleLanding({
             <h1 className="text-5xl md:text-6xl lg:text-7xl font-extralight tracking-wider uppercase mb-6 gradient-text">
               The Inner Circle
             </h1>
-            <div className="w-16 h-px bg-accent-gold/40 mx-auto mb-6" />
+            <div className="w-16 h-px bg-warm-gold/50 mx-auto mb-6" />
             <p className="text-xl text-text-gray max-w-2xl mx-auto mb-10 font-light leading-relaxed">
               A private community for people who are done being the ones who get
               played. Courses. Voice notes. A space that&apos;s actually safe.
@@ -170,7 +170,7 @@ export default async function InnerCircleLanding({
           {/* What's Inside */}
           <div className="mb-20">
             <div className="text-center mb-10">
-              <p className="text-accent-gold text-sm uppercase tracking-[0.3em] mb-3">Everything Included</p>
+              <p className="text-warm-gold text-sm uppercase tracking-[0.3em] mb-3">Everything Included</p>
               <h2 className="text-3xl font-extralight tracking-wider uppercase text-text-light">
                 What&apos;s Inside
               </h2>
@@ -191,7 +191,7 @@ export default async function InnerCircleLanding({
 
           {/* Price Anchor */}
           <div className="mb-20">
-            <div className="max-w-2xl mx-auto text-center p-10 bg-deep-black/50 border border-accent-gold/20 rounded-2xl">
+            <div className="max-w-2xl mx-auto text-center p-10 bg-deep-black/50 border border-warm-gold/20 rounded-2xl">
               <p className="text-text-gray text-sm uppercase tracking-wider mb-4">The Math</p>
               <div className="flex items-baseline justify-center gap-2 mb-2">
                 <span className="text-5xl font-extralight text-accent-gold">$29</span>
@@ -209,7 +209,7 @@ export default async function InnerCircleLanding({
                   <div className="text-accent-gold text-xl font-light">$24.99</div>
                   <div className="text-text-gray text-xs">Book (Included)</div>
                 </div>
-                <div className="text-center border border-accent-gold/30 rounded-lg py-2">
+                <div className="text-center border border-warm-gold/30 rounded-lg py-2">
                   <div className="text-accent-gold text-xl font-light">$29</div>
                   <div className="text-text-gray text-xs">Inner Circle</div>
                 </div>
