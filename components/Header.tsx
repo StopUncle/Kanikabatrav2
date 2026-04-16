@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { User, LayoutDashboard, Search as SearchIcon } from "lucide-react";
-import ConsiliumSeal from "./ConsiliumSeal";
+import DoubleEchoLogo from "./DoubleEchoLogo";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -48,13 +48,17 @@ const Header = () => {
     };
   }, [isMenuOpen]);
 
-  const navLinks = [
+  // `emphasized` draws a gold pill border around the nav item. We use it
+  // to mark The Consilium as the premium destination in the nav without
+  // needing a separate component. Keep this to ONE item at a time —
+  // multiple gold pills in the nav defeat the emphasis.
+  const navLinks: { href: string; label: string; emphasized?: boolean }[] = [
     { href: "/", label: "Home" },
     { href: "/book", label: "The Book" },
     { href: "/quiz", label: "Quiz" },
     { href: "/courses", label: "Courses" },
     { href: "/coaching", label: "Coaching" },
-    { href: "/inner-circle", label: "The Consilium" },
+    { href: "/inner-circle", label: "The Consilium", emphasized: true },
     { href: "/about", label: "About" },
     { href: "/blog", label: "Blog" },
     { href: "/contact", label: "Contact" },
@@ -68,9 +72,8 @@ const Header = () => {
             <div className="flex items-center justify-between h-16 sm:h-20">
               {/* Logo */}
               <Link href="/" className="flex items-center gap-3 group">
-                <ConsiliumSeal
+                <DoubleEchoLogo
                   size="md"
-                  haloed
                   className="transition-transform duration-500 group-hover:scale-105"
                 />
                 <span className="text-base sm:text-lg font-light tracking-[0.2em] text-accent-gold uppercase">
@@ -82,6 +85,26 @@ const Header = () => {
               <div className="hidden lg:flex items-center gap-1">
                 {navLinks.map((link) => {
                   const isActive = pathname === link.href;
+
+                  // Emphasized links (The Consilium) get a gold pill border
+                  // instead of the underline treatment — a standing CTA
+                  // rather than a navigational marker.
+                  if (link.emphasized) {
+                    return (
+                      <Link
+                        key={link.href}
+                        href={link.href}
+                        className={`relative mx-2 px-4 py-1.5 text-sm tracking-[0.1em] uppercase transition-all duration-300 rounded-full border ${
+                          isActive
+                            ? "text-accent-gold border-accent-gold/80 bg-accent-gold/10 shadow-[0_0_18px_-4px_rgba(212,175,55,0.45)]"
+                            : "text-accent-gold/95 border-accent-gold/50 hover:border-accent-gold/80 hover:bg-accent-gold/5 hover:shadow-[0_0_18px_-4px_rgba(212,175,55,0.35)]"
+                        }`}
+                      >
+                        {link.label}
+                      </Link>
+                    );
+                  }
+
                   return (
                     <Link
                       key={link.href}
@@ -232,28 +255,44 @@ const Header = () => {
                   onClick={() => setIsMenuOpen(false)}
                 >
                   <div className="flex items-center justify-between">
-                    <span
-                      className={`text-2xl sm:text-3xl font-extralight tracking-[0.15em] uppercase transition-colors duration-300 ${
-                        isActive
-                          ? "text-accent-gold"
-                          : "text-text-gray/70 group-hover:text-accent-gold"
-                      }`}
-                    >
-                      {link.label}
-                    </span>
+                    {link.emphasized ? (
+                      <span
+                        className={`inline-block px-5 py-1.5 rounded-full border text-xl sm:text-2xl font-extralight tracking-[0.15em] uppercase transition-all duration-300 ${
+                          isActive
+                            ? "text-accent-gold border-accent-gold/80 bg-accent-gold/10"
+                            : "text-accent-gold/95 border-accent-gold/50 group-hover:border-accent-gold/80 group-hover:bg-accent-gold/5"
+                        }`}
+                      >
+                        {link.label}
+                      </span>
+                    ) : (
+                      <span
+                        className={`text-2xl sm:text-3xl font-extralight tracking-[0.15em] uppercase transition-colors duration-300 ${
+                          isActive
+                            ? "text-accent-gold"
+                            : "text-text-gray/70 group-hover:text-accent-gold"
+                        }`}
+                      >
+                        {link.label}
+                      </span>
+                    )}
+                    {!link.emphasized && (
+                      <div
+                        className={`w-8 h-px transition-all duration-300 ${
+                          isActive
+                            ? "bg-accent-gold"
+                            : "bg-transparent group-hover:bg-accent-gold/50"
+                        }`}
+                      />
+                    )}
+                  </div>
+                  {!link.emphasized && (
                     <div
-                      className={`w-8 h-px transition-all duration-300 ${
-                        isActive
-                          ? "bg-accent-gold"
-                          : "bg-transparent group-hover:bg-accent-gold/50"
+                      className={`mt-2 h-px bg-gradient-to-r from-accent-gold/20 via-accent-gold/5 to-transparent ${
+                        isActive ? "opacity-100" : "opacity-50"
                       }`}
                     />
-                  </div>
-                  <div
-                    className={`mt-2 h-px bg-gradient-to-r from-accent-gold/20 via-accent-gold/5 to-transparent ${
-                      isActive ? "opacity-100" : "opacity-50"
-                    }`}
-                  />
+                  )}
                 </Link>
               );
             })}
@@ -316,7 +355,7 @@ const Header = () => {
 
           {/* Mobile Footer Accent */}
           <div className="pt-8 flex justify-center">
-            <ConsiliumSeal size="sm" className="opacity-30" />
+            <DoubleEchoLogo size="sm" className="opacity-30" />
           </div>
         </div>
       </div>
