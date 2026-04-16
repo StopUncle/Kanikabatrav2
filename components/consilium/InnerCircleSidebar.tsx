@@ -16,6 +16,7 @@ import {
   UserCircle2,
 } from "lucide-react";
 import ConsiliumSeal from "@/components/ConsiliumSeal";
+import MemberBadge, { getBadge } from "@/components/consilium/MemberBadge";
 
 interface ForumCategory {
   id: string;
@@ -39,9 +40,14 @@ const MAIN_NAV = [
 
 export default function InnerCircleSidebar({
   onlineCount,
+  currentTier,
+  displayName,
 }: {
   onlineCount?: number;
+  currentTier?: number;
+  displayName?: string;
 }) {
+  const badge = currentTier ? getBadge(currentTier) : null;
   const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [forumCategories, setForumCategories] = useState<ForumCategory[]>([]);
@@ -136,6 +142,34 @@ export default function InnerCircleSidebar({
           </div>
         )}
       </div>
+
+      {/* Identity block — member's current rank. Clickable tile that
+          routes to the full profile page. Rendered only when we have
+          a tier (server layout passes it down via props). */}
+      {badge && (
+        <Link
+          href="/consilium/profile"
+          onClick={() => setMobileOpen(false)}
+          className={`flex items-center gap-3 mx-3 mt-3 mb-1 px-3 py-2.5 rounded-xl border transition-all duration-200 ${
+            pathname === "/consilium/profile"
+              ? "border-warm-gold/60 bg-warm-gold/5"
+              : "border-warm-gold/15 hover:border-warm-gold/40 hover:bg-warm-gold/5"
+          }`}
+        >
+          <MemberBadge tier={badge.tier} size="sm" />
+          <div className="min-w-0 flex-1">
+            <p className="text-[10px] uppercase tracking-[0.2em] text-text-gray/60 truncate">
+              {displayName || "Counselor"}
+            </p>
+            <p className="text-sm font-light tracking-[0.12em] uppercase text-warm-gold truncate">
+              {badge.name}
+            </p>
+          </div>
+          <span className="text-[9px] uppercase tracking-[0.18em] text-text-gray/50 shrink-0">
+            {badge.numeral}
+          </span>
+        </Link>
+      )}
 
       {/* Main sections */}
       <nav className="flex-1 py-4 overflow-y-auto">
