@@ -115,7 +115,7 @@ export default function AccessGate({
           )}
 
           <Link
-            href="/inner-circle/feed"
+            href="/consilium/feed"
             className="block text-sm text-gray-400 hover:text-white transition-colors"
           >
             Back to The Consilium

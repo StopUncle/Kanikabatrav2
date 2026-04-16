@@ -431,7 +431,7 @@ export default function DashboardClient({ user }: DashboardClientProps) {
 
                     {subscriptions.some((s) => s.status === "ACTIVE") && (
                       <Link
-                        href="/inner-circle/feed"
+                        href="/consilium/feed"
                         className="flex items-center gap-3 p-4 bg-accent-gold/5 border border-accent-gold/20 rounded-xl hover:bg-accent-gold/10 transition-colors"
                       >
                         <div className="w-10 h-10 rounded-full bg-accent-gold/10 flex items-center justify-center">

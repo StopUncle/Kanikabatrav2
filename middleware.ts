@@ -61,15 +61,22 @@ export function middleware(request: NextRequest) {
     return NextResponse.redirect(redirectUrl, 301);
   }
 
-  // Community → Inner Circle redirects. The community section was merged
-  // into the Inner Circle in April 2026. Old links and bookmarks should
-  // land in the right place.
+  // Legacy URL redirects. Old paths keep working forever so email CTAs,
+  // bookmarks, and links posted on social all land in the right place.
+  //
+  //   /community/*    -> /consilium/*   (community was merged in Apr 2026)
+  //   /inner-circle/* -> /consilium/*   (rebrand in Apr 2026)
   const { pathname } = request.nextUrl;
   if (pathname.startsWith("/community")) {
     const newPath = pathname
-      .replace(/^\/community\/forum/, "/inner-circle/forum")
-      .replace(/^\/community\/chat/, "/inner-circle/chat")
-      .replace(/^\/community$/, "/inner-circle/feed");
+      .replace(/^\/community\/forum/, "/consilium/forum")
+      .replace(/^\/community\/chat/, "/consilium/chat")
+      .replace(/^\/community$/, "/consilium/feed");
+    const base = `https://${host}`;
+    return NextResponse.redirect(`${base}${newPath}${request.nextUrl.search}`, 301);
+  }
+  if (pathname.startsWith("/inner-circle")) {
+    const newPath = pathname.replace(/^\/inner-circle/, "/consilium");
     const base = `https://${host}`;
     return NextResponse.redirect(`${base}${newPath}${request.nextUrl.search}`, 301);
   }

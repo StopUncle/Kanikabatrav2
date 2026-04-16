@@ -44,7 +44,7 @@ export default function PrivacyPage() {
                 <li>Name and email address (when you create an account, purchase a product, or subscribe to our newsletter)</li>
                 <li>Payment information (processed securely through our payment processors — we do not store card details)</li>
                 <li>Quiz and assessment responses (when you take the Dark Mirror Assessment)</li>
-                <li>Community posts, comments, and messages (when you participate in The Inner Circle)</li>
+                <li>Community posts, comments, and messages (when you participate in The Consilium)</li>
                 <li>Coaching session notes and questionnaire responses</li>
                 <li>Contact form submissions</li>
               </ul>
@@ -81,7 +81,7 @@ export default function PrivacyPage() {
               <ul className="text-text-gray space-y-2 list-disc list-inside">
                 <li><strong className="text-text-light">Payment processor</strong> — Stripe (stripe.com) handles all payments and stores card details on our behalf</li>
                 <li><strong className="text-text-light">Email providers</strong> — Resend and Nodemailer SMTP deliver transactional and marketing emails; open/click tracking may be enabled</li>
-                <li><strong className="text-text-light">Real-time chat</strong> — Pusher (pusher.com) powers Inner Circle chat rooms and receives message content in transit</li>
+                <li><strong className="text-text-light">Real-time chat</strong> — Pusher (pusher.com) powers Consilium chat rooms and receives message content in transit</li>
                 <li><strong className="text-text-light">Media storage</strong> — Cloudflare R2 stores voice notes and member avatars</li>
                 <li><strong className="text-text-light">Analytics</strong> — Google Analytics (anonymised IP) tracks aggregate site usage</li>
                 <li><strong className="text-text-light">Error tracking</strong> — Sentry captures application errors (personal data masked by default)</li>
@@ -96,7 +96,7 @@ export default function PrivacyPage() {
                 We retain your personal information for as long as your account is active or as needed to provide services. Purchase records are retained for 7 years for accounting and tax compliance. You may request deletion of your account and associated data at any time by emailing Kanika@kanikarose.com.
               </p>
               <p className="text-text-gray leading-relaxed">
-                If you cancel your Inner Circle subscription, your posts, comments, and chat messages remain visible to other members under your pseudonym. If you request full deletion, your content is either removed or anonymised at our discretion. Voice note files you received continue to be accessible via your original email delivery links until they expire.
+                If you cancel your Consilium subscription, your posts, comments, and chat messages remain visible to other members under your pseudonym. If you request full deletion, your content is either removed or anonymised at our discretion. Voice note files you received continue to be accessible via your original email delivery links until they expire.
               </p>
             </section>
 

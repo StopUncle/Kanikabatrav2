@@ -10,7 +10,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Invalid product" }, { status: 400 });
     }
 
-    // INNER_CIRCLE checkout must go through /api/inner-circle/subscription/create
+    // INNER_CIRCLE checkout must go through /api/consilium/subscription/create
     // which verifies the applicant has APPROVED status. Allowing it here would
     // let anyone bypass the manual application review by hitting this endpoint
     // directly with priceKey: "INNER_CIRCLE".

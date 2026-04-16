@@ -329,12 +329,12 @@ function SuccessContent() {
               </Link>
 
               <Link
-                href="/inner-circle"
+                href="/consilium"
                 className="block p-5 bg-deep-black/50 border border-accent-gold/10 rounded-xl hover:border-accent-gold/30 transition-all"
               >
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-text-light font-light">Join The Inner Circle — $29/mo</p>
+                    <p className="text-text-light font-light">Join The Consilium — $29/mo</p>
                     <p className="text-text-gray text-sm">Courses, voice notes, community of women who get it</p>
                   </div>
                   <ArrowRight size={18} className="text-accent-gold" />

@@ -70,9 +70,9 @@ export default function RefundPage() {
             </section>
 
             <section className="bg-deep-black/50 border border-accent-gold/10 rounded-2xl p-8">
-              <h2 className="text-2xl font-light text-accent-gold mb-4">The Inner Circle (Subscription)</h2>
+              <h2 className="text-2xl font-light text-accent-gold mb-4">The Consilium (Subscription)</h2>
               <p className="text-text-gray leading-relaxed mb-4">
-                The Inner Circle is a monthly subscription at $29/month. <strong className="text-text-light">Your subscription renews automatically each month until you cancel.</strong>
+                The Consilium is a monthly subscription at $29/month. <strong className="text-text-light">Your subscription renews automatically each month until you cancel.</strong>
               </p>
               <ul className="text-text-gray space-y-3 list-disc list-inside">
                 <li><strong className="text-text-light">Auto-renewal:</strong> Billing is charged to your payment method on the same day each month. You&apos;ll receive a renewal confirmation email each time it renews successfully</li>

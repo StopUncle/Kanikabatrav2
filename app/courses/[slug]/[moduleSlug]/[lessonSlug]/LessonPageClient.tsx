@@ -335,10 +335,10 @@ export default function LessonPageClient({
                     Have questions about this lesson?
                   </p>
                   <Link
-                    href="/inner-circle/forum"
+                    href="/consilium/forum"
                     className="text-sm text-accent-gold hover:text-accent-gold/80 transition-colors"
                   >
-                    Discuss in the Inner Circle forum →
+                    Discuss in the Consilium forum →
                   </Link>
                 </div>
               </div>

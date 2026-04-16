@@ -141,7 +141,7 @@ export default function MetricsPage() {
         <StatCard
           label="Active Members"
           value={data.members.active.toString()}
-          sub={`Inner Circle`}
+          sub={`Consilium`}
           icon={Users}
         />
         <StatCard
@@ -204,7 +204,7 @@ export default function MetricsPage() {
         <div className="space-y-3">
           <FunnelRow label="Quiz taken" value={quiz} maxValue={Math.max(quiz, 1)} />
           <FunnelRow
-            label="Applied to Inner Circle"
+            label="Applied to Consilium"
             value={apps}
             maxValue={Math.max(quiz, 1)}
             rate={quizToApp}

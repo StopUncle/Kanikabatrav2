@@ -60,12 +60,19 @@ async function seedCommunity() {
     }),
     prisma.forumCategory.upsert({
       where: { slug: "inner-circle" },
-      update: {},
+      // The slug stays "inner-circle" so existing forum URLs keep working
+      // (members have links to specific threads under this slug). Only
+      // the display name is rebranded.
+      update: {
+        name: "The Counselors",
+        description:
+          "Premium chamber — advanced strategy for coaching clients",
+      },
       create: {
-        name: "Inner Circle",
+        name: "The Counselors",
         slug: "inner-circle",
         description:
-          "Premium content and advanced strategies for coaching clients",
+          "Premium chamber — advanced strategy for coaching clients",
         icon: "👑",
         sortOrder: 5,
         accessTier: "COACHING_CLIENT",

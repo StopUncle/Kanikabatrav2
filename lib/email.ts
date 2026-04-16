@@ -1270,7 +1270,7 @@ export const sendQuizResults = async (
 };
 
 // ============================================
-// Inner Circle Application Emails
+// Consilium Application Emails
 // ============================================
 
 interface ApplicationDetails {
@@ -1309,7 +1309,7 @@ const luxuryEmailShell = (innerHtml: string, headerTitle: string, headerSub: str
                 ${innerHtml}
                 <div style="margin-top: 35px; padding-top: 25px; border-top: 1px solid #2a1820; text-align: center;">
                   <p style="color: #d4af37; margin: 0; font-size: 16px; font-weight: 600; letter-spacing: 1px;">Kanika Batra</p>
-                  <p style="color: #666; margin: 5px 0 0 0; font-size: 12px;">The Inner Circle</p>
+                  <p style="color: #666; margin: 5px 0 0 0; font-size: 12px;">The Consilium</p>
                 </div>
               </td>
             </tr>
@@ -1330,7 +1330,7 @@ export const sendApplicationConfirmation = async (
       Dear ${esc(applicantName)},
     </p>
     <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 20px 0; font-size: 15px;">
-      Your application to The Inner Circle has been received. Every applicant is reviewed personally — this is not a community you can buy your way into.
+      Your application to The Consilium has been received. Every applicant is reviewed personally — this is not a community you can buy your way into.
     </p>
     <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="margin: 25px 0;">
       <tr>
@@ -1351,7 +1351,7 @@ export const sendApplicationConfirmation = async (
 
   return await sendEmail({
     to: applicantEmail,
-    subject: "Your Inner Circle application has been received",
+    subject: "Your Consilium application has been received",
     html: luxuryEmailShell(inner, "Application Received", "We're reviewing your submission"),
   });
 };
@@ -1364,7 +1364,7 @@ export const sendAdminApplicationAlert = async (
 
   const inner = `
     <p style="color: #f5f0ed; font-size: 16px; margin: 0 0 25px 0; line-height: 1.6;">
-      A new application has been submitted to The Inner Circle.
+      A new application has been submitted to The Consilium.
     </p>
     <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="margin: 0 0 25px 0;">
       <tr>
@@ -1401,14 +1401,14 @@ export const sendAdminApplicationAlert = async (
   return await sendEmail({
     to: adminEmail,
     // Strip CRLF from user-supplied names to prevent header injection.
-    subject: `[Inner Circle] New application from ${details.applicantName.replace(/[\r\n]/g, " ")}`,
+    subject: `[Consilium] New application from ${details.applicantName.replace(/[\r\n]/g, " ")}`,
     html: luxuryEmailShell(inner, "New Application", `From ${esc(details.applicantName)}`),
     replyTo: details.applicantEmail,
   });
 };
 
 // ============================================
-// Weekly digest for Inner Circle members
+// Weekly digest for Consilium members
 // ============================================
 
 interface DigestPost {
@@ -1477,7 +1477,7 @@ export const sendWeeklyDigest = async (
           (post) => `
         <tr>
           <td style="padding: 0 0 14px 0;">
-            <a href="${baseUrl}/inner-circle/feed/${post.id}" style="text-decoration: none; color: inherit;">
+            <a href="${baseUrl}/consilium/feed/${post.id}" style="text-decoration: none; color: inherit;">
               <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="background: #1a0d11; border: 1px solid rgba(212,175,55,0.15); border-radius: 10px;">
                 <tr>
                   <td style="padding: 16px 18px;">
@@ -1505,7 +1505,7 @@ export const sendWeeklyDigest = async (
       ${data.newVoiceNotes
         .map(
           (vn) => `
-        <li><a href="${baseUrl}/inner-circle/voice-notes" style="color: #d4af37; text-decoration: none;">${esc(vn.title)}</a></li>
+        <li><a href="${baseUrl}/consilium/voice-notes" style="color: #d4af37; text-decoration: none;">${esc(vn.title)}</a></li>
       `,
         )
         .join("")}
@@ -1521,7 +1521,7 @@ export const sendWeeklyDigest = async (
       ${data.newCourses
         .map(
           (c) => `
-        <li><a href="${baseUrl}/inner-circle/classroom/${esc(c.slug)}" style="color: #d4af37; text-decoration: none;">${esc(c.title)}</a></li>
+        <li><a href="${baseUrl}/consilium/classroom/${esc(c.slug)}" style="color: #d4af37; text-decoration: none;">${esc(c.title)}</a></li>
       `,
         )
         .join("")}
@@ -1558,7 +1558,7 @@ export const sendWeeklyDigest = async (
       Hi ${esc(data.memberName)},
     </p>
     <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 25px 0; font-size: 14px;">
-      Here's what happened inside The Inner Circle this past week (${weekRange}).
+      Here's what happened inside The Consilium this past week (${weekRange}).
     </p>
 
     ${commentsNote}
@@ -1573,7 +1573,7 @@ export const sendWeeklyDigest = async (
           <table role="presentation" cellspacing="0" cellpadding="0" border="0">
             <tr>
               <td bgcolor="#d4af37" style="border-radius: 50px;" align="center">
-                <a href="${baseUrl}/inner-circle/feed" target="_blank" style="display: inline-block; color: #050511; padding: 16px 42px; text-decoration: none; font-weight: 700; font-size: 14px; letter-spacing: 1px; text-transform: uppercase; border-radius: 50px;">Open the feed</a>
+                <a href="${baseUrl}/consilium/feed" target="_blank" style="display: inline-block; color: #050511; padding: 16px 42px; text-decoration: none; font-weight: 700; font-size: 14px; letter-spacing: 1px; text-transform: uppercase; border-radius: 50px;">Open the feed</a>
               </td>
             </tr>
           </table>
@@ -1582,7 +1582,7 @@ export const sendWeeklyDigest = async (
     </table>
 
     <p style="color: #666; line-height: 1.6; margin: 30px 0 0 0; font-size: 11px; text-align: center;">
-      You're receiving this because you're an active member of The Inner Circle.
+      You're receiving this because you're an active member of The Consilium.
       <br>
       <a href="${baseUrl}/profile" style="color: #888; text-decoration: underline;">Manage preferences</a>${
         data.unsubscribeUrl
@@ -1596,7 +1596,7 @@ export const sendWeeklyDigest = async (
 
   return await sendEmail({
     to: data.memberEmail,
-    subject: `The Inner Circle — this week in review`,
+    subject: `The Consilium — this week in review`,
     html: luxuryEmailShell(inner, "Weekly Digest", weekRange),
   });
 };
@@ -1614,7 +1614,7 @@ export const sendInnerCircleWelcomeNewUser = async (
       Welcome ${esc(userName)},
     </p>
     <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 25px 0; font-size: 15px;">
-      Your subscription to The Inner Circle is active. Because you checked out
+      Your subscription to The Consilium is active. Because you checked out
       directly from Stripe, we created an account for you using the email
       address you provided.
     </p>
@@ -1650,7 +1650,7 @@ export const sendInnerCircleWelcomeNewUser = async (
 
   return await sendEmail({
     to: userEmail,
-    subject: "Welcome to The Inner Circle — set your password",
+    subject: "Welcome to The Consilium — set your password",
     html: luxuryEmailShell(inner, "Welcome", "Your account is ready"),
   });
 };
@@ -1666,7 +1666,7 @@ export const sendApplicationApproved = async (
       Dear ${esc(applicantName)},
     </p>
     <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 25px 0; font-size: 15px;">
-      You've been approved for The Inner Circle. Welcome to the room you've been trying to enter.
+      You've been approved for The Consilium. Welcome to the room you've been trying to enter.
     </p>
     <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="margin: 0 0 30px 0;">
       <tr>
@@ -1692,7 +1692,7 @@ export const sendApplicationApproved = async (
           <table role="presentation" cellspacing="0" cellpadding="0" border="0">
             <tr>
               <td bgcolor="#d4af37" style="border-radius: 50px;" align="center">
-                <a href="${baseUrl}/inner-circle/apply?status=approved" target="_blank" style="display: inline-block; color: #050511; padding: 18px 50px; text-decoration: none; font-weight: 700; font-size: 16px; letter-spacing: 1px; text-transform: uppercase; border-radius: 50px;">Activate Membership</a>
+                <a href="${baseUrl}/consilium/apply?status=approved" target="_blank" style="display: inline-block; color: #050511; padding: 18px 50px; text-decoration: none; font-weight: 700; font-size: 16px; letter-spacing: 1px; text-transform: uppercase; border-radius: 50px;">Activate Membership</a>
               </td>
             </tr>
           </table>
@@ -1706,8 +1706,8 @@ export const sendApplicationApproved = async (
 
   return await sendEmail({
     to: applicantEmail,
-    subject: "You're in. Welcome to The Inner Circle.",
-    html: luxuryEmailShell(inner, "Application Approved", "Welcome to The Inner Circle"),
+    subject: "You're in. Welcome to The Consilium.",
+    html: luxuryEmailShell(inner, "Application Approved", "Welcome to The Consilium"),
   });
 };
 
@@ -1721,7 +1721,7 @@ export const sendApplicationRejected = async (
       Dear ${esc(applicantName)},
     </p>
     <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 25px 0; font-size: 15px;">
-      Thank you for your interest in The Inner Circle. After reviewing your application, we&rsquo;re unable to offer you a spot at this time.
+      Thank you for your interest in The Consilium. After reviewing your application, we&rsquo;re unable to offer you a spot at this time.
     </p>
     ${reason ? `
     <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="margin: 0 0 25px 0;">
@@ -1744,8 +1744,8 @@ export const sendApplicationRejected = async (
 
   return await sendEmail({
     to: applicantEmail,
-    subject: "Your Inner Circle Application",
-    html: luxuryEmailShell(inner, "Application Update", "The Inner Circle"),
+    subject: "Your Consilium Application",
+    html: luxuryEmailShell(inner, "Application Update", "The Consilium"),
   });
 };
 
@@ -1759,7 +1759,7 @@ export const sendMembershipRenewed = async (
       ${esc(memberName)},
     </p>
     <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 25px 0; font-size: 15px;">
-      Your Inner Circle membership has been renewed. Your next billing date is <strong style="color: #d4af37;">${esc(nextBillingDate)}</strong>.
+      Your Consilium membership has been renewed. Your next billing date is <strong style="color: #d4af37;">${esc(nextBillingDate)}</strong>.
     </p>
     <p style="color: #94a3b8; line-height: 1.8; margin: 0; font-size: 14px;">
       The feed, classroom, and community are waiting for you.
@@ -1768,8 +1768,8 @@ export const sendMembershipRenewed = async (
 
   return await sendEmail({
     to: memberEmail,
-    subject: "Membership renewed — The Inner Circle",
-    html: luxuryEmailShell(inner, "Membership Renewed", "The Inner Circle"),
+    subject: "Membership renewed — The Consilium",
+    html: luxuryEmailShell(inner, "Membership Renewed", "The Consilium"),
   });
 };
 
@@ -1784,7 +1784,7 @@ export const sendMembershipSuspended = async (
       ${esc(memberName)},
     </p>
     <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 25px 0; font-size: 15px;">
-      We weren&rsquo;t able to process your latest payment for The Inner Circle. Your membership has been paused until the payment issue is resolved.
+      We weren&rsquo;t able to process your latest payment for The Consilium. Your membership has been paused until the payment issue is resolved.
     </p>
     <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 25px 0; font-size: 15px;">
       Please update your payment method to restore access:
@@ -1809,8 +1809,8 @@ export const sendMembershipSuspended = async (
 
   return await sendEmail({
     to: memberEmail,
-    subject: "Action needed — Inner Circle payment failed",
-    html: luxuryEmailShell(inner, "Payment Issue", "The Inner Circle"),
+    subject: "Action needed — Consilium payment failed",
+    html: luxuryEmailShell(inner, "Payment Issue", "The Consilium"),
   });
 };
 
@@ -1824,7 +1824,7 @@ export const sendMembershipCancelled = async (
       ${esc(memberName)},
     </p>
     <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 25px 0; font-size: 15px;">
-      Your Inner Circle membership has been cancelled.${accessUntil ? ` You&rsquo;ll retain access until <strong style="color: #d4af37;">${esc(accessUntil)}</strong>.` : ""}
+      Your Consilium membership has been cancelled.${accessUntil ? ` You&rsquo;ll retain access until <strong style="color: #d4af37;">${esc(accessUntil)}</strong>.` : ""}
     </p>
     <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 25px 0; font-size: 15px;">
       If this was a mistake or you change your mind, you can resubscribe from your dashboard at any time.
@@ -1836,8 +1836,8 @@ export const sendMembershipCancelled = async (
 
   return await sendEmail({
     to: memberEmail,
-    subject: "Inner Circle membership cancelled",
-    html: luxuryEmailShell(inner, "Membership Cancelled", "The Inner Circle"),
+    subject: "Consilium membership cancelled",
+    html: luxuryEmailShell(inner, "Membership Cancelled", "The Consilium"),
   });
 };
 
@@ -1853,7 +1853,7 @@ export const sendTrialExpiringSoon = async (
       ${esc(memberName)},
     </p>
     <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 25px 0; font-size: 15px;">
-      Your free trial of The Inner Circle ends in <strong style="color: #B76E79;">${daysLeft} day${daysLeft === 1 ? "" : "s"}</strong>.
+      Your free trial of The Consilium ends in <strong style="color: #B76E79;">${daysLeft} day${daysLeft === 1 ? "" : "s"}</strong>.
     </p>
     <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 25px 0; font-size: 15px;">
       After that, access to the feed, voice notes, classroom, and community goes away. If you&rsquo;ve found value in what&rsquo;s here, subscribe to keep it.
@@ -1864,7 +1864,7 @@ export const sendTrialExpiringSoon = async (
           <table role="presentation" cellspacing="0" cellpadding="0" border="0">
             <tr>
               <td bgcolor="#B76E79" style="border-radius: 50px;" align="center">
-                <a href="${baseUrl}/inner-circle/feed" target="_blank" style="display: inline-block; color: #050511; padding: 16px 40px; text-decoration: none; font-weight: 700; font-size: 15px; letter-spacing: 1px; text-transform: uppercase; border-radius: 50px;">Keep My Access</a>
+                <a href="${baseUrl}/consilium/feed" target="_blank" style="display: inline-block; color: #050511; padding: 16px 40px; text-decoration: none; font-weight: 700; font-size: 15px; letter-spacing: 1px; text-transform: uppercase; border-radius: 50px;">Keep My Access</a>
               </td>
             </tr>
           </table>
@@ -1878,7 +1878,7 @@ export const sendTrialExpiringSoon = async (
 
   return await sendEmail({
     to: memberEmail,
-    subject: `Your Inner Circle trial ends in ${daysLeft} day${daysLeft === 1 ? "" : "s"}`,
-    html: luxuryEmailShell(inner, "Trial Ending Soon", "The Inner Circle"),
+    subject: `Your Consilium trial ends in ${daysLeft} day${daysLeft === 1 ? "" : "s"}`,
+    html: luxuryEmailShell(inner, "Trial Ending Soon", "The Consilium"),
   });
 };

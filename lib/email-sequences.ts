@@ -139,7 +139,7 @@ function buildWelcomeHtml(name: string): string {
 }
 
 function buildTrialOfferHtml(name: string, trialToken: string): string {
-  const claimUrl = `${baseUrl}/api/inner-circle/claim-trial?token=${trialToken}`;
+  const claimUrl = `${baseUrl}/api/consilium/claim-trial?token=${trialToken}`;
 
   const body = `
     <p style="color: #f5f0ed; font-size: 18px; margin: 0 0 20px 0; line-height: 1.6;">
@@ -147,7 +147,7 @@ function buildTrialOfferHtml(name: string, trialToken: string): string {
     </p>
 
     <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 20px 0; font-size: 15px;">
-      Because you invested in the premium edition, I&rsquo;m giving you something I don&rsquo;t offer publicly &mdash; a free month inside The Inner Circle.
+      Because you invested in the premium edition, I&rsquo;m giving you something I don&rsquo;t offer publicly &mdash; a free month inside The Consilium.
     </p>
 
     <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 25px 0; font-size: 15px;">
@@ -160,7 +160,7 @@ function buildTrialOfferHtml(name: string, trialToken: string): string {
       <tr>
         <td bgcolor="#1a0d11" style="padding: 25px; border-radius: 10px; border: 1px solid #d4af37;">
           <h3 style="color: #d4af37; margin: 0 0 20px 0; font-size: 18px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; text-align: center;">
-            What&rsquo;s Inside The Inner Circle
+            What&rsquo;s Inside The Consilium
           </h3>
           <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0">
             <tr>
@@ -194,13 +194,13 @@ function buildTrialOfferHtml(name: string, trialToken: string): string {
 
   return emailShell(
     "You&rsquo;ve Been Invited",
-    "The Inner Circle &mdash; free month",
+    "The Consilium &mdash; free month",
     body,
   );
 }
 
 function buildReminderHtml(name: string, trialToken: string): string {
-  const claimUrl = `${baseUrl}/api/inner-circle/claim-trial?token=${trialToken}`;
+  const claimUrl = `${baseUrl}/api/consilium/claim-trial?token=${trialToken}`;
 
   const body = `
     <p style="color: #f5f0ed; font-size: 18px; margin: 0 0 20px 0; line-height: 1.6;">
@@ -208,7 +208,7 @@ function buildReminderHtml(name: string, trialToken: string): string {
     </p>
 
     <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 20px 0; font-size: 15px;">
-      Quick reminder &mdash; your free month inside The Inner Circle is still waiting for you, but the invitation won&rsquo;t be open forever.
+      Quick reminder &mdash; your free month inside The Consilium is still waiting for you, but the invitation won&rsquo;t be open forever.
     </p>
 
     <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 25px 0; font-size: 15px;">
@@ -223,7 +223,7 @@ function buildReminderHtml(name: string, trialToken: string): string {
 
   return emailShell(
     "Your Free Month Expires Soon",
-    "The Inner Circle invitation",
+    "The Consilium invitation",
     body,
   );
 }
@@ -257,7 +257,7 @@ export function buildBookBuyerSequence(
       recipientName,
       sequence: "book-buyer-welcome",
       step: 2,
-      subject: "You've been invited \u2014 The Inner Circle (free month)",
+      subject: "You've been invited \u2014 The Consilium (free month)",
       htmlBody: buildTrialOfferHtml(recipientName, trialToken),
       scheduledAt: addDays(now, 3),
       metadata: { type: "trial-offer", trialToken },
@@ -267,7 +267,7 @@ export function buildBookBuyerSequence(
       recipientName,
       sequence: "book-buyer-welcome",
       step: 3,
-      subject: "Your free month expires soon \u2014 The Inner Circle",
+      subject: "Your free month expires soon \u2014 The Consilium",
       htmlBody: buildReminderHtml(recipientName, trialToken),
       scheduledAt: addDays(now, 7),
       metadata: { type: "trial-reminder", trialToken },

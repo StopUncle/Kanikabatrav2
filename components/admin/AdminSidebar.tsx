@@ -94,7 +94,7 @@ export default function AdminSidebar() {
 
       <div className="px-6 py-4 border-t border-accent-gold/10 space-y-3">
         <Link
-          href="/inner-circle/feed"
+          href="/consilium/feed"
           className="flex items-center gap-3 text-sm font-light tracking-wide text-accent-gold hover:text-accent-gold/80 transition-colors duration-200"
         >
           <Eye size={18} strokeWidth={1.5} />

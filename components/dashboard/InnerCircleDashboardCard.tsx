@@ -27,14 +27,14 @@ interface Props {
  * Renders different content depending on the member's status:
  *   - null           → not a member yet, CTA to apply
  *   - PENDING        → application under review
- *   - APPROVED       → complete payment CTA (hits /inner-circle/apply)
+ *   - APPROVED       → complete payment CTA (hits /consilium/apply)
  *   - ACTIVE         → member status + expiry + Manage Subscription + Feed
  *   - SUSPENDED      → suspension reason + resume / contact
  *   - CANCELLED      → cancelled but still has access until expiry
  *   - EXPIRED        → expired, re-apply
  *
  * The "Manage Subscription" button hits the Stripe Customer Portal via
- * /api/inner-circle/subscription/portal, redirecting the user to Stripe's
+ * /api/consilium/subscription/portal, redirecting the user to Stripe's
  * hosted portal where they can change their card, cancel, or view invoices.
  */
 export default function InnerCircleDashboardCard({ membership }: Props) {
@@ -45,7 +45,7 @@ export default function InnerCircleDashboardCard({ membership }: Props) {
     setPortalLoading(true);
     setPortalError(null);
     try {
-      const res = await fetch("/api/inner-circle/subscription/portal", {
+      const res = await fetch("/api/consilium/subscription/portal", {
         method: "POST",
       });
       const data = await res.json();
@@ -67,7 +67,7 @@ export default function InnerCircleDashboardCard({ membership }: Props) {
           Access exclusive voice notes, courses, and community discussions.
         </p>
         <Link
-          href="/inner-circle"
+          href="/consilium"
           className="inline-flex items-center gap-2 px-6 py-2 bg-accent-gold text-deep-black rounded-full font-medium hover:bg-accent-gold/90 transition-all"
         >
           Explore The Consilium
@@ -100,7 +100,7 @@ export default function InnerCircleDashboardCard({ membership }: Props) {
           Complete your subscription to activate your membership.
         </p>
         <Link
-          href="/inner-circle/apply?status=approved"
+          href="/consilium/apply?status=approved"
           className="inline-flex items-center gap-2 px-6 py-2 bg-accent-gold text-deep-black rounded-full font-medium hover:bg-accent-gold/90 transition-all"
         >
           Activate Membership
@@ -137,7 +137,7 @@ export default function InnerCircleDashboardCard({ membership }: Props) {
 
         <div className="flex flex-col sm:flex-row gap-2">
           <Link
-            href="/inner-circle/feed"
+            href="/consilium/feed"
             className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2 bg-accent-gold text-deep-black rounded-full text-sm font-medium hover:bg-accent-gold/90 transition-all"
           >
             Go to Feed
@@ -223,7 +223,7 @@ export default function InnerCircleDashboardCard({ membership }: Props) {
             : "Your membership has ended."}
         </p>
         <Link
-          href="/inner-circle"
+          href="/consilium"
           className="inline-flex items-center gap-2 px-4 py-2 bg-accent-gold text-deep-black rounded-full text-sm font-medium hover:bg-accent-gold/90 transition-all"
         >
           Re-join
@@ -238,7 +238,7 @@ export default function InnerCircleDashboardCard({ membership }: Props) {
     <div className="text-center py-6">
       <p className="text-text-gray mb-4">Your membership has expired.</p>
       <Link
-        href="/inner-circle"
+        href="/consilium"
         className="inline-flex items-center gap-2 px-6 py-2 bg-accent-gold text-deep-black rounded-full font-medium hover:bg-accent-gold/90 transition-all"
       >
         Re-apply

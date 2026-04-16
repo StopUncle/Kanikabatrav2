@@ -64,7 +64,7 @@ export async function POST(request: NextRequest) {
           html: `
             <p style="font-family: Georgia, serif; font-size: 16px; color: #f5f0ed;">Hey Kanika,</p>
             <p style="font-family: Georgia, serif; font-size: 15px; color: #94a3b8; line-height: 1.6;">
-              The automatic daily insights posting to the Inner Circle feed have run out. The feed won't post a new insight today until more are added.
+              The automatic daily insights posting to the Consilium feed have run out. The feed won't post a new insight today until more are added.
             </p>
             <p style="font-family: Georgia, serif; font-size: 15px; color: #94a3b8; line-height: 1.6;">
               Ask your developer to top up the insights library — no action is needed from you, just a heads up.

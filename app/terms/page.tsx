@@ -126,10 +126,10 @@ export default function TermsPage() {
 
                   <div>
                     <h3 className="text-lg font-light text-accent-gold mb-3">
-                      Subscription Billing (The Inner Circle)
+                      Subscription Billing (The Consilium)
                     </h3>
                     <p className="text-text-gray leading-relaxed mb-4">
-                      The Inner Circle is a paid monthly subscription at
+                      The Consilium is a paid monthly subscription at
                       $29/month. Your subscription will automatically renew each
                       month until you cancel. You can cancel anytime from your
                       dashboard or by emailing Kanika@kanikarose.com — your
@@ -137,7 +137,7 @@ export default function TermsPage() {
                     </p>
                     <p className="text-text-gray leading-relaxed mb-4">
                       Book purchasers may receive a 30-day free trial to The
-                      Inner Circle via email. The trial includes full access;
+                      Consilium via email. The trial includes full access;
                       at the end of the trial your access expires unless you
                       subscribe. No charges are made during the trial.
                     </p>
@@ -149,7 +149,7 @@ export default function TermsPage() {
                     </h3>
                     <p className="text-text-gray leading-relaxed mb-4">
                       Posts, comments, forum threads, and chat messages you
-                      create in The Inner Circle remain your own content. By
+                      create in The Consilium remain your own content. By
                       posting, you grant us a license to display that content
                       within the community. We may remove content that
                       violates the community guidelines (harassment, doxxing,

@@ -34,7 +34,7 @@ export default function PostCard({ post, categorySlug }: PostCardProps) {
 
   return (
     <Link
-      href={`/inner-circle/forum/${categorySlug}/post/${post.id}`}
+      href={`/consilium/forum/${categorySlug}/post/${post.id}`}
       className="block p-4 bg-deep-navy/30 hover:bg-deep-navy/50 active:bg-deep-navy/70 border border-gray-800 hover:border-gray-700 rounded-lg transition-all"
     >
       <div className="flex items-start gap-4">

@@ -45,7 +45,7 @@ export default function PostsPage() {
 
   const fetchPosts = useCallback(async () => {
     try {
-      const res = await fetch("/api/inner-circle/feed");
+      const res = await fetch("/api/consilium/feed");
       if (res.ok) {
         const data = await res.json();
         setPosts(data.posts || []);
@@ -67,7 +67,7 @@ export default function PostsPage() {
 
     setSubmitting(true);
     try {
-      const res = await fetch("/api/inner-circle/feed", {
+      const res = await fetch("/api/consilium/feed", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),

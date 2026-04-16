@@ -38,11 +38,11 @@ const Header = () => {
   // Hiding the main Header's hamburger here prevents the stacked-hamburger
   // bug (two toggle buttons, both on the right, both visible).
   const isMemberArea =
-    pathname.startsWith("/inner-circle/feed") ||
-    pathname.startsWith("/inner-circle/voice-notes") ||
-    pathname.startsWith("/inner-circle/classroom") ||
-    pathname.startsWith("/inner-circle/forum") ||
-    pathname.startsWith("/inner-circle/chat");
+    pathname.startsWith("/consilium/feed") ||
+    pathname.startsWith("/consilium/voice-notes") ||
+    pathname.startsWith("/consilium/classroom") ||
+    pathname.startsWith("/consilium/forum") ||
+    pathname.startsWith("/consilium/chat");
 
   // Primary nav. Home is implicit in the logo click so it's not listed.
   // The Consilium is explicitly NOT in this array — it's a standalone CTA
@@ -57,7 +57,7 @@ const Header = () => {
     { href: "/contact", label: "Contact" },
   ];
 
-  const isConsiliumActive = pathname.startsWith("/inner-circle");
+  const isConsiliumActive = pathname.startsWith("/consilium");
 
   useEffect(() => {
     async function checkAuth() {
@@ -179,7 +179,7 @@ const Header = () => {
                     to match the logo. Small arrow-up-right reinforces
                     "enter a separate space". */}
                 <Link
-                  href="/inner-circle"
+                  href="/consilium"
                   className={`group relative inline-flex items-center gap-1.5 pl-4 pr-3 py-1.5 rounded-full border text-[11px] tracking-[0.22em] uppercase transition-all duration-300 whitespace-nowrap ${
                     isConsiliumActive
                       ? "text-deep-black bg-warm-gold border-warm-gold shadow-[0_0_20px_-4px_rgba(212,175,55,0.55)]"
@@ -300,7 +300,7 @@ const Header = () => {
               commercial destination, so it shouldn't be buried under
               seven secondary links. */}
           <Link
-            href="/inner-circle"
+            href="/consilium"
             onClick={() => setIsMenuOpen(false)}
             className={`group relative flex items-center justify-between px-5 py-4 rounded-full border transition-all duration-300 ${
               isConsiliumActive

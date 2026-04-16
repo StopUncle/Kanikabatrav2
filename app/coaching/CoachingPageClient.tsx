@@ -455,10 +455,10 @@ export default function CoachingPage() {
           <div className="mt-8 text-center">
             <p className="text-text-gray text-sm mb-2">Not ready for 1:1?</p>
             <Link
-              href="/inner-circle"
+              href="/consilium"
               className="text-accent-gold hover:text-accent-gold/80 text-sm transition-colors"
             >
-              Start with The Inner Circle — $29/mo →
+              Start with The Consilium — $29/mo →
             </Link>
           </div>
 

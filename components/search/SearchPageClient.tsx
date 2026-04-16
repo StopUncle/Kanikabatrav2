@@ -162,7 +162,7 @@ export default function SearchPageClient() {
                 {data.results.courses.map((course) => (
                   <Link
                     key={course.id}
-                    href={`/inner-circle/classroom/${course.slug}`}
+                    href={`/consilium/classroom/${course.slug}`}
                     className="block p-4 bg-deep-black/50 border border-accent-gold/10 rounded-xl hover:border-accent-gold/30 transition-all"
                   >
                     <p className="text-text-light font-medium text-sm mb-1">
@@ -187,7 +187,7 @@ export default function SearchPageClient() {
                 {data.results.feedPosts.map((post) => (
                   <Link
                     key={post.id}
-                    href={`/inner-circle/feed/${post.id}`}
+                    href={`/consilium/feed/${post.id}`}
                     className="block p-4 bg-deep-black/50 border border-accent-gold/10 rounded-xl hover:border-accent-gold/30 transition-all"
                   >
                     <p className="text-text-light font-medium text-sm mb-1">

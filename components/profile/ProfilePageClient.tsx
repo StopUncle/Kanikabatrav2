@@ -448,7 +448,7 @@ export default function ProfilePageClient({ userId: _userId, email }: ProfilePag
               </Link>
 
               <Link
-                href="/inner-circle"
+                href="/consilium"
                 className="flex items-center gap-4 p-5 bg-deep-black/50 border border-accent-gold/10 rounded-xl hover:border-accent-gold/30 transition-all group"
               >
                 <div className="w-10 h-10 rounded-full bg-accent-gold/10 flex items-center justify-center group-hover:bg-accent-gold/20 transition-colors">

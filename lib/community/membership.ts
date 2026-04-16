@@ -100,7 +100,7 @@ export async function checkMembership(userId: string | null): Promise<Membership
       status: null,
       membership: null,
       reason: "Not a member",
-      redirectUrl: "/inner-circle",
+      redirectUrl: "/consilium",
     };
   }
 
@@ -125,18 +125,18 @@ export async function checkMembership(userId: string | null): Promise<Membership
         status: "EXPIRED",
         membership,
         reason: "Your approval has expired. Please reapply.",
-        redirectUrl: "/inner-circle?status=expired",
+        redirectUrl: "/consilium?status=expired",
       };
     }
   }
 
   if (membership.status !== "ACTIVE") {
     const redirectMap: Record<string, string> = {
-      PENDING: "/inner-circle/apply?status=pending",
-      APPROVED: "/inner-circle/apply?status=approved",
-      CANCELLED: "/inner-circle?status=cancelled",
-      EXPIRED: "/inner-circle?status=expired",
-      SUSPENDED: "/inner-circle?status=suspended",
+      PENDING: "/consilium/apply?status=pending",
+      APPROVED: "/consilium/apply?status=approved",
+      CANCELLED: "/consilium?status=cancelled",
+      EXPIRED: "/consilium?status=expired",
+      SUSPENDED: "/consilium?status=suspended",
     };
 
     return {
@@ -144,7 +144,7 @@ export async function checkMembership(userId: string | null): Promise<Membership
       status: membership.status,
       membership,
       reason: `Membership status: ${membership.status.toLowerCase()}`,
-      redirectUrl: redirectMap[membership.status] || "/inner-circle",
+      redirectUrl: redirectMap[membership.status] || "/consilium",
     };
   }
 
@@ -162,7 +162,7 @@ export async function checkMembership(userId: string | null): Promise<Membership
       status: "EXPIRED",
       membership,
       reason: "Membership expired",
-      redirectUrl: "/inner-circle?status=expired",
+      redirectUrl: "/consilium?status=expired",
     };
   }
 

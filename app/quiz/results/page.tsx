@@ -582,10 +582,10 @@ export default function QuizResultsPage() {
                   Want ongoing support from women who think like you?
                 </p>
                 <Link
-                  href="/inner-circle"
+                  href="/consilium"
                   className="inline-block px-6 py-2 text-sm font-medium text-accent-gold border border-accent-gold/20 rounded-full hover:bg-accent-gold/10 transition-all"
                 >
-                  Explore The Inner Circle — $29/mo
+                  Explore The Consilium — $29/mo
                 </Link>
               </div>
             </m.div>
@@ -778,10 +778,10 @@ export default function QuizResultsPage() {
                   Want ongoing support from women who think like you?
                 </p>
                 <Link
-                  href="/inner-circle"
+                  href="/consilium"
                   className="inline-block px-6 py-2 text-sm font-medium text-accent-gold border border-accent-gold/20 rounded-full hover:bg-accent-gold/10 transition-all"
                 >
-                  Explore The Inner Circle — $29/mo
+                  Explore The Consilium — $29/mo
                 </Link>
               </div>
             </m.div>

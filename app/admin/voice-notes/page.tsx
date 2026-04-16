@@ -45,7 +45,7 @@ export default function VoiceNotesPage() {
 
   const fetchVoiceNotes = useCallback(async () => {
     try {
-      const res = await fetch("/api/inner-circle/feed");
+      const res = await fetch("/api/consilium/feed");
       if (res.ok) {
         const data = await res.json();
         const voiceNotes = (data.posts || []).filter(
@@ -97,7 +97,7 @@ export default function VoiceNotesPage() {
       const formData = new FormData();
       formData.append("audio", file);
 
-      const uploadRes = await fetch("/api/inner-circle/voice-notes/upload", {
+      const uploadRes = await fetch("/api/consilium/voice-notes/upload", {
         method: "POST",
         body: formData,
       });
@@ -109,7 +109,7 @@ export default function VoiceNotesPage() {
 
       const { url } = await uploadRes.json();
 
-      const postRes = await fetch("/api/inner-circle/feed", {
+      const postRes = await fetch("/api/consilium/feed", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
