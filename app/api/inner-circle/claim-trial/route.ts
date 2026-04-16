@@ -220,7 +220,10 @@ export async function GET(request: NextRequest) {
     // with no log trail.
     try {
       const existingWelcome = await prisma.feedPost.findFirst({
-        where: { type: "AUTOMATED", metadata: { path: ["type"], equals: "welcome" } },
+        where: {
+          title: "Welcome to The Inner Circle",
+          isPinned: true,
+        },
       });
 
       if (!existingWelcome) {

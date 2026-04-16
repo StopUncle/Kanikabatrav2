@@ -81,9 +81,9 @@ export default function FeedPost({ post, isDetail = false }: FeedPostProps) {
       className="bg-deep-black/50 backdrop-blur-sm border border-accent-gold/10 rounded-2xl p-6 hover:border-accent-gold/25 transition-all duration-300"
     >
       {post.isPinned && (
-        <div className="flex items-center gap-1.5 text-accent-gold text-xs mb-3">
+        <div className="flex items-center gap-1.5 text-warm-gold text-xs mb-3">
           <Pin className="w-3 h-3" />
-          <span className="uppercase tracking-wider font-medium bg-accent-gold/10 border border-accent-gold/20 px-2 py-0.5 rounded-full">Pinned</span>
+          <span className="uppercase tracking-wider font-medium bg-warm-gold/10 border border-warm-gold/25 px-2 py-0.5 rounded-full">Pinned</span>
         </div>
       )}
 
@@ -113,7 +113,7 @@ export default function FeedPost({ post, isDetail = false }: FeedPostProps) {
             {post.author?.name || "Kanika"}
           </span>
           {isAdminAuthor && (
-            <span className="text-[10px] bg-accent-gold/10 text-accent-gold border border-accent-gold/20 px-1.5 py-0.5 rounded-full uppercase tracking-wider shrink-0">
+            <span className="text-[10px] bg-warm-gold/10 text-warm-gold border border-warm-gold/25 px-1.5 py-0.5 rounded-full uppercase tracking-wider shrink-0">
               Kanika
             </span>
           )}
@@ -160,7 +160,7 @@ export default function FeedPost({ post, isDetail = false }: FeedPostProps) {
             ),
             li: ({ children }) => <li className="text-text-gray">{children}</li>,
             blockquote: ({ children }) => (
-              <blockquote className="border-l-2 border-accent-gold/40 pl-4 italic text-text-gray/90 my-2">
+              <blockquote className="border-l-2 border-warm-gold/40 pl-4 italic text-text-gray/90 my-2">
                 {children}
               </blockquote>
             ),
@@ -205,7 +205,7 @@ export default function FeedPost({ post, isDetail = false }: FeedPostProps) {
         </div>
       )}
 
-      <div className="flex items-center gap-4 pt-3 border-t border-accent-gold/10">
+      <div className="flex items-center gap-4 pt-3 border-t border-warm-gold/10">
         <button
           onClick={handleLike}
           disabled={isToggling}

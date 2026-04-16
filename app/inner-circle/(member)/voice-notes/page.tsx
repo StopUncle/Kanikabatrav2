@@ -58,6 +58,7 @@ export default async function VoiceNotesPage() {
         <h1 className="text-2xl sm:text-3xl font-extralight tracking-wider uppercase gradient-text-gold mb-2">
           Voice Notes
         </h1>
+        <div className="w-12 h-px bg-warm-gold/40 mb-3" />
         <p className="text-text-gray text-sm">Raw, unfiltered. Straight from Kanika.</p>
       </div>
 
