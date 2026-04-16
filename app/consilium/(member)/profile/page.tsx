@@ -1,12 +1,13 @@
 import { requireServerAuth } from "@/lib/auth/server-auth";
 import { prisma } from "@/lib/prisma";
-import MemberBadge, {
+import MemberBadge from "@/components/consilium/MemberBadge";
+import {
   BADGE_TIERS,
   getBadge,
   monthsSince,
   tierFromMonths,
   daysToNextTier,
-} from "@/components/consilium/MemberBadge";
+} from "@/components/consilium/badge-tiers";
 import { Lock, CheckCircle2, Calendar, MessageSquare, Heart, BookOpen, type LucideIcon } from "lucide-react";
 import ManageSubscriptionButton from "./ManageSubscriptionButton";
 

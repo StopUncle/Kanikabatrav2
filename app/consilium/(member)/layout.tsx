@@ -8,7 +8,7 @@ import { prisma } from "@/lib/prisma";
 import {
   monthsSince,
   tierFromMonths,
-} from "@/components/consilium/MemberBadge";
+} from "@/components/consilium/badge-tiers";
 
 export default async function MemberLayout({
   children,
