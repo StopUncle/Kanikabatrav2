@@ -18,7 +18,7 @@ export const metadata = {
 export default async function ConsiliumProfilePage() {
   const userId = await requireServerAuth("/consilium/profile");
 
-  const [user, membership, commentCount, forumPostCount, likeCount, enrollmentCount] =
+  const [user, membership, commentCount, forumPostCount, likeCount] =
     await Promise.all([
       prisma.user.findUnique({
         where: { id: userId },
@@ -45,7 +45,6 @@ export default async function ConsiliumProfilePage() {
       }),
       prisma.forumPost.count({ where: { authorId: userId } }),
       prisma.feedPostLike.count({ where: { userId } }),
-      prisma.courseEnrollment.count({ where: { userId } }),
     ]);
 
   const handle = user?.displayName || "Counselor";
