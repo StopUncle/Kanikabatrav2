@@ -204,14 +204,15 @@ export default function FeedPost({ post, isDetail = false }: FeedPostProps) {
         </div>
       )}
 
-      <div className="flex items-center gap-4 pt-3 border-t border-warm-gold/10">
+      <div className="flex items-center gap-2 pt-2 border-t border-warm-gold/10">
         <button
           onClick={handleLike}
           disabled={isToggling}
-          className="flex items-center gap-1.5 text-sm transition-colors group"
+          aria-label={liked ? "Unlike" : "Like"}
+          className="flex items-center gap-1.5 text-sm transition-colors group px-2 py-2 -mx-2 rounded-lg active:bg-accent-gold/10 tap-target"
         >
           <Heart
-            className={`w-4 h-4 transition-colors ${
+            className={`w-5 h-5 transition-colors ${
               liked
                 ? "fill-accent-gold text-accent-gold"
                 : "text-text-gray/50 group-hover:text-accent-gold"
@@ -224,9 +225,10 @@ export default function FeedPost({ post, isDetail = false }: FeedPostProps) {
 
         <Link
           href={`/inner-circle/feed/${post.id}`}
-          className="flex items-center gap-1.5 text-sm text-text-gray/50 hover:text-accent-gold transition-colors"
+          aria-label="View comments"
+          className="flex items-center gap-1.5 text-sm text-text-gray/50 hover:text-accent-gold transition-colors px-2 py-2 -mx-2 rounded-lg active:bg-accent-gold/10 tap-target"
         >
-          <MessageCircle className="w-4 h-4" />
+          <MessageCircle className="w-5 h-5" />
           <span>{post.commentCount}</span>
         </Link>
       </div>

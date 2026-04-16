@@ -88,7 +88,9 @@ export default function PostEditor({
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             placeholder="Enter a descriptive title..."
-            className="w-full px-4 py-3 bg-deep-black/60 border border-accent-gold/20 rounded-lg text-text-light placeholder-text-muted focus:border-accent-gold/50 focus:outline-none transition-colors"
+            enterKeyHint="next"
+            autoCapitalize="sentences"
+            className="mobile-input w-full px-4 py-3 bg-deep-black/60 border border-accent-gold/20 rounded-lg text-text-light placeholder-text-muted focus:border-accent-gold/50 focus:outline-none transition-colors"
             required
             maxLength={200}
           />
@@ -107,7 +109,8 @@ export default function PostEditor({
             onChange={(e) => setContent(e.target.value)}
             placeholder="Share your thoughts, questions, or insights..."
             rows={6}
-            className="w-full px-4 py-3 bg-deep-black/60 border border-accent-gold/20 rounded-lg text-text-light placeholder-text-muted focus:border-accent-gold/50 focus:outline-none transition-colors resize-none"
+            autoCapitalize="sentences"
+            className="mobile-input w-full px-4 py-3 bg-deep-black/60 border border-accent-gold/20 rounded-lg text-text-light placeholder-text-muted focus:border-accent-gold/50 focus:outline-none transition-colors resize-none"
             required
           />
         </div>
@@ -125,7 +128,7 @@ export default function PostEditor({
           <button
             type="submit"
             disabled={isSubmitting || !title.trim() || !content.trim()}
-            className="flex items-center gap-2 px-6 py-2 bg-gradient-to-r from-accent-burgundy to-accent-sapphire text-white rounded-lg font-medium hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex items-center gap-2 px-6 py-3 sm:py-2 min-h-[44px] sm:min-h-0 bg-gradient-to-r from-accent-burgundy to-accent-sapphire text-white rounded-lg font-medium hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {isSubmitting ? (
               <>

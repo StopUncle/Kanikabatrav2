@@ -34,7 +34,7 @@ export default function ChatInput({ onSend }: ChatInputProps) {
   }
 
   return (
-    <div className="p-4 border-t border-gray-800 bg-deep-black/30">
+    <div className="p-3 sm:p-4 border-t border-gray-800 bg-deep-black/80 backdrop-blur-sm pb-safe">
       <div className="flex items-end gap-2">
         <textarea
           ref={inputRef}
@@ -43,7 +43,10 @@ export default function ChatInput({ onSend }: ChatInputProps) {
           onKeyDown={handleKeyDown}
           placeholder="Type a message..."
           rows={1}
-          className="flex-1 bg-deep-black border border-gray-700 rounded-lg px-4 py-2 text-white placeholder-gray-500 resize-none focus:border-accent-gold focus:outline-none min-h-[40px] max-h-[120px]"
+          enterKeyHint="send"
+          autoCapitalize="sentences"
+          autoComplete="off"
+          className="mobile-input flex-1 bg-deep-black border border-gray-700 rounded-xl px-4 py-2.5 text-white placeholder-gray-500 resize-none focus:border-accent-gold focus:outline-none min-h-[44px] max-h-[120px]"
           style={{
             height: "auto",
             overflow: message.includes("\n") ? "auto" : "hidden",
@@ -52,12 +55,16 @@ export default function ChatInput({ onSend }: ChatInputProps) {
         <button
           onClick={handleSend}
           disabled={!message.trim() || isSending}
-          className="p-2.5 bg-accent-gold text-deep-black rounded-lg hover:bg-accent-gold/90 disabled:opacity-50 disabled:cursor-not-allowed"
+          aria-label="Send message"
+          className="p-3 bg-accent-gold text-deep-black rounded-xl hover:bg-accent-gold/90 disabled:opacity-50 disabled:cursor-not-allowed tap-target"
         >
           <Send className="w-5 h-5" />
         </button>
       </div>
-      <p className="text-xs text-gray-600 mt-2">
+      {/* Enter-to-send hint: desktop only. On mobile the enterKeyHint
+          attribute turns the keyboard's return key into a "send" icon, which
+          is self-documenting and doesn't need a helper line. */}
+      <p className="hidden sm:block text-xs text-gray-600 mt-2">
         Press Enter to send, Shift+Enter for new line
       </p>
     </div>

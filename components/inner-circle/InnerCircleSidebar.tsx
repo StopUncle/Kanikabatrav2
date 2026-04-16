@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
@@ -44,6 +44,29 @@ export default function InnerCircleSidebar({
   const [mobileOpen, setMobileOpen] = useState(false);
   const [forumCategories, setForumCategories] = useState<ForumCategory[]>([]);
   const [chatRooms, setChatRooms] = useState<ChatRoom[]>([]);
+
+  // Swipe-to-close gesture state. We track the initial touch point
+  // and only close if the user swipes LEFT by at least 50px — smaller
+  // movements (or a vertical scroll) don't dismiss the panel.
+  const touchStartX = useRef<number | null>(null);
+  const touchStartY = useRef<number | null>(null);
+
+  function handleTouchStart(e: React.TouchEvent) {
+    touchStartX.current = e.touches[0].clientX;
+    touchStartY.current = e.touches[0].clientY;
+  }
+
+  function handleTouchEnd(e: React.TouchEvent) {
+    if (touchStartX.current === null || touchStartY.current === null) return;
+    const dx = e.changedTouches[0].clientX - touchStartX.current;
+    const dy = Math.abs(e.changedTouches[0].clientY - touchStartY.current);
+    // Horizontal swipe left > 50px, and more horizontal than vertical
+    if (dx < -50 && Math.abs(dx) > dy) {
+      setMobileOpen(false);
+    }
+    touchStartX.current = null;
+    touchStartY.current = null;
+  }
 
   useEffect(() => {
     setMobileOpen(false);
@@ -115,7 +138,7 @@ export default function InnerCircleSidebar({
           <Link
             key={href}
             href={href}
-            className={`flex items-center gap-3 mx-3 px-3 py-2.5 rounded-lg text-sm font-light tracking-wide transition-all duration-200 ${
+            className={`flex items-center gap-3 mx-3 px-3 py-3 lg:py-2.5 min-h-[44px] lg:min-h-0 rounded-lg text-sm font-light tracking-wide transition-all duration-200 active:bg-accent-gold/15 ${
               isActive(href)
                 ? "text-accent-gold bg-accent-gold/8 border-l-2 border-accent-gold ml-3"
                 : "text-text-gray hover:text-text-light hover:bg-white/[0.03]"
@@ -139,7 +162,7 @@ export default function InnerCircleSidebar({
               <Link
                 key={cat.id}
                 href={`/inner-circle/forum/${cat.slug}`}
-                className={`flex items-center justify-between mx-3 px-3 py-2 rounded-lg text-sm transition-all duration-200 ${
+                className={`flex items-center justify-between mx-3 px-3 py-3 lg:py-2 min-h-[44px] lg:min-h-0 rounded-lg text-sm transition-all duration-200 active:bg-accent-gold/15 ${
                   pathname.includes(`/forum/${cat.slug}`)
                     ? "text-accent-gold bg-accent-gold/8"
                     : "text-text-gray hover:text-text-light hover:bg-white/[0.03]"
@@ -168,7 +191,7 @@ export default function InnerCircleSidebar({
               <Link
                 key={room.id}
                 href={`/inner-circle/chat/${room.slug}`}
-                className={`flex items-center justify-between mx-3 px-3 py-2 rounded-lg text-sm transition-all duration-200 ${
+                className={`flex items-center justify-between mx-3 px-3 py-3 lg:py-2 min-h-[44px] lg:min-h-0 rounded-lg text-sm transition-all duration-200 active:bg-accent-gold/15 ${
                   pathname.includes(`/chat/${room.slug}`)
                     ? "text-accent-gold bg-accent-gold/8"
                     : "text-text-gray hover:text-text-light hover:bg-white/[0.03]"
@@ -212,10 +235,10 @@ export default function InnerCircleSidebar({
         </div>
         <button
           onClick={() => setMobileOpen(!mobileOpen)}
-          className="p-1.5 text-accent-gold"
+          className="p-2.5 -m-1 text-accent-gold tap-target"
           aria-label="Toggle menu"
         >
-          {mobileOpen ? <X size={18} /> : <Menu size={18} />}
+          {mobileOpen ? <X size={20} /> : <Menu size={20} />}
         </button>
       </div>
 
@@ -227,10 +250,14 @@ export default function InnerCircleSidebar({
         />
       )}
 
-      {/* Mobile slide-in sidebar */}
+      {/* Mobile slide-in sidebar. Swipe left to close (Material/iOS
+          navigation-drawer convention), and pt-safe so the top doesn't
+          disappear behind the iOS notch. */}
       <aside
-        className={`lg:hidden fixed top-0 left-0 z-50 w-64 h-full bg-deep-black border-r border-accent-gold/10 flex flex-col transform transition-transform duration-300 ${
-          mobileOpen ? "translate-x-0" : "-translate-x-full"
+        onTouchStart={handleTouchStart}
+        onTouchEnd={handleTouchEnd}
+        className={`lg:hidden fixed top-0 left-0 z-50 w-72 h-full bg-deep-black border-r border-accent-gold/10 flex flex-col transform transition-transform duration-300 ease-out pt-safe pb-safe ${
+          mobileOpen ? "translate-x-0 shadow-2xl" : "-translate-x-full"
         }`}
       >
         {navContent}

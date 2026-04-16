@@ -26,10 +26,10 @@ export default function CategoryCard({ category }: CategoryCardProps) {
     <Link
       href={category.hasAccess ? `/inner-circle/forum/${category.slug}` : "#"}
       className={`
-        block p-6 rounded-xl border transition-all
+        block p-5 sm:p-6 rounded-xl border transition-all
         ${
           category.hasAccess
-            ? "bg-deep-navy/50 border-gray-800 hover:border-accent-gold/50 hover:bg-deep-navy/70"
+            ? "bg-deep-navy/50 border-gray-800 hover:border-accent-gold/50 hover:bg-deep-navy/70 active:bg-deep-navy/80"
             : "bg-gray-900/30 border-gray-800/50 cursor-not-allowed opacity-75"
         }
       `}

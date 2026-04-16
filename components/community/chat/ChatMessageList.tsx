@@ -42,7 +42,12 @@ export default function ChatMessageList({
   }
 
   return (
-    <div ref={containerRef} className="flex-1 overflow-y-auto p-4 space-y-4">
+    // overscroll-contain: pull-to-refresh on the chat shouldn't
+    // navigate/refresh the page. Mobile Safari + Chrome respect this.
+    <div
+      ref={containerRef}
+      className="flex-1 overflow-y-auto p-3 sm:p-4 space-y-3 sm:space-y-4 overscroll-contain"
+    >
       {messages.map((message, index) => {
         const prevMessage = messages[index - 1];
         const showAvatar =

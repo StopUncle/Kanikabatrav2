@@ -19,6 +19,45 @@
     @apply border-gray-800;
   }
 
+  /* Mobile polish — applied globally so every interactive element
+     behaves well on touch devices without per-component effort.
+       - Kill the iOS/Android blue/gray tap flash (we provide our own
+         :active/hover feedback).
+       - touch-action:manipulation stops the 300ms double-tap-to-zoom
+         delay that otherwise makes taps feel sluggish.
+       - -webkit-touch-callout:none on buttons+links prevents the
+         long-press popup that interrupts scrolling on iOS. */
+  html {
+    -webkit-tap-highlight-color: transparent;
+  }
+  button,
+  a,
+  [role="button"] {
+    -webkit-touch-callout: none;
+    touch-action: manipulation;
+  }
+
+  /* Active-state feedback for touch. :active gets applied
+     immediately on tap, before any JS runs — a subtle scale gives
+     a perceptible "clicked" response even on slow networks. We
+     only apply it on coarse (touch) pointers so desktop hover stays
+     clean. */
+  @media (hover: none) and (pointer: coarse) {
+    button:active,
+    [role="button"]:active,
+    a:active {
+      transform: scale(0.97);
+      transition: transform 50ms ease-out;
+    }
+  }
+
+  /* Mobile keyboard and address-bar fix: don't let rubber-banding
+     or pull-to-refresh accidentally navigate away. Pages that want
+     pull-to-refresh opt back in via `overscroll-behavior-y: auto`. */
+  body {
+    overscroll-behavior-y: none;
+  }
+
   body {
     @apply bg-deep-black text-text-light;
     font-family: "Georgia", serif;
@@ -47,6 +86,17 @@
   @supports (min-height: 100dvh) {
     .hero-viewport {
       min-height: 100dvh;
+    }
+  }
+
+  /* Chat viewport — same dvh pattern but for the chat panel height.
+     12rem accounts for the fixed site header + page padding above. */
+  .chat-viewport {
+    height: calc(100vh - 12rem);
+  }
+  @supports (height: 100dvh) {
+    .chat-viewport {
+      height: calc(100dvh - 12rem);
     }
   }
 }
@@ -223,6 +273,45 @@
 @layer utilities {
   .text-balance {
     text-wrap: balance;
+  }
+
+  /* Mobile touch utilities. Use these on any interactive element
+     to guarantee a 44x44 touch target (Apple HIG minimum) without
+     forcing visual padding. */
+  .tap-target {
+    min-height: 44px;
+    min-width: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* iOS Safari zooms the page when a form input's font-size is
+     < 16px. Apply this class to any textarea/input that would
+     otherwise render at 14px to prevent the unwanted zoom. */
+  .mobile-input {
+    font-size: 16px;
+  }
+  @media (min-width: 640px) {
+    .mobile-input {
+      font-size: 14px;
+    }
+  }
+
+  /* Safe-area padding helpers — respect the iPhone home indicator
+     and notch. Use pb-safe on sticky bottom bars, pt-safe on
+     fullscreen sheets. */
+  .pb-safe {
+    padding-bottom: env(safe-area-inset-bottom, 0);
+  }
+  .pt-safe {
+    padding-top: env(safe-area-inset-top, 0);
+  }
+  .pl-safe {
+    padding-left: env(safe-area-inset-left, 0);
+  }
+  .pr-safe {
+    padding-right: env(safe-area-inset-right, 0);
   }
 
   .animate-float {

@@ -164,18 +164,23 @@ export default function ChatRoom({ room, currentUserId }: ChatRoomProps) {
   }
 
   return (
-    <div className="flex h-[calc(100vh-12rem)] bg-deep-navy/50 border border-gray-800 rounded-xl overflow-hidden">
-      <div className="flex-1 flex flex-col">
-        <div className="flex items-center justify-between p-4 border-b border-gray-800">
-          <div>
-            <h2 className="font-semibold text-white">{room.name}</h2>
+    // chat-viewport: dvh on modern browsers, vh fallback on older
+    // ones. dvh accounts for the mobile browser chrome (address bar)
+    // that shrinks/grows on scroll, so the chat panel doesn't clip
+    // the input bar behind the keyboard. See globals.css.
+    <div className="flex chat-viewport bg-deep-navy/50 border border-gray-800 rounded-xl overflow-hidden">
+      <div className="flex-1 flex flex-col min-w-0">
+        <div className="flex items-center justify-between p-3 sm:p-4 border-b border-gray-800">
+          <div className="min-w-0 flex-1">
+            <h2 className="font-semibold text-white truncate">{room.name}</h2>
             {room.description && (
-              <p className="text-sm text-gray-500">{room.description}</p>
+              <p className="text-xs sm:text-sm text-gray-500 truncate">{room.description}</p>
             )}
           </div>
           <button
             onClick={() => setShowOnlineUsers(!showOnlineUsers)}
-            className="lg:hidden p-2 text-gray-400 hover:text-white"
+            aria-label="Toggle online users"
+            className="lg:hidden p-2.5 -mr-1 text-gray-400 hover:text-white tap-target"
           >
             <Users className="w-5 h-5" />
           </button>

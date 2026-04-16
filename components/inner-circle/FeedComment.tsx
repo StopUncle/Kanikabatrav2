@@ -114,13 +114,14 @@ export default function FeedComment({
           {comment.content}
         </p>
 
-        <div className="flex items-center gap-3 ml-8 mt-2">
+        <div className="flex items-center gap-1 ml-8 mt-1">
           <button
             onClick={handleLike}
-            className="flex items-center gap-1 text-xs transition-colors group"
+            aria-label={liked ? "Unlike comment" : "Like comment"}
+            className="flex items-center gap-1 text-xs transition-colors group px-2 py-2 -ml-2 rounded-lg active:bg-accent-gold/10"
           >
             <Heart
-              className={`w-3.5 h-3.5 transition-colors ${
+              className={`w-4 h-4 transition-colors ${
                 liked
                   ? "fill-accent-gold text-accent-gold"
                   : "text-text-gray group-hover:text-accent-gold"
@@ -136,9 +137,9 @@ export default function FeedComment({
           {depth === 0 && (
             <button
               onClick={() => setShowReply(!showReply)}
-              className="flex items-center gap-1 text-xs text-text-gray hover:text-accent-gold transition-colors"
+              className="flex items-center gap-1 text-xs text-text-gray hover:text-accent-gold transition-colors px-2 py-2 rounded-lg active:bg-accent-gold/10"
             >
-              <Reply className="w-3.5 h-3.5" />
+              <Reply className="w-4 h-4" />
               Reply
             </button>
           )}

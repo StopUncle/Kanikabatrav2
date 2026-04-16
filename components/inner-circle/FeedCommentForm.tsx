@@ -70,12 +70,16 @@ export default function FeedCommentForm({
           placeholder={placeholder}
           rows={compact ? 1 : 2}
           maxLength={2000}
-          className="flex-1 bg-deep-black/50 border border-accent-gold/20 rounded-xl px-3 py-2 text-sm text-text-light placeholder-text-gray/50 focus:outline-none focus:border-accent-gold/50 resize-none transition-all"
+          enterKeyHint="send"
+          autoCapitalize="sentences"
+          autoComplete="off"
+          className="mobile-input flex-1 bg-deep-black/50 border border-accent-gold/20 rounded-xl px-3 py-2.5 text-text-light placeholder-text-gray/50 focus:outline-none focus:border-accent-gold/50 resize-none transition-all"
         />
         <button
           type="submit"
           disabled={!content.trim() || status === "submitting"}
-          className="self-end p-2 rounded-full bg-accent-gold text-deep-black font-medium hover:bg-accent-gold/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          aria-label="Post comment"
+          className="self-end p-3 rounded-full bg-accent-gold text-deep-black font-medium hover:bg-accent-gold/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed tap-target"
         >
           <Send className="w-4 h-4" />
         </button>
