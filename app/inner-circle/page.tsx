@@ -100,19 +100,19 @@ export default async function InnerCircleLanding({
             <div className="mb-8 p-4 bg-red-900/20 border border-red-500/30 rounded-xl text-center">
               <p className="text-red-300 text-sm">
                 Your membership has been suspended due to a payment issue. Please update your payment method or contact{" "}
-                <a href="mailto:Kanika@kanikarose.com" className="text-accent-gold hover:underline">Kanika@kanikarose.com</a> for help.
+                <a href="mailto:Kanika@kanikarose.com" className="text-warm-gold hover:underline">Kanika@kanikarose.com</a> for help.
               </p>
             </div>
           )}
           {statusParam === "cancelled" && (
-            <div className="mb-8 p-4 bg-accent-gold/5 border border-accent-gold/20 rounded-xl text-center">
+            <div className="mb-8 p-4 bg-warm-gold/5 border border-warm-gold/25 rounded-xl text-center">
               <p className="text-text-gray text-sm">
                 Your membership has ended. You can reapply below if you&apos;d like to rejoin.
               </p>
             </div>
           )}
           {statusParam === "expired" && (
-            <div className="mb-8 p-4 bg-accent-gold/5 border border-accent-gold/20 rounded-xl text-center">
+            <div className="mb-8 p-4 bg-warm-gold/5 border border-warm-gold/25 rounded-xl text-center">
               <p className="text-text-gray text-sm">
                 Your membership or approval has expired. You&apos;re welcome to reapply below.
               </p>
@@ -124,10 +124,22 @@ export default async function InnerCircleLanding({
             <div className="flex justify-center mb-8">
               <ConsiliumSeal size="xl" haloed />
             </div>
-            <p className="text-accent-gold uppercase tracking-[0.3em] text-sm mb-4">
+            <p className="text-warm-gold/90 uppercase tracking-[0.3em] text-sm mb-4">
               A Private Council
             </p>
-            <h1 className="text-5xl md:text-6xl lg:text-7xl font-extralight tracking-wider uppercase mb-3 gradient-text">
+            {/* H1 uses the same 3-stop warm-gold gradient as the Seal
+                (#f3d98a -> #d4af37 -> #9c7a1f) so the heading reads as
+                struck from the same metal as the medallion above. */}
+            <h1
+              className="text-5xl md:text-6xl lg:text-7xl font-extralight tracking-wider uppercase mb-3"
+              style={{
+                background:
+                  "linear-gradient(135deg, #f3d98a 0%, #d4af37 50%, #9c7a1f 100%)",
+                WebkitBackgroundClip: "text",
+                WebkitTextFillColor: "transparent",
+                backgroundClip: "text",
+              }}
+            >
               The Consilium
             </h1>
             <p className="text-text-gray/60 uppercase tracking-[0.4em] text-xs mb-6 font-light">
@@ -163,10 +175,10 @@ export default async function InnerCircleLanding({
             {features.map((feature) => (
               <div
                 key={feature.title}
-                className="bg-deep-black/50 backdrop-blur-sm border border-accent-gold/10 rounded-2xl p-6 hover:border-accent-gold/30 transition-all duration-300 group"
+                className="bg-deep-black/50 backdrop-blur-sm border border-warm-gold/15 rounded-2xl p-6 hover:border-warm-gold/40 hover:shadow-[0_8px_40px_-12px_rgba(212,175,55,0.2)] transition-all duration-300 group"
               >
-                <div className="w-12 h-12 rounded-full bg-accent-gold/10 flex items-center justify-center mb-4 group-hover:bg-accent-gold/20 transition-colors">
-                  <feature.icon className="w-6 h-6 text-accent-gold" />
+                <div className="w-12 h-12 rounded-full bg-warm-gold/10 border border-warm-gold/20 flex items-center justify-center mb-4 group-hover:bg-warm-gold/15 group-hover:border-warm-gold/40 transition-all">
+                  <feature.icon className="w-6 h-6 text-warm-gold" strokeWidth={1.5} />
                 </div>
                 <h3 className="text-text-light font-light text-lg mb-2">{feature.title}</h3>
                 <p className="text-sm text-text-gray font-light leading-relaxed">{feature.description}</p>
@@ -183,11 +195,11 @@ export default async function InnerCircleLanding({
               </h2>
             </div>
             <div className="max-w-2xl mx-auto">
-              <div className="p-8 bg-gradient-to-br from-deep-navy/60 to-deep-burgundy/60 backdrop-blur-sm border border-accent-sapphire/15 rounded-2xl">
+              <div className="p-8 bg-gradient-to-br from-deep-navy/60 to-deep-burgundy/60 backdrop-blur-sm border border-warm-gold/20 rounded-2xl">
                 <div className="space-y-4">
                   {benefits.map((item) => (
                     <div key={item} className="flex items-start gap-3">
-                      <CheckCircle size={18} className="text-accent-gold mt-0.5 flex-shrink-0" />
+                      <CheckCircle size={18} className="text-warm-gold mt-0.5 flex-shrink-0" strokeWidth={1.5} />
                       <p className="text-text-gray font-light">{item}</p>
                     </div>
                   ))}
@@ -198,10 +210,10 @@ export default async function InnerCircleLanding({
 
           {/* Price Anchor */}
           <div className="mb-20">
-            <div className="max-w-2xl mx-auto text-center p-10 bg-deep-black/50 border border-warm-gold/20 rounded-2xl">
-              <p className="text-text-gray text-sm uppercase tracking-wider mb-4">The Math</p>
+            <div className="max-w-2xl mx-auto text-center p-10 bg-deep-black/50 border border-warm-gold/25 rounded-2xl">
+              <p className="text-text-gray text-sm uppercase tracking-[0.25em] mb-4">The Math</p>
               <div className="flex items-baseline justify-center gap-2 mb-2">
-                <span className="text-5xl font-extralight text-accent-gold">$29</span>
+                <span className="text-5xl font-extralight text-warm-gold">$29</span>
                 <span className="text-text-gray font-light">/month</span>
               </div>
               <p className="text-text-gray font-light mb-6">
@@ -209,21 +221,21 @@ export default async function InnerCircleLanding({
               </p>
               <div className="grid grid-cols-3 gap-4 mb-8 max-w-md mx-auto">
                 <div className="text-center">
-                  <div className="text-accent-gold text-xl font-light">$297</div>
+                  <div className="text-warm-gold/80 text-xl font-light">$297</div>
                   <div className="text-text-gray text-xs">1 Coaching Session</div>
                 </div>
                 <div className="text-center">
-                  <div className="text-accent-gold text-xl font-light">$24.99</div>
+                  <div className="text-warm-gold/80 text-xl font-light">$24.99</div>
                   <div className="text-text-gray text-xs">Book (Included)</div>
                 </div>
-                <div className="text-center border border-warm-gold/30 rounded-lg py-2">
-                  <div className="text-accent-gold text-xl font-light">$29</div>
+                <div className="text-center border border-warm-gold/50 bg-warm-gold/5 rounded-lg py-2">
+                  <div className="text-warm-gold text-xl font-light">$29</div>
                   <div className="text-text-gray text-xs">The Consilium</div>
                 </div>
               </div>
               <Link
                 href="/inner-circle/apply"
-                className="inline-flex items-center justify-center gap-2 py-4 px-10 bg-accent-gold text-deep-black font-medium tracking-wider uppercase rounded-full transition-all hover:bg-accent-gold/90 hover:shadow-lg hover:shadow-accent-gold/20"
+                className="inline-flex items-center justify-center gap-2 py-4 px-10 bg-warm-gold text-deep-black font-medium tracking-wider uppercase rounded-full transition-all hover:bg-warm-gold/90 hover:shadow-[0_8px_24px_-4px_rgba(212,175,55,0.45)]"
               >
                 Apply Now
                 <ArrowRight size={18} />
@@ -239,7 +251,7 @@ export default async function InnerCircleLanding({
             <p className="text-text-gray font-light mb-2">Want direct 1:1 access?</p>
             <Link
               href="/coaching"
-              className="text-accent-gold hover:text-accent-gold/80 transition-colors"
+              className="text-warm-gold hover:text-warm-gold/80 transition-colors"
             >
               Explore Private Coaching →
             </Link>
@@ -249,7 +261,7 @@ export default async function InnerCircleLanding({
           <div className="text-center">
             <p className="text-text-gray font-light mb-6">
               Have questions?{" "}
-              <Link href="/contact" className="text-accent-gold hover:text-accent-gold/80 transition-colors">
+              <Link href="/contact" className="text-warm-gold hover:text-warm-gold/80 transition-colors">
                 Get in touch
               </Link>
             </p>
