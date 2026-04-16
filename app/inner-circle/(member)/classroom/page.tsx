@@ -4,8 +4,8 @@ import CourseCard from "@/components/inner-circle/CourseCard";
 import { BookOpen } from "lucide-react";
 
 export const metadata = {
-  title: "Classroom | The Inner Circle",
-  description: "Course library for Inner Circle members",
+  title: "Classroom | The Consilium",
+  description: "Course library for Consilium members.",
 };
 
 export default async function ClassroomPage() {

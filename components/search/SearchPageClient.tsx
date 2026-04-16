@@ -181,7 +181,7 @@ export default function SearchPageClient() {
             {data.results.feedPosts.length > 0 && (
               <ResultSection
                 icon={MessageCircle}
-                title="Inner Circle feed"
+                title="Consilium feed"
                 count={data.results.feedPosts.length}
               >
                 {data.results.feedPosts.map((post) => (
@@ -203,7 +203,7 @@ export default function SearchPageClient() {
 
             {!data.viewer.isActiveMember && (
               <p className="text-text-gray/50 text-xs text-center italic">
-                Inner Circle feed results are only shown to active members.
+                Consilium feed results are only shown to active members.
               </p>
             )}
           </div>
@@ -211,7 +211,7 @@ export default function SearchPageClient() {
 
         {!debouncedQuery && (
           <div className="text-center text-text-gray/50 text-sm py-10">
-            Search across the blog, courses, and (if you&apos;re a member) the Inner Circle feed.
+            Search across the blog, courses, and (if you&apos;re a member) the Consilium feed.
           </div>
         )}
       </main>

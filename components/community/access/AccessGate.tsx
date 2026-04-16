@@ -118,7 +118,7 @@ export default function AccessGate({
             href="/inner-circle/feed"
             className="block text-sm text-gray-400 hover:text-white transition-colors"
           >
-            Back to The Inner Circle
+            Back to The Consilium
           </Link>
         </div>
       </div>

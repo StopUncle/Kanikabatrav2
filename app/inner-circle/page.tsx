@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma";
 import Link from "next/link";
 import Header from "@/components/Header";
 import BackgroundEffects from "@/components/BackgroundEffects";
+import ConsiliumSeal from "@/components/ConsiliumSeal";
 import {
   BookOpen,
   Mic,
@@ -16,9 +17,9 @@ import {
 } from "lucide-react";
 
 export const metadata = {
-  title: "The Inner Circle | Kanika Batra",
+  title: "The Consilium | Kanika Batra",
   description:
-    "Private community for dark psychology education — courses, voice notes, and a community of people who see through the bullshit",
+    "A private council for dark psychology, power dynamics, and strategic thinking. Courses, voice notes, and a community of people who see through the bullshit.",
 };
 
 export default async function InnerCircleLanding({
@@ -120,15 +121,21 @@ export default async function InnerCircleLanding({
 
           {/* Hero */}
           <div className="text-center mb-20">
+            <div className="flex justify-center mb-8">
+              <ConsiliumSeal size="xl" haloed />
+            </div>
             <p className="text-accent-gold uppercase tracking-[0.3em] text-sm mb-4">
-              Private Community
+              A Private Council
             </p>
-            <h1 className="text-5xl md:text-6xl lg:text-7xl font-extralight tracking-wider uppercase mb-6 gradient-text">
-              The Inner Circle
+            <h1 className="text-5xl md:text-6xl lg:text-7xl font-extralight tracking-wider uppercase mb-3 gradient-text">
+              The Consilium
             </h1>
+            <p className="text-text-gray/60 uppercase tracking-[0.4em] text-xs mb-6 font-light">
+              kon·sil·i·um &nbsp;·&nbsp; Latin: council, strategy, deliberation
+            </p>
             <div className="w-16 h-px bg-warm-gold/50 mx-auto mb-6" />
             <p className="text-xl text-text-gray max-w-2xl mx-auto mb-10 font-light leading-relaxed">
-              A private community for people who are done being the ones who get
+              A private council for people who are done being the ones who get
               played. Courses. Voice notes. A space that&apos;s actually safe.
             </p>
 
@@ -211,7 +218,7 @@ export default async function InnerCircleLanding({
                 </div>
                 <div className="text-center border border-warm-gold/30 rounded-lg py-2">
                   <div className="text-accent-gold text-xl font-light">$29</div>
-                  <div className="text-text-gray text-xs">Inner Circle</div>
+                  <div className="text-text-gray text-xs">The Consilium</div>
                 </div>
               </div>
               <Link

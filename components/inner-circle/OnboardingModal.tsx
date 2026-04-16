@@ -1,10 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import { X, MessageCircle, Mic, BookOpen, Users, ArrowRight } from "lucide-react";
+import { X, Scroll, AudioLines, Library, Users, ArrowRight } from "lucide-react";
+import ConsiliumSeal from "@/components/ConsiliumSeal";
 
 /**
- * First-visit welcome modal for new Inner Circle members.
+ * First-visit welcome modal for new Consilium members.
  *
  * Shown on /inner-circle/feed when the server-side page detects that the
  * current user has no onboardingSeenAt timestamp. Clicking "Got it" PATCHes
@@ -51,9 +52,12 @@ export default function OnboardingModal() {
         </button>
 
         <div className="text-center mb-6">
+          <div className="flex justify-center mb-4">
+            <ConsiliumSeal size="lg" haloed />
+          </div>
           <p className="text-accent-gold text-xs uppercase tracking-[0.25em] mb-2">Welcome In</p>
           <h2 className="text-2xl font-extralight tracking-wider uppercase gradient-text-gold mb-2">
-            The Inner Circle
+            The Consilium
           </h2>
           <div className="w-12 h-px bg-accent-gold/40 mx-auto" />
         </div>
@@ -65,23 +69,23 @@ export default function OnboardingModal() {
 
         <ul className="space-y-3 mb-8">
           <OnboardingItem
-            icon={MessageCircle}
+            icon={Scroll}
             title="The Feed"
             body="Posts, discussions, and announcements from Kanika. Comment, react, and build a track record here."
           />
           <OnboardingItem
-            icon={Mic}
+            icon={AudioLines}
             title="Voice Notes"
             body="Raw, unfiltered audio drops. Check the Voice Notes tab — new ones show up without notice."
           />
           <OnboardingItem
-            icon={BookOpen}
+            icon={Library}
             title="The Classroom"
             body="Structured courses on dark psychology, pattern recognition, and career strategy. Start at the top and work down."
           />
           <OnboardingItem
             icon={Users}
-            title="Community Guidelines"
+            title="Council Guidelines"
             body="Every comment is reviewed. Trolls get removed. This is a safe space — keep it that way and you belong here."
           />
         </ul>
@@ -104,7 +108,7 @@ function OnboardingItem({
   title,
   body,
 }: {
-  icon: typeof MessageCircle;
+  icon: typeof Scroll;
   title: string;
   body: string;
 }) {

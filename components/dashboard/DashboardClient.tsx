@@ -439,7 +439,7 @@ export default function DashboardClient({ user }: DashboardClientProps) {
                         </div>
                         <div>
                           <p className="font-medium text-text-light">
-                            The Inner Circle
+                            The Consilium
                           </p>
                           <p className="text-xs text-text-gray">
                             Connect with other members
@@ -470,9 +470,9 @@ export default function DashboardClient({ user }: DashboardClientProps) {
                 )}
               </DashboardCard>
 
-              {/* Inner Circle Section — state-aware */}
+              {/* The Consilium section — state-aware */}
               <DashboardCard
-                title="The Inner Circle"
+                title="The Consilium"
                 subtitle={
                   data?.user.communityMembership?.status === "ACTIVE"
                     ? "Your membership"

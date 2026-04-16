@@ -5,7 +5,7 @@ import FeedPost from "@/components/inner-circle/FeedPost";
 import { Mic } from "lucide-react";
 
 export const metadata = {
-  title: "Voice Notes — The Inner Circle | Kanika Batra",
+  title: "Voice Notes — The Consilium | Kanika Batra",
 };
 
 export default async function VoiceNotesPage() {

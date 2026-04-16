@@ -7,8 +7,8 @@ import OnboardingModal from "@/components/inner-circle/OnboardingModal";
 import { MessageCircle } from "lucide-react";
 
 export const metadata = {
-  title: "Feed — The Inner Circle | Kanika Batra",
-  description: "Community feed for The Inner Circle members",
+  title: "Feed — The Consilium | Kanika Batra",
+  description: "The council feed — insights, discussions, and voice notes from Kanika.",
 };
 
 export default async function FeedPage() {
@@ -84,7 +84,7 @@ export default async function FeedPage() {
           </h1>
           <div className="w-12 h-px bg-warm-gold/40 mb-3" />
           <p className="text-text-gray text-sm">
-            Posts, insights, and discussions from the inner circle.
+            Posts, insights, and discussions from the council.
           </p>
         </div>
 

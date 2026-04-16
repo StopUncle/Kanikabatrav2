@@ -455,7 +455,7 @@ export default function ProfilePageClient({ userId: _userId, email }: ProfilePag
                   <Crown size={18} className="text-accent-gold" />
                 </div>
                 <div className="flex-1">
-                  <p className="text-text-light font-light">The Inner Circle</p>
+                  <p className="text-text-light font-light">The Consilium</p>
                   <p className="text-text-gray text-xs">Community, courses & voice notes</p>
                 </div>
                 <ChevronRight size={16} className="text-text-gray group-hover:text-accent-gold transition-colors" />

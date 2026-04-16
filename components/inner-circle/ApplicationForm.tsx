@@ -62,7 +62,7 @@ export default function ApplicationForm({ existingStatus }: ApplicationFormProps
       <div className="bg-deep-black/50 backdrop-blur-sm border border-accent-gold/20 rounded-2xl p-8 text-center">
         <CheckCircle className="w-16 h-16 text-accent-gold mx-auto mb-6" />
         <h2 className="text-2xl font-light gradient-text-gold mb-4">You&apos;ve Been Approved!</h2>
-        <p className="text-text-gray mb-8">Complete your subscription to access The Inner Circle.</p>
+        <p className="text-text-gray mb-8">Complete your subscription to enter The Consilium.</p>
         <button
           onClick={async () => {
             setIsSubmitting(true);
@@ -187,7 +187,7 @@ export default function ApplicationForm({ existingStatus }: ApplicationFormProps
 
       <div>
         <label className="block text-sm font-light text-text-gray mb-2">
-          Why do you want to join The Inner Circle?
+          Why do you want to join The Consilium?
         </label>
         <textarea
           {...register("whyJoin")}

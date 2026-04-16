@@ -70,7 +70,7 @@ export default function InnerCircleDashboardCard({ membership }: Props) {
           href="/inner-circle"
           className="inline-flex items-center gap-2 px-6 py-2 bg-accent-gold text-deep-black rounded-full font-medium hover:bg-accent-gold/90 transition-all"
         >
-          Explore The Inner Circle
+          Explore The Consilium
           <ArrowRight size={16} />
         </Link>
       </div>

@@ -5,8 +5,8 @@ import { prisma } from "@/lib/prisma";
 import TrialSubscribeButton from "@/components/inner-circle/TrialSubscribeButton";
 
 export const metadata: Metadata = {
-  title: "The Inner Circle | Kanika Batra",
-  description: "Private community for dark psychology education and personal transformation",
+  title: "The Consilium | Kanika Batra",
+  description: "A private council for dark psychology education and personal transformation.",
 };
 
 export default async function InnerCircleLayout({

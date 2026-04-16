@@ -78,10 +78,10 @@ function SuccessContent() {
                 <CheckCircle className="w-10 h-10 text-emerald-400" />
               </div>
               <h1 className="text-3xl sm:text-4xl font-extralight text-text-light mb-4 tracking-wider uppercase">
-                Welcome to The Inner Circle
+                Welcome to The Consilium
               </h1>
               <p className="text-text-gray font-light mb-8 leading-relaxed">
-                Your membership is active. The courses, feed, and community are yours.
+                Your seat is confirmed. The courses, feed, and council are yours.
               </p>
               <Link
                 href="/inner-circle/feed"
@@ -91,7 +91,7 @@ function SuccessContent() {
                   boxShadow: "0 8px 20px rgba(114,9,33,0.3), 0 8px 20px rgba(99,102,241,0.3)",
                 }}
               >
-                Enter The Inner Circle
+                Enter The Consilium
                 <ArrowRight className="w-5 h-5" />
               </Link>
             </>
@@ -107,7 +107,7 @@ function SuccessContent() {
                 Your payment went through successfully. Your membership is being activated &mdash; this can take up to a minute.
               </p>
               <p className="text-text-gray font-light mb-8">
-                Check your email for a confirmation, or try accessing the Inner Circle in a moment. If you need help, contact{" "}
+                Check your email for a confirmation, or try accessing The Consilium in a moment. If you need help, contact{" "}
                 <a href="mailto:Kanika@kanikarose.com" className="text-accent-gold hover:text-accent-gold/80 transition-colors">
                   Kanika@kanikarose.com
                 </a>.

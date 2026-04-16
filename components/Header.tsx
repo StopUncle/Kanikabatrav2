@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { User, LayoutDashboard, Search as SearchIcon } from "lucide-react";
-import DoubleEchoLogo from "./DoubleEchoLogo";
+import ConsiliumSeal from "./ConsiliumSeal";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -12,6 +12,16 @@ const Header = () => {
   const [isCheckingAuth, setIsCheckingAuth] = useState(true);
   const pathname = usePathname();
   const router = useRouter();
+
+  // Inside the member area the Consilium sidebar owns the mobile nav.
+  // Hiding the main Header's hamburger here prevents the stacked-hamburger
+  // bug (two toggle buttons, both on the right, both visible).
+  const isMemberArea =
+    pathname.startsWith("/inner-circle/feed") ||
+    pathname.startsWith("/inner-circle/voice-notes") ||
+    pathname.startsWith("/inner-circle/classroom") ||
+    pathname.startsWith("/inner-circle/forum") ||
+    pathname.startsWith("/inner-circle/chat");
 
   useEffect(() => {
     async function checkAuth() {
@@ -44,7 +54,7 @@ const Header = () => {
     { href: "/quiz", label: "Quiz" },
     { href: "/courses", label: "Courses" },
     { href: "/coaching", label: "Coaching" },
-    { href: "/inner-circle", label: "Inner Circle" },
+    { href: "/inner-circle", label: "The Consilium" },
     { href: "/about", label: "About" },
     { href: "/blog", label: "Blog" },
     { href: "/contact", label: "Contact" },
@@ -58,8 +68,9 @@ const Header = () => {
             <div className="flex items-center justify-between h-16 sm:h-20">
               {/* Logo */}
               <Link href="/" className="flex items-center gap-3 group">
-                <DoubleEchoLogo
+                <ConsiliumSeal
                   size="md"
+                  haloed
                   className="transition-transform duration-500 group-hover:scale-105"
                 />
                 <span className="text-base sm:text-lg font-light tracking-[0.2em] text-accent-gold uppercase">
@@ -165,10 +176,11 @@ const Header = () => {
                 )}
               </div>
 
-              {/* Mobile Menu Button */}
+              {/* Mobile Menu Button — hidden inside the member area so it
+                  doesn't stack with the Consilium sidebar's toggle. */}
               <button
                 onClick={() => setIsMenuOpen(!isMenuOpen)}
-                className="lg:hidden relative w-10 h-10 flex items-center justify-center"
+                className={`${isMemberArea ? "hidden" : "lg:hidden"} relative w-10 h-10 flex items-center justify-center`}
                 aria-label="Toggle menu"
               >
                 <div className="relative w-6 h-5 flex flex-col justify-between">
@@ -304,7 +316,7 @@ const Header = () => {
 
           {/* Mobile Footer Accent */}
           <div className="pt-8 flex justify-center">
-            <DoubleEchoLogo size="sm" className="opacity-30" />
+            <ConsiliumSeal size="sm" className="opacity-30" />
           </div>
         </div>
       </div>

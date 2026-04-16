@@ -20,7 +20,7 @@ const Footer = () => {
       { name: "Quiz", href: "/quiz" },
       { name: "Courses", href: "/courses" },
       { name: "Coaching", href: "/coaching" },
-      { name: "Inner Circle", href: "/inner-circle" },
+      { name: "The Consilium", href: "/inner-circle" },
       { name: "Ask Kanika", href: "/ask" },
       { name: "Content", href: "/content" },
       { name: "Blog", href: "/blog" },

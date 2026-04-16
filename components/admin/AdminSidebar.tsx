@@ -98,7 +98,7 @@ export default function AdminSidebar() {
           className="flex items-center gap-3 text-sm font-light tracking-wide text-accent-gold hover:text-accent-gold/80 transition-colors duration-200"
         >
           <Eye size={18} strokeWidth={1.5} />
-          Preview Inner Circle
+          Preview Consilium
         </Link>
         <Link
           href="/dashboard"

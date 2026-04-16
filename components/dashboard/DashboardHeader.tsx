@@ -16,7 +16,7 @@ const DashboardHeader = ({ userEmail }: DashboardHeaderProps) => {
     { href: "/", label: "Home", icon: Home },
     { href: "/book", label: "The Book", icon: BookOpen },
     { href: "/coaching", label: "Coaching", icon: Calendar },
-    { href: "/inner-circle/feed", label: "Inner Circle", icon: Users },
+    { href: "/inner-circle/feed", label: "The Consilium", icon: Users },
   ];
 
   const handleLogout = async () => {

@@ -4,16 +4,18 @@ import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
-  MessageCircle,
-  Mic,
-  BookOpen,
-  MessageSquare,
-  Users,
+  Scroll,
+  AudioLines,
+  Library,
+  MessagesSquare,
+  Hash,
   Menu,
   X,
   ArrowLeft,
-  Flame,
+  Home,
+  UserCircle2,
 } from "lucide-react";
+import ConsiliumSeal from "@/components/ConsiliumSeal";
 
 interface ForumCategory {
   id: string;
@@ -30,9 +32,9 @@ interface ChatRoom {
 }
 
 const MAIN_NAV = [
-  { href: "/inner-circle/feed", label: "Feed", icon: MessageCircle },
-  { href: "/inner-circle/voice-notes", label: "Voice Notes", icon: Mic },
-  { href: "/inner-circle/classroom", label: "Classroom", icon: BookOpen },
+  { href: "/inner-circle/feed", label: "Feed", icon: Scroll },
+  { href: "/inner-circle/voice-notes", label: "Voice Notes", icon: AudioLines },
+  { href: "/inner-circle/classroom", label: "Classroom", icon: Library },
 ];
 
 export default function InnerCircleSidebar({
@@ -112,13 +114,21 @@ export default function InnerCircleSidebar({
 
   const navContent = (
     <>
-      {/* Brand header */}
+      {/* Brand header — Consilium seal + wordmark */}
       <div className="px-5 py-5 border-b border-accent-gold/10">
-        <h1 className="text-sm font-light uppercase tracking-[0.2em] text-accent-gold">
-          The Inner Circle
-        </h1>
+        <div className="flex items-center gap-3">
+          <ConsiliumSeal size="sm" />
+          <div>
+            <p className="text-[10px] font-light uppercase tracking-[0.3em] text-text-gray/60 leading-none">
+              The
+            </p>
+            <h1 className="text-base font-extralight uppercase tracking-[0.25em] text-accent-gold leading-tight mt-0.5">
+              Consilium
+            </h1>
+          </div>
+        </div>
         {onlineCount !== undefined && onlineCount > 0 && (
-          <div className="flex items-center gap-1.5 mt-2">
+          <div className="flex items-center gap-1.5 mt-3">
             <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
             <span className="text-xs text-text-gray">
               {onlineCount} online
@@ -131,7 +141,7 @@ export default function InnerCircleSidebar({
       <nav className="flex-1 py-4 overflow-y-auto">
         <div className="px-3 mb-1">
           <p className="px-2 text-[10px] font-semibold text-text-gray/50 uppercase tracking-[0.15em] mb-2">
-            Content
+            Chambers
           </p>
         </div>
         {MAIN_NAV.map(({ href, label, icon: Icon }) => (
@@ -145,7 +155,7 @@ export default function InnerCircleSidebar({
             }`}
             onClick={() => setMobileOpen(false)}
           >
-            <Icon size={17} strokeWidth={1.5} />
+            <Icon size={16} strokeWidth={1.25} />
             {label}
           </Link>
         ))}
@@ -170,7 +180,7 @@ export default function InnerCircleSidebar({
                 onClick={() => setMobileOpen(false)}
               >
                 <div className="flex items-center gap-2.5">
-                  <MessageSquare size={15} strokeWidth={1.5} />
+                  <MessagesSquare size={14} strokeWidth={1.25} />
                   <span className="font-light">{cat.name}</span>
                 </div>
                 <span className="text-[10px] text-text-gray/40">{cat.postCount}</span>
@@ -199,7 +209,7 @@ export default function InnerCircleSidebar({
                 onClick={() => setMobileOpen(false)}
               >
                 <div className="flex items-center gap-2.5">
-                  <Users size={15} strokeWidth={1.5} />
+                  <Hash size={14} strokeWidth={1.25} />
                   <span className="font-light">{room.name}</span>
                 </div>
                 <span className="text-[10px] text-text-gray/40">{room.memberCount}</span>
@@ -209,15 +219,33 @@ export default function InnerCircleSidebar({
         )}
       </nav>
 
-      {/* Footer */}
-      <div className="px-5 py-4 border-t border-accent-gold/10 space-y-2">
+      {/* Footer — back-out links. The Header's mobile hamburger is
+          hidden inside the Consilium area, so members need a route
+          back to the main site from the sidebar itself. */}
+      <div className="px-5 py-4 border-t border-accent-gold/10 space-y-2.5">
         <Link
           href="/dashboard"
           className="flex items-center gap-2.5 text-sm font-light text-text-gray hover:text-accent-gold transition-colors"
           onClick={() => setMobileOpen(false)}
         >
-          <ArrowLeft size={15} strokeWidth={1.5} />
+          <ArrowLeft size={14} strokeWidth={1.25} />
           Dashboard
+        </Link>
+        <Link
+          href="/profile"
+          className="flex items-center gap-2.5 text-sm font-light text-text-gray hover:text-accent-gold transition-colors"
+          onClick={() => setMobileOpen(false)}
+        >
+          <UserCircle2 size={14} strokeWidth={1.25} />
+          Profile
+        </Link>
+        <Link
+          href="/"
+          className="flex items-center gap-2.5 text-sm font-light text-text-gray hover:text-accent-gold transition-colors"
+          onClick={() => setMobileOpen(false)}
+        >
+          <Home size={14} strokeWidth={1.25} />
+          Main Site
         </Link>
       </div>
     </>
@@ -225,12 +253,14 @@ export default function InnerCircleSidebar({
 
   return (
     <>
-      {/* Mobile header bar */}
+      {/* Mobile header bar — the ONLY nav toggle on member pages on
+          mobile (the main Header's hamburger is hidden inside the
+          Consilium area, so there's no longer a double-hamburger). */}
       <div className="lg:hidden fixed top-16 sm:top-20 left-0 right-0 z-40 bg-deep-black/95 backdrop-blur-md border-b border-accent-gold/10 px-4 py-2.5 flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <Flame size={14} className="text-accent-gold" />
-          <span className="text-xs font-light uppercase tracking-[0.15em] text-accent-gold">
-            Inner Circle
+        <div className="flex items-center gap-2.5">
+          <ConsiliumSeal size="sm" />
+          <span className="text-xs font-light uppercase tracking-[0.25em] text-accent-gold">
+            The Consilium
           </span>
         </div>
         <button
@@ -238,7 +268,7 @@ export default function InnerCircleSidebar({
           className="p-2.5 -m-1 text-accent-gold tap-target"
           aria-label="Toggle menu"
         >
-          {mobileOpen ? <X size={20} /> : <Menu size={20} />}
+          {mobileOpen ? <X size={20} strokeWidth={1.5} /> : <Menu size={20} strokeWidth={1.5} />}
         </button>
       </div>
 
