@@ -16,8 +16,11 @@ import { NextRequest, NextResponse } from "next/server";
 import { requireAuth } from "@/lib/auth/middleware";
 import { prisma } from "@/lib/prisma";
 import { z } from "zod";
-import { getScenario } from "@/lib/simulator/scenarios";
-import { badgesEarnedFromState } from "@/lib/simulator/badges";
+import { getScenario, ALL_SCENARIOS } from "@/lib/simulator/scenarios";
+import {
+  badgesEarnedFromState,
+  levelCompleteBadgeFor,
+} from "@/lib/simulator/badges";
 import type { SimulatorState } from "@/lib/simulator/types";
 import { logger } from "@/lib/logger";
 
@@ -120,6 +123,36 @@ export async function POST(request: NextRequest) {
           data: newKeys.map((badgeKey) => ({ userId: user.id, badgeKey })),
           skipDuplicates: true,
         });
+      }
+
+      // Level-complete check — if this run just completed every scenario in
+      // the level with a good/mastery badge, award the level-clear badge too.
+      // We re-read the full badge set so the check includes the badges we
+      // just inserted above.
+      const heldNow = await prisma.simulatorBadge.findMany({
+        where: { userId: user.id },
+        select: { badgeKey: true },
+      });
+      const heldNowSet = new Set(heldNow.map((b) => b.badgeKey));
+      const scenariosInLevel = ALL_SCENARIOS.filter(
+        (s) => s.level === scenario.level,
+      ).map((s) => s.id);
+      const levelKey = levelCompleteBadgeFor(
+        scenario.level,
+        scenariosInLevel,
+        heldNowSet,
+      );
+
+      if (levelKey) {
+        try {
+          await prisma.simulatorBadge.create({
+            data: { userId: user.id, badgeKey: levelKey },
+          });
+          newKeys.push(levelKey);
+          earnedKeys.push(levelKey);
+        } catch {
+          // Unique constraint — already had it. Silent.
+        }
       }
 
       return NextResponse.json({

@@ -22,6 +22,11 @@ import type { Character, EmotionType } from "@/lib/simulator/types";
 type Props = {
   character: Character;
   emotion?: EmotionType;
+  /**
+   * Scale from 0.5 (dim supporting cast) to 1 (active speaker).
+   * Non-speaker cast members render at ~0.7 with reduced opacity.
+   */
+  intensity?: number;
 };
 
 function rimColorFor(emotion?: EmotionType): string {
@@ -84,10 +89,16 @@ function hairPathFor(silhouetteType?: string): string {
   }
 }
 
-export default function CharacterSilhouette({ character, emotion }: Props) {
+export default function CharacterSilhouette({
+  character,
+  emotion,
+  intensity = 1,
+}: Props) {
   const activeEmotion = emotion ?? character.defaultEmotion;
   const rim = rimColorFor(activeEmotion);
   const hairPath = hairPathFor(character.silhouetteType);
+  // Non-speakers render dimmed so the eye lands on whoever is talking.
+  const containerOpacity = Math.max(0.35, Math.min(1, intensity));
 
   // Subtle body lean driven by emotion — aggressive emotions lean forward,
   // withdrawn ones lean back.
@@ -106,9 +117,9 @@ export default function CharacterSilhouette({ character, emotion }: Props) {
       <m.div
         key={character.id + (emotion ?? "")}
         initial={{ opacity: 0, scale: 0.98 }}
-        animate={{ opacity: 1, scale: 1 }}
+        animate={{ opacity: containerOpacity, scale: intensity }}
         transition={{ duration: 0.9, ease: "easeOut" }}
-        className="relative w-48 h-64 sm:w-64 sm:h-80 mx-auto"
+        className="relative w-48 h-64 sm:w-64 sm:h-80"
       >
         <div
           className="absolute inset-0 rounded-full blur-3xl opacity-60"
@@ -131,9 +142,13 @@ export default function CharacterSilhouette({ character, emotion }: Props) {
     <m.div
       key={character.id + (emotion ?? "")}
       initial={{ opacity: 0, scale: 0.98 }}
-      animate={{ opacity: 1, scale: 1, rotate: lean * 0.4 }}
+      animate={{
+        opacity: containerOpacity,
+        scale: intensity,
+        rotate: lean * 0.4,
+      }}
       transition={{ duration: 0.9, ease: "easeOut" }}
-      className="relative w-52 h-72 sm:w-64 sm:h-96 mx-auto"
+      className="relative w-52 h-72 sm:w-64 sm:h-96"
       style={{ transformOrigin: "center bottom" }}
     >
       {/* Rim glow behind character — picks up emotion color */}

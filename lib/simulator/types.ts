@@ -81,6 +81,14 @@ export interface Scene {
   dialog: DialogLine[];
   choices?: Choice[];
   nextSceneId?: string;
+  /**
+   * Characters visible in the scene ("the cast"). When set, the runner
+   * renders up to 3 silhouettes side-by-side — the current speaker
+   * full-size and rim-lit, others smaller and dimmed. Useful for group
+   * scenes (two antagonists + an ally). If omitted, the runner falls
+   * back to showing whoever is currently speaking.
+   */
+  presentCharacterIds?: string[];
   // Ending fields
   isEnding?: boolean;
   outcomeType?: OutcomeType;
@@ -106,6 +114,10 @@ export interface Scenario {
   tagline: string;
   description: string;
   tier: SubscriptionTier;
+  /** 1-based level. Used to group scenarios on the list page. */
+  level: number;
+  /** 1-based order within the level. */
+  order: number;
   estimatedMinutes: number;
   difficulty: Difficulty;
   category: ScenarioCategory;

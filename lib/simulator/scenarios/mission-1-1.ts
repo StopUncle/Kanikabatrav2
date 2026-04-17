@@ -11,6 +11,7 @@
  */
 
 import type { Scenario, Scene } from "../types";
+import { ALEX, DANA, PRIYA, INNER_VOICE } from "../characters";
 
 const scenes: Scene[] = [
   // ---------------------------------------------------------------------
@@ -799,6 +800,8 @@ export const mission11: Scenario = {
   description:
     "You wake up the day after the Caldwell Gala. Your phone is buzzing with messages from people you met — and people you didn't know were watching. How you handle this attention will define your next move.",
   tier: "free",
+  level: 1,
+  order: 1,
   estimatedMinutes: 10,
   difficulty: "beginner",
   category: "social-dynamics",
@@ -818,27 +821,10 @@ export const mission11: Scenario = {
     unlocksScenarioId: "mission-1-2",
   },
   characters: [
-    {
-      id: "alex",
-      name: "Alex Torres",
-      description:
-        "Your roommate. Didn't get into the gala. Seething with jealousy disguised as curiosity.",
-      traits: ["competitive", "jealous", "probing"],
-      defaultEmotion: "neutral",
-      gender: "male",
-      personalityType: "competitor",
-      silhouetteType: "male-athletic",
-    },
-    {
-      id: "priya",
-      name: "Priya Sharma",
-      description: "Met her briefly at the gala. She's texting you now. What does she want?",
-      traits: ["observant", "strategic", "friendly"],
-      defaultEmotion: "neutral",
-      gender: "female",
-      personalityType: "friend",
-      silhouetteType: "female-athletic",
-    },
+    ALEX,
+    PRIYA,
+    DANA,
+    INNER_VOICE,
     {
       id: "stranger",
       name: "Unknown Number",
@@ -848,23 +834,6 @@ export const mission11: Scenario = {
       gender: "male",
       personalityType: "neutral",
       silhouetteType: "male-lean",
-    },
-    {
-      id: "dana",
-      name: "Dana Morrison",
-      description: "Caleb's sister. She approaches you at the coffee shop. Too friendly, too fast.",
-      traits: ["calculating", "charming", "dangerous"],
-      defaultEmotion: "happy",
-      gender: "female",
-      personalityType: "narcissist",
-      silhouetteType: "female-elegant",
-    },
-    {
-      id: "inner-voice",
-      name: "Inner Voice",
-      description: "Your gut instinct.",
-      traits: ["intuitive"],
-      defaultEmotion: "neutral",
     },
   ],
   scenes,

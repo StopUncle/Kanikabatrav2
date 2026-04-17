@@ -77,6 +77,25 @@ export default function SimulatorRunner({
       ? characterById[currentLine.speakerId]
       : undefined;
 
+  // The "cast" — characters visibly present in the current scene. If the
+  // scene declares `presentCharacterIds`, we render that list side-by-side.
+  // Otherwise we fall back to just the active speaker (legacy behavior).
+  // inner-voice is filtered out — it's narration, not a visible character.
+  const castCharacters = (() => {
+    if (!scene) return [];
+    const ids =
+      scene.presentCharacterIds && scene.presentCharacterIds.length > 0
+        ? scene.presentCharacterIds
+        : activeCharacter
+          ? [activeCharacter.id]
+          : [];
+    return ids
+      .filter((id) => id !== "inner-voice")
+      .map((id) => characterById[id])
+      .filter((c): c is NonNullable<typeof c> => !!c)
+      .slice(0, 3);
+  })();
+
   // Persistence hook — fire on state transitions (but not lineIndex changes).
   useEffect(() => {
     onStateChange?.(state);
@@ -165,17 +184,22 @@ export default function SimulatorRunner({
         </p>
       </div>
 
-      {/* Character */}
-      <div className="relative z-10 flex-1 flex items-center justify-center px-4">
-        <AnimatePresence mode="wait">
-          {activeCharacter && (
+      {/* Cast — one or more characters side-by-side. Speaker gets full
+          intensity + emotion-driven rim light; others dim back. */}
+      <div className="relative z-10 flex-1 flex items-end justify-center px-4 gap-4 sm:gap-8">
+        {castCharacters.map((c) => {
+          const isSpeaker = activeCharacter?.id === c.id;
+          return (
             <CharacterSilhouette
-              key={activeCharacter.id + (currentLine?.emotion ?? "")}
-              character={activeCharacter}
-              emotion={currentLine?.emotion}
+              key={c.id}
+              character={c}
+              emotion={
+                isSpeaker ? currentLine?.emotion : c.defaultEmotion
+              }
+              intensity={isSpeaker ? 1 : 0.72}
             />
-          )}
-        </AnimatePresence>
+          );
+        })}
       </div>
 
       {/* Dialog + choices */}
