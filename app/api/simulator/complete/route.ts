@@ -21,7 +21,15 @@ import {
   badgesEarnedFromState,
   levelCompleteBadgeFor,
 } from "@/lib/simulator/badges";
-import type { SimulatorState } from "@/lib/simulator/types";
+import {
+  evaluateAchievements,
+  type AchievementProgressSnapshot,
+} from "@/lib/simulator/achievements";
+import type {
+  SimulatorState,
+  OutcomeType,
+  ChoiceRecord,
+} from "@/lib/simulator/types";
 import { logger } from "@/lib/logger";
 
 const CompleteBody = z.object({
@@ -150,8 +158,50 @@ export async function POST(request: NextRequest) {
           });
           newKeys.push(levelKey);
           earnedKeys.push(levelKey);
+          heldNowSet.add(levelKey);
         } catch {
           // Unique constraint — already had it. Silent.
+        }
+      }
+
+      // Meta-achievements — cumulative cross-scenario accolades. Evaluated
+      // off the user's full completion history + current badge set. Any
+      // that newly fire get inserted alongside scenario + level badges.
+      const allCompletions = await prisma.simulatorProgress.findMany({
+        where: { userId: user.id, completedAt: { not: null } },
+        select: {
+          scenarioId: true,
+          outcome: true,
+          xpEarned: true,
+          choicesMade: true,
+        },
+      });
+      const snapshot: AchievementProgressSnapshot = {
+        completions: allCompletions.map((r) => ({
+          scenarioId: r.scenarioId,
+          outcome: (r.outcome as OutcomeType | null) ?? null,
+          xpEarned: r.xpEarned,
+          choicesMade: ((r.choicesMade as unknown as ChoiceRecord[]) ?? []).map(
+            (m) => ({ wasOptimal: m.wasOptimal }),
+          ),
+        })),
+        badgesHeld: heldNowSet,
+      };
+      const achievementKeys = evaluateAchievements(snapshot);
+      const freshAchievements = achievementKeys.filter(
+        (k) => !heldNowSet.has(k),
+      );
+      if (freshAchievements.length > 0) {
+        await prisma.simulatorBadge.createMany({
+          data: freshAchievements.map((badgeKey) => ({
+            userId: user.id,
+            badgeKey,
+          })),
+          skipDuplicates: true,
+        });
+        for (const k of freshAchievements) {
+          newKeys.push(k);
+          earnedKeys.push(k);
         }
       }
 

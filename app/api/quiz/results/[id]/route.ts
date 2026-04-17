@@ -34,25 +34,23 @@ export async function GET(_request: NextRequest, { params }: RouteParams) {
   try {
     const { id } = await params;
 
+    // Quiz results are personal data. A logged-in user can only read their
+    // own row; anonymous viewers get nothing. (We used to let anonymous
+    // viewers see results with the email redacted — that's been removed
+    // because owners want their results strictly private, and the post-
+    // submit landing flow can rely on sessionStorage + /api/quiz/save
+    // instead of a public result-by-id endpoint.)
+    const viewerUserId = await getViewerUserId();
+    if (!viewerUserId) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
     const quizResult = await prisma.quizResult.findUnique({
       where: { id },
     });
 
-    if (!quizResult) {
-      return NextResponse.json({ error: "Result not found" }, { status: 404 });
-    }
-
-    // Ownership check: a logged-in viewer can ONLY read their own result.
-    // Anonymous viewers can read any result (the post-submit page needs this
-    // before the user has an account), but we redact the email for them so
-    // result IDs can't be enumerated to harvest emails.
-    const viewerUserId = await getViewerUserId();
-    const isOwner =
-      viewerUserId !== null && quizResult.userId === viewerUserId;
-    const isAnonymousViewer = viewerUserId === null;
-
-    if (!isOwner && !isAnonymousViewer) {
-      // Logged in but viewing someone else's result — block.
+    if (!quizResult || quizResult.userId !== viewerUserId) {
+      // Same 404 for missing + not-yours so IDs aren't enumerable.
       return NextResponse.json({ error: "Result not found" }, { status: 404 });
     }
 
@@ -67,9 +65,7 @@ export async function GET(_request: NextRequest, { params }: RouteParams) {
 
     return NextResponse.json({
       id: quizResult.id,
-      // Only return the email to its owner — anonymous viewers see null so a
-      // result ID can't be used as an email lookup.
-      email: isOwner ? quizResult.email : null,
+      email: quizResult.email,
       primaryType,
       secondaryType,
       scores,
