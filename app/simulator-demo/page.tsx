@@ -32,7 +32,6 @@ import { ArrowRight, RotateCcw, SkipForward, Sparkles } from "lucide-react";
 // ---------------------------------------------------------------------------
 
 type Emotion = "seductive" | "cold" | "neutral" | "curious";
-type SceneType = "dialog" | "ending";
 type OutcomeType = "good" | "neutral" | "bad";
 
 type DialogLine = { speaker: string | null; text: string };
