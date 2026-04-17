@@ -38,16 +38,29 @@ function verifyGiftToken(token: string): GiftPayload {
 }
 
 /**
- * Magic-claim server action.
+ * Claim server action.
  *
- * Re-verifies the JWT server-side (never trust the client), finds-or-creates
- * the user account, signs them into a session, activates the 30-day
- * membership, and sends a "set your password" email for the new-user case
- * so they can log back in from any device later.
+ * Two modes, chosen by whether an account already exists for the gift
+ * email:
+ *
+ *   A. No account yet (guest book-buyer path)
+ *      Re-verify JWT → create user with random password → sign them in
+ *      via accessToken/refreshToken cookies → activate 30-day gift →
+ *      fire welcome email with 7-day password-set link → redirect to feed.
+ *
+ *   B. Account already exists (returning customer path)
+ *      We NEVER take over an existing account from a JWT — a gift token
+ *      in an email is not a full authentication factor, and existing
+ *      accounts may have history, purchases, admin role, etc. Instead:
+ *      bounce to /login with the token preserved. Post-login the page
+ *      re-runs, email matches, and we activate against the existing
+ *      session cookies.
+ *
+ * This closes the "claim loads me in as the wrong user" footgun where a
+ * stale or alternate user record happened to match the gift email.
  *
  * Wrapped in a button-submitted form (not auto-on-page-load) so email
- * pre-scanners (Outlook SafeLinks, Gmail image proxies) don't accidentally
- * consume the claim.
+ * pre-scanners don't accidentally consume the claim.
  */
 async function claimAction(formData: FormData): Promise<void> {
   "use server";
@@ -58,19 +71,34 @@ async function claimAction(formData: FormData): Promise<void> {
   const payload = verifyGiftToken(token);
   const normalizedEmail = payload.email.toLowerCase();
 
-  // Find or create the user. Guest book-buyers with no account get a
-  // fresh user with a random password — they'll set their real one via
-  // the welcome email.
-  let user = await prisma.user.findUnique({
+  const currentUserId = await optionalServerAuth();
+
+  const existing = await prisma.user.findUnique({
     where: { email: normalizedEmail },
     select: { id: true, email: true, name: true, tokenVersion: true },
   });
+
+  // Account exists (or the logged-in session is a different account).
+  // In either case we require the user to log in as the claim email —
+  // we never take over an existing account from just a JWT in an email.
+  if (existing && (!currentUserId || currentUserId !== existing.id)) {
+    const returnTo = encodeURIComponent(
+      `/consilium/claim?token=${token}`,
+    );
+    redirect(
+      `/login?returnTo=${returnTo}&hint=${encodeURIComponent(normalizedEmail)}`,
+    );
+  }
+
+  // Path A — brand new account for this email. Create + auto-sign-in.
+  // Path A.5 — already logged in as the right account. Activate only.
+  let user = existing;
   let isNewUser = false;
 
   if (!user) {
     const tempPassword = crypto.randomBytes(24).toString("hex");
     const hashed = await hashPassword(tempPassword);
-    const created = await prisma.user.create({
+    user = await prisma.user.create({
       data: {
         email: normalizedEmail,
         password: hashed,
@@ -78,15 +106,12 @@ async function claimAction(formData: FormData): Promise<void> {
       },
       select: { id: true, email: true, name: true, tokenVersion: true },
     });
-    user = created;
     isNewUser = true;
   }
 
-  // Activate a 30-day gift membership. Upsert so re-clicks don't error
-  // and so we can elevate a SUSPENDED / CANCELLED record back to ACTIVE.
+  // Activate the 30-day gift membership.
   const expiresAt = new Date();
   expiresAt.setDate(expiresAt.getDate() + 30);
-
   await prisma.communityMembership.upsert({
     where: { userId: user.id },
     create: {
@@ -106,32 +131,30 @@ async function claimAction(formData: FormData): Promise<void> {
     },
   });
 
-  // Set the session cookies so the user lands inside the member area
-  // already logged in. Mirrors the pattern from /api/auth/login.
-  const tokens = generateTokenPair({
-    userId: user.id,
-    email: user.email,
-    v: user.tokenVersion,
-  });
-  const cookieStore = await cookies();
-  cookieStore.set("accessToken", tokens.accessToken, {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "strict",
-    maxAge: 15 * 60,
-    path: "/",
-  });
-  cookieStore.set("refreshToken", tokens.refreshToken, {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "strict",
-    maxAge: 7 * 24 * 60 * 60,
-    path: "/",
-  });
-
-  // New users get a welcome email with a 7-day password-set link. Never
-  // block the redirect on email success — the user is already claimed.
+  // Only set session cookies for the brand-new-account path. Existing
+  // already-signed-in users keep their current session.
   if (isNewUser) {
+    const tokens = generateTokenPair({
+      userId: user.id,
+      email: user.email,
+      v: user.tokenVersion,
+    });
+    const cookieStore = await cookies();
+    cookieStore.set("accessToken", tokens.accessToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+      maxAge: 15 * 60,
+      path: "/",
+    });
+    cookieStore.set("refreshToken", tokens.refreshToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+      maxAge: 7 * 24 * 60 * 60,
+      path: "/",
+    });
+
     try {
       const resetToken = jwt.sign(
         { userId: user.id, type: "password-reset", v: user.tokenVersion },

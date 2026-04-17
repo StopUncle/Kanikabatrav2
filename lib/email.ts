@@ -1283,53 +1283,65 @@ interface ApplicationDetails {
 
 const luxuryEmailShell = (innerHtml: string, headerTitle: string, headerSub: string): string => `
   <!DOCTYPE html>
-  <html lang="en">
+  <html lang="en" style="background-color: #060509;">
   <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="color-scheme" content="dark light">
-    <meta name="supported-color-schemes" content="dark light">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <!-- Tell clients we were DESIGNED for dark so they stop auto-inverting
+         our already-dark palette into some muddy mid-grey on iPhone. -->
+    <meta name="color-scheme" content="only dark">
+    <meta name="supported-color-schemes" content="only dark">
     <title>${headerTitle}</title>
     <style>
-      /* Phone sizes: tighten padding, bigger type, readable line-height.
-         Apple Mail, Gmail iOS, Outlook iOS all respect @media so these rules
-         actually land on-device. */
+      /* Belt-and-braces dark lock — iOS clients (Outlook, Gmail, Spark) all
+         read one or more of these selectors. Stops the background drifting
+         toward grey when the device is in light or dark mode. */
+      :root { color-scheme: only dark; supported-color-schemes: only dark; }
+      html, body { background-color: #060509 !important; }
+      [data-ogsc] body,
+      [data-ogsb] body {
+        background-color: #060509 !important;
+      }
+      [data-ogsc] .lux-body-text { color: #efe9de !important; }
+      [data-ogsc] .lux-muted-text { color: #c2bdb4 !important; }
+
+      /* Phone layout — tighten padding, bigger type, full-width CTA. */
       @media only screen and (max-width: 600px) {
-        .lux-outer-pad { padding: 20px 12px !important; }
-        .lux-card      { border-radius: 16px !important; }
-        .lux-header    { padding: 32px 24px !important; }
-        .lux-title     { font-size: 22px !important; letter-spacing: 1.5px !important; }
+        .lux-outer-pad { padding: 16px 8px !important; }
+        .lux-card      { border-radius: 14px !important; }
+        .lux-header    { padding: 30px 22px !important; }
+        .lux-title     { font-size: 21px !important; letter-spacing: 1.3px !important; }
         .lux-subtitle  { font-size: 12px !important; }
-        .lux-body      { padding: 28px 22px !important; font-size: 16px !important; }
+        .lux-body      { padding: 26px 20px !important; }
         .lux-body p    { font-size: 16px !important; line-height: 1.7 !important; }
-        .lux-cta       { padding: 16px 28px !important; font-size: 15px !important; width: 100% !important; box-sizing: border-box !important; }
+        .lux-cta       { padding: 16px 26px !important; font-size: 15px !important; width: 100% !important; box-sizing: border-box !important; }
         .lux-cta-wrap  { width: 100% !important; }
       }
-      /* Force dark-mode-ish colors even in clients that try to auto-invert.
-         Outlook/Gmail iOS will otherwise flip dark backgrounds to white. */
-      [data-ogsc] .lux-body-text { color: #e8e3d8 !important; }
-      [data-ogsc] .lux-muted-text { color: #c2bdb4 !important; }
     </style>
   </head>
-  <body style="margin: 0; padding: 0; background-color: #0a0a0a; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; -webkit-font-smoothing: antialiased;">
-    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="background-color: #0a0a0a;">
+  <body bgcolor="#060509" style="margin: 0; padding: 0; background-color: #060509; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; -webkit-font-smoothing: antialiased;">
+    <!-- Full-width outer table with explicit bgcolor attr (Gmail prefers
+         attrs to CSS; this keeps the background locked to near-black even
+         when the mobile client tries to remap dark palettes). -->
+    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" bgcolor="#060509" style="background-color: #060509; width: 100%;">
       <tr>
-        <td align="center" class="lux-outer-pad" style="padding: 40px 20px;">
-          <table role="presentation" width="600" cellspacing="0" cellpadding="0" border="0" class="lux-card" style="max-width: 600px; width: 100%; background-color: #121017; border-radius: 20px; overflow: hidden; box-shadow: 0 20px 60px rgba(0,0,0,0.45);">
+        <td align="center" class="lux-outer-pad" bgcolor="#060509" style="padding: 40px 20px; background-color: #060509;">
+          <table role="presentation" width="600" cellspacing="0" cellpadding="0" border="0" bgcolor="#14101a" class="lux-card" style="max-width: 600px; width: 100%; background-color: #14101a; border-radius: 20px; overflow: hidden;">
             <tr>
-              <td class="lux-header" style="background: linear-gradient(135deg, #4a1426 0%, #3d0f1a 55%, #2a0a12 100%); padding: 44px 32px; text-align: center; border-bottom: 1px solid rgba(212,175,55,0.35);">
-                <h1 class="lux-title" style="color: #f3d98a; margin: 0 0 10px 0; font-size: 26px; font-weight: 300; letter-spacing: 2.5px; text-transform: uppercase; text-shadow: 0 1px 2px rgba(0,0,0,0.4);">
+              <td class="lux-header" bgcolor="#3d0f1a" style="background-color: #3d0f1a; background: linear-gradient(135deg, #4a1426 0%, #3d0f1a 55%, #2a0a12 100%); padding: 44px 32px; text-align: center; border-bottom: 1px solid #5a2030;">
+                <h1 class="lux-title" style="color: #f3d98a; margin: 0 0 10px 0; font-size: 26px; font-weight: 300; letter-spacing: 2.5px; text-transform: uppercase;">
                   ${headerTitle}
                 </h1>
-                <p class="lux-subtitle" style="color: #d6cfc4; margin: 0; font-size: 13px; letter-spacing: 1.4px; font-style: italic;">
+                <p class="lux-subtitle" style="color: #e5dccc; margin: 0; font-size: 13px; letter-spacing: 1.4px; font-style: italic;">
                   ${headerSub}
                 </p>
               </td>
             </tr>
             <tr>
-              <td class="lux-body" style="padding: 40px 32px; background-color: #121017;">
+              <td class="lux-body" bgcolor="#14101a" style="padding: 40px 32px; background-color: #14101a;">
                 ${innerHtml}
-                <div style="margin-top: 38px; padding-top: 26px; border-top: 1px solid rgba(212,175,55,0.15); text-align: center;">
+                <div style="margin-top: 38px; padding-top: 26px; border-top: 1px solid #2b2236; text-align: center;">
                   <p style="color: #d4af37; margin: 0; font-size: 15px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase;">Kanika Batra</p>
                   <p style="color: #a8a29a; margin: 6px 0 0 0; font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase;">The Consilium</p>
                 </div>
