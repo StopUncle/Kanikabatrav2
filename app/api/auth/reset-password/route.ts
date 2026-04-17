@@ -46,7 +46,12 @@ export async function POST(request: NextRequest) {
 
     let payload: ResetTokenPayload;
     try {
-      payload = jwt.verify(token, getJwtSecret()) as ResetTokenPayload;
+      // Pin the algorithm so `none`/asymmetric-swap attacks can't forge
+      // a reset token. Reset tokens are signed with HS256 in the
+      // webhook + forgot-password routes.
+      payload = jwt.verify(token, getJwtSecret(), {
+        algorithms: ["HS256"],
+      }) as ResetTokenPayload;
     } catch {
       return NextResponse.json(
         { error: "Invalid or expired reset link" },

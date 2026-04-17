@@ -63,6 +63,18 @@ presale-list.json
 !/private/books/
 /private/books/*.txt
 /private/books/*.md
+# The download route reads specific canonical filenames:
+# FINAL_BOOK.{epub,pdf} and Addendum_{Narcissists,Avoidants}.{epub,pdf}.
+# Fresh Calibre exports dumped into subdirectories or with different
+# filenames are dead weight — keep them out of the repo.
+/private/books/EVENBETTERBOOK/
+/private/books/Addendums/
+/private/books/book-cover.*
+/private/books/*-stylesheet.css
+
+# Local cleanup scripts and their logs
+.cleanup-log.txt
+.cleanup.ps1
 
 # Environment files
 .env

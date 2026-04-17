@@ -25,7 +25,14 @@ export async function GET(request: NextRequest) {
       },
     });
 
-    const isUnlocked = quizResult.paid || !!hasBookPurchase;
+    // Consilium members get the quiz unlocked as a membership perk.
+    const consiliumMembership = await prisma.communityMembership.findUnique({
+      where: { userId: user.id },
+      select: { status: true },
+    });
+    const hasActiveConsilium = consiliumMembership?.status === "ACTIVE";
+
+    const isUnlocked = quizResult.paid || !!hasBookPurchase || hasActiveConsilium;
 
     // Side-effect: lazily flip the paid flag when a book purchase exists.
     // Wrap in try/catch so a transient DB error here doesn't crash the

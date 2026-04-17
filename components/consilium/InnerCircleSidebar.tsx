@@ -56,8 +56,21 @@ export default function InnerCircleSidebar({
   const badge = currentTier ? getBadge(currentTier) : null;
   const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
   const [forumCategories, setForumCategories] = useState<ForumCategory[]>([]);
   const [chatRooms, setChatRooms] = useState<ChatRoom[]>([]);
+
+  // Match the main Header's 24px scroll threshold so the mobile sub-header
+  // slides up flush against the collapsed main header instead of leaving
+  // an 8-16px gap once the user scrolls.
+  useEffect(() => {
+    function onScroll() {
+      setIsScrolled(window.scrollY > 24);
+    }
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
   // Swipe-to-close gesture state. We track the initial touch point
   // and only close if the user swipes LEFT by at least 50px — smaller
@@ -296,7 +309,11 @@ export default function InnerCircleSidebar({
       {/* Mobile header bar — the ONLY nav toggle on member pages on
           mobile (the main Header's hamburger is hidden inside the
           Consilium area, so there's no longer a double-hamburger). */}
-      <div className="lg:hidden fixed top-16 sm:top-20 left-0 right-0 z-40 bg-deep-black/95 backdrop-blur-md border-b border-accent-gold/10 px-4 py-2.5 flex items-center justify-between">
+      <div
+        className={`lg:hidden fixed left-0 right-0 z-40 bg-deep-black/95 backdrop-blur-md border-b border-accent-gold/10 px-4 py-2.5 flex items-center justify-between transition-all duration-300 ${
+          isScrolled ? "top-14 sm:top-16" : "top-16 sm:top-20"
+        }`}
+      >
         <div className="flex items-center gap-2.5">
           <ConsiliumSeal size="sm" />
           <span className="text-xs font-light uppercase tracking-[0.25em] text-accent-gold">

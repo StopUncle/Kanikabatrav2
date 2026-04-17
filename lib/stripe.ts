@@ -26,6 +26,7 @@ export const STRIPE_PRICES: Record<string, string> = {
   QUIZ: "price_1TJug0Jv9vx5CHTwa9tjzDlu",
   INNER_CIRCLE: "price_1TJug1Jv9vx5CHTwjPYeSm7E",
   COACHING_SINGLE: "price_1TJug1Jv9vx5CHTw6FT0vzoW",
+  COACHING_CLARITY: "price_1TN3uWJv9vx5CHTwUELJJn5E",
   COACHING_INTENSIVE: "price_1TJug2Jv9vx5CHTwiikiPESt",
   COACHING_CAREER: "price_1TJug3Jv9vx5CHTwU3XgjOGH",
   COACHING_RETAINER: "price_1TJug4Jv9vx5CHTwmEAoOJaf",

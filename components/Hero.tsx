@@ -24,10 +24,12 @@ export default function Hero() {
           transition={{ duration: 0.8 }}
         >
           <p className="text-accent-burgundy uppercase tracking-[0.2em] sm:tracking-[0.3em] lg:tracking-[0.4em] text-xs sm:text-sm mb-4 sm:mb-6 animate-glow px-2">
-            <span className="block sm:inline">As seen on LADbible, Unilad &amp; Yahoo</span>
-            <span className="hidden sm:inline mx-1 sm:mx-2">&middot;</span>
             <span className="block sm:inline">
               {SOCIAL_METRICS.combined.totalFollowers} Followers
+            </span>
+            <span className="hidden sm:inline mx-1 sm:mx-2">&middot;</span>
+            <span className="block sm:inline">
+              {SOCIAL_METRICS.combined.totalViews} Views
             </span>
           </p>
         </m.div>
@@ -39,13 +41,10 @@ export default function Hero() {
           className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-light leading-tight mb-6 sm:mb-8"
         >
           <span className="block gradient-text animate-gradient text-5xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-9xl">
-            Sociopathic Dating Bible
+            The Psychology of Power
           </span>
           <span className="block text-text-light text-2xl sm:text-3xl md:text-4xl mt-2">
-            A Cure For Empathy
-          </span>
-          <span className="block text-accent-gold text-2xl sm:text-3xl md:text-4xl mt-2">
-            Now Available
+            The strategy they don&apos;t teach you
           </span>
         </m.h1>
 
@@ -76,8 +75,9 @@ export default function Hero() {
           transition={{ duration: 0.8, delay: 0.4 }}
           className="text-text-gray text-base sm:text-lg md:text-xl max-w-2xl lg:max-w-3xl mx-auto mb-8 sm:mb-12 font-light px-4"
         >
-          The dating guide written by a clinically diagnosed sociopath.
-          The psychology they don&apos;t teach you — now in your hands.
+          A private council for people done being the ones who get played.
+          Dark psychology, power dynamics, and the strategy behind it all —
+          taught by a clinically diagnosed sociopath.
         </m.p>
 
         <m.div
@@ -87,22 +87,22 @@ export default function Hero() {
           className="flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center items-center px-4"
         >
           <Link
-            href="/book"
+            href="/consilium"
             className="btn-primary rounded-full text-white inline-block px-6 sm:px-8 py-3 sm:py-4 text-sm sm:text-base w-full sm:w-auto max-w-xs"
           >
-            Get The Book Now
-          </Link>
-          <Link
-            href="/coaching"
-            className="btn-secondary rounded-full inline-block px-6 sm:px-8 py-3 sm:py-4 text-sm sm:text-base w-full sm:w-auto max-w-xs"
-          >
-            Private Coaching
+            Join The Consilium
           </Link>
           <Link
             href="/quiz"
+            className="btn-secondary rounded-full inline-block px-6 sm:px-8 py-3 sm:py-4 text-sm sm:text-base w-full sm:w-auto max-w-xs"
+          >
+            Take The Free Quiz
+          </Link>
+          <Link
+            href="/book"
             className="rounded-full inline-block px-6 sm:px-8 py-3 sm:py-4 text-sm sm:text-base w-full sm:w-auto max-w-xs border border-accent-gold/50 text-accent-gold hover:bg-accent-gold/10 transition-colors"
           >
-            Take The Quiz
+            Read The Book
           </Link>
         </m.div>
 

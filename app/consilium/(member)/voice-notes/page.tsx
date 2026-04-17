@@ -1,6 +1,10 @@
 import { requireServerAuth } from "@/lib/auth/server-auth";
 import { prisma } from "@/lib/prisma";
 import { memberSafeName } from "@/lib/community/privacy";
+import {
+  getViewerGender,
+  feedPostGenderWhere,
+} from "@/lib/community/gender-filter";
 import FeedPost from "@/components/consilium/FeedPost";
 import { Mic } from "lucide-react";
 import { tierForMember } from "@/components/consilium/badge-tiers";
@@ -12,8 +16,15 @@ export const metadata = {
 export default async function VoiceNotesPage() {
   const userId = await requireServerAuth("/consilium/voice-notes");
 
+  // Gender-split: same filter used on the feed. Today voice notes are
+  // admin-authored only (all visible to everyone via the ADMIN/MODERATOR
+  // carve-out in feedPostGenderWhere), but if member-authored voice notes
+  // are ever added, this keeps the split consistent without a second pass.
+  const viewerGender = await getViewerGender(userId);
+  const genderWhere = feedPostGenderWhere(viewerGender);
+
   const voiceNotes = await prisma.feedPost.findMany({
-    where: { type: "VOICE_NOTE" },
+    where: { type: "VOICE_NOTE", ...genderWhere },
     orderBy: { createdAt: "desc" },
     include: {
       author: {

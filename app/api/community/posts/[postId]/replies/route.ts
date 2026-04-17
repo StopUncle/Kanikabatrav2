@@ -6,6 +6,7 @@ import { getViewerGender, authorGenderWhere } from "@/lib/community/gender-filte
 import { verifyAccessToken } from "@/lib/auth/jwt";
 import { cookies } from "next/headers";
 import { memberSafeName } from "@/lib/community/privacy";
+import { enforceMessagingGuard } from "@/lib/community/messaging-guard";
 
 export async function GET(
   request: NextRequest,
@@ -142,6 +143,9 @@ export async function POST(
 ) {
   return requireAuth(request, async (_req, user) => {
     try {
+      const guardBlock = await enforceMessagingGuard(user.id);
+      if (guardBlock) return guardBlock;
+
       const { postId } = await params;
       const body = await request.json();
       const { content, parentId } = body;

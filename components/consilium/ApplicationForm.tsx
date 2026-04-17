@@ -7,10 +7,34 @@ import { z } from "zod";
 import { m } from "framer-motion";
 import { Send, CheckCircle, Clock } from "lucide-react";
 
+// Calculates age in whole years from an ISO date string. Returns -1 for
+// anything that doesn't parse, so the refine() below rejects bad input.
+function calculateAge(isoDate: string): number {
+  const birth = new Date(isoDate);
+  if (isNaN(birth.getTime())) return -1;
+  const now = new Date();
+  let age = now.getFullYear() - birth.getFullYear();
+  const hadBirthdayThisYear =
+    now.getMonth() > birth.getMonth() ||
+    (now.getMonth() === birth.getMonth() && now.getDate() >= birth.getDate());
+  if (!hadBirthdayThisYear) age--;
+  return age;
+}
+
 const schema = z.object({
   gender: z.enum(["MALE", "FEMALE"], {
     errorMap: () => ({ message: "Please select your gender" }),
   }),
+  // Stored as ISO date (YYYY-MM-DD) inside applicationData. The Consilium
+  // is an adults-only community — we enforce 18+ here on the client and
+  // re-check on the server.
+  dateOfBirth: z
+    .string()
+    .regex(/^\d{4}-\d{2}-\d{2}$/, "Please enter your date of birth")
+    .refine((s) => {
+      const age = calculateAge(s);
+      return age >= 18 && age <= 100;
+    }, "You must be 18 or older to join The Consilium"),
   // Pseudonym the member uses inside the community. Real names are never
   // shown to other members — only this. 2-30 chars keeps it usable as a
   // display handle while avoiding empty/abusive names.
@@ -23,6 +47,14 @@ const schema = z.object({
   whyJoin: z.string().min(20, "Tell us a bit more (at least 20 characters)").max(1000),
   whatHope: z.string().min(20, "Tell us a bit more (at least 20 characters)").max(1000),
   howFound: z.string().min(1, "Required").max(500),
+  // Explicit attestation that everything submitted is true. Captured on
+  // the application for audit purposes — giving false info is grounds for
+  // removal. Must be ticked to submit.
+  confirmTruthful: z.literal(true, {
+    errorMap: () => ({
+      message: "You must confirm the information you've provided is true",
+    }),
+  }),
   agreeToGuidelines: z.literal(true, {
     errorMap: () => ({ message: "You must agree to the community guidelines" }),
   }),
@@ -168,6 +200,34 @@ export default function ApplicationForm({ existingStatus }: ApplicationFormProps
 
       <div>
         <label className="block text-sm font-light text-text-gray mb-2">
+          Date of birth
+        </label>
+        <input
+          type="date"
+          {...register("dateOfBirth")}
+          // Upper bound: today (no future dates). Lower bound: 120 years ago
+          // (rejects silly input before zod even fires).
+          max={new Date().toISOString().split("T")[0]}
+          min={
+            new Date(Date.now() - 120 * 365.25 * 24 * 60 * 60 * 1000)
+              .toISOString()
+              .split("T")[0]
+          }
+          className="w-full px-4 py-3 bg-deep-black/50 border border-accent-gold/20 rounded-lg text-text-light placeholder-text-gray/40 focus:border-accent-gold/60 focus:outline-none transition-colors [color-scheme:dark]"
+          autoComplete="bday"
+        />
+        {errors.dateOfBirth && (
+          <p className="mt-2 text-sm text-red-400">{errors.dateOfBirth.message}</p>
+        )}
+        <p className="mt-2 text-xs text-text-gray/60">
+          The Consilium is for adults only. You must be 18 or older to join.
+          Your date of birth is kept private — only the admin reviewing your
+          application can see it.
+        </p>
+      </div>
+
+      <div>
+        <label className="block text-sm font-light text-text-gray mb-2">
           Your display name
         </label>
         <input
@@ -229,22 +289,45 @@ export default function ApplicationForm({ existingStatus }: ApplicationFormProps
         )}
       </div>
 
-      <div className="flex items-start gap-3">
-        <input
-          type="checkbox"
-          {...register("agreeToGuidelines")}
-          id="guidelines"
-          className="mt-1 h-4 w-4 rounded border-accent-gold/20 bg-deep-black/50 text-accent-gold focus:ring-accent-gold"
-        />
-        <label htmlFor="guidelines" className="text-sm text-text-gray">
-          I agree to the community guidelines. I understand this is a safe space and
-          trolling, harassment, or manipulation of other members results in immediate
-          removal with no refund.
-        </label>
+      <div className="space-y-4 pt-2 border-t border-accent-gold/10">
+        <div className="flex items-start gap-3">
+          <input
+            type="checkbox"
+            {...register("confirmTruthful")}
+            id="truthful"
+            className="mt-1 h-4 w-4 rounded border-accent-gold/20 bg-deep-black/50 text-accent-gold focus:ring-accent-gold"
+          />
+          <label htmlFor="truthful" className="text-sm text-text-gray">
+            I confirm that all the information I&apos;ve provided above is true
+            and accurate. I understand that submitting false information is
+            grounds for removal without refund.
+          </label>
+        </div>
+        {errors.confirmTruthful && (
+          <p className="text-sm text-red-400 -mt-2">
+            {errors.confirmTruthful.message}
+          </p>
+        )}
+
+        <div className="flex items-start gap-3">
+          <input
+            type="checkbox"
+            {...register("agreeToGuidelines")}
+            id="guidelines"
+            className="mt-1 h-4 w-4 rounded border-accent-gold/20 bg-deep-black/50 text-accent-gold focus:ring-accent-gold"
+          />
+          <label htmlFor="guidelines" className="text-sm text-text-gray">
+            I agree to the community guidelines. I understand this is a safe space and
+            trolling, harassment, or manipulation of other members results in immediate
+            removal with no refund.
+          </label>
+        </div>
+        {errors.agreeToGuidelines && (
+          <p className="text-sm text-red-400 -mt-2">
+            {errors.agreeToGuidelines.message}
+          </p>
+        )}
       </div>
-      {errors.agreeToGuidelines && (
-        <p className="text-sm text-red-400">{errors.agreeToGuidelines.message}</p>
-      )}
 
       {errorMessage && (
         <p className="text-sm text-red-400 bg-red-400/10 rounded-lg px-4 py-2">{errorMessage}</p>

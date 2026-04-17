@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { requireAuth } from "@/lib/auth/middleware";
 import { checkAccessTier } from "@/lib/community/access";
 import { memberSafeName } from "@/lib/community/privacy";
+import { enforceMessagingGuard } from "@/lib/community/messaging-guard";
 
 function generateSlug(title: string): string {
   return title
@@ -15,6 +16,9 @@ function generateSlug(title: string): string {
 export async function POST(request: NextRequest) {
   return requireAuth(request, async (_req, user) => {
     try {
+      const guardBlock = await enforceMessagingGuard(user.id);
+      if (guardBlock) return guardBlock;
+
       const body = await request.json();
       const { categoryId, title, content } = body;
 

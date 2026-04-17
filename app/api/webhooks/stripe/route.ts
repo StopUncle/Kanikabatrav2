@@ -209,7 +209,7 @@ export async function POST(request: NextRequest) {
             }
           }
         } else if (
-          ["COACHING_SINGLE", "COACHING_INTENSIVE", "COACHING_CAREER", "COACHING_RETAINER"].includes(productKey)
+          ["COACHING_SINGLE", "COACHING_CLARITY", "COACHING_INTENSIVE", "COACHING_CAREER", "COACHING_RETAINER"].includes(productKey)
         ) {
           const idempotencyKey = `ST-${sessionId}`;
           const existing = await prisma.purchase.findUnique({
@@ -224,12 +224,14 @@ export async function POST(request: NextRequest) {
 
           const packageNames: Record<string, string> = {
             COACHING_SINGLE: "Single Session",
+            COACHING_CLARITY: "Clarity Pack (2 Sessions)",
             COACHING_INTENSIVE: "Intensive (3 Sessions)",
             COACHING_CAREER: "Career Coaching (4 Sessions)",
             COACHING_RETAINER: "Coaching Retainer",
           };
           const sessionCounts: Record<string, number> = {
             COACHING_SINGLE: 1,
+            COACHING_CLARITY: 2,
             COACHING_INTENSIVE: 3,
             COACHING_CAREER: 4,
             COACHING_RETAINER: 4,
@@ -390,32 +392,60 @@ export async function POST(request: NextRequest) {
 
           // Grant Consilium access — no Stripe subscription, just a
           // dated membership row.
-          const consiliumExpiresAt = new Date();
-          consiliumExpiresAt.setDate(
-            consiliumExpiresAt.getDate() + daysGranted,
-          );
+          //
+          // Guard against downgrading an active paying subscription. If
+          // the buyer already has a monthly/annual subscription, we do
+          // NOT overwrite their billingCycle or expiresAt — that would
+          // lose subscription state and effectively demote them. The
+          // book has already been delivered above, so they still get
+          // full value from the bundle purchase.
+          const existingMembership =
+            await prisma.communityMembership.findUnique({
+              where: { userId: user.id },
+              select: {
+                id: true,
+                status: true,
+                billingCycle: true,
+                paypalSubscriptionId: true,
+                expiresAt: true,
+              },
+            });
 
-          await prisma.communityMembership.upsert({
-            where: { userId: user.id },
-            create: {
-              userId: user.id,
-              status: "ACTIVE",
-              billingCycle: bundleLabel,
-              activatedAt: new Date(),
-              approvedAt: new Date(),
-              expiresAt: consiliumExpiresAt,
-            },
-            update: {
-              // If they already had an ACTIVE paying subscription, don't
-              // downgrade it to a bundle — just extend their access.
-              // Otherwise overwrite whatever state they were in.
-              status: "ACTIVE",
-              billingCycle: bundleLabel,
-              activatedAt: new Date(),
-              approvedAt: new Date(),
-              expiresAt: consiliumExpiresAt,
-            },
-          });
+          const hasActiveSubscription =
+            existingMembership?.status === "ACTIVE" &&
+            (existingMembership.paypalSubscriptionId !== null ||
+              existingMembership.billingCycle === "monthly" ||
+              existingMembership.billingCycle === "annual");
+
+          if (hasActiveSubscription) {
+            console.log(
+              `[stripe-webhook] ${productKey} buyer ${email} already has an active subscription (${existingMembership.billingCycle}) — not downgrading to bundle`,
+            );
+          } else {
+            const consiliumExpiresAt = new Date();
+            consiliumExpiresAt.setDate(
+              consiliumExpiresAt.getDate() + daysGranted,
+            );
+
+            await prisma.communityMembership.upsert({
+              where: { userId: user.id },
+              create: {
+                userId: user.id,
+                status: "ACTIVE",
+                billingCycle: bundleLabel,
+                activatedAt: new Date(),
+                approvedAt: new Date(),
+                expiresAt: consiliumExpiresAt,
+              },
+              update: {
+                status: "ACTIVE",
+                billingCycle: bundleLabel,
+                activatedAt: new Date(),
+                approvedAt: new Date(),
+                expiresAt: consiliumExpiresAt,
+              },
+            });
+          }
 
           // If we just created the account, they don't know the password.
           // Send the same welcome-new-user email pattern as INNER_CIRCLE.
@@ -780,12 +810,19 @@ export async function POST(request: NextRequest) {
           data: { status: "REFUNDED" },
         });
 
-        // INNER_CIRCLE refunds also need to cancel the membership — otherwise
-        // a refunded user keeps community access until expiresAt naturally
-        // lapses. Find the membership via the userId on the purchase, or via
-        // email lookup if userId is null.
+        // Refunds of Consilium-granting purchases must also cancel the
+        // membership — otherwise a refunded user keeps community access
+        // until expiresAt naturally lapses. Covers:
+        //   - INNER_CIRCLE (monthly subscription checkout)
+        //   - BOOK_CONSILIUM_1MO / _3MO (one-time book + bundle)
+        // Find the membership via the userId on the purchase, or via
+        // email lookup if userId is null (e.g. auto-created accounts).
         const meta = purchase.metadata as Record<string, string> | null;
-        if (meta?.productKey === "INNER_CIRCLE") {
+        const grantsConsilium =
+          meta?.productKey === "INNER_CIRCLE" ||
+          meta?.productKey === "BOOK_CONSILIUM_1MO" ||
+          meta?.productKey === "BOOK_CONSILIUM_3MO";
+        if (grantsConsilium) {
           const user = purchase.userId
             ? await prisma.user.findUnique({ where: { id: purchase.userId } })
             : await prisma.user.findUnique({ where: { email: purchase.customerEmail } });
@@ -796,7 +833,7 @@ export async function POST(request: NextRequest) {
               data: { status: "CANCELLED", cancelledAt: new Date() },
             });
             console.log(
-              `[stripe-webhook] cancelled membership for refunded INNER_CIRCLE user ${user.email}`,
+              `[stripe-webhook] cancelled membership for refunded ${meta?.productKey} user ${user.email}`,
             );
           }
         }

@@ -51,6 +51,7 @@ const COACHING_FAQ = [
 
 const COACHING_PRICE_KEYS: Record<string, string> = {
   "single-session": "COACHING_SINGLE",
+  clarity: "COACHING_CLARITY",
   intensive: "COACHING_INTENSIVE",
   career: "COACHING_CAREER",
   retainer: "COACHING_RETAINER",
@@ -58,6 +59,7 @@ const COACHING_PRICE_KEYS: Record<string, string> = {
 
 const COACHING_PRICES: Record<string, string> = {
   "single-session": "$297",
+  clarity: "$497",
   intensive: "$1,497",
   career: "$2,997",
   retainer: "$4,997",

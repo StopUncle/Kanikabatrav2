@@ -7,7 +7,7 @@ interface Application {
   id: string;
   userId: string;
   status: string;
-  applicationData: Record<string, string> | null;
+  applicationData: Record<string, string | boolean> | null;
   appliedAt: string;
   approvedAt: string | null;
   activatedAt: string | null;
@@ -18,6 +18,55 @@ interface Application {
     name: string | null;
     displayName: string | null;
   };
+}
+
+// Age calculator for the dateOfBirth field. Shown next to the DOB in the
+// admin view so reviewers don't have to do the math themselves.
+function calculateAgeFromIso(isoDate: string): number | null {
+  const birth = new Date(isoDate);
+  if (isNaN(birth.getTime())) return null;
+  const now = new Date();
+  let age = now.getFullYear() - birth.getFullYear();
+  const hadBirthdayThisYear =
+    now.getMonth() > birth.getMonth() ||
+    (now.getMonth() === birth.getMonth() && now.getDate() >= birth.getDate());
+  if (!hadBirthdayThisYear) age--;
+  return age;
+}
+
+// Humanises a camelCase key into Title Case: "dateOfBirth" → "Date Of Birth".
+function humaniseKey(key: string): string {
+  return key
+    .replace(/([A-Z])/g, " $1")
+    .replace(/^./, (c) => c.toUpperCase())
+    .trim();
+}
+
+// Pretty-prints a single applicationData value. Booleans become ✓/✗,
+// ISO dates are rendered with age, everything else is rendered as-is.
+function renderValue(key: string, value: string | boolean): React.ReactNode {
+  if (typeof value === "boolean") {
+    return value ? (
+      <span className="text-emerald-400">✓ Yes</span>
+    ) : (
+      <span className="text-red-400">✗ No</span>
+    );
+  }
+  if (key === "dateOfBirth" && /^\d{4}-\d{2}-\d{2}$/.test(value)) {
+    const age = calculateAgeFromIso(value);
+    const formatted = new Date(value).toLocaleDateString();
+    return (
+      <>
+        {formatted}
+        {age !== null && (
+          <span className="text-text-gray/60 ml-2">
+            (age {age})
+          </span>
+        )}
+      </>
+    );
+  }
+  return String(value);
 }
 
 type FilterTab = "PENDING" | "APPROVED" | "ALL";
@@ -137,9 +186,11 @@ export default function ApplicationsPage() {
                     return (
                       <div key={key}>
                         <p className="text-text-gray text-xs uppercase tracking-wider mb-0.5">
-                          {key.replace(/([A-Z])/g, " $1").trim()}
+                          {humaniseKey(key)}
                         </p>
-                        <p className="text-text-light text-sm font-light">{String(value)}</p>
+                        <p className="text-text-light text-sm font-light">
+                          {renderValue(key, value)}
+                        </p>
                       </div>
                     );
                   })}

@@ -6,6 +6,7 @@ import { isAdmin } from "@/lib/community/membership";
 import { getAdminUserId } from "@/lib/auth/server-auth";
 import { getViewerGender, authorGenderWhere } from "@/lib/community/gender-filter";
 import { enforceRateLimit, limits } from "@/lib/rate-limit";
+import { enforceMessagingGuard } from "@/lib/community/messaging-guard";
 import { prisma } from "@/lib/prisma";
 import { memberSafeName } from "@/lib/community/privacy";
 import { tierForMember } from "@/components/consilium/badge-tiers";
@@ -154,22 +155,12 @@ export async function POST(
     return NextResponse.json({ error: "Not a member" }, { status: 403 });
   }
 
-  // Messaging restriction — softer than a ban. Admin can toggle this
-  // per-user from /admin/members. Restricted users keep read access
-  // but can't post new comments.
-  const restriction = await prisma.user.findUnique({
-    where: { id: userId },
-    select: { messagingRestricted: true },
-  });
-  if (restriction?.messagingRestricted) {
-    return NextResponse.json(
-      {
-        error:
-          "Your messaging has been restricted. Contact Kanika if you think this is a mistake.",
-      },
-      { status: 403 },
-    );
-  }
+  // Block banned users + messaging-restricted users. See
+  // lib/community/messaging-guard.ts for the two states and why we check
+  // both. Same guard is used by chat, forum, and reply endpoints so
+  // mutes/bans take effect everywhere.
+  const guardBlock = await enforceMessagingGuard(userId);
+  if (guardBlock) return guardBlock;
 
   // Rate-limit by user (10 comments/hour) to prevent a compromised
   // account from spam-flooding every post.
@@ -210,13 +201,21 @@ export async function POST(
   const userIsAdmin = await isAdmin(userId);
   const status = userIsAdmin ? "APPROVED" : "PENDING_REVIEW";
 
+  // Depth flattening: the feed UI only renders 2 levels (top-level
+  // comment + one tier of children). If the caller tries to reply to
+  // a reply, silently re-point the new comment to the grandparent so
+  // it shows up in the thread instead of vanishing into a depth the
+  // UI never renders. Also validates the parent exists + is approved.
+  let effectiveParentId: string | null = null;
   if (body.parentId) {
     const parentComment = await prisma.feedComment.findFirst({
       where: { id: body.parentId, postId, status: "APPROVED" },
+      select: { id: true, parentId: true },
     });
     if (!parentComment) {
       return NextResponse.json({ error: "Parent comment not found" }, { status: 404 });
     }
+    effectiveParentId = parentComment.parentId ?? parentComment.id;
   }
 
   if (status === "APPROVED") {
@@ -227,7 +226,7 @@ export async function POST(
           authorId: userId,
           content,
           status,
-          parentId: body.parentId || null,
+          parentId: effectiveParentId,
         },
         include: {
           author: { select: authorSelect },
@@ -259,7 +258,7 @@ export async function POST(
       authorId: userId,
       content,
       status,
-      parentId: body.parentId || null,
+      parentId: effectiveParentId,
     },
     include: {
       author: { select: authorSelect },

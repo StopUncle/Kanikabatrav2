@@ -8,8 +8,29 @@ import {
 import { logger } from "@/lib/logger";
 import { z } from "zod";
 
+// Server-side age check. Defense in depth: the client also enforces this
+// but a determined attacker can bypass the client, so we revalidate here.
+function calculateAge(isoDate: string): number {
+  const birth = new Date(isoDate);
+  if (isNaN(birth.getTime())) return -1;
+  const now = new Date();
+  let age = now.getFullYear() - birth.getFullYear();
+  const hadBirthdayThisYear =
+    now.getMonth() > birth.getMonth() ||
+    (now.getMonth() === birth.getMonth() && now.getDate() >= birth.getDate());
+  if (!hadBirthdayThisYear) age--;
+  return age;
+}
+
 const applicationSchema = z.object({
   gender: z.enum(["MALE", "FEMALE"]),
+  dateOfBirth: z
+    .string()
+    .regex(/^\d{4}-\d{2}-\d{2}$/, "Invalid date format")
+    .refine((s) => {
+      const age = calculateAge(s);
+      return age >= 18 && age <= 100;
+    }, "Applicant must be 18 or older"),
   displayName: z
     .string()
     .trim()
@@ -19,6 +40,7 @@ const applicationSchema = z.object({
   whyJoin: z.string().min(20).max(1000),
   whatHope: z.string().min(20).max(1000),
   howFound: z.string().min(1).max(500),
+  confirmTruthful: z.literal(true),
   agreeToGuidelines: z.literal(true),
 });
 

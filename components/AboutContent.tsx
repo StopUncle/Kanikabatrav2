@@ -33,7 +33,7 @@ export default function AboutContent() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.1 }}
-          className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-16"
+          className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8"
         >
           <div className="bg-deep-black/50 backdrop-blur-sm border border-gray-800 rounded-lg p-6 text-center">
             <div className="text-3xl font-light text-white">
@@ -48,12 +48,37 @@ export default function AboutContent() {
             <div className="text-gray-500 text-sm">Total Views</div>
           </div>
           <div className="bg-deep-black/50 backdrop-blur-sm border border-gray-800 rounded-lg p-6 text-center">
-            <div className="text-3xl font-light text-white">28</div>
-            <div className="text-gray-500 text-sm">Years Old</div>
+            <div className="text-3xl font-light text-white">2</div>
+            <div className="text-gray-500 text-sm">Books Published</div>
           </div>
           <div className="bg-deep-black/50 backdrop-blur-sm border border-gray-800 rounded-lg p-6 text-center">
-            <div className="text-3xl font-light text-white">21</div>
-            <div className="text-gray-500 text-sm">Age of ASPD Diagnosis</div>
+            <div className="text-3xl font-light text-white">Global</div>
+            <div className="text-gray-500 text-sm">Press Coverage</div>
+          </div>
+        </m.div>
+
+        {/* As Seen On — Press Ticker */}
+        <m.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.15 }}
+          className="mb-16"
+        >
+          <div className="bg-deep-black/30 backdrop-blur-sm border border-accent-gold/10 rounded-lg py-5 px-6">
+            <p className="text-center text-accent-gold/70 text-xs tracking-[0.3em] uppercase mb-4">
+              As Featured In
+            </p>
+            <div className="flex flex-wrap items-center justify-center gap-x-8 gap-y-3 text-text-gray/80 text-sm md:text-base tracking-wide">
+              <span className="font-serif italic">LADbible</span>
+              <span className="text-accent-gold/30">·</span>
+              <span className="font-serif italic">UNILAD</span>
+              <span className="text-accent-gold/30">·</span>
+              <span className="font-serif italic">Yahoo</span>
+              <span className="text-accent-gold/30">·</span>
+              <span className="font-serif italic">Newsweek</span>
+              <span className="text-accent-gold/30">·</span>
+              <span className="font-serif italic">YourTango</span>
+            </div>
           </div>
         </m.div>
 
@@ -71,29 +96,34 @@ export default function AboutContent() {
               </h2>
               <div className="space-y-4 text-text-gray leading-relaxed">
                 <p>
-                  Born in New Zealand and raised in Sydney, Australia—my journey
-                  from psychiatric assessment to international pageant stages
-                  defies every expectation society has about what a diagnosed
-                  sociopath should look like.
+                  Born in New Zealand, raised in Sydney, and now based in
+                  Barcelona. My journey from psychiatric assessment to
+                  international pageant stages, journalism, and a global
+                  audience of 670K+ defies every expectation society has about
+                  what a diagnosed sociopath should look like.
                 </p>
                 <p>
-                  At 21, after years of behavioral issues, poor impulse control,
-                  and a near-fatal suicide attempt, I finally received my
-                  diagnosis: Antisocial Personality Disorder. The psychiatrist
-                  who diagnosed me had spent years working in prisons. He saw
+                  After years of behavioral issues, poor impulse control, and a
+                  near-fatal suicide attempt, I received my diagnosis:
+                  Antisocial Personality Disorder. The psychiatrist who assessed
+                  me had spent years working inside prison populations. He saw
                   what I was immediately.
                 </p>
                 <p>
-                  While others saw this as a death sentence, I recognized it as
-                  my greatest advantage. Where most people struggle with
-                  emotional baggage, social anxiety, and self-doubt, I operate
-                  with crystal-clear logic and unshakeable confidence.
+                  While others saw that diagnosis as a death sentence, I
+                  recognized it as my greatest advantage. Where most people
+                  struggle with emotional baggage, social anxiety, and
+                  self-doubt, I operate with crystal-clear logic and unshakeable
+                  confidence.
                 </p>
                 <p>
-                  Now based in Barcelona with my husband Sam of 3.5 years,
-                  I&apos;ve built a following of over 670,000 across social
-                  media—teaching people the strategic truths about power,
-                  attraction, and dominance that society refuses to acknowledge.
+                  I built my early career as a senior journalist at LADbible
+                  Group, writing about psychology and identity long before my
+                  own story became the story. Today I write books, coach
+                  high-stakes clients, and publish the strategic truths about
+                  power, attraction, and dominance that mainstream psychology
+                  refuses to touch — to an audience that now spans Sydney,
+                  London, New York, and everywhere in between.
                 </p>
                 <p className="text-white font-medium">
                   I&apos;m here to teach you how to stop being predictable, stop
@@ -119,9 +149,9 @@ export default function AboutContent() {
                     Clinical Diagnosis
                   </h3>
                   <ul className="space-y-2 text-text-gray">
-                    <li>• Clinically Diagnosed ASPD (Age 21)</li>
-                    <li>• Assessed by prison psychiatrist specialist</li>
-                    <li>• Documented behavioral patterns since childhood</li>
+                    <li>• Clinically diagnosed with ASPD</li>
+                    <li>• Assessed by a prison-psychiatrist specialist</li>
+                    <li>• Documented behavioural patterns since childhood</li>
                     <li>
                       • Living proof that ASPD can be channeled for success
                     </li>
@@ -308,7 +338,7 @@ export default function AboutContent() {
               {
                 question: "Is Kanika actually diagnosed with ASPD?",
                 answer:
-                  "Yes. At age 21, after years of documented behavioral issues and a near-fatal suicide attempt, I was clinically diagnosed with Antisocial Personality Disorder by a psychiatrist who specialized in working with prison populations. This diagnosis came after comprehensive psychological evaluation.",
+                  "Yes. After years of documented behavioral issues and a near-fatal suicide attempt, I was clinically diagnosed with Antisocial Personality Disorder by a psychiatrist who specialized in working with prison populations. The diagnosis followed a comprehensive psychological evaluation and has been referenced in my press coverage with LADbible, UNILAD, Yahoo, and Newsweek.",
               },
               {
                 question:

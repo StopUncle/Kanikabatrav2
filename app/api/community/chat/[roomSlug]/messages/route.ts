@@ -6,6 +6,7 @@ import { verifyAccessToken } from "@/lib/auth/jwt";
 import { cookies } from "next/headers";
 import { pusherServer } from "@/lib/pusher/server";
 import { memberSafeName } from "@/lib/community/privacy";
+import { enforceMessagingGuard } from "@/lib/community/messaging-guard";
 
 export async function GET(
   request: NextRequest,
@@ -97,6 +98,10 @@ export async function POST(
 ) {
   return requireAuth(request, async (_req, user) => {
     try {
+      // Block banned users + messaging-restricted users before any work.
+      const guardBlock = await enforceMessagingGuard(user.id);
+      if (guardBlock) return guardBlock;
+
       const { roomSlug } = await params;
       const body = await request.json();
       const { content, type = "TEXT" } = body;

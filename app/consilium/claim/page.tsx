@@ -43,7 +43,13 @@ export default async function ClaimPage({
 
   let payload: GiftPayload;
   try {
-    payload = jwt.verify(token, process.env.JWT_SECRET!) as GiftPayload;
+    // Pin the algorithm so an attacker can't forge a token by swapping
+    // to `none` or a weaker algorithm. The backfill script signs with
+    // HS256 (jsonwebtoken's default), so HS256 is the only acceptable
+    // verification algorithm.
+    payload = jwt.verify(token, process.env.JWT_SECRET!, {
+      algorithms: ["HS256"],
+    }) as GiftPayload;
     if (payload.type !== "consilium-gift") {
       throw new Error("wrong token type");
     }
