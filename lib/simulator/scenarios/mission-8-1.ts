@@ -333,6 +333,7 @@ const scenes: Scene[] = [
     id: "mother-storms",
     backgroundId: "apartment",
     mood: "danger",
+    shakeOnEntry: "shock",
     presentCharacterIds: ["mother", "sibling"],
     dialog: [
       {

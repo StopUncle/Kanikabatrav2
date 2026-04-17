@@ -285,6 +285,8 @@ const scenes: Scene[] = [
     id: "brag-spreads",
     backgroundId: "park",
     mood: "danger",
+    immersionTrigger: "red-flag-revealed",
+    shakeOnEntry: "shock",
     dialog: [
       { speakerId: null, text: "By noon, half the campus has heard. By evening, it reaches Maris." },
       { speakerId: null, text: "Your phone buzzes. A text from an unknown number." },
@@ -316,6 +318,7 @@ const scenes: Scene[] = [
     id: "info-weaponized",
     backgroundId: "coffee-shop",
     mood: "danger",
+    immersionTrigger: "red-flag-revealed",
     dialog: [
       { speakerId: null, text: "Two days later. You're at the coffee shop when you overhear two people talking." },
       {

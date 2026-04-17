@@ -14,6 +14,7 @@ const scenes: Scene[] = [
     id: "priya-calls",
     backgroundId: "apartment",
     mood: "danger",
+    immersionTrigger: "red-flag-revealed",
     presentCharacterIds: ["priya"],
     dialog: [
       {

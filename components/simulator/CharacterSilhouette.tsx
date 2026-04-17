@@ -27,6 +27,14 @@ type Props = {
    * Non-speaker cast members render at ~0.7 with reduced opacity.
    */
   intensity?: number;
+  /**
+   * Casting role — drives size and visual prominence.
+   *   - "solo"      : single-character scene, centered, full size (default)
+   *   - "speaker"   : active talker in a group, full size, rim-lit
+   *   - "supporting": in-scene but not currently speaking, 50% size, dimmed,
+   *                   rendered behind the speaker for depth
+   */
+  role?: "solo" | "speaker" | "supporting";
 };
 
 function rimColorFor(emotion?: EmotionType): string {
@@ -93,12 +101,18 @@ export default function CharacterSilhouette({
   character,
   emotion,
   intensity = 1,
+  role = "solo",
 }: Props) {
   const activeEmotion = emotion ?? character.defaultEmotion;
   const rim = rimColorFor(activeEmotion);
   const hairPath = hairPathFor(character.silhouetteType);
   // Non-speakers render dimmed so the eye lands on whoever is talking.
   const containerOpacity = Math.max(0.35, Math.min(1, intensity));
+  // Size class per role — supporting cast renders at 55% of speaker size
+  const sizeClass =
+    role === "supporting"
+      ? "w-28 h-40 sm:w-36 sm:h-52"
+      : "w-52 h-72 sm:w-64 sm:h-96";
 
   // Subtle body lean driven by emotion — aggressive emotions lean forward,
   // withdrawn ones lean back.
@@ -119,7 +133,7 @@ export default function CharacterSilhouette({
         initial={{ opacity: 0, scale: 0.98 }}
         animate={{ opacity: containerOpacity, scale: intensity }}
         transition={{ duration: 0.9, ease: "easeOut" }}
-        className="relative w-48 h-64 sm:w-64 sm:h-80"
+        className={`relative ${sizeClass}`}
       >
         <div
           className="absolute inset-0 rounded-full blur-3xl opacity-60"
@@ -141,14 +155,14 @@ export default function CharacterSilhouette({
   return (
     <m.div
       key={character.id + (emotion ?? "")}
-      initial={{ opacity: 0, scale: 0.98 }}
+      initial={{ opacity: 0, scale: 0.94 }}
       animate={{
         opacity: containerOpacity,
         scale: intensity,
         rotate: lean * 0.4,
       }}
-      transition={{ duration: 0.9, ease: "easeOut" }}
-      className="relative w-52 h-72 sm:w-64 sm:h-96"
+      transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+      className={`relative ${sizeClass}`}
       style={{ transformOrigin: "center bottom" }}
     >
       {/* Rim glow behind character — picks up emotion color */}

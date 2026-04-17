@@ -326,6 +326,8 @@ const scenes: Scene[] = [
     id: "maris-rejects-withdrawal",
     backgroundId: "text-screen",
     mood: "danger",
+    immersionTrigger: "shock",
+    shakeOnEntry: "revelation",
     dialog: [
       {
         speakerId: "maris",

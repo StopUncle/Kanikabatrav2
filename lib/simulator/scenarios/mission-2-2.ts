@@ -65,6 +65,7 @@ const scenes: Scene[] = [
     id: "dana-drops-bait",
     backgroundId: "common-room",
     mood: "danger",
+    immersionTrigger: "manipulation-detected",
     presentCharacterIds: ["dana"],
     dialog: [
       {

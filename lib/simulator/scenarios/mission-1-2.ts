@@ -228,6 +228,7 @@ const scenes: Scene[] = [
     id: "maris-escalates",
     backgroundId: "bar",
     mood: "tense",
+    immersionTrigger: "manipulation-detected",
     presentCharacterIds: ["maris"],
     dialog: [
       {

@@ -522,6 +522,7 @@ const scenes: Scene[] = [
     id: "ending-absorbed",
     backgroundId: "restaurant",
     mood: "danger",
+    immersionTrigger: "defeat",
     isEnding: true,
     outcomeType: "bad",
     endingTitle: "Absorbed",

@@ -41,6 +41,23 @@ export type MoodType =
   | "mysterious"
   | "professional";
 
+/**
+ * Full-screen cinematic effect played on scene entry. Rendered by
+ * `components/simulator/ImmersionOverlay.tsx`. Use sparingly —
+ * these are punctuation, not ambience.
+ */
+export type ImmersionTrigger =
+  | "manipulation-detected"
+  | "red-flag-revealed"
+  | "cold-moment"
+  | "intimate-moment"
+  | "shock"
+  | "victory"
+  | "defeat";
+
+/** Screen-shake preset on scene entry. */
+export type ShakePreset = "shock" | "threat" | "revelation";
+
 export type OutcomeType = "good" | "neutral" | "bad" | "passed" | "failed";
 export type Gender = "male" | "female" | "non-binary";
 
@@ -89,6 +106,10 @@ export interface Scene {
    * back to showing whoever is currently speaking.
    */
   presentCharacterIds?: string[];
+  /** Cinematic trigger fired once on scene entry. Purely visual. */
+  immersionTrigger?: ImmersionTrigger;
+  /** Screen-shake preset on scene entry. Purely visual. */
+  shakeOnEntry?: ShakePreset;
   // Ending fields
   isEnding?: boolean;
   outcomeType?: OutcomeType;

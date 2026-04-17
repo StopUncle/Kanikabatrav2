@@ -187,6 +187,7 @@ const scenes: Scene[] = [
     id: "ending-legacy",
     backgroundId: "restaurant",
     mood: "peaceful",
+    immersionTrigger: "victory",
     isEnding: true,
     outcomeType: "good",
     endingTitle: "The Legacy Move",

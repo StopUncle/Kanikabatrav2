@@ -108,6 +108,7 @@ const scenes: Scene[] = [
     id: "send-the-text",
     backgroundId: "text-screen",
     mood: "mysterious",
+    shakeOnEntry: "revelation",
     dialog: [
       {
         speakerId: null,

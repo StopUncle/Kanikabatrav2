@@ -21,6 +21,11 @@ import CharacterSilhouette from "./CharacterSilhouette";
 import DialogBox from "./DialogBox";
 import ChoiceCards from "./ChoiceCards";
 import EndingScreen from "./EndingScreen";
+import ImmersionOverlay from "./ImmersionOverlay";
+import SceneShake from "./SceneShake";
+import XpFloater from "./XpFloater";
+import StreakIndicator from "./StreakIndicator";
+import SceneProgress from "./SceneProgress";
 
 type Props = {
   scenario: Scenario;
@@ -52,6 +57,13 @@ export default function SimulatorRunner({
     initialState ?? initState(scenario),
   );
   const [lineIndex, setLineIndex] = useState(0);
+  // Dopamine state — XP floater + optimal-streak tracking
+  const [xpFloat, setXpFloat] = useState<{
+    id: number;
+    xp: number;
+    tone: "optimal" | "neutral" | "bad";
+  } | null>(null);
+  const [streak, setStreak] = useState(0);
   // Ref avoids re-firing onComplete when React double-invokes in StrictMode.
   const completeFiredRef = useRef(false);
 
@@ -129,6 +141,22 @@ export default function SimulatorRunner({
 
   const pickChoice = useCallback(
     (choice: Choice) => {
+      // Show XP floater. Tone maps to the optimality signal used by
+      // the engine for XP calculation so the floater matches reality.
+      const tone: "optimal" | "neutral" | "bad" =
+        choice.isOptimal === true
+          ? "optimal"
+          : choice.isOptimal === false
+            ? "bad"
+            : "neutral";
+      const xp = tone === "optimal" ? 10 : tone === "bad" ? 0 : 3;
+      setXpFloat({ id: Date.now(), xp, tone });
+      // Auto-clear after the animation duration (1.4s)
+      setTimeout(() => setXpFloat(null), 1500);
+
+      // Streak tracking: increment on optimal, reset otherwise.
+      setStreak((s) => (choice.isOptimal === true ? s + 1 : 0));
+
       setState((prev) => applyChoice(scenario, prev, choice.id));
       setLineIndex(0);
     },
@@ -139,6 +167,8 @@ export default function SimulatorRunner({
     completeFiredRef.current = false;
     setState(initState(scenario));
     setLineIndex(0);
+    setStreak(0);
+    setXpFloat(null);
   }, [scenario]);
 
   if (!scene) {
@@ -172,38 +202,110 @@ export default function SimulatorRunner({
   }
 
   // Dialog scene
+  // Layout strategy: use absolute positioning instead of flex-col to
+  // prevent dialog-to-choices transition from reflowing the character.
+  //
+  //   [ letterbox top ]        fixed, h-14/16
+  //   [ scenario label ]       absolute top-20
+  //   [ cast zone ]            absolute, centered between label and dialog
+  //   [ dialog/choices zone ]  absolute bottom, min-height reserved so
+  //                            choice cards don't push up the dialog above
   return (
-    <div className="fixed inset-0 z-[60] bg-deep-black overflow-hidden flex flex-col">
+    <div className="fixed inset-0 z-[60] bg-deep-black overflow-hidden">
       <MoodBackground mood={scene.mood} />
       <Letterbox />
+      <ImmersionOverlay sceneId={scene.id} trigger={scene.immersionTrigger} />
+      <SceneProgress scenario={scenario} state={state} />
+      <StreakIndicator streak={streak} />
+      <XpFloater
+        show={!!xpFloat}
+        xp={xpFloat?.xp ?? 0}
+        tone={xpFloat?.tone}
+      />
 
-      {/* Scenario label — top */}
-      <div className="relative z-30 pt-20 sm:pt-24 text-center">
+      <SceneShake sceneId={scene.id} shake={scene.shakeOnEntry}>
+
+      {/* Scenario label — absolute top, just under letterbox */}
+      <div className="absolute top-[76px] sm:top-[88px] left-0 right-0 z-30 text-center">
         <p className="text-accent-gold/60 text-[10px] uppercase tracking-[0.5em]">
           {scenario.title}
         </p>
       </div>
 
-      {/* Cast — one or more characters side-by-side. Speaker gets full
-          intensity + emotion-driven rim light; others dim back. */}
-      <div className="relative z-10 flex-1 flex items-end justify-center px-4 gap-4 sm:gap-8">
-        {castCharacters.map((c) => {
-          const isSpeaker = activeCharacter?.id === c.id;
-          return (
-            <CharacterSilhouette
-              key={c.id}
-              character={c}
-              emotion={
-                isSpeaker ? currentLine?.emotion : c.defaultEmotion
-              }
-              intensity={isSpeaker ? 1 : 0.72}
-            />
-          );
-        })}
+      {/* Cast staging — absolute, centered between top label and dialog zone.
+          - Solo scene (1 char): center, full size.
+          - Group scene (2-3 chars): speaker center/forward, supporting
+            cast left + right at 55% size and lower z-index. When the
+            active speaker changes, the LAYOUT stays stable — we just
+            re-rim-light who's talking. No character swap, no fade out,
+            no scene cut. Film-grade continuity.
+          Supporting cast uses `key={c.id}` only (not emotion-keyed) so
+          they don't remount when speakers change. */}
+      <div className="absolute inset-x-0 top-24 sm:top-28 bottom-[360px] sm:bottom-[320px] z-10 flex items-center justify-center px-4">
+        {castCharacters.length === 1 ? (
+          // Solo — just center it
+          (() => {
+            const c = castCharacters[0];
+            const isSpeaker = activeCharacter?.id === c.id;
+            return (
+              <CharacterSilhouette
+                key={c.id}
+                character={c}
+                emotion={isSpeaker ? currentLine?.emotion : c.defaultEmotion}
+                intensity={isSpeaker ? 1 : 0.72}
+                role="solo"
+              />
+            );
+          })()
+        ) : (
+          // Group — speaker center, supporting cast at sides
+          <div className="relative w-full max-w-3xl h-full flex items-center justify-center">
+            {/* Supporting cast — positioned left/right, behind speaker */}
+            {castCharacters
+              .filter((c) => c.id !== activeCharacter?.id)
+              .map((c, i, arr) => {
+                const isOnlySupporting = arr.length === 1;
+                const side =
+                  isOnlySupporting || i === 1 ? "right" : "left";
+                return (
+                  <div
+                    key={c.id}
+                    className={`absolute bottom-4 ${
+                      side === "left"
+                        ? "left-0 sm:left-8"
+                        : "right-0 sm:right-8"
+                    } z-0`}
+                  >
+                    <CharacterSilhouette
+                      character={c}
+                      emotion={c.defaultEmotion}
+                      intensity={0.65}
+                      role="supporting"
+                    />
+                  </div>
+                );
+              })}
+            {/* Active speaker — centered, forward */}
+            {activeCharacter && (
+              <div className="relative z-10">
+                <CharacterSilhouette
+                  key={activeCharacter.id}
+                  character={activeCharacter}
+                  emotion={currentLine?.emotion}
+                  intensity={1}
+                  role="speaker"
+                />
+              </div>
+            )}
+          </div>
+        )}
       </div>
 
-      {/* Dialog + choices */}
-      <div className="relative z-20 pb-24 sm:pb-28 flex flex-col items-center gap-8">
+      {/* Dialog + choices — absolute bottom.
+          min-height reserved: ~320px on desktop, ~360px on mobile, so
+          choice cards appearing doesn't push dialog text up. Both states
+          share the same vertical zone; we just swap content inside it. */}
+      <div className="absolute inset-x-0 bottom-16 sm:bottom-20 z-20 flex flex-col items-center justify-center min-h-[280px] sm:min-h-[240px] px-4">
         <AnimatePresence mode="wait">
           {!showChoices && currentLine && (
             <DialogBox
@@ -226,6 +328,8 @@ export default function SimulatorRunner({
           )}
         </AnimatePresence>
       </div>
+
+      </SceneShake>
     </div>
   );
 }

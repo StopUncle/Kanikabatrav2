@@ -1,10 +1,38 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { m } from "framer-motion";
 import Link from "next/link";
 import { RotateCcw, ArrowRight, Award } from "lucide-react";
 import type { Scene, Scenario, SimulatorState } from "@/lib/simulator/types";
 import { BADGE_BY_KEY } from "@/lib/simulator/badges";
+
+/**
+ * Count-up hook. Animates a number from 0 → target over ~1.2s using
+ * requestAnimationFrame for smooth 60fps ticking. Delays start so it
+ * fires after the title reveal.
+ */
+function useCountUp(target: number, delayMs = 1700) {
+  const [value, setValue] = useState(0);
+  useEffect(() => {
+    const delay = setTimeout(() => {
+      const start = performance.now();
+      const duration = 1200;
+      let raf = 0;
+      const tick = (now: number) => {
+        const t = Math.min(1, (now - start) / duration);
+        // easeOutCubic
+        const eased = 1 - Math.pow(1 - t, 3);
+        setValue(Math.round(target * eased));
+        if (t < 1) raf = requestAnimationFrame(tick);
+      };
+      raf = requestAnimationFrame(tick);
+      return () => cancelAnimationFrame(raf);
+    }, delayMs);
+    return () => clearTimeout(delay);
+  }, [target, delayMs]);
+  return value;
+}
 
 type Props = {
   scenario: Scenario;
@@ -16,6 +44,28 @@ type Props = {
   nextScenarioHref?: string | null;
   onRestart: () => void;
 };
+
+function XpCounter({ target }: { target: number }) {
+  const value = useCountUp(target, 1700);
+  return (
+    <m.div
+      initial={{ opacity: 0, y: 12, scale: 0.9 }}
+      animate={{ opacity: 1, y: 0, scale: 1 }}
+      transition={{ duration: 0.6, delay: 1.7 }}
+      className="inline-flex flex-col items-center gap-1 px-6 py-3 rounded-full border border-accent-gold/30 mb-6"
+    >
+      <p className="text-accent-gold/70 text-[10px] uppercase tracking-[0.35em]">
+        XP Earned
+      </p>
+      <p
+        className="text-accent-gold text-3xl font-light tabular-nums"
+        style={{ textShadow: "0 0 20px rgba(212,175,55,0.4)" }}
+      >
+        +{value}
+      </p>
+    </m.div>
+  );
+}
 
 export default function EndingScreen({
   scene,
@@ -84,20 +134,10 @@ export default function EndingScreen({
           </m.p>
         )}
 
-        {/* XP earned */}
-        <m.div
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 1.7 }}
-          className="inline-flex flex-col items-center gap-1 px-6 py-3 rounded-full border border-accent-gold/30 mb-6"
-        >
-          <p className="text-accent-gold/70 text-[10px] uppercase tracking-[0.35em]">
-            XP Earned
-          </p>
-          <p className="text-accent-gold text-2xl font-light">
-            +{state.xpEarned}
-          </p>
-        </m.div>
+        {/* XP earned — count-up animation */}
+        <XpCounter target={state.xpEarned} />
+
+
 
         {/* Badges earned this run */}
         {badgesEarned.length > 0 && (

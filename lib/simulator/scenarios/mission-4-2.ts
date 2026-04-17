@@ -38,6 +38,8 @@ const scenes: Scene[] = [
     id: "avery-accuses",
     backgroundId: "common-room",
     mood: "danger",
+    immersionTrigger: "red-flag-revealed",
+    shakeOnEntry: "threat",
     presentCharacterIds: ["avery", "priya"],
     dialog: [
       {
