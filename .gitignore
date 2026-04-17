@@ -76,6 +76,9 @@ presale-list.json
 .cleanup-log.txt
 .cleanup.ps1
 
+# Claude Code internal state (lockfiles, per-session temp)
+.claude/
+
 # Environment files
 .env
 .env.local

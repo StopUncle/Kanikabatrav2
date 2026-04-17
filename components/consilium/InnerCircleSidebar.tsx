@@ -17,6 +17,7 @@ import {
   Award,
   Eye,
   Clock,
+  Film,
 } from "lucide-react";
 import ConsiliumSeal from "@/components/ConsiliumSeal";
 import MemberBadge, { getBadge } from "@/components/consilium/MemberBadge";
@@ -40,8 +41,9 @@ const MAIN_NAV = [
   { href: "/consilium/voice-notes", label: "Voice Notes", icon: AudioLines },
   { href: "/consilium/previews", label: "Previews", icon: Clock },
   { href: "/consilium/classroom", label: "Classroom", icon: Library },
+  { href: "/consilium/simulator", label: "Simulator", icon: Film },
   { href: "/consilium/badges", label: "Badges", icon: Award },
-  { href: "/quiz", label: "Dark Mirror", icon: Eye },
+  { href: "/consilium/quiz", label: "Dark Mirror", icon: Eye },
 ];
 
 export default function InnerCircleSidebar({
