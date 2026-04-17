@@ -16,6 +16,16 @@ import mission41 from "./mission-4-1";
 import mission42 from "./mission-4-2";
 import mission51 from "./mission-5-1";
 import mission52 from "./mission-5-2";
+import mission61 from "./mission-6-1";
+import mission62 from "./mission-6-2";
+import mission71 from "./mission-7-1";
+import mission72 from "./mission-7-2";
+import mission81 from "./mission-8-1";
+import mission82 from "./mission-8-2";
+import mission91 from "./mission-9-1";
+import mission92 from "./mission-9-2";
+import mission101 from "./mission-10-1";
+import mission102 from "./mission-10-2";
 
 export const ALL_SCENARIOS: Scenario[] = [
   mission11,
@@ -28,6 +38,16 @@ export const ALL_SCENARIOS: Scenario[] = [
   mission42,
   mission51,
   mission52,
+  mission61,
+  mission62,
+  mission71,
+  mission72,
+  mission81,
+  mission82,
+  mission91,
+  mission92,
+  mission101,
+  mission102,
 ];
 
 export const SCENARIO_BY_ID: Record<string, Scenario> = Object.fromEntries(
@@ -80,5 +100,25 @@ export const LEVEL_TITLES: Record<number, { title: string; blurb: string }> = {
   5: {
     title: "Mastery",
     blurb: "The gravity has shifted. Use it consciously.",
+  },
+  6: {
+    title: "Career Power",
+    blurb: "Credit thieves, hostile negotiations, meeting politics.",
+  },
+  7: {
+    title: "Dating Strategy",
+    blurb: "Invest proportional to evidence. Exit cleanly when you must.",
+  },
+  8: {
+    title: "Family Dynamics",
+    blurb: "Twenty-nine-year-old scripts. Breaking them or being broken by them.",
+  },
+  9: {
+    title: "The Long Game",
+    blurb: "Six months of whispers you never heard. What to do in three weeks.",
+  },
+  10: {
+    title: "Endgame",
+    blurb: "You are the gatekeeper now. Everything you've built rests on who you name.",
   },
 };

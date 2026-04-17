@@ -129,3 +129,116 @@ export const LENNOX: Character = {
   personalityType: "aspirant",
   silhouetteType: "hair-ponytail",
 };
+
+// Level 6 — Career Power
+export const MARCUS: Character = {
+  id: "marcus",
+  name: "Marcus Hale",
+  description:
+    "Your director. Takes credit easily, redirects blame smoothly. Says 'team effort' when it went well; names you when it didn't.",
+  traits: ["narcissistic", "credit-thief", "politically-savvy"],
+  defaultEmotion: "neutral",
+  gender: "male",
+  personalityType: "workplace-narcissist",
+  silhouetteType: "male-imposing",
+};
+
+export const SAGE: Character = {
+  id: "sage",
+  name: "Sage Ortiz",
+  description:
+    "Coworker at your level. Quiet, agreeable, excellent at taking notes — and knowing whose ideas those notes get attributed to.",
+  traits: ["covert", "observer", "opportunistic"],
+  defaultEmotion: "neutral",
+  gender: "female",
+  personalityType: "covert-narcissist",
+  silhouetteType: "female-soft",
+};
+
+export const KAYA: Character = {
+  id: "kaya",
+  name: "Kaya Brooks",
+  description:
+    "Senior peer or mentor figure. Calm, thorough. Knows where the bodies are buried and rarely mentions it.",
+  traits: ["seasoned", "strategic", "low-noise"],
+  defaultEmotion: "knowing",
+  gender: "female",
+  personalityType: "mentor",
+  silhouetteType: "female-athletic",
+};
+
+// Level 7 — Dating Strategy
+export const ELIAS: Character = {
+  id: "elias",
+  name: "Elias",
+  description:
+    "Dating interest. Avoidant attachment style — interested, then distant, then back. Not malicious; just patterned.",
+  traits: ["avoidant", "inconsistent", "interesting"],
+  defaultEmotion: "curious",
+  gender: "male",
+  personalityType: "avoidant",
+  silhouetteType: "male-lean",
+};
+
+export const NOVA: Character = {
+  id: "nova",
+  name: "Nova",
+  description:
+    "Dating interest. Secure, direct, low drama. Doesn't play the game. Asks questions you don't practice the answers to.",
+  traits: ["secure", "direct", "calm"],
+  defaultEmotion: "neutral",
+  gender: "non-binary",
+  personalityType: "secure",
+  silhouetteType: "hair-styled",
+};
+
+// Level 8 — Family
+export const THE_MOTHER: Character = {
+  id: "mother",
+  name: "Mother",
+  description:
+    "Lifelong primary figure. Covert narcissist. Compares siblings, rewrites history, wields guilt like an inheritance. The scripts ran before you could name them.",
+  traits: ["narcissistic", "guilt-engineering", "history-rewriting"],
+  defaultEmotion: "neutral",
+  gender: "female",
+  personalityType: "narc-parent",
+  silhouetteType: "female-elegant",
+};
+
+export const GOLDEN_SIBLING: Character = {
+  id: "sibling",
+  name: "Ren",
+  description:
+    "Your sibling. The 'golden child' — favored without effort, cited in every comparison, sometimes unaware of the role they're playing. Sometimes very aware.",
+  traits: ["favored", "triangulated", "ambiguous"],
+  defaultEmotion: "neutral",
+  gender: "non-binary",
+  personalityType: "triangulation-tool",
+  silhouetteType: "hair-short",
+};
+
+// Level 9 — Long Game
+export const ARIA: Character = {
+  id: "aria",
+  name: "Aria Vale",
+  description:
+    "A rival with a six-month head start. Covertly campaigning against you in rooms you'll never see. Smart, patient, ruthless.",
+  traits: ["patient", "covert", "reputation-warrior"],
+  defaultEmotion: "neutral",
+  gender: "female",
+  personalityType: "covert-narcissist",
+  silhouetteType: "female-elegant",
+};
+
+// Level 10 — Endgame
+export const DEVON: Character = {
+  id: "devon",
+  name: "Devon",
+  description:
+    "A newer player, gender-neutral presentation. Reminds you of who you were three years ago — before Maris, before Priya, before you understood any of this.",
+  traits: ["earnest", "learning", "promising"],
+  defaultEmotion: "hopeful",
+  gender: "non-binary",
+  personalityType: "aspirant",
+  silhouetteType: "hair-short",
+};

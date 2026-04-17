@@ -235,6 +235,166 @@ export const SIMULATOR_BADGES: SimulatorBadgeDef[] = [
     },
   ),
 
+  // ---------- Level 6 — Career Power ----------
+  ...scenarioBadges(
+    "mission-6-1",
+    {
+      good: "Credit Reclaimed",
+      neutral: "Victory With Interest",
+      bad: "It's His Model Now",
+      mastery: "The Ambush Paid",
+    },
+    {
+      good: "Corrected the frame early; defended the work in the room that mattered.",
+      neutral: "You got the credit. You also made a political enemy.",
+      bad: "By next quarter, your work is canonically his.",
+      mastery: "All-optimal. You made the room reassign the work consciously.",
+    },
+  ),
+  ...scenarioBadges(
+    "mission-6-2",
+    {
+      good: "Raise Won",
+      neutral: "Capped Early",
+      bad: "Split the Difference",
+      mastery: "Priced Yourself Correctly",
+    },
+    {
+      good: "Refused his anchors, held external data, walked out with a real bump.",
+      neutral: "You accepted his ceiling as your aspiration.",
+      bad: "You anchored first. He halved you.",
+      mastery: "All-optimal. You made him name a number, anchored with data, bundled progression with salary.",
+    },
+  ),
+
+  // ---------- Level 7 — Dating Strategy ----------
+  ...scenarioBadges(
+    "mission-7-1",
+    {
+      good: "Rotation Mastered",
+      neutral: "Equal Time, Unequal Energy",
+      bad: "Funded the Pattern",
+      mastery: "The Calibrated Test",
+    },
+    {
+      good: "Investment proportional to evidence. Pattern named on the way out.",
+      neutral: "You held shape but gave equal time to unequal energies.",
+      bad: "'No worries' became the subscription renewal.",
+      mastery: "All-optimal. You tested the rise, rewarded directness, let evidence weight attention.",
+    },
+  ),
+  ...scenarioBadges(
+    "mission-7-2",
+    {
+      good: "Clean Exit",
+      neutral: "Ambiguous Close",
+      bad: "The Fade",
+      mastery: "End The Shape",
+    },
+    {
+      good: "Rehearsed delivery, specific about the shape not the person.",
+      neutral: "Couldn't commit to the reason — they'll be back in a month.",
+      bad: "You became the avoidant you spent six months describing.",
+      mastery: "All-optimal. Honest answer to an honest question. No landmines left behind.",
+    },
+  ),
+
+  // ---------- Level 8 — Family ----------
+  ...scenarioBadges(
+    "mission-8-1",
+    {
+      good: "Triangulation Refused",
+      neutral: "Dinner Survived",
+      bad: "Auditioned and Lost",
+      mastery: "The Engine Stalled",
+    },
+    {
+      good: "You refused the role in her hierarchy.",
+      neutral: "You got through the dinner without winning or losing much.",
+      bad: "You competed for her approval on her terms. She cut you off mid-sentence.",
+      mastery: "All-optimal. The triangulation engine couldn't find a foothold.",
+    },
+  ),
+  ...scenarioBadges(
+    "mission-8-2",
+    {
+      good: "No Contact Held",
+      neutral: "Belated Narrative",
+      bad: "Channel Reopened",
+      mastery: "The Cut That Held",
+    },
+    {
+      good: "Minimum-viable exit. No material for the smear to quote.",
+      neutral: "Disappeared first, managed the narrative late.",
+      bad: "One reply after no-contact declared the rule negotiable.",
+      mastery: "All-optimal. Pre-empted the smear, blocked without reading, allies informed first.",
+    },
+  ),
+
+  // ---------- Level 9 — The Long Game ----------
+  ...scenarioBadges(
+    "mission-9-1",
+    {
+      good: "Long Game Seen",
+      neutral: "Results Eventually",
+      bad: "Cards Shown",
+      mastery: "The Trap Laid",
+    },
+    {
+      good: "Found out about the campaign. Didn't react — responded.",
+      neutral: "Chose the patient path. Paid the year in invisible tax.",
+      bad: "DMed her to say you knew. She moved to rooms you can't see.",
+      mastery: "All-optimal. Four months of discipline; her behavior became the argument against her.",
+    },
+  ),
+  ...scenarioBadges(
+    "mission-9-2",
+    {
+      good: "Long Game Won",
+      neutral: "Partial Hold",
+      bad: "Drawn Publicly",
+      mastery: "The Work Closed It",
+    },
+    {
+      good: "Outmaneuvered a six-month covert campaign without engaging it publicly.",
+      neutral: "Mixed outcome — held some rooms, lost others.",
+      bad: "She set the stage. You stepped onto it.",
+      mastery: "All-optimal. The undeniable result made her attacks obsolete.",
+    },
+  ),
+
+  // ---------- Level 10 — Endgame ----------
+  ...scenarioBadges(
+    "mission-10-1",
+    {
+      good: "Gate Held Fairly",
+      neutral: "Polite No",
+      bad: "You Became the Door",
+      mastery: "Protégé Built",
+    },
+    {
+      good: "Mentor, specific, generous without spending credibility.",
+      neutral: "Not-ready without reason. Neutral, wasted.",
+      bad: "You said the exact sentence you once resented.",
+      mastery: "All-optimal. You built the next generation at Kaya-level depth.",
+    },
+  ),
+  ...scenarioBadges(
+    "mission-10-2",
+    {
+      good: "Legacy",
+      neutral: "Unprepared",
+      bad: "Loyalty Over Judgment",
+      mastery: "The Final Mastery",
+    },
+    {
+      good: "Named someone strong. Meant it.",
+      neutral: "Proposed breadth without prepared specifics.",
+      bad: "Nominated your protégé. Kaya marked it.",
+      mastery: "All-optimal. Named the person who will surpass you. Elevated anyway.",
+    },
+  ),
+
   // ---------- Level-clear badges ----------
   {
     key: "level-1-complete",
@@ -268,6 +428,41 @@ export const SIMULATOR_BADGES: SimulatorBadgeDef[] = [
     key: "level-5-complete",
     title: "Mastery — Cleared",
     description: "Level 5 complete. You've done every scenario with a good ending.",
+    tier: "level",
+    icon: "crown",
+  },
+  {
+    key: "level-6-complete",
+    title: "Career Power — Cleared",
+    description: "Level 6 complete. You price yourself now.",
+    tier: "level",
+    icon: "crown",
+  },
+  {
+    key: "level-7-complete",
+    title: "Dating Strategy — Cleared",
+    description: "Level 7 complete. Evidence-weighted, clean-ending dating.",
+    tier: "level",
+    icon: "crown",
+  },
+  {
+    key: "level-8-complete",
+    title: "Family Dynamics — Cleared",
+    description: "Level 8 complete. Twenty-nine-year scripts, broken.",
+    tier: "level",
+    icon: "crown",
+  },
+  {
+    key: "level-9-complete",
+    title: "The Long Game — Cleared",
+    description: "Level 9 complete. Covert campaigns outmaneuvered.",
+    tier: "level",
+    icon: "crown",
+  },
+  {
+    key: "level-10-complete",
+    title: "Endgame — Cleared",
+    description: "Level 10 complete. You built a legacy worth inheriting.",
     tier: "level",
     icon: "crown",
   },
