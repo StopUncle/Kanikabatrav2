@@ -1287,29 +1287,51 @@ const luxuryEmailShell = (innerHtml: string, headerTitle: string, headerSub: str
   <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="color-scheme" content="dark light">
+    <meta name="supported-color-schemes" content="dark light">
     <title>${headerTitle}</title>
+    <style>
+      /* Phone sizes: tighten padding, bigger type, readable line-height.
+         Apple Mail, Gmail iOS, Outlook iOS all respect @media so these rules
+         actually land on-device. */
+      @media only screen and (max-width: 600px) {
+        .lux-outer-pad { padding: 20px 12px !important; }
+        .lux-card      { border-radius: 16px !important; }
+        .lux-header    { padding: 32px 24px !important; }
+        .lux-title     { font-size: 22px !important; letter-spacing: 1.5px !important; }
+        .lux-subtitle  { font-size: 12px !important; }
+        .lux-body      { padding: 28px 22px !important; font-size: 16px !important; }
+        .lux-body p    { font-size: 16px !important; line-height: 1.7 !important; }
+        .lux-cta       { padding: 16px 28px !important; font-size: 15px !important; width: 100% !important; box-sizing: border-box !important; }
+        .lux-cta-wrap  { width: 100% !important; }
+      }
+      /* Force dark-mode-ish colors even in clients that try to auto-invert.
+         Outlook/Gmail iOS will otherwise flip dark backgrounds to white. */
+      [data-ogsc] .lux-body-text { color: #e8e3d8 !important; }
+      [data-ogsc] .lux-muted-text { color: #c2bdb4 !important; }
+    </style>
   </head>
-  <body style="margin: 0; padding: 0; background-color: #0a0a0a; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;">
+  <body style="margin: 0; padding: 0; background-color: #0a0a0a; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; -webkit-font-smoothing: antialiased;">
     <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="background-color: #0a0a0a;">
       <tr>
-        <td align="center" style="padding: 40px 20px;">
-          <table role="presentation" width="600" cellspacing="0" cellpadding="0" border="0" style="max-width: 600px; width: 100%; background-color: #050511; border-radius: 12px; overflow: hidden;">
+        <td align="center" class="lux-outer-pad" style="padding: 40px 20px;">
+          <table role="presentation" width="600" cellspacing="0" cellpadding="0" border="0" class="lux-card" style="max-width: 600px; width: 100%; background-color: #121017; border-radius: 20px; overflow: hidden; box-shadow: 0 20px 60px rgba(0,0,0,0.45);">
             <tr>
-              <td bgcolor="#3d0f1a" style="padding: 40px 30px; text-align: center;">
-                <h1 style="color: #d4af37; margin: 0 0 10px 0; font-size: 26px; font-weight: 300; letter-spacing: 2px; text-transform: uppercase;">
+              <td class="lux-header" style="background: linear-gradient(135deg, #4a1426 0%, #3d0f1a 55%, #2a0a12 100%); padding: 44px 32px; text-align: center; border-bottom: 1px solid rgba(212,175,55,0.35);">
+                <h1 class="lux-title" style="color: #f3d98a; margin: 0 0 10px 0; font-size: 26px; font-weight: 300; letter-spacing: 2.5px; text-transform: uppercase; text-shadow: 0 1px 2px rgba(0,0,0,0.4);">
                   ${headerTitle}
                 </h1>
-                <p style="color: #94a3b8; margin: 0; font-size: 13px; letter-spacing: 1px;">
+                <p class="lux-subtitle" style="color: #d6cfc4; margin: 0; font-size: 13px; letter-spacing: 1.4px; font-style: italic;">
                   ${headerSub}
                 </p>
               </td>
             </tr>
             <tr>
-              <td style="padding: 40px 30px; border-left: 1px solid #d4af37; border-right: 1px solid #d4af37; border-bottom: 1px solid #d4af37;">
+              <td class="lux-body" style="padding: 40px 32px; background-color: #121017;">
                 ${innerHtml}
-                <div style="margin-top: 35px; padding-top: 25px; border-top: 1px solid #2a1820; text-align: center;">
-                  <p style="color: #d4af37; margin: 0; font-size: 16px; font-weight: 600; letter-spacing: 1px;">Kanika Batra</p>
-                  <p style="color: #666; margin: 5px 0 0 0; font-size: 12px;">The Consilium</p>
+                <div style="margin-top: 38px; padding-top: 26px; border-top: 1px solid rgba(212,175,55,0.15); text-align: center;">
+                  <p style="color: #d4af37; margin: 0; font-size: 15px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase;">Kanika Batra</p>
+                  <p style="color: #a8a29a; margin: 6px 0 0 0; font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase;">The Consilium</p>
                 </div>
               </td>
             </tr>
@@ -1970,23 +1992,23 @@ export const sendConsiliumGiftInvite = async (
   const claimUrl = `${baseUrl}/consilium/claim?token=${claimToken}`;
 
   const inner = `
-    <p style="color: #f5f0ed; font-size: 18px; margin: 0 0 20px 0; line-height: 1.6;">
+    <p class="lux-body-text" style="color: #f5efe2; font-size: 19px; margin: 0 0 22px 0; line-height: 1.55; font-weight: 400;">
       Dear ${esc(recipientName)},
     </p>
-    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 20px 0; font-size: 15px;">
-      You bought the Sociopathic Dating Bible direct from kanikarose.com — not through Amazon, not through a middleman. That matters to me.
+    <p class="lux-body-text" style="color: #e8e3d8; line-height: 1.75; margin: 0 0 22px 0; font-size: 15.5px;">
+      You bought the Sociopathic Dating Bible direct from kanikarose.com &mdash; not through Amazon, not through a middleman. That matters to me.
     </p>
-    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 25px 0; font-size: 15px;">
-      As a thank-you, I'm giving you <strong style="color: #d4af37;">one month inside The Consilium, free</strong>. No card required. Your 30 days start the moment you claim — so claim when you're ready to actually use it.
+    <p class="lux-body-text" style="color: #e8e3d8; line-height: 1.75; margin: 0 0 30px 0; font-size: 15.5px;">
+      As a thank-you, I'm giving you <strong style="color: #f3d98a;">one month inside The Consilium, free</strong>. No card required. No auto-charge. Your 30 days start the moment you claim &mdash; so claim when you're ready to actually use it.
     </p>
-    <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
+    <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="margin: 0 0 30px 0;">
       <tr>
-        <td align="center" style="padding: 10px 0 30px 0;">
-          <table role="presentation" cellpadding="0" cellspacing="0" border="0">
+        <td align="center">
+          <table role="presentation" cellpadding="0" cellspacing="0" border="0" class="lux-cta-wrap">
             <tr>
-              <td style="background: #d4af37; border-radius: 999px; padding: 14px 32px;">
-                <a href="${claimUrl}" style="color: #050511; text-decoration: none; font-size: 14px; font-weight: 600; letter-spacing: 0.15em; text-transform: uppercase; display: inline-block;">
-                  Claim Your Free Month
+              <td style="background: linear-gradient(135deg, #f3d98a 0%, #d4af37 55%, #b08a1c 100%); border-radius: 999px; box-shadow: 0 6px 24px rgba(212,175,55,0.35);" align="center">
+                <a href="${claimUrl}" class="lux-cta" style="color: #1a0d11; text-decoration: none; font-size: 14px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; display: inline-block; padding: 17px 42px;">
+                  Claim Your Free Month &rarr;
                 </a>
               </td>
             </tr>
@@ -1994,17 +2016,17 @@ export const sendConsiliumGiftInvite = async (
         </td>
       </tr>
     </table>
-    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 15px 0; font-size: 14px;">
-      What you'll get inside:
-    </p>
-    <ul style="color: #94a3b8; line-height: 1.8; margin: 0 0 25px 0; padding-left: 20px; font-size: 14px;">
-      <li>The full course library — dark psychology, pattern recognition, career power</li>
-      <li>Voice notes from me — raw, unfiltered, nothing I post publicly</li>
-      <li>The feed — daily insights and discussions from inside</li>
-      <li>Early-access post previews — the next blog posts, read before anyone else</li>
-    </ul>
-    <p style="color: #94a3b8; line-height: 1.8; margin: 0; font-size: 13px; text-align: center;">
-      If the claim button doesn't work, copy-paste this into your browser: <a href="${claimUrl}" style="color: #d4af37; word-break: break-all;">${claimUrl}</a>
+    <div style="background: rgba(212,175,55,0.06); border-left: 3px solid #d4af37; border-radius: 6px; padding: 18px 20px; margin: 0 0 28px 0;">
+      <p class="lux-body-text" style="color: #f3d98a; font-size: 12px; letter-spacing: 1.5px; text-transform: uppercase; margin: 0 0 10px 0; font-weight: 600;">What you get inside</p>
+      <ul class="lux-body-text" style="color: #e8e3d8; line-height: 1.85; margin: 0; padding-left: 18px; font-size: 14.5px;">
+        <li>The full course library &mdash; dark psychology, pattern recognition, career power</li>
+        <li>Voice notes from me &mdash; raw, unfiltered, nothing I post publicly</li>
+        <li>The feed &mdash; daily insights and discussions from inside</li>
+        <li>Early-access post previews &mdash; the next blog posts, read before anyone else</li>
+      </ul>
+    </div>
+    <p class="lux-muted-text" style="color: #a8a29a; line-height: 1.7; margin: 0; font-size: 12px; text-align: center;">
+      Button not working? Paste this: <a href="${claimUrl}" style="color: #d4af37; word-break: break-all;">${claimUrl}</a>
     </p>
   `;
 
