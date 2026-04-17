@@ -40,8 +40,12 @@ export default function VoiceNotesPage() {
   const [uploadStatus, setUploadStatus] = useState<"idle" | "success" | "error">("idle");
   const [statusMessage, setStatusMessage] = useState("");
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const micInputRef = useRef<HTMLInputElement>(null);
 
-  const ACCEPTED_TYPES = ".mp3,.m4a,.wav,.ogg,.webm";
+  // Combined extension + wildcard so iOS Safari Files/Voice Memos picker
+  // lets you select .m4a files (which it sometimes filters out with an
+  // extension-only accept attr), and Android/desktop still see explicit exts.
+  const ACCEPTED_TYPES = "audio/*,.mp3,.m4a,.mp4,.wav,.ogg,.webm,.aac,.caf";
 
   const fetchVoiceNotes = useCallback(async () => {
     try {
@@ -70,13 +74,26 @@ export default function VoiceNotesPage() {
     const dropped = e.dataTransfer.files[0];
     if (dropped && isValidAudio(dropped)) {
       setFile(dropped);
+    } else if (dropped) {
+      setUploadStatus("error");
+      setStatusMessage(
+        "That file doesn't look like audio. Supported: MP3, M4A, MP4, WAV, OGG, WEBM, AAC, CAF.",
+      );
     }
   }
 
+  // Accept anything whose extension OR MIME type looks like audio. iPhone
+  // Voice Memos shared via the Files app occasionally arrive with empty
+  // extension but a correct audio/* MIME, and the reverse also happens.
   function isValidAudio(f: File): boolean {
-    const validExts = ["mp3", "m4a", "wav", "ogg", "webm"];
+    const validExts = ["mp3", "m4a", "mp4", "wav", "ogg", "webm", "aac", "caf"];
     const ext = f.name.split(".").pop()?.toLowerCase() || "";
-    return validExts.includes(ext);
+    if (ext && validExts.includes(ext)) return true;
+    const mime = (f.type || "").toLowerCase();
+    if (mime.startsWith("audio/")) return true;
+    // iOS occasionally reports recordings as video/mp4 (AAC-in-MP4).
+    if (mime === "video/mp4") return true;
+    return false;
   }
 
   function formatFileSize(bytes: number): string {
@@ -215,6 +232,38 @@ export default function VoiceNotesPage() {
               onRecorded={(f) => setFile(f)}
               disabled={submitting}
             />
+            <button
+              type="button"
+              onClick={() => micInputRef.current?.click()}
+              className="mt-2 w-full sm:w-auto flex items-center justify-center gap-2 px-4 py-3 bg-white/[0.02] border border-white/10 rounded text-sm text-text-gray hover:border-accent-gold/30 hover:text-accent-gold transition-all sm:hidden"
+            >
+              <Mic size={14} />
+              Record with iPhone mic
+            </button>
+            <input
+              ref={micInputRef}
+              type="file"
+              accept="audio/*"
+              // `capture` tells iOS/Android Safari to open the mic directly
+              // instead of the Files picker. Desktop browsers ignore it and
+              // fall back to a normal file dialog.
+              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+              // @ts-ignore — `capture` is valid HTML but TS types lag
+              capture="user"
+              onChange={(e) => {
+                const f = e.target.files?.[0];
+                if (f && isValidAudio(f)) {
+                  setFile(f);
+                  setUploadStatus("idle");
+                } else if (f) {
+                  setUploadStatus("error");
+                  setStatusMessage(
+                    "That recording didn't come through as audio. Try again or use Voice Memos → Share → Save to Files → Upload File.",
+                  );
+                }
+              }}
+              className="hidden"
+            />
           </div>
 
           <div className="flex items-center gap-3">
@@ -249,7 +298,15 @@ export default function VoiceNotesPage() {
                 accept={ACCEPTED_TYPES}
                 onChange={(e) => {
                   const f = e.target.files?.[0];
-                  if (f && isValidAudio(f)) setFile(f);
+                  if (f && isValidAudio(f)) {
+                    setFile(f);
+                    setUploadStatus("idle");
+                  } else if (f) {
+                    setUploadStatus("error");
+                    setStatusMessage(
+                      "That file doesn't look like audio. Try an MP3, M4A, WAV, OGG, WEBM, AAC, or CAF file.",
+                    );
+                  }
                 }}
                 className="hidden"
               />
@@ -279,7 +336,10 @@ export default function VoiceNotesPage() {
                     Drag and drop or click to browse
                   </p>
                   <p className="text-text-gray/50 text-xs">
-                    MP3, M4A, WAV, OGG, WEBM &middot; Max 50MB
+                    MP3, M4A, MP4, WAV, OGG, WEBM, AAC, CAF &middot; Max 50MB
+                  </p>
+                  <p className="text-text-gray/40 text-[10px] mt-2">
+                    iPhone: record with Voice Memos → Share → Save to Files → pick it here.
                   </p>
                 </div>
               )}

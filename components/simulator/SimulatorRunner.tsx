@@ -1,6 +1,9 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { createPortal } from "react-dom";
+import Link from "next/link";
+import { X } from "lucide-react";
 import { AnimatePresence } from "framer-motion";
 import type {
   Scenario,
@@ -57,6 +60,25 @@ export default function SimulatorRunner({
     initialState ?? initState(scenario),
   );
   const [lineIndex, setLineIndex] = useState(0);
+  // Portal target — document.body. Escapes the parent layout's stacking
+  // context (the consilium member layout wraps content in `relative z-10`,
+  // which caps our `z-[60]` against the Header at `z-50` and causes the
+  // header to overlap the game). Portal is null until mount so SSR doesn't
+  // blow up; the first render is empty then re-renders with the real tree.
+  const [portalReady, setPortalReady] = useState(false);
+  useEffect(() => {
+    setPortalReady(true);
+  }, []);
+
+  // Lock the body scroll while the game is mounted — prevents mobile Safari
+  // from bouncing the underlying page behind the portal.
+  useEffect(() => {
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = previousOverflow;
+    };
+  }, []);
   // Dopamine state — XP floater + optimal-streak tracking
   const [xpFloat, setXpFloat] = useState<{
     id: number;
@@ -171,21 +193,40 @@ export default function SimulatorRunner({
     setXpFloat(null);
   }, [scenario]);
 
+  // Exit button — small icon, top-right, above the letterbox. Shown on all
+  // breakpoints but sized/positioned so it doesn't compete with content.
+  // `href` returns to the scenario index. On mobile it's the primary way
+  // out of the full-screen game (the site Header is now hidden behind the
+  // portal). On desktop it's a quieter affordance.
+  const exitButton = (
+    <Link
+      href="/consilium/simulator"
+      aria-label="Exit scenario"
+      className="fixed top-[max(env(safe-area-inset-top),0.5rem)] right-[max(env(safe-area-inset-right),0.75rem)] z-[70] flex items-center justify-center w-10 h-10 sm:w-9 sm:h-9 rounded-full bg-deep-black/70 backdrop-blur-md border border-white/15 text-text-gray hover:text-accent-gold hover:border-accent-gold/40 active:scale-95 transition-all"
+    >
+      <X size={18} strokeWidth={1.5} />
+    </Link>
+  );
+
   if (!scene) {
     // Unknown scene id — bad data or tampered state. Fail gracefully.
-    return (
+    const missing = (
       <div className="fixed inset-0 z-[60] bg-deep-black flex items-center justify-center text-text-gray">
+        {exitButton}
         <p className="text-sm">Scene missing. Restart the scenario.</p>
       </div>
     );
+    if (!portalReady) return null;
+    return createPortal(missing, document.body);
   }
 
   // Ending scene — dedicated cinematic layout
   if (scene.isEnding) {
-    return (
+    const ending = (
       <div className="fixed inset-0 z-[60] bg-deep-black overflow-y-auto">
         <MoodBackground mood={scene.mood ?? "mysterious"} />
         <Letterbox />
+        {exitButton}
         <AnimatePresence mode="wait">
           <EndingScreen
             key={scene.id}
@@ -199,6 +240,8 @@ export default function SimulatorRunner({
         </AnimatePresence>
       </div>
     );
+    if (!portalReady) return null;
+    return createPortal(ending, document.body);
   }
 
   // Dialog scene
@@ -210,13 +253,18 @@ export default function SimulatorRunner({
   //   [ cast zone ]            absolute, centered between label and dialog
   //   [ dialog/choices zone ]  absolute bottom, min-height reserved so
   //                            choice cards don't push up the dialog above
-  return (
+  //
+  // The whole thing is rendered through a portal to document.body so it
+  // escapes the consilium layout's z-10 stacking context and properly
+  // covers the site Header on every breakpoint (mobile in particular).
+  const game = (
     <div className="fixed inset-0 z-[60] bg-deep-black overflow-hidden">
       <MoodBackground mood={scene.mood} />
       <Letterbox />
       <ImmersionOverlay sceneId={scene.id} trigger={scene.immersionTrigger} />
       <SceneProgress scenario={scenario} state={state} />
       <StreakIndicator streak={streak} />
+      {exitButton}
       <XpFloater
         show={!!xpFloat}
         xp={xpFloat?.xp ?? 0}
@@ -332,4 +380,7 @@ export default function SimulatorRunner({
       </SceneShake>
     </div>
   );
+
+  if (!portalReady) return null;
+  return createPortal(game, document.body);
 }

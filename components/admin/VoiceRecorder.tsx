@@ -45,6 +45,14 @@ export default function VoiceRecorder({ onRecorded, disabled }: Props) {
 
   async function start() {
     setError(null);
+
+    if (typeof MediaRecorder === "undefined") {
+      setError(
+        "This browser can't record audio. On iPhone, use Safari 14.5+ or tap \"Upload File\" and record with the Voice Memos app.",
+      );
+      return;
+    }
+
     try {
       const stream = await navigator.mediaDevices.getUserMedia({
         audio: {
@@ -55,17 +63,33 @@ export default function VoiceRecorder({ onRecorded, disabled }: Props) {
       });
       streamRef.current = stream;
 
-      // Let the browser pick the format. Chrome/Edge prefer webm/opus,
-      // Safari prefers mp4/aac. Our upload endpoint accepts both.
-      const mimeType = MediaRecorder.isTypeSupported("audio/webm;codecs=opus")
-        ? "audio/webm;codecs=opus"
-        : MediaRecorder.isTypeSupported("audio/mp4")
-          ? "audio/mp4"
-          : "";
+      // Let the browser pick the format. Chrome/Edge prefer webm/opus, iOS
+      // Safari prefers audio/mp4 (AAC). On iOS, isTypeSupported sometimes
+      // lies — we try in order and let the MediaRecorder constructor throw
+      // if the type isn't actually supported, then fall back to unspecified.
+      const candidates = [
+        "audio/webm;codecs=opus",
+        "audio/webm",
+        "audio/mp4",
+        "audio/aac",
+      ];
+      const preferred = candidates.find(
+        (t) =>
+          typeof MediaRecorder.isTypeSupported === "function" &&
+          MediaRecorder.isTypeSupported(t),
+      );
 
-      const recorder = mimeType
-        ? new MediaRecorder(stream, { mimeType })
-        : new MediaRecorder(stream);
+      let recorder: MediaRecorder;
+      try {
+        recorder = preferred
+          ? new MediaRecorder(stream, { mimeType: preferred })
+          : new MediaRecorder(stream);
+      } catch {
+        // iOS Safari sometimes reports a type as supported then rejects it.
+        // Retry with no mimeType and accept whatever the browser gives us.
+        recorder = new MediaRecorder(stream);
+      }
+
       mediaRecorderRef.current = recorder;
       chunksRef.current = [];
 
@@ -74,15 +98,21 @@ export default function VoiceRecorder({ onRecorded, disabled }: Props) {
       };
 
       recorder.onstop = () => {
-        const blob = new Blob(chunksRef.current, {
-          type: recorder.mimeType || "audio/webm",
-        });
-        // Extension to match the blob type, so the server-side validator
-        // sees a consistent extension + MIME + magic-byte combo.
-        const ext = blob.type.includes("mp4") ? "mp4" : "webm";
-        const file = new File([blob], `voice-note-${Date.now()}.${ext}`, {
-          type: blob.type,
-        });
+        const type = recorder.mimeType || "audio/mp4";
+        const blob = new Blob(chunksRef.current, { type });
+        // Pick extension from the actual recorded MIME. iOS returns
+        // "audio/mp4;codecs=mp4a.40.2" → m4a. Others: webm → webm, ogg → ogg.
+        // The server re-sniffs magic bytes regardless, so a wrong guess
+        // still uploads — this just gives a sensible filename.
+        const lower = type.toLowerCase();
+        const ext = lower.includes("mp4") || lower.includes("aac") || lower.includes("mpeg")
+          ? "m4a"
+          : lower.includes("ogg")
+            ? "ogg"
+            : lower.includes("wav")
+              ? "wav"
+              : "webm";
+        const file = new File([blob], `voice-note-${Date.now()}.${ext}`, { type });
         onRecorded(file);
         setStatus("stopped");
       };

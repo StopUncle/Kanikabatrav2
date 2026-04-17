@@ -205,6 +205,26 @@ export default function BookShowcase() {
                     icon="card"
                   />
 
+                  {/* Book + Consilium bundles — matched to the book page so
+                      the landing page captures the same upsell. Only shown
+                      post-launch. */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <StripeButton
+                      priceKey="BOOK_CONSILIUM_1MO"
+                      label="+ 1 month Consilium"
+                      price="$39"
+                      icon="none"
+                      className="w-full py-3 px-5 rounded-full border border-warm-gold/40 bg-warm-gold/[0.04] text-warm-gold text-sm font-medium tracking-wider transition-all duration-300 hover:bg-warm-gold/[0.08] hover:border-warm-gold/70 disabled:opacity-50 flex items-center justify-center gap-2 whitespace-nowrap"
+                    />
+                    <StripeButton
+                      priceKey="BOOK_CONSILIUM_3MO"
+                      label="+ 3 months · save $33"
+                      price="$79"
+                      icon="none"
+                      className="w-full py-3 px-5 rounded-full border border-warm-gold/70 bg-warm-gold/10 text-warm-gold text-sm font-semibold tracking-wider transition-all duration-300 hover:bg-warm-gold/20 hover:border-warm-gold disabled:opacity-50 flex items-center justify-center gap-2 whitespace-nowrap shadow-[0_0_20px_-8px_rgba(212,175,55,0.4)]"
+                    />
+                  </div>
+
                   {/* Guarantee */}
                   <div className="flex items-center justify-center gap-2 text-text-gray text-xs">
                     <ShieldCheck size={14} className="text-accent-gold" />
