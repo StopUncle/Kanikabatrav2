@@ -1283,67 +1283,79 @@ interface ApplicationDetails {
 
 const luxuryEmailShell = (innerHtml: string, headerTitle: string, headerSub: string): string => `
   <!DOCTYPE html>
-  <html lang="en" style="background-color: #060509;">
+  <html lang="en" style="background-color: #1a0d11;">
   <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <!-- Tell clients we were DESIGNED for dark so they stop auto-inverting
-         our already-dark palette into some muddy mid-grey on iPhone. -->
     <meta name="color-scheme" content="only dark">
     <meta name="supported-color-schemes" content="only dark">
     <title>${headerTitle}</title>
+    <!--[if mso]>
+    <xml>
+      <o:OfficeDocumentSettings>
+        <o:PixelsPerInch>96</o:PixelsPerInch>
+      </o:OfficeDocumentSettings>
+    </xml>
+    <![endif]-->
     <style>
-      /* Belt-and-braces dark lock — iOS clients (Outlook, Gmail, Spark) all
-         read one or more of these selectors. Stops the background drifting
-         toward grey when the device is in light or dark mode. */
+      /* Deep-burgundy palette instead of near-black. Outlook iOS and Spark
+         will still lighten dark areas slightly, but burgundy → muted
+         burgundy reads as intentional brand color, not "grey bug". */
       :root { color-scheme: only dark; supported-color-schemes: only dark; }
-      html, body { background-color: #060509 !important; }
-      [data-ogsc] body,
-      [data-ogsb] body {
-        background-color: #060509 !important;
-      }
-      [data-ogsc] .lux-body-text { color: #efe9de !important; }
-      [data-ogsc] .lux-muted-text { color: #c2bdb4 !important; }
+      html, body { background-color: #1a0d11 !important; margin: 0 !important; padding: 0 !important; }
 
-      /* Phone layout — tighten padding, bigger type, full-width CTA. */
+      /* Outlook iOS (two variants: data-ogsc / data-ogsb) + Outlook web. */
+      [data-ogsc] body, [data-ogsb] body { background-color: #1a0d11 !important; }
+      [data-ogsc] .lux-card, [data-ogsb] .lux-card { background-color: #1a0d11 !important; }
+      [data-ogsc] .lux-body, [data-ogsb] .lux-body { background-color: #1a0d11 !important; }
+      [data-ogsc] .lux-text, [data-ogsb] .lux-text { color: #f5efe2 !important; }
+      [data-ogsc] .lux-muted, [data-ogsb] .lux-muted { color: #d6cfc4 !important; }
+
+      /* Gmail dark-mode (u+.body selector) */
+      u + .lux-body-wrap { background-color: #1a0d11 !important; }
+
+      /* Phone layout. */
       @media only screen and (max-width: 600px) {
-        .lux-outer-pad { padding: 16px 8px !important; }
-        .lux-card      { border-radius: 14px !important; }
-        .lux-header    { padding: 30px 22px !important; }
-        .lux-title     { font-size: 21px !important; letter-spacing: 1.3px !important; }
+        .lux-outer-pad { padding: 0 !important; }
+        .lux-card      { border-radius: 0 !important; }
+        .lux-header    { padding: 32px 24px !important; }
+        .lux-title     { font-size: 22px !important; letter-spacing: 1.5px !important; }
         .lux-subtitle  { font-size: 12px !important; }
-        .lux-body      { padding: 26px 20px !important; }
-        .lux-body p    { font-size: 16px !important; line-height: 1.7 !important; }
-        .lux-cta       { padding: 16px 26px !important; font-size: 15px !important; width: 100% !important; box-sizing: border-box !important; }
-        .lux-cta-wrap  { width: 100% !important; }
+        .lux-body      { padding: 30px 22px !important; }
+        .lux-body p    { font-size: 16px !important; line-height: 1.75 !important; }
+        .lux-cta-td    { width: 100% !important; display: block !important; }
+        .lux-cta       { padding: 18px 24px !important; font-size: 15px !important; width: 100% !important; box-sizing: border-box !important; display: block !important; }
       }
     </style>
   </head>
-  <body bgcolor="#060509" style="margin: 0; padding: 0; background-color: #060509; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; -webkit-font-smoothing: antialiased;">
-    <!-- Full-width outer table with explicit bgcolor attr (Gmail prefers
-         attrs to CSS; this keeps the background locked to near-black even
-         when the mobile client tries to remap dark palettes). -->
-    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" bgcolor="#060509" style="background-color: #060509; width: 100%;">
+  <body bgcolor="#1a0d11" class="lux-body-wrap" style="margin: 0; padding: 0; background-color: #1a0d11; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; -webkit-font-smoothing: antialiased;">
+    <!-- Hidden preheader — shows as snippet preview next to subject in most
+         inbox lists. Burns 90 NBSPs so other quoted content doesn't leak in. -->
+    <div style="display: none; max-height: 0; overflow: hidden; opacity: 0; visibility: hidden; mso-hide: all; font-size: 1px; line-height: 1px; color: #1a0d11;">
+      A thank-you from Kanika — one month inside The Consilium, on the house.
+      &#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;
+    </div>
+    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" bgcolor="#1a0d11" style="background-color: #1a0d11; width: 100%;">
       <tr>
-        <td align="center" class="lux-outer-pad" bgcolor="#060509" style="padding: 40px 20px; background-color: #060509;">
-          <table role="presentation" width="600" cellspacing="0" cellpadding="0" border="0" bgcolor="#14101a" class="lux-card" style="max-width: 600px; width: 100%; background-color: #14101a; border-radius: 20px; overflow: hidden;">
+        <td align="center" class="lux-outer-pad" bgcolor="#1a0d11" style="padding: 32px 16px; background-color: #1a0d11;">
+          <table role="presentation" width="600" cellspacing="0" cellpadding="0" border="0" bgcolor="#1a0d11" class="lux-card" style="max-width: 600px; width: 100%; background-color: #1a0d11; border: 1px solid #3a1f2a; border-radius: 16px; overflow: hidden;">
             <tr>
-              <td class="lux-header" bgcolor="#3d0f1a" style="background-color: #3d0f1a; background: linear-gradient(135deg, #4a1426 0%, #3d0f1a 55%, #2a0a12 100%); padding: 44px 32px; text-align: center; border-bottom: 1px solid #5a2030;">
-                <h1 class="lux-title" style="color: #f3d98a; margin: 0 0 10px 0; font-size: 26px; font-weight: 300; letter-spacing: 2.5px; text-transform: uppercase;">
+              <td class="lux-header" bgcolor="#3d0f1a" style="background-color: #3d0f1a; padding: 44px 32px; text-align: center; border-bottom: 1px solid #5a2030;">
+                <h1 class="lux-title lux-text" style="color: #f3d98a; margin: 0 0 10px 0; font-size: 26px; font-weight: 300; letter-spacing: 2.5px; text-transform: uppercase;">
                   ${headerTitle}
                 </h1>
-                <p class="lux-subtitle" style="color: #e5dccc; margin: 0; font-size: 13px; letter-spacing: 1.4px; font-style: italic;">
+                <p class="lux-subtitle lux-muted" style="color: #e5dccc; margin: 0; font-size: 13px; letter-spacing: 1.4px; font-style: italic;">
                   ${headerSub}
                 </p>
               </td>
             </tr>
             <tr>
-              <td class="lux-body" bgcolor="#14101a" style="padding: 40px 32px; background-color: #14101a;">
+              <td class="lux-body" bgcolor="#1a0d11" style="padding: 40px 32px; background-color: #1a0d11;">
                 ${innerHtml}
-                <div style="margin-top: 38px; padding-top: 26px; border-top: 1px solid #2b2236; text-align: center;">
-                  <p style="color: #d4af37; margin: 0; font-size: 15px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase;">Kanika Batra</p>
-                  <p style="color: #a8a29a; margin: 6px 0 0 0; font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase;">The Consilium</p>
+                <div style="margin-top: 38px; padding-top: 26px; border-top: 1px solid #3a1f2a; text-align: center;">
+                  <p class="lux-text" style="color: #d4af37; margin: 0; font-size: 15px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase;">Kanika Batra</p>
+                  <p class="lux-muted" style="color: #b8a89a; margin: 6px 0 0 0; font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase;">The Consilium</p>
                 </div>
               </td>
             </tr>
@@ -2004,40 +2016,43 @@ export const sendConsiliumGiftInvite = async (
   const claimUrl = `${baseUrl}/consilium/claim?token=${claimToken}`;
 
   const inner = `
-    <p class="lux-body-text" style="color: #f5efe2; font-size: 19px; margin: 0 0 22px 0; line-height: 1.55; font-weight: 400;">
+    <p class="lux-text" style="color: #f5efe2; font-size: 19px; margin: 0 0 22px 0; line-height: 1.55; font-weight: 400;">
       Dear ${esc(recipientName)},
     </p>
-    <p class="lux-body-text" style="color: #e8e3d8; line-height: 1.75; margin: 0 0 22px 0; font-size: 15.5px;">
+    <p class="lux-text" style="color: #efe7d6; line-height: 1.75; margin: 0 0 22px 0; font-size: 15.5px;">
       You bought the Sociopathic Dating Bible direct from kanikarose.com &mdash; not through Amazon, not through a middleman. That matters to me.
     </p>
-    <p class="lux-body-text" style="color: #e8e3d8; line-height: 1.75; margin: 0 0 30px 0; font-size: 15.5px;">
+    <p class="lux-text" style="color: #efe7d6; line-height: 1.75; margin: 0 0 30px 0; font-size: 15.5px;">
       As a thank-you, I'm giving you <strong style="color: #f3d98a;">one month inside The Consilium, free</strong>. No card required. No auto-charge. Your 30 days start the moment you claim &mdash; so claim when you're ready to actually use it.
     </p>
-    <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="margin: 0 0 30px 0;">
+    <!-- Bulletproof button: bgcolor attr + inline background-color so
+         Outlook desktop, which ignores CSS gradients and sometimes strips
+         background, still renders solid gold. Text color 0d0d0d (not
+         burgundy-dark) because Outlook dark mode leaves near-black alone
+         but flips tinted dark text to light. -->
+    <table role="presentation" cellpadding="0" cellspacing="0" border="0" align="center" style="margin: 0 auto 30px auto;">
       <tr>
-        <td align="center">
-          <table role="presentation" cellpadding="0" cellspacing="0" border="0" class="lux-cta-wrap">
-            <tr>
-              <td style="background: linear-gradient(135deg, #f3d98a 0%, #d4af37 55%, #b08a1c 100%); border-radius: 999px; box-shadow: 0 6px 24px rgba(212,175,55,0.35);" align="center">
-                <a href="${claimUrl}" class="lux-cta" style="color: #1a0d11; text-decoration: none; font-size: 14px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; display: inline-block; padding: 17px 42px;">
-                  Claim Your Free Month &rarr;
-                </a>
-              </td>
-            </tr>
-          </table>
+        <td align="center" bgcolor="#d4af37" class="lux-cta-td" style="background-color: #d4af37; border-radius: 999px;">
+          <a href="${claimUrl}" class="lux-cta" style="background-color: #d4af37; color: #0d0d0d; text-decoration: none; font-size: 14px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; display: inline-block; padding: 17px 40px; border-radius: 999px; mso-padding-alt: 0;">
+            <span style="color: #0d0d0d; text-decoration: none;">Claim Your Free Month &rarr;</span>
+          </a>
         </td>
       </tr>
     </table>
-    <div style="background: rgba(212,175,55,0.06); border-left: 3px solid #d4af37; border-radius: 6px; padding: 18px 20px; margin: 0 0 28px 0;">
-      <p class="lux-body-text" style="color: #f3d98a; font-size: 12px; letter-spacing: 1.5px; text-transform: uppercase; margin: 0 0 10px 0; font-weight: 600;">What you get inside</p>
-      <ul class="lux-body-text" style="color: #e8e3d8; line-height: 1.85; margin: 0; padding-left: 18px; font-size: 14.5px;">
-        <li>The full course library &mdash; dark psychology, pattern recognition, career power</li>
-        <li>Voice notes from me &mdash; raw, unfiltered, nothing I post publicly</li>
-        <li>The feed &mdash; daily insights and discussions from inside</li>
-        <li>Early-access post previews &mdash; the next blog posts, read before anyone else</li>
-      </ul>
-    </div>
-    <p class="lux-muted-text" style="color: #a8a29a; line-height: 1.7; margin: 0; font-size: 12px; text-align: center;">
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin: 0 0 28px 0;">
+      <tr>
+        <td bgcolor="#22151a" style="background-color: #22151a; border-left: 3px solid #d4af37; border-radius: 6px; padding: 18px 20px;">
+          <p class="lux-text" style="color: #f3d98a; font-size: 12px; letter-spacing: 1.5px; text-transform: uppercase; margin: 0 0 10px 0; font-weight: 600;">What you get inside</p>
+          <ul class="lux-text" style="color: #efe7d6; line-height: 1.85; margin: 0; padding-left: 18px; font-size: 14.5px;">
+            <li>The full course library &mdash; dark psychology, pattern recognition, career power</li>
+            <li>Voice notes from me &mdash; raw, unfiltered, nothing I post publicly</li>
+            <li>The feed &mdash; daily insights and discussions from inside</li>
+            <li>Early-access post previews &mdash; the next blog posts, read before anyone else</li>
+          </ul>
+        </td>
+      </tr>
+    </table>
+    <p class="lux-muted" style="color: #b8a89a; line-height: 1.7; margin: 0; font-size: 12px; text-align: center;">
       Button not working? Paste this: <a href="${claimUrl}" style="color: #d4af37; word-break: break-all;">${claimUrl}</a>
     </p>
   `;
