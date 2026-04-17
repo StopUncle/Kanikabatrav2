@@ -1884,6 +1884,77 @@ export const sendTrialExpiringSoon = async (
 };
 
 /**
+ * Generic "membership ending soon" email. Covers every non-renewing
+ * billing cycle — gift (1 month free), bundle-1mo, bundle-3mo, trial.
+ * Paid monthly/annual subscriptions don't use this (Stripe handles renewal).
+ *
+ * One upgrade CTA → Stripe checkout for the standard $29/mo subscription.
+ */
+export const sendMembershipEndingSoon = async (
+  memberEmail: string,
+  memberName: string,
+  daysLeft: number,
+  billingCycle: string,
+): Promise<boolean> => {
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://kanikarose.com";
+  const upgradeUrl = `${baseUrl}/consilium?upgrade=1`;
+
+  const cycleLabel =
+    billingCycle === "gift"
+      ? "free month"
+      : billingCycle === "bundle-1mo"
+        ? "Book + 1 month bundle"
+        : billingCycle === "bundle-3mo"
+          ? "Book + 3 month bundle"
+          : billingCycle === "trial"
+            ? "trial"
+            : "access";
+
+  const headerKicker =
+    billingCycle === "gift"
+      ? "Your free month"
+      : billingCycle === "bundle-3mo"
+        ? "Your 3 months"
+        : billingCycle === "bundle-1mo"
+          ? "Your month"
+          : "Your trial";
+
+  const inner = `
+    <p style="color: #f5f0ed; font-size: 18px; margin: 0 0 20px 0; line-height: 1.6;">
+      ${esc(memberName)},
+    </p>
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 25px 0; font-size: 15px;">
+      Heads-up — your ${esc(cycleLabel)} inside The Consilium ends in <strong style="color: #d4af37;">${daysLeft} day${daysLeft === 1 ? "" : "s"}</strong>. No auto-charge. No surprises. Access just lapses unless you decide to keep it.
+    </p>
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 25px 0; font-size: 15px;">
+      If you've been using it — keep it. The feed, voice notes, classroom, and community carry on at <strong style="color: #d4af37;">$29/month</strong>, cancel anytime.
+    </p>
+    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="margin: 0 0 25px 0;">
+      <tr>
+        <td align="center">
+          <table role="presentation" cellspacing="0" cellpadding="0" border="0">
+            <tr>
+              <td bgcolor="#d4af37" style="border-radius: 50px;" align="center">
+                <a href="${upgradeUrl}" target="_blank" style="display: inline-block; color: #050511; padding: 16px 40px; text-decoration: none; font-weight: 700; font-size: 15px; letter-spacing: 1px; text-transform: uppercase; border-radius: 50px;">Keep My Access</a>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+    <p style="color: #94a3b8; line-height: 1.6; margin: 0 0 15px 0; font-size: 13px; text-align: center; font-style: italic;">
+      You won't be billed unless you choose to subscribe. Just letting you know the clock.
+    </p>
+  `;
+
+  return await sendEmail({
+    to: memberEmail,
+    subject: `${headerKicker} inside The Consilium ends in ${daysLeft} day${daysLeft === 1 ? "" : "s"}`,
+    html: luxuryEmailShell(inner, "Your access is ending", "The Consilium"),
+  });
+};
+
+/**
  * Gift-invite email for past book buyers — thank-you + claim button
  * that grants 1 month of Consilium access. The claim link hits the
  * existing /api/consilium/claim-trial endpoint with a token that

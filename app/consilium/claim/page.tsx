@@ -1,12 +1,17 @@
 import { redirect } from "next/navigation";
+import { cookies } from "next/headers";
 import Link from "next/link";
 import jwt from "jsonwebtoken";
+import crypto from "crypto";
 import { optionalServerAuth } from "@/lib/auth/server-auth";
 import { prisma } from "@/lib/prisma";
+import { hashPassword } from "@/lib/auth/password";
+import { generateTokenPair } from "@/lib/auth/jwt";
+import { sendInnerCircleWelcomeNewUser } from "@/lib/email";
 import Header from "@/components/Header";
 import BackgroundEffects from "@/components/BackgroundEffects";
 import ConsiliumSeal from "@/components/ConsiliumSeal";
-import { ArrowRight, AlertTriangle, CheckCircle2 } from "lucide-react";
+import { ArrowRight, AlertTriangle, CheckCircle2, Gift } from "lucide-react";
 
 export const metadata = {
   title: "Claim Your Free Month — The Consilium",
@@ -20,90 +25,65 @@ interface GiftPayload {
   v: number;
 }
 
+function verifyGiftToken(token: string): GiftPayload {
+  // Algorithm pinned to HS256 to prevent `alg: none` forgery. The
+  // backfill script + send-test-gift-email script both sign with HS256.
+  const payload = jwt.verify(token, process.env.JWT_SECRET!, {
+    algorithms: ["HS256"],
+  }) as GiftPayload;
+  if (payload.type !== "consilium-gift") {
+    throw new Error("wrong token type");
+  }
+  return payload;
+}
+
 /**
- * /consilium/claim?token=...
+ * Magic-claim server action.
  *
- * Landing page for the gift-invite email. Verifies the JWT, then:
- *  - No token / bad token       → error screen
- *  - Not logged in              → send to /login?returnTo=... (preserves token)
- *  - Logged in, email mismatch  → error (claim is tied to the book-buyer email)
- *  - Logged in, email matches   → activate 30-day membership + redirect to feed
+ * Re-verifies the JWT server-side (never trust the client), finds-or-creates
+ * the user account, signs them into a session, activates the 30-day
+ * membership, and sends a "set your password" email for the new-user case
+ * so they can log back in from any device later.
  *
- * Claim token has 90-day expiry (signed in the backfill script). After
- * claim, the 30-day countdown starts from now.
+ * Wrapped in a button-submitted form (not auto-on-page-load) so email
+ * pre-scanners (Outlook SafeLinks, Gmail image proxies) don't accidentally
+ * consume the claim.
  */
-export default async function ClaimPage({
-  searchParams,
-}: {
-  searchParams: Promise<{ token?: string }>;
-}) {
-  const { token } = await searchParams;
+async function claimAction(formData: FormData): Promise<void> {
+  "use server";
 
-  if (!token) return <ErrorScreen heading="Missing claim link" />;
+  const token = String(formData.get("token") ?? "");
+  if (!token) return;
 
-  let payload: GiftPayload;
-  try {
-    // Pin the algorithm so an attacker can't forge a token by swapping
-    // to `none` or a weaker algorithm. The backfill script signs with
-    // HS256 (jsonwebtoken's default), so HS256 is the only acceptable
-    // verification algorithm.
-    payload = jwt.verify(token, process.env.JWT_SECRET!, {
-      algorithms: ["HS256"],
-    }) as GiftPayload;
-    if (payload.type !== "consilium-gift") {
-      throw new Error("wrong token type");
-    }
-  } catch {
-    return <ErrorScreen heading="This claim link is invalid or expired" />;
-  }
+  const payload = verifyGiftToken(token);
+  const normalizedEmail = payload.email.toLowerCase();
 
-  const userId = await optionalServerAuth();
-
-  // Not logged in — bounce to login, preserving the token so we come
-  // back here after auth.
-  if (!userId) {
-    const returnTo = encodeURIComponent(`/consilium/claim?token=${token}`);
-    redirect(`/login?returnTo=${returnTo}`);
-  }
-
-  const user = await prisma.user.findUnique({
-    where: { id: userId },
-    select: {
-      id: true,
-      email: true,
-      communityMembership: {
-        select: { status: true, billingCycle: true },
-      },
-    },
+  // Find or create the user. Guest book-buyers with no account get a
+  // fresh user with a random password — they'll set their real one via
+  // the welcome email.
+  let user = await prisma.user.findUnique({
+    where: { email: normalizedEmail },
+    select: { id: true, email: true, name: true, tokenVersion: true },
   });
+  let isNewUser = false;
 
-  if (!user) return <ErrorScreen heading="Account lookup failed" />;
-
-  // Email mismatch — the claim is tied to the book-buyer's email.
-  if (user.email.toLowerCase() !== payload.email.toLowerCase()) {
-    return (
-      <ErrorScreen
-        heading="This gift belongs to a different account"
-        body={`The claim was issued to ${payload.email}. Log in with that email to claim.`}
-      />
-    );
+  if (!user) {
+    const tempPassword = crypto.randomBytes(24).toString("hex");
+    const hashed = await hashPassword(tempPassword);
+    const created = await prisma.user.create({
+      data: {
+        email: normalizedEmail,
+        password: hashed,
+        name: payload.name || "Reader",
+      },
+      select: { id: true, email: true, name: true, tokenVersion: true },
+    });
+    user = created;
+    isNewUser = true;
   }
 
-  // Already an ACTIVE paying member — their access is already covered,
-  // send them to the feed instead of downgrading to a gift.
-  const cm = user.communityMembership;
-  const onPaidPlan =
-    cm &&
-    cm.status === "ACTIVE" &&
-    cm.billingCycle !== "gift" &&
-    !cm.billingCycle.startsWith("bundle") &&
-    !cm.billingCycle.startsWith("trial");
-
-  if (onPaidPlan) {
-    return <AlreadyMember />;
-  }
-
-  // Activate — 30 days from now.
+  // Activate a 30-day gift membership. Upsert so re-clicks don't error
+  // and so we can elevate a SUSPENDED / CANCELLED record back to ACTIVE.
   const expiresAt = new Date();
   expiresAt.setDate(expiresAt.getDate() + 30);
 
@@ -126,7 +106,121 @@ export default async function ClaimPage({
     },
   });
 
-  return <SuccessScreen />;
+  // Set the session cookies so the user lands inside the member area
+  // already logged in. Mirrors the pattern from /api/auth/login.
+  const tokens = generateTokenPair({
+    userId: user.id,
+    email: user.email,
+    v: user.tokenVersion,
+  });
+  const cookieStore = await cookies();
+  cookieStore.set("accessToken", tokens.accessToken, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "strict",
+    maxAge: 15 * 60,
+    path: "/",
+  });
+  cookieStore.set("refreshToken", tokens.refreshToken, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "strict",
+    maxAge: 7 * 24 * 60 * 60,
+    path: "/",
+  });
+
+  // New users get a welcome email with a 7-day password-set link. Never
+  // block the redirect on email success — the user is already claimed.
+  if (isNewUser) {
+    try {
+      const resetToken = jwt.sign(
+        { userId: user.id, type: "password-reset", v: user.tokenVersion },
+        process.env.JWT_SECRET!,
+        { expiresIn: "7d" },
+      );
+      await sendInnerCircleWelcomeNewUser(
+        user.email,
+        user.name || "Reader",
+        resetToken,
+      );
+    } catch (err) {
+      console.error("[claim] welcome email failed for", user.email, err);
+    }
+  }
+
+  redirect("/consilium/feed?claimed=1");
+}
+
+/**
+ * /consilium/claim?token=...
+ *
+ * Landing page for the gift-invite email. Two flows:
+ *
+ *   1. Already logged in with matching email
+ *      → render "Claim" button, server action activates + redirects to feed.
+ *
+ *   2. Not logged in / no account yet
+ *      → render "Claim" button anyway. Server action finds-or-creates the
+ *        account for the JWT's email, signs the user in, activates, and
+ *        fires a welcome-with-password-set email.
+ *
+ * The button is always a form submit (not auto-on-mount) so email
+ * link-scanners can't accidentally consume the claim.
+ */
+export default async function ClaimPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ token?: string }>;
+}) {
+  const { token } = await searchParams;
+
+  if (!token) return <ErrorScreen heading="Missing claim link" />;
+
+  let payload: GiftPayload;
+  try {
+    payload = verifyGiftToken(token);
+  } catch {
+    return <ErrorScreen heading="This claim link is invalid or expired" />;
+  }
+
+  const userId = await optionalServerAuth();
+
+  // Logged-in path: fast-check for email mismatch and already-paid cases
+  // so we don't silently over-write a paying member's record.
+  if (userId) {
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+      select: {
+        email: true,
+        communityMembership: {
+          select: { status: true, billingCycle: true },
+        },
+      },
+    });
+    if (!user) return <ErrorScreen heading="Account lookup failed" />;
+
+    if (user.email.toLowerCase() !== payload.email.toLowerCase()) {
+      return (
+        <ErrorScreen
+          heading="This gift belongs to a different account"
+          body={`The claim was issued to ${payload.email}. Log out and click the link again to claim with that email.`}
+        />
+      );
+    }
+
+    const cm = user.communityMembership;
+    const onPaidPlan =
+      cm &&
+      cm.status === "ACTIVE" &&
+      cm.billingCycle !== "gift" &&
+      !cm.billingCycle.startsWith("bundle") &&
+      !cm.billingCycle.startsWith("trial");
+
+    if (onPaidPlan) return <AlreadyMember />;
+  }
+
+  // Show the claim button for everyone else — including guest buyers.
+  return <ClaimButton token={token} name={payload.name} email={payload.email} />;
 }
 
 // ---------------------------------------------------------------------------
@@ -145,15 +239,24 @@ function Shell({ children }: { children: React.ReactNode }) {
   );
 }
 
-function SuccessScreen() {
+function ClaimButton({
+  token,
+  name,
+  email,
+}: {
+  token: string;
+  name: string;
+  email: string;
+}) {
   return (
     <Shell>
       <div className="rounded-3xl border border-warm-gold/30 bg-gradient-to-br from-deep-black/80 via-deep-burgundy/10 to-deep-black/80 p-10 sm:p-12">
         <div className="flex justify-center mb-6">
           <ConsiliumSeal size="xl" haloed />
         </div>
-        <p className="text-warm-gold/90 uppercase tracking-[0.3em] text-xs mb-3">
-          Your Gift Is Claimed
+        <p className="text-warm-gold/90 uppercase tracking-[0.3em] text-xs mb-3 flex items-center justify-center gap-2">
+          <Gift size={12} />
+          A gift from Kanika
         </p>
         <h1
           className="text-3xl sm:text-4xl font-extralight tracking-wider uppercase mb-4"
@@ -167,17 +270,27 @@ function SuccessScreen() {
         >
           30 Days Inside
         </h1>
-        <p className="text-text-gray font-light leading-relaxed mb-8">
-          Welcome. Your month starts now. Use it — the Consilium rewards
-          members who actually show up.
+        <p className="text-text-gray font-light leading-relaxed mb-2">
+          {name},
         </p>
-        <Link
-          href="/consilium/feed"
-          className="inline-flex items-center gap-2 px-8 py-3.5 bg-warm-gold text-deep-black rounded-full font-medium tracking-wider uppercase hover:bg-warm-gold/90 transition-all"
-        >
-          Enter The Consilium
-          <ArrowRight size={16} />
-        </Link>
+        <p className="text-text-gray font-light leading-relaxed mb-8">
+          Your 30 days begin the moment you claim. No card required. No
+          auto-charge when it ends. We&apos;ll email you a week before, then just
+          lapse cleanly.
+        </p>
+        <form action={claimAction}>
+          <input type="hidden" name="token" value={token} />
+          <button
+            type="submit"
+            className="inline-flex items-center gap-2 px-10 py-4 bg-warm-gold text-deep-black rounded-full font-medium tracking-wider uppercase hover:bg-warm-gold/90 transition-all"
+          >
+            Claim My Free Month
+            <ArrowRight size={16} />
+          </button>
+        </form>
+        <p className="text-text-gray/60 text-xs mt-6">
+          Claim for <span className="text-text-gray">{email}</span>
+        </p>
       </div>
     </Shell>
   );

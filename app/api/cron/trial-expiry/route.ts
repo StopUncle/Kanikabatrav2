@@ -1,14 +1,26 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { sendTrialExpiringSoon } from "@/lib/email";
+import { sendMembershipEndingSoon } from "@/lib/email";
 
 /**
- * Cron: check for trial memberships expiring in 3 days. Sends a
- * single nudge email per trial member. Idempotent — tracks whether
- * the email was already sent via applicationData.trialExpiryNotified.
+ * Cron: expiry reminders for every non-renewing Consilium cycle.
  *
- * Schedule: daily, same time as daily-insight.
+ * Covers:  trial · gift · bundle-1mo · bundle-3mo
+ * Skips:   monthly, annual (Stripe renews those automatically)
+ *
+ * Window: ACTIVE memberships expiring in the next 7 days that haven't
+ * received a reminder yet. Idempotent via `expiryNotified7d` flag on
+ * applicationData — keeps the legacy `trialExpiryNotified` flag intact
+ * so memberships already notified under the old 3-day window still have
+ * their history.
+ *
+ * Expected schedule: daily. Because this flips a flag the first time
+ * each membership comes into range, running it multiple times a day is
+ * safe (subsequent runs find nothing to do).
  */
+
+const NON_RENEWING_CYCLES = ["trial", "gift", "bundle-1mo", "bundle-3mo"] as const;
+
 export async function POST(request: NextRequest) {
   const secret = request.headers.get("x-cron-secret");
   if (secret !== process.env.CRON_SECRET && secret !== process.env.ADMIN_SECRET) {
@@ -17,16 +29,15 @@ export async function POST(request: NextRequest) {
 
   try {
     const now = new Date();
-    const threeDaysFromNow = new Date(now.getTime() + 3 * 24 * 60 * 60 * 1000);
+    const sevenDaysFromNow = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
 
-    // Find ACTIVE trials expiring within 3 days that haven't been notified
-    const expiringTrials = await prisma.communityMembership.findMany({
+    const expiring = await prisma.communityMembership.findMany({
       where: {
         status: "ACTIVE",
-        billingCycle: "trial",
+        billingCycle: { in: [...NON_RENEWING_CYCLES] },
         expiresAt: {
           gt: now,
-          lte: threeDaysFromNow,
+          lte: sevenDaysFromNow,
         },
       },
       include: {
@@ -38,11 +49,11 @@ export async function POST(request: NextRequest) {
 
     let sent = 0;
     let skipped = 0;
+    const perCycle: Record<string, number> = {};
 
-    for (const membership of expiringTrials) {
-      // Idempotency: skip if already notified
+    for (const membership of expiring) {
       const data = (membership.applicationData as Record<string, unknown>) || {};
-      if (data.trialExpiryNotified) {
+      if (data.expiryNotified7d) {
         skipped++;
         continue;
       }
@@ -51,13 +62,17 @@ export async function POST(request: NextRequest) {
 
       const daysLeft = Math.max(
         1,
-        Math.ceil((membership.expiresAt.getTime() - now.getTime()) / (1000 * 60 * 60 * 24)),
+        Math.ceil(
+          (membership.expiresAt.getTime() - now.getTime()) /
+            (1000 * 60 * 60 * 24),
+        ),
       );
 
-      const emailSent = await sendTrialExpiringSoon(
+      const emailSent = await sendMembershipEndingSoon(
         membership.user.email,
         membership.user.name || "there",
         daysLeft,
+        membership.billingCycle,
       );
 
       if (emailSent) {
@@ -66,20 +81,24 @@ export async function POST(request: NextRequest) {
           data: {
             applicationData: {
               ...data,
-              trialExpiryNotified: true,
-              trialExpiryNotifiedAt: new Date().toISOString(),
+              expiryNotified7d: true,
+              expiryNotified7dAt: new Date().toISOString(),
+              expiryNotifiedCycle: membership.billingCycle,
             },
           },
         });
         sent++;
+        perCycle[membership.billingCycle] =
+          (perCycle[membership.billingCycle] ?? 0) + 1;
       }
     }
 
     return NextResponse.json({
       success: true,
-      found: expiringTrials.length,
+      found: expiring.length,
       sent,
       skipped,
+      perCycle,
     });
   } catch (error) {
     console.error("[cron/trial-expiry] error:", error);
