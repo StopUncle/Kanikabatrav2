@@ -1,30 +1,23 @@
 import { NextRequest, NextResponse } from "next/server";
 import { cookies } from "next/headers";
-import { verifyAccessToken } from "@/lib/auth/jwt";
+import { resolveActiveUserIdFromRequest } from "@/lib/auth/resolve-user";
 import { prisma } from "@/lib/prisma";
 import { stripe } from "@/lib/stripe";
 
 export async function DELETE(request: NextRequest) {
   try {
-    const cookieStore = await cookies();
-    const accessToken = cookieStore.get("accessToken")?.value;
-
-    if (!accessToken) {
+    // Ban-aware resolver — deleted / banned / tokenVersion-revoked
+    // accounts are rejected before we ever reach the DB cascade.
+    const userId = await resolveActiveUserIdFromRequest(request);
+    if (!userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
-    let payload;
-    try {
-      payload = verifyAccessToken(accessToken);
-    } catch {
-      return NextResponse.json({ error: "Invalid token" }, { status: 401 });
     }
 
     const body = await request.json();
     const { confirmEmail } = body;
 
     const user = await prisma.user.findUnique({
-      where: { id: payload.userId },
+      where: { id: userId },
       select: { email: true },
     });
 
@@ -44,7 +37,7 @@ export async function DELETE(request: NextRequest) {
     // subscription ID), so we must grab it first. Without this, the
     // user's card keeps getting charged after account deletion.
     const membership = await prisma.communityMembership.findUnique({
-      where: { userId: payload.userId },
+      where: { userId: userId },
       select: { paypalSubscriptionId: true, status: true },
     });
     if (
@@ -65,7 +58,7 @@ export async function DELETE(request: NextRequest) {
     }
 
     await prisma.user.delete({
-      where: { id: payload.userId },
+      where: { id: userId },
     });
 
     cookieStore.delete("accessToken");

@@ -1,22 +1,21 @@
 import { redirect } from "next/navigation";
-import { cookies } from "next/headers";
-import { verifyAccessToken } from "@/lib/auth/jwt";
+import { resolveActiveUserId } from "@/lib/auth/resolve-user";
+import { prisma } from "@/lib/prisma";
 import ProfilePageClient from "@/components/profile/ProfilePageClient";
 
 export default async function ProfilePage() {
-  const cookieStore = await cookies();
-  const accessToken = cookieStore.get("accessToken")?.value;
-
-  if (!accessToken) {
+  const userId = await resolveActiveUserId();
+  if (!userId) {
     redirect("/login?returnTo=/profile");
   }
-
-  try {
-    const payload = verifyAccessToken(accessToken);
-    return <ProfilePageClient userId={payload.userId} email={payload.email} />;
-  } catch {
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+    select: { id: true, email: true },
+  });
+  if (!user) {
     redirect("/login?returnTo=/profile");
   }
+  return <ProfilePageClient userId={user.id} email={user.email} />;
 }
 
 export const metadata = {

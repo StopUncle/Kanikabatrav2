@@ -1,31 +1,28 @@
 import { redirect } from "next/navigation";
-import { cookies } from "next/headers";
-import { verifyAccessToken } from "@/lib/auth/jwt";
+import { resolveActiveUserId } from "@/lib/auth/resolve-user";
+import { prisma } from "@/lib/prisma";
 import DashboardClient from "@/components/dashboard/DashboardClient";
 
 export default async function DashboardPage() {
-  // Server-side auth check
-  const cookieStore = await cookies();
-  const accessToken = cookieStore.get("accessToken")?.value;
-
-  if (!accessToken) {
+  // Ban-aware auth — deleted / banned / tokenVersion-revoked sessions
+  // bounce back to login instead of rendering a partially-broken shell
+  // against an orphaned userId.
+  const userId = await resolveActiveUserId();
+  if (!userId) {
     redirect("/login");
   }
 
-  try {
-    const payload = verifyAccessToken(accessToken);
-
-    // Pass user data to client component
-    const user = {
-      email: payload.email,
-      userId: payload.userId,
-    };
-
-    return <DashboardClient user={user} />;
-  } catch (_error) {
-    // Token is invalid or expired
+  // Pull the canonical email from the DB rather than trusting the JWT
+  // payload (the user may have changed it since login).
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+    select: { id: true, email: true },
+  });
+  if (!user) {
     redirect("/login");
   }
+
+  return <DashboardClient user={{ email: user.email, userId: user.id }} />;
 }
 
 export const metadata = {

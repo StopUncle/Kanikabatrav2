@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
-import { cookies } from "next/headers";
-import { verifyAccessToken } from "@/lib/auth/jwt";
+import {
+  resolveActiveUserId,
+  resolveActiveUserIdFromRequest,
+} from "@/lib/auth/resolve-user";
 import { prisma } from "@/lib/prisma";
 
 // Defaults applied when a user has never saved their preferences. The
@@ -16,22 +18,13 @@ const DEFAULT_PREFERENCES = {
 
 export async function GET() {
   try {
-    const cookieStore = await cookies();
-    const accessToken = cookieStore.get("accessToken")?.value;
-
-    if (!accessToken) {
+    const userId = await resolveActiveUserId();
+    if (!userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    let payload;
-    try {
-      payload = verifyAccessToken(accessToken);
-    } catch {
-      return NextResponse.json({ error: "Invalid token" }, { status: 401 });
-    }
-
     const user = await prisma.user.findUnique({
-      where: { id: payload.userId },
+      where: { id: userId },
     });
 
     if (!user) {
@@ -57,18 +50,9 @@ export async function GET() {
 
 export async function PUT(request: NextRequest) {
   try {
-    const cookieStore = await cookies();
-    const accessToken = cookieStore.get("accessToken")?.value;
-
-    if (!accessToken) {
+    const userId = await resolveActiveUserIdFromRequest(request);
+    if (!userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
-    let payload;
-    try {
-      payload = verifyAccessToken(accessToken);
-    } catch {
-      return NextResponse.json({ error: "Invalid token" }, { status: 401 });
     }
 
     const body = await request.json();
@@ -85,7 +69,7 @@ export async function PUT(request: NextRequest) {
       UPDATE "User"
       SET "emailPreferences" = ${JSON.stringify(emailPreferences)}::jsonb,
           "updatedAt" = NOW()
-      WHERE id = ${payload.userId}
+      WHERE id = ${userId}
     `;
 
     return NextResponse.json({ success: true });

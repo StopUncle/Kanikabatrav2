@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { cookies } from "next/headers";
-import { verifyAccessToken } from "@/lib/auth/jwt";
+import { resolveActiveUserId } from "@/lib/auth/resolve-user";
 import { prisma } from "@/lib/prisma";
 import {
   PERSONALITY_PROFILES,
@@ -14,20 +13,12 @@ interface RouteParams {
 
 /**
  * Look up the current viewer (if any) from the access-token cookie.
- * Returns null when there's no valid session — quiz results are designed to
- * be viewable by an anonymous taker too (the immediately-after-quiz landing
- * page), so missing auth is not itself an error.
+ * Uses the ban-aware resolver so banned / tokenVersion-revoked / deleted
+ * accounts can't read their historical quiz results with a stale JWT.
+ * Returns null when there's no valid session.
  */
 async function getViewerUserId(): Promise<string | null> {
-  const cookieStore = await cookies();
-  const token = cookieStore.get("accessToken")?.value;
-  if (!token) return null;
-  try {
-    const payload = verifyAccessToken(token);
-    return payload.userId;
-  } catch {
-    return null;
-  }
+  return resolveActiveUserId();
 }
 
 export async function GET(_request: NextRequest, { params }: RouteParams) {
