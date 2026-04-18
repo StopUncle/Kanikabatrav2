@@ -5,8 +5,6 @@ import { m, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import BackgroundEffects from "@/components/BackgroundEffects";
 import Header from "@/components/Header";
-// PayPal — kept as fallback
-// import PayPalButton from "@/components/PayPalButton";
 import StripeButton from "@/components/StripeButton";
 import { COACHING_PACKAGES } from "@/lib/constants";
 import { Check, ArrowRight, ChevronDown } from "lucide-react";

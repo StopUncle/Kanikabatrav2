@@ -6,9 +6,6 @@ import BackgroundEffects from "@/components/BackgroundEffects";
 import Header from "@/components/Header";
 import CountdownTimer from "@/components/CountdownTimer";
 import PresaleModal from "@/components/PresaleModal";
-// PayPal — kept as fallback
-// import PayPalButton from "@/components/PayPalButton";
-// import LemonSqueezyButton from "@/components/LemonSqueezyButton";
 import StripeButton from "@/components/StripeButton";
 import { BOOK_INFO } from "@/lib/constants";
 import {

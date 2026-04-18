@@ -3,9 +3,6 @@
 import { useState } from "react";
 import { m } from "framer-motion";
 import { Check, ShieldCheck, Bell } from "lucide-react";
-// PayPal — kept as fallback
-// import PayPalButton from "./PayPalButton";
-// import LemonSqueezyButton from "./LemonSqueezyButton";
 import StripeButton from "./StripeButton";
 import PresaleModal from "./PresaleModal";
 import CountdownTimer from "./CountdownTimer";

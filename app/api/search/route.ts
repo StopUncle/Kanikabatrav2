@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import { cookies } from "next/headers";
 import { prisma } from "@/lib/prisma";
-import { verifyAccessToken } from "@/lib/auth/jwt";
+import { resolveActiveUserIdFromRequest } from "@/lib/auth/resolve-user";
 import { getAllPosts } from "@/lib/mdx";
 import { feedPostGenderWhere } from "@/lib/community/gender-filter";
 import { checkMembership } from "@/lib/community/membership";
@@ -55,20 +54,14 @@ export async function GET(request: NextRequest) {
   }
 
   // Look up the viewer (if any) — determines whether feed results are
-  // included and what gender filter applies.
-  let viewerUserId: string | null = null;
+  // included and what gender filter applies. resolveActiveUserIdFromRequest
+  // returns null for banned / tokenVersion-revoked sessions, so banned
+  // users drop to the anonymous-viewer path (blog + courses only).
+  const viewerUserId = await resolveActiveUserIdFromRequest(request);
   let viewerIsActiveMember = false;
-  try {
-    const cookieStore = await cookies();
-    const token = cookieStore.get("accessToken")?.value;
-    if (token) {
-      const payload = verifyAccessToken(token);
-      viewerUserId = payload.userId;
-      const { isMember } = await checkMembership(viewerUserId);
-      viewerIsActiveMember = isMember;
-    }
-  } catch {
-    // Anonymous viewer, continue.
+  if (viewerUserId) {
+    const { isMember } = await checkMembership(viewerUserId);
+    viewerIsActiveMember = isMember;
   }
 
   try {
