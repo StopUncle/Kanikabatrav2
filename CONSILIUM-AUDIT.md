@@ -91,6 +91,35 @@ Full audit of `Purchase` rows filtered 12 test/backfill/mislabeled rows
 out of the original 109 candidates. 97 clean paying-customer emails fired
 through the magic-claim pipeline with 0 failures.
 
+### UX — gift-claim welcome banner (`?claimed=1`)
+Fresh claims land on `/consilium/feed?claimed=1` with a one-off
+burgundy-gold banner that tells them to check their email for the
+set-password link so they don't get locked out from a different device
+later. Non-dismissible on purpose — it goes away the moment they
+navigate away.
+
+### UX — classroom hides empty courses
+Was rendering "0 lessons / 0%" cards for partially-populated courses,
+which looked broken. Now filters to courses with ≥ 1 lesson. Admin panel
+still manages the empty ones via `/admin/courses`.
+
+### UX — feed "NEW" indicator since last visit
+Posts created after the viewer's previous visit paint a subtle emerald
+pip. Per-device localStorage — no schema migration, no round trip,
+works offline. Threshold frozen at mount so stamping the new timestamp
+mid-render doesn't instantly kill every highlight.
+
+### Security — full ban-aware auth migration (10 more routes)
+Swept every remaining server component and API endpoint on the
+consilium/community surface that resolved the caller via raw
+`verifyAccessToken`. Converted to `resolveActiveUserId` /
+`resolveActiveUserIdFromRequest`. Affected: outer `/consilium/layout`
+(trial banner), chat list page, chat room page, forum index, forum
+category, forum post detail, community category list + detail APIs,
+forum reply list API. No active vulnerability — downstream guards
+already caught banned users — but the revocation story is now
+uniformly enforced at the session-resolution layer.
+
 ## ⚠️ BACKLOG — documented but not shipped
 
 ### B1. Forum post/reply API ban-enforcement gap
@@ -111,35 +140,23 @@ Members can create / report comments but can't edit their own. Standard
 expectation from forum UX. **Effort: ~30 LOC — PATCH at
 `/api/consilium/feed/[postId]/comments/[commentId]` with owner check.**
 
-### B4. Classroom pages don't have error boundary coverage for missing lesson content
-The course enrollment query in `classroom/page.tsx` returns all courses
-even if some have empty modules. A partially-populated course shows
-0% progress and empty modules — confusing. Add a guard to skip
-courses with 0 lessons. **Effort: ~5 LOC.**
+### B4. ~~Classroom pages don't have error boundary coverage for missing lesson content~~ **SHIPPED**
 
-### B5. Chat room page uses raw `verifyAccessToken` in a server component
-`app/consilium/(member)/chat/[roomSlug]/page.tsx` has the same
-verifyAccessToken pattern at lines 41-48. The parent `(member)/layout.tsx`
-already calls `requireServerAuth` which blocks banned users, so this is
-defensive redundancy — not an active vulnerability. **Priority: low.**
+### B5. ~~Chat room page uses raw `verifyAccessToken` in a server component~~ **SHIPPED**
+Plus all other server components and community APIs — see "full
+ban-aware auth migration" in the SHIPPED section.
 
 ### B6. No admin audit log
 Ban, unban, role change, refund — none of these record who performed
 the action. Would be useful for accountability. **Effort: ~80 LOC —
 new `AdminAuditLog` table + writes from each admin mutation route.**
 
-### B7. Gift-claim → password-set flow
-When a gift recipient claims and their account is auto-created, we
-send a welcome email with a password-reset link. But there's no in-app
-prompt after they land on `/consilium/feed?claimed=1` telling them to
-check their email. First-time users might assume they're fully set up
-and later get locked out. **Effort: ~30 LOC — a dismissible banner on
-the feed when `?claimed=1` is in the URL.**
+### B7. ~~Gift-claim → password-set flow~~ **SHIPPED**
 
-### B8. No read-receipts / unread state on feed
-Members have no way to tell which feed posts are new since their last
-visit. Could boost engagement substantially. **Effort: ~40 LOC — a
-`User.feedLastSeenAt` column + filter on feed page for highlight style.**
+### B8. ~~No read-receipts / unread state on feed~~ **SHIPPED**
+Implemented client-side via localStorage instead of a DB column, which
+skips the Railway manual-migrate-deploy dance and is enough signal for
+a "what's new since last time" hint.
 
 ### B9. Simulator is invisible to non-members
 Non-members visiting the site can't even preview the simulator — it's
