@@ -11,6 +11,7 @@ import {
   ChevronUp,
   Send,
   Trash2,
+  RefreshCw,
 } from "lucide-react";
 
 interface FeedPost {
@@ -121,6 +122,19 @@ export default function PostsPage() {
     }
   }
 
+  async function refreshWelcome() {
+    const confirmed = window.confirm(
+      "Refresh the pinned welcome post to the latest house-rules version?\n\nKeeps the same post id — comments and likes carry over.",
+    );
+    if (!confirmed) return;
+    const res = await fetch("/api/admin/refresh-welcome", { method: "POST" });
+    if (res.ok) {
+      fetchPosts();
+    } else {
+      window.alert("Refresh failed. Check the logs.");
+    }
+  }
+
   async function bulkDelete(ids: string[], label: string) {
     const confirmed = window.confirm(
       `Delete ${ids.length} ${label}?\n\nRemoves posts + all comments + all likes. Can't be undone.`,
@@ -146,13 +160,23 @@ export default function PostsPage() {
         <h1 className="text-2xl font-light uppercase tracking-[0.15em] text-text-light">
           Posts
         </h1>
-        <button
-          onClick={() => setShowForm(!showForm)}
-          className="flex items-center gap-2 px-4 py-2 text-sm font-light tracking-wide bg-accent-gold/10 text-accent-gold border border-accent-gold/30 rounded hover:bg-accent-gold/20 transition-all duration-200"
-        >
-          {showForm ? <ChevronUp size={16} /> : <Plus size={16} />}
-          {showForm ? "Close" : "Create Post"}
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={refreshWelcome}
+            title="Refresh pinned welcome post to latest house-rules version"
+            className="flex items-center gap-2 px-4 py-2 text-sm font-light tracking-wide text-text-gray border border-white/10 rounded hover:text-accent-gold hover:border-accent-gold/30 transition-all duration-200"
+          >
+            <RefreshCw size={14} />
+            Refresh Welcome
+          </button>
+          <button
+            onClick={() => setShowForm(!showForm)}
+            className="flex items-center gap-2 px-4 py-2 text-sm font-light tracking-wide bg-accent-gold/10 text-accent-gold border border-accent-gold/30 rounded hover:bg-accent-gold/20 transition-all duration-200"
+          >
+            {showForm ? <ChevronUp size={16} /> : <Plus size={16} />}
+            {showForm ? "Close" : "Create Post"}
+          </button>
+        </div>
       </div>
 
       {showForm && (
