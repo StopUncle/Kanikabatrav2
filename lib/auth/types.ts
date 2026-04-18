@@ -4,6 +4,8 @@ export interface User {
   password: string;
   name?: string | null;
   tokenVersion: number;
+  isBanned: boolean;
+  banReason?: string | null;
   createdAt: Date;
   updatedAt: Date;
 }

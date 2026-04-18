@@ -56,7 +56,18 @@ export async function requireServerAuth(redirectPath: string): Promise<string> {
   if (accessToken) {
     try {
       const payload = verifyAccessToken(accessToken);
-      return payload.userId;
+      // Block banned users at the server-render layer too, not just at
+      // API routes. The DB check is cheap and matches the middleware.
+      const user = await prisma.user.findUnique({
+        where: { id: payload.userId },
+        select: { id: true, isBanned: true, tokenVersion: true },
+      });
+      if (user && !user.isBanned && (payload.v === undefined || payload.v === user.tokenVersion)) {
+        return payload.userId;
+      }
+      if (user?.isBanned) {
+        redirect(`/login?banned=1`);
+      }
     } catch {
       // Token invalid — fall through to admin check
     }
@@ -70,8 +81,8 @@ export async function requireServerAuth(redirectPath: string): Promise<string> {
 }
 
 /**
- * Optionally get user ID from cookies (returns null if not logged in).
- * With DEV_BYPASS_AUTH, always returns the dev user.
+ * Optionally get user ID from cookies (returns null if not logged in or
+ * if the user is banned).
  */
 export async function optionalServerAuth(): Promise<string | null> {
   if (process.env.DEV_BYPASS_AUTH === "true") {
@@ -85,6 +96,12 @@ export async function optionalServerAuth(): Promise<string | null> {
 
   try {
     const payload = verifyAccessToken(accessToken);
+    const user = await prisma.user.findUnique({
+      where: { id: payload.userId },
+      select: { isBanned: true, tokenVersion: true },
+    });
+    if (!user || user.isBanned) return null;
+    if (payload.v !== undefined && payload.v !== user.tokenVersion) return null;
     return payload.userId;
   } catch {
     return null;

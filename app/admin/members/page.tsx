@@ -13,6 +13,7 @@ import {
   UserCheck,
   VolumeX,
   MessageSquare,
+  Fingerprint,
 } from "lucide-react";
 
 interface Member {
@@ -104,6 +105,8 @@ export default function MembersPage() {
       <h1 className="text-2xl font-light uppercase tracking-[0.15em] text-text-light mb-8">
         Members
       </h1>
+
+      <FingerprintLookup />
 
       <div className="relative mb-6">
         <Search
@@ -296,6 +299,119 @@ export default function MembersPage() {
               ))}
             </tbody>
           </table>
+        </div>
+      )}
+    </div>
+  );
+}
+
+/**
+ * Leak-attribution tool. Pastes an 8-hex SID found in an external video or
+ * screenshot, returns the exact member whose dashboard was filmed. Sits at
+ * the top of the Members page so it's the first thing an admin sees when a
+ * leak is reported.
+ */
+function FingerprintLookup() {
+  const [sid, setSid] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [match, setMatch] = useState<null | {
+    id: string;
+    email: string;
+    name: string | null;
+    displayName: string | null;
+    role: string;
+    isBanned: boolean;
+    fingerprint: string;
+  }>(null);
+  const [noMatch, setNoMatch] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  async function lookup(e: React.FormEvent) {
+    e.preventDefault();
+    setLoading(true);
+    setMatch(null);
+    setNoMatch(false);
+    setError(null);
+    try {
+      const res = await fetch("/api/admin/fingerprint-lookup", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ fingerprint: sid.trim() }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setError(data.error || "Lookup failed");
+      } else if (data.match) {
+        setMatch(data.match);
+      } else {
+        setNoMatch(true);
+      }
+    } catch {
+      setError("Network error");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  return (
+    <div className="glass-card rounded-lg p-5 mb-6">
+      <div className="flex items-center gap-2 mb-3">
+        <Fingerprint size={14} className="text-accent-gold" />
+        <h2 className="text-sm font-light uppercase tracking-[0.15em] text-text-light">
+          Leak Attribution
+        </h2>
+      </div>
+      <p className="text-text-gray/70 text-xs font-light mb-4 leading-relaxed">
+        Every member page watermarks a hidden 8-character session ID in the
+        bottom-right. If content from inside the Consilium appears externally,
+        paste the SID from the footage here to identify the account that
+        filmed it.
+      </p>
+      <form onSubmit={lookup} className="flex gap-2 flex-wrap">
+        <input
+          type="text"
+          value={sid}
+          onChange={(e) => setSid(e.target.value)}
+          placeholder="e.g. a1b2c3d4"
+          maxLength={16}
+          className="flex-1 min-w-[180px] bg-white/[0.03] border border-white/10 rounded px-4 py-2.5 text-text-light text-sm font-mono tracking-wider focus:border-accent-gold/40 focus:outline-none transition-colors"
+        />
+        <button
+          type="submit"
+          disabled={loading || !sid.trim()}
+          className="flex items-center gap-2 px-5 py-2.5 text-sm font-light tracking-wide bg-accent-gold/10 text-accent-gold border border-accent-gold/30 rounded hover:bg-accent-gold/20 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          {loading ? <Loader2 size={14} className="animate-spin" /> : <Search size={14} />}
+          Look Up
+        </button>
+      </form>
+
+      {error && (
+        <p className="mt-3 text-xs text-red-400">{error}</p>
+      )}
+      {noMatch && (
+        <p className="mt-3 text-xs text-text-gray">
+          No member matches that SID. Check the characters — it&apos;s case-insensitive, 8 hex chars.
+        </p>
+      )}
+      {match && (
+        <div className="mt-4 p-4 rounded-lg border border-red-500/30 bg-red-500/[0.04]">
+          <p className="text-[10px] uppercase tracking-[0.2em] text-red-400/70 mb-2">
+            Match · {match.fingerprint}
+          </p>
+          <p className="text-text-light font-light">
+            {match.displayName || match.name || "(no display name)"}
+            <span className="text-text-gray text-sm ml-2">
+              {match.email}
+            </span>
+          </p>
+          <p className="text-text-gray text-xs mt-1">
+            Role: {match.role}
+            {match.isBanned ? " · ALREADY BANNED" : ""}
+          </p>
+          <p className="text-text-gray/50 text-[10px] mt-2 font-mono">
+            ID: {match.id}
+          </p>
         </div>
       )}
     </div>

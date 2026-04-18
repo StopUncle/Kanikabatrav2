@@ -48,6 +48,8 @@ export class UserDatabase {
       email: userData.email,
       password: hashedPassword,
       tokenVersion: 0,
+      isBanned: false,
+      banReason: null,
       createdAt: now,
       updatedAt: now,
     };

@@ -19,6 +19,12 @@ export async function authenticateUser(
         if (user) {
           if (payload.v !== undefined && payload.v !== user.tokenVersion) {
             // Token revoked — fall through to admin check
+          } else if (user.isBanned) {
+            // Banned users get no session, regardless of token validity.
+            // Token version is bumped on ban via /api/admin/users/[id],
+            // so existing cookies are invalidated at the crypto layer too;
+            // this check catches any edge case where that didn't happen.
+            return null;
           } else {
             return { id: user.id, email: user.email };
           }

@@ -53,6 +53,11 @@ export async function POST(
           data: {
             isBanned: true,
             banReason: reason || "Banned by admin",
+            // Bump tokenVersion so every existing access/refresh token for
+            // this user is immediately invalidated. Without this, a banned
+            // user with a valid 15-minute accessToken would still have
+            // access until the cookie expired.
+            tokenVersion: { increment: 1 },
           },
           select: {
             id: true,

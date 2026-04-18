@@ -4,8 +4,10 @@ import { checkMembership } from "@/lib/community/membership";
 import Header from "@/components/Header";
 import BackgroundEffects from "@/components/BackgroundEffects";
 import InnerCircleSidebar from "@/components/consilium/InnerCircleSidebar";
+import SessionWatermark from "@/components/consilium/SessionWatermark";
 import { prisma } from "@/lib/prisma";
 import { tierForMember } from "@/components/consilium/badge-tiers";
+import { computeFingerprint } from "@/lib/community/fingerprint";
 
 export default async function MemberLayout({
   children,
@@ -49,6 +51,8 @@ export default async function MemberLayout({
   });
   const displayName = me?.displayName || "Counselor";
 
+  const fingerprint = computeFingerprint(userId);
+
   return (
     <div className="min-h-screen bg-deep-black text-text-light">
       <BackgroundEffects />
@@ -63,6 +67,7 @@ export default async function MemberLayout({
           {children}
         </main>
       </div>
+      <SessionWatermark fingerprint={fingerprint} />
     </div>
   );
 }
