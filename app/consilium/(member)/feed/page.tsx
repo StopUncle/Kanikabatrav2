@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { memberSafeName } from "@/lib/community/privacy";
 import FeedList from "@/components/consilium/FeedList";
 import OnboardingModal from "@/components/consilium/OnboardingModal";
+import FirstMovesChecklist from "@/components/consilium/FirstMovesChecklist";
 import { MessageCircle, Mail } from "lucide-react";
 import { tierForMember } from "@/components/consilium/badge-tiers";
 
@@ -21,11 +22,32 @@ export default async function FeedPage({
   const params = await searchParams;
   const justClaimed = params.claimed === "1";
 
+  // Pull onboarding state + the signals that back the "Your first moves"
+  // checklist in one round-trip. Counts instead of booleans so any future
+  // "how many comments/scenarios completed" UI can reuse this shape.
   const viewerRecord = await prisma.user.findUnique({
     where: { id: userId },
-    select: { onboardingSeenAt: true },
+    select: {
+      onboardingSeenAt: true,
+      displayName: true,
+      _count: {
+        select: {
+          quizResults: true,
+          simulatorProgress: true,
+          feedComments: true,
+        },
+      },
+    },
   });
   const showOnboarding = viewerRecord?.onboardingSeenAt == null;
+  const firstMovesSignals = {
+    hasDisplayName:
+      !!viewerRecord?.displayName && viewerRecord.displayName.trim() !== "",
+    hasQuizResult: (viewerRecord?._count.quizResults ?? 0) > 0,
+    hasSimulatorProgress:
+      (viewerRecord?._count.simulatorProgress ?? 0) > 0,
+    hasComment: (viewerRecord?._count.feedComments ?? 0) > 0,
+  };
 
   const viewerGender = await getViewerGender(userId);
   const genderWhere = feedPostGenderWhere(viewerGender);
@@ -131,6 +153,8 @@ export default async function FeedPage({
             Posts, insights, and discussions from the council.
           </p>
         </div>
+
+        <FirstMovesChecklist signals={firstMovesSignals} />
 
         {formatted.length === 0 ? (
           <div className="text-center py-16">
