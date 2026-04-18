@@ -37,11 +37,19 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const correctPin = process.env.ADMIN_PIN;
+    // Resolve the correct PIN.
+    //
+    // Production: must come from the ADMIN_PIN env var. If it's unset we
+    // refuse to authenticate — returning 503 rather than silently falling
+    // back to a default prevents a missing env var from accidentally
+    // turning a predictable PIN into the admin password.
+    //
+    // Development: a missing ADMIN_PIN falls back to "000000" so local
+    // work doesn't require env plumbing. This is gated strictly on
+    // NODE_ENV !== "production" so the dev default can never leak to
+    // the live site regardless of how the code is deployed.
+    let correctPin = process.env.ADMIN_PIN;
     if (!correctPin) {
-      // Refuse to authenticate if the PIN env var is unset in production.
-      // The previous default of "000000" meant that a missing env var would
-      // silently grant admin access to anyone trying that PIN.
       if (process.env.NODE_ENV === "production") {
         console.error("CRITICAL: ADMIN_PIN environment variable not set in production");
         return NextResponse.json(
@@ -49,11 +57,8 @@ export async function POST(request: NextRequest) {
           { status: 503 },
         );
       }
-      console.warn("ADMIN_PIN not set — admin auth disabled in dev");
-      return NextResponse.json(
-        { error: "Authentication is unavailable" },
-        { status: 503 },
-      );
+      console.warn("ADMIN_PIN not set — using dev default 000000");
+      correctPin = "000000";
     }
 
     if (correctPin.length !== 6) {

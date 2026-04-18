@@ -129,19 +129,8 @@ const TESTIMONIALS = [
   },
 ];
 
-interface BookPageClientProps {
-  /**
-   * When true, the viewer is an ACTIVE Consilium member and sees the
-   * member-exclusive $9.99 price instead of the standard $24.99. The
-   * checkout route server-side enforces the same rule, so this prop
-   * only controls display — no security implication if it's wrong.
-   */
-  isMember?: boolean;
-}
-
-export default function BookPage({ isMember = false }: BookPageClientProps) {
+export default function BookPage() {
   const [showPresaleModal, setShowPresaleModal] = useState(false);
-  const displayPrice = isMember ? "$9.99" : "$24.99";
 
   const handlePresaleSignup = async (
     email: string,
@@ -268,29 +257,12 @@ export default function BookPage({ isMember = false }: BookPageClientProps) {
                     Join Presale List
                   </button>
                 ) : (
-                  <div className="w-full">
-                    <StripeButton
-                      priceKey="BOOK"
-                      label="Get Instant Access"
-                      price={displayPrice}
-                      icon="cart"
-                    />
-                    {isMember ? (
-                      <p className="text-accent-gold/70 text-xs text-center mt-2 italic">
-                        Consilium member price applied &mdash; $15 off
-                      </p>
-                    ) : (
-                      <p className="text-text-gray/60 text-xs text-center mt-2">
-                        Consilium members pay $9.99 &mdash;{" "}
-                        <Link
-                          href="/consilium"
-                          className="text-accent-gold/80 hover:text-accent-gold underline underline-offset-2"
-                        >
-                          join the room
-                        </Link>
-                      </p>
-                    )}
-                  </div>
+                  <StripeButton
+                    priceKey="BOOK"
+                    label="Get Instant Access"
+                    price="$24.99"
+                    icon="cart"
+                  />
                 )}
                 <Link
                   href="#chapters"
@@ -418,19 +390,11 @@ export default function BookPage({ isMember = false }: BookPageClientProps) {
                 <span className="text-text-gray line-through text-lg">${totalValue.toFixed(2)}</span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-accent-gold text-sm font-medium">
-                  {isMember ? "Member price" : "You pay today"}
-                </span>
-                <span className="text-4xl font-light gradient-text-gold">
-                  {isMember ? "$9.99" : `$${BOOK_INFO.price}`}
-                </span>
+                <span className="text-accent-gold text-sm font-medium">You pay today</span>
+                <span className="text-4xl font-light gradient-text-gold">${BOOK_INFO.price}</span>
               </div>
               <div className="text-right mt-1">
-                <span className="text-accent-gold/80 text-sm">
-                  {isMember
-                    ? `You save $${(totalValue - 9.99).toFixed(0)}`
-                    : `You save $${(totalValue - BOOK_INFO.price).toFixed(0)}`}
-                </span>
+                <span className="text-accent-gold/80 text-sm">You save ${(totalValue - BOOK_INFO.price).toFixed(0)}</span>
               </div>
             </div>
 
@@ -444,37 +408,16 @@ export default function BookPage({ isMember = false }: BookPageClientProps) {
                     Join Presale List
                   </button>
                 ) : (
-                  <div className="w-full">
-                    <StripeButton
-                      priceKey="BOOK"
-                      label="Get Instant Access"
-                      price={displayPrice}
-                      icon="cart"
-                    />
-                    {isMember ? (
-                      <p className="text-accent-gold/70 text-xs text-center mt-2 italic">
-                        Consilium member price applied
-                      </p>
-                    ) : (
-                      <p className="text-text-gray/60 text-xs text-center mt-2">
-                        Consilium members pay $9.99 &mdash;{" "}
-                        <Link
-                          href="/consilium"
-                          className="text-accent-gold/80 hover:text-accent-gold underline underline-offset-2"
-                        >
-                          join the room
-                        </Link>
-                      </p>
-                    )}
-                  </div>
+                  <StripeButton
+                    priceKey="BOOK"
+                    label="Get Instant Access"
+                    price="$24.99"
+                    icon="cart"
+                  />
                 )}
 
-                {/* Upgrade bundles — book + Consilium community access.
-                    Hidden for active members: they already have the room,
-                    and buying a bundle would route around their member
-                    book price while the webhook's downgrade guard blocks
-                    the membership-extension value of the bundle. */}
-                {!BOOK_INFO.isPresale && !isMember && (
+                {/* Upgrade bundles — book + Consilium community access. */}
+                {!BOOK_INFO.isPresale && (
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
                     <StripeButton
                       priceKey="BOOK_CONSILIUM_1MO"
@@ -506,12 +449,8 @@ export default function BookPage({ isMember = false }: BookPageClientProps) {
                   <div className="grid grid-cols-2 text-center">
                     <div className="p-4 bg-accent-gold/[0.05] border-r border-white/[0.06]">
                       <p className="text-accent-gold text-xs uppercase tracking-wider mb-1">Premium Edition</p>
-                      <p className="text-2xl font-light text-white">
-                        {isMember ? "$9.99" : `$${BOOK_INFO.price}`}
-                      </p>
-                      <p className="text-accent-gold/60 text-xs mt-1">
-                        {isMember ? "Member price · direct download" : "Direct download"}
-                      </p>
+                      <p className="text-2xl font-light text-white">${BOOK_INFO.price}</p>
+                      <p className="text-accent-gold/60 text-xs mt-1">Direct download</p>
                     </div>
                     <div className="p-4">
                       <p className="text-text-gray text-xs uppercase tracking-wider mb-1">Kindle Edition</p>
