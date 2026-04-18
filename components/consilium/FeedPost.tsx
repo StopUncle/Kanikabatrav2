@@ -36,9 +36,10 @@ export interface FeedPostData {
 interface FeedPostProps {
   post: FeedPostData;
   isDetail?: boolean;
+  isNew?: boolean;
 }
 
-export default function FeedPost({ post, isDetail = false }: FeedPostProps) {
+export default function FeedPost({ post, isDetail = false, isNew = false }: FeedPostProps) {
   const [liked, setLiked] = useState(post.isLiked);
   const [likeCount, setLikeCount] = useState(post.likeCount);
   const [isToggling, setIsToggling] = useState(false);
@@ -105,6 +106,15 @@ export default function FeedPost({ post, isDetail = false }: FeedPostProps) {
           <span className="inline-flex items-center gap-1 text-[10px] text-warm-gold uppercase tracking-wider font-medium bg-warm-gold/10 border border-warm-gold/25 px-2 py-0.5 rounded-full shrink-0">
             <Pin className="w-2.5 h-2.5" />
             Pinned
+          </span>
+        )}
+        {isNew && !isDetail && (
+          <span
+            className="inline-flex items-center gap-1 text-[10px] text-emerald-300 uppercase tracking-[0.18em] font-medium bg-emerald-500/10 border border-emerald-400/30 px-2 py-0.5 rounded-full shrink-0"
+            aria-label="New since your last visit"
+          >
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+            New
           </span>
         )}
       </div>

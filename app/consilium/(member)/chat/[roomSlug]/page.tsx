@@ -1,7 +1,6 @@
-import { cookies } from "next/headers";
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { verifyAccessToken } from "@/lib/auth/jwt";
+import { resolveActiveUserId } from "@/lib/auth/resolve-user";
 import { getAdminUserId } from "@/lib/auth/server-auth";
 import { prisma } from "@/lib/prisma";
 import { checkAccessTier } from "@/lib/community/access";
@@ -34,18 +33,9 @@ export async function generateMetadata({ params }: Props) {
 export default async function ChatRoomPage({ params }: Props) {
   const { roomSlug } = await params;
 
-  const cookieStore = await cookies();
-  const accessToken = cookieStore.get("accessToken")?.value;
-  let userId: string | null = null;
-
-  if (accessToken) {
-    try {
-      const payload = verifyAccessToken(accessToken);
-      if (payload) userId = payload.userId;
-    } catch {
-      /* fall through to admin check */
-    }
-  }
+  // Ban-aware resolver (checks isBanned + tokenVersion); admin preview
+  // falls back last so Kanika can inspect any room from /admin.
+  let userId: string | null = await resolveActiveUserId();
   if (!userId) {
     userId = await getAdminUserId();
   }
