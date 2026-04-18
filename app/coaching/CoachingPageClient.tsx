@@ -288,11 +288,19 @@ export default function CoachingPage() {
                           </label>
 
                           {agreedToTerms[pkg.id] && (
+                            // No successUrl override — the default from
+                            // /api/stripe/checkout sends buyers to
+                            // /success?session_id={CHECKOUT_SESSION_ID}&product=…,
+                            // which polls /api/stripe/session for real
+                            // order details and auto-opens the coaching
+                            // BookingModal. Overriding to /coaching/success
+                            // (which previously happened here) sent users
+                            // to a hardcoded-placeholder page that couldn't
+                            // even identify which package they bought.
                             <StripeButton
                               priceKey={COACHING_PRICE_KEYS[pkg.id]}
                               label="Book Now"
                               price={COACHING_PRICES[pkg.id]}
-                              successUrl={`${typeof window !== "undefined" ? window.location.origin : ""}/coaching/success`}
                             />
                           )}
                         </div>

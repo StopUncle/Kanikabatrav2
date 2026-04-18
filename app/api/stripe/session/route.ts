@@ -28,11 +28,17 @@ export async function GET(request: NextRequest) {
     // For book purchases, find the purchase record with download token
     let downloadToken: string | null = null;
     if (isBook && email) {
-      // The webhook may or may not have fired yet — poll up to 20 seconds
+      // The webhook may or may not have fired yet — poll up to 20 seconds.
+      // Case-insensitive match because Stripe returns the email exactly
+      // as the buyer typed it at checkout, while the webhook normalises
+      // to lowercase before writing Purchase.customerEmail. A buyer who
+      // typed Alice@Gmail.com used to miss the token entirely and only
+      // get it from the email; now the success page can render the
+      // immediate-download button regardless of email casing.
       for (let i = 0; i < 10; i++) {
         const purchase = await prisma.purchase.findFirst({
           where: {
-            customerEmail: email,
+            customerEmail: { equals: email, mode: "insensitive" },
             type: "BOOK",
             status: "COMPLETED",
             paypalOrderId: { startsWith: "ST-" },

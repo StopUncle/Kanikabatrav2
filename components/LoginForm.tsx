@@ -18,7 +18,14 @@ type LoginFormData = z.infer<typeof loginSchema>;
 export default function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const returnTo = searchParams.get("returnTo");
+  // Accept both param names — server-auth redirects send ?redirect=…,
+  // the profile/quiz-results pages send ?returnTo=…, and some legacy
+  // components use ?redirect=… too. Without this dual read, anyone
+  // hitting a protected page while logged out landed on /dashboard
+  // after login instead of being sent back to where they were going.
+  // Prefer returnTo when both are present (explicit > implicit).
+  const returnTo =
+    searchParams.get("returnTo") || searchParams.get("redirect");
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");

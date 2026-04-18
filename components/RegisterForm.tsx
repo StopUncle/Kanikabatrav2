@@ -24,7 +24,11 @@ type RegisterFormData = z.infer<typeof registerSchema>;
 export default function RegisterForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const returnTo = searchParams.get("returnTo");
+  // Accept both ?returnTo and ?redirect so every entry point lands back
+  // in the same place post-register. See LoginForm for why — server-auth
+  // ships users here via ?redirect=…, other pages use ?returnTo=….
+  const returnTo =
+    searchParams.get("returnTo") || searchParams.get("redirect");
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);

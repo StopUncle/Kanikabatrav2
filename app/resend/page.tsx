@@ -67,8 +67,8 @@ export default function ResendPage() {
               <span className="gradient-text">Resend Download Link</span>
             </h1>
             <p className="text-text-gray text-lg">
-              Didn&apos;t receive your book? Enter the email you used on PayPal
-              and we&apos;ll send a fresh download link.
+              Didn&apos;t receive your book? Enter the email you used at
+              checkout and we&apos;ll send a fresh download link.
             </p>
           </m.div>
 
