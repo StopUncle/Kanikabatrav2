@@ -35,30 +35,39 @@ export default async function ClassroomPage() {
     },
   });
 
-  const courseData = courses.map((course) => {
-    const totalLessons = course.modules.reduce(
-      (sum, mod) => sum + mod.lessons.length,
-      0,
-    );
-    const enrollment = course.enrollments[0];
-    const completedLessons = enrollment
-      ? enrollment.progress.filter((p) => p.isCompleted).length
-      : 0;
-    const progressPercent =
-      totalLessons > 0 ? Math.round((completedLessons / totalLessons) * 100) : 0;
+  const courseData = courses
+    // Hide courses that have no lessons yet — otherwise members see a
+    // card that says "0 lessons" with 0% progress, which looks broken.
+    // Admin panel can still manage these via /admin/courses.
+    .filter((course) =>
+      course.modules.some((mod) => mod.lessons.length > 0),
+    )
+    .map((course) => {
+      const totalLessons = course.modules.reduce(
+        (sum, mod) => sum + mod.lessons.length,
+        0,
+      );
+      const enrollment = course.enrollments[0];
+      const completedLessons = enrollment
+        ? enrollment.progress.filter((p) => p.isCompleted).length
+        : 0;
+      const progressPercent =
+        totalLessons > 0
+          ? Math.round((completedLessons / totalLessons) * 100)
+          : 0;
 
-    return {
-      id: course.id,
-      title: course.title,
-      slug: course.slug,
-      description: course.description,
-      thumbnailUrl: course.thumbnailUrl,
-      moduleCount: course.modules.length,
-      totalLessons,
-      completedLessons,
-      progressPercent,
-    };
-  });
+      return {
+        id: course.id,
+        title: course.title,
+        slug: course.slug,
+        description: course.description,
+        thumbnailUrl: course.thumbnailUrl,
+        moduleCount: course.modules.length,
+        totalLessons,
+        completedLessons,
+        progressPercent,
+      };
+    });
 
   return (
     <div className="max-w-4xl mx-auto px-3 sm:px-4 py-6 sm:py-8 lg:py-12">

@@ -4,7 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { memberSafeName } from "@/lib/community/privacy";
 import FeedList from "@/components/consilium/FeedList";
 import OnboardingModal from "@/components/consilium/OnboardingModal";
-import { MessageCircle } from "lucide-react";
+import { MessageCircle, Mail } from "lucide-react";
 import { tierForMember } from "@/components/consilium/badge-tiers";
 
 export const metadata = {
@@ -12,8 +12,14 @@ export const metadata = {
   description: "The council feed — insights, discussions, and voice notes from Kanika.",
 };
 
-export default async function FeedPage() {
+export default async function FeedPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ claimed?: string }>;
+}) {
   const userId = await requireServerAuth("/consilium/feed");
+  const params = await searchParams;
+  const justClaimed = params.claimed === "1";
 
   const viewerRecord = await prisma.user.findUnique({
     where: { id: userId },
@@ -89,6 +95,33 @@ export default async function FeedPage() {
       {showOnboarding && <OnboardingModal />}
 
       <div className="max-w-2xl mx-auto px-3 sm:px-4 py-6 sm:py-8 lg:py-12">
+        {justClaimed && (
+          // One-off banner shown only when the user just landed via the
+          // magic-claim flow (?claimed=1). Tells fresh gift-members to
+          // check their inbox for the password-set link so they don't
+          // get locked out from a different device later. Non-dismissible
+          // on purpose — it goes away the moment they navigate to any
+          // other member page or reload /consilium/feed without the
+          // query param.
+          <div className="mb-6 rounded-xl border border-warm-gold/40 bg-warm-gold/[0.05] p-4 sm:p-5">
+            <div className="flex items-start gap-3">
+              <div className="shrink-0 w-9 h-9 rounded-full bg-warm-gold/15 border border-warm-gold/30 flex items-center justify-center">
+                <Mail className="w-4 h-4 text-warm-gold" strokeWidth={1.8} />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-warm-gold text-[10px] uppercase tracking-[0.25em] mb-1">
+                  Your gift is claimed
+                </p>
+                <p className="text-text-light text-sm font-light leading-relaxed">
+                  30 days start now. Check your email for a{" "}
+                  <strong className="text-warm-gold">set-your-password</strong>{" "}
+                  link so you can log back in from any device later.
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
+
         <div className="mb-6 sm:mb-8">
           <h1 className="text-2xl sm:text-3xl font-extralight tracking-wider uppercase gradient-text-gold mb-2">
             The Feed
