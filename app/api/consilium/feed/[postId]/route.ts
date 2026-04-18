@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { requireAdminSession } from "@/lib/admin/auth";
 import { prisma } from "@/lib/prisma";
 import { logger } from "@/lib/logger";
+import { deleteFromR2, isR2Configured } from "@/lib/storage/r2";
 
 /**
  * Admin-only feed post mutations.
@@ -70,7 +71,41 @@ export async function DELETE(_request: NextRequest, { params }: RouteParams) {
   }
 
   try {
+    // If this is a voice-note post, grab the R2 key before we delete the
+    // row. The voiceNoteUrl is of the form
+    //   https://pub-XXX.r2.dev/voice-notes/vn-1234567890-abc.m4a
+    // We strip the public-URL prefix to recover the object key, then best-
+    // effort delete from R2 AFTER the DB row is gone. DB is authoritative
+    // so a failed R2 delete leaves an orphan object but the user-facing
+    // state is consistent — easier to garbage-collect orphans later than
+    // to leave the DB referencing deleted audio.
+    const post = await prisma.feedPost.findUnique({
+      where: { id: postId },
+      select: { voiceNoteUrl: true, type: true },
+    });
+
     await prisma.feedPost.delete({ where: { id: postId } });
+
+    if (
+      post?.type === "VOICE_NOTE" &&
+      post.voiceNoteUrl &&
+      isR2Configured()
+    ) {
+      const publicBase = (process.env.R2_PUBLIC_URL ?? "").replace(/\/$/, "");
+      if (publicBase && post.voiceNoteUrl.startsWith(publicBase + "/")) {
+        const key = post.voiceNoteUrl.slice(publicBase.length + 1);
+        try {
+          await deleteFromR2(key);
+        } catch (err) {
+          logger.warn("[admin/feed-delete] R2 delete failed (orphan ok)", {
+            postId,
+            key,
+            err: (err as Error).message,
+          });
+        }
+      }
+    }
+
     return NextResponse.json({ success: true });
   } catch (err) {
     logger.error("[admin/feed-delete] failed", err as Error, { postId });
