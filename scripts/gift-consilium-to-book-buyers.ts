@@ -51,6 +51,41 @@ const prisma = new PrismaClient();
 const DRY_RUN = !process.argv.includes("--send");
 const LOG_PATH = path.join(process.cwd(), ".gift-log.json");
 
+// Test / internal accounts we never want to email in a mass send.
+// Compared case-insensitively against customerEmail AND customerName.
+const EMAIL_BLOCKLIST = new Set(
+  [
+    "test@example.com",
+    "sdmatheson@outlook.com",
+    "sdmatheson776@gmail.com",
+    "mathesonsienna7@gmail.com",
+    "kanika@kanikarose.com",
+    "kanikarosaliebatra@gmail.com",
+    "kbatra271@gmail.com",
+  ].map((e) => e.toLowerCase()),
+);
+
+const NAME_BLOCKLIST_PATTERNS = [
+  /^test user$/i,
+  /^fat sam$/i,
+  /^smelly/i,
+  /^kanika/i,
+];
+
+const EMAIL_PATTERN_BLOCKLIST = [
+  /@example\.com$/i,
+  /^test@/i,
+  /\+test@/i,
+];
+
+function isBlocklisted(email: string, name: string): boolean {
+  const normalizedEmail = email.toLowerCase();
+  if (EMAIL_BLOCKLIST.has(normalizedEmail)) return true;
+  if (EMAIL_PATTERN_BLOCKLIST.some((p) => p.test(normalizedEmail))) return true;
+  if (NAME_BLOCKLIST_PATTERNS.some((p) => p.test(name))) return true;
+  return false;
+}
+
 function signClaimToken(email: string, name: string): string {
   const secret = process.env.JWT_SECRET;
   if (!secret) {
@@ -75,14 +110,25 @@ async function main() {
       : "LIVE RUN — emails will actually send.\n",
   );
 
-  // Gather unique buyer emails. Book is type=BOOK; exclude the
-  // INNER_CIRCLE bundled book purchases (paypalOrderId starts with
-  // "IC-BOOK-") since those members already have Consilium.
+  // Gather unique buyer emails. A "real" book buyer must be:
+  //   - type BOOK, status COMPLETED
+  //   - NOT a bundle purchase (paypalOrderId starts IC-BOOK-, those
+  //     already have Consilium access from the bundle)
+  //   - NOT a MANUAL_ or MANUAL- backfill placeholder (those rows exist
+  //     for people who bought on Amazon/KDP so the quiz could be unlocked
+  //     for their email — they never paid this site)
+  //   - amount >= 15 (the book's cheapest real price was $24.99, presale
+  //     $34.99; anything under is a quiz-unlock or test row that got
+  //     mis-typed as BOOK)
   const purchases = await prisma.purchase.findMany({
     where: {
       type: "BOOK",
       status: "COMPLETED",
-      NOT: { paypalOrderId: { startsWith: "IC-BOOK-" } },
+      amount: { gte: 15 },
+      NOT: [
+        { paypalOrderId: { startsWith: "IC-BOOK-" } },
+        { paypalOrderId: { contains: "MANUAL" } },
+      ],
     },
     select: {
       customerEmail: true,
@@ -105,6 +151,20 @@ async function main() {
   }
 
   console.log(`Unique book buyers: ${uniqueBuyers.size}`);
+
+  // Filter out test / internal accounts.
+  const blocklisted: Array<{ email: string; name: string }> = [];
+  for (const key of Array.from(uniqueBuyers.keys())) {
+    const buyer = uniqueBuyers.get(key)!;
+    if (isBlocklisted(buyer.email, buyer.name)) {
+      blocklisted.push(buyer);
+      uniqueBuyers.delete(key);
+    }
+  }
+  if (blocklisted.length > 0) {
+    console.log(`Filtered ${blocklisted.length} test/internal:`);
+    blocklisted.forEach((b) => console.log(`    skip  ${b.email} — ${b.name}`));
+  }
 
   // Skip buyers with an ACTIVE paying membership (not bundle, not gift).
   const skipList = new Set<string>();
