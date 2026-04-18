@@ -1,6 +1,8 @@
 import { Metadata } from "next";
 import BookPageClient from "./BookPageClient";
 import { SITE_CONFIG } from "@/lib/constants";
+import { optionalServerAuth } from "@/lib/auth/server-auth";
+import { checkMembership } from "@/lib/community/membership";
 
 export const metadata: Metadata = {
   title: "Sociopathic Dating Bible | Kanika Batra",
@@ -27,6 +29,18 @@ export const metadata: Metadata = {
   },
 };
 
-export default function BookPage() {
-  return <BookPageClient />;
+export default async function BookPage() {
+  // Look up membership so we can show the member-exclusive $9.99 price
+  // instead of $24.99. The server-side checkout endpoint enforces the
+  // same rule, so this display lookup is informational only — not a
+  // security boundary. Non-members still pay $24.99 even if the prop
+  // is spoofed client-side.
+  const userId = await optionalServerAuth();
+  let isMember = false;
+  if (userId) {
+    const check = await checkMembership(userId);
+    isMember = check.isMember && check.status === "ACTIVE";
+  }
+
+  return <BookPageClient isMember={isMember} />;
 }

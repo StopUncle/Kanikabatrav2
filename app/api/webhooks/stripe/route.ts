@@ -549,40 +549,14 @@ export async function POST(request: NextRequest) {
             },
           });
 
-          // Inner Circle members get the premium book bundled. Create a
-          // download token + Purchase row just like the standalone BOOK
-          // branch so they get working download links.
-          try {
-            const bookToken = crypto.randomBytes(32).toString("hex");
-            const bookExpiry = new Date();
-            bookExpiry.setDate(bookExpiry.getDate() + 30);
-
-            await prisma.purchase.create({
-              data: {
-                type: "BOOK",
-                customerEmail: user.email,
-                customerName: user.name || "Member",
-                amount: 0,
-                status: "COMPLETED",
-                paypalOrderId: `IC-BOOK-${sessionId}`,
-                downloadToken: bookToken,
-                expiresAt: bookExpiry,
-                maxDownloads: 10,
-                metadata: { source: "inner-circle-bundle", sessionId },
-              },
-            });
-
-            await sendBookDelivery(
-              user.email,
-              user.name || "Member",
-              bookToken,
-              "PREMIUM",
-              bookExpiry,
-            );
-            console.log(`[stripe-webhook] book delivery sent to INNER_CIRCLE member ${user.email}`);
-          } catch (err) {
-            console.error("[stripe-webhook] INNER_CIRCLE book delivery failed:", err);
-          }
+          // NOTE: The Sociopathic Dating Bible is no longer bundled with
+          // the $29/month Consilium subscription as of 2026-04-18. Members
+          // can now purchase the book at the member-exclusive $9.99 via
+          // the standard BOOK checkout (see /api/stripe/checkout, which
+          // swaps to STRIPE_PRICES.BOOK_MEMBER when an ACTIVE member is
+          // authenticated). The BOOK_CONSILIUM_1MO / BOOK_CONSILIUM_3MO
+          // one-time bundles still deliver the book — those are separate
+          // SKUs purchased for that express purpose.
 
           // If we just created the account, the user has no idea they have
           // one. Send them a welcome email containing their login email and

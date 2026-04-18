@@ -23,6 +23,14 @@ export const stripe = new Proxy({} as Stripe, {
 // After creating, fill in the price IDs (starts with price_)
 export const STRIPE_PRICES: Record<string, string> = {
   BOOK: "price_1TJufzJv9vx5CHTwnijydfaY",
+  /**
+   * Member-exclusive book price. Used by /api/stripe/checkout when the
+   * authenticated buyer has an ACTIVE Consilium membership. Never exposed
+   * as a priceKey to the client — the swap happens server-side so the
+   * standard $24.99 BOOK key cannot be manipulated into $9.99 by a
+   * non-member via devtools.
+   */
+  BOOK_MEMBER: "price_1TNS57Jv9vx5CHTw3Miq2KmS",
   QUIZ: "price_1TJug0Jv9vx5CHTwa9tjzDlu",
   INNER_CIRCLE: "price_1TJug1Jv9vx5CHTwjPYeSm7E",
   COACHING_SINGLE: "price_1TJug1Jv9vx5CHTw6FT0vzoW",

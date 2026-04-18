@@ -82,11 +82,12 @@ export default async function InnerCircleLanding({
 
   const benefits = [
     "Full access to the course library — dark psychology, pattern recognition, career strategy",
+    "The Dark Mirror simulator — 30 interactive scenarios across three tracks",
     "Voice notes from Kanika — raw insights you won't hear anywhere else",
     "Community feed — daily insights, discussion prompts, and posts from Kanika",
     "Forum and live chat — connect with other members who see what you see",
     "New courses and content added regularly",
-    "The Sociopathic Dating Bible (premium edition) included",
+    "Member-exclusive pricing on the Sociopathic Dating Bible — $9.99 (normally $24.99)",
   ];
 
   return (
@@ -225,8 +226,8 @@ export default async function InnerCircleLanding({
                   <div className="text-text-gray text-xs">1 Coaching Session</div>
                 </div>
                 <div className="text-center">
-                  <div className="text-warm-gold/80 text-xl font-light">$24.99</div>
-                  <div className="text-text-gray text-xs">Book (Included)</div>
+                  <div className="text-warm-gold/80 text-xl font-light">$9.99</div>
+                  <div className="text-text-gray text-xs">Book (Member Price)</div>
                 </div>
                 <div className="text-center border border-warm-gold/50 bg-warm-gold/5 rounded-lg py-2">
                   <div className="text-warm-gold text-xl font-light">$29</div>

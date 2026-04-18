@@ -198,12 +198,17 @@ export default function BookShowcase() {
                 </div>
               ) : (
                 <div className="space-y-4">
-                  <StripeButton
-                    priceKey="BOOK"
-                    label="Get Instant Access"
-                    price="$24.99"
-                    icon="card"
-                  />
+                  <div>
+                    <StripeButton
+                      priceKey="BOOK"
+                      label="Get Instant Access"
+                      price="$24.99"
+                      icon="card"
+                    />
+                    <p className="text-text-gray/60 text-xs text-center mt-2">
+                      Consilium members pay $9.99 &mdash; applied at checkout
+                    </p>
+                  </div>
 
                   {/* Book + Consilium bundles — matched to the book page so
                       the landing page captures the same upsell. Only shown
