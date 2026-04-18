@@ -120,6 +120,51 @@ forum reply list API. No active vulnerability — downstream guards
 already caught banned users — but the revocation story is now
 uniformly enforced at the session-resolution layer.
 
+### Security — broader ban-aware sweep outside consilium (6 more routes)
+Followed the consilium pass with the last six non-consilium call sites:
+`/api/purchases`, `/api/user/delete`, `/api/user/settings`,
+`/api/quiz/results/[id]`, `/dashboard` (server component), `/profile`
+(server component). After this the `app/` tree is **zero** raw
+`verifyAccessToken` calls — every auth path enforces `isBanned`,
+`tokenVersion`, and "account still exists" at the session layer.
+
+### Revenue — killed live PayPal paths
+/links page was still running a live PayPal checkout for the premium
+book even though the rest of the site had been Stripe-only since April
+2026. Bypass silently skipped webhook → Purchase row → delivery email →
+email sequence → gift-campaign eligibility → member-discount swap.
+Rewired the "Buy Now — \$24.99" linkinbio button to hit
+`/api/stripe/checkout` with `priceKey: "BOOK"` so the path matches the
+homepage and `/book`. `/donate` redirects to `/book` (variable-amount
+donations aren't in the Stripe catalogue; rebuild on demand). Removed
+from footer.
+
+### Infrastructure — `microphone=()` header was blocking VoiceRecorder
+`next.config.js` set `Permissions-Policy: camera=(), microphone=(),
+geolocation=()`. The `microphone=()` empty allowlist makes
+Chrome/Safari silently deny `getUserMedia` **even on same-origin**,
+which means the admin VoiceRecorder's MediaRecorder path would reject
+with `NotAllowedError` and the admin would have no idea why. Relaxed to
+`microphone=(self)`; camera and geolocation stay empty-allowlist since
+nothing on the site needs them.
+
+### Ops — deleted Lemon Squeezy dead code (590 LOC)
+LS was the short-lived intermediate processor between PayPal and Stripe
+and got cut in April 2026 when LS flagged the book content. Four files
+were still sitting in the tree: `/api/lemonsqueezy/checkout`,
+`/api/webhooks/lemonsqueezy`, `components/LemonSqueezyButton.tsx`,
+`lib/lemonsqueezy.ts`. The checkout route was still publicly POST-able;
+no live code path hit it but leaving a live payment handler in a tree
+you believe is Stripe-only is an audit trap. All gone.
+
+### Ops — robots.txt tightening
+Added `/admin`, `/admin/`, `/reset-password`, `/forgot-password`,
+`/consilium/claim`, `/consilium/success`, `/consilium/book`,
+`/consilium/quiz`, `/consilium/badges`, and `/quiz/results` to the
+disallow list. `/consilium/claim` especially matters — the URL carries
+a magic-claim JWT in the query string and we don't want search engines
+archiving inbound referrers with it attached.
+
 ## ⚠️ BACKLOG — documented but not shipped
 
 ### B1. Forum post/reply API ban-enforcement gap
