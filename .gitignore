@@ -109,3 +109,6 @@ HOW-AI-ACTUALLY-WORKS.md
 
 # Gift-campaign delivery logs — contain customer emails
 .gift-log.json
+
+# Private research notes (gurus, trends, strategy) — local only
+research/
