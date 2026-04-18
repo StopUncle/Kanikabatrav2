@@ -72,8 +72,15 @@ const nextConfig = {
             value: "origin-when-cross-origin",
           },
           {
+            // microphone=(self) — the admin voice-note recorder uses
+            // MediaRecorder + getUserMedia, which the response header
+            // enforces in Chrome/Safari. microphone=() silently blocks
+            // recording even on same-origin and produces a confusing
+            // "NotAllowedError" in the admin console. Camera and
+            // geolocation stay empty-allowlist — nothing on the site
+            // needs them.
             key: "Permissions-Policy",
-            value: "camera=(), microphone=(), geolocation=()",
+            value: "camera=(), microphone=(self), geolocation=()",
           },
         ],
       },

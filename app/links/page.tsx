@@ -3,8 +3,6 @@
 import { useState, useCallback, useRef, useEffect } from "react";
 import { MANIPULATION_QUIZ, getResult } from "@/lib/quiz-manipulation";
 import type { QuizResult } from "@/lib/quiz-manipulation";
-import PayPalButton from "@/components/PayPalButton";
-import { BOOK_INFO } from "@/lib/constants";
 
 function trackEvent(name: string, params?: Record<string, string>) {
   try {
@@ -65,8 +63,39 @@ function SaleTimer() {
 // ─── Main Page ─────────────────────────────────────────────
 export default function LinksPage() {
   const [showQuiz, setShowQuiz] = useState(false);
-  const [showPayPal, setShowPayPal] = useState(false);
+  const [checkoutLoading, setCheckoutLoading] = useState(false);
+  const [checkoutError, setCheckoutError] = useState<string | null>(null);
   const [landingVideoPlaying, setLandingVideoPlaying] = useState(false);
+
+  // Stripe checkout for the premium book — matches the BookShowcase /
+  // /book flow so webhook-driven book delivery, quiz unlock, email
+  // sequence, and gift-campaign eligibility all fire the same way
+  // whether the buyer arrives from the homepage or the linkinbio page.
+  const startBookCheckout = useCallback(async () => {
+    trackEvent("book_click", { version: "premium" });
+    setCheckoutLoading(true);
+    setCheckoutError(null);
+    try {
+      const res = await fetch("/api/stripe/checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          priceKey: "BOOK",
+          metadata: { source: "linkinbio" },
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok || !data.checkoutUrl) {
+        throw new Error(data.error || "Checkout unavailable — try again.");
+      }
+      window.location.href = data.checkoutUrl;
+    } catch (err) {
+      setCheckoutError(
+        err instanceof Error ? err.message : "Checkout unavailable — try again.",
+      );
+      setCheckoutLoading(false);
+    }
+  }, []);
   const landingVideoRef = useRef<HTMLVideoElement>(null);
   const landingVideoContainerRef = useRef<HTMLDivElement>(null);
 
@@ -205,50 +234,30 @@ export default function LinksPage() {
 
         {/* CTA */}
         <div className="space-y-3">
-          {showPayPal ? (
-            <div>
-              <PayPalButton
-                type="book"
-                amount={BOOK_INFO.price}
-                itemName={BOOK_INFO.title}
-                onSuccess={(details) => {
-                  trackEvent("purchase_complete", { version: "premium" });
-                  window.location.href = `/success?payment_id=${details.id}&type=book&amount=${BOOK_INFO.price}`;
-                }}
-                onError={(err) => console.error("Payment failed:", err)}
-                onCancel={() => setShowPayPal(false)}
-              />
-              <button
-                onClick={() => setShowPayPal(false)}
-                className="block w-full text-center mt-3 text-[#6b7280] text-xs hover:text-[#94a3b8] transition-colors"
-              >
-                &larr; Back
-              </button>
-            </div>
-          ) : (
-            <>
-              <button
-                onClick={() => { trackEvent("book_click", { version: "premium" }); setShowPayPal(true); }}
-                className="block w-full text-center py-4 rounded-full font-medium text-sm tracking-wider uppercase active:scale-[0.97] transition-transform cursor-pointer"
-                style={{
-                  background: "linear-gradient(135deg, #d4af37 0%, #b8962e 100%)",
-                  color: "#0a0a0a",
-                  boxShadow: "0 0 20px rgba(212,175,55,0.2), 0 4px 15px rgba(0,0,0,0.3)",
-                }}
-              >
-                Buy Now — $24.99
-              </button>
-              <a
-                href="https://www.amazon.com/dp/B0FWKJLT6F"
-                onClick={() => trackEvent("book_click", { version: "kindle" })}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="block w-full text-center py-3.5 rounded-full text-sm font-medium text-[#94a3b8] border border-[#1e1915] hover:border-[#d4af37]/30 active:scale-[0.97] transition-all"
-              >
-                Or get on Kindle — $9.99
-              </a>
-            </>
+          <button
+            onClick={startBookCheckout}
+            disabled={checkoutLoading}
+            className="block w-full text-center py-4 rounded-full font-medium text-sm tracking-wider uppercase active:scale-[0.97] transition-transform cursor-pointer disabled:opacity-60 disabled:cursor-wait"
+            style={{
+              background: "linear-gradient(135deg, #d4af37 0%, #b8962e 100%)",
+              color: "#0a0a0a",
+              boxShadow: "0 0 20px rgba(212,175,55,0.2), 0 4px 15px rgba(0,0,0,0.3)",
+            }}
+          >
+            {checkoutLoading ? "Opening checkout…" : "Buy Now — $24.99"}
+          </button>
+          {checkoutError && (
+            <p className="text-[#f87171] text-xs text-center">{checkoutError}</p>
           )}
+          <a
+            href="https://www.amazon.com/dp/B0FWKJLT6F"
+            onClick={() => trackEvent("book_click", { version: "kindle" })}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="block w-full text-center py-3.5 rounded-full text-sm font-medium text-[#94a3b8] border border-[#1e1915] hover:border-[#d4af37]/30 active:scale-[0.97] transition-all"
+          >
+            Or get on Kindle — $9.99
+          </a>
         </div>
 
         {/* Premium includes */}
