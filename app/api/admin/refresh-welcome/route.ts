@@ -23,12 +23,27 @@ export async function POST(_request: NextRequest) {
   const unauthorized = await requireAdminSession();
   if (unauthorized) return unauthorized;
 
-  const existing = await prisma.feedPost.findFirst({
-    where: {
-      type: "AUTOMATED",
-      metadata: { path: ["type"], equals: "welcome" },
-    },
-  });
+  // Match order matters: try the canonical metadata marker first, then
+  // fall back to legacy rows that pre-date the metadata.type=welcome
+  // convention (old test posts, seed data, hand-created rows) by title.
+  // Without this fallback, refresh would CREATE a duplicate instead of
+  // updating the one the user actually sees.
+  const existing =
+    (await prisma.feedPost.findFirst({
+      where: {
+        type: "AUTOMATED",
+        metadata: { path: ["type"], equals: "welcome" },
+      },
+    })) ||
+    (await prisma.feedPost.findFirst({
+      where: {
+        OR: [
+          { title: { startsWith: "Welcome to The Consilium" } },
+          { title: { startsWith: "Welcome to the Consilium" } },
+        ],
+      },
+      orderBy: { createdAt: "asc" },
+    }));
 
   const content = buildWelcomeContent();
 
@@ -51,6 +66,9 @@ export async function POST(_request: NextRequest) {
     data: {
       title: WELCOME_TITLE,
       content,
+      // Normalize these in case we matched a legacy row that wasn't
+      // previously AUTOMATED or didn't carry our metadata marker.
+      type: "AUTOMATED",
       isPinned: true,
       metadata: {
         ...((existing.metadata as Record<string, unknown>) || {}),

@@ -42,6 +42,10 @@ export default function PostsPage() {
   const [showForm, setShowForm] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [typeFilter, setTypeFilter] = useState<TypeFilter>("ALL");
+  const [flash, setFlash] = useState<
+    | { kind: "success" | "error"; message: string }
+    | null
+  >(null);
   const [formData, setFormData] = useState({
     title: "",
     content: "",
@@ -72,6 +76,7 @@ export default function PostsPage() {
     if (!formData.title.trim() || !formData.content.trim()) return;
 
     setSubmitting(true);
+    setFlash(null);
     try {
       const res = await fetch("/api/consilium/feed/posts", {
         method: "POST",
@@ -80,12 +85,26 @@ export default function PostsPage() {
       });
 
       if (res.ok) {
+        const data = await res.json();
+        setFlash({
+          kind: "success",
+          message: `Post created (id ${data.post?.id?.slice(0, 8) ?? "?"}). Showing on the feed now.`,
+        });
         setFormData({ title: "", content: "", type: "ANNOUNCEMENT", isPinned: false });
         setShowForm(false);
         fetchPosts();
+      } else {
+        const err = await res.json().catch(() => ({}));
+        setFlash({
+          kind: "error",
+          message: `${res.status} · ${err.error ?? "Create failed"}${err.detail ? ` (${err.detail})` : ""}`,
+        });
       }
     } catch (err) {
-      console.error("Failed to create post:", err);
+      setFlash({
+        kind: "error",
+        message: `Network error: ${err instanceof Error ? err.message : "unknown"}`,
+      });
     } finally {
       setSubmitting(false);
     }
@@ -127,11 +146,21 @@ export default function PostsPage() {
       "Refresh the pinned welcome post to the latest house-rules version?\n\nKeeps the same post id — comments and likes carry over.",
     );
     if (!confirmed) return;
+    setFlash(null);
     const res = await fetch("/api/admin/refresh-welcome", { method: "POST" });
     if (res.ok) {
+      const data = await res.json();
+      setFlash({
+        kind: "success",
+        message: `Welcome post ${data.action ?? "updated"} (id ${data.post?.id?.slice(0, 8) ?? "?"}). Hard-refresh the feed to see it.`,
+      });
       fetchPosts();
     } else {
-      window.alert("Refresh failed. Check the logs.");
+      const err = await res.json().catch(() => ({}));
+      setFlash({
+        kind: "error",
+        message: `${res.status} · ${err.error ?? "Refresh failed"}`,
+      });
     }
   }
 
@@ -178,6 +207,18 @@ export default function PostsPage() {
           </button>
         </div>
       </div>
+
+      {flash && (
+        <div
+          className={`mb-6 px-4 py-3 rounded border text-sm font-light ${
+            flash.kind === "success"
+              ? "bg-emerald-500/10 border-emerald-500/30 text-emerald-300"
+              : "bg-red-500/10 border-red-500/30 text-red-300"
+          }`}
+        >
+          {flash.message}
+        </div>
+      )}
 
       {showForm && (
         <form
