@@ -1,7 +1,15 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { Loader2, Check, X, Clock, UserCheck, Users } from "lucide-react";
+import {
+  Loader2,
+  Check,
+  X,
+  Clock,
+  UserCheck,
+  Users,
+  ShieldCheck,
+} from "lucide-react";
 
 interface Application {
   id: string;
@@ -69,10 +77,20 @@ function renderValue(key: string, value: string | boolean): React.ReactNode {
   return String(value);
 }
 
-type FilterTab = "PENDING" | "APPROVED" | "ALL";
+type FilterTab = "PENDING" | "APPROVED" | "ACTIVE" | "ALL";
+
+type TabCounts = Record<FilterTab, number>;
+
+const EMPTY_COUNTS: TabCounts = {
+  PENDING: 0,
+  APPROVED: 0,
+  ACTIVE: 0,
+  ALL: 0,
+};
 
 export default function ApplicationsPage() {
   const [applications, setApplications] = useState<Application[]>([]);
+  const [counts, setCounts] = useState<TabCounts>(EMPTY_COUNTS);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<FilterTab>("PENDING");
   const [actionLoading, setActionLoading] = useState<string | null>(null);
@@ -84,6 +102,17 @@ export default function ApplicationsPage() {
       if (res.ok) {
         const data = await res.json();
         setApplications(data.applications || []);
+        // The API returns fresh per-tab counts on every request. We
+        // update them unconditionally so the badges reflect the current
+        // DB state regardless of which tab the admin opens first.
+        if (data.counts) {
+          setCounts({
+            PENDING: data.counts.PENDING ?? 0,
+            APPROVED: data.counts.APPROVED ?? 0,
+            ACTIVE: data.counts.ACTIVE ?? 0,
+            ALL: data.counts.ALL ?? 0,
+          });
+        }
       }
     } catch (err) {
       console.error("Failed to fetch applications:", err);
@@ -117,30 +146,56 @@ export default function ApplicationsPage() {
   const tabs: { value: FilterTab; label: string; icon: typeof Clock }[] = [
     { value: "PENDING", label: "Pending", icon: Clock },
     { value: "APPROVED", label: "Approved", icon: UserCheck },
+    // Active = approved + paid. Previously these vanished from the
+    // admin view entirely since they weren't PENDING or APPROVED and
+    // "All" was the only place they surfaced.
+    { value: "ACTIVE", label: "Active", icon: ShieldCheck },
     { value: "ALL", label: "All", icon: Users },
   ];
 
   return (
     <div className="max-w-5xl mx-auto">
-      <h1 className="text-2xl font-light uppercase tracking-[0.15em] text-text-light mb-8">
-        Applications
-      </h1>
+      <div className="mb-6">
+        <h1 className="text-2xl font-light uppercase tracking-[0.15em] text-text-light mb-1">
+          Applications
+        </h1>
+        {/* Gift claims + manual comps don't have an apply form, so they
+            never show here. This note makes that explicit instead of
+            leaving the admin wondering why their member count elsewhere
+            doesn't match the count on this page. */}
+        <p className="text-text-gray/60 text-xs font-light">
+          Only shows members who submitted the apply form. Gift claims and
+          manual memberships are in Admin &rsaquo; Members.
+        </p>
+      </div>
 
-      <div className="flex gap-2 mb-8">
-        {tabs.map(({ value, label, icon: Icon }) => (
-          <button
-            key={value}
-            onClick={() => setActiveTab(value)}
-            className={`flex items-center gap-2 px-4 py-2 text-sm font-light tracking-wide rounded transition-all duration-200 ${
-              activeTab === value
-                ? "bg-accent-gold/10 text-accent-gold border border-accent-gold/30"
-                : "text-text-gray border border-white/10 hover:text-text-light hover:border-white/20"
-            }`}
-          >
-            <Icon size={16} strokeWidth={1.5} />
-            {label}
-          </button>
-        ))}
+      <div className="flex gap-2 mb-8 flex-wrap">
+        {tabs.map(({ value, label, icon: Icon }) => {
+          const count = counts[value];
+          return (
+            <button
+              key={value}
+              onClick={() => setActiveTab(value)}
+              className={`flex items-center gap-2 px-4 py-2 text-sm font-light tracking-wide rounded transition-all duration-200 ${
+                activeTab === value
+                  ? "bg-accent-gold/10 text-accent-gold border border-accent-gold/30"
+                  : "text-text-gray border border-white/10 hover:text-text-light hover:border-white/20"
+              }`}
+            >
+              <Icon size={16} strokeWidth={1.5} />
+              {label}
+              <span
+                className={`ml-1 px-1.5 py-0.5 rounded text-[10px] tabular-nums tracking-normal ${
+                  activeTab === value
+                    ? "bg-accent-gold/20 text-accent-gold"
+                    : "bg-white/5 text-text-gray/70"
+                }`}
+              >
+                {count}
+              </span>
+            </button>
+          );
+        })}
       </div>
 
       {loading ? (
@@ -149,7 +204,15 @@ export default function ApplicationsPage() {
         </div>
       ) : applications.length === 0 ? (
         <div className="glass-card rounded-lg p-12 text-center">
-          <p className="text-text-gray font-light">No applications found.</p>
+          <p className="text-text-gray font-light">
+            {activeTab === "PENDING"
+              ? "No applications waiting for review."
+              : activeTab === "APPROVED"
+                ? "No approved applications awaiting payment."
+                : activeTab === "ACTIVE"
+                  ? "No active members from the apply flow yet."
+                  : "No applications found."}
+          </p>
         </div>
       ) : (
         <div className="space-y-4">
@@ -171,8 +234,14 @@ export default function ApplicationsPage() {
                     app.status === "PENDING"
                       ? "bg-amber-500/10 text-amber-400"
                       : app.status === "APPROVED"
-                        ? "bg-emerald-500/10 text-emerald-400"
-                        : "bg-red-500/10 text-red-400"
+                        ? "bg-sky-500/10 text-sky-300"
+                        : app.status === "ACTIVE"
+                          ? "bg-emerald-500/10 text-emerald-400"
+                          : app.status === "SUSPENDED"
+                            ? "bg-orange-500/10 text-orange-300"
+                            : app.status === "EXPIRED"
+                              ? "bg-white/5 text-text-gray"
+                              : "bg-red-500/10 text-red-400"
                   }`}
                 >
                   {app.status}
