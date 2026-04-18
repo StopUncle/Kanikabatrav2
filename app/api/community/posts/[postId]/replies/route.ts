@@ -3,8 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { requireAuth } from "@/lib/auth/middleware";
 import { checkAccessTier } from "@/lib/community/access";
 import { getViewerGender, authorGenderWhere } from "@/lib/community/gender-filter";
-import { verifyAccessToken } from "@/lib/auth/jwt";
-import { cookies } from "next/headers";
+import { resolveActiveUserIdFromRequest } from "@/lib/auth/resolve-user";
 import { memberSafeName } from "@/lib/community/privacy";
 import { enforceMessagingGuard } from "@/lib/community/messaging-guard";
 
@@ -18,16 +17,10 @@ export async function GET(
     const cursor = searchParams.get("cursor");
     const limit = Math.min(parseInt(searchParams.get("limit") || "20"), 50);
 
-    const cookieStore = await cookies();
-    const accessToken = cookieStore.get("accessToken")?.value;
-    let userId: string | null = null;
-
-    if (accessToken) {
-      const payload = verifyAccessToken(accessToken);
-      if (payload) {
-        userId = payload.userId;
-      }
-    }
+    // Ban-aware resolver (isBanned + tokenVersion). Returns null for
+    // unauth / banned — access check below then applies PUBLIC-tier
+    // rules (banned users see the same as signed-out visitors).
+    const userId = await resolveActiveUserIdFromRequest(request);
 
     const post = await prisma.forumPost.findUnique({
       where: { id: postId },

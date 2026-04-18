@@ -1,8 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { checkAccessTier } from "@/lib/community/access";
-import { verifyAccessToken } from "@/lib/auth/jwt";
-import { cookies } from "next/headers";
+import { resolveActiveUserIdFromRequest } from "@/lib/auth/resolve-user";
 
 export async function GET(
   request: NextRequest,
@@ -15,17 +14,9 @@ export async function GET(
     const limit = Math.min(parseInt(searchParams.get("limit") || "20"), 50);
     const sort = searchParams.get("sort") || "latest";
 
-    // Get user ID if logged in
-    const cookieStore = await cookies();
-    const accessToken = cookieStore.get("accessToken")?.value;
-    let userId: string | null = null;
-
-    if (accessToken) {
-      const payload = verifyAccessToken(accessToken);
-      if (payload) {
-        userId = payload.userId;
-      }
-    }
+    // Ban-aware resolver (isBanned + tokenVersion). Banned users drop
+    // to PUBLIC-tier access via the checkAccessTier filter below.
+    const userId = await resolveActiveUserIdFromRequest(request);
 
     // Get category
     const category = await prisma.forumCategory.findUnique({
