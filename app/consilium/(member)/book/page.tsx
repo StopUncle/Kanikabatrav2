@@ -41,9 +41,16 @@ export default async function MemberBookPage() {
   //   1. Members who got the old bundled book (paypalOrderId: IC-BOOK-…)
   //   2. Members who bought standalone BOOK before joining
   //   3. Members who buy via this page at $9.99 today
+  //
+  // Case-insensitive email match — Purchase rows store the email as it
+  // was entered at Stripe checkout (often mixed case like
+  // "Kanika@Kanikarose.com") while User rows normalise to lowercase on
+  // register. Without `mode: "insensitive"` a gift-claim user whose
+  // purchase was under a different-cased email would see "you don't
+  // own this yet" and be charged for a book they already bought.
   const existingBook = await prisma.purchase.findFirst({
     where: {
-      customerEmail: user.email,
+      customerEmail: { equals: user.email, mode: "insensitive" },
       type: "BOOK",
       status: "COMPLETED",
     },

@@ -15,11 +15,12 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: "No quiz results found" }, { status: 404 });
     }
 
-    // Match by lowercased email — register stores lowercase, but historical
-    // QuizResult rows may have whatever the user typed at quiz time.
+    // Case-insensitive match — Purchase rows carry whatever was entered
+    // at Stripe checkout (often mixed-case). User.email is lowercased at
+    // register time. Straight equality misses historical rows.
     const hasBookPurchase = await prisma.purchase.findFirst({
       where: {
-        customerEmail: user.email.toLowerCase(),
+        customerEmail: { equals: user.email, mode: "insensitive" },
         type: "BOOK",
         status: "COMPLETED",
       },

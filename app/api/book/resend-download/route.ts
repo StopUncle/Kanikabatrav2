@@ -43,9 +43,11 @@ export async function POST() {
   // Pick the most recent non-refunded BOOK purchase for this email.
   // Covers both the old bundled purchases (paypalOrderId: IC-BOOK-…) and
   // any standalone BOOK purchases, including the new $9.99 member ones.
+  // Case-insensitive — Purchase rows carry the email as entered at
+  // checkout, often mixed-case. User.email is lowercased at register.
   const existing = await prisma.purchase.findFirst({
     where: {
-      customerEmail: user.email,
+      customerEmail: { equals: user.email, mode: "insensitive" },
       type: "BOOK",
       status: "COMPLETED",
     },
