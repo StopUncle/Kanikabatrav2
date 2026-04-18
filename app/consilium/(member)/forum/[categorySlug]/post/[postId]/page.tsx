@@ -1,7 +1,6 @@
-import { cookies } from "next/headers";
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { verifyAccessToken } from "@/lib/auth/jwt";
+import { resolveActiveUserId } from "@/lib/auth/resolve-user";
 import { getAdminUserId } from "@/lib/auth/server-auth";
 import { prisma } from "@/lib/prisma";
 import { checkAccessTier } from "@/lib/community/access";
@@ -35,18 +34,7 @@ export async function generateMetadata({ params }: Props) {
 export default async function PostPage({ params }: Props) {
   const { categorySlug, postId } = await params;
 
-  const cookieStore = await cookies();
-  const accessToken = cookieStore.get("accessToken")?.value;
-  let userId: string | null = null;
-
-  if (accessToken) {
-    try {
-      const payload = verifyAccessToken(accessToken);
-      if (payload) userId = payload.userId;
-    } catch {
-      /* fall through to admin check */
-    }
-  }
+  let userId: string | null = await resolveActiveUserId();
   if (!userId) {
     userId = await getAdminUserId();
   }

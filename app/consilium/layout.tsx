@@ -1,6 +1,5 @@
 import { Metadata } from "next";
-import { cookies } from "next/headers";
-import { verifyAccessToken } from "@/lib/auth/jwt";
+import { resolveActiveUserId } from "@/lib/auth/resolve-user";
 import { prisma } from "@/lib/prisma";
 import TrialSubscribeButton from "@/components/consilium/TrialSubscribeButton";
 
@@ -16,23 +15,26 @@ export default async function InnerCircleLayout({
 }) {
   let trialBanner: { daysLeft: number } | null = null;
 
-  try {
-    const cookieStore = await cookies();
-    const token = cookieStore.get("accessToken")?.value;
-    if (token) {
-      const payload = verifyAccessToken(token);
-      const membership = await prisma.communityMembership.findUnique({
-        where: { userId: payload.userId },
-        select: { billingCycle: true, expiresAt: true, status: true },
-      });
+  // Ban-aware resolver returns null for banned / tokenVersion-revoked
+  // users, which is exactly what we want — they shouldn't see the trial
+  // countdown banner anyway since they don't have an active membership.
+  const userId = await resolveActiveUserId();
+  if (userId) {
+    const membership = await prisma.communityMembership.findUnique({
+      where: { userId },
+      select: { billingCycle: true, expiresAt: true, status: true },
+    });
 
-      if (membership?.billingCycle === "trial" && membership.status === "ACTIVE" && membership.expiresAt) {
-        const daysLeft = Math.ceil((membership.expiresAt.getTime() - Date.now()) / (1000 * 60 * 60 * 24));
-        trialBanner = { daysLeft };
-      }
+    if (
+      membership?.billingCycle === "trial" &&
+      membership.status === "ACTIVE" &&
+      membership.expiresAt
+    ) {
+      const daysLeft = Math.ceil(
+        (membership.expiresAt.getTime() - Date.now()) / (1000 * 60 * 60 * 24),
+      );
+      trialBanner = { daysLeft };
     }
-  } catch {
-    /* not logged in or not a member */
   }
 
   return (
