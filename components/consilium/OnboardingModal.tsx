@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { X, Scroll, AudioLines, Library, Users, ArrowRight } from "lucide-react";
+import { X, Scroll, AudioLines, Library, Users, ArrowRight, Gamepad2 } from "lucide-react";
 import ConsiliumSeal from "@/components/ConsiliumSeal";
 
 /**
@@ -71,22 +71,27 @@ export default function OnboardingModal() {
           <OnboardingItem
             icon={Scroll}
             title="The Feed"
-            body="Posts, discussions, and announcements from Kanika. Comment, react, and build a track record here."
+            body="Posts, discussions, and announcements from Kanika. The pinned post at the top has the house rules — read it."
+          />
+          <OnboardingItem
+            icon={Gamepad2}
+            title="The Dark Mirror Simulator"
+            body="Interactive scenarios that teach manipulation + defense through play. Ten levels, twenty scenarios. Start at Level 1."
           />
           <OnboardingItem
             icon={AudioLines}
             title="Voice Notes"
-            body="Raw, unfiltered audio drops. Check the Voice Notes tab — new ones show up without notice."
+            body="Raw audio from Kanika — nothing she posts publicly. New drops appear without notice."
           />
           <OnboardingItem
             icon={Library}
             title="The Classroom"
-            body="Structured courses on dark psychology, pattern recognition, and career strategy. Start at the top and work down."
+            body="Structured courses on dark psychology, pattern recognition, and career strategy. Work top-down."
           />
           <OnboardingItem
             icon={Users}
-            title="Council Guidelines"
-            body="Every comment is reviewed. Trolls get removed. This is a safe space — keep it that way and you belong here."
+            title="House Rules"
+            body="Every comment is reviewed. Every page is watermarked. Leaking content or attacking members = permanent ban."
           />
         </ul>
 
