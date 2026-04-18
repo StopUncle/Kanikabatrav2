@@ -1,21 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { checkAccessTier } from "@/lib/community/access";
-import { verifyAccessToken } from "@/lib/auth/jwt";
-import { cookies } from "next/headers";
+import { resolveActiveUserIdFromRequest } from "@/lib/auth/resolve-user";
 
-export async function GET(_request: NextRequest) {
+export async function GET(request: NextRequest) {
   try {
-    const cookieStore = await cookies();
-    const accessToken = cookieStore.get("accessToken")?.value;
-    let userId: string | null = null;
-
-    if (accessToken) {
-      const payload = verifyAccessToken(accessToken);
-      if (payload) {
-        userId = payload.userId;
-      }
-    }
+    const userId = await resolveActiveUserIdFromRequest(request);
 
     const rooms = await prisma.chatRoom.findMany({
       where: { isActive: true },

@@ -1,9 +1,8 @@
 import { NextResponse } from "next/server";
-import { cookies } from "next/headers";
-import { verifyAccessToken } from "@/lib/auth/jwt";
 import { checkMembership } from "@/lib/community/membership";
 import { isAdmin } from "@/lib/community/membership";
 import { getAdminUserId } from "@/lib/auth/server-auth";
+import { resolveActiveUserId } from "@/lib/auth/resolve-user";
 import { getViewerGender, authorGenderWhere } from "@/lib/community/gender-filter";
 import { enforceRateLimit, limits } from "@/lib/rate-limit";
 import { enforceMessagingGuard } from "@/lib/community/messaging-guard";
@@ -41,18 +40,13 @@ const authorSelect = {
 
 /**
  * Resolve the caller's userId from either the member accessToken or
- * the admin_session cookie. Returns null if neither is valid.
+ * the admin_session cookie. Returns null for missing / invalid /
+ * BANNED sessions (the shared resolveActiveUserId enforces isBanned +
+ * tokenVersion; admin preview falls back last).
  */
 async function resolveUserId(): Promise<string | null> {
-  const cookieStore = await cookies();
-  const token = cookieStore.get("accessToken")?.value;
-  if (token) {
-    try {
-      return verifyAccessToken(token).userId;
-    } catch {
-      // fall through to admin check
-    }
-  }
+  const active = await resolveActiveUserId();
+  if (active) return active;
   return await getAdminUserId();
 }
 

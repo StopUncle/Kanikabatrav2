@@ -2,10 +2,9 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { checkAccessTier } from "@/lib/community/access";
 import { requireAuth } from "@/lib/auth/middleware";
-import { verifyAccessToken } from "@/lib/auth/jwt";
-import { cookies } from "next/headers";
 import { memberSafeName } from "@/lib/community/privacy";
 import { enforceMessagingGuard } from "@/lib/community/messaging-guard";
+import { resolveActiveUserIdFromRequest } from "@/lib/auth/resolve-user";
 
 export async function GET(
   request: NextRequest,
@@ -14,16 +13,7 @@ export async function GET(
   try {
     const { roomSlug } = await params;
 
-    const cookieStore = await cookies();
-    const accessToken = cookieStore.get("accessToken")?.value;
-    let userId: string | null = null;
-
-    if (accessToken) {
-      const payload = verifyAccessToken(accessToken);
-      if (payload) {
-        userId = payload.userId;
-      }
-    }
+    const userId = await resolveActiveUserIdFromRequest(request);
 
     const room = await prisma.chatRoom.findUnique({
       where: { slug: roomSlug },

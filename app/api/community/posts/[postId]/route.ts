@@ -2,8 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { requireAuth } from "@/lib/auth/middleware";
 import { checkAccessTier } from "@/lib/community/access";
-import { verifyAccessToken } from "@/lib/auth/jwt";
-import { cookies } from "next/headers";
+import { resolveActiveUserIdFromRequest } from "@/lib/auth/resolve-user";
 
 export async function GET(
   request: NextRequest,
@@ -12,17 +11,9 @@ export async function GET(
   try {
     const { postId } = await params;
 
-    // Get user ID if logged in
-    const cookieStore = await cookies();
-    const accessToken = cookieStore.get("accessToken")?.value;
-    let userId: string | null = null;
-
-    if (accessToken) {
-      const payload = verifyAccessToken(accessToken);
-      if (payload) {
-        userId = payload.userId;
-      }
-    }
+    // Resolve the caller through the unified auth path so banned users +
+    // revoked tokenVersions get filtered out. Null => treat as anonymous.
+    const userId = await resolveActiveUserIdFromRequest(request);
 
     const post = await prisma.forumPost.findUnique({
       where: { id: postId },

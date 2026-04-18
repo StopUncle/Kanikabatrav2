@@ -1,16 +1,12 @@
 import { NextResponse } from "next/server";
-import { cookies } from "next/headers";
-import { verifyAccessToken } from "@/lib/auth/jwt";
 import { getAdminUserId } from "@/lib/auth/server-auth";
+import { resolveActiveUserId } from "@/lib/auth/resolve-user";
 import { checkMembership } from "@/lib/community/membership";
 import { prisma } from "@/lib/prisma";
 
 async function resolveUserId(): Promise<string | null> {
-  const cookieStore = await cookies();
-  const token = cookieStore.get("accessToken")?.value;
-  if (token) {
-    try { return verifyAccessToken(token).userId; } catch { /* fall through */ }
-  }
+  const active = await resolveActiveUserId();
+  if (active) return active;
   return await getAdminUserId();
 }
 

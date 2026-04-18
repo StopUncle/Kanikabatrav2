@@ -1,23 +1,24 @@
 import { NextRequest, NextResponse } from "next/server";
 import { pusherServer } from "@/lib/pusher/server";
-import { verifyAccessToken } from "@/lib/auth/jwt";
-import { cookies } from "next/headers";
 import { prisma } from "@/lib/prisma";
 import { checkAccessTier } from "@/lib/community/access";
 import { memberSafeName } from "@/lib/community/privacy";
+import { resolveActiveUserIdFromRequest } from "@/lib/auth/resolve-user";
 
+/**
+ * Pusher channel authentication.
+ *
+ * Pusher opens long-lived real-time connections. Without a ban-aware gate,
+ * a banned user with a still-cryptographically-valid JWT can remain
+ * subscribed to presence and private channels indefinitely. Using the
+ * unified resolveActiveUserIdFromRequest closes that: banned users and
+ * revoked tokenVersions return null and Pusher rejects the subscription.
+ */
 export async function POST(request: NextRequest) {
   try {
-    const cookieStore = await cookies();
-    const accessToken = cookieStore.get("accessToken")?.value;
-
-    if (!accessToken) {
+    const userId = await resolveActiveUserIdFromRequest(request);
+    if (!userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
-    const payload = verifyAccessToken(accessToken);
-    if (!payload) {
-      return NextResponse.json({ error: "Invalid token" }, { status: 401 });
     }
 
     const formData = await request.formData();
@@ -32,7 +33,7 @@ export async function POST(request: NextRequest) {
     }
 
     const user = await prisma.user.findUnique({
-      where: { id: payload.userId },
+      where: { id: userId },
       select: {
         id: true,
         name: true,
@@ -56,7 +57,7 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ error: "Room not found" }, { status: 404 });
       }
 
-      const access = await checkAccessTier(payload.userId, room.accessTier);
+      const access = await checkAccessTier(userId, room.accessTier);
       if (!access.hasAccess) {
         return NextResponse.json(
           { error: "Access denied to premium room" },
@@ -78,7 +79,7 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ error: "Room not found" }, { status: 404 });
       }
 
-      const access = await checkAccessTier(payload.userId, room.accessTier);
+      const access = await checkAccessTier(userId, room.accessTier);
       if (!access.hasAccess) {
         return NextResponse.json({ error: "Access denied" }, { status: 403 });
       }
@@ -102,7 +103,7 @@ export async function POST(request: NextRequest) {
     if (channelName.startsWith("private-user-")) {
       const targetUserId = channelName.replace("private-user-", "");
 
-      if (targetUserId !== payload.userId) {
+      if (targetUserId !== userId) {
         return NextResponse.json(
           { error: "Cannot subscribe to other user channels" },
           { status: 403 },
