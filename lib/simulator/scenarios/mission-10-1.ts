@@ -264,6 +264,8 @@ const scenes: Scene[] = [
     mood: "danger",
     isEnding: true,
     outcomeType: "bad",
+    failureBlogSlug: "empress-endgame-from-victim-to-sovereign",
+    failureBlogTitle: "The Empress Endgame: From Victim to Sovereign",
     endingTitle: "You Became the Door",
     endingSummary:
       "\"Not yet. Earn the rounds first.\" The exact sentence that was said to you, which you resented, which delayed you by two years. You just said it. Devon leaves. In three years they'll be the ones with your role, and they'll remember the 'no' — not the reason for it.",
@@ -300,6 +302,8 @@ const scenes: Scene[] = [
     mood: "danger",
     isEnding: true,
     outcomeType: "bad",
+    failureBlogSlug: "mask-collection-four-personas-sociopaths-wear",
+    failureBlogTitle: "Mask Collection: The Four Personas Sociopaths Wear",
     endingTitle: "Credibility Spent",
     endingSummary:
       "You opened the door to be generous. The committee met Devon, was unimpressed, and now applies a discount to your future recommendations. Your generosity to one person cost you leverage for the next five. Gatekeeping IS caring, when the gate is downstream from your name.",

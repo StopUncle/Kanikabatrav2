@@ -226,6 +226,8 @@ const scenes: Scene[] = [
     mood: "tense",
     isEnding: true,
     outcomeType: "bad",
+    failureBlogSlug: "empress-endgame-from-victim-to-sovereign",
+    failureBlogTitle: "The Empress Endgame: From Victim to Sovereign",
     endingTitle: "Loyalty Over Judgment",
     endingSummary:
       "You nominated Devon. Kaya marked it. Three months later, the board interviewed Devon and passed. The story in the quiet rooms: 'they nominated their own protégé — didn't see the weakness.' Your next nomination will carry the discount. The decade you spent building judgment was spent fast on one loyalty pick.",
@@ -244,6 +246,8 @@ const scenes: Scene[] = [
     mood: "tense",
     isEnding: true,
     outcomeType: "bad",
+    failureBlogSlug: "mask-collection-four-personas-sociopaths-wear",
+    failureBlogTitle: "Mask Collection: The Four Personas Sociopaths Wear",
     endingTitle: "Smaller Than the Seat",
     endingSummary:
       "You hesitated. Kaya saw why. The senior-most role you'd worked toward for a decade now has a question mark next to your name: 'can they elevate?' Power at this level is partly about whose career you can accelerate. You just revealed that yours still contains a calculation about eclipse.",
@@ -280,6 +284,8 @@ const scenes: Scene[] = [
     mood: "danger",
     isEnding: true,
     outcomeType: "bad",
+    failureBlogSlug: "dark-triad-personality-types",
+    failureBlogTitle: "Dark Triad Personality Types",
     endingTitle: "Abdication",
     endingSummary:
       "You declined to weigh in. Kaya's face stayed neutral but her assessment landed: 'they'll take the role but they won't lead at it.' The nomination happens without you. The person chosen is competent but not who you would have picked. You'll spend five years working for someone you could have chosen better than.",

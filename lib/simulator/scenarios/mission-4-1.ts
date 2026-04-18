@@ -310,6 +310,8 @@ const scenes: Scene[] = [
     mood: "danger",
     isEnding: true,
     outcomeType: "bad",
+    failureBlogSlug: "ghostlighting-when-they-ghost-then-gaslight",
+    failureBlogTitle: "Ghostlighting: When They Ghost Then Gaslight",
     endingTitle: "You Broadcast the Smear",
     endingSummary:
       "A public statement told everyone who HADN'T heard the rumor that there was a rumor to be told. Reach multiplied. 'Why are they so defensive?' is now the follow-up question. You became the best marketing Avery's story ever got.",
@@ -328,6 +330,8 @@ const scenes: Scene[] = [
     mood: "tense",
     isEnding: true,
     outcomeType: "bad",
+    failureBlogSlug: "architecture-of-control-how-emotional-dependency-is-built",
+    failureBlogTitle: "Architecture of Control: How Emotional Dependency Is Built",
     endingTitle: "Capital Wasted",
     endingSummary:
       "You spent three conversations trying to flip Morgan and Dana. Neither moved. Both added 'and then they tried to convince me' to the story. You spent your relational capital with the wrong audience.",
@@ -346,6 +350,8 @@ const scenes: Scene[] = [
     mood: "danger",
     isEnding: true,
     outcomeType: "bad",
+    failureBlogSlug: "narcissist-playbook-how-they-actually-operate",
+    failureBlogTitle: "Narcissist Playbook: How They Actually Operate",
     endingTitle: "Two Smears Now",
     endingSummary:
       "You countered her smear with one about her. Observers now see 'two people trash-talking each other' — and split the difference. Your story is no more credible, and you've become part of the same mess you were trying to rise above.",
@@ -364,6 +370,8 @@ const scenes: Scene[] = [
     mood: "danger",
     isEnding: true,
     outcomeType: "bad",
+    failureBlogSlug: "ghostlighting-when-they-ghost-then-gaslight",
+    failureBlogTitle: "Ghostlighting: When They Ghost Then Gaslight",
     endingTitle: "The Reply Was the Bait",
     endingSummary:
       "Your DM to Avery was weaponized in under two hours. The screenshot makes you look aggressive; Avery looks calmly mistreated. You handed her the final piece of the campaign she'd been running for a week.",

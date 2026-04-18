@@ -758,6 +758,8 @@ const scenes: Scene[] = [
     mood: "danger",
     isEnding: true,
     outcomeType: "bad",
+    failureBlogSlug: "predators-gaze-how-sociopaths-detect-weakness",
+    failureBlogTitle: "Predator's Gaze: How Sociopaths Detect Weakness",
     endingTitle: "Word Travels Fast",
     endingSummary:
       "You bragged about your connection to Maris. By evening, the story had grown, twisted, and reached her ears. You've been marked as someone who talks too much. That reputation will cost you.",
@@ -779,6 +781,8 @@ const scenes: Scene[] = [
     mood: "danger",
     isEnding: true,
     outcomeType: "bad",
+    failureBlogSlug: "narcissist-playbook-how-they-actually-operate",
+    failureBlogTitle: "Narcissist Playbook: How They Actually Operate",
     endingTitle: "Information Weaponized",
     endingSummary:
       "You shared private information with someone who shouldn't have it. Whether it was the unknown texter or Dana Morrison, the result is the same — your words have been twisted and spread. You're now known as someone who can't keep secrets.",

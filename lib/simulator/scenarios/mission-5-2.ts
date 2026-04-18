@@ -411,6 +411,8 @@ const scenes: Scene[] = [
     mood: "danger",
     isEnding: true,
     outcomeType: "bad",
+    failureBlogSlug: "mask-collection-four-personas-sociopaths-wear",
+    failureBlogTitle: "Mask Collection: The Four Personas Sociopaths Wear",
     endingTitle: "You Handed Over the Playbook",
     endingSummary:
       "She asked how you did the coffee-shop collab. You told her. In three months she's running your plays in a parallel vertical; in six, she's working the same gatekeepers. The person studying you now has your schematic. You made a replica.",

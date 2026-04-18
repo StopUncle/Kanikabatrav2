@@ -383,6 +383,8 @@ const scenes: Scene[] = [
     mood: "danger",
     isEnding: true,
     outcomeType: "bad",
+    failureBlogSlug: "doctrine-of-cold-your-new-dating-operating-system",
+    failureBlogTitle: "The Doctrine of Cold",
     endingTitle: "You Showed Your Hand",
     endingSummary:
       "You DM'd Aria. Warned her. Now she knows you know, and she's more careful. She moves to rooms you have no visibility into, adds a third-party intermediary, and ramps up. Worse: she now has a 'paranoid DM' screenshot to share with anyone who'd listen. You lost the element of surprise, which was the only advantage you had.",
@@ -401,6 +403,8 @@ const scenes: Scene[] = [
     mood: "danger",
     isEnding: true,
     outcomeType: "bad",
+    failureBlogSlug: "architecture-of-control-how-emotional-dependency-is-built",
+    failureBlogTitle: "Architecture of Control: How Emotional Dependency Is Built",
     endingTitle: "You Amplified the Smear",
     endingSummary:
       "You started referencing 'the stories' in meetings. Now everyone has heard about them, including people who hadn't. They don't remember your rebuttal; they remember that stories exist. You did Aria's work for her.",

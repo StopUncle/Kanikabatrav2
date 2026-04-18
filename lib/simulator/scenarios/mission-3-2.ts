@@ -594,6 +594,8 @@ const scenes: Scene[] = [
     mood: "danger",
     isEnding: true,
     outcomeType: "bad",
+    failureBlogSlug: "beige-protocol-strategic-boredom-weapon",
+    failureBlogTitle: "The Beige Protocol: Strategic Boredom as Weapon",
     endingTitle: "You Were Hired",
     endingSummary:
       "She needed someone who 'gets it' at 10pm. You volunteered. Now the job has no hours, no pay, and no exit clause — every time you try to step back, the crisis escalates. You didn't save her. You got assigned.",

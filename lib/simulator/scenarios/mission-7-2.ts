@@ -392,6 +392,8 @@ const scenes: Scene[] = [
     mood: "danger",
     isEnding: true,
     outcomeType: "bad",
+    failureBlogSlug: "avoidant-defence-system-why-they-pull-away",
+    failureBlogTitle: "The Avoidant Defence System: Why They Pull Away",
     endingTitle: "The Fade",
     endingSummary:
       "You got slower to reply. Harder to see. You became the avoidant you spent six months describing to Priya. Nova figured it out before you delivered it, which means they got the breakup without the conversation. You saved yourself the discomfort; they lost the closure.",
@@ -410,6 +412,8 @@ const scenes: Scene[] = [
     mood: "danger",
     isEnding: true,
     outcomeType: "bad",
+    failureBlogSlug: "butterflies-are-warning-not-romance",
+    failureBlogTitle: "Butterflies Are Warning, Not Romance",
     endingTitle: "Messy Delivery",
     endingSummary:
       "You softened with flattery, then ended it. They heard warmth, then rejection in the same breath. You gave them a puzzle to solve — 'if I mean so much, why did they leave?' — that they'll chew on for a year. Kinder to have said nothing sweet at all.",

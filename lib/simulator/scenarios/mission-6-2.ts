@@ -457,6 +457,8 @@ const scenes: Scene[] = [
     mood: "danger",
     isEnding: true,
     outcomeType: "bad",
+    failureBlogSlug: "architecture-of-control-how-emotional-dependency-is-built",
+    failureBlogTitle: "Architecture of Control: How Emotional Dependency Is Built",
     endingTitle: "The Goalposts",
     endingSummary:
       "He named 'performance' as the gap. You asked what to hit. The criteria will move every time you hit one. In six months, 'you need to show more leadership'. In twelve, 'cross-functional impact'. Goalposts designed to move are goalposts designed to never be reached.",
@@ -475,6 +477,8 @@ const scenes: Scene[] = [
     mood: "danger",
     isEnding: true,
     outcomeType: "bad",
+    failureBlogSlug: "narcissist-playbook-how-they-actually-operate",
+    failureBlogTitle: "Narcissist Playbook: How They Actually Operate",
     endingTitle: "Split the Difference",
     endingSummary:
       "You anchored first. He halved you. The 'budget' he cited was whatever number he wanted it to be. You got 50% of what you wanted, which was 120% of what you needed — so you accepted. He'll anchor harder next year because he knows your ceiling now.",
@@ -493,6 +497,8 @@ const scenes: Scene[] = [
     mood: "danger",
     isEnding: true,
     outcomeType: "bad",
+    failureBlogSlug: "dark-triad-personality-types",
+    failureBlogTitle: "Dark Triad Personality Types",
     endingTitle: "You Folded",
     endingSummary:
       "One pushback and you recanted. He's now seen how much pressure it takes to collapse you. Your offer will reflect what he thinks he can get away with — which is always less than what you could have negotiated.",

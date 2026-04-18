@@ -319,6 +319,8 @@ const scenes: Scene[] = [
     mood: "danger",
     isEnding: true,
     outcomeType: "bad",
+    failureBlogSlug: "ghostlighting-when-they-ghost-then-gaslight",
+    failureBlogTitle: "Ghostlighting: When They Ghost Then Gaslight",
     endingTitle: "Two Loud People",
     endingSummary:
       "You matched volume and engaged the trap. Observers now have a story: 'those two were yelling at each other.' Your credibility is averaged with hers. You gave her the equivalence she needed.",
@@ -337,6 +339,8 @@ const scenes: Scene[] = [
     mood: "danger",
     isEnding: true,
     outcomeType: "bad",
+    failureBlogSlug: "architecture-of-control-how-emotional-dependency-is-built",
+    failureBlogTitle: "Architecture of Control: How Emotional Dependency Is Built",
     endingTitle: "The Speech Killed You",
     endingSummary:
       "Point-by-point rebuttal to a staged accusation IS the loss. People remember the long explanation, not the facts in it. By the end, half the audience thinks 'why are they trying so hard.'",

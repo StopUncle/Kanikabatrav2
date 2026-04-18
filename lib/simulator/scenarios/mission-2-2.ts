@@ -515,6 +515,8 @@ const scenes: Scene[] = [
     mood: "danger",
     isEnding: true,
     outcomeType: "bad",
+    failureBlogSlug: "narcissist-playbook-how-they-actually-operate",
+    failureBlogTitle: "Narcissist Playbook: How They Actually Operate",
     endingTitle: "Defended Into the Frame",
     endingSummary:
       "'I'm not performing anything' is now a quote. Dana carries it back. Maris retells it to a half-dozen people. By next week, 'they were really defensive when I brought it up' is the story. Defense always makes the accusation louder.",
@@ -533,6 +535,8 @@ const scenes: Scene[] = [
     mood: "danger",
     isEnding: true,
     outcomeType: "bad",
+    failureBlogSlug: "predators-gaze-how-sociopaths-detect-weakness",
+    failureBlogTitle: "Predator's Gaze: How Sociopaths Detect Weakness",
     endingTitle: "Network Mapped",
     endingSummary:
       "You told Dana about your alliances — 'not really talking to anyone' is still a data point. Maris now knows who you AREN'T connected to, which tells her who's safe to weaponize against you. You handed over the map.",
@@ -551,6 +555,8 @@ const scenes: Scene[] = [
     mood: "danger",
     isEnding: true,
     outcomeType: "bad",
+    failureBlogSlug: "mask-collection-four-personas-sociopaths-wear",
+    failureBlogTitle: "Mask Collection: The Four Personas Sociopaths Wear",
     endingTitle: "You Named Priya",
     endingSummary:
       "You told Dana — so you told Maris — that you and Priya have been close. Priya is Maris's old target. She just became Maris's current one again, and you're the reason. The person who's been protecting you through every level is about to find out you put her name in a proxy's mouth.",

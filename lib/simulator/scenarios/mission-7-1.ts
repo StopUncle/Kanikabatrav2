@@ -474,6 +474,8 @@ const scenes: Scene[] = [
     mood: "danger",
     isEnding: true,
     outcomeType: "bad",
+    failureBlogSlug: "avoidant-defence-system-why-they-pull-away",
+    failureBlogTitle: "The Avoidant Defence System: Why They Pull Away",
     endingTitle: "You Funded the Pattern",
     endingSummary:
       "He canceled again. You said 'no worries.' The subscription renews monthly — a flurry of warmth, a week of silence, a cancellation, a chapter-break apology, repeat. He'll keep doing this because you keep receiving it. Nova will find someone direct. You'll be waiting for a text that doesn't come.",
@@ -492,6 +494,8 @@ const scenes: Scene[] = [
     mood: "tense",
     isEnding: true,
     outcomeType: "bad",
+    failureBlogSlug: "reading-attachment-style-from-texts",
+    failureBlogTitle: "Reading Attachment Style from Texts",
     endingTitle: "You Became the Pattern",
     endingSummary:
       "You ghosted because he ghosts. Now you're his mirror: silent until convenient, running the same avoidance you hated. The rotation isn't about revenge. When you mirror the pattern, you become it.",

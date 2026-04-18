@@ -432,6 +432,8 @@ const scenes: Scene[] = [
     mood: "danger",
     isEnding: true,
     outcomeType: "bad",
+    failureBlogSlug: "predators-gaze-how-sociopaths-detect-weakness",
+    failureBlogTitle: "Predator's Gaze: How Sociopaths Detect Weakness",
     endingTitle: "You Became the Source",
     endingSummary:
       "You offered speculation. They turned it into a citation. Whatever you said is now attributed to you, shaped into something you didn't mean, and attached to Maris's name. Your next interaction with her begins with her already knowing you talked.",
@@ -450,6 +452,8 @@ const scenes: Scene[] = [
     mood: "danger",
     isEnding: true,
     outcomeType: "bad",
+    failureBlogSlug: "mask-collection-four-personas-sociopaths-wear",
+    failureBlogTitle: "Mask Collection: The Four Personas Sociopaths Wear",
     endingTitle: "Caught in the Lie",
     endingSummary:
       "The lie you told was disproved in the same chat thread, within the hour. Now your name is associated with dishonesty and bad judgment — in a public document. 'Lying about being there' is a smaller story people love to retell.",
@@ -468,6 +472,8 @@ const scenes: Scene[] = [
     mood: "danger",
     isEnding: true,
     outcomeType: "bad",
+    failureBlogSlug: "narcissist-playbook-how-they-actually-operate",
+    failureBlogTitle: "Narcissist Playbook: How They Actually Operate",
     endingTitle: "Informant",
     endingSummary:
       "You offered intel to someone working for Caleb. Congratulations — you're now a tool in someone else's campaign, and every word you send forward gets routed back to Maris. She doesn't need to extract anything from you anymore. You'll volunteer.",

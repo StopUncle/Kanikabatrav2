@@ -331,6 +331,8 @@ const scenes: Scene[] = [
     mood: "danger",
     isEnding: true,
     outcomeType: "bad",
+    failureBlogSlug: "narcissist-playbook-how-they-actually-operate",
+    failureBlogTitle: "Narcissist Playbook: How They Actually Operate",
     endingTitle: "It's His Model Now",
     endingSummary:
       "By the end of the quarter, 'Marcus's pricing model' is canonical in every follow-up meeting. You built it. Nobody remembers. Next review cycle, your contribution line reads 'supported the pricing initiative.' You're now competing with your own director for your own work.",
@@ -349,6 +351,8 @@ const scenes: Scene[] = [
     mood: "tense",
     isEnding: true,
     outcomeType: "bad",
+    failureBlogSlug: "architecture-of-control-how-emotional-dependency-is-built",
+    failureBlogTitle: "Architecture of Control: How Emotional Dependency Is Built",
     endingTitle: "'The Team' Took the Win",
     endingSummary:
       "You presented the model — but accepted 'team effort' as the frame. On the quarterly write-up, 'the team' is shorthand for 'Marcus's group'. On LinkedIn, Marcus mentions 'leading the pricing redesign.' By next quarter he's been promoted for it.",
@@ -367,6 +371,8 @@ const scenes: Scene[] = [
     mood: "danger",
     isEnding: true,
     outcomeType: "bad",
+    failureBlogSlug: "architecture-of-control-how-emotional-dependency-is-built",
+    failureBlogTitle: "Architecture of Control: How Emotional Dependency Is Built",
     endingTitle: "You Won By Disloyalty",
     endingSummary:
       "You let Marcus fumble. The CEO noticed — and saw the whole team look dysfunctional, including you. The CEO's takeaway: 'That group doesn't run cohesively.' Your director will remember your silence as sabotage, even if nobody else does.",

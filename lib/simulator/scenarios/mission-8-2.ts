@@ -409,6 +409,8 @@ const scenes: Scene[] = [
     mood: "danger",
     isEnding: true,
     outcomeType: "bad",
+    failureBlogSlug: "narcissist-playbook-how-they-actually-operate",
+    failureBlogTitle: "Narcissist Playbook: How They Actually Operate",
     endingTitle: "Your Own Words, Weaponized",
     endingSummary:
       "You wrote the long letter. Itemized every wound. Meant to be read and absorbed. Instead, it's being selectively quoted to every aunt, cousin, and family friend. 'Look what they said about me — their own mother.' Your carefully written grievances have become a marketing kit for her narrative.",
@@ -427,6 +429,8 @@ const scenes: Scene[] = [
     mood: "danger",
     isEnding: true,
     outcomeType: "bad",
+    failureBlogSlug: "narcissistic-hoovering-explained",
+    failureBlogTitle: "Narcissistic Hoovering, Explained",
     endingTitle: "Channel Reopened",
     endingSummary:
       "You replied once. The channel is now negotiable. Next week she'll send a 'just checking in' message. You'll reply, because you already did. In three months you'll be having Sunday dinners again, wondering why nothing changed. Nothing changed because you reopened the channel.",
@@ -445,6 +449,8 @@ const scenes: Scene[] = [
     mood: "danger",
     isEnding: true,
     outcomeType: "bad",
+    failureBlogSlug: "family-colonisation-why-winning-his-mother-matters-more",
+    failureBlogTitle: "Family Colonisation: Why Winning His Mother Matters More",
     endingTitle: "You Fueled the Smear",
     endingSummary:
       "'You have no idea what you've done to me.' — screenshotted, shared to the whole family group chat. The smear now has a villain quote. You're the aggressor in every retelling, because she has evidence. The rage was valid; the delivery fueled her campaign for a year.",
@@ -463,6 +469,8 @@ const scenes: Scene[] = [
     mood: "danger",
     isEnding: true,
     outcomeType: "bad",
+    failureBlogSlug: "architecture-of-control-how-emotional-dependency-is-built",
+    failureBlogTitle: "Architecture of Control: How Emotional Dependency Is Built",
     endingTitle: "The Boundary Rescinded Itself",
     endingSummary:
       "You stayed to comfort her. By 5pm you were helping with dinner. The boundary didn't just fail — it now exists as a story she tells: 'they tried to cut me off, and then apologized and came home.' You'll be cited with that story for years.",
@@ -481,6 +489,8 @@ const scenes: Scene[] = [
     mood: "danger",
     isEnding: true,
     outcomeType: "bad",
+    failureBlogSlug: "narcissist-playbook-how-they-actually-operate",
+    failureBlogTitle: "Narcissist Playbook: How They Actually Operate",
     endingTitle: "The Smear Landed",
     endingSummary:
       "Three weeks of silence gave her a narrative monopoly. By the time you explain to Ren, other relatives have absorbed the 'mental breakdown' story. They're calling each other about it, not you. The truth will reach some of them eventually. Most won't ask.",

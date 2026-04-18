@@ -525,6 +525,8 @@ const scenes: Scene[] = [
     immersionTrigger: "defeat",
     isEnding: true,
     outcomeType: "bad",
+    failureBlogSlug: "empress-endgame-from-victim-to-sovereign",
+    failureBlogTitle: "The Empress Endgame: From Victim to Sovereign",
     endingTitle: "Absorbed",
     endingSummary:
       "You said a big yes to a vague offer. She'll define the terms over the next three months — slowly, in her favor. Within a year, your project is tangled with her network, and extracting will cost more than the whole project was worth. The invitation was annexation.",

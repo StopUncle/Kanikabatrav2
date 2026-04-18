@@ -554,6 +554,8 @@ const scenes: Scene[] = [
     mood: "danger",
     isEnding: true,
     outcomeType: "bad",
+    failureBlogSlug: "beige-protocol-strategic-boredom-weapon",
+    failureBlogTitle: "The Beige Protocol: Strategic Boredom as Weapon",
     endingTitle: "You Became the Uber",
     endingSummary:
       "Saturday: five hours driving. One stop at Target became three. The 'be back by 7' became 11. Next Tuesday she'll ask for something bigger. The week after, bigger still. You didn't fail a favor — you signed a contract.",
@@ -572,6 +574,8 @@ const scenes: Scene[] = [
     mood: "danger",
     isEnding: true,
     outcomeType: "bad",
+    failureBlogSlug: "narcissist-playbook-how-they-actually-operate",
+    failureBlogTitle: "Narcissist Playbook: How They Actually Operate",
     endingTitle: "You Rescued the Performance",
     endingSummary:
       "She performed distress and you arrived to heal it. The performance worked. Every week from now on, when she wants something, distress will appear on cue — because you trained it.",
@@ -590,6 +594,8 @@ const scenes: Scene[] = [
     mood: "danger",
     isEnding: true,
     outcomeType: "bad",
+    failureBlogSlug: "narcissist-playbook-how-they-actually-operate",
+    failureBlogTitle: "Narcissist Playbook: How They Actually Operate",
     endingTitle: "You Completed Her Training",
     endingSummary:
       "The pattern is locked in. Every 'no' from you from now on will trigger escalation, abandonment language, and eventually your collapse. She didn't design this consciously — but the loop works and it'll run forever.",
@@ -608,6 +614,8 @@ const scenes: Scene[] = [
     mood: "danger",
     isEnding: true,
     outcomeType: "bad",
+    failureBlogSlug: "how-to-leave-without-being-villain",
+    failureBlogTitle: "How to Leave Without Being the Villain",
     endingTitle: "Your Lie Got Checked",
     endingSummary:
       "The alibi was disprovable and she disproved it in three hours. Now the conversation isn't about a favor — it's about why you lied. You spent more capital defending the excuse than the favor would have cost.",

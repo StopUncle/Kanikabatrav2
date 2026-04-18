@@ -255,6 +255,8 @@ const scenes: Scene[] = [
     mood: "danger",
     isEnding: true,
     outcomeType: "bad",
+    failureBlogSlug: "doctrine-of-cold-your-new-dating-operating-system",
+    failureBlogTitle: "The Doctrine of Cold",
     endingTitle: "Publicly Drawn",
     endingSummary:
       "You stood up, engaged her on stage, tried to respond with dignity. No matter how you performed, the frame was hers. Observers remember 'those two had some kind of public fight at the panel.' The hiring committee now sees two people who couldn't share a room. The senior role goes to a third candidate you'd barely considered.",
@@ -273,6 +275,8 @@ const scenes: Scene[] = [
     mood: "danger",
     isEnding: true,
     outcomeType: "bad",
+    failureBlogSlug: "permanent-ghost-protocol-how-to-disappear-and-haunt-him-forever",
+    failureBlogTitle: "The Permanent Ghost Protocol",
     endingTitle: "Dramatic Exit",
     endingSummary:
       "You walked out visibly. The room talked about it for days — but not the way you hoped. The story became 'they couldn't handle the panel.' Aria's 'confident presentations and quiet damage' now has an opening act.",
@@ -291,6 +295,8 @@ const scenes: Scene[] = [
     mood: "danger",
     isEnding: true,
     outcomeType: "bad",
+    failureBlogSlug: "apex-predator-loyalty-what-sociopathic-love-looks-like",
+    failureBlogTitle: "Apex Predator Loyalty: What Sociopathic Love Looks Like",
     endingTitle: "Opened a Second Front",
     endingSummary:
       "You tweeted during the panel. It got screenshotted. Now the fight lives in two theaters simultaneously. Twitter observers take sides, the hiring committee gets pinged about 'ongoing drama,' and the role decision stalls. Aria didn't beat you. You spread yourself too thin to win.",
@@ -309,6 +315,8 @@ const scenes: Scene[] = [
     mood: "danger",
     isEnding: true,
     outcomeType: "bad",
+    failureBlogSlug: "architecture-of-control-how-emotional-dependency-is-built",
+    failureBlogTitle: "Architecture of Control: How Emotional Dependency Is Built",
     endingTitle: "Equated",
     endingSummary:
       "Your LinkedIn subtweet about 'classy opponents' landed as passive aggression. The community equated the two of you — 'both of them are petty now.' You lost the one advantage you had: being seen as the one who hadn't descended.",
@@ -327,6 +335,8 @@ const scenes: Scene[] = [
     mood: "danger",
     isEnding: true,
     outcomeType: "bad",
+    failureBlogSlug: "permanent-ghost-protocol-how-to-disappear-and-haunt-him-forever",
+    failureBlogTitle: "The Permanent Ghost Protocol",
     endingTitle: "Meeting Wasted",
     endingSummary:
       "You used your twenty minutes with the committee chair to defend against Aria's claims. The chair now thinks of you as the defensive one — reinforcing her core accusation that you have 'quiet damage' in the way you respond to pressure. You handed her the meeting.",

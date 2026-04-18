@@ -584,6 +584,8 @@ const scenes: Scene[] = [
     mood: "danger",
     isEnding: true,
     outcomeType: "bad",
+    failureBlogSlug: "predators-gaze-how-sociopaths-detect-weakness",
+    failureBlogTitle: "Predator's Gaze: How Sociopaths Detect Weakness",
     endingTitle: "Publicly Rejected",
     endingSummary:
       "You waved. She declined. Three people watched. By morning, four more will have heard. Maris didn't need to say anything about you — you just gave her the story.",
@@ -606,6 +608,8 @@ const scenes: Scene[] = [
     mood: "danger",
     isEnding: true,
     outcomeType: "bad",
+    failureBlogSlug: "narcissist-playbook-how-they-actually-operate",
+    failureBlogTitle: "Narcissist Playbook: How They Actually Operate",
     endingTitle: "Cast as Yourself",
     endingSummary:
       "You took the compliment. You took the seat. Somewhere between the third drink and the shared secret, you forgot you were being evaluated. She hasn't. Every sentence you've said tonight is a line she'll quote back at you when it suits her.",
@@ -628,6 +632,8 @@ const scenes: Scene[] = [
     mood: "danger",
     isEnding: true,
     outcomeType: "bad",
+    failureBlogSlug: "dark-psychology-beginners-guide",
+    failureBlogTitle: "Dark Psychology: Beginner's Guide",
     endingTitle: "One Confession Too Far",
     endingSummary:
       "She asked for something private. You gave it. The intimacy was fake — the ammunition is real. Every time you cross her from now on, that detail comes out in a conversation you're not part of.",

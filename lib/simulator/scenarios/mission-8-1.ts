@@ -571,6 +571,8 @@ const scenes: Scene[] = [
     mood: "danger",
     isEnding: true,
     outcomeType: "bad",
+    failureBlogSlug: "architecture-of-control-how-emotional-dependency-is-built",
+    failureBlogTitle: "Architecture of Control: How Emotional Dependency Is Built",
     endingTitle: "You Auditioned. You Lost.",
     endingSummary:
       "You competed for her approval on her terms. She cut you off mid-sentence to redirect to Ren. The exact script that's played for twenty-nine years, played again, by you choosing to be in it. The pain isn't new; your willingness to feel it again is.",
@@ -589,6 +591,8 @@ const scenes: Scene[] = [
     mood: "danger",
     isEnding: true,
     outcomeType: "bad",
+    failureBlogSlug: "narcissist-playbook-how-they-actually-operate",
+    failureBlogTitle: "Narcissist Playbook: How They Actually Operate",
     endingTitle: "Retrained",
     endingSummary:
       "You named the pattern and then apologized for naming it. She just taught you — again — that observing her behavior is the crime, not performing it. Next Sunday she'll run the same script, and you'll stay quieter. By next year you'll be apologizing for being present in the room.",
@@ -607,6 +611,8 @@ const scenes: Scene[] = [
     mood: "danger",
     isEnding: true,
     outcomeType: "bad",
+    failureBlogSlug: "narcissistic-hoovering-explained",
+    failureBlogTitle: "Narcissistic Hoovering, Explained",
     endingTitle: "Reinstalled",
     endingSummary:
       "You chased her down the hall. Comforted her. Apologized. She accepted, in a fragile voice, and came back to finish dinner. The pattern is now stronger: next time she feels challenged, she'll storm out faster, because she's seen it works. You're back in your assigned seat.",
@@ -625,6 +631,8 @@ const scenes: Scene[] = [
     mood: "danger",
     isEnding: true,
     outcomeType: "bad",
+    failureBlogSlug: "family-colonisation-why-winning-his-mother-matters-more",
+    failureBlogTitle: "Family Colonisation: Why Winning His Mother Matters More",
     endingTitle: "Material Handed Over",
     endingSummary:
       "You gave her the work-stress story. By Wednesday it's 'they're struggling at work' in calls to the extended family. By Friday it's 'they've been so fragile lately.' The sympathy she performs is the cover she uses to reframe you. You handed her the narrative, warm.",
@@ -643,6 +651,8 @@ const scenes: Scene[] = [
     mood: "danger",
     isEnding: true,
     outcomeType: "bad",
+    failureBlogSlug: "architecture-of-control-how-emotional-dependency-is-built",
+    failureBlogTitle: "Architecture of Control: How Emotional Dependency Is Built",
     endingTitle: "You Weaponized Ren",
     endingSummary:
       "Ren held a boundary for themselves. You used it as a club against your mother. Ren pulled back — they don't want to be recruited into your war. Next Sunday they'll side with Mom just to not be your weapon. You isolated yourself by treating an ally as ammunition.",
