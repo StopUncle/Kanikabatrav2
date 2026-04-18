@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { verifyAccessToken } from "@/lib/auth/jwt";
 import { getAdminUserId } from "@/lib/auth/server-auth";
+import { requireAdminSession } from "@/lib/admin/auth";
 import { checkMembership } from "@/lib/community/membership";
 import {
   getViewerGender,
@@ -10,6 +11,8 @@ import {
 import { prisma } from "@/lib/prisma";
 import { memberSafeName } from "@/lib/community/privacy";
 import { tierForMember } from "@/components/consilium/badge-tiers";
+import { z } from "zod";
+import { logger } from "@/lib/logger";
 
 async function resolveUserId(): Promise<string | null> {
   const cookieStore = await cookies();
@@ -121,4 +124,80 @@ export async function GET(request: NextRequest) {
     : null;
 
   return NextResponse.json({ posts: formatted, nextCursor });
+}
+
+// ---------------------------------------------------------------------------
+// POST — admin creates a feed post (announcement / discussion prompt /
+// voice-note post). Gated on the admin_session cookie. This was silently
+// missing — /admin/posts and /admin/voice-notes both POSTed to a 404.
+// ---------------------------------------------------------------------------
+
+const CreatePostBody = z.object({
+  title: z.string().min(1).max(200),
+  content: z.string().min(1).max(10_000),
+  type: z.enum([
+    "ANNOUNCEMENT",
+    "DISCUSSION_PROMPT",
+    "VOICE_NOTE",
+    "AUTOMATED",
+  ]),
+  isPinned: z.boolean().optional().default(false),
+  voiceNoteUrl: z.string().url().optional().nullable(),
+});
+
+export async function POST(request: NextRequest) {
+  const unauthorized = await requireAdminSession();
+  if (unauthorized) return unauthorized;
+
+  let payload: z.infer<typeof CreatePostBody>;
+  try {
+    const json = await request.json();
+    payload = CreatePostBody.parse(json);
+  } catch (err) {
+    return NextResponse.json(
+      { error: "Invalid post payload", detail: (err as Error).message },
+      { status: 400 },
+    );
+  }
+
+  // VOICE_NOTE posts must carry a voiceNoteUrl. Reject early so the feed
+  // UI never renders a broken audio player.
+  if (payload.type === "VOICE_NOTE" && !payload.voiceNoteUrl) {
+    return NextResponse.json(
+      { error: "VOICE_NOTE posts require a voiceNoteUrl" },
+      { status: 400 },
+    );
+  }
+
+  // Attribute to Kanika's admin user so the feed avatar + Queen badge
+  // render correctly. getAdminUserId() pulls the first ADMIN user.
+  const authorId = await getAdminUserId();
+
+  try {
+    const post = await prisma.feedPost.create({
+      data: {
+        title: payload.title,
+        content: payload.content,
+        type: payload.type,
+        isPinned: payload.isPinned,
+        voiceNoteUrl: payload.voiceNoteUrl ?? null,
+        authorId: authorId ?? undefined,
+      },
+      select: {
+        id: true,
+        title: true,
+        createdAt: true,
+        type: true,
+      },
+    });
+    return NextResponse.json({ success: true, post }, { status: 201 });
+  } catch (err) {
+    logger.error("[admin/feed-create] failed", err as Error, {
+      type: payload.type,
+    });
+    return NextResponse.json(
+      { error: "Failed to create post" },
+      { status: 500 },
+    );
+  }
 }

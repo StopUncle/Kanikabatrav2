@@ -283,9 +283,14 @@ const Header = () => {
         </nav>
       </header>
 
-      {/* Mobile Menu Overlay — outside <header> for stacking context */}
+      {/* Mobile Menu Overlay — outside <header> for stacking context.
+          Top offset binds to the same scroll state as the header (h-14/h-16
+          when scrolled, h-16/h-20 otherwise) so there's no gap between the
+          bottom of the header and the top of the menu. */}
       <div
-        className={`lg:hidden fixed inset-0 top-16 sm:top-20 z-[100] bg-deep-black/98 backdrop-blur-xl transition-all duration-500 touch-pan-y ${
+        className={`lg:hidden fixed inset-0 z-[100] bg-deep-black/98 backdrop-blur-xl transition-all duration-500 touch-pan-y ${
+          isScrolled ? "top-14 sm:top-16" : "top-16 sm:top-20"
+        } ${
           isMenuOpen ? "opacity-100 visible" : "opacity-0 invisible"
         }`}
       >

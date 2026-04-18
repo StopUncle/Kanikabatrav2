@@ -10,6 +10,7 @@ import {
   Unlock,
   ChevronUp,
   Send,
+  Trash2,
 } from "lucide-react";
 
 interface FeedPost {
@@ -21,6 +22,7 @@ interface FeedPost {
   isLocked: boolean;
   likeCount: number;
   commentCount: number;
+  voiceNoteUrl?: string | null;
   createdAt: string;
   author: {
     id: string;
@@ -29,6 +31,8 @@ interface FeedPost {
   } | null;
 }
 
+type TypeFilter = "ALL" | "ANNOUNCEMENT" | "DISCUSSION_PROMPT" | "VOICE_NOTE" | "AUTOMATED";
+
 const POST_TYPES = ["ANNOUNCEMENT", "DISCUSSION_PROMPT"] as const;
 
 export default function PostsPage() {
@@ -36,6 +40,7 @@ export default function PostsPage() {
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [typeFilter, setTypeFilter] = useState<TypeFilter>("ALL");
   const [formData, setFormData] = useState({
     title: "",
     content: "",
@@ -45,7 +50,7 @@ export default function PostsPage() {
 
   const fetchPosts = useCallback(async () => {
     try {
-      const res = await fetch("/api/consilium/feed");
+      const res = await fetch("/api/admin/feed");
       if (res.ok) {
         const data = await res.json();
         setPosts(data.posts || []);
@@ -67,7 +72,7 @@ export default function PostsPage() {
 
     setSubmitting(true);
     try {
-      const res = await fetch("/api/consilium/feed", {
+      const res = await fetch("/api/consilium/feed/posts", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
@@ -84,6 +89,56 @@ export default function PostsPage() {
       setSubmitting(false);
     }
   }
+
+  async function togglePin(post: FeedPost) {
+    await fetch(`/api/consilium/feed/${post.id}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ isPinned: !post.isPinned }),
+    });
+    fetchPosts();
+  }
+
+  async function toggleLock(post: FeedPost) {
+    await fetch(`/api/consilium/feed/${post.id}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ isLocked: !post.isLocked }),
+    });
+    fetchPosts();
+  }
+
+  async function deletePost(post: FeedPost) {
+    const confirmed = window.confirm(
+      `Delete "${post.title}"?\n\nThis removes the post, all comments, and all likes. Can't be undone.`,
+    );
+    if (!confirmed) return;
+    const res = await fetch(`/api/consilium/feed/${post.id}`, {
+      method: "DELETE",
+    });
+    if (res.ok) {
+      setPosts((prev) => prev.filter((p) => p.id !== post.id));
+    }
+  }
+
+  async function bulkDelete(ids: string[], label: string) {
+    const confirmed = window.confirm(
+      `Delete ${ids.length} ${label}?\n\nRemoves posts + all comments + all likes. Can't be undone.`,
+    );
+    if (!confirmed) return;
+    await Promise.all(
+      ids.map((id) =>
+        fetch(`/api/consilium/feed/${id}`, { method: "DELETE" }),
+      ),
+    );
+    const deleted = new Set(ids);
+    setPosts((prev) => prev.filter((p) => !deleted.has(p.id)));
+  }
+
+  const visiblePosts =
+    typeFilter === "ALL"
+      ? posts
+      : posts.filter((p) => p.type === typeFilter);
 
   return (
     <div className="max-w-5xl mx-auto">
@@ -173,17 +228,63 @@ export default function PostsPage() {
         </form>
       )}
 
+      {!loading && posts.length > 0 && (
+        <div className="flex flex-wrap items-center gap-3 mb-4">
+          <span className="text-text-gray text-xs uppercase tracking-wider">
+            Filter
+          </span>
+          {(["ALL", "ANNOUNCEMENT", "DISCUSSION_PROMPT", "VOICE_NOTE", "AUTOMATED"] as const).map(
+            (t) => {
+              const count =
+                t === "ALL"
+                  ? posts.length
+                  : posts.filter((p) => p.type === t).length;
+              const active = typeFilter === t;
+              return (
+                <button
+                  key={t}
+                  type="button"
+                  onClick={() => setTypeFilter(t)}
+                  className={`px-3 py-1.5 text-xs rounded-full border transition-all ${
+                    active
+                      ? "bg-accent-gold/15 border-accent-gold/50 text-accent-gold"
+                      : "border-white/10 text-text-gray hover:border-accent-gold/30 hover:text-accent-gold"
+                  }`}
+                >
+                  {t.replace("_", " ")} {count > 0 ? `(${count})` : ""}
+                </button>
+              );
+            },
+          )}
+          {typeFilter !== "ALL" && visiblePosts.length > 0 && (
+            <button
+              type="button"
+              onClick={() =>
+                bulkDelete(
+                  visiblePosts.map((p) => p.id),
+                  `${typeFilter.replace("_", " ").toLowerCase()}s`,
+                )
+              }
+              className="ml-auto flex items-center gap-1.5 px-3 py-1.5 text-xs text-red-400 border border-red-500/30 rounded-full hover:bg-red-500/10 transition-all"
+            >
+              <Trash2 size={12} />
+              Delete all {visiblePosts.length} {typeFilter.replace("_", " ").toLowerCase()}
+            </button>
+          )}
+        </div>
+      )}
+
       {loading ? (
         <div className="flex items-center justify-center py-20">
           <Loader2 className="animate-spin text-accent-gold" size={32} />
         </div>
-      ) : posts.length === 0 ? (
+      ) : visiblePosts.length === 0 ? (
         <div className="glass-card rounded-lg p-12 text-center">
-          <p className="text-text-gray font-light">No posts yet.</p>
+          <p className="text-text-gray font-light">No posts match this filter.</p>
         </div>
       ) : (
         <div className="space-y-4">
-          {posts.map((post) => (
+          {visiblePosts.map((post) => (
             <div key={post.id} className="glass-card rounded-lg p-6">
               <div className="flex items-start justify-between mb-3">
                 <div>
@@ -198,7 +299,14 @@ export default function PostsPage() {
                       {post.type.replace("_", " ")}
                     </span>
                   </div>
-                  <h3 className="text-text-light font-light text-lg">{post.title}</h3>
+                  <a
+                    href={`/consilium/feed/${post.id}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-text-light font-light text-lg hover:text-accent-gold transition-colors"
+                  >
+                    {post.title}
+                  </a>
                   <p className="text-text-gray/60 text-xs mt-1">
                     {post.author?.name || "System"} &middot;{" "}
                     {new Date(post.createdAt).toLocaleDateString()}
@@ -215,13 +323,29 @@ export default function PostsPage() {
               </p>
 
               <div className="flex gap-2">
-                <button className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-light tracking-wide text-text-gray border border-white/10 rounded hover:text-accent-gold hover:border-accent-gold/30 transition-all duration-200">
+                <button
+                  type="button"
+                  onClick={() => togglePin(post)}
+                  className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-light tracking-wide text-text-gray border border-white/10 rounded hover:text-accent-gold hover:border-accent-gold/30 transition-all duration-200"
+                >
                   {post.isPinned ? <PinOff size={12} /> : <Pin size={12} />}
                   {post.isPinned ? "Unpin" : "Pin"}
                 </button>
-                <button className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-light tracking-wide text-text-gray border border-white/10 rounded hover:text-accent-gold hover:border-accent-gold/30 transition-all duration-200">
+                <button
+                  type="button"
+                  onClick={() => toggleLock(post)}
+                  className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-light tracking-wide text-text-gray border border-white/10 rounded hover:text-accent-gold hover:border-accent-gold/30 transition-all duration-200"
+                >
                   {post.isLocked ? <Unlock size={12} /> : <Lock size={12} />}
                   {post.isLocked ? "Unlock" : "Lock"}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => deletePost(post)}
+                  className="ml-auto flex items-center gap-1.5 px-3 py-1.5 text-xs font-light tracking-wide text-red-400/80 border border-red-500/20 rounded hover:text-red-300 hover:border-red-500/50 hover:bg-red-500/5 transition-all duration-200"
+                >
+                  <Trash2 size={12} />
+                  Delete
                 </button>
               </div>
             </div>

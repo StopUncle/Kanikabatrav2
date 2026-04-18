@@ -69,8 +69,12 @@ export default function FeedPost({ post, isDetail = false }: FeedPostProps) {
     }
   };
 
-  const isAdminAuthor = post.author?.role === "ADMIN";
-  const authorTier = post.author?.tier ?? (isAdminAuthor ? 12 : 1);
+  // System / cron-generated posts come through with author === null but
+  // render as "Kanika" in the UI (see line below). Treat those as admin-
+  // authored so the Queen badge (tier 12) shows instead of the default
+  // Initiate tier.
+  const isAdminAuthor = post.author?.role === "ADMIN" || !post.author;
+  const authorTier = post.author?.tier ?? 12;
   const shouldTruncate = !isDetail && post.content.length > 500;
   const displayContent = shouldTruncate ? post.content.slice(0, 500) : post.content;
   const timeAgo = formatDistanceToNow(new Date(post.createdAt), { addSuffix: true });
@@ -105,7 +109,20 @@ export default function FeedPost({ post, isDetail = false }: FeedPostProps) {
         )}
       </div>
 
-      <h3 className="text-base sm:text-lg font-medium text-text-light mb-2">{post.title}</h3>
+      {isDetail ? (
+        <h3 className="text-base sm:text-lg font-medium text-text-light mb-2">
+          {post.title}
+        </h3>
+      ) : (
+        <Link
+          href={`/consilium/feed/${post.id}`}
+          className="block mb-2 hover:text-accent-gold transition-colors"
+        >
+          <h3 className="text-base sm:text-lg font-medium text-text-light hover:text-accent-gold transition-colors">
+            {post.title}
+          </h3>
+        </Link>
+      )}
 
       <div className="text-text-gray text-sm leading-relaxed mb-4 feed-markdown">
         {/*

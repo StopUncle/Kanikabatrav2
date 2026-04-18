@@ -49,7 +49,7 @@ export default function VoiceNotesPage() {
 
   const fetchVoiceNotes = useCallback(async () => {
     try {
-      const res = await fetch("/api/consilium/feed");
+      const res = await fetch("/api/admin/feed");
       if (res.ok) {
         const data = await res.json();
         const voiceNotes = (data.posts || []).filter(
@@ -126,7 +126,7 @@ export default function VoiceNotesPage() {
 
       const { url } = await uploadRes.json();
 
-      const postRes = await fetch("/api/consilium/feed", {
+      const postRes = await fetch("/api/consilium/feed/posts", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
