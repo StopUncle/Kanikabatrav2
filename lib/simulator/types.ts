@@ -13,7 +13,12 @@ export type ScenarioCategory =
   | "healthy"
   | "professional"
   | "dating-tactics"
-  | "social-dynamics";
+  | "social-dynamics"
+  | "business"
+  | "dating"
+  | "power";
+
+export type ScenarioTrack = "female" | "male-business" | "male-dating";
 
 export type EmotionType =
   | "neutral"
@@ -117,6 +122,14 @@ export interface Scene {
   endingSummary?: string;
   endingLearnReference?: string;
   endingLearnPrompt?: string;
+  /**
+   * When a defeat/bad ending maps to an existing blog post, set both
+   * fields. The EndingScreen renders a "Read: <title>" CTA linking to
+   * `/blog/<slug>`. Leave unset on good endings or endings without a
+   * matching post.
+   */
+  failureBlogSlug?: string;
+  failureBlogTitle?: string;
 }
 
 /** Alias — scenario files from the Expo port use `ForkScene`. */
@@ -135,6 +148,12 @@ export interface Scenario {
   tagline: string;
   description: string;
   tier: SubscriptionTier;
+  /**
+   * Which simulator track this scenario belongs to. `female` = legacy
+   * scenarios (Maris-arc). `male-business` / `male-dating` = male-version
+   * branches. Defaults to `female` when omitted for backwards compatibility.
+   */
+  track?: ScenarioTrack;
   /** 1-based level. Used to group scenarios on the list page. */
   level: number;
   /** 1-based order within the level. */

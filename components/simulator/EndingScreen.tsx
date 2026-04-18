@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { m } from "framer-motion";
 import Link from "next/link";
-import { RotateCcw, ArrowRight, Award } from "lucide-react";
+import { RotateCcw, ArrowRight, Award, BookOpen } from "lucide-react";
 import type { Scene, Scenario, SimulatorState } from "@/lib/simulator/types";
 import { BADGE_BY_KEY } from "@/lib/simulator/badges";
 
@@ -137,7 +137,46 @@ export default function EndingScreen({
         {/* XP earned — count-up animation */}
         <XpCounter target={state.xpEarned} />
 
-
+        {/* Failure → blog post CTA.
+            Only shown on defeat endings that declare a `failureBlogSlug`.
+            The pedagogy: when a player loses to a manipulation tactic, hand
+            them the blog post that teaches the pattern. Links to /blog/<slug>
+            in a new tab so they don't lose the ending screen state. */}
+        {scene.failureBlogSlug &&
+          (outcome === "bad" || outcome === "failed") && (
+            <m.div
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 2.1 }}
+              className="mb-12 flex justify-center"
+            >
+              <Link
+                href={`/blog/${scene.failureBlogSlug}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group inline-flex items-center gap-3 px-6 py-4 rounded-xl border border-accent-gold/30 bg-deep-black/60 hover:border-accent-gold/60 hover:bg-accent-gold/5 transition-all max-w-md text-left"
+              >
+                <BookOpen
+                  size={20}
+                  className="text-accent-gold shrink-0"
+                  strokeWidth={1.5}
+                />
+                <div className="flex-1 min-w-0">
+                  <p className="text-accent-gold/70 text-[10px] uppercase tracking-[0.3em] mb-1">
+                    Understand what happened
+                  </p>
+                  <p className="text-white text-sm font-light leading-snug">
+                    {scene.failureBlogTitle ?? "Read the pattern breakdown"}
+                  </p>
+                </div>
+                <ArrowRight
+                  size={16}
+                  className="text-accent-gold/50 group-hover:text-accent-gold group-hover:translate-x-1 transition-all shrink-0"
+                  strokeWidth={1.5}
+                />
+              </Link>
+            </m.div>
+          )}
 
         {/* Badges earned this run */}
         {badgesEarned.length > 0 && (

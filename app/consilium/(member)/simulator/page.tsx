@@ -4,8 +4,11 @@ import Link from "next/link";
 import {
   ALL_SCENARIOS,
   scenariosByLevel,
-  LEVEL_TITLES,
+  scenariosForTrack,
+  levelTitlesForTrack,
+  TRACK_META,
 } from "@/lib/simulator/scenarios";
+import type { ScenarioTrack } from "@/lib/simulator/types";
 import { ArrowRight, Clock, Target, CheckCircle2, Circle, Lock } from "lucide-react";
 
 export const metadata = {
@@ -14,13 +17,39 @@ export const metadata = {
     "Interactive scenarios teaching pattern recognition, information discipline, and power dynamics through story.",
 };
 
+const VALID_TRACKS: ScenarioTrack[] = [
+  "female",
+  "male-business",
+  "male-dating",
+];
+
+function resolveTrack(value?: string): ScenarioTrack {
+  if (value && (VALID_TRACKS as string[]).includes(value)) {
+    return value as ScenarioTrack;
+  }
+  return "female";
+}
+
 /**
  * Catalog landing — groups scenarios by level with a header blurb per level.
  * Shows per-scenario status (new / in-progress / completed) + XP + badges.
  * Scenarios with unmet prerequisites render as locked.
+ *
+ * A track selector tab at the top switches between:
+ *   - Feminine (the original Maris arc)
+ *   - Business Line (male — power, career, capital)
+ *   - Dating Line (male — mate selection, dark-psych, secure)
+ * Each track keeps independent progress in the same SimulatorProgress table
+ * because scenario IDs are globally unique across tracks.
  */
-export default async function SimulatorIndex() {
+export default async function SimulatorIndex({
+  searchParams,
+}: {
+  searchParams: Promise<{ track?: string }>;
+}) {
   const userId = await requireServerAuth("/consilium/simulator");
+  const params = await searchParams;
+  const track = resolveTrack(params.track);
 
   const [progress, badgeCount] = await Promise.all([
     prisma.simulatorProgress.findMany({
@@ -38,22 +67,31 @@ export default async function SimulatorIndex() {
   const progressByScenario = new Map(progress.map((p) => [p.scenarioId, p]));
   const totalXp = progress.reduce((acc, p) => acc + (p.xpEarned ?? 0), 0);
 
-  // A scenario is "unlocked" if ALL of its prerequisites have been completed.
   const completedIds = new Set(
     progress.filter((p) => p.completedAt).map((p) => p.scenarioId),
   );
   const isUnlocked = (prerequisites?: string[]) =>
     !prerequisites || prerequisites.every((id) => completedIds.has(id));
 
-  const byLevel = scenariosByLevel();
+  const trackScenarios = scenariosForTrack(track);
+  const byLevel = scenariosByLevel(track);
   const levels = Object.keys(byLevel)
     .map(Number)
     .sort((a, b) => a - b);
+  const levelTitles = levelTitlesForTrack(track);
+
+  // Per-track progress counters (scoped to the currently-selected track).
+  const trackScenarioIds = new Set(trackScenarios.map((s) => s.id));
+  const trackProgress = progress.filter((p) => trackScenarioIds.has(p.scenarioId));
+  const trackCompleted = trackProgress.filter((p) => p.completedAt).length;
+  const trackXp = trackProgress.reduce((acc, p) => acc + (p.xpEarned ?? 0), 0);
+
+  const meta = TRACK_META[track];
 
   return (
     <main className="min-h-screen px-4 sm:px-8 py-12 max-w-6xl mx-auto">
       {/* Header */}
-      <header className="mb-12">
+      <header className="mb-10">
         <p className="text-accent-gold/70 uppercase tracking-[0.3em] text-xs mb-3">
           The Consilium · Simulator
         </p>
@@ -61,12 +99,19 @@ export default async function SimulatorIndex() {
           The <span className="text-accent-gold">Dark Mirror</span>
         </h1>
         <p className="text-text-gray text-lg font-light max-w-2xl leading-relaxed">
-          Interactive scenarios. Real dating and social dynamics. Real
-          manipulation tactics. Every choice teaches you something — whether it
-          costs you or not.
+          Interactive scenarios. Real dynamics. Real manipulation tactics.
+          Every choice teaches you something — whether it costs you or not.
         </p>
 
         <div className="mt-8 flex flex-wrap gap-6 text-sm">
+          <div>
+            <p className="text-accent-gold/60 uppercase tracking-[0.25em] text-[10px]">
+              Track XP
+            </p>
+            <p className="text-white text-2xl font-extralight mt-1">
+              {trackXp}
+            </p>
+          </div>
           <div>
             <p className="text-accent-gold/60 uppercase tracking-[0.25em] text-[10px]">
               Total XP
@@ -88,7 +133,7 @@ export default async function SimulatorIndex() {
               Completed
             </p>
             <p className="text-white text-2xl font-extralight mt-1">
-              {progress.filter((p) => p.completedAt).length} / {ALL_SCENARIOS.length}
+              {trackCompleted} / {trackScenarios.length}
             </p>
           </div>
         </div>
@@ -104,9 +149,64 @@ export default async function SimulatorIndex() {
         </div>
       </header>
 
+      {/* Track selector — three tabs. Server-side via query param, so each
+          track has a bookmarkable URL. Progress on each scenario is stored
+          by scenario id (globally unique), so switching tracks shows the
+          right state even if the user played some of both. */}
+      <nav
+        aria-label="Simulator track"
+        className="mb-10 flex flex-col sm:flex-row gap-2 p-1.5 rounded-xl border border-accent-gold/15 bg-deep-black/40"
+      >
+        {VALID_TRACKS.map((t) => {
+          const tMeta = TRACK_META[t];
+          const active = t === track;
+          return (
+            <Link
+              key={t}
+              href={tMeta.href}
+              className={`flex-1 flex flex-col items-start px-4 py-3 rounded-lg transition-all ${
+                active
+                  ? "bg-accent-gold/10 border border-accent-gold/40"
+                  : "border border-transparent hover:bg-white/5"
+              }`}
+            >
+              <span
+                className={`uppercase tracking-[0.3em] text-[10px] mb-1 ${
+                  active ? "text-accent-gold" : "text-accent-gold/50"
+                }`}
+              >
+                {active ? "Playing" : "Switch to"}
+              </span>
+              <span
+                className={`text-base font-light tracking-wide ${
+                  active ? "text-white" : "text-text-gray"
+                }`}
+              >
+                {tMeta.label}
+              </span>
+              <span className="text-text-gray/50 text-xs font-light mt-1 leading-snug">
+                {tMeta.sublabel}
+              </span>
+            </Link>
+          );
+        })}
+      </nav>
+
+      <div className="mb-8 border-l-2 border-accent-gold/30 pl-4">
+        <p className="text-accent-gold/70 uppercase tracking-[0.3em] text-[10px] mb-1">
+          Current track
+        </p>
+        <p className="text-white text-xl font-extralight tracking-wide">
+          {meta.label}
+        </p>
+        <p className="text-text-gray/70 text-sm font-light mt-1">
+          {meta.sublabel}
+        </p>
+      </div>
+
       {/* Levels */}
       {levels.map((level) => {
-        const levelInfo = LEVEL_TITLES[level] ?? {
+        const levelInfo = levelTitles[level] ?? {
           title: `Level ${level}`,
           blurb: "",
         };
@@ -243,14 +343,14 @@ export default async function SimulatorIndex() {
         );
       })}
 
-      {/* Future-content tease */}
+      {/* Global stats — show combined library size so users know there's more */}
       <div className="p-6 rounded-xl border border-dashed border-accent-gold/15 bg-deep-black/30 text-center opacity-80">
         <p className="text-accent-gold/50 uppercase tracking-[0.3em] text-[10px] mb-3">
-          Levels 6–10 · Coming
+          Full Library · {ALL_SCENARIOS.length} scenarios across 3 tracks
         </p>
         <p className="text-text-gray text-sm font-light max-w-md mx-auto">
-          Corporate power dynamics. Long-game reputation war. The Queen
-          scenarios. New scenarios drop monthly; members unlock them first.
+          Each track is a separate curriculum. Playing one doesn&apos;t lock
+          another. Progress tracks independently.
         </p>
       </div>
     </main>

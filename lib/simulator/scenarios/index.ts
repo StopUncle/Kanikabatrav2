@@ -5,7 +5,15 @@
  * catalog page (grouped client-side by `level`).
  */
 
-import type { Scenario } from "../types";
+import type { Scenario, ScenarioTrack } from "../types";
+import {
+  MALE_BUSINESS_SCENARIOS,
+  MALE_BUSINESS_LEVEL_TITLES,
+} from "./male-business";
+import {
+  MALE_DATING_SCENARIOS,
+  MALE_DATING_LEVEL_TITLES,
+} from "./male-dating";
 import mission11 from "./mission-1-1";
 import mission12 from "./mission-1-2";
 import mission21 from "./mission-2-1";
@@ -27,7 +35,11 @@ import mission92 from "./mission-9-2";
 import mission101 from "./mission-10-1";
 import mission102 from "./mission-10-2";
 
-export const ALL_SCENARIOS: Scenario[] = [
+/**
+ * Female track — the original Maris-arc scenarios. `track` is implicit
+ * ("female") on these when omitted. The `getTrack()` helper resolves it.
+ */
+export const FEMALE_SCENARIOS: Scenario[] = [
   mission11,
   mission12,
   mission21,
@@ -50,6 +62,29 @@ export const ALL_SCENARIOS: Scenario[] = [
   mission102,
 ];
 
+export { MALE_BUSINESS_SCENARIOS, MALE_DATING_SCENARIOS };
+
+export const ALL_SCENARIOS: Scenario[] = [
+  ...FEMALE_SCENARIOS,
+  ...MALE_BUSINESS_SCENARIOS,
+  ...MALE_DATING_SCENARIOS,
+];
+
+/**
+ * Resolve a scenario's track. Legacy scenarios without an explicit `track`
+ * field are treated as "female" for backwards compatibility.
+ */
+export function getTrack(s: Scenario): ScenarioTrack {
+  return s.track ?? "female";
+}
+
+/** Scenarios filtered to one track, ordered by level then in-level order. */
+export function scenariosForTrack(track: ScenarioTrack): Scenario[] {
+  return ALL_SCENARIOS.filter((s) => getTrack(s) === track).sort((a, b) =>
+    a.level === b.level ? a.order - b.order : a.level - b.level,
+  );
+}
+
 export const SCENARIO_BY_ID: Record<string, Scenario> = Object.fromEntries(
   ALL_SCENARIOS.map((s) => [s.id, s]),
 );
@@ -66,10 +101,18 @@ export function scenariosForTier(tier: "free" | "premium" | "vip"): Scenario[] {
   return ALL_SCENARIOS.filter((s) => s.tier === "free");
 }
 
-/** Group scenarios by level. Used by the catalog page. */
-export function scenariosByLevel(): Record<number, Scenario[]> {
+/**
+ * Group scenarios by level. Used by the catalog page.
+ * When `track` is provided, only that track's scenarios are grouped —
+ * each track numbers its levels from 1 independently, so the page renders
+ * one coherent ladder per track.
+ */
+export function scenariosByLevel(
+  track?: ScenarioTrack,
+): Record<number, Scenario[]> {
+  const source = track ? scenariosForTrack(track) : ALL_SCENARIOS;
   const buckets: Record<number, Scenario[]> = {};
-  for (const s of ALL_SCENARIOS) {
+  for (const s of source) {
     if (!buckets[s.level]) buckets[s.level] = [];
     buckets[s.level].push(s);
   }
@@ -78,6 +121,40 @@ export function scenariosByLevel(): Record<number, Scenario[]> {
   }
   return buckets;
 }
+
+/**
+ * Track-aware level titles. The female simulator uses `LEVEL_TITLES`
+ * directly; male tracks each have their own level titles keyed by track.
+ */
+export function levelTitlesForTrack(
+  track: ScenarioTrack,
+): Record<number, { title: string; blurb: string }> {
+  if (track === "male-business") return MALE_BUSINESS_LEVEL_TITLES;
+  if (track === "male-dating") return MALE_DATING_LEVEL_TITLES;
+  return LEVEL_TITLES;
+}
+
+/** Track metadata for the branch selector UI. */
+export const TRACK_META: Record<
+  ScenarioTrack,
+  { label: string; sublabel: string; href: string }
+> = {
+  female: {
+    label: "Feminine",
+    sublabel: "The Maris arc · dark-psych at the gala and beyond",
+    href: "/consilium/simulator?track=female",
+  },
+  "male-business": {
+    label: "Business Line",
+    sublabel: "Power · career · capital · dark-psych in rooms that matter",
+    href: "/consilium/simulator?track=male-business",
+  },
+  "male-dating": {
+    label: "Dating Line",
+    sublabel: "Mate selection · BPD/HPD · gaslight · hoover · choose secure",
+    href: "/consilium/simulator?track=male-dating",
+  },
+};
 
 /** Human title for each level — shown as section headers on the catalog. */
 export const LEVEL_TITLES: Record<number, { title: string; blurb: string }> = {
