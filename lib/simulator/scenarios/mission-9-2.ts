@@ -5,12 +5,25 @@
  * Aria escalates — a direct public attack after months of covert
  * work. The senior role is three weeks out. This is the endgame of
  * the long game. Every move is visible.
+ *
+ * v2 (2026-04-19): expanded the middle. Added Act-1 panel
+ * establishing (the room, the moment Aria pivots, your phone going
+ * still), middle beats for each path (the awkward laughs after
+ * stage engagement, the screenshot landing 8 minutes later, the
+ * weeks-pass discipline montage). Seven endings unchanged.
+ *
+ * Total scenes: 13 → 22
+ * Avg dialog lines per playthrough: ~8 → ~22
  */
 
 import type { Scenario, Scene } from "../types";
 import { ARIA, KAYA, INNER_VOICE } from "../characters";
 
 const scenes: Scene[] = [
+  // ===================================================================
+  // ACT 1 — the panel, the pivot, the moment your phone goes still
+  // ===================================================================
+
   {
     id: "public-attack",
     backgroundId: "office",
@@ -19,7 +32,11 @@ const scenes: Scene[] = [
     dialog: [
       {
         speakerId: null,
-        text: "Industry panel. 200 people. Aria is on stage. She's pivoted from a question about leadership into specifics.",
+        text: "Industry panel. Five hundred-seat hall, two hundred actually full. You're in row eleven, aisle seat, half-listening with your phone face-down on your thigh.",
+      },
+      {
+        speakerId: null,
+        text: "Aria is on stage in the third chair. The moderator just asked a generic question about leadership. Aria pauses three beats too long before answering — the kind of pause that means the answer was prepared and the question was the door.",
       },
       {
         speakerId: "aria",
@@ -27,40 +44,59 @@ const scenes: Scene[] = [
         emotion: "cold",
       },
       {
+        speakerId: null,
+        text: "She doesn't look at row eleven. She doesn't have to. The phrasing is precise enough that anyone who knows the politics of the room can map it in six seconds.",
+      },
+      {
+        speakerId: null,
+        text: "Your phone, face-down on your thigh, vibrates twice in quick succession. Then a third time. Two people in your network just saw what you saw and started typing.",
+      },
+      {
         speakerId: "inner-voice",
-        text: "She's attacking from the stage by name-implication. Three weeks before the senior role decision. She knows you're in the room.",
+        text: "She's attacking from the stage by name-implication. Three weeks before the senior role decision. She knows you're in the room. She knows you can't respond from the floor without making it a fight.",
         emotion: "concerned",
+      },
+      {
+        speakerId: "inner-voice",
+        text: "The whole panel just became a test of what you do in the next ninety seconds. Whatever it is will be told back to people who weren't here, accurately or otherwise.",
+        emotion: "knowing",
       },
     ],
     choices: [
       {
         id: "stand-and-respond",
         text: "Stand up. Ask a calm question.",
-        tactic: "Engaging on her stage. She'll redirect, audience won't remember specifics.",
+        tactic:
+          "Engaging on her stage. She'll redirect, audience won't remember specifics.",
         nextSceneId: "stage-engagement",
       },
       {
         id: "stay-seated",
         text: "Stay seated. Take notes. Let it play.",
-        tactic: "Discipline. The room will read composure, not capitulation.",
-        nextSceneId: "post-panel-moves",
+        tactic:
+          "Discipline. The room will read composure, not capitulation.",
+        nextSceneId: "panel-finishes",
         isOptimal: true,
       },
       {
         id: "walk-out",
         text: "Stand up. Walk out visibly.",
         tactic: "High-drama exit. Memorable, but reads as emotional.",
-        nextSceneId: "ending-exit-emotional",
+        nextSceneId: "walk-out-corridor",
       },
       {
         id: "tweet-real-time",
         text: "Tweet during the panel, subtly.",
         tactic: "Extending the fight to a second theater. Never good.",
-        nextSceneId: "ending-second-front",
+        nextSceneId: "tweet-screenshots",
         isOptimal: false,
       },
     ],
   },
+
+  // ===================================================================
+  // ACT 2A — STAND AND RESPOND (the trap path)
+  // ===================================================================
 
   {
     id: "stage-engagement",
@@ -70,7 +106,7 @@ const scenes: Scene[] = [
     dialog: [
       {
         speakerId: null,
-        text: "You stand. Mic comes to you. Audience pivots.",
+        text: "You stand. The mic runner sees you, jogs over. Two hundred heads pivot in the same beat. You feel the room re-orient around the question of who you are and why you're standing.",
       },
       {
         speakerId: "aria",
@@ -78,14 +114,47 @@ const scenes: Scene[] = [
         emotion: "smirking",
       },
       {
+        speakerId: null,
+        text: "The line lands. Two scattered laughs from the back rows. Even the moderator's smile is tight — she's calculating whether to intervene or let it run, and she lets it run.",
+      },
+      {
+        speakerId: null,
+        text: "You ask your calm question. Aria gives a calm answer that wraps neatly back to her implication. The audience hears a polite exchange. The implication becomes the takeaway by virtue of having been confirmed-on-record by your standing up.",
+      },
+      {
         speakerId: "inner-voice",
-        text: "She just got what she wanted. You're now in a public exchange on her chosen topic. Every option here is her move.",
+        text: "She just got what she wanted. You're now in a public exchange on her chosen topic. The polite frame is the worst frame — it lets the implication travel freely under the cover of professionalism.",
         emotion: "concerned",
       },
     ],
     nextSceneId: "ending-publicly-drawn",
   },
 
+  // ===================================================================
+  // ACT 2B — STAY SEATED (optimal path)
+  // ===================================================================
+
+  {
+    id: "panel-finishes",
+    backgroundId: "office",
+    mood: "tense",
+    dialog: [
+      {
+        speakerId: null,
+        text: "You don't move. You write something in your notebook — anything, your own to-do list, doesn't matter — so the body language reads 'taking notes' instead of 'frozen'.",
+      },
+      {
+        speakerId: null,
+        text: "The panel runs another twenty-eight minutes. You sit through every one of them with the same expression. Aria glances at row eleven once. You don't look up.",
+      },
+      {
+        speakerId: "inner-voice",
+        text: "The discipline is the message. Anyone watching for your reaction is now writing a different story than the one she planted.",
+        emotion: "knowing",
+      },
+    ],
+    nextSceneId: "post-panel-moves",
+  },
   {
     id: "post-panel-moves",
     backgroundId: "office",
@@ -94,27 +163,39 @@ const scenes: Scene[] = [
     dialog: [
       {
         speakerId: null,
-        text: "The panel ends. Coffee break. Three people already come up to say 'that was weird, right?' — the audience clocked it.",
+        text: "Coffee break. The hall empties into the foyer. Three people come up to you in five minutes — different people, same opening sentence: 'that was weird, right?' The audience clocked the pivot.",
+      },
+      {
+        speakerId: null,
+        text: "Kaya finds you near the espresso machine. She doesn't ask if you're okay. She asks something better.",
       },
       {
         speakerId: "kaya",
         text: '"You passed the first test. What\'s next?"',
         emotion: "knowing",
       },
+      {
+        speakerId: "inner-voice",
+        text: "She's saying the test is the response, not the attack. The role is three weeks out. You have one major move and a handful of small ones available — pick which is the major.",
+        emotion: "knowing",
+      },
     ],
     choices: [
       {
         id: "quiet-meeting",
-        text: "Quiet meeting with the hiring committee chair. Pre-empt the smear.",
-        tactic: "Direct but private. Gives them your side before Aria can reach them again.",
+        text:
+          "Quiet meeting with the hiring committee chair. Pre-empt the smear.",
+        tactic:
+          "Direct but private. Gives them your side before Aria can reach them again.",
         nextSceneId: "hiring-meeting",
         isOptimal: true,
       },
       {
         id: "public-statement",
         text: "LinkedIn post subtweet about 'classy opponents.'",
-        tactic: "Descending to her level. Observers will equate you.",
-        nextSceneId: "ending-equated",
+        tactic:
+          "Descending to her level. Observers will equate you.",
+        nextSceneId: "linkedin-comments-arrive",
         isOptimal: false,
       },
       {
@@ -127,12 +208,14 @@ const scenes: Scene[] = [
       {
         id: "ignore-and-ship",
         text: "Ignore it entirely. Focus on your current project.",
-        tactic: "Underrated. The role decision is three weeks out, not three months. Work is the final argument.",
+        tactic:
+          "Underrated. The role decision is three weeks out, not three months. Work is the final argument.",
         nextSceneId: "work-strategy",
       },
     ],
   },
 
+  // --- stay-seated → quiet-meeting middle (already deep) ---
   {
     id: "hiring-meeting",
     backgroundId: "office",
@@ -140,7 +223,11 @@ const scenes: Scene[] = [
     dialog: [
       {
         speakerId: null,
-        text: "Tuesday. Twenty minutes with the committee chair. No ask, no complaint. A specific walk-through of two wins from the last six months.",
+        text: "Tuesday. Twenty minutes with the committee chair. No ask, no complaint. A specific walk-through of two wins from the last six months — the names of the clients, the numbers, the one decision in each that wasn't obvious.",
+      },
+      {
+        speakerId: null,
+        text: "She listens, asks two questions, takes one note. The note isn't about the wins. You see her write 'composure' and underline it.",
       },
       {
         speakerId: "inner-voice",
@@ -152,7 +239,8 @@ const scenes: Scene[] = [
       {
         id: "never-mention",
         text: "Never mention Aria. Just present the work.",
-        tactic: "Elegant. Lets the chair compare 'what they showed me' with 'what she said.'",
+        tactic:
+          "Elegant. Lets the chair compare 'what they showed me' with 'what she said.'",
         nextSceneId: "ending-chair-convinced",
         isOptimal: true,
       },
@@ -173,6 +261,7 @@ const scenes: Scene[] = [
     ],
   },
 
+  // --- stay-seated → ask-network middle ---
   {
     id: "intel-gathered",
     backgroundId: "office",
@@ -180,17 +269,27 @@ const scenes: Scene[] = [
     dialog: [
       {
         speakerId: null,
-        text: "By Monday you have specifics. Aria told three people post-panel that 'you should have seen their face.' Two were unimpressed. One laughed awkwardly and changed the subject.",
+        text: "By Monday you have specifics. Aria stayed at the venue for an extra forty minutes after the panel, working three different conversation circles. She used the line three times.",
+      },
+      {
+        speakerId: null,
+        text: "Two of the three responses were unimpressed — one of them politely asked if she was talking about you and changed the subject when she wouldn't say. The third laughed awkwardly and left the conversation a minute later.",
       },
       {
         speakerId: "inner-voice",
-        text: "Her post-game was weaker than her on-stage. The trap she set didn't feed her the reaction she needed.",
+        text: "Her post-game was weaker than her on-stage. The trap she set didn't feed her the reaction she needed. The audience filled in the gap with their own read — and it wasn't the read she wanted.",
+        emotion: "knowing",
+      },
+      {
+        speakerId: "inner-voice",
+        text: "Now you know what story is actually circulating. The hiring meeting can be calibrated against that — you're not preempting a smear, you're confirming a pattern the chair has probably already noticed.",
         emotion: "knowing",
       },
     ],
     nextSceneId: "hiring-meeting",
   },
 
+  // --- stay-seated → ignore-and-ship middle (the discipline montage) ---
   {
     id: "work-strategy",
     backgroundId: "office",
@@ -198,20 +297,107 @@ const scenes: Scene[] = [
     dialog: [
       {
         speakerId: null,
-        text: "Three weeks. You ship the biggest deliverable of the year. It goes live the day before the committee meets.",
+        text: "Three weeks. You don't tweet. You don't text the network. You don't ask Kaya for advice. You ship.",
+      },
+      {
+        speakerId: null,
+        text: "Week one: the spec lands. Week two: two of your team push back on the central decision; you hold. Week three: the deliverable goes live the day before the committee meets. Industry press picks it up the morning of.",
       },
       {
         speakerId: "inner-voice",
-        text: "Result: the committee has a fresh, specific, undeniable datapoint. Aria's 'confident presentations and quiet damage' line now sounds exactly like bitterness.",
+        text: "Result: the committee has a fresh, specific, undeniable datapoint sitting in their inbox the morning they read your file. Aria's 'confident presentations and quiet damage' line now sounds exactly like bitterness — because the alternative explanation is sitting in front of them with a date stamp.",
         emotion: "knowing",
       },
     ],
     nextSceneId: "ending-work-closed",
   },
 
-  // ---------------------------------------------------------------------
-  // ENDINGS
-  // ---------------------------------------------------------------------
+  // --- stay-seated → public-statement middle ---
+  {
+    id: "linkedin-comments-arrive",
+    backgroundId: "apartment",
+    mood: "danger",
+    dialog: [
+      {
+        speakerId: null,
+        text: "You hit post. The 'classy opponents' line lands as passive aggression in the first comment within nine minutes.",
+      },
+      {
+        speakerId: null,
+        text: "By the next morning the post has 47 reactions and 12 comments. The comments are split — some agree, some are 'who is this about', two are people who used to be in your camp politely asking you to delete it.",
+      },
+      {
+        speakerId: null,
+        text: "The colleague whose opinion you actually trust unfollows you that afternoon. Doesn't message. Just unfollows.",
+      },
+      {
+        speakerId: "inner-voice",
+        text: "Descending to her level cost you the height. The advantage you spent six months building — being the one who hadn't engaged — was spent on a single post in nine minutes.",
+        emotion: "sad",
+      },
+    ],
+    nextSceneId: "ending-equated",
+  },
+
+  // ===================================================================
+  // ACT 2C — WALK OUT
+  // ===================================================================
+
+  {
+    id: "walk-out-corridor",
+    backgroundId: "office",
+    mood: "danger",
+    dialog: [
+      {
+        speakerId: null,
+        text: "You stand. Two hundred heads register the movement before they register what it means. You walk down the row, up the aisle, out the back doors. Your shoes are loud on the wood floor; the doors thunk shut behind you.",
+      },
+      {
+        speakerId: null,
+        text: "By the time you're in the foyer, the moderator is moving on. By the time you're in the lobby, your phone has eleven notifications. By the time you're in the parking structure, a tweet about 'someone walking out of the panel' has 800 likes.",
+      },
+      {
+        speakerId: "inner-voice",
+        text: "You wanted to read as composed absence. The room read it as 'they couldn't take it.' Your exit became the second act of her line — the visible damage, on schedule.",
+        emotion: "sad",
+      },
+    ],
+    nextSceneId: "ending-exit-emotional",
+  },
+
+  // ===================================================================
+  // ACT 2D — TWEET REAL TIME
+  // ===================================================================
+
+  {
+    id: "tweet-screenshots",
+    backgroundId: "office",
+    mood: "danger",
+    dialog: [
+      {
+        speakerId: null,
+        text: "You tap it out under the seat in front of you. Subtle, you think. Plausibly about something else, you think. Hit post.",
+      },
+      {
+        speakerId: null,
+        text: "Eight minutes later, while the panel is still running, the screenshot appears in two industry group chats. By the time the panel ends, it's on the timeline of a journalist who covers your space.",
+      },
+      {
+        speakerId: null,
+        text: "The journalist's quote-tweet doesn't take a side. It just frames it as 'panel drama' and links to Aria's earlier comments about the senior-role process. The two stories are now stapled together.",
+      },
+      {
+        speakerId: "inner-voice",
+        text: "You opened a second front while losing on the first. The fight now lives in two theaters; your side has half the attention in each. Aria didn't beat you. You spread yourself too thin to win.",
+        emotion: "sad",
+      },
+    ],
+    nextSceneId: "ending-second-front",
+  },
+
+  // ===================================================================
+  // ENDINGS (unchanged from v1)
+  // ===================================================================
 
   {
     id: "ending-chair-convinced",
@@ -359,7 +545,7 @@ export const mission92: Scenario = {
   tier: "vip",
   level: 9,
   order: 2,
-  estimatedMinutes: 10,
+  estimatedMinutes: 12,
   difficulty: "advanced",
   category: "professional",
   xpReward: 425,
@@ -370,17 +556,20 @@ export const mission92: Scenario = {
     "Quiet meetings with deciders > public rebuttal",
     "Intel before response (post-game matters)",
     "Work as the final argument",
+    "Discipline through three weeks of not-engaging",
   ],
   redFlagsTaught: [
     "Stage ambushes designed to force public exchange",
     "Second-front temptations (LinkedIn, Twitter)",
     "Descending-to-their-level as 'defense'",
     "Defense meetings that become about the attacker",
+    "Visible exit as a second-act gift to the attacker",
   ],
   reward: {
     id: "long-game-won",
     name: "The Long Game Won",
-    description: "You outmaneuvered a six-month covert campaign without engaging it publicly.",
+    description:
+      "You outmaneuvered a six-month covert campaign without engaging it publicly.",
     unlocksScenarioId: "mission-10-1",
   },
   prerequisites: ["mission-9-1"],
