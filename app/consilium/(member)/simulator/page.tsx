@@ -138,12 +138,19 @@ export default async function SimulatorIndex({
           </div>
         </div>
 
-        <div className="mt-6">
+        <div className="mt-6 flex flex-wrap gap-3">
           <Link
             href="/consilium/simulator/achievements"
             className="inline-flex items-center gap-2 px-4 py-2 text-xs uppercase tracking-[0.2em] text-warm-gold border border-warm-gold/30 rounded-full hover:bg-warm-gold/10 hover:border-warm-gold/60 transition-all"
           >
             View achievements
+            <ArrowRight size={12} />
+          </Link>
+          <Link
+            href="/consilium/simulator/leaderboard"
+            className="inline-flex items-center gap-2 px-4 py-2 text-xs uppercase tracking-[0.2em] text-warm-gold border border-warm-gold/30 rounded-full hover:bg-warm-gold/10 hover:border-warm-gold/60 transition-all"
+          >
+            Leaderboard
             <ArrowRight size={12} />
           </Link>
         </div>
