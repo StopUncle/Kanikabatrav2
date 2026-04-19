@@ -95,6 +95,9 @@ export async function GET(request: NextRequest) {
     content: post.content,
     type: post.type,
     voiceNoteUrl: post.voiceNoteUrl,
+    videoUrl: post.videoUrl,
+    videoPosterUrl: post.videoPosterUrl,
+    videoDurationSeconds: post.videoDurationSeconds,
     isPinned: post.isPinned,
     isLocked: post.isLocked,
     likeCount: post.likeCount,
@@ -136,9 +139,13 @@ const CreatePostBody = z.object({
     "DISCUSSION_PROMPT",
     "VOICE_NOTE",
     "AUTOMATED",
+    "VIDEO",
   ]),
   isPinned: z.boolean().optional().default(false),
   voiceNoteUrl: z.string().url().optional().nullable(),
+  videoUrl: z.string().url().optional().nullable(),
+  videoPosterUrl: z.string().url().optional().nullable(),
+  videoDurationSeconds: z.number().int().positive().optional().nullable(),
 });
 
 export async function POST(request: NextRequest) {
@@ -165,6 +172,15 @@ export async function POST(request: NextRequest) {
     );
   }
 
+  // Same rule for VIDEO — never let the feed render a placeholder card
+  // with no actual video attached (the Apr 1 voice-note bug taught us this).
+  if (payload.type === "VIDEO" && !payload.videoUrl) {
+    return NextResponse.json(
+      { error: "VIDEO posts require a videoUrl" },
+      { status: 400 },
+    );
+  }
+
   // Attribute to Kanika's admin user so the feed avatar + Queen badge
   // render correctly. getAdminUserId() pulls the first ADMIN user.
   const authorId = await getAdminUserId();
@@ -177,6 +193,9 @@ export async function POST(request: NextRequest) {
         type: payload.type,
         isPinned: payload.isPinned,
         voiceNoteUrl: payload.voiceNoteUrl ?? null,
+        videoUrl: payload.videoUrl ?? null,
+        videoPosterUrl: payload.videoPosterUrl ?? null,
+        videoDurationSeconds: payload.videoDurationSeconds ?? null,
         authorId: authorId ?? undefined,
       },
       select: {

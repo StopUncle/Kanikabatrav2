@@ -88,6 +88,7 @@ enum FeedPostType {
   ANNOUNCEMENT
   DISCUSSION_PROMPT
   AUTOMATED
+  VIDEO
 }
 
 enum CommentStatus {
@@ -630,12 +631,15 @@ model CommunityMembership {
 }
 
 model FeedPost {
-  id           String         @id @default(cuid())
-  authorId     String?
-  title        String
-  content      String         @db.Text
-  type         FeedPostType   @default(ANNOUNCEMENT)
-  voiceNoteUrl String?
+  id                   String         @id @default(cuid())
+  authorId             String?
+  title                String
+  content              String         @db.Text
+  type                 FeedPostType   @default(ANNOUNCEMENT)
+  voiceNoteUrl         String?
+  videoUrl             String?
+  videoPosterUrl       String?
+  videoDurationSeconds Int?
   isPinned     Boolean        @default(false)
   isLocked     Boolean        @default(false)
   likeCount    Int            @default(0)

@@ -17,6 +17,7 @@ import {
   X,
   Check,
 } from "lucide-react";
+import VideoUrlField from "@/components/admin/VideoUrlField";
 
 interface Lesson {
   id: string;
@@ -825,17 +826,16 @@ export default function CoursesPage() {
                                   className="bg-white/[0.03] border border-white/10 rounded px-3 py-2 text-text-light text-xs font-light focus:border-accent-gold/40 focus:outline-none transition-colors"
                                   placeholder="Lesson title..."
                                 />
-                                <input
-                                  type="text"
+                                <VideoUrlField
+                                  compact
                                   value={lessonForm.videoUrl}
-                                  onChange={(e) =>
+                                  onChange={(url) =>
                                     setLessonForm({
                                       ...lessonForm,
-                                      videoUrl: e.target.value,
+                                      videoUrl: url,
                                     })
                                   }
-                                  className="bg-white/[0.03] border border-white/10 rounded px-3 py-2 text-text-light text-xs font-light focus:border-accent-gold/40 focus:outline-none transition-colors"
-                                  placeholder="YouTube URL or video path..."
+                                  placeholder="YouTube URL or upload mp4..."
                                 />
                               </div>
                               <textarea

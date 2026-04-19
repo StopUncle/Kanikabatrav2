@@ -8,6 +8,7 @@ import Link from "next/link";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import VoiceNotePlayer from "./VoiceNotePlayer";
+import VideoPlayer from "./VideoPlayer";
 import MemberBadge from "./MemberBadge";
 
 interface FeedPostAuthor {
@@ -24,6 +25,9 @@ export interface FeedPostData {
   content: string;
   type: string;
   voiceNoteUrl: string | null;
+  videoUrl: string | null;
+  videoPosterUrl: string | null;
+  videoDurationSeconds: number | null;
   isPinned: boolean;
   isLocked: boolean;
   likeCount: number;
@@ -206,6 +210,16 @@ export default function FeedPost({ post, isDetail = false, isNew = false }: Feed
       {post.type === "VOICE_NOTE" && post.voiceNoteUrl && (
         <div className="mb-4">
           <VoiceNotePlayer src={post.voiceNoteUrl} />
+        </div>
+      )}
+
+      {post.type === "VIDEO" && post.videoUrl && (
+        <div className="mb-4">
+          <VideoPlayer
+            src={post.videoUrl}
+            poster={post.videoPosterUrl}
+            durationSeconds={post.videoDurationSeconds}
+          />
         </div>
       )}
 
