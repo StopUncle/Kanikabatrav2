@@ -90,15 +90,22 @@ export default function SimulatorRunner({
   const completeFiredRef = useRef(false);
 
   const scene = currentScene(scenario, state);
+  const totalLines = scene?.dialog?.length ?? 0;
+  // currentLine is undefined when lineIndex has been bumped PAST the
+  // final dialog line — that's the signal that the player has read
+  // all the dialog and we're now showing choices (or auto-advancing).
   const currentLine: DialogLine | undefined = scene?.dialog?.[lineIndex];
-  const isLastLine =
-    scene && scene.dialog ? lineIndex === scene.dialog.length - 1 : false;
+  const isLastLine = lineIndex === totalLines - 1;
+  // Only show choices once the player has clicked PAST the last dialog
+  // line. The previous logic flipped showChoices the moment we landed
+  // ON the last line, which silently skipped that line — players never
+  // saw the final inner-voice tactical beat that frames the choice.
   const showChoices =
     !!scene &&
     !scene.isEnding &&
-    isLastLine &&
     !!scene.choices &&
-    scene.choices.length > 0;
+    scene.choices.length > 0 &&
+    lineIndex >= totalLines;
 
   const characterById = useMemo(() => {
     const map: Record<string, Scenario["characters"][number]> = {};
@@ -145,19 +152,33 @@ export default function SimulatorRunner({
 
   const advanceLine = useCallback(() => {
     if (!scene) return;
-    // More lines remain — just step forward in the current scene
-    if (scene.dialog && lineIndex < scene.dialog.length - 1) {
+    const lines = scene.dialog?.length ?? 0;
+
+    // Still inside the dialog — step to the next line.
+    if (lineIndex < lines - 1) {
       setLineIndex((i) => i + 1);
       return;
     }
-    // Last line: if scene has choices, ChoiceCards render; nothing to do here.
-    if (scene.choices && scene.choices.length > 0) return;
 
-    // Auto-advance to next scene (handles endings internally)
-    setState((prev) => {
-      const next = autoAdvance(scenario, prev);
-      return next;
-    });
+    // On the last dialog line. Clicking "Decide" / "Continue" here
+    // either reveals the choices (by bumping lineIndex past the end —
+    // showChoices then evaluates true) or auto-advances to the next
+    // scene if there are no choices.
+    if (lineIndex === lines - 1) {
+      if (scene.choices && scene.choices.length > 0) {
+        setLineIndex(lines); // past the end → choices render
+        return;
+      }
+      // Auto-advance scene
+      setState((prev) => autoAdvance(scenario, prev));
+      setLineIndex(0);
+      return;
+    }
+
+    // lineIndex is past the dialog. If choices are showing, the click
+    // came from somewhere stale — ignore. Otherwise auto-advance.
+    if (scene.choices && scene.choices.length > 0) return;
+    setState((prev) => autoAdvance(scenario, prev));
     setLineIndex(0);
   }, [scene, scenario, lineIndex]);
 
@@ -354,10 +375,22 @@ export default function SimulatorRunner({
           choice cards appearing doesn't push dialog text up. Both states
           share the same vertical zone; we just swap content inside it. */}
       <div className="absolute inset-x-0 bottom-16 sm:bottom-20 z-20 flex flex-col items-center justify-center min-h-[280px] sm:min-h-[240px] px-4">
+        {/* One AnimatePresence with mode="wait" so the dialog→choices
+            swap is sequential (dialog exits, then choices enter) instead
+            of overlapping in the same vertical zone. The previous
+            two-presence setup let them cross-fade on top of each other,
+            which read as a glitch on every scene with choices. */}
         <AnimatePresence mode="wait">
-          {!showChoices && currentLine && (
+          {showChoices && scene.choices ? (
+            <ChoiceCards
+              key={`choices-${scene.id}`}
+              choices={scene.choices}
+              onPick={pickChoice}
+              scenario={scenario}
+            />
+          ) : currentLine ? (
             <DialogBox
-              key={`${scene.id}-${lineIndex}`}
+              key={`line-${scene.id}-${lineIndex}`}
               line={currentLine}
               character={
                 currentLine.speakerId
@@ -367,17 +400,7 @@ export default function SimulatorRunner({
               isLastLine={!!isLastLine}
               onAdvance={advanceLine}
             />
-          )}
-        </AnimatePresence>
-
-        <AnimatePresence>
-          {showChoices && scene.choices && (
-            <ChoiceCards
-              choices={scene.choices}
-              onPick={pickChoice}
-              scenario={scenario}
-            />
-          )}
+          ) : null}
         </AnimatePresence>
       </div>
 

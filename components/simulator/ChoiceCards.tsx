@@ -38,6 +38,7 @@ export default function ChoiceCards({ choices, onPick, scenario }: Props) {
     <m.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: 12, transition: { duration: 0.25 } }}
       transition={{ duration: 0.5, delay: 0.1 }}
       className={`max-w-4xl mx-auto w-full px-4 grid gap-4 ${
         choices.length >= 3 ? "md:grid-cols-3" : "md:grid-cols-2"
