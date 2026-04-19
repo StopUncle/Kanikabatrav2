@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from "next/server";
-import { cookies } from "next/headers";
 import { resolveActiveUserIdFromRequest } from "@/lib/auth/resolve-user";
 import { prisma } from "@/lib/prisma";
 import { stripe } from "@/lib/stripe";
