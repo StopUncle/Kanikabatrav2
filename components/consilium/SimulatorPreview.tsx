@@ -176,21 +176,8 @@ function useTypewriter(text: string, active: boolean, speed = 18) {
   return revealed;
 }
 
-function usePrefersReducedMotion(): boolean {
-  const [prefers, setPrefers] = useState(false);
-  useEffect(() => {
-    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
-    setPrefers(mq.matches);
-    const handler = (e: MediaQueryListEvent) => setPrefers(e.matches);
-    mq.addEventListener("change", handler);
-    return () => mq.removeEventListener("change", handler);
-  }, []);
-  return prefers;
-}
-
 export default function SimulatorPreview() {
   const containerRef = useRef<HTMLDivElement>(null);
-  const reducedMotion = usePrefersReducedMotion();
 
   const [sceneIndex, setSceneIndex] = useState(0);
   const [beatIndex, setBeatIndex] = useState(0);
@@ -198,46 +185,52 @@ export default function SimulatorPreview() {
   const [inView, setInView] = useState(true);
 
   // Pause when not visible — saves CPU when the visitor scrolls past.
+  // Permissive threshold (5%) so the loop keeps running even when only
+  // a sliver of the preview is on screen.
   useEffect(() => {
     const node = containerRef.current;
     if (!node) return;
     const observer = new IntersectionObserver(
       ([entry]) => setInView(entry.isIntersecting),
-      { threshold: 0.2 },
+      { threshold: 0.05 },
     );
     observer.observe(node);
     return () => observer.disconnect();
   }, []);
 
-  // Beat progression. Skipped entirely under reduced-motion; we just
-  // freeze on the "reward" beat of scene 0 so the visitor sees a
-  // composed still rather than a half-rendered animation.
+  // Beat progression. The reduced-motion short-circuit that previously
+  // lived here was freezing the loop on the reward beat for any user
+  // with the system "reduce motion" preference enabled (Windows defaults
+  // and several browsers ship it on). The animations are subtle enough
+  // — opacity crossfades, a typewriter, a brief flash — that they're
+  // fine for reduced-motion users; better to keep the loop running than
+  // to pin them on scene 1 indefinitely.
   useEffect(() => {
-    if (reducedMotion || !inView) return;
+    if (!inView) return;
     const beat = BEAT_ORDER[beatIndex];
     const duration = BEAT_MS[beat];
-    const t = setTimeout(() => {
+    const t = window.setTimeout(() => {
       if (beatIndex >= BEAT_ORDER.length - 1) {
-        // Loop to next scene. Reset streak every 3rd scene so the counter
-        // stays small and believable.
-        setBeatIndex(0);
+        // End of beat list — loop to the next scene. Update streak based
+        // on the post-loop scene so the counter stays small and
+        // believable (resets on every full cycle).
         setSceneIndex((i) => {
           const next = (i + 1) % SCENES.length;
-          if (next === 0) setStreak(1);
-          else setStreak((s) => s + 1);
           return next;
         });
+        setStreak((s) => {
+          const nextScene = (sceneIndex + 1) % SCENES.length;
+          return nextScene === 0 ? 1 : s + 1;
+        });
+        setBeatIndex(0);
       } else {
         setBeatIndex((i) => i + 1);
       }
     }, duration);
-    return () => clearTimeout(t);
-  }, [beatIndex, reducedMotion, inView]);
+    return () => window.clearTimeout(t);
+  }, [beatIndex, sceneIndex, inView]);
 
-  // Reduced-motion mode pins to a calm beat with everything visible.
-  const effectiveBeatIndex = reducedMotion
-    ? BEAT_ORDER.indexOf("reward")
-    : beatIndex;
+  const effectiveBeatIndex = beatIndex;
   const beat = BEAT_ORDER[effectiveBeatIndex];
   const scene = SCENES[sceneIndex];
 
@@ -312,14 +305,10 @@ export default function SimulatorPreview() {
               key={`p-${sceneIndex}-${i}`}
               className="absolute w-[3px] h-[3px] rounded-full bg-warm-gold/40"
               style={{ left: `${p.left}%`, top: `${p.top}%` }}
-              animate={
-                reducedMotion
-                  ? { opacity: 0.4 }
-                  : {
-                      opacity: [0, 0.5, 0],
-                      y: [0, -10, -20],
-                    }
-              }
+              animate={{
+                opacity: [0, 0.5, 0],
+                y: [0, -10, -20],
+              }}
               transition={{
                 duration: 4,
                 repeat: Infinity,
