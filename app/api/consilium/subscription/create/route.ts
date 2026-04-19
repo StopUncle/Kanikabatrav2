@@ -9,74 +9,38 @@ export async function POST(request: NextRequest) {
       where: { userId: user.id },
     });
 
-    if (!membership || membership.status === "PENDING") {
-      return NextResponse.json(
-        { error: "Application must be approved before subscribing" },
-        { status: 403 },
-      );
-    }
+    // Application gate removed (2026-04-19). Anyone authenticated can
+    // proceed to Stripe checkout. Three guard clauses still apply:
+    //
+    //   1. Already an active paying subscriber — nothing to buy.
+    //   2. Suspended for a violation — refunds + bans go through admin,
+    //      not a self-service repurchase.
+    //   3. Previously rejected at the application stage — kept as a
+    //      defensive block for legacy users with rejectedAt stamped on
+    //      their applicationData. The form is gone; nobody new can land
+    //      in this state.
 
-    if (membership.status === "ACTIVE" && membership.billingCycle !== "trial") {
+    if (membership?.status === "ACTIVE" && membership.billingCycle !== "trial") {
       return NextResponse.json(
         { error: "Already an active subscriber" },
         { status: 400 },
       );
     }
 
-    if (membership.status === "SUSPENDED") {
+    if (membership?.status === "SUSPENDED") {
       return NextResponse.json(
         { error: "Membership suspended" },
         { status: 403 },
       );
     }
 
-    // CANCELLED + EXPIRED need extra logic. Both states cover two very
-    // different histories, and only one of each is allowed to subscribe:
-    //
-    //   CANCELLED + applicationData.rejectedAt set
-    //     → admin explicitly rejected this applicant. They must reapply
-    //       through the form (which Kanika will re-review) — they cannot
-    //       buy their way past a rejection.
-    //   CANCELLED + activatedAt null + no rejectedAt
-    //     → defensive: a CANCELLED row that was never paid and wasn't
-    //       explicitly rejected shouldn't be a thing, but if it exists,
-    //       send them through reapplication for safety.
-    //   CANCELLED + activatedAt set + no rejectedAt
-    //     → former paid member who cancelled. Welcome back, allow.
-    //
-    //   EXPIRED + activatedAt null
-    //     → approved but never paid; the 14-day window lapsed. They must
-    //       reapply so Kanika can re-review (they may have changed
-    //       circumstances since the original application).
-    //   EXPIRED + activatedAt set
-    //     → former paid member whose subscription ran out. Allow renewal.
-    const data = membership.applicationData as Record<string, unknown> | null;
+    const data = membership?.applicationData as Record<string, unknown> | null;
     const wasRejected = !!(data && (data.rejectedAt || data.rejectionNote));
-
-    if (membership.status === "CANCELLED") {
-      if (wasRejected) {
-        return NextResponse.json(
-          {
-            error:
-              "Your application was reviewed and not accepted. Please reapply if circumstances have changed.",
-          },
-          { status: 403 },
-        );
-      }
-      if (!membership.activatedAt) {
-        return NextResponse.json(
-          { error: "Please reapply to The Consilium." },
-          { status: 403 },
-        );
-      }
-      // Former paid member — fall through to allow renewal.
-    }
-
-    if (membership.status === "EXPIRED" && !membership.activatedAt) {
+    if (membership?.status === "CANCELLED" && wasRejected) {
       return NextResponse.json(
         {
           error:
-            "Your approval window expired. Please reapply to The Consilium.",
+            "Your application was reviewed and not accepted. Please contact support if circumstances have changed.",
         },
         { status: 403 },
       );

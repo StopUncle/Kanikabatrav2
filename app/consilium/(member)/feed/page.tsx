@@ -30,6 +30,7 @@ export default async function FeedPage({
     select: {
       onboardingSeenAt: true,
       displayName: true,
+      gender: true,
       _count: {
         select: {
           quizResults: true,
@@ -40,6 +41,11 @@ export default async function FeedPage({
     },
   });
   const showOnboarding = viewerRecord?.onboardingSeenAt == null;
+  // The modal collects gender + display name post-pay (the application
+  // form used to collect them; now that it's gone, we capture them on
+  // first feed visit). Skip the form half if the user already has them.
+  const needsDisplayName = !viewerRecord?.displayName;
+  const needsGender = !viewerRecord?.gender;
   const firstMovesSignals = {
     hasDisplayName:
       !!viewerRecord?.displayName && viewerRecord.displayName.trim() !== "",
@@ -117,7 +123,12 @@ export default async function FeedPage({
 
   return (
     <>
-      {showOnboarding && <OnboardingModal />}
+      {showOnboarding && (
+        <OnboardingModal
+          needsDisplayName={needsDisplayName}
+          needsGender={needsGender}
+        />
+      )}
 
       <div className="max-w-2xl mx-auto px-3 sm:px-4 py-6 sm:py-8 lg:py-12">
         {justClaimed && (

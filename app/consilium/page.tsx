@@ -73,7 +73,7 @@ export default async function InnerCircleLanding({
       icon: Shield,
       title: "Troll-Free Zone",
       description:
-        "Every member is vetted. Every comment is reviewed. This space is protected",
+        "Every comment is reviewed. Bad actors are removed fast. This space is protected",
     },
     {
       icon: Users,
@@ -168,13 +168,13 @@ export default async function InnerCircleLanding({
                   boxShadow: "0 8px 20px rgba(114,9,33,0.3), 0 8px 20px rgba(99,102,241,0.3)",
                 }}
               >
-                Apply to Join — $29/month
+                Join — $29/month
                 <ArrowRight size={20} />
               </Link>
             </div>
 
             <p className="text-text-gray/50 text-sm mt-4">
-              Cancel anytime. No contracts. No bullshit.
+              Instant access. Cancel anytime. No bullshit.
             </p>
           </div>
 
@@ -395,11 +395,11 @@ export default async function InnerCircleLanding({
                 href="/consilium/apply"
                 className="inline-flex items-center justify-center gap-2 py-4 px-10 bg-warm-gold text-deep-black font-medium tracking-wider uppercase rounded-full transition-all hover:bg-warm-gold/90 hover:shadow-[0_8px_24px_-4px_rgba(212,175,55,0.45)]"
               >
-                Apply Now
+                Step Inside
                 <ArrowRight size={18} />
               </Link>
               <p className="text-text-gray/40 text-xs mt-4">
-                Applications are reviewed within 24 hours.
+                Instant access. Cancel anytime.
               </p>
             </div>
           </div>
