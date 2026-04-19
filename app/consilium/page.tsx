@@ -17,6 +17,7 @@ import {
   Target,
   Sparkles,
 } from "lucide-react";
+import SimulatorPreview from "@/components/consilium/SimulatorPreview";
 
 export const metadata = {
   title: "The Consilium | Kanika Batra",
@@ -265,6 +266,14 @@ export default async function InnerCircleLanding({
                     what a trained eye would have caught — and what it
                     costs you if you missed it.
                   </p>
+
+                  {/* Live preview — three real scenes auto-playing on a loop.
+                      The viewer watches the optimal choice get picked, sees
+                      the tactic reveal, hears the inner-voice line. Sells
+                      the dopamine without spoiling the actual scenarios. */}
+                  <div className="w-full mb-10">
+                    <SimulatorPreview />
+                  </div>
 
                   {/* Stats row — concrete numbers that prove depth.
                       Auditor-sourced: 30 scenarios, 526 scenes, 83 unique
