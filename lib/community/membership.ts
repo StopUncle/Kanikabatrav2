@@ -10,6 +10,7 @@ export interface MembershipCheck {
     id: string;
     status: MembershipStatus;
     billingCycle: string;
+    approvedAt: Date | null;
     activatedAt: Date | null;
     expiresAt: Date | null;
   } | null;
@@ -33,7 +34,7 @@ export async function checkMembership(userId: string | null): Promise<Membership
           const membership = userId
             ? await prisma.communityMembership.findUnique({
                 where: { userId },
-                select: { id: true, status: true, billingCycle: true, activatedAt: true, expiresAt: true },
+                select: { id: true, status: true, billingCycle: true, approvedAt: true, activatedAt: true, expiresAt: true },
               })
             : null;
           return {
@@ -43,6 +44,7 @@ export async function checkMembership(userId: string | null): Promise<Membership
               id: "admin-preview",
               status: "ACTIVE" as MembershipStatus,
               billingCycle: "MONTHLY",
+              approvedAt: new Date(),
               activatedAt: new Date(),
               expiresAt: new Date(Date.now() + 365 * 86_400_000),
             },
@@ -89,6 +91,7 @@ export async function checkMembership(userId: string | null): Promise<Membership
       id: true,
       status: true,
       billingCycle: true,
+      approvedAt: true,
       activatedAt: true,
       expiresAt: true,
     },
@@ -112,10 +115,20 @@ export async function checkMembership(userId: string | null): Promise<Membership
   // APPROVED applications that sit untouched for 14+ days auto-expire.
   // This prevents approved-but-abandoned applications from blocking the
   // pipeline indefinitely.
+  //
+  // Bug history: this used to read `membership.activatedAt`, which is set
+  // on PAYMENT (never on approval). For an APPROVED-but-unpaid member
+  // that field is null, the fallback to `new Date(0)` made the 14-day
+  // comparison always true, and APPROVED members were silently flipped
+  // to EXPIRED on their first gated-page load instead of after the
+  // intended grace window.
   if (membership.status === "APPROVED") {
-    const approvedAt = membership.activatedAt || new Date(0);
+    const approvedAt = membership.approvedAt;
     const fourteenDays = 14 * 24 * 60 * 60 * 1000;
-    if (Date.now() - approvedAt.getTime() > fourteenDays) {
+    // If approvedAt is somehow null (legacy data), don't auto-expire —
+    // safer to leave the row as APPROVED and let an admin investigate
+    // than to silently push members into EXPIRED.
+    if (approvedAt && Date.now() - approvedAt.getTime() > fourteenDays) {
       await prisma.communityMembership.updateMany({
         where: { id: membership.id, status: "APPROVED" },
         data: { status: "EXPIRED" },

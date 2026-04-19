@@ -5,7 +5,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { m } from "framer-motion";
-import { Send, CheckCircle, Clock } from "lucide-react";
+import { Send, CheckCircle, Clock, XCircle, RefreshCcw } from "lucide-react";
 
 // Calculates age in whole years from an ISO date string. Returns -1 for
 // anything that doesn't parse, so the refine() below rejects bad input.
@@ -64,9 +64,21 @@ type FormData = z.infer<typeof schema>;
 
 interface ApplicationFormProps {
   existingStatus?: string | null;
+  /** True if a CANCELLED row was set by an admin rejection (not a member-
+   *  initiated cancellation). Drives the "not accepted" message vs the
+   *  "welcome back" reactivation prompt. */
+  wasRejected?: boolean;
+  /** True if the row has activatedAt set, meaning this user actually paid
+   *  at some point. Distinguishes EXPIRED-after-paid (renew) from
+   *  EXPIRED-after-approval (must reapply). */
+  wasFormerlyPaid?: boolean;
 }
 
-export default function ApplicationForm({ existingStatus }: ApplicationFormProps) {
+export default function ApplicationForm({
+  existingStatus,
+  wasRejected = false,
+  wasFormerlyPaid = false,
+}: ApplicationFormProps) {
   const [submitStatus, setSubmitStatus] = useState<"idle" | "submitting" | "success" | "error">("idle");
   const [errorMessage, setErrorMessage] = useState("");
 
@@ -119,6 +131,109 @@ export default function ApplicationForm({ existingStatus }: ApplicationFormProps
         <Clock className="w-16 h-16 text-accent-gold mx-auto mb-4" />
         <h2 className="text-2xl font-light text-text-light mb-2">Application Under Review</h2>
         <p className="text-text-gray">We&apos;ll notify you by email once your application is reviewed.</p>
+      </div>
+    );
+  }
+
+  // Rejected applicant. No CTA — they need to wait and submit a fresh
+  // application later if their circumstances change. Showing the form
+  // again immediately would feel like the rejection didn't land.
+  if (existingStatus === "CANCELLED" && wasRejected) {
+    return (
+      <div className="bg-deep-black/50 backdrop-blur-sm border border-accent-gold/20 rounded-2xl p-8 text-center">
+        <XCircle className="w-12 h-12 text-text-gray/60 mx-auto mb-5" />
+        <h2 className="text-xl font-light text-text-light mb-3">
+          Application Not Accepted
+        </h2>
+        <p className="text-text-gray font-light max-w-md mx-auto leading-relaxed">
+          We&apos;ve reviewed your application and aren&apos;t able to extend
+          a place in The Consilium at this time. If your circumstances
+          change, you&apos;re welcome to apply again later.
+        </p>
+      </div>
+    );
+  }
+
+  // Former paid member who cancelled their subscription. Welcome them
+  // back with a one-click reactivate flow rather than making them
+  // resubmit the application form.
+  if (existingStatus === "CANCELLED" && wasFormerlyPaid) {
+    return (
+      <div className="bg-deep-black/50 backdrop-blur-sm border border-accent-gold/20 rounded-2xl p-8 text-center">
+        <RefreshCcw className="w-12 h-12 text-accent-gold mx-auto mb-5" />
+        <h2 className="text-2xl font-light gradient-text-gold mb-3">Welcome Back</h2>
+        <p className="text-text-gray font-light mb-7 max-w-md mx-auto">
+          Your seat is still recognised. Reactivate your subscription to
+          step back into The Consilium.
+        </p>
+        <button
+          onClick={async () => {
+            setIsSubmitting(true);
+            const res = await fetch("/api/consilium/subscription/create", { method: "POST" });
+            const data = await res.json();
+            if (data.checkoutUrl) window.location.href = data.checkoutUrl;
+            setIsSubmitting(false);
+          }}
+          disabled={isSubmitting}
+          className="px-8 py-4 rounded-full text-text-light font-medium uppercase tracking-wider transition-all duration-300 disabled:opacity-50"
+          style={{ background: 'linear-gradient(135deg, #720921, #6366f1)', boxShadow: '0 8px 20px rgba(114,9,33,0.3), 0 8px 20px rgba(99,102,241,0.3)' }}
+        >
+          {isSubmitting ? "Redirecting..." : "Reactivate \u2014 $29/month"}
+        </button>
+      </div>
+    );
+  }
+
+  // Approved-but-never-paid window lapsed. They have to reapply through
+  // the form (which Kanika re-reviews) — we can't let them buy past the
+  // expired approval since the original review may be stale.
+  if (existingStatus === "EXPIRED" && !wasFormerlyPaid) {
+    return (
+      <div className="bg-deep-black/50 backdrop-blur-sm border border-accent-gold/20 rounded-2xl p-8 text-center">
+        <Clock className="w-12 h-12 text-text-gray/60 mx-auto mb-5" />
+        <h2 className="text-xl font-light text-text-light mb-3">
+          Approval Window Lapsed
+        </h2>
+        <p className="text-text-gray font-light max-w-md mx-auto leading-relaxed">
+          Your application was approved but the activation window passed
+          without payment. Submit a fresh application below — we review
+          each one personally.
+        </p>
+      </div>
+    );
+    // Note: we deliberately don't fall through to the form here. A new
+    // entry below this card would be confusing — the user has to scroll
+    // to find it. If a UX iteration wants both the explanation AND the
+    // form on one page, render them together; right now the cleanest
+    // path is to show this card only and let the user click "Apply"
+    // from the consilium landing page if they want to retry.
+  }
+
+  // Former paid member whose subscription expired (not approval window).
+  // Same comeback flow as CANCELLED + wasFormerlyPaid above.
+  if (existingStatus === "EXPIRED" && wasFormerlyPaid) {
+    return (
+      <div className="bg-deep-black/50 backdrop-blur-sm border border-accent-gold/20 rounded-2xl p-8 text-center">
+        <RefreshCcw className="w-12 h-12 text-accent-gold mx-auto mb-5" />
+        <h2 className="text-2xl font-light gradient-text-gold mb-3">Welcome Back</h2>
+        <p className="text-text-gray font-light mb-7 max-w-md mx-auto">
+          Your subscription expired. Reactivate to pick up where you
+          left off.
+        </p>
+        <button
+          onClick={async () => {
+            setIsSubmitting(true);
+            const res = await fetch("/api/consilium/subscription/create", { method: "POST" });
+            const data = await res.json();
+            if (data.checkoutUrl) window.location.href = data.checkoutUrl;
+            setIsSubmitting(false);
+          }}
+          disabled={isSubmitting}
+          className="px-8 py-4 rounded-full text-text-light font-medium uppercase tracking-wider transition-all duration-300 disabled:opacity-50"
+          style={{ background: 'linear-gradient(135deg, #720921, #6366f1)', boxShadow: '0 8px 20px rgba(114,9,33,0.3), 0 8px 20px rgba(99,102,241,0.3)' }}
+        >
+          {isSubmitting ? "Redirecting..." : "Reactivate \u2014 $29/month"}
+        </button>
       </div>
     );
   }

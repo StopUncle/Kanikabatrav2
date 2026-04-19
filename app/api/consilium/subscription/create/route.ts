@@ -30,6 +30,58 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // CANCELLED + EXPIRED need extra logic. Both states cover two very
+    // different histories, and only one of each is allowed to subscribe:
+    //
+    //   CANCELLED + applicationData.rejectedAt set
+    //     → admin explicitly rejected this applicant. They must reapply
+    //       through the form (which Kanika will re-review) — they cannot
+    //       buy their way past a rejection.
+    //   CANCELLED + activatedAt null + no rejectedAt
+    //     → defensive: a CANCELLED row that was never paid and wasn't
+    //       explicitly rejected shouldn't be a thing, but if it exists,
+    //       send them through reapplication for safety.
+    //   CANCELLED + activatedAt set + no rejectedAt
+    //     → former paid member who cancelled. Welcome back, allow.
+    //
+    //   EXPIRED + activatedAt null
+    //     → approved but never paid; the 14-day window lapsed. They must
+    //       reapply so Kanika can re-review (they may have changed
+    //       circumstances since the original application).
+    //   EXPIRED + activatedAt set
+    //     → former paid member whose subscription ran out. Allow renewal.
+    const data = membership.applicationData as Record<string, unknown> | null;
+    const wasRejected = !!(data && (data.rejectedAt || data.rejectionNote));
+
+    if (membership.status === "CANCELLED") {
+      if (wasRejected) {
+        return NextResponse.json(
+          {
+            error:
+              "Your application was reviewed and not accepted. Please reapply if circumstances have changed.",
+          },
+          { status: 403 },
+        );
+      }
+      if (!membership.activatedAt) {
+        return NextResponse.json(
+          { error: "Please reapply to The Consilium." },
+          { status: 403 },
+        );
+      }
+      // Former paid member — fall through to allow renewal.
+    }
+
+    if (membership.status === "EXPIRED" && !membership.activatedAt) {
+      return NextResponse.json(
+        {
+          error:
+            "Your approval window expired. Please reapply to The Consilium.",
+        },
+        { status: 403 },
+      );
+    }
+
     const dbUser = await prisma.user.findUnique({
       where: { id: user.id },
       select: { email: true, name: true },

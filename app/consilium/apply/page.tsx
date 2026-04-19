@@ -15,12 +15,24 @@ export default async function ApplyPage() {
 
   const membership = await prisma.communityMembership.findUnique({
     where: { userId },
-    select: { status: true },
+    select: {
+      status: true,
+      activatedAt: true,
+      applicationData: true,
+    },
   });
 
   if (membership?.status === "ACTIVE") {
     redirect("/consilium/feed");
   }
+
+  // Derive context flags so the form can render the right CTA without
+  // re-querying. CANCELLED + EXPIRED both have two distinct histories
+  // (rejected vs former paid member, abandoned-approval vs lapsed
+  // subscription) and the right message depends on which branch they're on.
+  const data = membership?.applicationData as Record<string, unknown> | null;
+  const wasRejected = !!(data && (data.rejectedAt || data.rejectionNote));
+  const wasFormerlyPaid = !!membership?.activatedAt;
 
   return (
     <div className="min-h-screen bg-deep-black text-text-light">
@@ -40,7 +52,11 @@ export default async function ApplyPage() {
           </p>
         </div>
 
-        <ApplicationForm existingStatus={membership?.status || null} />
+        <ApplicationForm
+          existingStatus={membership?.status || null}
+          wasRejected={wasRejected}
+          wasFormerlyPaid={wasFormerlyPaid}
+        />
       </div>
     </div>
   );
