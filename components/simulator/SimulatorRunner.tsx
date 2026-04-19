@@ -372,7 +372,11 @@ export default function SimulatorRunner({
 
         <AnimatePresence>
           {showChoices && scene.choices && (
-            <ChoiceCards choices={scene.choices} onPick={pickChoice} />
+            <ChoiceCards
+              choices={scene.choices}
+              onPick={pickChoice}
+              scenario={scenario}
+            />
           )}
         </AnimatePresence>
       </div>

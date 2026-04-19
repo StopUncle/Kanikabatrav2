@@ -45,3 +45,17 @@ filesToRemove.forEach((file) => {
 });
 
 console.log("✨ Cleanup complete!");
+
+// Scenario data audit — fails the build on dangling/missing scene refs.
+// Warns (but doesn't block) on one-click endings, since some scenarios
+// use them deliberately as a "you took the bait" teaching beat.
+const { spawnSync } = require("child_process");
+console.log("🔎 Auditing simulator scenarios...");
+const audit = spawnSync(
+  "npx",
+  ["tsx", "scripts/check-scenario-shortcuts.ts"],
+  { stdio: "inherit", shell: true },
+);
+if (audit.status !== 0) {
+  process.exit(audit.status ?? 1);
+}

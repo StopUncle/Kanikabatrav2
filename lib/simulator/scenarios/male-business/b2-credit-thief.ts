@@ -181,7 +181,7 @@ const scenes: Scene[] = [
         id: "send-hr-anyway",
         text: "Send the HR email. You have the evidence. Why wait?",
         tactic: "Evidence for one instance reads as grievance. Hale outmanoeuvres via his HR relationships. You become 'the one with the problem'.",
-        nextSceneId: "hr-backfire",
+        nextSceneId: "ending-hr-loss",
       },
       {
         id: "confront-hale-direct",
