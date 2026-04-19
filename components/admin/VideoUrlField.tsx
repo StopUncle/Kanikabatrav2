@@ -2,6 +2,7 @@
 
 import { useRef, useState } from "react";
 import { Loader2, Upload, XCircle } from "lucide-react";
+import { isSafeMediaUrl } from "@/lib/security/safe-media-url";
 
 interface VideoUrlFieldProps {
   value: string;
@@ -106,14 +107,24 @@ export default function VideoUrlField({
     }
   }
 
+  // Empty string is fine (means "no video"); a non-empty value must pass
+  // the same whitelist the player enforces so admins get immediate
+  // feedback rather than uploading content that won't render.
+  const urlInvalid = value.trim().length > 0 && !isSafeMediaUrl(value.trim());
+
   return (
     <div className={compact ? "flex items-stretch gap-1.5" : "space-y-1.5"}>
       <input
         type="text"
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="flex-1 bg-white/[0.03] border border-white/10 rounded px-3 py-2 text-text-light text-xs font-light focus:border-accent-gold/40 focus:outline-none transition-colors"
+        className={`flex-1 bg-white/[0.03] border rounded px-3 py-2 text-text-light text-xs font-light focus:outline-none transition-colors ${
+          urlInvalid
+            ? "border-red-500/60 focus:border-red-500/80"
+            : "border-white/10 focus:border-accent-gold/40"
+        }`}
         placeholder={placeholder}
+        aria-invalid={urlInvalid || undefined}
       />
       <button
         type="button"
@@ -150,6 +161,12 @@ export default function VideoUrlField({
         <div className="absolute mt-9 inline-flex items-center gap-1 text-[10px] text-red-400">
           <XCircle size={10} />
           {error}
+        </div>
+      )}
+      {!error && urlInvalid && (
+        <div className="absolute mt-9 inline-flex items-center gap-1 text-[10px] text-red-400">
+          <XCircle size={10} />
+          Use an https:// link from R2 or YouTube.
         </div>
       )}
     </div>

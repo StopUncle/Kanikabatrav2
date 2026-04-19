@@ -2,6 +2,7 @@
 
 import { useRef, useState } from "react";
 import { Play } from "lucide-react";
+import { safeMediaUrl } from "@/lib/security/safe-media-url";
 
 interface VideoPlayerProps {
   src: string;
@@ -37,6 +38,20 @@ export default function VideoPlayer({
   const videoRef = useRef<HTMLVideoElement>(null);
   const [started, setStarted] = useState(false);
 
+  // Whitelist before either URL touches the DOM. A bad src would let
+  // someone smuggle javascript:/data: payloads through the admin upload
+  // flow; a bad poster would do the same via CSS background-image.
+  const safeSrc = safeMediaUrl(src);
+  const safePoster = safeMediaUrl(poster);
+
+  if (!safeSrc) {
+    return (
+      <div className="w-full aspect-video rounded-xl border border-accent-gold/15 bg-deep-black/60 flex items-center justify-center text-text-gray text-sm font-light">
+        Video unavailable
+      </div>
+    );
+  }
+
   const handleStart = () => {
     setStarted(true);
     // Fire play() on the next tick — by then the controls are mounted
@@ -63,9 +78,9 @@ export default function VideoPlayer({
           aria-label="Play video"
           className="group absolute inset-0 z-10 flex items-center justify-center bg-deep-black/40 hover:bg-deep-black/30 transition-colors"
           style={
-            poster
+            safePoster
               ? {
-                  backgroundImage: `url(${poster})`,
+                  backgroundImage: `url(${safePoster})`,
                   backgroundSize: "cover",
                   backgroundPosition: "center",
                 }
@@ -90,8 +105,8 @@ export default function VideoPlayer({
 
       <video
         ref={videoRef}
-        src={src}
-        poster={poster ?? undefined}
+        src={safeSrc}
+        poster={safePoster ?? undefined}
         controls={started}
         playsInline
         preload="metadata"

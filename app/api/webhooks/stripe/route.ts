@@ -481,17 +481,17 @@ export async function POST(request: NextRequest) {
             break;
           }
 
-          // Idempotency: if a membership row already exists with this exact
-          // subscription id and is ACTIVE, the webhook already ran. Skip.
-          const alreadyActive = await prisma.communityMembership.findFirst({
-            where: {
-              paypalSubscriptionId: `ST-${subscriptionId}`,
-              status: "ACTIVE",
-            },
+          // Idempotency: a Purchase row keyed on the Stripe session is the
+          // canonical "we already processed this" marker. The refund handler
+          // also relies on this row existing so it can identify the
+          // membership to cancel.
+          const idempotencyKey = `ST-${sessionId}`;
+          const existingPurchase = await prisma.purchase.findUnique({
+            where: { paypalOrderId: idempotencyKey },
           });
-          if (alreadyActive) {
+          if (existingPurchase) {
             console.log(
-              `[stripe-webhook] INNER_CIRCLE subscription ST-${subscriptionId} already active — skipping`,
+              `[stripe-webhook] INNER_CIRCLE purchase ${idempotencyKey} already processed — skipping`,
             );
             break;
           }
@@ -546,6 +546,32 @@ export async function POST(request: NextRequest) {
               paypalSubscriptionId: `ST-${subscriptionId}`,
               activatedAt: new Date(),
               expiresAt,
+            },
+          });
+
+          // Purchase row exists for two reasons:
+          //   1. Idempotency anchor for retried webhooks (see check above)
+          //   2. Refund linkage — charge.refunded looks up the Purchase by
+          //      ST-${sessionId} and reads metadata.productKey to decide
+          //      whether to cancel the membership. Without this row, an
+          //      INNER_CIRCLE refund would silently leave the user with
+          //      paid access until expiresAt naturally lapsed.
+          await prisma.purchase.create({
+            data: {
+              type: "BOOK",
+              productVariant: "INNER_CIRCLE",
+              userId: user.id,
+              customerEmail: email,
+              customerName: name || "Member",
+              amount,
+              status: "COMPLETED",
+              paypalOrderId: idempotencyKey,
+              metadata: {
+                source: "stripe",
+                sessionId,
+                productKey: "INNER_CIRCLE",
+                subscriptionId,
+              },
             },
           });
 

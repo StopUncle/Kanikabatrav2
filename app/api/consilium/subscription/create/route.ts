@@ -60,7 +60,7 @@ export async function POST(request: NextRequest) {
         successUrl: `${baseUrl}/consilium/success?session_id={CHECKOUT_SESSION_ID}`,
         cancelUrl: `${baseUrl}/consilium`,
         customerEmail: dbUser?.email || user.email,
-        metadata: { userId: user.id },
+        metadata: { userId: user.id, product_key: "INNER_CIRCLE" },
       });
 
       if (!session.url) {
