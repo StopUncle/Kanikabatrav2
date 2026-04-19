@@ -282,9 +282,12 @@ export default function SimulatorPreview() {
       className="relative w-full max-w-3xl mx-auto rounded-2xl overflow-hidden border border-warm-gold/25 shadow-[0_20px_80px_-20px_rgba(212,175,55,0.25)]"
       aria-label="Live preview of the Dark Mirror Simulator"
     >
-      {/* The 16:9 canvas — fixed aspect so the layout never shifts as
-          beats progress. */}
-      <div className="relative aspect-[16/10] bg-deep-black">
+      {/* Canvas — fixed aspect so the layout never shifts as beats
+          progress. Taller on mobile because the dialog stack (speaker +
+          inner voice + two choice cards) needs ~280px of room; a 16:10
+          canvas at 375px wide is only ~234px tall and everything would
+          collapse onto the silhouette. */}
+      <div className="relative aspect-[3/4] sm:aspect-[16/10] bg-deep-black">
         {/* Mood backdrop — crossfades on scene change */}
         <AnimatePresence mode="wait">
           <m.div
@@ -352,8 +355,11 @@ export default function SimulatorPreview() {
         </div>
 
         {/* Character silhouette — soft gradient blob, centered, with a
-            gentle backlit glow. Crossfades on scene change. */}
-        <div className="absolute inset-x-0 top-20 sm:top-24 bottom-[170px] sm:bottom-[200px] z-10 flex items-end justify-center pointer-events-none">
+            gentle backlit glow. Crossfades on scene change.
+            Mobile reserves more room at the bottom for the dialog stack
+            (speaker line + inner voice + two cards) which needs ~210px
+            once both lines have typed in. */}
+        <div className="absolute inset-x-0 top-16 sm:top-24 bottom-[230px] sm:bottom-[200px] z-10 flex items-end justify-center pointer-events-none">
           <AnimatePresence mode="wait">
             <m.div
               key={`silh-${sceneIndex}`}
@@ -423,10 +429,9 @@ export default function SimulatorPreview() {
               animate={{ opacity: 1, y: -28, scale: 1 }}
               exit={{ opacity: 0, y: -50 }}
               transition={{ duration: 0.6 }}
-              className="absolute z-30"
+              className="absolute z-30 bottom-[240px] sm:bottom-[210px]"
               style={{
                 left: optimalIdx === 0 ? "26%" : "74%",
-                bottom: "180px",
                 transform: "translateX(-50%)",
               }}
             >
