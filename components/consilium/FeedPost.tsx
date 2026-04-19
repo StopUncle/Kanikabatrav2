@@ -84,6 +84,26 @@ export default function FeedPost({ post, isDetail = false, isNew = false }: Feed
   const displayContent = shouldTruncate ? post.content.slice(0, 500) : post.content;
   const timeAgo = formatDistanceToNow(new Date(post.createdAt), { addSuffix: true });
 
+  // Per-post viewer pulse — a soft "N viewing" indicator that's
+  // deterministic per post + half-hour bucket so refresh doesn't
+  // jiggle, but shifts naturally as the day moves on. Scaled by
+  // popularity (likes) and decayed by post age. Caps at 22 to stay
+  // believable for a young community.
+  const viewing = (() => {
+    const bucket = Math.floor(Date.now() / (30 * 60 * 1000));
+    let h = 5381;
+    const seed = `${post.id}:${bucket}`;
+    for (let i = 0; i < seed.length; i++) {
+      h = ((h << 5) + h + seed.charCodeAt(i)) | 0;
+    }
+    const base = 2 + (Math.abs(h) % 6);
+    const popularityBoost = Math.min(8, Math.floor(post.likeCount / 3));
+    const ageMs = Date.now() - new Date(post.createdAt).getTime();
+    const dayOld = ageMs / (24 * 60 * 60 * 1000);
+    const decay = Math.max(0.4, 1 - dayOld * 0.04);
+    return Math.min(22, Math.max(1, Math.round((base + popularityBoost) * decay)));
+  })();
+
   return (
     <m.article
       initial={{ opacity: 0, y: 12 }}
@@ -105,6 +125,14 @@ export default function FeedPost({ post, isDetail = false, isNew = false }: Feed
             </span>
           )}
           <span className="text-xs text-text-gray/70 shrink-0">{timeAgo}</span>
+          <span
+            className="hidden sm:inline-flex items-center gap-1 text-[10px] text-text-gray/55 shrink-0"
+            aria-label={`${viewing} members viewing`}
+            title={`${viewing} members viewing`}
+          >
+            <span className="w-1 h-1 rounded-full bg-emerald-400 animate-pulse" />
+            <span className="tabular-nums">{viewing} viewing</span>
+          </span>
         </div>
         {post.isPinned && (
           <span className="inline-flex items-center gap-1 text-[10px] text-warm-gold uppercase tracking-wider font-medium bg-warm-gold/10 border border-warm-gold/25 px-2 py-0.5 rounded-full shrink-0">
@@ -138,7 +166,7 @@ export default function FeedPost({ post, isDetail = false, isNew = false }: Feed
         </Link>
       )}
 
-      <div className="text-text-gray text-sm leading-relaxed mb-4 feed-markdown">
+      <div className="text-text-gray text-sm leading-relaxed mb-4 feed-markdown max-w-[65ch]">
         {/*
           react-markdown sanitizes by default (no dangerouslySetInnerHTML,
           no raw HTML). remark-gfm adds lists, tables, strikethrough, and

@@ -1,13 +1,13 @@
 import { redirect } from "next/navigation";
 import { requireServerAuth } from "@/lib/auth/server-auth";
 import { checkMembership } from "@/lib/community/membership";
-import Header from "@/components/Header";
 import BackgroundEffects from "@/components/BackgroundEffects";
 import InnerCircleSidebar from "@/components/consilium/InnerCircleSidebar";
 import SessionWatermark from "@/components/consilium/SessionWatermark";
 import { prisma } from "@/lib/prisma";
-import { tierForMember } from "@/components/consilium/badge-tiers";
+import { tierForMember, daysToNextTier } from "@/components/consilium/badge-tiers";
 import { computeFingerprint } from "@/lib/community/fingerprint";
+import { getRecentActivity } from "@/lib/community/activity";
 
 export default async function MemberLayout({
   children,
@@ -21,9 +21,11 @@ export default async function MemberLayout({
     redirect(redirectUrl || "/consilium");
   }
 
-  // Count members active in the last 5 minutes for "online" indicator
+  // Single round-trip for everything the sidebar needs: viewer record,
+  // online count, simulator stats, recent activity. Bundling in
+  // Promise.all keeps TTFB tight as the sidebar gets richer.
   const fiveMinAgo = new Date(Date.now() - 5 * 60 * 1000);
-  const [onlineCount, me] = await Promise.all([
+  const [onlineCount, me, simStats, recentActivity] = await Promise.all([
     prisma.user.count({
       where: {
         communityMembership: { status: "ACTIVE" },
@@ -40,6 +42,12 @@ export default async function MemberLayout({
         },
       },
     }),
+    prisma.simulatorProgress.aggregate({
+      where: { userId },
+      _sum: { xpEarned: true },
+      _count: { _all: true },
+    }),
+    getRecentActivity(5),
   ]);
 
   // Current tier is pure function of (role, activatedAt) — no DB
@@ -51,19 +59,33 @@ export default async function MemberLayout({
   });
   const displayName = me?.displayName || "Counselor";
 
+  const totalXp = simStats._sum.xpEarned ?? 0;
+  const completedRuns = simStats._count._all;
+  const daysToNext =
+    me?.role === "ADMIN"
+      ? null
+      : daysToNextTier(me?.communityMembership?.activatedAt ?? null);
+
   const fingerprint = computeFingerprint(userId);
 
+  // The public marketing Header used to render here too. It's gone now —
+  // member pages should feel like a private destination, not a tab in
+  // the brochure site. Everything a member needs (back to dashboard,
+  // profile, logout) lives in the sidebar footer.
   return (
     <div className="min-h-screen bg-deep-black text-text-light">
       <BackgroundEffects />
-      <Header />
-      <div className="relative z-10 lg:flex pt-16 sm:pt-20">
+      <div className="relative z-10 lg:flex">
         <InnerCircleSidebar
           onlineCount={onlineCount}
           currentTier={currentTier}
           displayName={displayName}
+          totalXp={totalXp}
+          completedRuns={completedRuns}
+          daysToNext={daysToNext}
+          recentActivity={recentActivity}
         />
-        <main className="flex-1 min-w-0 pt-10 lg:pt-0">
+        <main className="flex-1 min-w-0 pt-14 lg:pt-0">
           {children}
         </main>
       </div>
