@@ -84,6 +84,17 @@ export async function POST(request: NextRequest) {
     }
 
     try {
+      // If the scenario was already completed, a replay's mid-run save must
+      // NOT clear the original outcome/completedAt — the user can replay but
+      // the completion record is sticky. xpEarned keeps the higher of the two
+      // so replays can't downgrade a prior best.
+      const existing = await prisma.simulatorProgress.findUnique({
+        where: {
+          userId_scenarioId: { userId: user.id, scenarioId: body.scenarioId },
+        },
+      });
+      const preserveCompletion = !!existing?.completedAt && !body.endedAt;
+
       const saved = await prisma.simulatorProgress.upsert({
         where: {
           userId_scenarioId: { userId: user.id, scenarioId: body.scenarioId },
@@ -100,9 +111,17 @@ export async function POST(request: NextRequest) {
         update: {
           currentSceneId: body.currentSceneId,
           choicesMade: body.choicesMade,
-          xpEarned: body.xpEarned,
-          outcome: body.outcome ?? null,
-          completedAt: body.endedAt ? new Date(body.endedAt) : null,
+          xpEarned: preserveCompletion
+            ? Math.max(existing!.xpEarned, body.xpEarned)
+            : body.xpEarned,
+          outcome: preserveCompletion
+            ? existing!.outcome
+            : (body.outcome ?? null),
+          completedAt: preserveCompletion
+            ? existing!.completedAt
+            : body.endedAt
+              ? new Date(body.endedAt)
+              : null,
         },
       });
 

@@ -6,9 +6,10 @@ import type { SimulatorState, ChoiceRecord, OutcomeType } from "@/lib/simulator/
 import SimulatorPageClient from "@/components/simulator/SimulatorPageClient";
 
 /**
- * Play a scenario. Loads any persisted state from DB and hydrates the
- * client runner. If the persisted state points at an ending scene, the
- * runner will render the ending screen — the user can replay from there.
+ * Play a scenario. Resumes mid-run progress from DB. If the scenario was
+ * already completed, we start the replay from the opening scene instead
+ * of dropping the player back on the ending screen — the latter killed
+ * engagement because "already done" scenarios never invited replay.
  */
 
 export async function generateMetadata({
@@ -43,18 +44,22 @@ export default async function SimulatorPlay({
     where: { userId_scenarioId: { userId, scenarioId } },
   });
 
-  const initialState: SimulatorState | undefined = row
-    ? {
-        scenarioId: row.scenarioId,
-        currentSceneId: row.currentSceneId,
-        // choicesMade is Json — Prisma types it as Prisma.JsonValue, but we
-        // wrote it in the shape ChoiceRecord[]. Cast narrowly.
-        choicesMade: (row.choicesMade as unknown as ChoiceRecord[]) ?? [],
-        xpEarned: row.xpEarned ?? 0,
-        outcome: (row.outcome as OutcomeType | null) ?? undefined,
-        endedAt: row.completedAt?.toISOString() ?? undefined,
-      }
-    : undefined;
+  // Completed runs always start fresh; only mid-run progress resumes.
+  const initialState: SimulatorState | undefined =
+    row && !row.completedAt
+      ? {
+          scenarioId: row.scenarioId,
+          currentSceneId: row.currentSceneId,
+          // choicesMade is Json — Prisma types it as Prisma.JsonValue, but we
+          // wrote it in the shape ChoiceRecord[]. Cast narrowly.
+          choicesMade: (row.choicesMade as unknown as ChoiceRecord[]) ?? [],
+          xpEarned: row.xpEarned ?? 0,
+          outcome: (row.outcome as OutcomeType | null) ?? undefined,
+          endedAt: row.completedAt
+            ? (row.completedAt as Date).toISOString()
+            : undefined,
+        }
+      : undefined;
 
   // "Next scenario" link — whatever comes after this one in ALL_SCENARIOS.
   const currentIdx = ALL_SCENARIOS.findIndex((s) => s.id === scenario.id);
