@@ -42,6 +42,12 @@ type Props = {
   badgesEarned?: string[];
   /** Hook for "next scenario" — pass null to hide the next CTA. */
   nextScenarioHref?: string | null;
+  /**
+   * Custom CTA block rendered in place of the "Next Scenario" button.
+   * When provided, this wins over nextScenarioHref. Used by the public
+   * /try route to convert finishers into Consilium members.
+   */
+  customCta?: React.ReactNode;
   onRestart: () => void;
 };
 
@@ -72,6 +78,7 @@ export default function EndingScreen({
   state,
   badgesEarned = [],
   nextScenarioHref,
+  customCta,
   onRestart,
 }: Props) {
   const outcome = state.outcome ?? scene.outcomeType ?? "neutral";
@@ -229,15 +236,17 @@ export default function EndingScreen({
             <RotateCcw size={16} strokeWidth={1.5} />
             Replay
           </button>
-          {nextScenarioHref && (
-            <Link
-              href={nextScenarioHref}
-              className="inline-flex items-center justify-center gap-2 px-8 py-3 bg-accent-gold text-deep-black font-medium tracking-wider uppercase text-sm rounded-full hover:bg-accent-gold/90 transition-all"
-            >
-              Next Scenario
-              <ArrowRight size={16} strokeWidth={1.5} />
-            </Link>
-          )}
+          {customCta
+            ? customCta
+            : nextScenarioHref && (
+                <Link
+                  href={nextScenarioHref}
+                  className="inline-flex items-center justify-center gap-2 px-8 py-3 bg-accent-gold text-deep-black font-medium tracking-wider uppercase text-sm rounded-full hover:bg-accent-gold/90 transition-all"
+                >
+                  Next Scenario
+                  <ArrowRight size={16} strokeWidth={1.5} />
+                </Link>
+              )}
         </m.div>
       </div>
     </m.div>

@@ -14,7 +14,19 @@ import { Sparkles, Flame } from "lucide-react";
  *
  * No engine, no real state — just a setTimeout chain advancing a beat
  * counter. Pauses when scrolled offscreen so it doesn't burn CPU.
- * Falls back to a single static frame for prefers-reduced-motion users.
+ *
+ * Visual design notes:
+ *   - Character silhouettes used to be an abstract gradient blob that
+ *     read as placeholder art. Replaced with a stylised Venetian-style
+ *     half-mask SVG that's on-brand for "Behind the Mask" and works as
+ *     a universal visual for any speaker. The mask is tinted per-scene
+ *     mood (purple / amber / red) via the silhouetteHue seed.
+ *   - The "streak · N" counter was removed. It's meaningless on an
+ *     autoplay loop (you can't build streaks by watching) and made the
+ *     whole preview read as fake gamification.
+ *   - "LIVE" label was misleading (the preview is a loop, not a live
+ *     game). Relabeled "DEMO" and moved the scene number into the
+ *     corner as a cinematic "01 · 03" frame counter.
  *
  * Why three scenes:
  *   1. Romance — 10pm DM (mystery, intrigue, lowest barrier to "oh shit
@@ -42,7 +54,7 @@ interface PreviewScene {
   speakerLine: string;
   innerVoiceLine: string;
   choices: [PreviewChoice, PreviewChoice];
-  /** Visual seed for the silhouette gradient. */
+  /** Seed for the mask tint. "H, S%" partial passed into hsla(). */
   silhouetteHue: string;
 }
 
@@ -114,13 +126,18 @@ const SCENES: PreviewScene[] = [
   },
 ];
 
+// Stronger, more cinematic mood backdrops. The previous palette was
+// too subtle — the scene felt washed out and the mood change between
+// scenes was barely perceptible. These use higher alpha at the source
+// plus a second deep-color accent lower-left so the background reads
+// as "lit by a single coloured source" rather than flat.
 const MOOD_GRADIENTS: Record<PreviewScene["mood"], string> = {
   mysterious:
-    "radial-gradient(ellipse at 50% 30%, rgba(100,70,160,0.18), transparent 60%), radial-gradient(ellipse at 70% 80%, rgba(20,10,30,0.85), transparent 60%)",
+    "radial-gradient(ellipse at 50% 20%, rgba(140,90,220,0.32), transparent 55%), radial-gradient(ellipse at 15% 85%, rgba(60,30,110,0.5), transparent 55%), radial-gradient(ellipse at 80% 90%, rgba(10,5,25,0.95), transparent 55%)",
   tense:
-    "radial-gradient(ellipse at 40% 30%, rgba(200,100,60,0.14), transparent 55%), radial-gradient(ellipse at 60% 80%, rgba(30,20,30,0.8), transparent 60%)",
+    "radial-gradient(ellipse at 50% 20%, rgba(230,140,80,0.26), transparent 55%), radial-gradient(ellipse at 20% 85%, rgba(120,60,30,0.42), transparent 55%), radial-gradient(ellipse at 80% 90%, rgba(25,15,15,0.95), transparent 55%)",
   danger:
-    "radial-gradient(ellipse at 50% 25%, rgba(180,30,60,0.22), transparent 65%), radial-gradient(ellipse at 70% 80%, rgba(40,10,20,0.85), transparent 60%)",
+    "radial-gradient(ellipse at 50% 18%, rgba(220,50,70,0.38), transparent 55%), radial-gradient(ellipse at 20% 85%, rgba(130,20,40,0.45), transparent 55%), radial-gradient(ellipse at 80% 90%, rgba(30,5,10,0.95), transparent 55%)",
 };
 
 // Beat = the discrete phase of the loop. Each scene runs through these
@@ -181,7 +198,6 @@ export default function SimulatorPreview() {
 
   const [sceneIndex, setSceneIndex] = useState(0);
   const [beatIndex, setBeatIndex] = useState(0);
-  const [streak, setStreak] = useState(1);
   const [inView, setInView] = useState(true);
 
   // Pause when not visible — saves CPU when the visitor scrolls past.
@@ -211,24 +227,15 @@ export default function SimulatorPreview() {
     const duration = BEAT_MS[beat];
     const t = window.setTimeout(() => {
       if (beatIndex >= BEAT_ORDER.length - 1) {
-        // End of beat list — loop to the next scene. Update streak based
-        // on the post-loop scene so the counter stays small and
-        // believable (resets on every full cycle).
-        setSceneIndex((i) => {
-          const next = (i + 1) % SCENES.length;
-          return next;
-        });
-        setStreak((s) => {
-          const nextScene = (sceneIndex + 1) % SCENES.length;
-          return nextScene === 0 ? 1 : s + 1;
-        });
+        // End of beat list — loop to the next scene.
+        setSceneIndex((i) => (i + 1) % SCENES.length);
         setBeatIndex(0);
       } else {
         setBeatIndex((i) => i + 1);
       }
     }, duration);
     return () => window.clearTimeout(t);
-  }, [beatIndex, sceneIndex, inView]);
+  }, [beatIndex, inView]);
 
   const effectiveBeatIndex = beatIndex;
   const beat = BEAT_ORDER[effectiveBeatIndex];
@@ -322,16 +329,19 @@ export default function SimulatorPreview() {
           ))}
         </div>
 
-        {/* Top letterbox + brand label */}
+        {/* Top letterbox + brand label.
+            Replaced "LIVE" with "DEMO" — the preview is a loop, not
+            live play. The pulsing emerald dot + "streak · N" counter
+            were removed because they implied interactive state that
+            isn't there. The right-side slot now carries a cinematic
+            frame counter ("01 · 03") that genuinely reflects what's
+            on screen. */}
         <div className="absolute top-0 left-0 right-0 h-9 sm:h-10 bg-deep-black z-30 flex items-center justify-center border-b border-warm-gold/10">
           <p className="text-warm-gold/70 text-[10px] sm:text-[11px] uppercase tracking-[0.45em] font-light">
-            The Dark Mirror · Live
+            The Dark Mirror &nbsp;·&nbsp; Demo
           </p>
-          <span className="absolute right-3 sm:right-4 flex items-center gap-1 text-warm-gold/60 text-[10px]">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-            <span className="hidden sm:inline tabular-nums">
-              streak · {streak}
-            </span>
+          <span className="absolute right-3 sm:right-4 text-warm-gold/50 text-[10px] tabular-nums tracking-[0.25em]">
+            {String(sceneIndex + 1).padStart(2, "0")} / {String(SCENES.length).padStart(2, "0")}
           </span>
         </div>
 
@@ -354,66 +364,156 @@ export default function SimulatorPreview() {
           </AnimatePresence>
         </div>
 
-        {/* Character silhouette — soft gradient blob, centered, with a
-            gentle backlit glow. Crossfades on scene change.
-            Mobile reserves more room at the bottom for the dialog stack
-            (speaker line + inner voice + two cards) which needs ~210px
-            once both lines have typed in. */}
-        <div className="absolute inset-x-0 top-16 sm:top-24 bottom-[230px] sm:bottom-[200px] z-10 flex items-end justify-center pointer-events-none">
+        {/* Central visual — a stylised Venetian half-mask.
+            Replaces the old abstract head + shoulders silhouette, which
+            read as placeholder art (gradient blob, earth-tone fill on
+            the workplace scene made it look like wet clay).
+            The mask is on-brand: the site's core metaphor is "Behind
+            the Mask" and "The Dark Mirror" — a mask SVG ties the visual
+            directly to the brand instead of trying (and failing) to
+            represent a specific person.
+            Tinted per mood via the scene's silhouetteHue. Soft backlit
+            halo behind picks up the same hue so the mask reads as "lit
+            from behind by something coloured" — cinematic. A gentle
+            breathing scale keeps it alive without feeling fidgety.
+            Exit/enter crossfades on scene change so the loop reads as
+            a proper cut, not a hard pop. */}
+        <div className="absolute inset-x-0 top-16 sm:top-24 bottom-[230px] sm:bottom-[200px] z-10 flex items-center justify-center pointer-events-none">
           <AnimatePresence mode="wait">
             <m.div
-              key={`silh-${sceneIndex}`}
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: 8 }}
-              transition={{ duration: 0.7 }}
+              key={`mask-${sceneIndex}`}
+              initial={{ opacity: 0, scale: 0.92 }}
+              animate={{ opacity: 1, scale: [1, 1.02, 1] }}
+              exit={{ opacity: 0, scale: 0.96 }}
+              transition={{
+                opacity: { duration: 0.7 },
+                scale: {
+                  duration: 5,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                },
+              }}
               className="relative"
             >
-              {/* Backlit halo */}
+              {/* Backlit halo — picks up the scene's mood hue. This is
+                  the ONE place the mood hue lives. Keeping it out of
+                  the mask body fixes a contrast bug where the amber
+                  "tense" mood tinted the mask into the same color as
+                  its own backdrop, making the mask vanish. */}
               <div
-                className="absolute inset-0 -z-10 blur-3xl opacity-60"
+                className="absolute inset-0 -z-10 blur-3xl opacity-90 scale-150"
                 style={{
-                  background: `radial-gradient(closest-side, hsla(${scene.silhouetteHue}, 45%, 0.45), transparent 70%)`,
+                  background: `radial-gradient(closest-side, hsla(${scene.silhouetteHue}, 65%, 0.62), transparent 70%)`,
                 }}
               />
-              {/* Silhouette — abstract head + shoulders */}
+              {/* Venetian half-mask.
+                  Shape: horizontal bean, slight upper peak for the
+                  forehead, gentle lower curve. Eye holes are almond-
+                  shaped, tilted slightly outward. The mask body uses a
+                  fixed dark-navy → near-black gradient so it always
+                  reads against any mood backdrop. The gold stroke and
+                  eye glints provide the only chromatic detail. */}
               <svg
-                width="120"
-                height="140"
-                viewBox="0 0 120 140"
-                className="sm:w-[140px] sm:h-[160px]"
+                width="180"
+                height="100"
+                viewBox="0 0 180 100"
+                className="sm:w-[220px] sm:h-[120px]"
                 aria-hidden
+                style={{
+                  filter:
+                    "drop-shadow(0 6px 18px rgba(0,0,0,0.55)) drop-shadow(0 0 14px rgba(212,175,55,0.18))",
+                }}
               >
                 <defs>
+                  {/* Fixed dark fill — independent of mood so the mask
+                      always separates from its backdrop. */}
                   <linearGradient
-                    id={`silh-grad-${sceneIndex}`}
+                    id={`mask-fill-${sceneIndex}`}
                     x1="0"
                     y1="0"
                     x2="0"
                     y2="1"
                   >
-                    <stop
-                      offset="0%"
-                      stopColor={`hsla(${scene.silhouetteHue}, 28%, 0.95)`}
-                    />
-                    <stop
-                      offset="100%"
-                      stopColor="rgba(10,8,16,0.95)"
-                    />
+                    <stop offset="0%" stopColor="rgba(32,26,44,0.98)" />
+                    <stop offset="55%" stopColor="rgba(14,10,20,0.98)" />
+                    <stop offset="100%" stopColor="rgba(4,2,8,1)" />
+                  </linearGradient>
+                  <linearGradient
+                    id={`mask-stroke-${sceneIndex}`}
+                    x1="0"
+                    y1="0"
+                    x2="1"
+                    y2="1"
+                  >
+                    <stop offset="0%" stopColor="rgba(243,217,138,1)" />
+                    <stop offset="50%" stopColor="rgba(212,175,55,1)" />
+                    <stop offset="100%" stopColor="rgba(156,122,31,0.9)" />
                   </linearGradient>
                 </defs>
-                {/* Head */}
-                <ellipse
-                  cx="60"
-                  cy="42"
-                  rx="22"
-                  ry="26"
-                  fill={`url(#silh-grad-${sceneIndex})`}
-                />
-                {/* Shoulders */}
+                {/* Main mask shape */}
                 <path
-                  d="M 18 140 Q 18 88, 60 78 Q 102 88, 102 140 Z"
-                  fill={`url(#silh-grad-${sceneIndex})`}
+                  d="
+                    M 20 52
+                    C 20 28, 52 14, 90 14
+                    C 128 14, 160 28, 160 52
+                    C 160 68, 144 86, 126 86
+                    C 116 86, 108 78, 100 72
+                    C 96 69, 84 69, 80 72
+                    C 72 78, 64 86, 54 86
+                    C 36 86, 20 68, 20 52
+                    Z
+                  "
+                  fill={`url(#mask-fill-${sceneIndex})`}
+                  stroke={`url(#mask-stroke-${sceneIndex})`}
+                  strokeWidth="1.8"
+                />
+                {/* Upper brow flourish — a subtle raised ridge above the
+                    eyes that sells it as an actual mask, not a blob. */}
+                <path
+                  d="M 34 40 Q 58 24, 82 36"
+                  fill="none"
+                  stroke={`url(#mask-stroke-${sceneIndex})`}
+                  strokeWidth="1"
+                  opacity="0.7"
+                />
+                <path
+                  d="M 98 36 Q 122 24, 146 40"
+                  fill="none"
+                  stroke={`url(#mask-stroke-${sceneIndex})`}
+                  strokeWidth="1"
+                  opacity="0.7"
+                />
+                {/* Left eye hole */}
+                <ellipse
+                  cx="58"
+                  cy="48"
+                  rx="14"
+                  ry="7"
+                  fill="rgba(0,0,0,0.95)"
+                  transform="rotate(-6 58 48)"
+                />
+                {/* Right eye hole */}
+                <ellipse
+                  cx="122"
+                  cy="48"
+                  rx="14"
+                  ry="7"
+                  fill="rgba(0,0,0,0.95)"
+                  transform="rotate(6 122 48)"
+                />
+                {/* Eye glints — tiny specular highlights picking up the
+                    mood hue so the mask feels "lit by" the scene. */}
+                <circle
+                  cx="62"
+                  cy="46"
+                  r="1.1"
+                  fill={`hsla(${scene.silhouetteHue}, 80%, 0.9)`}
+                />
+                <circle
+                  cx="126"
+                  cy="46"
+                  r="1.1"
+                  fill={`hsla(${scene.silhouetteHue}, 80%, 0.9)`}
                 />
               </svg>
             </m.div>
@@ -561,17 +661,22 @@ export default function SimulatorPreview() {
         />
       </div>
 
-      {/* Below-canvas caption — frames the experience as a real product */}
+      {/* Below-canvas caption — minimal. The scene counter lives in
+          the letterbox now; this strip just carries the progress pills
+          and a quiet autoplay hint. Progress pills fill-in as the loop
+          runs through the three scenes. */}
       <div className="bg-deep-black px-4 py-3 border-t border-warm-gold/15 flex items-center justify-between">
-        <p className="text-text-gray/70 text-[10px] sm:text-xs font-light">
-          Scene {sceneIndex + 1} of {SCENES.length} · played automatically
+        <p className="text-text-gray/50 text-[10px] sm:text-[11px] font-light uppercase tracking-[0.25em]">
+          Autoplay · 3 scenes
         </p>
         <div className="flex items-center gap-1.5">
           {SCENES.map((_, i) => (
             <span
               key={i}
-              className={`h-1 w-4 sm:w-6 rounded-full transition-colors duration-300 ${
-                i === sceneIndex ? "bg-warm-gold" : "bg-warm-gold/20"
+              className={`h-1 rounded-full transition-all duration-500 ${
+                i === sceneIndex
+                  ? "w-8 sm:w-10 bg-warm-gold"
+                  : "w-4 sm:w-5 bg-warm-gold/20"
               }`}
             />
           ))}

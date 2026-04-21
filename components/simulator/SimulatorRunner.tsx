@@ -46,6 +46,18 @@ type Props = {
   nextScenarioHref?: string | null;
   /** Badge keys awarded by this completion — shown on the ending screen. */
   badgesEarned?: string[];
+  /**
+   * Where the exit button (top-right X) navigates. Defaults to the member
+   * catalog. The public /try route overrides this to "/" so unauth players
+   * don't get pushed into a 404 behind auth.
+   */
+  exitHref?: string;
+  /**
+   * Custom CTA block rendered on the ending screen in place of the
+   * "Next Scenario" button. Used on the public demo to convert finishers
+   * into Consilium members.
+   */
+  endingCta?: React.ReactNode;
 };
 
 export default function SimulatorRunner({
@@ -55,6 +67,8 @@ export default function SimulatorRunner({
   onComplete,
   nextScenarioHref,
   badgesEarned,
+  exitHref = "/consilium/simulator",
+  endingCta,
 }: Props) {
   const [state, setState] = useState<SimulatorState>(
     initialState ?? initState(scenario),
@@ -221,7 +235,7 @@ export default function SimulatorRunner({
   // portal). On desktop it's a quieter affordance.
   const exitButton = (
     <Link
-      href="/consilium/simulator"
+      href={exitHref}
       aria-label="Exit scenario"
       className="fixed top-[max(env(safe-area-inset-top),0.5rem)] right-[max(env(safe-area-inset-right),0.75rem)] z-[70] flex items-center justify-center w-10 h-10 sm:w-9 sm:h-9 rounded-full bg-deep-black/70 backdrop-blur-md border border-white/15 text-text-gray hover:text-accent-gold hover:border-accent-gold/40 active:scale-95 transition-all"
     >
@@ -256,6 +270,7 @@ export default function SimulatorRunner({
             state={state}
             badgesEarned={badgesEarned}
             nextScenarioHref={nextScenarioHref}
+            customCta={endingCta}
             onRestart={restart}
           />
         </AnimatePresence>

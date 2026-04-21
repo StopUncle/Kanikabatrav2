@@ -7,11 +7,11 @@ import BookShowcase from "@/components/BookShowcase";
 import CoachingSection from "@/components/CoachingSection";
 import Testimonial from "@/components/Testimonial";
 import NewsletterForm from "@/components/NewsletterForm";
-import AskKanika from "@/components/AskKanika";
 import SocialHub from "@/components/SocialHub";
 import PostCard from "@/components/blog/PostCard";
+import ConsiliumSimulatorTeaser from "@/components/consilium/ConsiliumSimulatorTeaser";
 import { getAllPosts } from "@/lib/mdx";
-import { SITE_CONFIG, SOCIAL_METRICS } from "@/lib/constants";
+import { SITE_CONFIG } from "@/lib/constants";
 
 export const metadata: Metadata = {
   title: `${SITE_CONFIG.name} - ${SITE_CONFIG.title}`,
@@ -61,99 +61,49 @@ export default function Home() {
 
   return (
     <>
-      {/* Background Effects - Aurora, Orbs, and Particles */}
       <BackgroundEffects />
-
-      {/* Header Navigation */}
       <Header />
 
-      {/* Main Content */}
+      {/*
+        Homepage flow — Book sits immediately after Hero as the first
+        tangible offer (concrete, single-price, skimmable), then the
+        Consilium teaser follows as the interactive flagship. This order
+        matches how cold traffic actually converts: the book is the easy
+        yes; the Consilium is the deeper commitment the demo earns.
+
+        1. Hero              — two primary CTAs, set the stakes
+        2. Book showcase     — PRIMARY #1. Concrete field guide.
+        3. Consilium teaser  — PRIMARY #2. Live SimulatorPreview with a
+                               "Try it free" dual CTA hitting /try.
+        4. Testimonial
+        5. Coaching          — premium tier
+        6. SocialHub
+        7. Blog              — conditional
+        8. Final CTA         — blended Book + Consilium, coaching tertiary
+        9. Newsletter
+
+        Removed: AskKanika (Q&A), standalone Quiz CTA section, standalone
+        stats section (redundant with SocialHub). The quiz still exists
+        as a product — just not a homepage tile.
+      */}
       <main className="relative z-10 pt-20">
-        {/* Hero Section */}
         <Hero />
 
-        {/* Book Showcase Section */}
+        {/* PRIMARY #1 — Book (the tangible field guide) */}
         <BookShowcase />
 
-        {/* Testimonial Section */}
+        {/* PRIMARY #2 — Consilium (the interactive flagship) */}
+        <ConsiliumSimulatorTeaser variant="homepage" />
+
         <section id="testimonials">
           <Testimonial />
         </section>
 
-        {/* Ask Kanika Section */}
-        <AskKanika />
-
-        {/* Quiz CTA Section */}
-        <section className="py-24 px-4 relative overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-r from-accent-burgundy/10 via-transparent to-accent-gold/10" />
-          <div className="max-w-4xl mx-auto text-center relative z-10">
-            <div className="inline-block mb-6 px-4 py-2 border border-accent-gold/30 rounded-full">
-              <span className="text-accent-gold text-sm tracking-[0.2em] uppercase">
-                Free Assessment
-              </span>
-            </div>
-            <h2 className="text-3xl md:text-5xl font-extralight text-white mb-6">
-              What&apos;s Your{" "}
-              <span className="text-accent-gold">Dark Mirror</span> Type?
-            </h2>
-            <p className="text-text-gray text-lg mb-8 max-w-2xl mx-auto leading-relaxed">
-              Take the 20-question assessment to discover which personality type
-              dominates your psychology, plus receive a clinical-style diagnosis
-              with your functioning level. Are you The Predator, The Strategist,
-              or something else entirely?
-            </p>
-            <a
-              href="/quiz"
-              className="inline-flex items-center gap-3 px-10 py-4 bg-gradient-to-r from-accent-gold to-accent-gold/80 text-deep-black font-medium text-lg tracking-wider uppercase rounded transition-all hover:shadow-lg hover:shadow-accent-gold/20"
-            >
-              Take The Quiz
-              <span className="text-xl">&rarr;</span>
-            </a>
-            <p className="mt-6 text-text-gray/60 text-sm">
-              Free to take. Results unlocked for $9.99.
-            </p>
-          </div>
-        </section>
-
-        {/* Coaching Section */}
+        {/* Premium tier */}
         <CoachingSection />
 
-        {/* Social Media Hub */}
         <SocialHub />
 
-        {/* Social Proof Stats */}
-        <section className="py-16 px-4 bg-gradient-to-b from-transparent via-deep-burgundy/5 to-transparent">
-          <div className="max-w-7xl mx-auto">
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
-              <div className="space-y-2">
-                <div className="text-3xl md:text-4xl font-light gradient-text-gold">
-                  {SOCIAL_METRICS.combined.totalFollowers}
-                </div>
-                <p className="text-text-gray text-sm">Total Followers</p>
-              </div>
-              <div className="space-y-2">
-                <div className="text-3xl md:text-4xl font-light gradient-text-gold">
-                  {SOCIAL_METRICS.combined.totalViews}
-                </div>
-                <p className="text-text-gray text-sm">Total Views</p>
-              </div>
-              <div className="space-y-2">
-                <div className="text-3xl md:text-4xl font-light gradient-text-gold">
-                  {SOCIAL_METRICS.tiktok.likes}
-                </div>
-                <p className="text-text-gray text-sm">TikTok Likes</p>
-              </div>
-              <div className="space-y-2">
-                <div className="text-3xl md:text-4xl font-light gradient-text-gold">
-                  {SOCIAL_METRICS.youtube.videos}
-                </div>
-                <p className="text-text-gray text-sm">YouTube Videos</p>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* Latest from the Blog */}
         {latestPosts.length > 0 && (
           <section className="py-24 px-4">
             <div className="max-w-7xl mx-auto">
@@ -187,56 +137,115 @@ export default function Home() {
           </section>
         )}
 
-        {/* Final CTA Section */}
-        <section className="py-32 px-4">
-          <div className="max-w-4xl mx-auto text-center">
-            <div>
-              <h2 className="text-4xl md:text-5xl font-light mb-6">
+        {/* Final CTA — blended.
+            Book + Consilium get equal visual weight as two primary cards.
+            Coaching sits beneath as a small tertiary link. The previous
+            version buried Consilium entirely and forced a binary pick
+            between Book and Coaching — this blends them the way the
+            funnel actually works: book is the field guide, Consilium
+            is the practice ground, coaching is the personal upgrade. */}
+        <section className="py-28 px-4">
+          <div className="max-w-5xl mx-auto">
+            <div className="text-center mb-14">
+              <p className="text-accent-gold uppercase tracking-[0.3em] text-sm mb-4">
+                Two ways in
+              </p>
+              <h2 className="text-4xl md:text-5xl font-light mb-4">
                 <span className="text-text-light">
                   Ready to See What&apos;s
-                </span>
-                <br />
+                </span>{" "}
                 <span className="gradient-text">Behind the Mask?</span>
               </h2>
-              <p className="text-text-gray text-lg mb-8 max-w-2xl mx-auto">
-                Join thousands who have discovered the power of understanding
-                psychology others won&apos;t teach. Your transformation begins
-                with a single decision.
+              <p className="text-text-gray text-lg max-w-2xl mx-auto font-light">
+                Read the book. Practice inside the Consilium. The two pair —
+                most members do both.
               </p>
-              <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <a
-                  href="/book"
-                  className="btn-primary rounded-full text-white px-8 py-4 inline-block"
-                >
-                  Get &ldquo;Sociopathic Dating Bible&rdquo;
-                </a>
-                <a
-                  href="/coaching"
-                  className="btn-secondary rounded-full px-8 py-4 inline-block"
-                >
-                  Private Coaching
-                </a>
-              </div>
             </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+              {/* Book card */}
+              <Link
+                href="/book"
+                className="group relative overflow-hidden rounded-2xl border border-accent-gold/25 bg-gradient-to-br from-deep-black/80 via-deep-burgundy/20 to-deep-black/80 p-8 hover:border-accent-gold/50 hover:shadow-[0_20px_60px_-20px_rgba(212,175,55,0.35)] transition-all duration-300"
+              >
+                <div className="flex items-baseline justify-between mb-4">
+                  <p className="text-accent-gold/80 uppercase tracking-[0.3em] text-xs">
+                    The Field Guide
+                  </p>
+                  <p className="text-accent-gold text-lg font-light tabular-nums">
+                    $24.99
+                  </p>
+                </div>
+                <h3 className="text-2xl md:text-3xl font-extralight text-text-light mb-3 tracking-wide leading-tight">
+                  Sociopathic Dating Bible
+                </h3>
+                <p className="text-text-gray text-sm font-light leading-relaxed mb-6">
+                  70,000 words. 15 chapters plus two bonus chapters on
+                  narcissists and avoidants. The pattern book that pairs
+                  with the simulator.
+                </p>
+                <div className="inline-flex items-center gap-2 text-accent-gold text-sm font-medium uppercase tracking-wider">
+                  Get the book
+                  <span className="transition-transform group-hover:translate-x-1">
+                    &rarr;
+                  </span>
+                </div>
+              </Link>
+
+              {/* Consilium card */}
+              <Link
+                href="/consilium"
+                className="group relative overflow-hidden rounded-2xl border border-warm-gold/30 bg-gradient-to-br from-deep-burgundy/30 via-deep-navy/30 to-deep-black/80 p-8 hover:border-warm-gold/60 hover:shadow-[0_20px_60px_-20px_rgba(212,175,55,0.45)] transition-all duration-300"
+              >
+                <div className="flex items-baseline justify-between mb-4">
+                  <p className="text-warm-gold uppercase tracking-[0.3em] text-xs">
+                    The Practice Ground
+                  </p>
+                  <p className="text-warm-gold text-lg font-light tabular-nums">
+                    $29<span className="text-text-gray/70 text-xs">/mo</span>
+                  </p>
+                </div>
+                <h3 className="text-2xl md:text-3xl font-extralight text-text-light mb-3 tracking-wide leading-tight">
+                  The Consilium
+                </h3>
+                <p className="text-text-gray text-sm font-light leading-relaxed mb-6">
+                  30 branching scenarios. 526 scenes. 83 manipulation tactics
+                  to spot. Plus voice notes, forum, and courses.
+                </p>
+                <div className="inline-flex items-center gap-2 text-warm-gold text-sm font-medium uppercase tracking-wider">
+                  Step inside
+                  <span className="transition-transform group-hover:translate-x-1">
+                    &rarr;
+                  </span>
+                </div>
+              </Link>
+            </div>
+
+            <p className="text-center text-text-gray/60 text-sm mt-10 font-light">
+              Want direct 1:1 access?{" "}
+              <Link
+                href="/coaching"
+                className="text-accent-gold hover:text-accent-gold/80 transition-colors"
+              >
+                Explore Private Coaching &rarr;
+              </Link>
+            </p>
           </div>
         </section>
 
-        {/* Newsletter Section */}
         <section className="py-20 px-4 border-t border-accent-gold/10">
           <div className="max-w-3xl mx-auto text-center">
-            <div>
-              <h3 className="text-2xl font-light mb-4 gradient-text-gold">
-                Psychology of Power — Weekly
-              </h3>
-              <p className="text-text-gray mb-8">
-                Strategic psychology, power dynamics, and the insights they
-                don&apos;t teach in school.
-              </p>
-              <NewsletterForm />
-              <p className="text-text-gray text-sm mt-4">
-                No spam. Only power. Unsubscribe anytime.
-              </p>
-            </div>
+            <h3 className="text-2xl font-light mb-4 gradient-text-gold">
+              Psychology of Power — Weekly
+            </h3>
+            <p className="text-text-gray mb-8">
+              Strategic psychology, power dynamics, and the insights they
+              don&apos;t teach in school.
+            </p>
+            <NewsletterForm />
+            <p className="text-text-gray text-sm mt-4">
+              No spam. Only power. Unsubscribe anytime.
+            </p>
           </div>
         </section>
       </main>

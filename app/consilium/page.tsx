@@ -14,10 +14,8 @@ import {
   Film,
   ArrowRight,
   CheckCircle,
-  Target,
-  Sparkles,
 } from "lucide-react";
-import SimulatorPreview from "@/components/consilium/SimulatorPreview";
+import ConsiliumSimulatorTeaser from "@/components/consilium/ConsiliumSimulatorTeaser";
 
 export const metadata = {
   title: "The Consilium | Kanika Batra",
@@ -215,142 +213,13 @@ export default async function InnerCircleLanding({
           </div>
 
           {/* Dedicated simulator section — the Consilium's strongest
-              differentiator. Framed as "Duolingo for dark psychology"
-              because that's the mental model that clicks: small interactive
-              lessons, real practice, no lecture. Sits between the features
-              grid (abstract tiles) and the "What's Inside" checklist (dry
-              bullet list) because this is where a fence-sitter actually
-              converts. */}
+              differentiator. Shared with the homepage via the teaser
+              component; "landing" variant gives a single Step-Inside
+              CTA. The teaser handles its own section padding, so the
+              parent div just provides bottom spacing for the next
+              block. */}
           <div className="mb-20">
-            <div className="relative overflow-hidden rounded-3xl border border-warm-gold/30 bg-gradient-to-br from-deep-burgundy/30 via-deep-black/70 to-deep-navy/40 backdrop-blur-sm">
-              {/* Radial highlight behind the headline — pulls the eye
-                  up and sets the "flagship surface" tone. Pointer-events
-                  off so the gradient can't intercept clicks on mobile. */}
-              <div
-                aria-hidden
-                className="pointer-events-none absolute -top-32 left-1/2 -translate-x-1/2 w-[540px] h-[540px] rounded-full"
-                style={{
-                  background:
-                    "radial-gradient(closest-side, rgba(212,175,55,0.18), transparent 70%)",
-                }}
-              />
-
-              <div className="relative p-8 sm:p-12">
-                <div className="flex flex-col items-center text-center max-w-3xl mx-auto">
-                  <div className="flex items-center gap-2 mb-5">
-                    <Sparkles className="w-4 h-4 text-warm-gold" strokeWidth={1.6} />
-                    <p className="text-warm-gold text-xs uppercase tracking-[0.3em]">
-                      The only place you can practice this
-                    </p>
-                  </div>
-
-                  <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extralight tracking-wider text-text-light mb-4">
-                    Duolingo for{" "}
-                    <span
-                      style={{
-                        background:
-                          "linear-gradient(135deg, #f3d98a 0%, #d4af37 50%, #9c7a1f 100%)",
-                        WebkitBackgroundClip: "text",
-                        WebkitTextFillColor: "transparent",
-                        backgroundClip: "text",
-                      }}
-                    >
-                      dark psychology
-                    </span>
-                  </h2>
-
-                  <p className="text-text-gray text-base sm:text-lg font-light leading-relaxed mb-8 max-w-2xl">
-                    Books tell you what manipulation looks like. The Dark
-                    Mirror Simulator drops you inside it. Every scene is a
-                    choice. Every choice branches. Every ending shows you
-                    what a trained eye would have caught — and what it
-                    costs you if you missed it.
-                  </p>
-
-                  {/* Live preview — three real scenes auto-playing on a loop.
-                      The viewer watches the optimal choice get picked, sees
-                      the tactic reveal, hears the inner-voice line. Sells
-                      the dopamine without spoiling the actual scenarios. */}
-                  <div className="w-full mb-10">
-                    <SimulatorPreview />
-                  </div>
-
-                  {/* Stats row — concrete numbers that prove depth.
-                      Auditor-sourced: 30 scenarios, 526 scenes, 83 unique
-                      tactics, 79 unique red flags. */}
-                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-6 w-full max-w-2xl mb-10">
-                    {[
-                      { n: "30", label: "Scenarios" },
-                      { n: "526", label: "Branching scenes" },
-                      { n: "83", label: "Tactics to spot" },
-                      { n: "79", label: "Red flags catalogued" },
-                    ].map((stat) => (
-                      <div
-                        key={stat.label}
-                        className="flex flex-col items-center px-3 py-4 rounded-xl border border-warm-gold/15 bg-deep-black/40"
-                      >
-                        <span className="text-2xl sm:text-3xl font-extralight text-warm-gold mb-1 tabular-nums">
-                          {stat.n}
-                        </span>
-                        <span className="text-[10px] sm:text-xs text-text-gray/70 uppercase tracking-wider text-center leading-tight">
-                          {stat.label}
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-
-                  {/* Three-track preview. Each "track" is a deck of
-                      scenarios aimed at a specific audience — same engine,
-                      different situations. Kept visually light so it reads
-                      as a menu, not another features grid. */}
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 w-full max-w-2xl mb-10">
-                    {[
-                      {
-                        title: "Relationship track",
-                        blurb: "Covert narcissists, love-bombers, slow-burn gaslighters",
-                      },
-                      {
-                        title: "Career / business",
-                        blurb: "Workplace power plays, credit-thieves, soft sabotage",
-                      },
-                      {
-                        title: "Dating (men)",
-                        blurb: "Reading intent, calling bluffs, holding your frame",
-                      },
-                    ].map((track) => (
-                      <div
-                        key={track.title}
-                        className="text-left p-4 rounded-xl border border-white/10 bg-white/[0.02]"
-                      >
-                        <div className="flex items-center gap-2 mb-1.5">
-                          <Target
-                            className="w-3.5 h-3.5 text-warm-gold/80"
-                            strokeWidth={1.8}
-                          />
-                          <p className="text-[10px] uppercase tracking-[0.2em] text-warm-gold/90">
-                            {track.title}
-                          </p>
-                        </div>
-                        <p className="text-xs text-text-gray/80 font-light leading-snug">
-                          {track.blurb}
-                        </p>
-                      </div>
-                    ))}
-                  </div>
-
-                  <Link
-                    href="/consilium/apply"
-                    className="inline-flex items-center justify-center gap-2 py-3.5 px-8 bg-warm-gold text-deep-black font-medium text-sm tracking-wider uppercase rounded-full transition-all hover:bg-warm-gold/90 hover:shadow-[0_8px_24px_-4px_rgba(212,175,55,0.45)]"
-                  >
-                    Start Practicing
-                    <ArrowRight size={16} />
-                  </Link>
-                  <p className="text-text-gray/50 text-xs mt-3">
-                    Included with every Consilium membership.
-                  </p>
-                </div>
-              </div>
-            </div>
+            <ConsiliumSimulatorTeaser variant="landing" />
           </div>
 
           {/* What's Inside */}
