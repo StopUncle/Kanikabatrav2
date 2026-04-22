@@ -309,13 +309,30 @@ export default function SimulatorRunner({
   // We dispatch a custom "simulator:tap" event and DialogBox listens
   // — keeps the typewriter skip-vs-advance logic in one place and
   // avoids lifting the typewriter hook up.
+  //
+  // Debounce guard: on auto-advance scenes (last line, no choices)
+  // a tap triggers a scene transition. During the ~350ms
+  // AnimatePresence exit of the old DialogBox, its window listener
+  // is still live — a second tap in that window would call the
+  // stale advanceLine on the NEW state and skip a scene.
+  // `tapLockRef` gates rapid taps so only one dispatch fires per
+  // transition window.
+  const tapLockRef = useRef(false);
   const handleBackgroundTap = useCallback(
     (e: React.MouseEvent) => {
       if (showChoices) return;
+      if (tapLockRef.current) return;
       const target = e.target as HTMLElement;
       // Never intercept clicks on interactive elements.
       if (target.closest("button, a")) return;
+      tapLockRef.current = true;
       window.dispatchEvent(new CustomEvent("simulator:tap"));
+      // 400ms covers the AnimatePresence exit (350ms) plus one frame
+      // of scheduling slack. Users can still tap through dialog lines
+      // at a comfortable reading pace.
+      window.setTimeout(() => {
+        tapLockRef.current = false;
+      }, 400);
     },
     [showChoices],
   );

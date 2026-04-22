@@ -12,8 +12,13 @@ import { Plus, ArrowLeft } from "lucide-react";
 
 interface Props {
   params: Promise<{ categorySlug: string }>;
-  searchParams: Promise<{ sort?: string }>;
+  searchParams: Promise<{ sort?: string; page?: string }>;
 }
+
+// Page size for forum category listings. With no pagination, posts
+// beyond the first PAGE_SIZE in a category were invisible to members —
+// categories with >20 posts silently dropped older/less-popular content.
+const PAGE_SIZE = 20;
 
 export async function generateMetadata({ params }: Props) {
   const { categorySlug } = await params;
@@ -33,7 +38,12 @@ export async function generateMetadata({ params }: Props) {
 
 export default async function CategoryPage({ params, searchParams }: Props) {
   const { categorySlug } = await params;
-  const { sort = "latest" } = await searchParams;
+  const { sort = "latest", page: pageParam } = await searchParams;
+
+  // Parse ?page= with a floor of 1. NaN, 0, negative → 1.
+  const parsedPage = Number.parseInt(pageParam ?? "1", 10);
+  const page = Number.isFinite(parsedPage) && parsedPage > 0 ? parsedPage : 1;
+  const skip = (page - 1) * PAGE_SIZE;
 
   let userId: string | null = await resolveActiveUserId();
   if (!userId) {
@@ -72,28 +82,38 @@ export default async function CategoryPage({ params, searchParams }: Props) {
   const viewerGender = await getViewerGender(userId);
   const authorWhere = authorGenderWhere(viewerGender);
 
-  const posts = await prisma.forumPost.findMany({
-    where: {
-      categoryId: category.id,
-      ...(authorWhere ? { author: authorWhere } : {}),
-    },
-    orderBy: [{ isPinned: "desc" }, orderBy],
-    include: {
-      author: {
-        select: {
-          id: true,
-          name: true,
-          displayName: true,
-          avatarUrl: true,
-          role: true,
+  // Run count + findMany in parallel. The count is needed to render
+  // the "Load more" affordance only when there are actually more
+  // posts beyond this page.
+  const postsWhere = {
+    categoryId: category.id,
+    ...(authorWhere ? { author: authorWhere } : {}),
+  };
+  const [posts, totalPosts] = await Promise.all([
+    prisma.forumPost.findMany({
+      where: postsWhere,
+      orderBy: [{ isPinned: "desc" }, orderBy],
+      include: {
+        author: {
+          select: {
+            id: true,
+            name: true,
+            displayName: true,
+            avatarUrl: true,
+            role: true,
+          },
+        },
+        _count: {
+          select: { replies: true },
         },
       },
-      _count: {
-        select: { replies: true },
-      },
-    },
-    take: 20,
-  });
+      skip,
+      take: PAGE_SIZE,
+    }),
+    prisma.forumPost.count({ where: postsWhere }),
+  ]);
+  const hasMore = skip + posts.length < totalPosts;
+  const hasPrevious = page > 1;
 
   const formattedPosts = posts.map((post) => ({
     id: post.id,
@@ -187,11 +207,47 @@ export default async function CategoryPage({ params, searchParams }: Props) {
           )}
         </div>
       ) : (
-        <div className="space-y-3">
-          {formattedPosts.map((post) => (
-            <PostCard key={post.id} post={post} categorySlug={categorySlug} />
-          ))}
-        </div>
+        <>
+          <div className="space-y-3">
+            {formattedPosts.map((post) => (
+              <PostCard key={post.id} post={post} categorySlug={categorySlug} />
+            ))}
+          </div>
+          {/* Pagination. Previously a hard take: 20 dropped posts 21+
+              silently — categories with lively discussion were
+              effectively capped. Offset-based paging works across all
+              three sort modes (latest/popular/active) and keeps the
+              category URL shareable. */}
+          {(hasPrevious || hasMore) && (
+            <div className="mt-10 flex items-center justify-between gap-4 text-sm">
+              {hasPrevious ? (
+                <Link
+                  href={`/consilium/forum/${categorySlug}?sort=${sort}${page > 2 ? `&page=${page - 1}` : ""}`}
+                  className="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-accent-gold/25 text-accent-gold hover:border-accent-gold/60 hover:bg-accent-gold/5 transition-all"
+                >
+                  <ArrowLeft className="w-4 h-4" />
+                  Newer
+                </Link>
+              ) : (
+                <span />
+              )}
+              <span className="text-text-gray/60 text-xs">
+                Page {page} · {totalPosts} post{totalPosts === 1 ? "" : "s"}
+              </span>
+              {hasMore ? (
+                <Link
+                  href={`/consilium/forum/${categorySlug}?sort=${sort}&page=${page + 1}`}
+                  className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-accent-gold text-deep-black hover:bg-accent-gold/90 transition-all font-medium"
+                >
+                  Older
+                  <ArrowLeft className="w-4 h-4 rotate-180" />
+                </Link>
+              ) : (
+                <span />
+              )}
+            </div>
+          )}
+        </>
       )}
     </div>
   );

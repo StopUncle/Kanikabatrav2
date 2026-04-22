@@ -172,7 +172,7 @@ export default async function InnerCircleLanding({
                 and the eye stops bouncing between three tracked eyebrows.
                 The decorative gold hairline that used to sit between this
                 line and the body was a break in rhythm — removed. */}
-            <p className="text-text-gray/60 italic text-sm mb-8 font-light">
+            <p className="text-text-gray/85 italic text-sm mb-8 font-light">
               kon·sil·i·um &nbsp;·&nbsp; Latin: council, strategy, deliberation
             </p>
             <p className="text-xl text-text-gray max-w-2xl mx-auto mb-4 font-light leading-relaxed">
@@ -205,7 +205,7 @@ export default async function InnerCircleLanding({
               </Link>
             </div>
 
-            <p className="text-text-gray/50 text-sm mt-4">
+            <p className="text-text-gray/75 text-sm mt-4">
               Instant access. Cancel anytime. No bullshit.
             </p>
           </div>
@@ -335,7 +335,7 @@ export default async function InnerCircleLanding({
                 Step Inside
                 <ArrowRight size={18} />
               </Link>
-              <p className="text-text-gray/40 text-xs mt-4">
+              <p className="text-text-gray/75 text-xs mt-4">
                 Instant access. Cancel anytime.
               </p>
             </div>
@@ -353,7 +353,7 @@ export default async function InnerCircleLanding({
               visitors who don't want to join, not conversion paths. */}
           <div className="mb-4">
             <div className="max-w-2xl mx-auto text-center px-6 py-8 border-t border-warm-gold/10">
-              <p className="text-text-gray/70 text-sm font-light mb-4">
+              <p className="text-text-gray/85 text-sm font-light mb-4">
                 Still deciding?
               </p>
               <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-8 text-sm">

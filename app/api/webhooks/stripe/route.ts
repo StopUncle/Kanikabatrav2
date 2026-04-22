@@ -449,22 +449,48 @@ export async function POST(request: NextRequest) {
 
           // If we just created the account, they don't know the password.
           // Send the same welcome-new-user email pattern as INNER_CIRCLE.
+          // Matches the INNER_CIRCLE branch's retry-flag pattern: if the
+          // email silently fails after 3 internal retries, set
+          // emailDeliveryFailed on the Purchase so /api/cron/retry-emails
+          // can recover. Without the flag, a bundle buyer with no
+          // existing account is permanently locked out.
           if (isNewUser) {
+            let bundleWelcomeSent = false;
             try {
               const resetToken = jwt.sign(
                 { userId: user.id, type: "password-reset", v: 0 },
                 getJwtSecretForReset(),
                 { expiresIn: "7d" },
               );
-              await sendInnerCircleWelcomeNewUser(
+              bundleWelcomeSent = await sendInnerCircleWelcomeNewUser(
                 user.email,
                 user.name || "Counselor",
                 resetToken,
               );
             } catch (err) {
               console.error(
-                "[stripe-webhook] failed to send bundle welcome email:",
+                "[stripe-webhook] sendInnerCircleWelcomeNewUser (bundle) threw:",
                 err,
+              );
+            }
+            if (!bundleWelcomeSent) {
+              await prisma.purchase.update({
+                where: { paypalOrderId: idempotencyKey },
+                data: {
+                  metadata: {
+                    source: "stripe",
+                    sessionId,
+                    productKey,
+                    bundleLabel,
+                    emailDeliveryFailed: true,
+                    welcomeEmailRecipient: user.email,
+                    welcomeEmailRecipientName: user.name || "Counselor",
+                    welcomeEmailUserId: user.id,
+                  },
+                },
+              });
+              console.error(
+                `[stripe-webhook] ${productKey} welcome email failed for ${user.email} (session ${sessionId}) — flagged for retry`,
               );
             }
           }
@@ -587,7 +613,17 @@ export async function POST(request: NextRequest) {
           // If we just created the account, the user has no idea they have
           // one. Send them a welcome email containing their login email and
           // a password-reset link so they can set their own password.
+          //
+          // CRITICAL reliability path: without this email an auto-created
+          // user has a random password they don't know AND no way to log
+          // in. If the email send silently fails (Resend down, recipient
+          // bounces), the member pays $29/month forever and can never
+          // access what they bought. We match the BOOK branch pattern —
+          // check the return value (sendInnerCircleWelcomeNewUser returns
+          // false after 3 retries, doesn't throw) and flag the Purchase
+          // so /api/cron/retry-emails can recover.
           if (isNewUser) {
+            let emailSent = false;
             try {
               // New user has tokenVersion=0 by default; reset route verifies
               // this `v` field matches before allowing reset, so this token
@@ -597,15 +633,35 @@ export async function POST(request: NextRequest) {
                 getJwtSecretForReset(),
                 { expiresIn: "7d" },
               );
-              await sendInnerCircleWelcomeNewUser(
+              emailSent = await sendInnerCircleWelcomeNewUser(
                 user.email,
                 user.name || "Member",
                 resetToken,
               );
             } catch (err) {
               console.error(
-                "[stripe-webhook] failed to send INNER_CIRCLE welcome email to new user:",
+                "[stripe-webhook] sendInnerCircleWelcomeNewUser threw:",
                 err,
+              );
+            }
+            if (!emailSent) {
+              await prisma.purchase.update({
+                where: { paypalOrderId: idempotencyKey },
+                data: {
+                  metadata: {
+                    source: "stripe",
+                    sessionId,
+                    productKey: "INNER_CIRCLE",
+                    subscriptionId,
+                    emailDeliveryFailed: true,
+                    welcomeEmailRecipient: user.email,
+                    welcomeEmailRecipientName: user.name || "Member",
+                    welcomeEmailUserId: user.id,
+                  },
+                },
+              });
+              console.error(
+                `[stripe-webhook] INNER_CIRCLE welcome email failed for ${user.email} (session ${sessionId}) — flagged for retry`,
               );
             }
           }

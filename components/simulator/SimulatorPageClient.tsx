@@ -58,6 +58,12 @@ export default function SimulatorPageClient({
   );
 
   const handleComplete = useCallback(async (state: SimulatorState) => {
+    // Clear stale badges from the previous run immediately. Without
+    // this, a replay that reaches a *different* ending path will
+    // briefly show the previous run's badge keys on the ending
+    // screen until the /complete POST resolves and sets fresh ones
+    // — a misleading render window of 200ms–2s on slow connections.
+    setBadgesEarned([]);
     try {
       const res = await fetch("/api/simulator/complete", {
         method: "POST",
