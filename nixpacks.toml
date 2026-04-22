@@ -2,7 +2,11 @@
 nixPkgs = ["nodejs_20", "openssl"]
 
 [phases.install]
-cmds = ["npm ci"]
+# `--include=dev` overrides the NODE_ENV=production variable set below,
+# which would otherwise make npm ci skip devDependencies. We need the
+# build-time dev deps (tailwindcss, postcss, autoprefixer, typescript,
+# etc.) installed for `next build` to resolve its PostCSS plugins.
+cmds = ["npm ci --include=dev"]
 
 [phases.build]
 cmds = [
