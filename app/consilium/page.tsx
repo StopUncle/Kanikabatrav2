@@ -13,7 +13,6 @@ import {
   Zap,
   Film,
   ArrowRight,
-  CheckCircle,
 } from "lucide-react";
 import ConsiliumSimulatorTeaser from "@/components/consilium/ConsiliumSimulatorTeaser";
 
@@ -82,21 +81,43 @@ export default async function InnerCircleLanding({
     },
   ];
 
-  const benefits = [
-    "The Dark Mirror Simulator — 30 branching scenarios across three tracks, 83 manipulation tactics to learn to spot, 79 red flags catalogued",
-    "Full access to the course library — dark psychology, pattern recognition, career strategy",
-    "Voice notes from Kanika — raw insights you won't hear anywhere else",
-    "Community feed — daily insights, discussion prompts, and posts from Kanika",
-    "Forum and live chat — connect with other members who see what you see",
-    "New scenarios, courses, and content added regularly",
-    "Member-exclusive pricing on the Sociopathic Dating Bible — $9.99 (normally $24.99)",
+  // Benefits grouped into three clusters so the card reads as a
+  // three-beat promise (practice / access / people) rather than a
+  // flat seven-bullet checkbox list. Each group is a "chapter"; the
+  // items inside are supporting points, not competing headlines.
+  const benefitGroups = [
+    {
+      heading: "Practice",
+      items: [
+        "The Dark Mirror Simulator — 30 branching scenarios across three tracks, 83 manipulation tactics to learn to spot",
+        "New scenarios, courses, and content added regularly",
+      ],
+    },
+    {
+      heading: "Access",
+      items: [
+        "Full course library — dark psychology, pattern recognition, career strategy",
+        "Voice notes from Kanika — raw insights you won't hear anywhere else",
+        "Member-exclusive pricing on the Sociopathic Dating Bible — $9.99 (normally $24.99)",
+      ],
+    },
+    {
+      heading: "People",
+      items: [
+        "Community feed — daily insights, discussion prompts, and posts from Kanika",
+        "Forum and live chat — connect with members who see what you see",
+      ],
+    },
   ];
 
   return (
     <>
       <BackgroundEffects />
       <Header />
-      <main className="min-h-screen pt-28 pb-16 relative z-10">
+      {/* div, not main — the root layout already wraps children in a
+          single <main>; a nested <main> here creates two "main content"
+          landmarks which confuses assistive tech. */}
+      <div className="min-h-screen pt-28 pb-16 relative z-10">
         <div className="max-w-5xl mx-auto px-4">
 
           {statusParam === "suspended" && (
@@ -182,9 +203,17 @@ export default async function InnerCircleLanding({
             </p>
           </div>
 
-          {/* Features Grid. The simulator card gets a highlight treatment
-              (warm-gold border + subtle gradient) so it reads as the flagship
-              surface at a glance — everything else is supporting material. */}
+          {/* Features Grid.
+              The simulator card gets a highlight treatment (warm-gold
+              border + subtle gradient) so it reads as the flagship
+              surface at a glance — everything else is supporting
+              material.
+              Previously each card carried a ~48px icon-in-colored-circle
+              at the top-left — the single most recognisable AI-SaaS-
+              template pattern. Replaced with a bare icon at larger size
+              in warm-gold; the icon now reads as a *mark* rather than
+              as a decorative chip, and six icons-in-circles no longer
+              hammer the eye in a single grid. Calmer. */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-20">
             {features.map((feature) => (
               <div
@@ -195,21 +224,14 @@ export default async function InnerCircleLanding({
                     : "bg-deep-black/50 border border-warm-gold/15 hover:border-warm-gold/40 hover:shadow-[0_8px_40px_-12px_rgba(212,175,55,0.2)]"
                 }`}
               >
-                <div
-                  className={`w-12 h-12 rounded-full flex items-center justify-center mb-4 transition-all ${
+                <feature.icon
+                  className={`w-7 h-7 mb-5 transition-colors ${
                     feature.highlight
-                      ? "bg-warm-gold/20 border border-warm-gold/50"
-                      : "bg-warm-gold/10 border border-warm-gold/20 group-hover:bg-warm-gold/15 group-hover:border-warm-gold/40"
+                      ? "text-warm-gold"
+                      : "text-warm-gold/70 group-hover:text-warm-gold"
                   }`}
-                >
-                  <feature.icon className="w-6 h-6 text-warm-gold" strokeWidth={1.5} />
-                </div>
-                {/* The highlighted card's border + gradient already reads
-                    as "the important one"; a separate "Flagship" pill on
-                    top of that duplicated the signal, competed with the
-                    dedicated simulator teaser section below (which is
-                    the actual flagship surface), and read as ornament.
-                    Dropped — the warm-gold border does the job alone. */}
+                  strokeWidth={1.25}
+                />
                 <h3 className="text-text-light font-light text-lg mb-2">{feature.title}</h3>
                 <p className="text-sm text-text-gray font-light leading-relaxed">{feature.description}</p>
               </div>
@@ -226,7 +248,15 @@ export default async function InnerCircleLanding({
             <ConsiliumSimulatorTeaser variant="landing" />
           </div>
 
-          {/* What's Inside */}
+          {/* What's Inside.
+              Restructured from a flat 7-bullet checklist into three
+              themed chapters (Practice / Access / People) so the card
+              reads as a promise with shape — not another SaaS feature
+              table. Each chapter gets a small uppercase label and its
+              own small space-y-2 stack of bullet rows; the gold
+              checkmark is replaced by a subtle warm-gold left accent
+              bar per chapter so the eye reads "three things" before
+              it reads "seven bullets". Calmer, easier to scan. */}
           <div className="mb-20">
             <div className="text-center mb-10">
               <p className="text-warm-gold text-sm uppercase tracking-[0.3em] mb-3">Everything Included</p>
@@ -235,12 +265,20 @@ export default async function InnerCircleLanding({
               </h2>
             </div>
             <div className="max-w-2xl mx-auto">
-              <div className="p-8 bg-gradient-to-br from-deep-navy/60 to-deep-burgundy/60 backdrop-blur-sm border border-warm-gold/20 rounded-2xl">
-                <div className="space-y-4">
-                  {benefits.map((item) => (
-                    <div key={item} className="flex items-start gap-3">
-                      <CheckCircle size={18} className="text-warm-gold mt-0.5 flex-shrink-0" strokeWidth={1.5} />
-                      <p className="text-text-gray font-light">{item}</p>
+              <div className="p-8 sm:p-10 bg-gradient-to-br from-deep-navy/60 to-deep-burgundy/60 backdrop-blur-sm border border-warm-gold/20 rounded-2xl">
+                <div className="space-y-7 sm:space-y-8">
+                  {benefitGroups.map((group) => (
+                    <div key={group.heading} className="pl-4 border-l border-warm-gold/30">
+                      <p className="text-warm-gold text-[11px] uppercase tracking-[0.3em] font-light mb-3">
+                        {group.heading}
+                      </p>
+                      <ul className="space-y-2">
+                        {group.items.map((item) => (
+                          <li key={item} className="text-text-gray font-light leading-relaxed text-sm sm:text-base">
+                            {item}
+                          </li>
+                        ))}
+                      </ul>
                     </div>
                   ))}
                 </div>
@@ -292,31 +330,40 @@ export default async function InnerCircleLanding({
             </div>
           </div>
 
-          {/* Coaching Upgrade.
-              mb-20 keeps this section on the same 80px rhythm as every
-              other main section — previously mb-16 broke the cadence
-              right at the tail. */}
-          <div className="mb-20 text-center">
-            <p className="text-text-gray font-light mb-2">Want direct 1:1 access?</p>
-            <Link
-              href="/coaching"
-              className="text-warm-gold hover:text-warm-gold/80 transition-colors"
-            >
-              Explore Private Coaching →
-            </Link>
-          </div>
-
-          {/* Bottom CTA */}
-          <div className="text-center">
-            <p className="text-text-gray font-light mb-6">
-              Have questions?{" "}
-              <Link href="/contact" className="text-warm-gold hover:text-warm-gold/80 transition-colors">
-                Get in touch
-              </Link>
-            </p>
+          {/* Closing section.
+              Previously two orphaned grey body lines hanging after the
+              $29 pricing card ("Want direct 1:1 access?" and "Have
+              questions?"). A weak ending — the page asked for the
+              close three times then trailed off. Consolidated into one
+              quiet closing card that offers the two alternate paths
+              (coaching, contact) side-by-side so the page ends on a
+              deliberate note rather than a whisper. Kept uncommercial
+              — no third CTA button; these are *alternatives* for
+              visitors who don't want to join, not conversion paths. */}
+          <div className="mb-4">
+            <div className="max-w-2xl mx-auto text-center px-6 py-8 border-t border-warm-gold/10">
+              <p className="text-text-gray/70 text-sm font-light mb-4">
+                Still deciding?
+              </p>
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-8 text-sm">
+                <Link
+                  href="/coaching"
+                  className="text-warm-gold hover:text-warm-gold/80 transition-colors font-light"
+                >
+                  Explore private coaching →
+                </Link>
+                <span className="hidden sm:inline text-warm-gold/20">·</span>
+                <Link
+                  href="/contact"
+                  className="text-warm-gold hover:text-warm-gold/80 transition-colors font-light"
+                >
+                  Get in touch →
+                </Link>
+              </div>
+            </div>
           </div>
         </div>
-      </main>
+      </div>
     </>
   );
 }

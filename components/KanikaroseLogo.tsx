@@ -23,6 +23,12 @@ interface KanikaroseLogoProps {
   iconOnly?: boolean;
   /** Enables staggered star-twinkle animation. For loading screens. */
   animate?: boolean;
+  /**
+   * When true, the wordmark renders as the full "KANIKAROSE" word
+   * instead of the "KR" monogram. Used in the footer so the footer
+   * brand doesn't duplicate the fixed-header "KR" visible above it.
+   */
+  fullName?: boolean;
   className?: string;
 }
 
@@ -64,6 +70,7 @@ export default function KanikaroseLogo({
   size = "md",
   iconOnly = false,
   animate = false,
+  fullName = false,
   className = "",
 }: KanikaroseLogoProps) {
   const s = SIZES[size];
@@ -161,7 +168,10 @@ export default function KanikaroseLogo({
             className="whitespace-nowrap"
             style={{
               fontFamily: "Inter, 'Helvetica Neue', Arial, sans-serif",
-              fontSize: s.wordmark,
+              // Full wordmark is longer; drop a size step so
+              // "KANIKAROSE" doesn't overpower the constellation at
+              // the same icon size.
+              fontSize: fullName ? Math.round(s.wordmark * 0.85) : s.wordmark,
               fontWeight: 500,
               letterSpacing: s.wmLetterSpacing,
               textTransform: "uppercase",
@@ -169,7 +179,7 @@ export default function KanikaroseLogo({
               lineHeight: 1,
             }}
           >
-            KR
+            {fullName ? "Kanikarose" : "KR"}
           </span>
         </>
       )}

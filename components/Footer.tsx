@@ -55,10 +55,16 @@ const Footer = () => {
     <footer className="relative z-20 bg-gradient-to-b from-deep-black to-burgundy-dark/10 border-t border-gold/10">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
-          {/* Brand Section */}
+          {/* Brand Section.
+              `fullName` swaps the "KR" monogram for the full "KANIKAROSE"
+              wordmark so the footer brand doesn't visually duplicate the
+              fixed-header "KR" at the top of the page — when you scroll
+              to the footer the two used to stack like an accidental
+              double-render. Full wordmark reads as a signature, not a
+              nav echo. */}
           <div className="space-y-3 sm:space-y-4 col-span-1 sm:col-span-2 lg:col-span-1">
             <div className="flex items-center">
-              <KanikaroseLogo size="lg" />
+              <KanikaroseLogo size="lg" fullName />
             </div>
             <p className="text-text-muted text-xs sm:text-sm">
               Diagnosed Sociopath. Author. Psychology of Power Expert.

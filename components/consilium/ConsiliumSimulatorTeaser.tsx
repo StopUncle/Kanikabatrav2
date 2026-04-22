@@ -106,28 +106,20 @@ export default function ConsiliumSimulatorTeaser({
                 <SimulatorPreview />
               </div>
 
-              {/* Depth stats. Auditor-sourced: 30 scenarios, 526 scenes,
-                  83 unique tactics, 79 unique red flags. */}
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-6 w-full max-w-2xl mb-8">
-                {[
-                  { n: "30", label: "Scenarios" },
-                  { n: "526", label: "Branching scenes" },
-                  { n: "83", label: "Tactics to spot" },
-                  { n: "79", label: "Red flags catalogued" },
-                ].map((stat) => (
-                  <div
-                    key={stat.label}
-                    className="flex flex-col items-center px-3 py-4 rounded-xl border border-warm-gold/15 bg-deep-black/40"
-                  >
-                    <span className="text-2xl sm:text-3xl font-extralight text-warm-gold mb-1 tabular-nums">
-                      {stat.n}
-                    </span>
-                    <span className="text-[10px] sm:text-xs text-text-gray/70 uppercase tracking-wider text-center leading-tight">
-                      {stat.label}
-                    </span>
-                  </div>
-                ))}
-              </div>
+              {/* Depth, as one narrative line.
+                  The previous 4-card stat grid (30 / 526 / 83 / 79) read
+                  as the generic "our product in numbers" SaaS slab and
+                  added visual weight to an already busy section. A
+                  single prose sentence with the real numbers inlined
+                  carries the same information calmer — the gold-coloured
+                  numerals still carry the quantitative punch without a
+                  grid of bordered cards behind them. */}
+              <p className="text-text-gray/80 text-sm sm:text-base font-light leading-relaxed max-w-2xl mb-8">
+                <span className="text-warm-gold tabular-nums">30</span> scenarios across three tracks.{" "}
+                <span className="text-warm-gold tabular-nums">526</span> branching scenes.{" "}
+                <span className="text-warm-gold tabular-nums">83</span> manipulation tactics to learn to spot,{" "}
+                <span className="text-warm-gold tabular-nums">79</span> red flags catalogued. Enough to play for months without repeating yourself.
+              </p>
 
               {/* Three-track chip row. Each track is a deck of scenarios
                   aimed at a specific audience — same engine, different
