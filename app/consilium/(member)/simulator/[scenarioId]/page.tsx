@@ -45,21 +45,44 @@ export default async function SimulatorPlay({
   });
 
   // Completed runs always start fresh; only mid-run progress resumes.
-  const initialState: SimulatorState | undefined =
-    row && !row.completedAt
-      ? {
-          scenarioId: row.scenarioId,
-          currentSceneId: row.currentSceneId,
-          // choicesMade is Json — Prisma types it as Prisma.JsonValue, but we
-          // wrote it in the shape ChoiceRecord[]. Cast narrowly.
-          choicesMade: (row.choicesMade as unknown as ChoiceRecord[]) ?? [],
-          xpEarned: row.xpEarned ?? 0,
-          outcome: (row.outcome as OutcomeType | null) ?? undefined,
-          endedAt: row.completedAt
-            ? (row.completedAt as Date).toISOString()
-            : undefined,
-        }
-      : undefined;
+  //
+  // Defensive guard: if the row's currentSceneId points at an ending
+  // scene or at a scene that doesn't exist anymore (scenario edited
+  // after the row was written), ignore the resume. Historically, a
+  // bad save ordering or a failed `endedAt` write could leave a row
+  // with currentSceneId = ending_id + completedAt = null — which
+  // dropped players directly onto the ending screen on re-entry.
+  // Starting fresh is always safe; losing one mid-run save is not.
+  let initialState: SimulatorState | undefined = undefined;
+  if (row && !row.completedAt) {
+    const resumeScene = scenario.scenes.find(
+      (s) => s.id === row.currentSceneId,
+    );
+    const resumeIsValid = !!resumeScene && !resumeScene.isEnding;
+    if (resumeIsValid) {
+      initialState = {
+        scenarioId: row.scenarioId,
+        currentSceneId: row.currentSceneId,
+        // choicesMade is Json — Prisma types it as Prisma.JsonValue, but we
+        // wrote it in the shape ChoiceRecord[]. Cast narrowly.
+        choicesMade: (row.choicesMade as unknown as ChoiceRecord[]) ?? [],
+        xpEarned: row.xpEarned ?? 0,
+        outcome: (row.outcome as OutcomeType | null) ?? undefined,
+        endedAt: undefined,
+      };
+    }
+  }
+
+  // Previous-best summary — shown in the pre-game overlay and on the
+  // ending screen so a replay feels like beating a record, not
+  // repeating chores. Only populated for fully-completed runs.
+  const previousBest = row?.completedAt
+    ? {
+        xpEarned: row.xpEarned ?? 0,
+        outcome: (row.outcome as OutcomeType | null) ?? null,
+        completedAt: row.completedAt.toISOString(),
+      }
+    : null;
 
   // "Next scenario" link — whatever comes after this one in ALL_SCENARIOS.
   const currentIdx = ALL_SCENARIOS.findIndex((s) => s.id === scenario.id);
@@ -70,6 +93,7 @@ export default async function SimulatorPlay({
     <SimulatorPageClient
       scenario={scenario}
       initialState={initialState}
+      previousBest={previousBest}
       nextScenarioHref={nextHref}
     />
   );

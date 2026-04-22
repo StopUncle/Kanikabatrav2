@@ -65,6 +65,16 @@ type Props = {
    * tangent. Forwarded to EndingScreen.
    */
   hideFailureBlog?: boolean;
+  /**
+   * Previous-best summary — shown as a small "Replaying · best: N XP
+   * · Mastery" banner under the letterbox during dialog, and in the
+   * ending-summary when this run concludes. Null on first attempt.
+   */
+  previousBest?: {
+    xpEarned: number;
+    outcome: import("@/lib/simulator/types").OutcomeType | null;
+    completedAt: string;
+  } | null;
 };
 
 export default function SimulatorRunner({
@@ -77,6 +87,7 @@ export default function SimulatorRunner({
   exitHref = "/consilium/simulator",
   endingCta,
   hideFailureBlog = false,
+  previousBest = null,
 }: Props) {
   const [state, setState] = useState<SimulatorState>(
     initialState ?? initState(scenario),
@@ -280,6 +291,7 @@ export default function SimulatorRunner({
             nextScenarioHref={nextScenarioHref}
             customCta={endingCta}
             hideFailureBlog={hideFailureBlog}
+            previousBest={previousBest}
             onRestart={restart}
           />
         </AnimatePresence>
@@ -363,10 +375,38 @@ export default function SimulatorRunner({
       <SceneShake sceneId={scene.id} shake={scene.shakeOnEntry}>
 
       {/* Scenario label — absolute top, just under letterbox */}
-      <div className="absolute top-[76px] sm:top-[88px] left-0 right-0 z-30 text-center">
+      <div className="absolute top-[76px] sm:top-[88px] left-0 right-0 z-30 text-center px-4">
         <p className="text-accent-gold/60 text-[10px] uppercase tracking-[0.5em]">
           {scenario.title}
         </p>
+        {/* Previous-best banner. Shows up on a replay so the player
+            knows what they're gunning for. Drops out the moment the
+            ending screen mounts (EndingScreen shows its own
+            prior-best comparison). Only renders when a prior
+            completion exists. */}
+        {previousBest && !scene.isEnding && (
+          <p className="mt-1 text-text-gray/60 text-[9px] uppercase tracking-[0.35em]">
+            <span className="text-accent-gold/60">Replay</span>
+            <span className="mx-1.5 text-text-gray/30">·</span>
+            Best{" "}
+            <span className="text-accent-gold/80 tabular-nums">
+              {previousBest.xpEarned}
+            </span>{" "}
+            XP
+            {previousBest.outcome && (
+              <>
+                <span className="mx-1.5 text-text-gray/30">·</span>
+                {previousBest.outcome === "good" ||
+                previousBest.outcome === "passed"
+                  ? "Mastery"
+                  : previousBest.outcome === "bad" ||
+                      previousBest.outcome === "failed"
+                    ? "Cost"
+                    : "Outcome"}
+              </>
+            )}
+          </p>
+        )}
       </div>
 
       {/* Cast staging — absolute, centered between top label and dialog zone.

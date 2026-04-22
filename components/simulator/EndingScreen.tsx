@@ -55,6 +55,16 @@ type Props = {
    * screen — the conversion CTA — not a tangent to a blog post.
    */
   hideFailureBlog?: boolean;
+  /**
+   * If the player has a prior completion of this scenario, this is
+   * the summary of it. Drives the "NEW BEST" / "prior best: N XP"
+   * comparison shown next to the XP counter.
+   */
+  previousBest?: {
+    xpEarned: number;
+    outcome: import("@/lib/simulator/types").OutcomeType | null;
+    completedAt: string;
+  } | null;
   onRestart: () => void;
 };
 
@@ -87,6 +97,7 @@ export default function EndingScreen({
   nextScenarioHref,
   customCta,
   hideFailureBlog = false,
+  previousBest = null,
   onRestart,
 }: Props) {
   const outcome = state.outcome ?? scene.outcomeType ?? "neutral";
@@ -151,6 +162,37 @@ export default function EndingScreen({
 
         {/* XP earned — count-up animation */}
         <XpCounter target={state.xpEarned} />
+
+        {/* Previous-best comparison. Only on replays. Calls out a new
+            record with a gold "NEW BEST" badge, otherwise shows the
+            prior best XP so the run feels meaningful even when the
+            player didn't improve. */}
+        {previousBest && (
+          <m.div
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 2.9 }}
+            className="inline-flex items-center gap-2 mb-8 -mt-2 text-[10px] uppercase tracking-[0.3em]"
+          >
+            {state.xpEarned > previousBest.xpEarned ? (
+              <span className="px-3 py-1 rounded-full bg-accent-gold/15 border border-accent-gold/50 text-accent-gold">
+                New best · +{state.xpEarned - previousBest.xpEarned} XP
+              </span>
+            ) : state.xpEarned === previousBest.xpEarned ? (
+              <span className="px-3 py-1 rounded-full border border-accent-gold/25 text-accent-gold/70">
+                Matched your best
+              </span>
+            ) : (
+              <span className="px-3 py-1 rounded-full border border-white/10 text-text-gray/70">
+                Best:{" "}
+                <span className="text-accent-gold/70 tabular-nums">
+                  {previousBest.xpEarned}
+                </span>{" "}
+                XP
+              </span>
+            )}
+          </m.div>
+        )}
 
         {/* Failure → blog post CTA.
             Only shown on defeat endings that declare a `failureBlogSlug`.

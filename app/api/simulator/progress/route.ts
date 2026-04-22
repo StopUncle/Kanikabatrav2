@@ -84,16 +84,67 @@ export async function POST(request: NextRequest) {
     }
 
     try {
-      // If the scenario was already completed, a replay's mid-run save must
-      // NOT clear the original outcome/completedAt — the user can replay but
-      // the completion record is sticky. xpEarned keeps the higher of the two
-      // so replays can't downgrade a prior best.
+      // Persisted row is the player's PERSONAL BEST plus a live pointer
+      // at the current scene for mid-run resume. Three cases:
+      //
+      //   A) mid-run save (body.endedAt falsy)
+      //      - advance currentSceneId + choicesMade pointer
+      //      - DO NOT touch outcome / completedAt / xpEarned if the
+      //        player already has a completion — those are their best
+      //      - xpEarned on an uncompleted row bumps only upward
+      //
+      //   B) first-ever completion (existing falsy OR existing.completedAt null)
+      //      - write the whole thing
+      //
+      //   C) replay completion (both existing.completedAt and body.endedAt set)
+      //      - keep the HIGHER xpEarned
+      //      - keep the BETTER outcome (good > neutral|passed > failed|bad)
+      //      - keep the ORIGINAL completedAt — first-completion timestamp
+      //        is load-bearing for "when did you beat this"
+      //      - advance currentSceneId pointer
+      //
+      // Previously a worse replay (outcome=bad at 60 XP after a first
+      // run of outcome=good at 100 XP) would overwrite the mastery
+      // completion with the defeat, losing the player's best run.
       const existing = await prisma.simulatorProgress.findUnique({
         where: {
           userId_scenarioId: { userId: user.id, scenarioId: body.scenarioId },
         },
       });
-      const preserveCompletion = !!existing?.completedAt && !body.endedAt;
+
+      const outcomeRank = (o: string | null): number => {
+        // Higher = better. Unset = 0 so any real outcome beats it.
+        if (o === "good") return 4;
+        if (o === "passed") return 3;
+        if (o === "neutral") return 2;
+        if (o === "failed") return 1;
+        if (o === "bad") return 0;
+        return -1;
+      };
+
+      const hadCompletion = !!existing?.completedAt;
+      const isCompletingNow = !!body.endedAt;
+      const isReplayCompletion = hadCompletion && isCompletingNow;
+      const isMidRunSave = !isCompletingNow;
+
+      // Best-of XP across runs (floor zero).
+      const bestXp = Math.max(existing?.xpEarned ?? 0, body.xpEarned);
+
+      // Best-of outcome across runs (existing vs incoming).
+      let bestOutcome: string | null = existing?.outcome ?? null;
+      if (body.outcome) {
+        if (outcomeRank(body.outcome) > outcomeRank(bestOutcome)) {
+          bestOutcome = body.outcome;
+        }
+      }
+
+      // completedAt: sticky once set. First completion timestamp wins
+      // (no re-stamping on replay completion).
+      const keptCompletedAt: Date | null = hadCompletion
+        ? existing!.completedAt!
+        : isCompletingNow
+          ? new Date(body.endedAt!)
+          : null;
 
       const saved = await prisma.simulatorProgress.upsert({
         where: {
@@ -111,17 +162,21 @@ export async function POST(request: NextRequest) {
         update: {
           currentSceneId: body.currentSceneId,
           choicesMade: body.choicesMade,
-          xpEarned: preserveCompletion
-            ? Math.max(existing!.xpEarned, body.xpEarned)
-            : body.xpEarned,
-          outcome: preserveCompletion
-            ? existing!.outcome
-            : (body.outcome ?? null),
-          completedAt: preserveCompletion
-            ? existing!.completedAt
-            : body.endedAt
-              ? new Date(body.endedAt)
-              : null,
+          xpEarned:
+            isMidRunSave && hadCompletion
+              ? // Mid-run save on an already-completed row must not touch the
+                // player's best XP.
+                existing!.xpEarned
+              : isReplayCompletion
+                ? bestXp
+                : body.xpEarned,
+          outcome:
+            isMidRunSave && hadCompletion
+              ? existing!.outcome
+              : isReplayCompletion
+                ? bestOutcome
+                : (body.outcome ?? null),
+          completedAt: keptCompletedAt,
         },
       });
 

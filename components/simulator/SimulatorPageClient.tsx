@@ -2,12 +2,29 @@
 
 import { useCallback, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import type { Scenario, SimulatorState } from "@/lib/simulator/types";
+import type {
+  Scenario,
+  SimulatorState,
+  OutcomeType,
+} from "@/lib/simulator/types";
 import SimulatorRunner from "./SimulatorRunner";
+
+export type PreviousBest = {
+  xpEarned: number;
+  outcome: OutcomeType | null;
+  completedAt: string; // ISO
+};
 
 type Props = {
   scenario: Scenario;
   initialState?: SimulatorState;
+  /**
+   * Summary of the player's best previous completion — shown as a
+   * "Replaying · Your best: 85 XP · Mastery" banner at the top of
+   * the game so replays feel like beating a record. Null on first
+   * attempt.
+   */
+  previousBest?: PreviousBest | null;
   nextScenarioHref?: string | null;
 };
 
@@ -24,10 +41,18 @@ type Props = {
 export default function SimulatorPageClient({
   scenario,
   initialState,
+  previousBest = null,
   nextScenarioHref,
 }: Props) {
   const router = useRouter();
   const [badgesEarned, setBadgesEarned] = useState<string[]>([]);
+  // Track the "best-to-date" across the session so a second replay
+  // in the same tab compares against the run that just finished, not
+  // the previousBest prop frozen at page load. Initial value mirrors
+  // the prop so first run always has a reference.
+  const [bestToDate, setBestToDate] = useState<PreviousBest | null>(
+    previousBest,
+  );
 
   // Throttle saves — only fire if state has actually changed on a key field.
   const lastSavedRef = useRef<string>("");
@@ -64,6 +89,21 @@ export default function SimulatorPageClient({
     // screen until the /complete POST resolves and sets fresh ones
     // — a misleading render window of 200ms–2s on slow connections.
     setBadgesEarned([]);
+
+    // Update the session's best-to-date if this run exceeded it.
+    // A subsequent in-session replay sees this as the new baseline so
+    // the "NEW BEST / Best: N XP" comparison stays honest without
+    // waiting for a router.refresh + re-hydrate.
+    setBestToDate((prev) => {
+      if (!prev || state.xpEarned > prev.xpEarned) {
+        return {
+          xpEarned: state.xpEarned,
+          outcome: state.outcome ?? null,
+          completedAt: state.endedAt ?? new Date().toISOString(),
+        };
+      }
+      return prev;
+    });
     try {
       const res = await fetch("/api/simulator/complete", {
         method: "POST",
@@ -99,6 +139,7 @@ export default function SimulatorPageClient({
     <SimulatorRunner
       scenario={scenario}
       initialState={initialState}
+      previousBest={bestToDate}
       onStateChange={handleStateChange}
       onComplete={handleComplete}
       nextScenarioHref={nextScenarioHref}

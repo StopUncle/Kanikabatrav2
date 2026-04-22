@@ -137,13 +137,22 @@ export async function POST(request: NextRequest) {
       // the level with a good/mastery badge, award the level-clear badge too.
       // We re-read the full badge set so the check includes the badges we
       // just inserted above.
+      //
+      // Track-aware filter: each track (female, male-business, male-dating)
+      // numbers its levels from 1 independently. Without the track filter,
+      // a male-track completion at level 1 would also match female-track
+      // mission-1-1 and mission-1-2 in the pool, so the "level 1 clear"
+      // check would demand badges the player has no path to earning. The
+      // male-track level-clear would silently never fire.
       const heldNow = await prisma.simulatorBadge.findMany({
         where: { userId: user.id },
         select: { badgeKey: true },
       });
       const heldNowSet = new Set(heldNow.map((b) => b.badgeKey));
+      const scenarioTrack = scenario.track ?? "female";
       const scenariosInLevel = ALL_SCENARIOS.filter(
-        (s) => s.level === scenario.level,
+        (s) =>
+          s.level === scenario.level && (s.track ?? "female") === scenarioTrack,
       ).map((s) => s.id);
       const levelKey = levelCompleteBadgeFor(
         scenario.level,
