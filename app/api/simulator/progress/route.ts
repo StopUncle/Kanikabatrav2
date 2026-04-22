@@ -15,6 +15,8 @@ import { prisma } from "@/lib/prisma";
 import { z } from "zod";
 import type { SimulatorState } from "@/lib/simulator/types";
 import { getScenario } from "@/lib/simulator/scenarios";
+import { replayXp } from "@/lib/simulator/engine";
+import { mergeProgress } from "@/lib/simulator/progress-merge";
 import { logger } from "@/lib/logger";
 
 const ProgressBody = z.object({
@@ -84,67 +86,36 @@ export async function POST(request: NextRequest) {
     }
 
     try {
-      // Persisted row is the player's PERSONAL BEST plus a live pointer
-      // at the current scene for mid-run resume. Three cases:
-      //
-      //   A) mid-run save (body.endedAt falsy)
-      //      - advance currentSceneId + choicesMade pointer
-      //      - DO NOT touch outcome / completedAt / xpEarned if the
-      //        player already has a completion — those are their best
-      //      - xpEarned on an uncompleted row bumps only upward
-      //
-      //   B) first-ever completion (existing falsy OR existing.completedAt null)
-      //      - write the whole thing
-      //
-      //   C) replay completion (both existing.completedAt and body.endedAt set)
-      //      - keep the HIGHER xpEarned
-      //      - keep the BETTER outcome (good > neutral|passed > failed|bad)
-      //      - keep the ORIGINAL completedAt — first-completion timestamp
-      //        is load-bearing for "when did you beat this"
-      //      - advance currentSceneId pointer
-      //
-      // Previously a worse replay (outcome=bad at 60 XP after a first
-      // run of outcome=good at 100 XP) would overwrite the mastery
-      // completion with the defeat, losing the player's best run.
+      // Anti-cheat: recompute XP server-side from the claimed
+      // choicesMade rather than trusting the client number. The
+      // server owns the engine + scenario data, so it can verify
+      // the actual XP earned. The persisted value is clamped to
+      // min(client, server) so a cheater sending xpEarned=10000
+      // via curl can't inflate the leaderboard. Honest clients
+      // will hit equality — the extra work is only penalised on
+      // tampering.
+      const authoritative = replayXp(scenario, body.choicesMade);
+      const safeXp = Math.min(body.xpEarned, authoritative.xp);
+
+      // Best-of merge — shared with /api/simulator/complete via
+      // lib/simulator/progress-merge so both routes agree on
+      // personal-best preservation. Without the shared helper, a
+      // replay completion would go through /complete, which used to
+      // clobber the existing row with a destructive upsert — losing
+      // the player's prior mastery.
       const existing = await prisma.simulatorProgress.findUnique({
         where: {
           userId_scenarioId: { userId: user.id, scenarioId: body.scenarioId },
         },
       });
 
-      const outcomeRank = (o: string | null): number => {
-        // Higher = better. Unset = 0 so any real outcome beats it.
-        if (o === "good") return 4;
-        if (o === "passed") return 3;
-        if (o === "neutral") return 2;
-        if (o === "failed") return 1;
-        if (o === "bad") return 0;
-        return -1;
-      };
-
-      const hadCompletion = !!existing?.completedAt;
-      const isCompletingNow = !!body.endedAt;
-      const isReplayCompletion = hadCompletion && isCompletingNow;
-      const isMidRunSave = !isCompletingNow;
-
-      // Best-of XP across runs (floor zero).
-      const bestXp = Math.max(existing?.xpEarned ?? 0, body.xpEarned);
-
-      // Best-of outcome across runs (existing vs incoming).
-      let bestOutcome: string | null = existing?.outcome ?? null;
-      if (body.outcome) {
-        if (outcomeRank(body.outcome) > outcomeRank(bestOutcome)) {
-          bestOutcome = body.outcome;
-        }
-      }
-
-      // completedAt: sticky once set. First completion timestamp wins
-      // (no re-stamping on replay completion).
-      const keptCompletedAt: Date | null = hadCompletion
-        ? existing!.completedAt!
-        : isCompletingNow
-          ? new Date(body.endedAt!)
-          : null;
+      const { create, update } = mergeProgress(existing, {
+        currentSceneId: body.currentSceneId,
+        choicesMade: body.choicesMade,
+        xpEarned: safeXp,
+        outcome: body.outcome ?? null,
+        endedAt: body.endedAt ?? null,
+      });
 
       const saved = await prisma.simulatorProgress.upsert({
         where: {
@@ -153,31 +124,9 @@ export async function POST(request: NextRequest) {
         create: {
           userId: user.id,
           scenarioId: body.scenarioId,
-          currentSceneId: body.currentSceneId,
-          choicesMade: body.choicesMade,
-          xpEarned: body.xpEarned,
-          outcome: body.outcome ?? null,
-          completedAt: body.endedAt ? new Date(body.endedAt) : null,
+          ...create,
         },
-        update: {
-          currentSceneId: body.currentSceneId,
-          choicesMade: body.choicesMade,
-          xpEarned:
-            isMidRunSave && hadCompletion
-              ? // Mid-run save on an already-completed row must not touch the
-                // player's best XP.
-                existing!.xpEarned
-              : isReplayCompletion
-                ? bestXp
-                : body.xpEarned,
-          outcome:
-            isMidRunSave && hadCompletion
-              ? existing!.outcome
-              : isReplayCompletion
-                ? bestOutcome
-                : (body.outcome ?? null),
-          completedAt: keptCompletedAt,
-        },
+        update,
       });
 
       return NextResponse.json({ progress: saved });

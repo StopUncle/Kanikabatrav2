@@ -30,6 +30,8 @@ import type {
   OutcomeType,
   ChoiceRecord,
 } from "@/lib/simulator/types";
+import { replayXp } from "@/lib/simulator/engine";
+import { mergeProgress } from "@/lib/simulator/progress-merge";
 import { logger } from "@/lib/logger";
 
 const CompleteBody = z.object({
@@ -79,11 +81,18 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Anti-cheat: recompute XP from the claimed choicesMade and clamp.
+    // See /api/simulator/progress for the same rationale — the server
+    // owns the engine, so it computes the truth and never trusts the
+    // client number beyond it.
+    const authoritative = replayXp(scenario, body.choicesMade);
+    const safeXp = Math.min(body.xpEarned, authoritative.xp);
+
     const state: SimulatorState = {
       scenarioId: body.scenarioId,
       currentSceneId: body.currentSceneId,
       choicesMade: body.choicesMade,
-      xpEarned: body.xpEarned,
+      xpEarned: safeXp,
       outcome: body.outcome,
       endedAt: body.endedAt,
     };
@@ -91,6 +100,29 @@ export async function POST(request: NextRequest) {
     const earnedKeys = badgesEarnedFromState(scenario, state);
 
     try {
+      // Best-of merge — shared with /api/simulator/progress so a replay
+      // completion doesn't overwrite a better prior completion. The
+      // previous destructive upsert here silently negated the best-of
+      // logic /progress enforces: if a player's first run was 100 XP /
+      // "good" and a replay ended at 60 XP / "bad", this endpoint would
+      // clobber the row down to the worse run. Now the existing row is
+      // fetched first and the merge helper decides what to keep.
+      const existingRow = await prisma.simulatorProgress.findUnique({
+        where: {
+          userId_scenarioId: {
+            userId: user.id,
+            scenarioId: body.scenarioId,
+          },
+        },
+      });
+      const { create, update } = mergeProgress(existingRow, {
+        currentSceneId: body.currentSceneId,
+        choicesMade: body.choicesMade,
+        xpEarned: safeXp,
+        outcome: body.outcome,
+        endedAt: body.endedAt,
+      });
+
       // Persist progress + badges in one round-trip.
       const [, existing] = await prisma.$transaction([
         prisma.simulatorProgress.upsert({
@@ -103,19 +135,9 @@ export async function POST(request: NextRequest) {
           create: {
             userId: user.id,
             scenarioId: body.scenarioId,
-            currentSceneId: body.currentSceneId,
-            choicesMade: body.choicesMade,
-            xpEarned: body.xpEarned,
-            outcome: body.outcome,
-            completedAt: new Date(body.endedAt),
+            ...create,
           },
-          update: {
-            currentSceneId: body.currentSceneId,
-            choicesMade: body.choicesMade,
-            xpEarned: body.xpEarned,
-            outcome: body.outcome,
-            completedAt: new Date(body.endedAt),
-          },
+          update,
         }),
         prisma.simulatorBadge.findMany({
           where: { userId: user.id, badgeKey: { in: earnedKeys } },

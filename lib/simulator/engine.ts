@@ -144,3 +144,63 @@ export function progressDepth(state: SimulatorState): number {
 export function optimalCount(state: SimulatorState): number {
   return state.choicesMade.filter((c) => c.wasOptimal).length;
 }
+
+/**
+ * Streak-bonus XP accrued across a run. Matches the client-side
+ * rule in SimulatorRunner: 3 consecutive optimal choices grants +5,
+ * 5 grants +10, 7 grants +15. Non-optimal choice resets the counter.
+ *
+ * Kept here so the server can replay the same logic from `choicesMade`
+ * alone — no client trust required. Called by `replayXp` below.
+ */
+export function streakBonusXp(choicesMade: ChoiceRecord[]): number {
+  let bonus = 0;
+  let run = 0;
+  for (const c of choicesMade) {
+    if (c.wasOptimal) {
+      run += 1;
+      if (run === 3) bonus += 5;
+      else if (run === 5) bonus += 10;
+      else if (run === 7) bonus += 15;
+    } else {
+      run = 0;
+    }
+  }
+  return bonus;
+}
+
+/**
+ * Server-side XP replay.
+ *
+ * Given a scenario and a list of choices the client claims were made,
+ * re-run them through `applyChoice` and return the authoritative XP
+ * the run actually earns. Any choice the client "made" that doesn't
+ * exist on the scene it claims (choiceId invalid, or sceneId drift
+ * from the prior choice's nextSceneId) aborts the replay — the
+ * partial XP up to that point is returned rather than throwing, so
+ * a slightly-malformed client doesn't lose ALL XP.
+ *
+ * Includes streak bonuses. Ending XP bonuses (finalizeEnding) are
+ * applied when the replay naturally lands on an ending scene.
+ *
+ * Does NOT depend on the client's reported `xpEarned` — that value
+ * is advisory only and may be clipped server-side to `replayXp(...)`
+ * to prevent leaderboard inflation.
+ */
+export function replayXp(
+  scenario: Scenario,
+  choicesMade: ChoiceRecord[],
+): { xp: number; endedAt: SimulatorState } {
+  let state = initState(scenario);
+  for (const record of choicesMade) {
+    const scene = currentScene(scenario, state);
+    if (!scene) break;
+    // The record.sceneId must match where the replay currently sits —
+    // otherwise the client's choice log is out of sync with the engine.
+    if (scene.id !== record.sceneId) break;
+    const choice = scene.choices?.find((c) => c.id === record.choiceId);
+    if (!choice) break;
+    state = applyChoice(scenario, state, choice.id);
+  }
+  return { xp: state.xpEarned + streakBonusXp(choicesMade), endedAt: state };
+}
