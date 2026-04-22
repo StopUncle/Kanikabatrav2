@@ -73,12 +73,12 @@ const Footer = () => {
             <h4 className="text-gold text-xs sm:text-sm font-medium tracking-wider mb-3 sm:mb-4">
               EXPLORE
             </h4>
-            <ul className="space-y-1 sm:space-y-2">
+            <ul className="space-y-1">
               {footerLinks.explore.map((link) => (
                 <li key={link.name}>
                   <Link
                     href={link.href}
-                    className="text-text-muted hover:text-gold transition-colors duration-300 text-xs sm:text-sm"
+                    className="block py-1.5 text-text-muted hover:text-gold transition-colors duration-300 text-xs sm:text-sm"
                   >
                     {link.name}
                   </Link>
@@ -92,12 +92,12 @@ const Footer = () => {
             <h4 className="text-gold text-xs sm:text-sm font-medium tracking-wider mb-3 sm:mb-4">
               LEGAL
             </h4>
-            <ul className="space-y-1 sm:space-y-2">
+            <ul className="space-y-1">
               {footerLinks.legal.map((link) => (
                 <li key={link.name}>
                   <Link
                     href={link.href}
-                    className="text-text-muted hover:text-gold transition-colors duration-300 text-xs sm:text-sm"
+                    className="block py-1.5 text-text-muted hover:text-gold transition-colors duration-300 text-xs sm:text-sm"
                   >
                     {link.name}
                   </Link>

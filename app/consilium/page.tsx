@@ -145,10 +145,15 @@ export default async function InnerCircleLanding({
             >
               The Consilium
             </h1>
-            <p className="text-text-gray/60 uppercase tracking-[0.4em] text-xs mb-6 font-light">
+            {/* Literary sub-line. Downgraded from uppercase-tracked
+                ("KON·SIL·I·UM · LATIN: COUNCIL, STRATEGY, DELIBERATION")
+                to lower-case italic serif so the H1 above owns the moment
+                and the eye stops bouncing between three tracked eyebrows.
+                The decorative gold hairline that used to sit between this
+                line and the body was a break in rhythm — removed. */}
+            <p className="text-text-gray/60 italic text-sm mb-8 font-light">
               kon·sil·i·um &nbsp;·&nbsp; Latin: council, strategy, deliberation
             </p>
-            <div className="w-16 h-px bg-warm-gold/50 mx-auto mb-6" />
             <p className="text-xl text-text-gray max-w-2xl mx-auto mb-6 font-light leading-relaxed">
               A private council for people who are done being the ones who get
               played. Practice catching manipulation in real time. Courses,
@@ -159,13 +164,13 @@ export default async function InnerCircleLanding({
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              {/* Primary conversion CTA. Uses the same warm-gold solid
+                  treatment as every other Consilium CTA on the page
+                  ("Start Practicing", "Step Inside") so the palette stays
+                  coherent — no tacked-on indigo stop. */}
               <Link
                 href="/consilium/apply"
-                className="inline-flex items-center justify-center gap-2 py-4 px-10 rounded-full text-text-light font-medium text-lg tracking-wider uppercase transition-all hover:shadow-lg"
-                style={{
-                  background: "linear-gradient(135deg, #720921, #6366f1)",
-                  boxShadow: "0 8px 20px rgba(114,9,33,0.3), 0 8px 20px rgba(99,102,241,0.3)",
-                }}
+                className="inline-flex items-center justify-center gap-2 py-4 px-10 rounded-full bg-warm-gold text-deep-black font-medium text-lg tracking-wider uppercase transition-all hover:bg-warm-gold/90 hover:shadow-[0_8px_24px_-4px_rgba(212,175,55,0.45)]"
               >
                 Join — $29/month
                 <ArrowRight size={20} />
@@ -199,14 +204,13 @@ export default async function InnerCircleLanding({
                 >
                   <feature.icon className="w-6 h-6 text-warm-gold" strokeWidth={1.5} />
                 </div>
-                <div className="flex items-center gap-2 mb-2">
-                  <h3 className="text-text-light font-light text-lg">{feature.title}</h3>
-                  {feature.highlight && (
-                    <span className="text-[9px] uppercase tracking-[0.2em] text-warm-gold bg-warm-gold/10 border border-warm-gold/30 rounded-full px-2 py-0.5">
-                      Flagship
-                    </span>
-                  )}
-                </div>
+                {/* The highlighted card's border + gradient already reads
+                    as "the important one"; a separate "Flagship" pill on
+                    top of that duplicated the signal, competed with the
+                    dedicated simulator teaser section below (which is
+                    the actual flagship surface), and read as ornament.
+                    Dropped — the warm-gold border does the job alone. */}
+                <h3 className="text-text-light font-light text-lg mb-2">{feature.title}</h3>
                 <p className="text-sm text-text-gray font-light leading-relaxed">{feature.description}</p>
               </div>
             ))}
@@ -255,12 +259,18 @@ export default async function InnerCircleLanding({
               <p className="text-text-gray font-light mb-6">
                 Less than a single coaching session ($297). Full community access.
               </p>
+              {/* All three cells share the same box model (border + py-2)
+                  so their prices share a baseline. Cells 1-2 get a
+                  transparent border that reserves the same 1px of space
+                  the highlighted $29 cell uses — without this, the
+                  highlighted cell sits 9px lower than the other two
+                  because its border+padding expands its box. */}
               <div className="grid grid-cols-3 gap-4 mb-8 max-w-md mx-auto">
-                <div className="text-center">
+                <div className="text-center border border-transparent rounded-lg py-2">
                   <div className="text-warm-gold/80 text-xl font-light">$297</div>
                   <div className="text-text-gray text-xs">1 Coaching Session</div>
                 </div>
-                <div className="text-center">
+                <div className="text-center border border-transparent rounded-lg py-2">
                   <div className="text-warm-gold/80 text-xl font-light">$9.99</div>
                   <div className="text-text-gray text-xs">Book (Member Price)</div>
                 </div>
@@ -282,8 +292,11 @@ export default async function InnerCircleLanding({
             </div>
           </div>
 
-          {/* Coaching Upgrade */}
-          <div className="mb-16 text-center">
+          {/* Coaching Upgrade.
+              mb-20 keeps this section on the same 80px rhythm as every
+              other main section — previously mb-16 broke the cadence
+              right at the tail. */}
+          <div className="mb-20 text-center">
             <p className="text-text-gray font-light mb-2">Want direct 1:1 access?</p>
             <Link
               href="/coaching"
