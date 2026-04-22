@@ -2063,3 +2063,61 @@ export const sendConsiliumGiftInvite = async (
     html: luxuryEmailShell(inner, "Thank You", "One month on me"),
   });
 };
+
+/**
+ * Bonus-month gift for an existing/returning member (e.g. someone whose
+ * first gift month lapsed and we want to extend another 30 days). Same
+ * signed-token claim flow as the first-time gift — just different copy
+ * so it doesn't read as a duplicate of the welcome email.
+ */
+export const sendConsiliumBonusMonth = async (
+  recipientEmail: string,
+  recipientName: string,
+  claimToken: string,
+): Promise<boolean> => {
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://kanikarose.com";
+  const claimUrl = `${baseUrl}/consilium/claim?token=${claimToken}`;
+
+  const inner = `
+    <p class="lux-text" style="color: #f5efe2; font-size: 19px; margin: 0 0 22px 0; line-height: 1.55; font-weight: 400;">
+      Dear ${esc(recipientName)},
+    </p>
+    <p class="lux-text" style="color: #efe7d6; line-height: 1.75; margin: 0 0 22px 0; font-size: 15.5px;">
+      You've already had a month inside The Consilium. I want you to have another &mdash; on me.
+    </p>
+    <p class="lux-text" style="color: #efe7d6; line-height: 1.75; margin: 0 0 30px 0; font-size: 15.5px;">
+      <strong style="color: #f3d98a;">A bonus month, free.</strong> No card required. No auto-charge. Your 30 days start the moment you claim &mdash; so claim when you're ready to use it.
+    </p>
+    <table role="presentation" cellpadding="0" cellspacing="0" border="0" align="center" style="margin: 0 auto 30px auto;">
+      <tr>
+        <td align="center" bgcolor="#d4af37" class="lux-cta-td" style="background-color: #d4af37; border-radius: 999px;">
+          <a href="${claimUrl}" class="lux-cta" style="background-color: #d4af37; color: #0d0d0d; text-decoration: none; font-size: 14px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; display: inline-block; padding: 17px 40px; border-radius: 999px; mso-padding-alt: 0;">
+            <span style="color: #0d0d0d; text-decoration: none;">Claim Your Bonus Month &rarr;</span>
+          </a>
+        </td>
+      </tr>
+    </table>
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin: 0 0 28px 0;">
+      <tr>
+        <td bgcolor="#22151a" style="background-color: #22151a; border-left: 3px solid #d4af37; border-radius: 6px; padding: 18px 20px;">
+          <p class="lux-text" style="color: #f3d98a; font-size: 12px; letter-spacing: 1.5px; text-transform: uppercase; margin: 0 0 10px 0; font-weight: 600;">What's waiting inside</p>
+          <ul class="lux-text" style="color: #efe7d6; line-height: 1.85; margin: 0; padding-left: 18px; font-size: 14.5px;">
+            <li>New voice notes since you were last here</li>
+            <li>Fresh courses and feed posts</li>
+            <li>The simulator &mdash; updated with more scenarios</li>
+            <li>Everything you had before, still there</li>
+          </ul>
+        </td>
+      </tr>
+    </table>
+    <p class="lux-muted" style="color: #b8a89a; line-height: 1.7; margin: 0; font-size: 12px; text-align: center;">
+      Button not working? Paste this: <a href="${claimUrl}" style="color: #d4af37; word-break: break-all;">${claimUrl}</a>
+    </p>
+  `;
+
+  return await sendEmail({
+    to: recipientEmail,
+    subject: "Another month inside The Consilium — on me",
+    html: luxuryEmailShell(inner, "A Bonus Month", "Another 30 days, on me"),
+  });
+};

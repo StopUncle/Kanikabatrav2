@@ -113,6 +113,9 @@ HOW-AI-ACTUALLY-WORKS.md
 # Private research notes (gurus, trends, strategy) — local only
 research/
 
+# Private voice/style reference material (author manuscripts, etc.) — local only
+reference/
+
 # Playwright MCP session artefacts — screenshots, snapshots, console logs
 .playwright-mcp/
 /*.png
