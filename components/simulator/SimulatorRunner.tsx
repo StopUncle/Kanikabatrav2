@@ -30,6 +30,7 @@ import SceneShake from "./SceneShake";
 import XpFloater from "./XpFloater";
 import StreakIndicator from "./StreakIndicator";
 import SceneProgress from "./SceneProgress";
+import ScenarioIntro from "./ScenarioIntro";
 
 type Props = {
   scenario: Scenario;
@@ -94,6 +95,17 @@ export default function SimulatorRunner({
     initialState ?? initState(scenario),
   );
   const [lineIndex, setLineIndex] = useState(0);
+
+  // Pre-game intro overlay — shown on a fresh run (never on a
+  // mid-run resume, since the player is already deep in). Mid-run
+  // resume is identified by either initialState being set AND not
+  // pointing at the start scene.
+  const hadResume =
+    !!initialState &&
+    (initialState.currentSceneId !== scenario.startSceneId ||
+      initialState.choicesMade.length > 0);
+  const [showIntro, setShowIntro] = useState(!hadResume);
+
   // Portal target — document.body. Escapes the parent layout's stacking
   // context (the consilium member layout wraps content in `relative z-10`,
   // which caps our `z-[60]` against the Header at `z-50` and causes the
@@ -113,6 +125,61 @@ export default function SimulatorRunner({
       document.body.style.overflow = previousOverflow;
     };
   }, []);
+
+  // Browser-level close / navigate-away guard. Matches the in-app
+  // exit button's confirm dialog but at the OS level. Fires on:
+  //   - closing the tab
+  //   - using the browser back button
+  //   - typing a new URL in the address bar
+  // Only active when mid-run (at least one choice made, not yet on
+  // an ending). Browsers ignore custom strings in modern versions;
+  // the event just needs preventDefault + returnValue set to trigger
+  // the generic "Changes you made may not be saved" prompt.
+  useEffect(() => {
+    function onBeforeUnload(e: BeforeUnloadEvent) {
+      const sceneNow = currentScene(scenario, state);
+      const isMid = !sceneNow?.isEnding && state.choicesMade.length > 0;
+      if (!isMid) return;
+      e.preventDefault();
+      e.returnValue = "";
+    }
+    window.addEventListener("beforeunload", onBeforeUnload);
+    return () => window.removeEventListener("beforeunload", onBeforeUnload);
+  }, [scenario, state]);
+
+  // Keyboard a11y: Space / Enter advances the dialog just like a
+  // background tap. Scoped to the document so the player doesn't
+  // have to keep the Continue button focused across scene remounts
+  // (focus is lost when AnimatePresence unmounts a DialogBox per
+  // line, so relying on button focus was a trap).
+  // Skipped during choices — there the player is choosing, not
+  // advancing; arrow keys / Tab + Enter on the choice cards is the
+  // right path and that works natively via the <button>s.
+  // Also skipped while the intro is showing so the Begin button
+  // owns the keypress.
+  useEffect(() => {
+    function onKey(e: KeyboardEvent) {
+      if (e.key !== " " && e.key !== "Enter") return;
+      // Don't intercept when focus is inside a form / link / other
+      // interactive target — those get the key natively.
+      const target = e.target as HTMLElement | null;
+      if (target?.closest("button, a, input, textarea, select")) return;
+      // Don't compete with the choices phase or the intro overlay.
+      const scene = currentScene(scenario, state);
+      const atEnding = !!scene?.isEnding;
+      const choicesOut =
+        !!scene &&
+        !scene.isEnding &&
+        !!scene.choices &&
+        scene.choices.length > 0 &&
+        lineIndex >= (scene.dialog?.length ?? 0);
+      if (atEnding || choicesOut || showIntro) return;
+      e.preventDefault();
+      window.dispatchEvent(new CustomEvent("simulator:tap"));
+    }
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [scenario, state, lineIndex, showIntro]);
   // Dopamine state — XP floater + optimal-streak tracking
   const [xpFloat, setXpFloat] = useState<{
     id: number;
@@ -276,6 +343,9 @@ export default function SimulatorRunner({
     setLineIndex(0);
     setStreak(0);
     setXpFloat(null);
+    // Re-show the intro on replay so the player sees the "Replay"
+    // framing + previous-best callout before diving back in.
+    setShowIntro(true);
   }, [scenario]);
 
   // Exit button — small icon, top-right, above the letterbox. Shown on all
@@ -383,6 +453,10 @@ export default function SimulatorRunner({
   const handleBackgroundTap = useCallback(
     (e: React.MouseEvent) => {
       if (showChoices) return;
+      // Don't advance dialog while the intro overlay is up — the
+      // player is reading the scenario meta and hasn't pressed
+      // Begin yet.
+      if (showIntro) return;
       if (tapLockRef.current) return;
       const target = e.target as HTMLElement;
       // Never intercept clicks on interactive elements.
@@ -396,7 +470,7 @@ export default function SimulatorRunner({
         tapLockRef.current = false;
       }, 400);
     },
-    [showChoices],
+    [showChoices, showIntro],
   );
 
   const game = (
@@ -420,6 +494,12 @@ export default function SimulatorRunner({
         show={!!xpFloat}
         xp={xpFloat?.xp ?? 0}
         tone={xpFloat?.tone}
+      />
+      <ScenarioIntro
+        scenario={scenario}
+        show={showIntro}
+        previousBest={previousBest}
+        onBegin={() => setShowIntro(false)}
       />
 
       <SceneShake sceneId={scene.id} shake={scene.shakeOnEntry}>
@@ -539,7 +619,11 @@ export default function SimulatorRunner({
             two-presence setup let them cross-fade on top of each other,
             which read as a glitch on every scene with choices. */}
         <AnimatePresence mode="wait">
-          {showChoices && scene.choices ? (
+          {/* Suppress the dialog + choices column while the intro
+              overlay is showing. Otherwise the typewriter races to
+              completion behind the intro and the player hits Begin
+              to find an already-revealed first line. */}
+          {showIntro ? null : showChoices && scene.choices ? (
             <ChoiceCards
               key={`choices-${scene.id}`}
               choices={scene.choices}

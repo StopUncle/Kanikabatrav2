@@ -285,7 +285,7 @@ export default function EndingScreen({
         >
           <button
             onClick={onRestart}
-            className="inline-flex items-center justify-center gap-2 px-8 py-3 border border-accent-gold/40 text-accent-gold hover:bg-accent-gold/10 font-medium tracking-wider uppercase text-sm rounded-full transition-all"
+            className="inline-flex items-center justify-center gap-2 px-8 py-3 border border-accent-gold/40 text-accent-gold hover:bg-accent-gold/10 font-medium tracking-wider uppercase text-sm rounded-full transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-gold focus-visible:ring-offset-2 focus-visible:ring-offset-deep-black"
           >
             <RotateCcw size={16} strokeWidth={1.5} />
             Replay
@@ -295,7 +295,7 @@ export default function EndingScreen({
             : nextScenarioHref && (
                 <Link
                   href={nextScenarioHref}
-                  className="inline-flex items-center justify-center gap-2 px-8 py-3 bg-accent-gold text-deep-black font-medium tracking-wider uppercase text-sm rounded-full hover:bg-accent-gold/90 transition-all"
+                  className="inline-flex items-center justify-center gap-2 px-8 py-3 bg-accent-gold text-deep-black font-medium tracking-wider uppercase text-sm rounded-full hover:bg-accent-gold/90 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-gold focus-visible:ring-offset-2 focus-visible:ring-offset-deep-black"
                 >
                   Next Scenario
                   <ArrowRight size={16} strokeWidth={1.5} />
