@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { m } from "framer-motion";
-import { ArrowRight, SkipForward } from "lucide-react";
+import { ArrowRight, SkipForward, FastForward } from "lucide-react";
 import type { DialogLine, Character } from "@/lib/simulator/types";
 
 function useTypewriter(text: string, speedMs = 22) {
@@ -43,6 +43,14 @@ type Props = {
   character?: Character;
   isLastLine: boolean;
   onAdvance: () => void;
+  /**
+   * Optional skip-scene callback. When present, a small "Skip scene"
+   * button appears alongside Continue — jumps past every remaining
+   * dialog line in the current scene straight to the choices.
+   * Intended for replayers who don't want to re-read dialog they've
+   * already seen.
+   */
+  onSkipScene?: () => void;
 };
 
 export default function DialogBox({
@@ -50,6 +58,7 @@ export default function DialogBox({
   character,
   isLastLine,
   onAdvance,
+  onSkipScene,
 }: Props) {
   const { revealed, done, skip } = useTypewriter(line.text);
 
@@ -110,22 +119,34 @@ export default function DialogBox({
           style={{ verticalAlign: "middle" }}
         />
       </p>
-      <button
-        onClick={handleClick}
-        className="mt-8 inline-flex items-center gap-2 text-text-gray/70 hover:text-accent-gold text-xs uppercase tracking-[0.3em] transition-colors"
-      >
-        {done ? (
-          <>
-            {isLastLine ? "Decide" : "Continue"}
-            <ArrowRight size={14} strokeWidth={1.5} />
-          </>
-        ) : (
-          <>
-            Skip
-            <SkipForward size={14} strokeWidth={1.5} />
-          </>
+      <div className="mt-8 flex items-center gap-6 flex-wrap">
+        <button
+          onClick={handleClick}
+          className="inline-flex items-center gap-2 text-text-gray/70 hover:text-accent-gold text-xs uppercase tracking-[0.3em] transition-colors focus-visible:outline-none focus-visible:text-accent-gold"
+        >
+          {done ? (
+            <>
+              {isLastLine ? "Decide" : "Continue"}
+              <ArrowRight size={14} strokeWidth={1.5} />
+            </>
+          ) : (
+            <>
+              Skip
+              <SkipForward size={14} strokeWidth={1.5} />
+            </>
+          )}
+        </button>
+        {onSkipScene && (
+          <button
+            onClick={onSkipScene}
+            className="inline-flex items-center gap-1.5 text-text-gray/40 hover:text-text-gray/80 text-[10px] uppercase tracking-[0.3em] transition-colors focus-visible:outline-none focus-visible:text-text-gray/80"
+            title="Skip past all remaining dialog in this scene"
+          >
+            <FastForward size={11} strokeWidth={1.5} />
+            Skip scene
+          </button>
         )}
-      </button>
+      </div>
     </m.div>
   );
 }

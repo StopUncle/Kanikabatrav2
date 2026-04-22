@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { X } from "lucide-react";
 import { AnimatePresence } from "framer-motion";
 import type {
@@ -225,18 +226,48 @@ export default function SimulatorRunner({
           : choice.isOptimal === false
             ? "bad"
             : "neutral";
-      const xp = tone === "optimal" ? 10 : tone === "bad" ? 0 : 3;
-      setXpFloat({ id: Date.now(), xp, tone });
-      // Auto-clear after the animation duration (1.4s)
-      setTimeout(() => setXpFloat(null), 1500);
+      const baseXp = tone === "optimal" ? 10 : tone === "bad" ? 0 : 3;
 
       // Streak tracking: increment on optimal, reset otherwise.
-      setStreak((s) => (choice.isOptimal === true ? s + 1 : 0));
+      // Streak bonuses — a small reward for reading the scenario as it
+      // was meant to be read. Reinforces the teaching loop: three
+      // optimal choices in a row = +5 XP, five = +10, seven = +15.
+      // Non-optimal choice resets the streak (but doesn't punish XP
+      // further than the base 0/3).
+      const nextStreak = choice.isOptimal === true ? streak + 1 : 0;
+      const streakBonus =
+        nextStreak === 3
+          ? 5
+          : nextStreak === 5
+            ? 10
+            : nextStreak === 7
+              ? 15
+              : 0;
+      const totalXp = baseXp + streakBonus;
 
-      setState((prev) => applyChoice(scenario, prev, choice.id));
+      // Skip the "+0 XP" floater — it reads as a bug (a reward with
+      // no reward). The choice card already flashes red to signal a
+      // bad choice; that's enough visual feedback without a
+      // misleading "+0" pop. Optimal + neutral still show.
+      if (totalXp > 0) {
+        setXpFloat({
+          id: Date.now(),
+          xp: totalXp,
+          tone,
+        });
+        setTimeout(() => setXpFloat(null), 1500);
+      }
+      setStreak(nextStreak);
+
+      setState((prev) => {
+        const next = applyChoice(scenario, prev, choice.id);
+        return streakBonus > 0
+          ? { ...next, xpEarned: next.xpEarned + streakBonus }
+          : next;
+      });
       setLineIndex(0);
     },
-    [scenario],
+    [scenario, streak],
   );
 
   const restart = useCallback(() => {
@@ -252,11 +283,30 @@ export default function SimulatorRunner({
   // `href` returns to the scenario index. On mobile it's the primary way
   // out of the full-screen game (the site Header is now hidden behind the
   // portal). On desktop it's a quieter affordance.
+  //
+  // Mid-run confirmation: if the player has made at least one choice and
+  // isn't on an ending screen, tapping Exit prompts before navigating.
+  // Protects against accidental taps losing replay progress. Bumped to
+  // 44×44 on all breakpoints for WCAG touch-target compliance.
+  const router = useRouter();
+  const isMidRun = !scene?.isEnding && state.choicesMade.length > 0;
+  const handleExit = useCallback(
+    (e: React.MouseEvent<HTMLAnchorElement>) => {
+      if (!isMidRun) return; // let the Link navigate normally
+      e.preventDefault();
+      const ok = window.confirm(
+        "Exit this scenario? Your current run won't be saved.",
+      );
+      if (ok) router.push(exitHref);
+    },
+    [isMidRun, router, exitHref],
+  );
   const exitButton = (
     <Link
       href={exitHref}
+      onClick={handleExit}
       aria-label="Exit scenario"
-      className="fixed top-[max(env(safe-area-inset-top),0.5rem)] right-[max(env(safe-area-inset-right),0.75rem)] z-[70] flex items-center justify-center w-10 h-10 sm:w-9 sm:h-9 rounded-full bg-deep-black/70 backdrop-blur-md border border-white/15 text-text-gray hover:text-accent-gold hover:border-accent-gold/40 active:scale-95 transition-all"
+      className="fixed top-[max(env(safe-area-inset-top),0.5rem)] right-[max(env(safe-area-inset-right),0.75rem)] z-[70] flex items-center justify-center w-11 h-11 rounded-full bg-deep-black/70 backdrop-blur-md border border-white/15 text-text-gray hover:text-accent-gold hover:border-accent-gold/40 active:scale-95 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-gold focus-visible:ring-offset-2 focus-visible:ring-offset-deep-black"
     >
       <X size={18} strokeWidth={1.5} />
     </Link>
@@ -507,6 +557,27 @@ export default function SimulatorRunner({
               }
               isLastLine={!!isLastLine}
               onAdvance={advanceLine}
+              // Skip-scene shortcut — only offered on replays. Jumps
+              // past every remaining dialog line in the current scene
+              // straight to the choices (or triggers an auto-advance
+              // for non-choice scenes). Saves the player from re-
+              // reading dialog they've already seen. Does nothing on
+              // endings, so safe to always offer when replaying.
+              onSkipScene={
+                previousBest
+                  ? () => {
+                      if (
+                        scene.choices &&
+                        scene.choices.length > 0
+                      ) {
+                        setLineIndex(totalLines);
+                      } else {
+                        setState((prev) => autoAdvance(scenario, prev));
+                        setLineIndex(0);
+                      }
+                    }
+                  : undefined
+              }
             />
           ) : null}
         </AnimatePresence>
