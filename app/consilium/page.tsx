@@ -175,12 +175,19 @@ export default async function InnerCircleLanding({
             <p className="text-text-gray/60 italic text-sm mb-8 font-light">
               kon·sil·i·um &nbsp;·&nbsp; Latin: council, strategy, deliberation
             </p>
-            <p className="text-xl text-text-gray max-w-2xl mx-auto mb-6 font-light leading-relaxed">
+            <p className="text-xl text-text-gray max-w-2xl mx-auto mb-4 font-light leading-relaxed">
               A private council for people who are done being the ones who get
               played. Practice catching manipulation in real time. Courses,
               voice notes, a space that&apos;s actually safe.
             </p>
-            <p className="text-warm-gold/80 text-sm tracking-[0.15em] uppercase max-w-2xl mx-auto mb-10 font-light">
+            {/* Secondary positioning line. Previously uppercase tracked
+                gold ("HOME OF THE DARK MIRROR SIMULATOR — DUOLINGO FOR
+                DARK PSYCHOLOGY") which made it a third eyebrow
+                competing with "A PRIVATE COUNCIL" at the top of the
+                hero. Demoted to the same quiet serif italic treatment
+                as the latin sub-line so the hero holds a single strong
+                eyebrow above the H1 and one literary whisper below. */}
+            <p className="text-text-gray/60 italic text-sm max-w-2xl mx-auto mb-10 font-light">
               Home of the Dark Mirror Simulator — Duolingo for dark psychology
             </p>
 
@@ -258,8 +265,12 @@ export default async function InnerCircleLanding({
               bar per chapter so the eye reads "three things" before
               it reads "seven bullets". Calmer, easier to scan. */}
           <div className="mb-20">
+            {/* Section heading. Previously "EVERYTHING INCLUDED" eyebrow
+                + "WHAT'S INSIDE" H2 — two uppercase tracked lines doing
+                the same job. The H2 alone is enough; the three-chapter
+                labels inside (PRACTICE / ACCESS / PEOPLE) provide the
+                structural signposts. */}
             <div className="text-center mb-10">
-              <p className="text-warm-gold text-sm uppercase tracking-[0.3em] mb-3">Everything Included</p>
               <h2 className="text-3xl font-extralight tracking-wider uppercase text-text-light">
                 What&apos;s Inside
               </h2>

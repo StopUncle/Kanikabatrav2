@@ -58,6 +58,13 @@ type Props = {
    * into Consilium members.
    */
   endingCta?: React.ReactNode;
+  /**
+   * When true, suppress the "Understand what happened → blog post"
+   * CTA on losing endings. The public /try demo sets this so cold
+   * visitors don't get pulled off the conversion flow into a blog
+   * tangent. Forwarded to EndingScreen.
+   */
+  hideFailureBlog?: boolean;
 };
 
 export default function SimulatorRunner({
@@ -69,6 +76,7 @@ export default function SimulatorRunner({
   badgesEarned,
   exitHref = "/consilium/simulator",
   endingCta,
+  hideFailureBlog = false,
 }: Props) {
   const [state, setState] = useState<SimulatorState>(
     initialState ?? initState(scenario),
@@ -271,6 +279,7 @@ export default function SimulatorRunner({
             badgesEarned={badgesEarned}
             nextScenarioHref={nextScenarioHref}
             customCta={endingCta}
+            hideFailureBlog={hideFailureBlog}
             onRestart={restart}
           />
         </AnimatePresence>
@@ -293,8 +302,35 @@ export default function SimulatorRunner({
   // The whole thing is rendered through a portal to document.body so it
   // escapes the consilium layout's z-10 stacking context and properly
   // covers the site Header on every breakpoint (mobile in particular).
+  // Tap-anywhere-to-advance.
+  // During dialog playback, a click on the background (not on a
+  // button or link, and not while choices are showing) should
+  // advance the dialog the same way the Continue/Skip button does.
+  // We dispatch a custom "simulator:tap" event and DialogBox listens
+  // — keeps the typewriter skip-vs-advance logic in one place and
+  // avoids lifting the typewriter hook up.
+  const handleBackgroundTap = useCallback(
+    (e: React.MouseEvent) => {
+      if (showChoices) return;
+      const target = e.target as HTMLElement;
+      // Never intercept clicks on interactive elements.
+      if (target.closest("button, a")) return;
+      window.dispatchEvent(new CustomEvent("simulator:tap"));
+    },
+    [showChoices],
+  );
+
   const game = (
-    <div className="fixed inset-0 z-[60] bg-deep-black overflow-hidden">
+    <div
+      // cursor-pointer signals "tap anywhere to advance" during dialog;
+      // dropped during the choices phase so the game doesn't falsely
+      // suggest the background is clickable when the actual action is
+      // to pick a choice.
+      className={`fixed inset-0 z-[60] bg-deep-black overflow-hidden ${
+        showChoices ? "" : "cursor-pointer"
+      }`}
+      onClick={handleBackgroundTap}
+    >
       <MoodBackground mood={scene.mood} />
       <Letterbox />
       <ImmersionOverlay sceneId={scene.id} trigger={scene.immersionTrigger} />

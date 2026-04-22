@@ -48,6 +48,13 @@ type Props = {
    * /try route to convert finishers into Consilium members.
    */
   customCta?: React.ReactNode;
+  /**
+   * When true, suppress the "Understand what happened" failure-blog
+   * CTA on losing endings. The public /try demo sets this because a
+   * cold visitor on a free demo should see one thing at the loss
+   * screen — the conversion CTA — not a tangent to a blog post.
+   */
+  hideFailureBlog?: boolean;
   onRestart: () => void;
 };
 
@@ -79,6 +86,7 @@ export default function EndingScreen({
   badgesEarned = [],
   nextScenarioHref,
   customCta,
+  hideFailureBlog = false,
   onRestart,
 }: Props) {
   const outcome = state.outcome ?? scene.outcomeType ?? "neutral";
@@ -148,8 +156,12 @@ export default function EndingScreen({
             Only shown on defeat endings that declare a `failureBlogSlug`.
             The pedagogy: when a player loses to a manipulation tactic, hand
             them the blog post that teaches the pattern. Links to /blog/<slug>
-            in a new tab so they don't lose the ending screen state. */}
+            in a new tab so they don't lose the ending screen state.
+            Suppressed on the public /try demo (hideFailureBlog=true) —
+            cold visitors on a free demo should see one thing on the
+            loss screen: the conversion CTA. */}
         {scene.failureBlogSlug &&
+          !hideFailureBlog &&
           (outcome === "bad" || outcome === "failed") && (
             <m.div
               initial={{ opacity: 0, y: 12 }}

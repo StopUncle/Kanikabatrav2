@@ -42,6 +42,12 @@ export default function PublicSimulatorClient({ scenario }: Props) {
       scenario={scenario}
       exitHref="/"
       endingCta={conversionCta}
+      /* Hide the failure-blog "Understand what happened" CTA on the
+         public demo. Cold visitors on the free demo should see exactly
+         one thing on the loss screen — the conversion CTA. Pulling
+         them into a blog tangent splits the moment of highest intent
+         and drops conversion. */
+      hideFailureBlog
     />
   );
 }

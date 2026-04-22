@@ -61,6 +61,24 @@ export default function DialogBox({
     }
   }
 
+  // Tap-anywhere-to-advance.
+  // SimulatorRunner dispatches a "simulator:tap" event whenever the
+  // player clicks on the game background (not on a button/link, not
+  // while choices are showing). We handle it identically to the
+  // Continue/Skip button: if the typewriter is mid-way, finish the
+  // line; otherwise advance. The ref pattern keeps the listener
+  // attached to the latest `handleClick` closure without re-binding
+  // the window listener on every render.
+  const handleClickRef = useRef(handleClick);
+  useEffect(() => {
+    handleClickRef.current = handleClick;
+  });
+  useEffect(() => {
+    const onTap = () => handleClickRef.current();
+    window.addEventListener("simulator:tap", onTap);
+    return () => window.removeEventListener("simulator:tap", onTap);
+  }, []);
+
   const speakerLabel = line.speakerId
     ? (character?.name ?? line.speakerId)
     : null;
