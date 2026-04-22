@@ -335,12 +335,32 @@ export default function SimulatorPreview() {
             were removed because they implied interactive state that
             isn't there. The right-side slot now carries a cinematic
             frame counter ("01 · 03") that genuinely reflects what's
-            on screen. */}
-        <div className="absolute top-0 left-0 right-0 h-9 sm:h-10 bg-deep-black z-30 flex items-center justify-center border-b border-warm-gold/10">
-          <p className="text-warm-gold/70 text-[10px] sm:text-[11px] uppercase tracking-[0.45em] font-light">
-            The Dark Mirror &nbsp;·&nbsp; Demo
+            on screen.
+
+            Layout: flex justify-between instead of absolute-
+            positioning the counter. On narrow mobile, the centered
+            brand-label stretched to its full container width (thanks
+            to the wide tracking), which left no room for an absolute
+            counter on the right — the two would collide ("THE DARK
+            MIRROR · DE M0 3"). A row layout with brand-left / counter-
+            right keeps the two separated no matter the width, and
+            tightens letter-spacing one notch on <sm so the brand fits
+            cleanly in a single line at 320px. */}
+        <div className="absolute top-0 left-0 right-0 h-9 sm:h-10 bg-deep-black z-30 flex items-center justify-between gap-2 px-3 sm:px-4 border-b border-warm-gold/10">
+          {/* On mobile the brand drops the " · Demo" suffix because the
+              3-scene counter on the right already signals this is a
+              looping demo. Desktop keeps the full flourish.
+              `flex-1 min-w-0` lets the label take the remaining space
+              and `truncate` kick in as a last-resort ellipsis; the
+              reduced mobile tracking keeps "The Dark Mirror" fitting
+              cleanly at 320px without ever actually eliding. */}
+          <p className="flex-1 min-w-0 text-warm-gold/70 text-[10px] sm:text-[11px] uppercase tracking-[0.1em] sm:tracking-[0.4em] font-light truncate">
+            <span className="sm:hidden">The Dark Mirror</span>
+            <span className="hidden sm:inline">
+              The Dark Mirror &nbsp;·&nbsp; Demo
+            </span>
           </p>
-          <span className="absolute right-3 sm:right-4 text-warm-gold/50 text-[10px] tabular-nums tracking-[0.25em]">
+          <span className="shrink-0 text-warm-gold/50 text-[10px] tabular-nums tracking-[0.25em]">
             {String(sceneIndex + 1).padStart(2, "0")} / {String(SCENES.length).padStart(2, "0")}
           </span>
         </div>

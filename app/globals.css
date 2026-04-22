@@ -58,6 +58,18 @@
     overscroll-behavior-y: none;
   }
 
+  /* Horizontal overflow safety. At 320px the SimulatorTeaser's radial
+     highlight (a translated 540px absolute blob) and a few other
+     flourish-scale elements have historically leaked a handful of
+     pixels past the viewport, introducing a 1–15px horizontal
+     scrollbar on the smallest phones. Clip the document itself so any
+     such leak can never produce a horizontal scroll — components
+     still self-manage their own inner clipping. */
+  html,
+  body {
+    overflow-x: clip;
+  }
+
   body {
     @apply bg-deep-black text-text-light;
     font-family: "Georgia", serif;
