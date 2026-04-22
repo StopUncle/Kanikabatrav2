@@ -382,6 +382,49 @@ export default function SimulatorRunner({
     </Link>
   );
 
+  // Tap-anywhere-to-advance.
+  // During dialog playback, a click on the background (not on a
+  // button or link, and not while choices are showing) should
+  // advance the dialog the same way the Continue/Skip button does.
+  // We dispatch a custom "simulator:tap" event and DialogBox listens
+  // — keeps the typewriter skip-vs-advance logic in one place and
+  // avoids lifting the typewriter hook up.
+  //
+  // Debounce guard: on auto-advance scenes (last line, no choices)
+  // a tap triggers a scene transition. During the ~350ms
+  // AnimatePresence exit of the old DialogBox, its window listener
+  // is still live — a second tap in that window would call the
+  // stale advanceLine on the NEW state and skip a scene.
+  // `tapLockRef` gates rapid taps so only one dispatch fires per
+  // transition window.
+  //
+  // Hoisted above the `if (!scene)` / `if (scene.isEnding)` early
+  // returns below so the hooks are called unconditionally on every
+  // render (React's rules-of-hooks).
+  const tapLockRef = useRef(false);
+  const handleBackgroundTap = useCallback(
+    (e: React.MouseEvent) => {
+      if (showChoices) return;
+      // Don't advance dialog while the intro overlay is up — the
+      // player is reading the scenario meta and hasn't pressed
+      // Begin yet.
+      if (showIntro) return;
+      if (tapLockRef.current) return;
+      const target = e.target as HTMLElement;
+      // Never intercept clicks on interactive elements.
+      if (target.closest("button, a")) return;
+      tapLockRef.current = true;
+      window.dispatchEvent(new CustomEvent("simulator:tap"));
+      // 400ms covers the AnimatePresence exit (350ms) plus one frame
+      // of scheduling slack. Users can still tap through dialog lines
+      // at a comfortable reading pace.
+      window.setTimeout(() => {
+        tapLockRef.current = false;
+      }, 400);
+    },
+    [showChoices, showIntro],
+  );
+
   if (!scene) {
     // Unknown scene id — bad data or tampered state. Fail gracefully.
     const missing = (
@@ -434,44 +477,8 @@ export default function SimulatorRunner({
   // The whole thing is rendered through a portal to document.body so it
   // escapes the consilium layout's z-10 stacking context and properly
   // covers the site Header on every breakpoint (mobile in particular).
-  // Tap-anywhere-to-advance.
-  // During dialog playback, a click on the background (not on a
-  // button or link, and not while choices are showing) should
-  // advance the dialog the same way the Continue/Skip button does.
-  // We dispatch a custom "simulator:tap" event and DialogBox listens
-  // — keeps the typewriter skip-vs-advance logic in one place and
-  // avoids lifting the typewriter hook up.
-  //
-  // Debounce guard: on auto-advance scenes (last line, no choices)
-  // a tap triggers a scene transition. During the ~350ms
-  // AnimatePresence exit of the old DialogBox, its window listener
-  // is still live — a second tap in that window would call the
-  // stale advanceLine on the NEW state and skip a scene.
-  // `tapLockRef` gates rapid taps so only one dispatch fires per
-  // transition window.
-  const tapLockRef = useRef(false);
-  const handleBackgroundTap = useCallback(
-    (e: React.MouseEvent) => {
-      if (showChoices) return;
-      // Don't advance dialog while the intro overlay is up — the
-      // player is reading the scenario meta and hasn't pressed
-      // Begin yet.
-      if (showIntro) return;
-      if (tapLockRef.current) return;
-      const target = e.target as HTMLElement;
-      // Never intercept clicks on interactive elements.
-      if (target.closest("button, a")) return;
-      tapLockRef.current = true;
-      window.dispatchEvent(new CustomEvent("simulator:tap"));
-      // 400ms covers the AnimatePresence exit (350ms) plus one frame
-      // of scheduling slack. Users can still tap through dialog lines
-      // at a comfortable reading pace.
-      window.setTimeout(() => {
-        tapLockRef.current = false;
-      }, 400);
-    },
-    [showChoices, showIntro],
-  );
+  // (Tap-anywhere-to-advance hook + handler are hoisted above the
+  // early returns up top — see `tapLockRef` / `handleBackgroundTap`.)
 
   const game = (
     <div
