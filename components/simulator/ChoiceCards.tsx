@@ -1,30 +1,18 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { m } from "framer-motion";
-import { Sparkles, Flag } from "lucide-react";
+import { Sparkles } from "lucide-react";
 import type { Choice, Scenario } from "@/lib/simulator/types";
 
 type Props = {
   choices: Choice[];
   onPick: (choice: Choice) => void;
-  /**
-   * When passed, choices whose nextSceneId points at an `isEnding`
-   * scene get a small "Ends here" badge. Without this, fast-end
-   * choices read as a UX bug — players tap, the scenario closes
-   * out, and it looks like the game just stopped.
-   */
+  /** Retained for API compatibility; no longer used. */
   scenario?: Scenario;
 };
 
-export default function ChoiceCards({ choices, onPick, scenario }: Props) {
-  // Build a fast lookup of which scene ids are endings so we can
-  // tag choices that route directly to one. Memoised on the scenario
-  // identity — the scenes array is static per scenario.
-  const endingIds = useMemo(() => {
-    if (!scenario) return new Set<string>();
-    return new Set(scenario.scenes.filter((s) => s.isEnding).map((s) => s.id));
-  }, [scenario]);
+export default function ChoiceCards({ choices, onPick }: Props) {
   // Track which card was clicked so we can flash it before the scene
   // transitions. Small delay (~200ms) before the actual pickChoice fires.
   const [selectedId, setSelectedId] = useState<string | null>(null);
@@ -71,27 +59,10 @@ export default function ChoiceCards({ choices, onPick, scenario }: Props) {
             whileHover={!selectedId ? { y: -4, scale: 1.01 } : undefined}
             whileTap={!selectedId ? { scale: 0.99 } : undefined}
             disabled={!!selectedId}
-            // Screen-reader hint: read the choice text + the
-            // "ends here" warning (if applicable) + the tactic as one
-            // accessible label. aria-label on a span doesn't get read;
-            // aria-describedby on the button itself does.
-            aria-describedby={
-              endingIds.has(c.nextSceneId) || c.tactic
-                ? `choice-desc-${c.id}`
-                : undefined
-            }
+            aria-describedby={c.tactic ? `choice-desc-${c.id}` : undefined}
             className={`group relative text-left p-6 rounded-xl border bg-deep-black/70 backdrop-blur-sm transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-gold focus-visible:ring-offset-4 focus-visible:ring-offset-deep-black ${flashBorder}`}
           >
             <div className="absolute inset-0 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none bg-gradient-to-br from-accent-gold/5 to-transparent" />
-            {endingIds.has(c.nextSceneId) && (
-              <span
-                className="absolute top-2.5 right-2.5 inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md bg-deep-black/80 border border-warm-gold/30 text-warm-gold/80 text-[9px] uppercase tracking-[0.2em]"
-                title="This choice closes out the scenario"
-              >
-                <Flag size={8} strokeWidth={2} aria-hidden />
-                Ends here
-              </span>
-            )}
             <p className="relative text-white font-light text-base sm:text-lg leading-snug mb-3">
               {c.text}
             </p>
@@ -106,10 +77,8 @@ export default function ChoiceCards({ choices, onPick, scenario }: Props) {
                 {c.tactic}
               </p>
             )}
-            {(endingIds.has(c.nextSceneId) || c.tactic) && (
+            {c.tactic && (
               <span id={`choice-desc-${c.id}`} className="sr-only">
-                {endingIds.has(c.nextSceneId) &&
-                  "Warning: this choice ends the scenario. "}
                 {c.tactic}
               </span>
             )}
