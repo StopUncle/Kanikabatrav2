@@ -18,7 +18,11 @@ const scenes: Scene[] = [
     dialog: [
       {
         speakerId: null,
-        text: "Common room. Thursday afternoon. You're reading. Dana materializes in the chair across from you. Uninvited but smiling.",
+        text: "Ten days after the group chat. Your reply to Maris's card is still unsent in a drafts folder you have opened, edited, and closed four times this week. You are in the common room trying to read. You are, rather unconvincingly, not trying to read about Maris.",
+      },
+      {
+        speakerId: null,
+        text: "Dana materialises in the chair across from you. She did not walk over so much as appear — you looked up and she was there, a cable-knit sweater and an arrangement of her face that a person would only practise in a mirror.",
       },
       {
         speakerId: "dana",
@@ -27,7 +31,12 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "inner-voice",
-        text: "'Are you okay' is not a greeting. It's a lead question.",
+        text: "'Are you okay' is not a greeting, and Dana is not concerned. It is a lead question — it presupposes that you might not be okay, which then gives her permission to bring up the reason you might not be. She is laying the premise for the ask she has not made yet.",
+        emotion: "knowing",
+      },
+      {
+        speakerId: "inner-voice",
+        text: "People who mean 'are you okay' do not ambush you in a common room during reading hours. Dana certainly knows what common rooms are for. This is not a check-in. This is a rehearsed opening.",
         emotion: "knowing",
       },
     ],
@@ -80,7 +89,17 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "inner-voice",
-        text: "Triangulation attempt. 'Heard it from a friend' is how they get you to ask what was said.",
+        text: "Name the move. This is triangulation — the use of a third party to deliver something the second party would not or could not say directly. Triangulation is the preferred delivery system of the covert narcissist because the source-of-record becomes the messenger rather than the messenger's sender, which gives the sender plausible deniability about every word that was supposedly said.",
+        emotion: "knowing",
+      },
+      {
+        speakerId: "inner-voice",
+        text: "Dana opened with 'don't freak out' to pre-frame any calm response of yours as 'you are already freaking out' — the sentence is a trap either way. She then signalled 'interesting things' without naming any, which is the bait. And the close, 'hear it from a friend,' presupposes you are friends, which you are not.",
+        emotion: "knowing",
+      },
+      {
+        speakerId: "inner-voice",
+        text: "Three manipulations in three sentences. You are being operated on in a common room by a woman in a cable-knit sweater. It is rather impressive, in its way.",
         emotion: "knowing",
       },
     ],

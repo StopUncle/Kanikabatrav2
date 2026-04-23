@@ -17,7 +17,11 @@ const scenes: Scene[] = [
     dialog: [
       {
         speakerId: null,
-        text: "Tuesday, 9:47pm. The group chat pings. Morgan is typing. Alex is typing. Priya is not.",
+        text: "Five days after the rooftop. The card from Maris is still in your coat pocket, still unreturned. You are on your couch, halfway through dinner, when the chat pings.",
+      },
+      {
+        speakerId: null,
+        text: "Morgan always pings when you are tired enough to answer. She has learned your schedule better than you have — she does not do it on purpose, but she does do it, and her instinct for when you will say the thing you meant to keep to yourself is almost supernatural.",
       },
       {
         speakerId: null,
@@ -29,7 +33,12 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "inner-voice",
-        text: "Morgan wants a story. Any story. She doesn't care if it's true.",
+        text: "Note the rhythm of those two messages. She did not ask 'do you know anything,' because that is answerable with 'no.' She asked 'who is' — a presupposition question, which only accepts a named answer. The second message removes the option of pleading ignorance. She has engineered a conversation in which the only socially frictionless reply is a name.",
+        emotion: "knowing",
+      },
+      {
+        speakerId: "inner-voice",
+        text: "This is information warfare at its most pedestrian. Morgan does not care if you know. She cares what you will say in the next ninety seconds because you do not want to look boring.",
         emotion: "knowing",
       },
     ],
@@ -255,11 +264,16 @@ const scenes: Scene[] = [
       },
       {
         speakerId: null,
-        text: "She moves on to asking Alex.",
+        text: "She moves on to asking Alex in the chat. Alex, who will absolutely feed her something in the next four minutes.",
       },
       {
         speakerId: "inner-voice",
-        text: "You were boring. That's the win.",
+        text: "The word 'boring' in that message is not a judgement. It is a concession. Morgan has just admitted she will not get the story from you. You are a dead well. She will remember this, which is actually useful — collectors prefer to ask productive sources, and you have just removed yourself from that list.",
+        emotion: "knowing",
+      },
+      {
+        speakerId: "inner-voice",
+        text: "Being boring to the wrong person is, rather often, the entire skill.",
         emotion: "knowing",
       },
     ],
@@ -363,22 +377,27 @@ const scenes: Scene[] = [
     dialog: [
       {
         speakerId: "priya",
-        text: '"Three rules for chats."',
+        text: '"Three rules for chats. Real talk."',
         emotion: "serious",
       },
       {
         speakerId: "priya",
-        text: '"One: anything you write is a public document. Don\'t write anything you wouldn\'t say on stage."',
+        text: '"One. Anything you type in any chat, including the one you are currently in with me, is a public document. Do not write anything you would not read aloud in a lecture hall with your mother in the back row."',
         emotion: "serious",
       },
       {
         speakerId: "priya",
-        text: '"Two: if someone wants a story, refuse to be the author. Let them go find one elsewhere."',
+        text: "\"Two. If someone wants a story out of you, refuse to be the author. Make them find one elsewhere. You do not owe anyone a sentence with a verb in it.\"",
         emotion: "serious",
       },
       {
         speakerId: "priya",
-        text: '"Three: \'just between us\' doesn\'t exist. The second it\'s typed, it\'s evidence."',
+        text: '"Three. \'Just between us\' does not exist. The second it is typed, it is evidence. The phrase itself is the tell — people who mean privacy do not announce it; they simply do it."',
+        emotion: "knowing",
+      },
+      {
+        speakerId: "inner-voice",
+        text: "Memorise those three. They apply to every group chat, every Slack channel, every text thread, every corporate email you will ever touch. The rules do not change when the stakes go up — which is good news, because the stakes absolutely will.",
         emotion: "knowing",
       },
     ],
