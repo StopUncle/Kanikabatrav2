@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { m, AnimatePresence } from "framer-motion";
 import type { Scene } from "@/lib/simulator/types";
+import { useReducedMotion } from "@/lib/hooks/use-reduced-motion";
 
 /**
  * Renders cinematic full-screen effects when a scene declares
@@ -161,8 +162,17 @@ export default function ImmersionOverlay({
   trigger?: Scene["immersionTrigger"];
 }) {
   const [active, setActive] = useState<TriggerKey | null>(null);
+  const reduceMotion = useReducedMotion();
 
   useEffect(() => {
+    // Vestibular/accessibility: the full-screen flashes (especially
+    // `shock` white-flash and `victory` radial burst) are the worst
+    // offenders for motion sensitivity. Suppress all overlays when
+    // the user has prefers-reduced-motion set.
+    if (reduceMotion) {
+      setActive(null);
+      return;
+    }
     if (!trigger) {
       setActive(null);
       return;
@@ -172,7 +182,7 @@ export default function ImmersionOverlay({
     if (!effect) return;
     const timer = setTimeout(() => setActive(null), effect.durationMs);
     return () => clearTimeout(timer);
-  }, [sceneId, trigger]);
+  }, [sceneId, trigger, reduceMotion]);
 
   return (
     <AnimatePresence>{active && EFFECTS[active]?.render()}</AnimatePresence>

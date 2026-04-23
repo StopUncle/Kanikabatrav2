@@ -10,7 +10,11 @@ import { Flame } from "lucide-react";
  * Positioned top-right under the scenario label.
  */
 export default function StreakIndicator({ streak }: { streak: number }) {
-  const show = streak >= 2;
+  // Only show when a bonus is active (first streak bonus is at 3 optimal
+  // in a row — see SimulatorRunner's pickChoice). Showing at streak=2
+  // was a false-positive: the badge appeared while no XP bonus was yet
+  // being awarded.
+  const show = streak >= 3;
 
   return (
     <AnimatePresence>

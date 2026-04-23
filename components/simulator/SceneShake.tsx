@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { m } from "framer-motion";
 import type { Scene } from "@/lib/simulator/types";
+import { useReducedMotion } from "@/lib/hooks/use-reduced-motion";
 
 /**
  * Screen-shake wrapper. Applies a brief shake animation whenever the
@@ -49,6 +50,7 @@ export default function SceneShake({
   children: React.ReactNode;
 }) {
   const [version, setVersion] = useState(0);
+  const reduceMotion = useReducedMotion();
 
   useEffect(() => {
     if (!shake) return;
@@ -56,7 +58,9 @@ export default function SceneShake({
     // Auto-reset: Framer handles the tween; no cleanup needed.
   }, [sceneId, shake]);
 
-  if (!shake) {
+  // Accessibility: skip the shake entirely for players with
+  // prefers-reduced-motion. The scene still plays, minus the kick.
+  if (!shake || reduceMotion) {
     return <div className="absolute inset-0">{children}</div>;
   }
 

@@ -5,12 +5,32 @@ import { m } from "framer-motion";
 import { ArrowRight, SkipForward, FastForward } from "lucide-react";
 import type { DialogLine, Character } from "@/lib/simulator/types";
 
-function useTypewriter(text: string, speedMs = 22) {
+/**
+ * Typewriter with length-aware pacing. Short pithy lines reveal close to
+ * reading speed; long interior-voice beats slow slightly so the player
+ * isn't sitting waiting on the cursor. Respects prefers-reduced-motion
+ * by revealing the whole line instantly.
+ */
+function useTypewriter(text: string) {
   const [revealed, setRevealed] = useState("");
   const [done, setDone] = useState(false);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
+  // Per-line speed: faster on long lines so the reveal rate stays close
+  // to comfortable reading speed regardless of length.
+  const speedMs = text.length <= 60 ? 28 : text.length <= 140 ? 22 : 16;
+
   useEffect(() => {
+    // prefers-reduced-motion: skip the reveal entirely, mount as "done".
+    if (
+      typeof window !== "undefined" &&
+      window.matchMedia?.("(prefers-reduced-motion: reduce)").matches
+    ) {
+      setRevealed(text);
+      setDone(true);
+      return;
+    }
+
     setRevealed("");
     setDone(false);
     let i = 0;
@@ -30,6 +50,7 @@ function useTypewriter(text: string, speedMs = 22) {
   }, [text, speedMs]);
 
   function skip() {
+    if (done) return;
     if (timerRef.current) clearTimeout(timerRef.current);
     setRevealed(text);
     setDone(true);
@@ -113,8 +134,12 @@ export default function DialogBox({
       >
         {revealed}
         <m.span
-          animate={{ opacity: [0, 1, 0] }}
-          transition={{ duration: 1, repeat: Infinity }}
+          animate={done ? { opacity: [0, 1, 0] } : { opacity: 1 }}
+          transition={
+            done
+              ? { duration: 1, repeat: Infinity }
+              : { duration: 0 }
+          }
           className="inline-block w-[2px] h-5 bg-accent-gold ml-1 translate-y-0.5"
           style={{ verticalAlign: "middle" }}
         />
