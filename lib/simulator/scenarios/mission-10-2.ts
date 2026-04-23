@@ -143,6 +143,20 @@ const scenes: Scene[] = [
         nextSceneId: "kaya-marks-it",
         isOptimal: false,
       },
+      {
+        id: "devon-plus-timing",
+        text: '"Devon — in eighteen months. If the board can wait, I\'d wait."',
+        tactic: "Right person, wrong clock. Nominating with a timeline is a different answer than nominating for now.",
+        nextSceneId: "the-nomination",
+        isOptimal: true,
+      },
+      {
+        id: "name-two-options",
+        text: '"Devon is my heart answer. My head answer is different. Which do you want?"',
+        tactic: "Show Kaya you know the difference. She'll make you say the head answer out loud; the exercise is the point.",
+        nextSceneId: "the-nomination",
+        isOptimal: true,
+      },
     ],
   },
   {
@@ -323,6 +337,19 @@ const scenes: Scene[] = [
         tactic:
           "You said the option before thinking it through. Weakens the rest of your input.",
         nextSceneId: "kaya-notes-fumble",
+      },
+      {
+        id: "name-two-with-one-flaw",
+        text: 'Name two. "Both serious. Here\'s the flaw in each."',
+        tactic: "Show the breadth AND the discernment. Kaya learns more from your framing of weaknesses than from the names themselves.",
+        nextSceneId: "kaya-engages-name",
+        isOptimal: true,
+      },
+      {
+        id: "ask-her-shortlist",
+        text: '"Before I say — who\'s on YOUR shortlist? I\'d like to calibrate."',
+        tactic: "Request her read first. Risky — reads as deferential — but Kaya respects peers who want to compare models.",
+        nextSceneId: "kaya-engages-name",
       },
     ],
   },

@@ -338,6 +338,20 @@ const scenes: Scene[] = [
         tactic: "Downplaying — but Priya's gift here was real. Take it.",
         nextSceneId: "ending-info-held",
       },
+      {
+        id: "return-the-read",
+        text: "\"You saw that before I did. Thanks.\"",
+        tactic: "Acknowledge the read without fishing for more. She'll give more because you noticed.",
+        nextSceneId: "priya-rules",
+        isOptimal: true,
+      },
+      {
+        id: "name-the-pattern",
+        text: "\"Morgan always does this, doesn't she. For who this time?\"",
+        tactic: "Pattern-matching out loud. Shows Priya you're thinking about the network, not just the incident.",
+        nextSceneId: "priya-rules",
+        isOptimal: true,
+      },
     ],
   },
 

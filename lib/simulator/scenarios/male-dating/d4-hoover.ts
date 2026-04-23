@@ -372,6 +372,20 @@ const scenes: Scene[] = [
         tactic: "Mutual friends are her remaining surface area. Soft ghost is ghost with a door propped open.",
         nextSceneId: "ending-lingering",
       },
+      {
+        id: "brief-the-inner-circle",
+        text: "Close the perimeter — and text three closest friends one line: \"she's hoovering, don't pass messages.\"",
+        tactic: "Pre-load your allies. Mutuals who've been briefed don't unwittingly become her next channel.",
+        nextSceneId: "smear-pivot",
+        isOptimal: true,
+      },
+      {
+        id: "burn-the-letter",
+        text: "Close the perimeter. In the morning, burn the 3am letter and the unsent one.",
+        tactic: "Ritual closure. The letter served its purpose at 3am. Keeping it is keeping her.",
+        nextSceneId: "smear-pivot",
+        isOptimal: true,
+      },
     ],
   },
 

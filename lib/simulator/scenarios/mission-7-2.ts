@@ -262,6 +262,20 @@ const scenes: Scene[] = [
         tactic: "Pre-emptively defining the conversation. Reasonable but tense.",
         nextSceneId: "nova-asks-one-thing",
       },
+      {
+        id: "offer-space",
+        text: "\"Of course. Take a minute if you need it first.\"",
+        tactic: "Give them room. The next sentence matters and should be said when they're ready for it.",
+        nextSceneId: "nova-asks-one-thing",
+        isOptimal: true,
+      },
+      {
+        id: "sit-with-it",
+        text: "Nod. Don't speak. Let them ask.",
+        tactic: "Silence respects the weight of the moment. They'll fill it with exactly what they meant.",
+        nextSceneId: "nova-asks-one-thing",
+        isOptimal: true,
+      },
     ],
   },
 

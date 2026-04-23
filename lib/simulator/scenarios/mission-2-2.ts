@@ -368,6 +368,20 @@ const scenes: Scene[] = [
         tactic: "You held for thirty seconds and gave in. She already won.",
         nextSceneId: "dana-gives-fake-quote",
       },
+      {
+        id: "deadpan",
+        text: "\"Nope.\" Go back to your book.",
+        tactic: "One syllable. Zero handle. She has nothing to pull on.",
+        nextSceneId: "ending-channel-closed",
+        isOptimal: true,
+      },
+      {
+        id: "smile-and-leave",
+        text: "Smile politely. Stand up. Walk out.",
+        tactic: "Leaving mid-offer tells her the dangle is boring. Nothing hurts a covert op like being uninteresting.",
+        nextSceneId: "ending-exit-clean",
+        isOptimal: true,
+      },
     ],
   },
 

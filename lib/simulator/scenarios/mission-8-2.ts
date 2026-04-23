@@ -342,6 +342,20 @@ const scenes: Scene[] = [
         nextSceneId: "ending-smear-lands",
         isOptimal: false,
       },
+      {
+        id: "one-line-answer",
+        text: "\"Say: I chose distance. That's all you owe anyone.\"",
+        tactic: "Hand Ren one sentence that works for every follow-up. A clean line travels faster than a long truth.",
+        nextSceneId: "ending-belated-narrative",
+        isOptimal: true,
+      },
+      {
+        id: "meet-ren-in-person",
+        text: "\"Can we get coffee this week? Not over text.\"",
+        tactic: "The story lives in the relationship with Ren. Invest in it in person; everything else follows.",
+        nextSceneId: "ending-belated-narrative",
+        isOptimal: true,
+      },
     ],
   },
 

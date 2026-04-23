@@ -298,6 +298,20 @@ const scenes: Scene[] = [
         tactic: "Valid choice. Trap requires perfect discipline.",
         nextSceneId: "counter-campaign-begins",
       },
+      {
+        id: "both-in-parallel",
+        text: "Run both. Trap as the long play, counter-narrative as the steady state.",
+        tactic: "The trap is an option; the counter-narrative is the daily discipline. They don't conflict if you keep them clean.",
+        nextSceneId: "ending-trap-executed",
+        isOptimal: true,
+      },
+      {
+        id: "request-kaya-cover",
+        text: "\"I'll do it. Will you give me air cover when she tries to escalate to you?\"",
+        tactic: "Secure the senior umbrella before you swing. The trap without the cover is a solo operation.",
+        nextSceneId: "ending-trap-executed",
+        isOptimal: true,
+      },
     ],
   },
 

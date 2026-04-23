@@ -336,6 +336,19 @@ const scenes: Scene[] = [
           "Clever but now you look combative. Don't keep swinging after the bell.",
         nextSceneId: "overstep-fallout",
       },
+      {
+        id: "address-audience-gently",
+        text: '"Sorry, everyone — I\'m going to step out. Enjoy your night." Leave.',
+        tactic: "Address the room, not her. Exits the scene while honouring the witnesses. Reads as composure.",
+        nextSceneId: "ending-audience-pivoted",
+        isOptimal: true,
+      },
+      {
+        id: "quiet-offer",
+        text: '"Avery — I\'m down to talk, but not here. DM me tomorrow." Leave.',
+        tactic: "Redirect the real conversation offstage without admitting anything. Takes the air out of the spectacle.",
+        nextSceneId: "ending-audience-pivoted",
+      },
     ],
   },
   {

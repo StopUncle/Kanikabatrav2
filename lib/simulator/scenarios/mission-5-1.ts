@@ -135,6 +135,20 @@ const scenes: Scene[] = [
         nextSceneId: "dinner-neutral",
         isOptimal: true,
       },
+      {
+        id: "push-day",
+        text: '"Thursday\'s tight. Next week works better."',
+        tactic: "Move her clock too. Two concessions requested is a position of confidence.",
+        nextSceneId: "dinner-neutral",
+        isOptimal: true,
+      },
+      {
+        id: "ask-agenda",
+        text: '"What are we talking about? I\'ll want to come ready."',
+        tactic: "Force her to preview the ask. She'll either reveal more than she intended or retreat to vague.",
+        nextSceneId: "dinner-neutral",
+        isOptimal: true,
+      },
     ],
   },
 
