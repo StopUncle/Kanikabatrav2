@@ -19,16 +19,25 @@ const scenes: Scene[] = [
     dialog: [
       {
         speakerId: null,
-        text: "A new face at the same rooftop bar. Twenty-two, maybe twenty-three. She's been watching you for twenty minutes before she approaches.",
+        text: "The same rooftop bar, a year later. You are at the booth you always take now — the one with the view of the door, though you do not consciously sit where you can see the door. It has become habitual. A new face has been watching you for twenty minutes. Early twenties, a good dress that she bought for tonight, a cocktail she has barely drunk. She is about to cross the room and she knows it.",
       },
       {
         speakerId: "lennox",
-        text: '"Hi. I know we haven\'t met. I\'ve heard a lot. I don\'t usually do this."',
-        emotion: "seductive",
+        text: '"Hi. I know we have not met. I have heard, rather a lot, about you. I do not usually do this."',
       },
       {
         speakerId: "inner-voice",
-        text: "You know this opener. You heard it six months ago at a different bar. You're in the Maris seat now.",
+        text: "Read the architecture of that opening. One — 'we have not met' establishes distance she will then pretend to bridge. Two — 'I have heard a lot' is the prize-framing move, the same one Maris ran on you at this bar twelve months ago, identical to the syllable. Three — 'I do not usually do this' is the fake-reluctance close, a planted receipt she can point to later: I told you I do not normally do this.",
+        emotion: "knowing",
+      },
+      {
+        speakerId: "inner-voice",
+        text: "This is the Maris opening bid. It is so similar to the opening you received a year ago that it is almost a compliment to her — Lennox has certainly studied someone, and the shape of what she studied is recognisable. You are now sitting in the Maris seat. The person approaching you is doing to you what Maris did to you, and she has no idea you know the playbook by name.",
+        emotion: "knowing",
+      },
+      {
+        speakerId: "inner-voice",
+        text: "How you handle the next four minutes is, rather unambiguously, the graduation exam for this entire chapter of your life.",
         emotion: "knowing",
       },
     ],
@@ -72,17 +81,20 @@ const scenes: Scene[] = [
     dialog: [
       {
         speakerId: "lennox",
-        text: '"I\'ve been trying to figure out what makes you different. You have something none of the obvious people have."',
-        emotion: "seductive",
+        text: '"I have been trying to figure out what makes you different. You have something none of the obvious people have."',
       },
       {
         speakerId: "lennox",
-        text: '"I\'m hoping we could... share notes."',
-        emotion: "curious",
+        text: '"I am hoping we could, as one might put it, share notes."',
       },
       {
         speakerId: "inner-voice",
-        text: "'Share notes' means 'mine yours.' She's doing the Maris ask, cleaner. She's studied.",
+        text: "'Share notes' translates to 'mine yours.' It is the same ask Maris ran on you at this same bar, cleaner. Lennox has studied. The softeners — 'rather,' 'as one might put it' — are a tell that she has read old-money interviews and picked up the register. The register is correct; the delivery is slightly too deliberate, the way a person with a new accent over-pronounces the vowels.",
+        emotion: "knowing",
+      },
+      {
+        speakerId: "inner-voice",
+        text: "You now have a decision that the Maris in front of you a year ago did not afford you: whether to be merciful or whether to teach. Both are legitimate. Neither is wrong. But both are conscious, and the only bad version of this scene is the version where you answer Lennox without having made the choice.",
         emotion: "knowing",
       },
     ],

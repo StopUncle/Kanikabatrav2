@@ -18,15 +18,25 @@ const scenes: Scene[] = [
     dialog: [
       {
         speakerId: null,
-        text: "Six months since the gala. A message. You don't recognize the number at first.",
+        text: "Six months since the gala. You are at your kitchen counter, which is yours now — not the cramped dorm, the apartment you moved into in March when the project began to actually pay. Your phone pings. The contact is not saved. It takes a beat to place the number.",
       },
       {
         speakerId: null,
-        text: "MARIS: \"I've been watching what you've built. We should talk.\"",
+        text: 'MARIS: "I have been watching what you have built. We should talk."',
       },
       {
         speakerId: "inner-voice",
-        text: "Notice what just happened. Six months ago she chose whether you existed. Now she's opening contact herself.",
+        text: "Read that sentence twice before you respond to anything. Six months ago, Maris Caldwell was the person deciding whether you existed in a room she was in. This evening, she is the one opening the contact. The gravitational direction of this relationship has inverted in the last half-year, and she is acknowledging that inversion by texting you first.",
+        emotion: "knowing",
+      },
+      {
+        speakerId: "inner-voice",
+        text: "Note the construction of her message. Not 'congratulations,' not 'it has been a while' — 'I have been watching.' She is framing herself as an observer whose attention is a prize. The prize framing only works if you play along. It is the oldest power gambit in the playbook — I see you, which is meant to read as I choose you, which is meant to obligate you to respond like someone who has just been chosen.",
+        emotion: "knowing",
+      },
+      {
+        speakerId: "inner-voice",
+        text: "You are, as of this text, officially in Level 5. Different game. Same opponents. Different altitude.",
         emotion: "knowing",
       },
     ],
@@ -68,15 +78,20 @@ const scenes: Scene[] = [
     dialog: [
       {
         speakerId: null,
-        text: "28 hours later.",
+        text: "Twenty-eight hours later. You are in bed. The phone lights up on the nightstand.",
       },
       {
         speakerId: null,
-        text: "MARIS: \"Still there? Proposing dinner. My treat. Pick the place.\"",
+        text: 'MARIS: "Still there? Proposing dinner. My treat. Pick the place."',
       },
       {
         speakerId: "inner-voice",
-        text: "She followed up. She's offering to pay. You get to choose the venue. All three are concessions.",
+        text: "Three concessions in one text. One — she followed up, which she would not have needed to do six months ago because six months ago you would have replied immediately. Two — she is offering to pay, which is her version of a white flag on the status register. Three — she is letting you pick the venue, which is the largest concession of the three because venue control is the first thing Maris negotiates in any meeting in her entire adult life.",
+        emotion: "knowing",
+      },
+      {
+        speakerId: "inner-voice",
+        text: "A person does not offer three concessions in a single text unless they want something meaningfully larger than the three concessions cost them. What she wants is not yet visible. Note the shape of the hole, not the words.",
         emotion: "knowing",
       },
     ],
