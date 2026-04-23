@@ -18,16 +18,21 @@ const scenes: Scene[] = [
     dialog: [
       {
         speakerId: null,
-        text: "10:32pm. A DM from a number you haven't heard from in six weeks.",
+        text: "10:32 pm. A DM from a number you have not heard from in six weeks.",
       },
       {
         speakerId: null,
-        text: "MARIS: \"hey. i know this is weird. are you up?\"",
+        text: 'MARIS: "Hey. I know this is unusual. Are you up?"',
       },
       {
         speakerId: "inner-voice",
-        text: "She has never texted you at 10pm. She has never admitted anything was 'weird'. Both of those are today's data.",
+        text: "Three things to notice before you reply to anything. One — she has never texted you at 10 pm. Two — she has never described anything she does as 'unusual,' because admitting a behaviour is unusual is admitting a self-awareness she normally performs her way around. Three — the sentence is punctuated correctly, which most people fail at this hour, which means she wrote it carefully, which means she rewrote it at least twice.",
         emotion: "concerned",
+      },
+      {
+        speakerId: "inner-voice",
+        text: "Everything about the message is calibrated to make you feel she is dropping her guard. Everything about the message proves she is not.",
+        emotion: "knowing",
       },
     ],
     choices: [
@@ -67,15 +72,25 @@ const scenes: Scene[] = [
     dialog: [
       {
         speakerId: null,
-        text: "MARIS: \"i'm sorry, this is so out of nowhere. i've been having a really hard week.\"",
+        text: 'MARIS: "I am sorry. This is rather out of nowhere. I have been having what one could honestly call a genuinely difficult week."',
       },
       {
         speakerId: null,
-        text: "MARIS: \"you're the only person i could think of who wouldn't just feed me platitudes\"",
+        text: 'MARIS: "You are, if I am honest, the only person I could think of who would not simply feed me platitudes."',
       },
       {
         speakerId: "inner-voice",
-        text: "Flattery embedded in vulnerability: 'you're different from everyone else.' She used this on you at the gala.",
+        text: "Read the form, not the content. Maris never writes in full sentences with capital letters to anyone she is not running something on. Most people, under genuine distress, drop punctuation and capitalisation — grief is fundamentally disorganised. Maris is producing the most composed grief text you have ever received. That is not a person falling apart. That is a person performing the fall.",
+        emotion: "concerned",
+      },
+      {
+        speakerId: "inner-voice",
+        text: "Note the embedded flattery. 'The only person who would not feed me platitudes' is the love-bomb at the gala, reheated in vulnerability packaging. Same move, different register. Same woman, same operation.",
+        emotion: "knowing",
+      },
+      {
+        speakerId: "inner-voice",
+        text: "Rule: a person who writes a grief text with correct punctuation at 10 pm on a Sunday is certainly grieving something. What they are grieving is the failure of their previous move. You are the previous move.",
         emotion: "knowing",
       },
     ],
@@ -117,16 +132,21 @@ const scenes: Scene[] = [
     dialog: [
       {
         speakerId: null,
-        text: "Paragraphs. She's been 'so alone'. People 'don't understand her'. Her 'father issues' are flaring. She had 'dark thoughts tonight'.",
+        text: "Paragraphs. She has been 'so alone'. People 'do not understand her'. Her 'father issues' are 'flaring,' a word no one uses about their own father issues while actually having them. She has had 'dark thoughts tonight.'",
       },
       {
         speakerId: null,
-        text: "MARIS: \"i haven't told anyone this but you always felt safe somehow\"",
+        text: 'MARIS: "I have not told anyone this, but you always felt safe to me somehow."',
       },
       {
         speakerId: "inner-voice",
-        text: "She's installing herself. The more you absorb, the more you're obligated to continue.",
+        text: "She is installing herself. Every paragraph is a brick in a wall between you and the version of you who wanted to go to bed twenty minutes ago. The more you absorb, the more you are socially obligated to keep absorbing — because to stop now would be to 'abandon' her after she has 'opened up,' which was precisely the point of the opening up.",
         emotion: "concerned",
+      },
+      {
+        speakerId: "inner-voice",
+        text: "The sentence 'you always felt safe to me' is the hinge. It is a planted memory — you and Maris have never been close enough for that kind of read. The planted memory obligates the version of you she is narrating. Refuse the memory; you refuse the character.",
+        emotion: "knowing",
       },
     ],
     choices: [
@@ -165,7 +185,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "maris",
-        text: '"sorry i know i\'m dumping. can we hop on a call? text is hard for this"',
+        text: '"I am sorry, I know I am dumping. Can we possibly hop on a call? Text is rather hard for this sort of thing."',
         emotion: "pleading",
       },
       {

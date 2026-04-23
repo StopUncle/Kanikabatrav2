@@ -18,7 +18,7 @@ const scenes: Scene[] = [
     dialog: [
       {
         speakerId: null,
-        text: "Friday night. 11:14pm. Jordan is typing.",
+        text: "Friday night. 11:14 pm. You are on your couch. Your phone lights up — Jordan, who is a perfectly fine acquaintance you have known for about seven months, and who has escalated in the last three weeks from weekly texts to daily ones.",
       },
       {
         speakerId: null,
@@ -30,8 +30,13 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "inner-voice",
-        text: "The word 'urgent' from Jordan means 'I decided this was urgent three minutes ago.'",
+        text: "The word 'urgent' from someone who is not in your actual emergency contact list means, almost without exception, 'I decided this was urgent approximately four minutes ago.' Real urgency does not text at 11:14 on a Friday to a medium-close acquaintance. Real urgency calls someone who can solve the problem directly.",
         emotion: "concerned",
+      },
+      {
+        speakerId: "inner-voice",
+        text: "Note also the construction 'hey omg i know this is so random' — a pre-emptive apology for an ask she has not made yet. People who are apologising before they ask know the ask is going to feel inappropriate. The apology is there to launder the inappropriateness.",
+        emotion: "knowing",
       },
     ],
     choices: [
@@ -135,8 +140,13 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "inner-voice",
-        text: "You said yes to a question she hadn't asked yet. Now she's filling in the scope.",
+        text: "This is scope widening in its most basic form. You said yes to 'help me out with something' — an unspecified ask — and she is now filling in the specification in a way you never would have agreed to if she had asked plainly. The pattern has a name: the camel-nose ask. Get the nose under the tent first; the camel follows.",
         emotion: "concerned",
+      },
+      {
+        speakerId: "inner-voice",
+        text: "This same move, exactly, will be run on you in every decade of your adult life by landlords, employers, people you are dating, and your own family. Learn to recognise it here, on a cheap ride, before someone runs it on you for something more expensive.",
+        emotion: "knowing",
       },
     ],
     choices: [
