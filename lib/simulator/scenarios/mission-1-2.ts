@@ -22,16 +22,21 @@ const scenes: Scene[] = [
     dialog: [
       {
         speakerId: null,
-        text: "A rooftop bar. Low light, lower music. Priya saw Maris walk in twenty minutes ago. You're late on purpose.",
+        text: "Thursday. Five nights after the gala. The cream-stock card Maris slid between your glasses is in the inside pocket of your coat. You read it again on the walk over — a Manhattan number, no title, handwritten in a script that certainly cost someone a finishing-school term. You have not replied to it.",
       },
       {
         speakerId: "priya",
-        text: '"She clocked the door three times since I got here. She knows you\'re coming."',
+        text: '"No pressure on drinks. I already ordered. She walked in twenty minutes ago and clocked the door three times while I finished the first one."',
         emotion: "knowing",
       },
       {
         speakerId: "inner-voice",
-        text: "She's not watching the door because she likes you. She's waiting to see how you enter.",
+        text: "Note the discipline of the timing. Maris did not message you to confirm. She simply assumed you would show up on the night she named, at roughly the hour she implied, and she has spent the last twenty minutes watching the door to find out whether she was right.",
+        emotion: "knowing",
+      },
+      {
+        speakerId: "inner-voice",
+        text: "Women who watch doors that carefully are not waiting for friends. They are waiting to see how the audition enters.",
         emotion: "knowing",
       },
     ],
@@ -75,17 +80,26 @@ const scenes: Scene[] = [
     dialog: [
       {
         speakerId: null,
-        text: "Four minutes later she's at the edge of your booth. Two drinks. One is for you.",
+        text: "Four minutes later she is at the edge of your booth. Two drinks. One of them is placed on your side of the table before she has sat down — not slid across, placed. She is still standing when she speaks.",
       },
       {
         speakerId: "maris",
-        text: '"I was hoping you\'d show up. I don\'t usually buy drinks before introductions."',
-        emotion: "seductive",
+        text: '"I am bad at remembering names. I am not bad at remembering faces, and yours did something at the Collins table last Thursday I have thought about on two separate drives home since. You are here. I am rather pleased about that."',
       },
       {
         speakerId: "inner-voice",
-        text: "First rule: love-bombing begins before she's even asked your name.",
-        emotion: "concerned",
+        text: "Note the construction of that sentence. She pretended to struggle with something she does not struggle with — nobody with her family remembers people by face and forgets names, they remember both, instantly, the first time. The pretend weakness is a compliment disguised as self-deprecation. It is the oldest trick in the class.",
+        emotion: "knowing",
+      },
+      {
+        speakerId: "inner-voice",
+        text: "The drink placement matters too. She put yours in front of you before asking if you wanted it. Placement is a frame — she is telling you, without any question, that hospitality in this booth runs through her now. The hospitality was already yours. She just annexed it.",
+        emotion: "knowing",
+      },
+      {
+        speakerId: "inner-voice",
+        text: "This is love-bombing in its first register. Specific flattery, planted memory, annexed hospitality, all before the second word out of your mouth. Name the move. The move is called the opening bid.",
+        emotion: "knowing",
       },
     ],
     choices: [
@@ -233,18 +247,21 @@ const scenes: Scene[] = [
     dialog: [
       {
         speakerId: "maris",
-        text: '"You know what I noticed about you? You have the same energy as someone I used to know. Someone I really respected."',
-        emotion: "seductive",
+        text: "\"You know what I noticed about you? You have the same energy as someone I used to know. Someone I rather respected, actually. I do not say that about many people.\"",
       },
       {
         speakerId: "inner-voice",
-        text: "Fabricated nostalgia. She met you six minutes ago.",
+        text: "Fabricated nostalgia — she met you six minutes ago, so whoever she is comparing you to is either invented or generic enough to fit anyone. The entire sentence is a piece of theatre. What it is actually doing is pricing you above the rest of the room at the cost of a comparison that cannot be fact-checked.",
         emotion: "concerned",
       },
       {
         speakerId: "maris",
-        text: '"Most people here are so boring. You\'re not. I can tell."',
-        emotion: "seductive",
+        text: '"Most people here are, I am afraid, rather boring. You are not. I can tell."',
+      },
+      {
+        speakerId: "inner-voice",
+        text: "Watch the structure — she insulted the whole room and excluded you from the insult in the same breath. You are meant to feel flattered by the exception. What actually happened is she established herself as the one who decides who is and is not boring. You just became a subject of her verdict system.",
+        emotion: "knowing",
       },
     ],
     choices: [
@@ -515,21 +532,25 @@ const scenes: Scene[] = [
     outcomeType: "good",
     endingTitle: "The Pattern Held",
     endingSummary:
-      "You saw every move before she made it — and didn't take a single one. She'll be back, but she'll come in differently. Tonight, you didn't lose yourself for the approval of someone you were never supposed to need.",
+      "You saw every move before she made it and took none of them. The card from the gala is back in your coat pocket, unreturned. Maris will be back — she certainly will — but she will come in differently next time, which means the first opening bid did not work, which means tonight you became the rare kind of person she has to plan for. You did not lose yourself to be chosen. That is a smaller achievement than most people at this bar will get in the next ten years.",
     dialog: [
       {
         speakerId: null,
-        text: "Later, walking out, Priya matches your pace.",
+        text: "Later, walking toward the lift, Priya matches your pace. She is not saying anything yet, which is itself a Priya choice — she has notes, she is sitting on them for thirty seconds so they land clean.",
       },
       {
         speakerId: "priya",
-        text: '"She\'s going to think about that one for a week."',
+        text: '"Real talk. She is going to think about tonight for a week. Maybe two. Do not reply to the card. Let her open the next move."',
         emotion: "knowing",
       },
       {
         speakerId: "inner-voice",
-        text: "Love-bombing only works on people who want to be chosen. You didn't.",
+        text: "Love-bombing only works on people who want to be chosen. You did not behave like someone who needed to be. That is the whole discipline of this scenario — not a rejection of her, which would feel like a scene, but a refusal of the chosen-by-Maris frame entirely.",
         emotion: "knowing",
+      },
+      {
+        speakerId: null,
+        text: "You take the card out of your coat pocket on the lift down. You look at it once. You put it back.",
       },
     ],
   },
@@ -612,16 +633,20 @@ const scenes: Scene[] = [
     failureBlogTitle: "Narcissist Playbook: How They Actually Operate",
     endingTitle: "Cast as Yourself",
     endingSummary:
-      "You took the compliment. You took the seat. Somewhere between the third drink and the shared secret, you forgot you were being evaluated. She hasn't. Every sentence you've said tonight is a line she'll quote back at you when it suits her.",
+      "You took the compliment. You took the seat. Somewhere between the third drink and the shared secret, you forgot that you were being auditioned. She did not. Every sentence you said tonight is now a line in a script she will quote back at you — not tonight, not next week, but in six months when she needs a favour she has not yet invented the excuse for. You are not her friend. You are a resource with a cover story called friendship.",
     dialog: [
       {
         speakerId: null,
-        text: "Tomorrow you'll wake up feeling chosen. You weren't. You were cast.",
+        text: "You walk out at some hour past one. The card is no longer in your coat because you reached for it twice tonight at her table to show her you still had it. She smiled both times. She did not reach for hers.",
       },
       {
         speakerId: "inner-voice",
-        text: "Love-bombing isn't the affection. It's the invoice it creates.",
+        text: "Love-bombing is not the affection. The affection is the invoice. Every warm sentence tonight has a price on the back of it written in invisible ink, and you will read it the first time you try to say no to her about something.",
         emotion: "sad",
+      },
+      {
+        speakerId: null,
+        text: "You lock your phone. You fall asleep. You will wake up feeling chosen, because that is what the brain does after a night like this. You were not chosen. You were cast.",
       },
     ],
   },
