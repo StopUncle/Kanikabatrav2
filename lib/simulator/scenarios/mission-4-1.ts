@@ -18,18 +18,32 @@ const scenes: Scene[] = [
     presentCharacterIds: ["priya"],
     dialog: [
       {
+        speakerId: null,
+        text: "Wednesday evening. You are at your desk. Priya rings — not texts, rings. You have not received a voice call from Priya in two months. You pick up on the second ring.",
+      },
+      {
         speakerId: "priya",
-        text: '"I wouldn\'t normally tell you this. But it\'s spreading and you should know."',
+        text: '"I would not normally tell you this. Real talk, I hate being the messenger on this kind of thing. But it is spreading and you should know before it reaches you from someone who is not a friend."',
         emotion: "serious",
       },
       {
         speakerId: "priya",
-        text: "\"Avery's been saying you... took credit for something that wasn't yours. Specifically the coffee-shop collab thing. She's telling people you pushed her out.\"",
+        text: "\"Avery has been saying — in rooms I have been in and in rooms I have not — that you took credit for the coffee-shop collab. Specifically that you pushed her out of it. She is not saying it angry. She is saying it sad, which is the worse version.\"",
         emotion: "concerned",
       },
       {
         speakerId: "inner-voice",
-        text: "Avery: quiet, 'nice', covert narcissist. She plants and waits. The collab story is pure fabrication.",
+        text: "Priya called instead of texting because she did not want this on a screen. That is a Priya discipline — messages that could be screenshotted stay off text. Note the practice. You will want to adopt it for your own life over the next decade.",
+        emotion: "knowing",
+      },
+      {
+        speakerId: "inner-voice",
+        text: "Avery is the covert-narcissist archetype — quiet, 'nice,' never raises her voice, never admits to grievance, delivers everything through the sad-victim frame. The collab story is a fabrication, but the fabrication is calibrated to be almost plausible, which is how covert smears work. Name the move. The move is called narrative seeding — plant a small version of a lie in multiple low-stakes rooms, let it grow in each, then appear in the room where it matters as the person who has been hurt by the lie you invented.",
+        emotion: "knowing",
+      },
+      {
+        speakerId: "inner-voice",
+        text: "The sad delivery is the operational choice. Angry rumours invite defence. Sad rumours invite sympathy for the teller and embarrassment for the subject. Avery is good at her job.",
         emotion: "knowing",
       },
     ],
@@ -72,16 +86,21 @@ const scenes: Scene[] = [
     dialog: [
       {
         speakerId: "priya",
-        text: '"She\'s told Dana, Morgan, two people in our cohort, and one person from the coffee shop."',
+        text: '"She has told Dana, Morgan, two people in our cohort, and one person from the coffee shop. That is the map as of tonight. By the weekend it will be five more names."',
         emotion: "knowing",
       },
       {
         speakerId: "priya",
-        text: '"Morgan already believes it. Dana is pretending to. The cohort people are asking each other."',
+        text: '"Morgan already believes it. Dana is pretending to — she believes whatever gets her more information. The cohort people are asking each other. The coffee-shop person has not said anything yet, which is the one I would watch."',
       },
       {
         speakerId: "inner-voice",
-        text: "The believers are a lost cause this week. The askers are who matters — they're checking with each other.",
+        text: "Priya has just handed you a three-tier map of how a rumour lives inside a social network. The believers have already closed the case; the pretenders are running the rumour as currency; the askers are the field where the counter-narrative either lands or dies.",
+        emotion: "knowing",
+      },
+      {
+        speakerId: "inner-voice",
+        text: "Rule: never spend social capital on the believers. They have already purchased their version of you. Rule: never spend it on the pretenders either — they are not running the rumour because they believe it, they are running it because it is trading well. Spend it all on the askers. They are the ones who have not made up their mind, and they are, rather conveniently, the only ones whose minds you can change.",
         emotion: "knowing",
       },
     ],

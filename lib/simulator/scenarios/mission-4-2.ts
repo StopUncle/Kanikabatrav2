@@ -48,8 +48,13 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "inner-voice",
-        text: "Staged confrontation. Her audience is the rest of the room, not you. The 'so people know' isn't a slip — it's the entire point.",
+        text: "Staged confrontation. Her audience is the rest of the room, not you. The phrase 'so people know' is not a slip of the tongue — it is the entire operating system of the move. A confrontation that required the room would not have announced that it required the room.",
         emotion: "concerned",
+      },
+      {
+        speakerId: "inner-voice",
+        text: "The next sixty seconds are the most expensive sixty seconds of your social life this month, and every sentence you produce either buys back your reputation or pays her for a performance she has been rehearsing for ten days. Plan accordingly.",
+        emotion: "knowing",
       },
     ],
     nextSceneId: "avery-accuses",
