@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { m } from "framer-motion";
 import Link from "next/link";
-import { RotateCcw, ArrowRight, Award, BookOpen } from "lucide-react";
+import { RotateCcw, ArrowRight, Award, BookOpen, Check, X, Minus } from "lucide-react";
 import type { Scene, Scenario, SimulatorState } from "@/lib/simulator/types";
 import { BADGE_BY_KEY } from "@/lib/simulator/badges";
 
@@ -101,19 +101,21 @@ export default function EndingScreen({
   onRestart,
 }: Props) {
   const outcome = state.outcome ?? scene.outcomeType ?? "neutral";
-  const outcomeColor =
-    outcome === "good" || outcome === "passed"
-      ? "text-accent-gold"
-      : outcome === "bad" || outcome === "failed"
-        ? "text-red-400"
-        : "text-text-light";
+  const isPass = outcome === "good" || outcome === "passed";
+  const isFail = outcome === "bad" || outcome === "failed";
 
-  const outcomeLabel =
-    outcome === "good" || outcome === "passed"
-      ? "Mastery"
-      : outcome === "bad" || outcome === "failed"
-        ? "Cost"
-        : "Outcome";
+  // The verdict pill is the FIRST thing a player reads on the ending
+  // screen. Previously this was tiny tracked-out text ("Mastery" / "Cost"
+  // / "Outcome") that players missed entirely — they'd read the ending
+  // title ("The Considered Return") as a win regardless of outcome.
+  // The pill fixes that with an unambiguous verb and icon.
+  const verdictLabel = isPass ? "Passed" : isFail ? "Failed" : "Complete";
+  const VerdictIcon = isPass ? Check : isFail ? X : Minus;
+  const verdictPillClasses = isPass
+    ? "bg-accent-gold text-deep-black border-accent-gold"
+    : isFail
+      ? "bg-red-500/90 text-white border-red-500"
+      : "bg-white/10 text-text-light border-white/20";
 
   return (
     <m.div
@@ -124,14 +126,19 @@ export default function EndingScreen({
       className="relative z-10 min-h-screen flex items-center justify-center px-6 py-20 overflow-y-auto"
     >
       <div className="max-w-2xl w-full text-center">
-        <m.p
-          initial={{ opacity: 0, letterSpacing: "0.1em" }}
-          animate={{ opacity: 1, letterSpacing: "0.45em" }}
-          transition={{ duration: 1, delay: 0.4 }}
-          className={`uppercase text-xs mb-8 ${outcomeColor}`}
+        <m.div
+          initial={{ opacity: 0, scale: 0.9, y: -8 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.2 }}
+          className="mb-8 flex justify-center"
         >
-          {outcomeLabel}
-        </m.p>
+          <span
+            className={`inline-flex items-center gap-2 px-5 py-2 rounded-full border-2 text-sm font-semibold uppercase tracking-[0.25em] ${verdictPillClasses}`}
+          >
+            <VerdictIcon size={18} strokeWidth={3} />
+            {verdictLabel}
+          </span>
+        </m.div>
 
         <m.h1
           initial={{ opacity: 0, y: 20 }}
