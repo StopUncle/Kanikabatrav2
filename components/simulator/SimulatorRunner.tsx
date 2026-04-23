@@ -5,7 +5,7 @@ import { createPortal } from "react-dom";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { X } from "lucide-react";
-import { AnimatePresence } from "framer-motion";
+import { AnimatePresence, m } from "framer-motion";
 import type {
   Scenario,
   SimulatorState,
@@ -196,6 +196,12 @@ export default function SimulatorRunner({
   // final dialog line — that's the signal that the player has read
   // all the dialog and we're now showing choices (or auto-advancing).
   const currentLine: DialogLine | undefined = scene?.dialog?.[lineIndex];
+  // The line that was on-screen immediately before the choices appeared.
+  // Shown as an echo above the choice cards so the player can see what
+  // they are replying to. Always resolves to the final dialog line of
+  // the scene when choices are active (lineIndex >= totalLines).
+  const lastDialogLine: DialogLine | undefined =
+    totalLines > 0 ? scene?.dialog?.[totalLines - 1] : undefined;
   const isLastLine = lineIndex === totalLines - 1;
   // Only show choices once the player has clicked PAST the last dialog
   // line. The previous logic flipped showChoices the moment we landed
@@ -616,15 +622,47 @@ export default function SimulatorRunner({
       </div>
 
       {/* Dialog + choices — absolute bottom.
-          min-height reserved: ~320px on desktop, ~360px on mobile, so
-          choice cards appearing doesn't push dialog text up. Both states
-          share the same vertical zone; we just swap content inside it. */}
-      <div className="absolute inset-x-0 bottom-16 sm:bottom-20 z-20 flex flex-col items-center justify-center min-h-[280px] sm:min-h-[240px] px-4">
+          When choices are shown, the last dialog line is echoed above them
+          so the player can see what they're replying to. The echo is
+          compact (no typewriter, no advance button, muted styling) to
+          avoid competing visually with the choice cards. */}
+      <div className="absolute inset-x-0 bottom-16 sm:bottom-20 z-20 flex flex-col items-center justify-center gap-4 sm:gap-6 min-h-[280px] sm:min-h-[240px] px-4">
+        {/* Last-line echo. Only renders during the choices phase.
+            Sits above the choice cards, in its own slot, so it cannot
+            be covered by the choices grid. Animates in once with the
+            choices. */}
+        {!showIntro && showChoices && scene.choices && lastDialogLine && (
+          <m.div
+            key={`echo-${scene.id}`}
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.35 }}
+            className="max-w-2xl w-full px-2 text-center"
+          >
+            {lastDialogLine.speakerId && (
+              <p className="text-accent-gold/70 text-[10px] uppercase tracking-[0.35em] mb-1.5 font-light">
+                {lastDialogLine.speakerId === "inner-voice"
+                  ? "Inner voice"
+                  : (characterById[lastDialogLine.speakerId]?.name ??
+                    lastDialogLine.speakerId)}
+              </p>
+            )}
+            <p
+              className={`font-light leading-snug text-sm sm:text-base max-w-xl mx-auto ${
+                lastDialogLine.speakerId == null
+                  ? "italic text-text-gray/70"
+                  : "text-white/75"
+              }`}
+            >
+              {lastDialogLine.text}
+            </p>
+          </m.div>
+        )}
+
         {/* One AnimatePresence with mode="wait" so the dialog→choices
             swap is sequential (dialog exits, then choices enter) instead
-            of overlapping in the same vertical zone. The previous
-            two-presence setup let them cross-fade on top of each other,
-            which read as a glitch on every scene with choices. */}
+            of overlapping in the same vertical zone. */}
         <AnimatePresence mode="wait">
           {/* Suppress the dialog + choices column while the intro
               overlay is showing. Otherwise the typewriter races to

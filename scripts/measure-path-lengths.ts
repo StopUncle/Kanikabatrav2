@@ -27,7 +27,8 @@ function analyze(scenarioId: string, scenes: Scene[], startId: string) {
   const shortest: Record<string, number> = { [startId]: 1 };
   const queue: string[] = [startId];
   while (queue.length) {
-    const id = queue.shift()!;
+    const id = queue.shift();
+    if (!id) continue;
     const scene = byId.get(id);
     if (!scene) continue;
     for (const next of successors(scene)) {
@@ -38,7 +39,7 @@ function analyze(scenarioId: string, scenes: Scene[], startId: string) {
     }
   }
 
-  const endingDepths = [...endings]
+  const endingDepths = Array.from(endings)
     .filter((id) => shortest[id] !== undefined)
     .map((id) => shortest[id]);
 
