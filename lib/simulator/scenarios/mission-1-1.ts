@@ -24,18 +24,23 @@ const scenes: Scene[] = [
     dialog: [
       {
         speakerId: null,
-        text: "Morning light filters through the blinds. Your phone is already buzzing.",
+        text: "The blinds slice your face into stripes. Your phone is already warm against the sheet — someone has been pinging since sometime before six.",
         emotion: "neutral",
       },
       {
         speakerId: null,
-        text: "7 new messages. 3 friend requests. 1 missed call from an unknown number.",
+        text: "Seven new messages. Three friend requests. One missed call from an unknown number.",
         emotion: "neutral",
       },
       {
         speakerId: "inner-voice",
-        text: "The gala opened doors. Question is — which ones do you walk through?",
-        emotion: "curious",
+        text: "First lesson of any morning after a win — whoever messages you in the first twelve hours is running an audit. They are not checking in. They are checking where you land in the new arrangement. Read everything twice before you reply to anything.",
+        emotion: "knowing",
+      },
+      {
+        speakerId: "inner-voice",
+        text: "The people who matter do not ping at 6 a.m. The people who ping at 6 a.m. are, almost without exception, collecting.",
+        emotion: "knowing",
       },
     ],
     choices: [
@@ -71,12 +76,22 @@ const scenes: Scene[] = [
     id: "phone-messages",
     backgroundId: "text-screen",
     dialog: [
-      { speakerId: null, text: 'PRIYA: "Hey! Great meeting you last night. Coffee later?"' },
+      { speakerId: null, text: 'PRIYA: "Hey! No pressure on replying. Coffee later if you are free — Campus Bean, I am there most mornings. I was at the Collins table last night."' },
       { speakerId: null, text: 'UNKNOWN: "Saw you talking to Maris. Impressive. We should connect."' },
-      { speakerId: null, text: 'ALEX: "Bro where did you disappear to?? Heard you were at THE gala??"' },
+      { speakerId: null, text: 'ALEX: "BRO. WHERE did you disappear to?? Heard you were at THE gala?? Call me"' },
       {
         speakerId: "inner-voice",
-        text: "Priya seems genuine. Unknown is fishing. Alex is... Alex.",
+        text: "Three different people, three different openings, three different intents. Priya leads with 'no pressure' and names where you saw her — she is confirming the shared context before asking for anything. That is what a person with no hidden agenda sounds like.",
+        emotion: "knowing",
+      },
+      {
+        speakerId: "inner-voice",
+        text: "Unknown opens with 'impressive' and proposes to 'connect' — a sentence engineered to cost them nothing and get them everything. A person who wanted to be known would sign their name. This one is fishing.",
+        emotion: "knowing",
+      },
+      {
+        speakerId: "inner-voice",
+        text: "Alex is in all capitals because Alex has one volume. He is not dangerous. He is an amplifier. Whatever you tell him he will say at dinner.",
         emotion: "knowing",
       },
     ],
@@ -116,18 +131,23 @@ const scenes: Scene[] = [
     dialog: [
       {
         speakerId: "alex",
-        text: "\"DUDE. You're awake. I've been waiting for like an hour.\"",
+        text: "\"DUDE. You're AWAKE. I've been waiting for like an hour, bro.\"",
         emotion: "happy",
       },
       {
         speakerId: "alex",
-        text: '"The gala. Spill. Everything. I heard you were talking to Maris freaking Caldwell?"',
+        text: '"The gala. Spill. Everything. I heard you were talking to Maris FREAKING Caldwell?"',
         emotion: "curious",
       },
       {
         speakerId: "inner-voice",
-        text: "He didn't get in. He's hungry for details. Careful.",
-        emotion: "concerned",
+        text: "Alex did not get an invite. He has been waiting outside his own FOMO for an hour and is now asking you for a full debrief at a volume calibrated for a stadium.",
+        emotion: "knowing",
+      },
+      {
+        speakerId: "inner-voice",
+        text: "Whatever you say in the next thirty seconds he will repeat, verbatim and louder, in at least three group chats before lunch. Pace your answer accordingly.",
+        emotion: "knowing",
       },
     ],
     choices: [
@@ -183,8 +203,13 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "inner-voice",
-        text: "Fishing expedition. They want specifics.",
+        text: "Note what did not happen in that reply. They did not answer the question. They did not give a name. They did not say where they saw you. They moved the conversation forward by asking a question of their own — and the question they asked was specific in exactly one direction: extract detail from you.",
         emotion: "concerned",
+      },
+      {
+        speakerId: "inner-voice",
+        text: "This pattern has a name. Information laundering — a person without standing to ask for something specific uses a vague intro to pull the specific out of the other party. The thing they actually want is in the second sentence, never the first. The word 'exactly' is the tell.",
+        emotion: "knowing",
       },
     ],
     choices: [
@@ -323,15 +348,24 @@ const scenes: Scene[] = [
     dialog: [
       {
         speakerId: "alex",
-        text: '"Wait, REALLY? Maris Caldwell? Her inner circle?"',
+        text: '"Wait, REALLY? Maris Caldwell? HER INNER CIRCLE?"',
         emotion: "happy",
       },
       {
         speakerId: "alex",
-        text: "\"Bro, that's insane. I gotta tell everyone about this.\"",
+        text: "\"Bro, that is INSANE. I gotta tell EVERYONE about this.\"",
         emotion: "happy",
       },
-      { speakerId: "inner-voice", text: "No. No no no.", emotion: "concerned" },
+      {
+        speakerId: "inner-voice",
+        text: "You just manufactured a sentence Maris never said and handed it to a broadcaster. Within six hours, the sentence will reach her through an intermediary and she will be told, 'They are saying you invited them to your inner circle.' She will not contradict it in public. She will contradict it in private, by unfollowing you, by not responding to the text you send her next week, by seating you three tables away at the next event.",
+        emotion: "concerned",
+      },
+      {
+        speakerId: "inner-voice",
+        text: "The damage is almost never a confrontation. The damage is a quiet downgrade that you feel for months before you can name it.",
+        emotion: "concerned",
+      },
     ],
     nextSceneId: "brag-spreads",
   },
@@ -565,7 +599,12 @@ const scenes: Scene[] = [
       { speakerId: "priya", text: "...", emotion: "concerned" },
       {
         speakerId: "inner-voice",
-        text: "Priya went quiet. She knows something about Dana.",
+        text: "Dana opened with a compliment she does not actually know the evidence for — 'made quite an impression' is a frame she is selling, not a fact she witnessed. Her second sentence, 'Maris doesn't talk to just anyone,' is the same move in reverse — flattering Maris to imply you are now in her circle, so you will speak as though you are.",
+        emotion: "knowing",
+      },
+      {
+        speakerId: "inner-voice",
+        text: "Priya going quiet is information. Allies grade newcomers faster than you do. The silence is her not wanting to contaminate whatever you are about to decide.",
         emotion: "knowing",
       },
     ],
@@ -744,17 +783,23 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "priya",
-        text: "\"She collects information. Uses it. Caleb's the same way — just more obvious about it.\"",
+        text: "\"She collects. That is her whole hobby. She keeps a mental ledger of who said what about whom at what event, and she calls on the ledger in the rooms where the ledger will earn her something. Caleb does the same thing. He is just louder about it.\"",
         emotion: "serious",
       },
       {
         speakerId: "priya",
-        text: '"You handled that well. Keep your cards close."',
+        text: '"You handled that well. No notes. Keep your cards close and keep picking up your phone when I call."',
         emotion: "knowing",
       },
       {
         speakerId: "inner-voice",
-        text: "Allies and enemies. The lines are clearer now.",
+        text: "The word Priya just used is collector. It is an actual archetype, and once you see it you see it everywhere — the party guest who remembers every promotion, every engagement, every grudge, and produces them at the right moment. Collectors are not inherently hostile. They become hostile when the person they are collecting on becomes competition.",
+        emotion: "knowing",
+      },
+      {
+        speakerId: "inner-voice",
+        text: "You are, as of last night, on Dana's ledger.",
+        emotion: "concerned",
       },
     ],
     choices: [
@@ -873,17 +918,26 @@ const scenes: Scene[] = [
     outcomeType: "good",
     endingTitle: "Reputation Intact",
     endingSummary:
-      "You navigated the post-gala attention without self-sabotage. You didn't brag, didn't leak information, and made a genuine ally in Priya. Dana Morrison has you on her radar — but you gave her nothing to use.",
+      "You navigated the post-gala morning without spending any social capital. You did not brag. You did not leak. You made Priya a real ally, and Dana Morrison got exactly nothing to move against you with. The unknown number is still on your phone, unreturned — and a cream-stock card from the gala is sitting face-up on your desk. Thursday, 7 p.m., rooftop. The next move is not at the coffee shop. The next move is at the bar you have not decided yet whether to walk into.",
     dialog: [
-      { speakerId: null, text: "You walk back to your dorm, mind clear." },
+      { speakerId: null, text: "You walk back from Campus Bean. Your coat smells like Priya's apartment — rosemary, something burnt earlier in the week, the standard student-flat perfume." },
       {
         speakerId: null,
-        text: "The gala opened doors. Today, you learned which ones lead somewhere — and which ones are traps.",
+        text: "On your desk: the card Maris slid between your glasses last night. Cream stock. No title. Just a number. You have not touched it this morning.",
       },
       {
         speakerId: "inner-voice",
-        text: "Information is currency. You didn't spend any today. Wise.",
+        text: "You passed your first morning. That is not a small thing. The people who fail here fail in one of two ways — they brag the win into the ground, or they hand the win to the first person who asks about it. You did neither. That is a small, specific discipline, and you would be surprised how few people have it at your age.",
         emotion: "knowing",
+      },
+      {
+        speakerId: "inner-voice",
+        text: "The card on the desk is not a question yet. It will be by Thursday. You have almost five days to decide who you want to be when you walk into that bar — or whether you want to walk into it at all.",
+        emotion: "knowing",
+      },
+      {
+        speakerId: null,
+        text: "You set your coffee down. You do not pick up the card. You let it stay where it is.",
       },
     ],
   },
