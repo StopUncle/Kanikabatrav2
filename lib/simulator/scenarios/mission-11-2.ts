@@ -1093,8 +1093,6 @@ const scenes: Scene[] = [
         emotion: "knowing",
       },
     ],
-    failureBlogSlug: "how-scope-widens",
-    failureBlogTitle: "How Scope Widens In Reasonable Paragraphs",
   },
 ];
 

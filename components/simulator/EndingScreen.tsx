@@ -197,11 +197,17 @@ export default function EndingScreen({
         {/* Failure → blog post CTA.
             Only shown on defeat endings that declare a `failureBlogSlug`.
             The pedagogy: when a player loses to a manipulation tactic, hand
-            them the blog post that teaches the pattern. Links to /blog/<slug>
-            in a new tab so they don't lose the ending screen state.
-            Suppressed on the public /try demo (hideFailureBlog=true) —
-            cold visitors on a free demo should see one thing on the
-            loss screen: the conversion CTA. */}
+            them the blog post that teaches the pattern. Links to the member
+            preview route (`/consilium/previews/<slug>`) rather than the
+            public `/blog/<slug>` — many referenced posts are future-dated
+            in their MDX frontmatter and the public route 404s on them.
+            The preview route uses `getPostBySlug` (not `getPublicPostBySlug`)
+            so members can read them immediately, and redirects to `/blog/`
+            once a post has gone public. Opens in a new tab so players
+            don't lose the ending screen state. Suppressed on the public
+            /try demo (hideFailureBlog=true) — cold visitors on a free
+            demo should see one thing on the loss screen: the conversion
+            CTA. */}
         {scene.failureBlogSlug &&
           !hideFailureBlog &&
           (outcome === "bad" || outcome === "failed") && (
@@ -212,7 +218,7 @@ export default function EndingScreen({
               className="mb-12 flex justify-center"
             >
               <Link
-                href={`/blog/${scene.failureBlogSlug}`}
+                href={`/consilium/previews/${scene.failureBlogSlug}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="group inline-flex items-center gap-3 px-6 py-4 rounded-xl border border-accent-gold/30 bg-deep-black/60 hover:border-accent-gold/60 hover:bg-accent-gold/5 transition-all max-w-md text-left"
