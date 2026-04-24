@@ -67,6 +67,7 @@ export default async function SimulatorAchievementsPage() {
         choicesMade: true,
         startedAt: true,
         completedAt: true,
+        completionCount: true,
       },
     }),
     prisma.simulatorBadge.findMany({
@@ -97,6 +98,7 @@ export default async function SimulatorAchievementsPage() {
         choicesMade: choicesMade.map((m) => ({ wasOptimal: m.wasOptimal })),
         events,
         durationMs,
+        completionCount: r.completionCount,
       };
     }),
     badgesHeld,

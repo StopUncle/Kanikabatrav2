@@ -881,6 +881,11 @@ model SimulatorProgress {
   completedAt    DateTime?
   // "good" | "neutral" | "bad" — null until an ending is reached.
   outcome        String?
+  // Incremented by /api/simulator/complete every time a run reaches
+  // an ending, including replays. Used by the `three-time-reader`
+  // meta-achievement in `lib/simulator/achievements.ts`. Stays 0 for
+  // in-progress rows; ticks to 1 on first completion, 2 on second, etc.
+  completionCount Int      @default(0)
 
   @@unique([userId, scenarioId])
   @@index([userId])

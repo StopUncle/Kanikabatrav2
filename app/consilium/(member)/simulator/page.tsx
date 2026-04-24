@@ -148,8 +148,14 @@ export default async function SimulatorIndex({
       blurb: info.blurb,
       scenarios: nodes,
       isUnlocked: isLevelUnlocked,
-      // Boss treatment for the mid-arc and finale levels.
-      isBoss: level === 5 || level === 10,
+      // Boss treatment for mid-arc and finale levels. L5 is the
+      // natural climax across most tracks (The Presentation, Christmas
+      // at His Parents, The Legal Adult). L6 is toxic-narc's finale
+      // (The Narc Friend) — the track-boss crown belongs there too.
+      // L10 is the Maris-arc mid-boss. The cluster-b-lab track
+      // currently tops out at L4 so no boss renders; that's deliberate
+      // — a drill track doesn't need a mid-arc boss.
+      isBoss: level === 5 || level === 6 || level === 10,
     };
   });
 

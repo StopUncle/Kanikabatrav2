@@ -35,6 +35,13 @@ export type AchievementProgressSnapshot = {
      * legacy rows without a startedAt.
      */
     durationMs?: number;
+    /**
+     * Total completions for this scenario (ticks on every ending, not
+     * just the first). Read directly off the SimulatorProgress row's
+     * completionCount column. Used by `three-time-reader`. Legacy rows
+     * (pre-migration) were backfilled to 1 on any row with completedAt.
+     */
+    completionCount?: number;
   }>;
   /** Set of badge keys the user already holds (from SimulatorBadge rows). */
   badgesHeld: Set<string>;
@@ -619,9 +626,27 @@ export const ACHIEVEMENTS: AchievementDef[] = [
   // so the emission lives in the complete route. The isEarned check
   // here just mirrors the persisted SimulatorBadge row.
   //
-  // `three-time-reader` deferred to Phase 6 — requires a completion-
-  // count column on SimulatorProgress, which is a schema migration.
+  // `three-time-reader` ships this phase — schema migration landed in
+  // 20260425000000_add_simulator_completion_count.
   // -----------------------------------------------------------------
+  {
+    key: "three-time-reader",
+    title: "Three-Time Reader",
+    description:
+      "Played the same scenario three times. Mastery is not the first clear — it's the run where the tactic cards stop surprising you.",
+    icon: "sparkles",
+    isEarned: (s) =>
+      s.completions.some(
+        (c) => (c.completionCount ?? 0) >= 3,
+      ),
+    progress: (s) => {
+      const best = s.completions.reduce(
+        (max, c) => Math.max(max, c.completionCount ?? 0),
+        0,
+      );
+      return { current: Math.min(best, 3), total: 3 };
+    },
+  },
   {
     key: "speedrun",
     title: "Decisive",
@@ -875,6 +900,7 @@ function metaAchievementMeta(a: AchievementDef): AchievementMeta {
     // Mastery / replay metas (Phase 5)
     "speedrun":              { rarity: "bronze", category: "mastery",    secret: false },
     "all-optimal-first-try": { rarity: "gold",   category: "mastery",    secret: false },
+    "three-time-reader":     { rarity: "silver", category: "mastery",    secret: false },
   };
   const p = policy[a.key] ?? {
     rarity: "gold" as const,

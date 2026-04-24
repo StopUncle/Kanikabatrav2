@@ -239,6 +239,7 @@ export async function POST(request: NextRequest) {
           choicesMade: true,
           startedAt: true,
           completedAt: true,
+          completionCount: true,
         },
       });
       const snapshot: AchievementProgressSnapshot = {
@@ -272,6 +273,7 @@ export async function POST(request: NextRequest) {
             choicesMade: choicesMade.map((m) => ({ wasOptimal: m.wasOptimal })),
             events,
             durationMs,
+            completionCount: r.completionCount,
           };
         }),
         badgesHeld: heldNowSet,

@@ -39,6 +39,10 @@ export type ProgressRow = {
   xpEarned: number;
   outcome: string | null;
   completedAt: Date | null;
+  /** Total times this scenario has reached an ending for this user.
+   *  0 when the row has no completion yet. Feeds the three-time-reader
+   *  meta-achievement via countCompletions in achievements.ts. */
+  completionCount: number;
 };
 
 export type IncomingProgress = {
@@ -68,6 +72,7 @@ export type MergeUpdate = {
   xpEarned: number;
   outcome: string | null;
   completedAt: Date | null;
+  completionCount: number;
 };
 
 export type MergeCreate = {
@@ -76,6 +81,7 @@ export type MergeCreate = {
   xpEarned: number;
   outcome: string | null;
   completedAt: Date | null;
+  completionCount: number;
 };
 
 /**
@@ -109,12 +115,19 @@ export function mergeProgress(
       ? new Date(incoming.endedAt!)
       : null;
 
+  // completionCount ticks only when this call is a completing run.
+  // Mid-run saves pass the existing count through unchanged. First
+  // completion sets it to 1; each subsequent ending bumps by 1.
+  const previousCount = existing?.completionCount ?? 0;
+  const nextCount = isCompletingNow ? previousCount + 1 : previousCount;
+
   const create: MergeCreate = {
     currentSceneId: incoming.currentSceneId,
     choicesMade: incoming.choicesMade,
     xpEarned: incoming.xpEarned,
     outcome: incoming.outcome ?? null,
     completedAt: incoming.endedAt ? new Date(incoming.endedAt) : null,
+    completionCount: isCompletingNow ? 1 : 0,
   };
 
   const update: MergeUpdate = {
@@ -131,6 +144,7 @@ export function mergeProgress(
         ? existing!.outcome
         : bestOutcome,
     completedAt: keptCompletedAt,
+    completionCount: nextCount,
   };
 
   return { create, update };
