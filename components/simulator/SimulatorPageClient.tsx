@@ -8,6 +8,7 @@ import type {
   OutcomeType,
 } from "@/lib/simulator/types";
 import SimulatorRunner from "./SimulatorRunner";
+import AchievementToast from "./AchievementToast";
 
 export type PreviousBest = {
   xpEarned: number;
@@ -46,6 +47,11 @@ export default function SimulatorPageClient({
 }: Props) {
   const router = useRouter();
   const [badgesEarned, setBadgesEarned] = useState<string[]>([]);
+  // Newly-earned-this-run keys drive the corner toast. Separate from
+  // `badgesEarned` (which is all earned, replay-inclusive, for the
+  // ending grid) so replays of an already-unlocked scenario don't
+  // re-fire the toast.
+  const [unlockedThisRun, setUnlockedThisRun] = useState<string[]>([]);
   // Track the "best-to-date" across the session so a second replay
   // in the same tab compares against the run that just finished, not
   // the previousBest prop frozen at page load. Initial value mirrors
@@ -89,6 +95,7 @@ export default function SimulatorPageClient({
     // screen until the /complete POST resolves and sets fresh ones
     // — a misleading render window of 200ms–2s on slow connections.
     setBadgesEarned([]);
+    setUnlockedThisRun([]);
 
     // Update the session's best-to-date if this run exceeded it.
     // A subsequent in-session replay sees this as the new baseline so
@@ -126,6 +133,9 @@ export default function SimulatorPageClient({
         // if duplicates — so replays still feel rewarding. Uniqueness is
         // enforced server-side via the SimulatorBadge unique constraint.
         setBadgesEarned(data.allEarnedKeys);
+        // Toast only on first-time unlocks — a replay that re-earns the
+        // same key array gets no popup, which is what players want.
+        setUnlockedThisRun(data.newlyEarnedKeys);
         // Refresh server components so the index page reflects new state
         // when the user returns.
         router.refresh();
@@ -136,14 +146,17 @@ export default function SimulatorPageClient({
   }, [router]);
 
   return (
-    <SimulatorRunner
-      scenario={scenario}
-      initialState={initialState}
-      previousBest={bestToDate}
-      onStateChange={handleStateChange}
-      onComplete={handleComplete}
-      nextScenarioHref={nextScenarioHref}
-      badgesEarned={badgesEarned}
-    />
+    <>
+      <SimulatorRunner
+        scenario={scenario}
+        initialState={initialState}
+        previousBest={bestToDate}
+        onStateChange={handleStateChange}
+        onComplete={handleComplete}
+        nextScenarioHref={nextScenarioHref}
+        badgesEarned={badgesEarned}
+      />
+      <AchievementToast unlocks={unlockedThisRun} />
+    </>
   );
 }

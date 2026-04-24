@@ -1,6 +1,7 @@
 import { requireServerAuth } from "@/lib/auth/server-auth";
 import { prisma } from "@/lib/prisma";
 import MemberBadge from "@/components/consilium/MemberBadge";
+import AchievementShelf from "@/components/consilium/AchievementShelf";
 import {
   BADGE_TIERS,
   getBadge,
@@ -165,6 +166,12 @@ export default async function ConsiliumProfilePage() {
         <StatTile icon={BookOpen} label="Forum posts" value={forumPostCount} />
         <StatTile icon={Heart} label="Posts liked" value={likeCount} />
       </section>
+
+      {/* Achievements — Dark Mirror trophy case. Lives here so the profile
+          reads as "identity + ranking + run record" in one surface. Separate
+          visual language from the tenure MemberBadge so the two seals don't
+          compete: hex medallions in bronze/silver/gold/obsidian tiers. */}
+      <AchievementShelf userId={userId} />
 
       {/* The Ladder */}
       <section className="mb-12">
