@@ -8,11 +8,13 @@ import type { Scenario } from "../../types";
 import toxicNarc11 from "./l1-1-the-mothers-call";
 import toxicNarc12 from "./l1-2-the-missed-calls";
 import toxicNarc21 from "./l2-1-the-boss-email";
+import toxicNarc31 from "./l3-1-the-family-group-chat";
 
 export const TOXIC_NARC_SCENARIOS: Scenario[] = [
   toxicNarc11,
   toxicNarc12,
   toxicNarc21,
+  toxicNarc31,
 ];
 
 export const TOXIC_NARC_LEVEL_TITLES: Record<
