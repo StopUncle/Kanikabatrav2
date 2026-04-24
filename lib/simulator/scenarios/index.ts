@@ -20,6 +20,10 @@ import {
   TOXIC_NARC_LEVEL_TITLES,
 } from "./toxic-narc";
 import { PC_CHILD_SCENARIOS, PC_CHILD_LEVEL_TITLES } from "./pc-child";
+import {
+  CLUSTER_B_LAB_SCENARIOS,
+  CLUSTER_B_LAB_LEVEL_TITLES,
+} from "./cluster-b-lab";
 import mission11 from "./mission-1-1";
 import mission12 from "./mission-1-2";
 import mission21 from "./mission-2-1";
@@ -78,6 +82,7 @@ export {
   ANXIETY_SCENARIOS,
   TOXIC_NARC_SCENARIOS,
   PC_CHILD_SCENARIOS,
+  CLUSTER_B_LAB_SCENARIOS,
 };
 
 export const ALL_SCENARIOS: Scenario[] = [
@@ -87,6 +92,7 @@ export const ALL_SCENARIOS: Scenario[] = [
   ...ANXIETY_SCENARIOS,
   ...TOXIC_NARC_SCENARIOS,
   ...PC_CHILD_SCENARIOS,
+  ...CLUSTER_B_LAB_SCENARIOS,
 ];
 
 /**
@@ -153,6 +159,7 @@ export function levelTitlesForTrack(
   if (track === "anxiety") return ANXIETY_LEVEL_TITLES;
   if (track === "toxic-narc") return TOXIC_NARC_LEVEL_TITLES;
   if (track === "pc-child") return PC_CHILD_LEVEL_TITLES;
+  if (track === "cluster-b-lab") return CLUSTER_B_LAB_LEVEL_TITLES;
   return LEVEL_TITLES;
 }
 
@@ -190,6 +197,11 @@ export const TRACK_META: Record<
     label: "Psychopath Child",
     sublabel: "Parental POV · conduct disorder · ages 5 to 20",
     href: "/consilium/simulator?track=pc-child",
+  },
+  "cluster-b-lab": {
+    label: "Cluster-B Lab",
+    sublabel: "Short drills · BPD / NPD / ASPD / HPD · audit, diagnose, prescribe",
+    href: "/consilium/simulator?track=cluster-b-lab",
   },
 };
 
