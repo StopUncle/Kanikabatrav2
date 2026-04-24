@@ -63,42 +63,67 @@ export default function VideoUrlField({
     setUploading(true);
     setProgress(0);
     try {
-      const fd = new FormData();
-      fd.append("video", f);
+      // 1. Ask the server for a presigned PUT URL. Keeps the video bytes
+      //    off Railway's edge entirely — a 502 was previously fired by
+      //    Railway's proxy on ~170 MB uploads before Next.js saw them.
+      const presignRes = await fetch("/api/consilium/feed/video/presign", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          filename: f.name,
+          size: f.size,
+          type: f.type,
+        }),
+      });
+      if (!presignRes.ok) {
+        const msg = await presignRes
+          .json()
+          .then((j) => j?.error)
+          .catch(() => null);
+        throw new Error(msg || `Could not prepare upload (${presignRes.status})`);
+      }
+      const { uploadUrl, publicUrl, key, contentType } = (await presignRes.json()) as {
+        uploadUrl: string;
+        publicUrl: string;
+        key: string;
+        contentType: string;
+      };
 
-      const url: string = await new Promise((resolve, reject) => {
+      // 2. PUT the bytes direct to R2. XHR because fetch() still lacks
+      //    upload-progress on most browsers.
+      await new Promise<void>((resolve, reject) => {
         const xhr = new XMLHttpRequest();
-        xhr.open("POST", "/api/consilium/feed/video/upload");
+        xhr.open("PUT", uploadUrl);
+        xhr.setRequestHeader("Content-Type", contentType);
         xhr.upload.onprogress = (ev) => {
           if (ev.lengthComputable) {
             setProgress(Math.round((ev.loaded / ev.total) * 100));
           }
         };
         xhr.onload = () => {
-          if (xhr.status >= 200 && xhr.status < 300) {
-            try {
-              resolve(JSON.parse(xhr.responseText).url);
-            } catch (err) {
-              reject(err);
-            }
-          } else {
-            try {
-              reject(
-                new Error(
-                  JSON.parse(xhr.responseText).error ||
-                    `Upload failed (${xhr.status})`,
-                ),
-              );
-            } catch {
-              reject(new Error(`Upload failed (${xhr.status})`));
-            }
-          }
+          if (xhr.status >= 200 && xhr.status < 300) resolve();
+          else reject(new Error(`Upload to storage failed (${xhr.status})`));
         };
-        xhr.onerror = () => reject(new Error("Network error"));
-        xhr.send(fd);
+        xhr.onerror = () => reject(new Error("Network error uploading to storage"));
+        xhr.send(f);
       });
 
-      onChange(url);
+      // 3. Verify the object actually landed before we hand the UI a
+      //    URL it will treat as real.
+      const verifyRes = await fetch("/api/consilium/feed/video/verify", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ key }),
+      });
+      if (!verifyRes.ok) {
+        const msg = await verifyRes
+          .json()
+          .then((j) => j?.error)
+          .catch(() => null);
+        throw new Error(msg || `Could not verify upload (${verifyRes.status})`);
+      }
+
+      onChange(publicUrl);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Upload failed");
     } finally {

@@ -1,4 +1,10 @@
-import { S3Client, PutObjectCommand, DeleteObjectCommand } from "@aws-sdk/client-s3";
+import {
+  S3Client,
+  PutObjectCommand,
+  DeleteObjectCommand,
+  HeadObjectCommand,
+} from "@aws-sdk/client-s3";
+import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 
 /**
  * Cloudflare R2 storage client.
@@ -116,6 +122,94 @@ export async function uploadToR2(
     url: `${base}/${key}`,
     key,
   };
+}
+
+export interface PresignedUpload {
+  /** Temporary URL the browser PUTs the file body to. */
+  uploadUrl: string;
+  /** Final public URL the object will be reachable at once uploaded. */
+  publicUrl: string;
+  /** Storage key (pass to `verifyR2ObjectExists` / `deleteFromR2`). */
+  key: string;
+  /**
+   * Content-Type the client MUST send on the PUT request. The server
+   * signs this value, so any mismatch on PUT invalidates the signature
+   * and R2 returns 403. Always read this from the response and echo
+   * it into the PUT header.
+   */
+  contentType: string;
+  /** Seconds until the presigned URL expires. */
+  expiresIn: number;
+}
+
+/**
+ * Generate a presigned PUT URL for a browser to upload directly to R2.
+ *
+ * Why: Railway's edge proxy rejects large request bodies (observed at
+ * 169 MB) before they ever reach the Next.js handler, producing a 502
+ * with zero deploy-log entry. Streaming the bytes through our own route
+ * also buffers the full file in Node memory (ArrayBuffer + Buffer copy),
+ * which on a small Railway instance is OOM territory for anything over
+ * ~150 MB. Presigned PUTs bypass both problems — the server only
+ * produces a signed URL, the browser sends the bytes direct to R2.
+ *
+ * Requires CORS to be configured on the R2 bucket — see
+ * `R2-CORS-SETUP.md` at project root.
+ *
+ * Content-Type is the ONLY header we sign. Cache-Control etc. would be
+ * nice to set here but would force the browser to send those headers on
+ * PUT — browsers don't reliably send arbitrary headers on XHR PUT, so
+ * any extra signed header is a future source of mysterious 403s. Keep
+ * the signature surface as narrow as possible.
+ */
+export async function getPresignedUploadUrl(
+  key: string,
+  contentType: string,
+  expiresIn = 900, // 15 minutes
+): Promise<PresignedUpload> {
+  const config = getR2Config();
+  if (!config) {
+    throw new Error("R2 is not configured");
+  }
+
+  const client = getClient();
+  const command = new PutObjectCommand({
+    Bucket: config.bucket,
+    Key: key,
+    ContentType: contentType,
+  });
+
+  const uploadUrl = await getSignedUrl(client, command, { expiresIn });
+
+  const base = config.publicUrl.replace(/\/$/, "");
+  return {
+    uploadUrl,
+    publicUrl: `${base}/${key}`,
+    key,
+    contentType,
+    expiresIn,
+  };
+}
+
+/**
+ * Check that an object actually exists in R2. Used after a presigned-PUT
+ * upload to confirm the browser completed before we treat the public URL
+ * as real. Returns the byte size on success, throws on 404.
+ */
+export async function verifyR2ObjectExists(key: string): Promise<number> {
+  const config = getR2Config();
+  if (!config) {
+    throw new Error("R2 is not configured");
+  }
+
+  const client = getClient();
+  const result = await client.send(
+    new HeadObjectCommand({
+      Bucket: config.bucket,
+      Key: key,
+    }),
+  );
+  return result.ContentLength ?? 0;
 }
 
 /**

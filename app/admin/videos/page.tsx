@@ -153,38 +153,64 @@ export default function VideosPage() {
     setProgress(0);
 
     try {
-      const formData = new FormData();
-      formData.append("video", file);
+      // 1. Ask the server for a presigned PUT URL. The video bytes
+      //    never pass through Railway's edge proxy — previously the
+      //    proxy 502'd on ~170 MB uploads before Next.js saw them.
+      const presignRes = await fetch("/api/consilium/feed/video/presign", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          filename: file.name,
+          size: file.size,
+          type: file.type,
+        }),
+      });
+      if (!presignRes.ok) {
+        const body = await presignRes.json().catch(() => null);
+        throw new Error(
+          body?.error || `Could not prepare upload (${presignRes.status})`,
+        );
+      }
+      const { uploadUrl, publicUrl, key, contentType } = (await presignRes.json()) as {
+        uploadUrl: string;
+        publicUrl: string;
+        key: string;
+        contentType: string;
+      };
 
-      // XHR (not fetch) so we can show real upload progress. fetch() does
-      // not expose request progress events in any browser.
-      const uploaded: { url: string } = await new Promise((resolve, reject) => {
+      // 2. PUT the bytes direct to R2. XHR (not fetch) so we can
+      //    display real upload progress; fetch does not expose
+      //    request progress events in any browser.
+      await new Promise<void>((resolve, reject) => {
         const xhr = new XMLHttpRequest();
-        xhr.open("POST", "/api/consilium/feed/video/upload");
+        xhr.open("PUT", uploadUrl);
+        xhr.setRequestHeader("Content-Type", contentType);
         xhr.upload.onprogress = (ev) => {
           if (ev.lengthComputable) {
             setProgress(Math.round((ev.loaded / ev.total) * 100));
           }
         };
         xhr.onload = () => {
-          if (xhr.status >= 200 && xhr.status < 300) {
-            try {
-              resolve(JSON.parse(xhr.responseText));
-            } catch (err) {
-              reject(err);
-            }
-          } else {
-            try {
-              const body = JSON.parse(xhr.responseText);
-              reject(new Error(body.error || `Upload failed (${xhr.status})`));
-            } catch {
-              reject(new Error(`Upload failed (${xhr.status})`));
-            }
-          }
+          if (xhr.status >= 200 && xhr.status < 300) resolve();
+          else reject(new Error(`Upload to storage failed (${xhr.status})`));
         };
         xhr.onerror = () => reject(new Error("Network error during upload"));
-        xhr.send(formData);
+        xhr.send(file);
       });
+
+      // 3. Server-side HEAD-check confirming the object landed before
+      //    we create the feed post pointing at it.
+      const verifyRes = await fetch("/api/consilium/feed/video/verify", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ key }),
+      });
+      if (!verifyRes.ok) {
+        const body = await verifyRes.json().catch(() => null);
+        throw new Error(
+          body?.error || `Could not verify upload (${verifyRes.status})`,
+        );
+      }
 
       const postRes = await fetch("/api/consilium/feed/posts", {
         method: "POST",
@@ -193,7 +219,7 @@ export default function VideosPage() {
           title: title.trim(),
           content: description.trim() || title.trim(),
           type: "VIDEO",
-          videoUrl: uploaded.url,
+          videoUrl: publicUrl,
           videoDurationSeconds: duration,
         }),
       });
