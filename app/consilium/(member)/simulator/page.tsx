@@ -226,47 +226,82 @@ export default async function SimulatorIndex({
         </div>
       </header>
 
-      {/* Track selector — wraps to a grid on narrow desktops. Seven tracks
-          in one row would crush the sublabel text; flex-wrap + basis gives
-          each tab a sensible minimum width and breaks to a second row when
-          the container is too narrow. */}
+      {/* Track selector.
+          Mobile (<sm): horizontal scroll row of compact pills. Seven
+          full-width tabs stacked vertically used to eat 700px of
+          mobile real estate — replaced with a scrollable row of
+          label-only pills. The active track's sublabel moves into
+          the "Current track" panel below (already present), so the
+          pills don't need to repeat it.
+          Desktop (≥sm): wrapping card grid with the full eyebrow +
+          label + sublabel layout. basis-[220px] keeps each card's
+          sublabel readable, flex-wrap breaks to a second row when
+          the container can't hold all seven in a line. */}
       <nav
         aria-label="Simulator track"
-        className="mb-8 flex flex-col sm:flex-row sm:flex-wrap gap-2 p-1.5 rounded-xl border border-warm-gold/15 bg-deep-black/40"
+        className="mb-8 p-1.5 rounded-xl border border-warm-gold/15 bg-deep-black/40"
       >
-        {VALID_TRACKS.map((t) => {
-          const tMeta = TRACK_META[t];
-          const active = t === track;
-          return (
-            <Link
-              key={t}
-              href={tMeta.href}
-              className={`flex-1 sm:basis-[220px] flex flex-col items-start px-4 py-3 rounded-lg transition-all ${
-                active
-                  ? "bg-warm-gold/10 border border-warm-gold/40"
-                  : "border border-transparent hover:bg-white/5"
-              }`}
-            >
-              <span
-                className={`uppercase tracking-[0.3em] text-[10px] mb-1 ${
-                  active ? "text-warm-gold" : "text-warm-gold/50"
-                }`}
-              >
-                {active ? "Playing" : "Switch to"}
-              </span>
-              <span
-                className={`text-base font-light tracking-wide ${
-                  active ? "text-white" : "text-text-gray"
+        {/* Mobile: scrollable pill row. scrollbar-hide removes the
+            default bar so the row reads clean; snap keeps each pill
+            landing at the left edge when scrolled. */}
+        <div className="sm:hidden flex gap-1.5 overflow-x-auto snap-x snap-mandatory -mx-1.5 px-1.5 pb-0.5 scrollbar-hide">
+          {VALID_TRACKS.map((t) => {
+            const tMeta = TRACK_META[t];
+            const active = t === track;
+            return (
+              <Link
+                key={t}
+                href={tMeta.href}
+                aria-current={active ? "page" : undefined}
+                className={`shrink-0 snap-start px-4 py-2.5 rounded-lg text-xs font-light tracking-wide whitespace-nowrap transition-all ${
+                  active
+                    ? "bg-warm-gold/15 border border-warm-gold/50 text-white"
+                    : "border border-white/5 bg-white/[0.02] text-text-gray/80 active:bg-white/10"
                 }`}
               >
                 {tMeta.label}
-              </span>
-              <span className="text-text-gray/50 text-xs font-light mt-1 leading-snug">
-                {tMeta.sublabel}
-              </span>
-            </Link>
-          );
-        })}
+              </Link>
+            );
+          })}
+        </div>
+
+        {/* Desktop: wrapping card grid — unchanged layout, hidden on
+            small screens. */}
+        <div className="hidden sm:flex sm:flex-wrap gap-2">
+          {VALID_TRACKS.map((t) => {
+            const tMeta = TRACK_META[t];
+            const active = t === track;
+            return (
+              <Link
+                key={t}
+                href={tMeta.href}
+                className={`flex-1 basis-[220px] flex flex-col items-start px-4 py-3 rounded-lg transition-all ${
+                  active
+                    ? "bg-warm-gold/10 border border-warm-gold/40"
+                    : "border border-transparent hover:bg-white/5"
+                }`}
+              >
+                <span
+                  className={`uppercase tracking-[0.3em] text-[10px] mb-1 ${
+                    active ? "text-warm-gold" : "text-warm-gold/50"
+                  }`}
+                >
+                  {active ? "Playing" : "Switch to"}
+                </span>
+                <span
+                  className={`text-base font-light tracking-wide ${
+                    active ? "text-white" : "text-text-gray"
+                  }`}
+                >
+                  {tMeta.label}
+                </span>
+                <span className="text-text-gray/50 text-xs font-light mt-1 leading-snug">
+                  {tMeta.sublabel}
+                </span>
+              </Link>
+            );
+          })}
+        </div>
       </nav>
 
       <div className="mb-6 border-l-2 border-warm-gold/30 pl-4">
