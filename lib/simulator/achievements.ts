@@ -75,6 +75,22 @@ function scenariosAtLevel(level: number): string[] {
   return ALL_SCENARIOS.filter((s) => s.level === level).map((s) => s.id);
 }
 
+/**
+ * All required scenario IDs cleared on a good ending. True iff the snapshot
+ * has a good completion for every id in the list. Used by the V3
+ * track-completion meta-achievements.
+ */
+function allGood(snap: AchievementProgressSnapshot, ids: string[]): boolean {
+  return ids.every((id) => goodOrMastery(snap, id));
+}
+
+function countGood(
+  snap: AchievementProgressSnapshot,
+  ids: string[],
+): number {
+  return ids.filter((id) => goodOrMastery(snap, id)).length;
+}
+
 // ---------------------------------------------------------------------------
 // The eight
 // ---------------------------------------------------------------------------
@@ -174,6 +190,92 @@ export const ACHIEVEMENTS: AchievementDef[] = [
       ).length;
       return { current: done, total: ALL_SCENARIOS.length };
     },
+  },
+
+  // -----------------------------------------------------------------
+  // V3 track-completion meta-achievements.
+  //
+  // "All good" means `outcome === "good"` on every required scenario. V3
+  // scenarios don't use the legacy -mastery layer; a good ending is the
+  // top tier. `pc-child-complete-no-obsidian` is the disciplined-all-the-
+  // way prestige: clear the whole track without stumbling into an obsidian
+  // secret path. Obsidian paths give you a different prestige lineage.
+  // -----------------------------------------------------------------
+  {
+    key: "anxiety-l1-complete",
+    title: "The 3 a.m. Track",
+    description: "All three anxiety L1 scenarios cleared on a good ending.",
+    icon: "shield",
+    isEarned: (s) => allGood(s, ["anx-1-1", "anx-1-2", "anx-1-3"]),
+    progress: (s) => ({
+      current: countGood(s, ["anx-1-1", "anx-1-2", "anx-1-3"]),
+      total: 3,
+    }),
+  },
+  {
+    key: "anxiety-l2-complete",
+    title: "The Waiting Held",
+    description: "Both anxiety L2 scenarios cleared on a good ending.",
+    icon: "shield",
+    isEarned: (s) => allGood(s, ["anx-2-1", "anx-2-2"]),
+    progress: (s) => ({
+      current: countGood(s, ["anx-2-1", "anx-2-2"]),
+      total: 2,
+    }),
+  },
+  {
+    key: "toxic-narc-l1-complete",
+    title: "The Mother Decoded",
+    description: "Both toxic-narc L1 scenarios cleared on a good ending.",
+    icon: "shield",
+    isEarned: (s) => allGood(s, ["tn-1-1", "tn-1-2"]),
+    progress: (s) => ({
+      current: countGood(s, ["tn-1-1", "tn-1-2"]),
+      total: 2,
+    }),
+  },
+  {
+    key: "toxic-narc-l2-l3-complete",
+    title: "The Public Registers",
+    description: "tn-2-1 and tn-3-1 both cleared on a good ending.",
+    icon: "award",
+    isEarned: (s) => allGood(s, ["tn-2-1", "tn-3-1"]),
+    progress: (s) => ({
+      current: countGood(s, ["tn-2-1", "tn-3-1"]),
+      total: 2,
+    }),
+  },
+  {
+    key: "pc-child-l1-l2-l3-complete",
+    title: "The Ten-Year Log",
+    description:
+      "pc-1-1, pc-2-1, and pc-3-1 all cleared on a good ending. The disciplined log.",
+    icon: "award",
+    isEarned: (s) => allGood(s, ["pc-1-1", "pc-2-1", "pc-3-1"]),
+    progress: (s) => ({
+      current: countGood(s, ["pc-1-1", "pc-2-1", "pc-3-1"]),
+      total: 3,
+    }),
+  },
+  {
+    key: "pc-child-complete-no-obsidian",
+    title: "The Parent Who Stayed",
+    description:
+      "All four pc-child scenarios cleared on a good ending — without taking either obsidian shortcut. The disciplined lineage.",
+    icon: "crown",
+    isEarned: (s) => {
+      const ids = ["pc-1-1", "pc-2-1", "pc-3-1", "pc-4-1"];
+      if (!allGood(s, ids)) return false;
+      // Hold the line on the disciplined path: obsidian secrets live on
+      // a different prestige lineage. `first-real-conversation` comes
+      // from pc-1-1, `the-fifteen-year-thank-you` from pc-4-1.
+      const obsidians = ["first-real-conversation", "the-fifteen-year-thank-you"];
+      return !obsidians.some((k) => s.badgesHeld.has(k));
+    },
+    progress: (s) => ({
+      current: countGood(s, ["pc-1-1", "pc-2-1", "pc-3-1", "pc-4-1"]),
+      total: 4,
+    }),
   },
 ];
 
@@ -367,6 +469,13 @@ function metaAchievementMeta(a: AchievementDef): AchievementMeta {
     "cold-reader":     { rarity: "gold",     category: "discipline", secret: false },
     "endgame":         { rarity: "gold",     category: "tracks",     secret: false },
     "perfect-mirror":  { rarity: "obsidian", category: "legend",     secret: false },
+    // V3 track-completion metas
+    "anxiety-l1-complete":          { rarity: "silver",   category: "tracks", secret: false },
+    "anxiety-l2-complete":          { rarity: "gold",     category: "tracks", secret: false },
+    "toxic-narc-l1-complete":       { rarity: "silver",   category: "tracks", secret: false },
+    "toxic-narc-l2-l3-complete":    { rarity: "gold",     category: "tracks", secret: false },
+    "pc-child-l1-l2-l3-complete":   { rarity: "gold",     category: "tracks", secret: false },
+    "pc-child-complete-no-obsidian":{ rarity: "obsidian", category: "legend", secret: false },
   };
   const p = policy[a.key] ?? {
     rarity: "gold" as const,
@@ -400,80 +509,104 @@ function metaAchievementMeta(a: AchievementDef): AchievementMeta {
 }
 
 // ---------------------------------------------------------------------------
-// V3 scenario badges — anxiety, toxic-narc, pc-child tracks.
+// V3 scenario badges — display policy.
 //
-// Hand-authored metadata matching the handoff tables in V3-PROGRESS.md. Unlike
-// the legacy mission-* badges (auto-derived from SIMULATOR_BADGES), V3
-// scenarios emit per-ending and pattern-matched badges whose names are
-// semantically meaningful on their own — not "mission-1-1-good" but
-// "first-outlast". Copy is Claude A's, preserved verbatim.
+// The badge key → name/description/icon source-of-truth lives in
+// `lib/simulator/badges.ts` (SIMULATOR_BADGES). This file only adds the
+// shelf-level display policy: rarity tier, category, secret flag, and an
+// optional unlock hint. buildCatalogue() joins the two sources at load time.
+//
+// V3_METADATA_POLICY is keyed by SimulatorBadge key (which matches the
+// AchievementMeta.slug 1:1). If a V3 SimulatorBadgeDef exists without a
+// matching policy entry, buildCatalogue falls back to generic bronze
+// scenario metadata so the shelf doesn't crash — same fallback contract
+// used for unregistered legacy keys.
 // ---------------------------------------------------------------------------
 
-const V3_SCENARIO_BADGES: AchievementMeta[] = [
-  // ======== anxiety / anx-1-1 — "The 3 a.m. Draft" ========
-  { slug: "first-outlast",   name: "The First Outlast",        description: "Put the phone down. Let the sensation peak. Slept in eleven minutes.",                             icon: "shield",   rarity: "bronze",   category: "recovery",  secret: false, unlockHint: "Clear anx-1-1 via the pure outlast path." },
-  { slug: "noor-called",     name: "The Ally on the Line",     description: "Routed the 3 a.m. spiral through a steady friend, not the ex.",                                   icon: "sparkles", rarity: "silver",   category: "recovery",  secret: false, unlockHint: "Clear anx-1-1 by calling Noor instead of sending." },
-  { slug: "sent-and-sat",    name: "Sent, and Sat With It",    description: "Sent the text. Did not chase. Did not double-text.",                                              icon: "eye",      rarity: "bronze",   category: "recovery",  secret: false, unlockHint: "Clear anx-1-1 on the neutral send-and-sit ending." },
-  { slug: "sent-and-chased", name: "The Second Text",          description: "Post-send spiral. Eight messages into a closed channel.",                                         icon: "skull",    rarity: "bronze",   category: "recovery",  secret: true  },
-  { slug: "sober-as-a-nun",  name: "Sober As A Nun",           description: "The pure outlast — no ally, no water, no deletion.",                                              icon: "crown",    rarity: "obsidian", category: "legend",    secret: true  },
+type V3Policy = Pick<AchievementMeta, "rarity" | "category" | "secret" | "unlockHint">;
 
-  // ======== anxiety / anx-1-2 — "The Morning After the Draft" ========
-  { slug: "morning-protocol", name: "The Morning Protocol",    description: "Four motor habits before the phone. Sunlight, water, written task, face-down until 11.",          icon: "sparkles", rarity: "silver",   category: "recovery",  secret: false, unlockHint: "Clear anx-1-2 on the good path." },
+const V3_METADATA_POLICY: Record<string, V3Policy> = {
+  // anxiety — anx-1-1 "The 3 a.m. Draft"
+  "first-outlast":    { rarity: "bronze",   category: "recovery",  secret: false, unlockHint: "Clear anx-1-1 via the pure outlast path." },
+  "noor-called":      { rarity: "silver",   category: "recovery",  secret: false, unlockHint: "Clear anx-1-1 by calling Noor instead of sending." },
+  "sent-and-sat":     { rarity: "bronze",   category: "recovery",  secret: false, unlockHint: "Clear anx-1-1 on the neutral send-and-sit ending." },
+  "sent-and-chased":  { rarity: "bronze",   category: "recovery",  secret: true  },
+  "sober-as-a-nun":   { rarity: "obsidian", category: "legend",    secret: true  },
 
-  // ======== anxiety / anx-1-3 — "The Read Receipt" ========
-  { slug: "showed-up-anyway", name: "Showed Up",               description: "Arrived at the door as yourself. Three days of rumination did not re-author the date.",           icon: "shield",   rarity: "silver",   category: "recovery",  secret: false, unlockHint: "Clear anx-1-3 on the good path." },
+  // anxiety — anx-1-2 / anx-1-3 / anx-2-1 / anx-3-1
+  "morning-protocol":        { rarity: "silver", category: "recovery", secret: false, unlockHint: "Clear anx-1-2 on the good path." },
+  "showed-up-anyway":        { rarity: "silver", category: "recovery", secret: false, unlockHint: "Clear anx-1-3 on the good path." },
+  "sat-with-silence":        { rarity: "silver", category: "recovery", secret: false, unlockHint: "Clear anx-2-1 on the good path." },
+  "present-on-the-date":     { rarity: "gold",   category: "recovery", secret: false, unlockHint: "Clear anx-3-1 on the good path." },
+  "the-warm-man-recognised": { rarity: "silver", category: "recovery", secret: true,  unlockHint: "Implicit via the present-on-the-date path." },
 
-  // ======== anxiety / anx-2-1 — "The Waiting" ========
-  { slug: "sat-with-silence", name: "Sat With Silence",        description: "Forty-eight hours of no data and you did not author a rejection story into it.",                  icon: "eye",      rarity: "silver",   category: "recovery",  secret: false, unlockHint: "Clear anx-2-1 on the good path." },
+  // toxic-narc — tn-1-1 "The Mother's Call"
+  "warm-no-mother":      { rarity: "gold",     category: "scenarios",  secret: false, unlockHint: "Clear tn-1-1 with the warm-no path." },
+  "call-declined-clean": { rarity: "silver",   category: "scenarios",  secret: false, unlockHint: "Clear tn-1-1 with a clean decline." },
+  "forty-eight-held":    { rarity: "silver",   category: "discipline", secret: false, unlockHint: "Clear tn-1-1 after holding the 48-hour window." },
+  "one-week-quiet":      { rarity: "obsidian", category: "legend",     secret: true  },
+  "lured-back":          { rarity: "bronze",   category: "scenarios",  secret: true  },
+  "booked-in":           { rarity: "bronze",   category: "scenarios",  secret: true  },
 
-  // ======== anxiety / anx-3-1 — "The First Date" ========
-  { slug: "present-on-the-date",      name: "Present On The Date",     description: "Did not grade, did not interview, did not pre-emptively refuse the second one.",                                    icon: "sparkles", rarity: "gold",   category: "recovery",  secret: false, unlockHint: "Clear anx-3-1 on the good path." },
-  { slug: "the-warm-man-recognised",  name: "The Warm Man Recognised", description: "Accepted the structural reason for a ninety-minute close as the warm move, not a rejection.",                      icon: "eye",      rarity: "silver", category: "recovery",  secret: true,  unlockHint: "Implicit via the present-on-the-date path." },
+  // toxic-narc — tn-1-2 / tn-2-1 / tn-3-1
+  "pile-triaged":           { rarity: "silver",   category: "scenarios", secret: false, unlockHint: "Clear tn-1-2 on the good path." },
+  "weekend-held":           { rarity: "gold",     category: "scenarios", secret: false, unlockHint: "Clear tn-2-1 on the good path." },
+  "funeral-held":           { rarity: "obsidian", category: "legend",    secret: true  },
+  "apologised-to-a-narc":   { rarity: "bronze",   category: "scenarios", secret: true  },
+  "grief-competition-lost": { rarity: "bronze",   category: "scenarios", secret: true  },
 
-  // ======== toxic-narc / tn-1-1 — "The Mother's Call" ========
-  { slug: "warm-no-mother",      name: "The Warm No",          description: "A boundary with your mother at normal volume, without negotiation.",                              icon: "shield",   rarity: "gold",     category: "scenarios", secret: false, unlockHint: "Clear tn-1-1 with the warm-no path." },
-  { slug: "call-declined-clean", name: "The Silent Decline",   description: "Declined the call, no follow-up text, read voicemail on your schedule.",                          icon: "eye",      rarity: "silver",   category: "scenarios", secret: false, unlockHint: "Clear tn-1-1 with a clean decline." },
-  { slug: "forty-eight-held",    name: "Forty-Eight Hours Held", description: "Invoked the 48-hour rule. Decided at hour 47, not hour 2.",                                     icon: "award",    rarity: "silver",   category: "discipline", secret: false, unlockHint: "Clear tn-1-1 after holding the 48-hour window." },
-  { slug: "one-week-quiet",      name: "One Week Quiet",       description: "Seven full days of structural quiet. Rarest reply in this scenario.",                             icon: "crown",    rarity: "obsidian", category: "legend",    secret: true  },
-  { slug: "lured-back",          name: "The Reversal",         description: "Declined, then reversed under the martyr register.",                                              icon: "skull",    rarity: "bronze",   category: "scenarios", secret: true  },
-  { slug: "booked-in",           name: "The Weekend",          description: "Accepted. Scope widened. The whole weekend is hers.",                                             icon: "skull",    rarity: "bronze",   category: "scenarios", secret: true  },
+  // pc-child — pc-1-1 "The Hamster"
+  "the-kitchen-held":        { rarity: "silver",   category: "scenarios",  secret: false, unlockHint: "Clear pc-1-1 on the disciplined kitchen path." },
+  "documented":              { rarity: "silver",   category: "discipline", secret: false, unlockHint: "Clear pc-1-1 with the log-started choice." },
+  "sibling-moved":           { rarity: "gold",     category: "scenarios",  secret: false, unlockHint: "Clear pc-1-1 by moving the younger sibling that night." },
+  "normalised-it":           { rarity: "bronze",   category: "scenarios",  secret: true  },
+  "first-real-conversation": { rarity: "obsidian", category: "legend",     secret: true  },
+  "opted-out":               { rarity: "bronze",   category: "discipline", secret: false, unlockHint: "Decline the pc-1-1 content gate." },
 
-  // ======== toxic-narc / tn-1-2 — "The Missed Calls" ========
-  { slug: "pile-triaged",        name: "The Pile Triaged",     description: "Fourteen calls, twenty-three messages, no Monday lost.",                                          icon: "award",    rarity: "silver",   category: "scenarios", secret: false, unlockHint: "Clear tn-1-2 on the good path." },
+  // pc-child — pc-2-1 / pc-3-1 / pc-4-1
+  "meeting-held":                { rarity: "gold",     category: "scenarios", secret: false, unlockHint: "Clear pc-2-1 on the good path." },
+  "alliance-repaired":           { rarity: "gold",     category: "scenarios", secret: false, unlockHint: "Clear pc-3-1 on the good path." },
+  "the-marriage-named":          { rarity: "gold",     category: "scenarios", secret: false, unlockHint: "Clear pc-4-1 on the good path." },
+  "the-fifteen-year-thank-you":  { rarity: "obsidian", category: "legend",    secret: true  },
+  "door-closed":                 { rarity: "bronze",   category: "scenarios", secret: true  },
+};
 
-  // ======== toxic-narc / tn-2-1 — "The Boss's 6 p.m. Email" ========
-  { slug: "weekend-held",        name: "The Weekend Held",     description: "One Friday reply. Specific Monday slot. No apology. The covert-narc boss calibrated down.",       icon: "shield",   rarity: "gold",     category: "scenarios", secret: false, unlockHint: "Clear tn-2-1 on the good path." },
+/** Join a V3 SimulatorBadgeDef with its display policy. */
+function v3Meta(def: SimulatorBadgeDef): AchievementMeta {
+  const policy = V3_METADATA_POLICY[def.key] ?? {
+    rarity: "bronze" as const,
+    category: "scenarios" as const,
+    secret: false,
+  };
+  return {
+    slug: def.key,
+    name: def.title,
+    description: def.description,
+    icon: def.icon,
+    rarity: policy.rarity,
+    category: policy.category,
+    secret: policy.secret,
+    unlockHint: policy.unlockHint,
+  };
+}
 
-  // ======== toxic-narc / tn-3-1 — "The Family Group Chat" ========
-  { slug: "funeral-held",            name: "The Funeral Held",         description: "Practical work with Aunt Prue, declined to enter the grief-ranking economy. The relationship that mattered was made, not performed.", icon: "crown", rarity: "obsidian", category: "legend",    secret: true  },
-  { slug: "apologised-to-a-narc",    name: "The Permanent Record",     description: "Apology landed inside the martyr register — now on file for every future family event.",                                              icon: "skull", rarity: "bronze",   category: "scenarios", secret: true  },
-  { slug: "grief-competition-lost",  name: "The Grief Competition",    description: "Entered the grief-ranking contest. Came third behind the narc parent and the golden sibling.",                                       icon: "skull", rarity: "bronze",   category: "scenarios", secret: true  },
-
-  // ======== pc-child / pc-1-1 — "The Hamster" ========
-  { slug: "the-kitchen-held",       name: "The Kitchen Held",          description: "Four disciplined moves before 10 a.m. on the hardest Saturday.",                          icon: "shield",   rarity: "silver",   category: "scenarios",  secret: false, unlockHint: "Clear pc-1-1 on the disciplined kitchen path." },
-  { slug: "documented",             name: "The Household Log",         description: "Began the dated record that will matter in fifteen years.",                               icon: "award",    rarity: "silver",   category: "discipline", secret: false, unlockHint: "Clear pc-1-1 by starting the documentation." },
-  { slug: "sibling-moved",          name: "The Room Change",           description: "Sibling protection formalised the same night, not next week.",                            icon: "shield",   rarity: "gold",     category: "scenarios",  secret: false, unlockHint: "Clear pc-1-1 by moving the younger sibling that night." },
-  { slug: "normalised-it",          name: "Wait And See",              description: "Accepted the one-off frame. A lost year of documentation.",                               icon: "skull",    rarity: "bronze",   category: "scenarios",  secret: true  },
-  { slug: "first-real-conversation", name: "The First Real Conversation", description: "The double truth spoken in daylight with your co-parent.",                            icon: "crown",    rarity: "obsidian", category: "legend",     secret: true  },
-  { slug: "opted-out",              name: "Not Tonight",               description: "Respected your own bandwidth. The scenario will return.",                                 icon: "eye",      rarity: "bronze",   category: "discipline", secret: false, unlockHint: "Decline the pc-1-1 content gate." },
-
-  // ======== pc-child / pc-2-1 — "The School Calls" ========
-  { slug: "meeting-held",           name: "The Meeting Held",          description: "Five years of log-keeping bought the meeting. The meeting bought the next five years of alliance.", icon: "award", rarity: "gold", category: "scenarios", secret: false, unlockHint: "Clear pc-2-1 on the good path." },
-
-  // ======== pc-child / pc-3-1 — "The Triangulation" ========
-  { slug: "alliance-repaired",      name: "The Alliance Repaired",     description: "Quote-accurate / frame-wrong triangulation named and closed. The marriage held.",          icon: "sparkles", rarity: "gold",     category: "scenarios", secret: false, unlockHint: "Clear pc-3-1 on the good path." },
-
-  // ======== pc-child / pc-4-1 — "The Marriage Question" ========
-  { slug: "the-marriage-named",     name: "The Marriage Named",        description: "The 6:47 a.m. sentence received cleanly, specific cost named back, structural commitment made.", icon: "shield", rarity: "gold",    category: "scenarios", secret: false, unlockHint: "Clear pc-4-1 on the good path." },
-  { slug: "the-fifteen-year-thank-you", name: "The Fifteen-Year Thank You", description: "Both partners named one specific unnamed act of the other across the decade. The obsidian path of pc-4-1.", icon: "crown", rarity: "obsidian", category: "legend", secret: true },
-  { slug: "door-closed",            name: "The Door Closed",           description: "Defended against the naming. The window at 6:47 a.m. closed by 7:02 a.m. The next one is harder.", icon: "skull", rarity: "bronze",   category: "scenarios", secret: true  },
-];
+/** A legacy mission-* key uses the `${scenarioId}-good` suffix pattern. */
+function isLegacyScenarioKey(key: string): boolean {
+  return (
+    key.endsWith("-good") ||
+    key.endsWith("-neutral") ||
+    key.endsWith("-bad") ||
+    key.endsWith("-mastery")
+  );
+}
 
 /**
  * The full display catalogue. Order: arrival → scenarios → mastery → levels →
  * tracks → discipline → recovery → legend. Inside each category, entries
- * are inserted in the order of SIMULATOR_BADGES / ACHIEVEMENTS / V3 so the
- * shelf reads left-to-right through the game's actual progression.
+ * are inserted in the order of SIMULATOR_BADGES / ACHIEVEMENTS so the shelf
+ * reads left-to-right through the game's actual progression. V3 keys are
+ * routed through the V3_METADATA_POLICY layer; legacy mission-* keys go
+ * through scenarioMeta; level-complete keys go through levelMeta.
  */
 function buildCatalogue(): AchievementMeta[] {
   const scenarios: AchievementMeta[] = [];
@@ -484,37 +617,33 @@ function buildCatalogue(): AchievementMeta[] {
   const legend: AchievementMeta[] = [];
   const tracks: AchievementMeta[] = [];
 
+  const route = (meta: AchievementMeta) => {
+    switch (meta.category) {
+      case "recovery":   recoveries.push(meta); break;
+      case "scenarios":  scenarios.push(meta); break;
+      case "discipline": discipline.push(meta); break;
+      case "legend":     legend.push(meta); break;
+      case "mastery":    masteries.push(meta); break;
+      case "levels":     levels.push(meta); break;
+      case "tracks":     tracks.push(meta); break;
+      case "arrival":    /* only meta-achievements produce arrival entries */ break;
+    }
+  };
+
   for (const def of SIMULATOR_BADGES) {
     if (def.tier === "level") {
       levels.push(levelMeta(def));
       continue;
     }
-    const meta = scenarioMeta(def);
-    if (meta.category === "mastery") masteries.push(meta);
-    else if (meta.category === "recovery") recoveries.push(meta);
-    else scenarios.push(meta);
+    // Legacy mission-* keys use the -good/-neutral/-bad/-mastery suffix
+    // pattern; everything else is a V3 semantic-slug badge.
+    route(isLegacyScenarioKey(def.key) ? scenarioMeta(def) : v3Meta(def));
   }
 
   const metas = ACHIEVEMENTS.map(metaAchievementMeta);
   const arrival = metas.filter((m) => m.category === "arrival");
-  for (const m of metas.filter((m) => m.category === "tracks")) tracks.push(m);
-  for (const m of metas.filter((m) => m.category === "discipline")) discipline.push(m);
-  for (const m of metas.filter((m) => m.category === "legend")) legend.push(m);
-
-  // Merge V3 hand-authored entries into their respective category buckets.
-  // Each V3 badge carries its own canonical category (recovery / scenarios /
-  // discipline / legend), so this is a declarative route, not a guess.
-  for (const m of V3_SCENARIO_BADGES) {
-    switch (m.category) {
-      case "recovery":   recoveries.push(m); break;
-      case "scenarios":  scenarios.push(m); break;
-      case "discipline": discipline.push(m); break;
-      case "legend":     legend.push(m); break;
-      case "mastery":    masteries.push(m); break;
-      case "levels":     levels.push(m); break;
-      case "tracks":     tracks.push(m); break;
-      case "arrival":    /* V3 has none */ break;
-    }
+  for (const m of metas) {
+    if (m.category !== "arrival") route(m);
   }
 
   return [

@@ -466,15 +466,194 @@ export const SIMULATOR_BADGES: SimulatorBadgeDef[] = [
     tier: "level",
     icon: "crown",
   },
+
+  // ---------- V3 scenario badges ----------
+  // Unlike legacy mission-* badges (derived from scenario id + outcome), V3
+  // scenarios emit semantically-named per-ending badges. Registered here so
+  // BADGE_BY_KEY resolves them for the ending-screen inline grid AND the
+  // V3 catalogue builder in achievements.ts can layer rarity/category on top.
+  // Name + description copy is authoritative; the display policy in
+  // achievements.ts only adds rarity, category, secret, and unlockHint.
+
+  // anxiety — anx-1-1 "The 3 a.m. Draft"
+  { key: "first-outlast",    title: "The First Outlast",     description: "Put the phone down. Let the sensation peak. Slept in eleven minutes.",                        tier: "scenario", icon: "shield"   },
+  { key: "noor-called",      title: "The Ally on the Line",  description: "Routed the 3 a.m. spiral through a steady friend, not the ex.",                              tier: "scenario", icon: "sparkles" },
+  { key: "sent-and-sat",     title: "Sent, and Sat With It", description: "Sent the text. Did not chase. Did not double-text.",                                         tier: "scenario", icon: "eye"      },
+  { key: "sent-and-chased",  title: "The Second Text",       description: "Post-send spiral. Eight messages into a closed channel.",                                    tier: "scenario", icon: "skull"    },
+  { key: "sober-as-a-nun",   title: "Sober As A Nun",        description: "The pure outlast — no ally, no water, no deletion.",                                         tier: "scenario", icon: "crown"    },
+
+  // anxiety — anx-1-2 "The Morning After the Draft"
+  { key: "morning-protocol", title: "The Morning Protocol",  description: "Four motor habits before the phone. Sunlight, water, written task, face-down until 11.",    tier: "scenario", icon: "sparkles" },
+
+  // anxiety — anx-1-3 "The Read Receipt"
+  { key: "showed-up-anyway", title: "Showed Up",             description: "Arrived at the door as yourself. Three days of rumination did not re-author the date.",     tier: "scenario", icon: "shield"   },
+
+  // anxiety — anx-2-1 "The Waiting"
+  { key: "sat-with-silence", title: "Sat With Silence",      description: "Forty-eight hours of no data and you did not author a rejection story into it.",            tier: "scenario", icon: "eye"      },
+
+  // anxiety — anx-3-1 "The First Date"
+  { key: "present-on-the-date",     title: "Present On The Date",     description: "Did not grade, did not interview, did not pre-emptively refuse the second one.",                        tier: "scenario", icon: "sparkles" },
+  { key: "the-warm-man-recognised", title: "The Warm Man Recognised", description: "Accepted the structural reason for a ninety-minute close as the warm move, not a rejection.",         tier: "scenario", icon: "eye"      },
+
+  // toxic-narc — tn-1-1 "The Mother's Call"
+  { key: "warm-no-mother",      title: "The Warm No",              description: "A boundary with your mother at normal volume, without negotiation.",           tier: "scenario", icon: "shield" },
+  { key: "call-declined-clean", title: "The Silent Decline",       description: "Declined the call, no follow-up text, read voicemail on your schedule.",       tier: "scenario", icon: "eye"    },
+  { key: "forty-eight-held",    title: "Forty-Eight Hours Held",   description: "Invoked the 48-hour rule. Decided at hour 47, not hour 2.",                   tier: "scenario", icon: "award"  },
+  { key: "one-week-quiet",      title: "One Week Quiet",           description: "Seven full days of structural quiet. Rarest reply in this scenario.",         tier: "scenario", icon: "crown"  },
+  { key: "lured-back",          title: "The Reversal",             description: "Declined, then reversed under the martyr register.",                          tier: "scenario", icon: "skull"  },
+  { key: "booked-in",           title: "The Weekend",              description: "Accepted. Scope widened. The whole weekend is hers.",                         tier: "scenario", icon: "skull"  },
+
+  // toxic-narc — tn-1-2 "The Missed Calls"
+  { key: "pile-triaged",        title: "The Pile Triaged",         description: "Fourteen calls, twenty-three messages, no Monday lost.",                      tier: "scenario", icon: "award"  },
+
+  // toxic-narc — tn-2-1 "The Boss's 6 p.m. Email"
+  { key: "weekend-held",        title: "The Weekend Held",         description: "One Friday reply. Specific Monday slot. No apology. The covert-narc boss calibrated down.", tier: "scenario", icon: "shield" },
+
+  // toxic-narc — tn-3-1 "The Family Group Chat"
+  { key: "funeral-held",             title: "The Funeral Held",      description: "Practical work with Aunt Prue, declined to enter the grief-ranking economy. The relationship that mattered was made, not performed.", tier: "scenario", icon: "crown" },
+  { key: "apologised-to-a-narc",     title: "The Permanent Record",  description: "Apology landed inside the martyr register — now on file for every future family event.",                                              tier: "scenario", icon: "skull" },
+  { key: "grief-competition-lost",   title: "The Grief Competition", description: "Entered the grief-ranking contest. Came third behind the narc parent and the golden sibling.",                                       tier: "scenario", icon: "skull" },
+
+  // pc-child — pc-1-1 "The Hamster"
+  { key: "the-kitchen-held",        title: "The Kitchen Held",         description: "Four disciplined moves before 10 a.m. on the hardest Saturday.",  tier: "scenario", icon: "shield"   },
+  { key: "documented",              title: "The Household Log",        description: "Began the dated record that will matter in fifteen years.",        tier: "scenario", icon: "award"    },
+  { key: "sibling-moved",           title: "The Room Change",          description: "Sibling protection formalised the same night, not next week.",    tier: "scenario", icon: "shield"   },
+  { key: "normalised-it",           title: "Wait And See",             description: "Accepted the one-off frame. A lost year of documentation.",       tier: "scenario", icon: "skull"    },
+  { key: "first-real-conversation", title: "The First Real Conversation", description: "The double truth spoken in daylight with your co-parent.",    tier: "scenario", icon: "crown"    },
+  { key: "opted-out",               title: "Not Tonight",              description: "Respected your own bandwidth. The scenario will return.",         tier: "scenario", icon: "eye"      },
+
+  // pc-child — pc-2-1 "The School Calls"
+  { key: "meeting-held",            title: "The Meeting Held",         description: "Five years of log-keeping bought the meeting. The meeting bought the next five years of alliance.", tier: "scenario", icon: "award" },
+
+  // pc-child — pc-3-1 "The Triangulation"
+  { key: "alliance-repaired",       title: "The Alliance Repaired",    description: "Quote-accurate / frame-wrong triangulation named and closed. The marriage held.",                    tier: "scenario", icon: "sparkles" },
+
+  // pc-child — pc-4-1 "The Marriage Question"
+  { key: "the-marriage-named",          title: "The Marriage Named",          description: "The 6:47 a.m. sentence received cleanly, specific cost named back, structural commitment made.", tier: "scenario", icon: "shield" },
+  { key: "the-fifteen-year-thank-you",  title: "The Fifteen-Year Thank You",  description: "Both partners named one specific unnamed act of the other across the decade. The obsidian path of pc-4-1.", tier: "scenario", icon: "crown" },
+  { key: "door-closed",                 title: "The Door Closed",             description: "Defended against the naming. The window at 6:47 a.m. closed by 7:02 a.m. The next one is harder.", tier: "scenario", icon: "skull" },
 ];
 
 export const BADGE_BY_KEY: Record<string, SimulatorBadgeDef> =
   Object.fromEntries(SIMULATOR_BADGES.map((b) => [b.key, b]));
 
+// ---------------------------------------------------------------------------
+// V3 scenario badge emission.
+//
+// V3 scenarios (anxiety, toxic-narc, pc-child tracks) don't use the
+// scenario-id + outcome pattern of the legacy mission-* scenarios. Instead
+// they emit semantic per-ending badges (e.g. `first-outlast` on a specific
+// good ending of anx-1-1) plus occasional pattern-matched secrets
+// (e.g. `sober-as-a-nun` when the player reaches `ending-outlasted`
+// without ever texting Noor, drinking water, or deleting the thread).
+//
+// Mapping table below is the authoritative ending→badge attribution.
+// Pattern rules live in V3_PATTERN_BADGES. Keep both in this file so the
+// evaluator stays close to the badge definitions it emits.
+// ---------------------------------------------------------------------------
+
+type V3EndingMap = Record<string, Record<string, string[]>>;
+
+export const V3_SCENARIO_ENDING_BADGES: V3EndingMap = {
+  "anx-1-1": {
+    "ending-outlasted":     ["first-outlast"],
+    "ending-debriefed":     ["noor-called"],
+    "ending-sent-survived": ["sent-and-sat"],
+    "ending-chased":        ["sent-and-chased"],
+  },
+  "anx-1-2": {
+    "ending-reclaimed": ["morning-protocol"],
+  },
+  "anx-1-3": {
+    "ending-showed-up-clean": ["showed-up-anyway"],
+  },
+  "anx-2-1": {
+    "ending-clean-saturday": ["sat-with-silence"],
+  },
+  "anx-3-1": {
+    "ending-present-on-date": ["present-on-the-date"],
+    "ending-probe-owned":     ["the-warm-man-recognised"],
+  },
+  "tn-1-1": {
+    "ending-warm-no":         ["warm-no-mother"],
+    "ending-declined-clean":  ["call-declined-clean"],
+    "ending-deferred":        ["forty-eight-held"],
+    "ending-one-week-quiet":  ["one-week-quiet"],
+    "ending-lured-back":      ["lured-back"],
+    "ending-booked-in":       ["booked-in"],
+  },
+  "tn-1-2": {
+    "ending-triaged-clean": ["pile-triaged"],
+  },
+  "tn-2-1": {
+    "ending-clean-monday": ["weekend-held"],
+  },
+  "tn-3-1": {
+    "ending-funeral-held":   ["funeral-held"],
+    "ending-apologised":     ["apologised-to-a-narc"],
+    "ending-over-performed": ["grief-competition-lost"],
+  },
+  "pc-1-1": {
+    // ending-acted-today emits two badges — the-kitchen-held (clearing the
+    // scenario on the disciplined path) AND documented (the log habit itself,
+    // since starting the dated record is one of the four disciplined moves).
+    "ending-acted-today":             ["the-kitchen-held", "documented"],
+    "ending-sibling-moved":           ["sibling-moved"],
+    "ending-first-real-conversation": ["first-real-conversation"],
+    "ending-normalised":              ["normalised-it"],
+    "ending-opted-out":               ["opted-out"],
+  },
+  "pc-2-1": {
+    "ending-alliance-held": ["meeting-held"],
+  },
+  "pc-3-1": {
+    "ending-alliance-repaired": ["alliance-repaired"],
+  },
+  "pc-4-1": {
+    "ending-the-marriage-named":    ["the-marriage-named"],
+    "ending-fifteen-year-thank-you": ["the-fifteen-year-thank-you"],
+    "ending-door-closed":            ["door-closed"],
+  },
+};
+
+type V3PatternBadge = {
+  badgeKey: string;
+  scenarioId: string;
+  /** Earned when the run arrives at this ending scene id. */
+  requiresEnding: string;
+  /**
+   * Returns true iff the run's full history satisfies the pattern.
+   * Checked AFTER the ending match, so the function can assume the
+   * correct scenario + ending.
+   */
+  check: (state: SimulatorState) => boolean;
+};
+
+export const V3_PATTERN_BADGES: V3PatternBadge[] = [
+  {
+    // The pure outlast — reached ending-outlasted without texting Noor,
+    // drinking water, or nuking the thread. Harder than the ally-assisted
+    // or water-assisted variants. Obsidian tier.
+    badgeKey: "sober-as-a-nun",
+    scenarioId: "anx-1-1",
+    requiresEnding: "ending-outlasted",
+    check: (state) => {
+      const forbidden = new Set(["text-noor", "water-glass", "delete-and-delete"]);
+      return state.choicesMade.every((c) => !forbidden.has(c.choiceId));
+    },
+  },
+];
+
 /**
  * Compute the scenario-level badges a completed state earns. Level-clear
  * badges are awarded separately (see `levelCompleteBadgesFor` below) because
  * they require cross-scenario state that this function doesn't have.
+ *
+ * V3 scenarios (those with an entry in V3_SCENARIO_ENDING_BADGES) use
+ * per-ending semantic badges instead of the legacy -good/-neutral/-bad/
+ * -mastery quad. Pattern rules in V3_PATTERN_BADGES layer on top for
+ * the rare obsidian secrets that depend on choice history, not just
+ * which ending was reached.
  */
 export function badgesEarnedFromState(
   scenario: Scenario,
@@ -483,22 +662,37 @@ export function badgesEarnedFromState(
   if (!state.outcome || !state.endedAt) return [];
 
   const keys: string[] = [];
-  const outcome = state.outcome;
 
-  if (outcome === "good" || outcome === "passed") {
-    keys.push(`${scenario.id}-good`);
-  } else if (outcome === "bad" || outcome === "failed") {
-    keys.push(`${scenario.id}-bad`);
+  // V3 path — scenario has an explicit ending map. Skip the legacy quad
+  // entirely; per-ending semantic badges do the work.
+  const endingMap = V3_SCENARIO_ENDING_BADGES[scenario.id];
+  if (endingMap) {
+    const endingBadges = endingMap[state.currentSceneId];
+    if (endingBadges) keys.push(...endingBadges);
+
+    for (const p of V3_PATTERN_BADGES) {
+      if (p.scenarioId !== scenario.id) continue;
+      if (state.currentSceneId !== p.requiresEnding) continue;
+      if (p.check(state)) keys.push(p.badgeKey);
+    }
   } else {
-    keys.push(`${scenario.id}-neutral`);
-  }
+    // Legacy path — mission-* scenarios.
+    const outcome = state.outcome;
+    if (outcome === "good" || outcome === "passed") {
+      keys.push(`${scenario.id}-good`);
+    } else if (outcome === "bad" || outcome === "failed") {
+      keys.push(`${scenario.id}-bad`);
+    } else {
+      keys.push(`${scenario.id}-neutral`);
+    }
 
-  if (
-    (outcome === "good" || outcome === "passed") &&
-    state.choicesMade.length > 0 &&
-    state.choicesMade.every((c) => c.wasOptimal)
-  ) {
-    keys.push(`${scenario.id}-mastery`);
+    if (
+      (outcome === "good" || outcome === "passed") &&
+      state.choicesMade.length > 0 &&
+      state.choicesMade.every((c) => c.wasOptimal)
+    ) {
+      keys.push(`${scenario.id}-mastery`);
+    }
   }
 
   return keys.filter((k) => BADGE_BY_KEY[k] !== undefined);
