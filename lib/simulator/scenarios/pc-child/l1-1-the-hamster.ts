@@ -239,7 +239,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: null,
-        text: "You type, delete, type again, send: 'Hamster is dead. Finn says it got scared. I don\\'t think that\\'s what happened. I need us both in the room.'",
+        text: "You type, delete, type again, send: 'Hamster is dead. Finn says it got scared. I do not think that is what happened. I need us both in the room.'",
       },
       {
         speakerId: "inner-voice",
@@ -378,7 +378,7 @@ const scenes: Scene[] = [
       {
         id: "propose-wait-and-see",
         text: '"Let\'s watch for a few more weeks. This might be a one-off. We don\'t want to overreact."',
-        tactic: "The parent-position that loses you, statistically, the next three to five years. 'Wait and see' is almost always motivated by the parent\\'s own grief, not by the child\\'s interest.",
+        tactic: "The parent-position that loses you, statistically, the next three to five years. 'Wait and see' is almost always motivated by the parent's own grief, not by the child's interest.",
         nextSceneId: "partner-agrees-wait",
       },
       {

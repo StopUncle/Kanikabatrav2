@@ -12,8 +12,9 @@
 
 import type { Scenario } from "../../types";
 import pcChild11 from "./l1-1-the-hamster";
+import pcChild21 from "./l2-1-the-school-calls";
 
-export const PC_CHILD_SCENARIOS: Scenario[] = [pcChild11];
+export const PC_CHILD_SCENARIOS: Scenario[] = [pcChild11, pcChild21];
 
 export const PC_CHILD_LEVEL_TITLES: Record<
   number,

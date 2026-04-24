@@ -720,7 +720,7 @@ const scenes: Scene[] = [
     dialog: [
       {
         speakerId: "inner-voice",
-        text: "Write down what the reversal felt like. Not the guilt; the specific micro-sensation in the first three seconds after you said 'okay, I\\'ll come.' A relief, narrower than it should have been, followed almost immediately by a weight. That is the signature of a martyr-frame capitulation. Learn the signature. Next time, the three-second window is where you refuse.",
+        text: "Write down what the reversal felt like. Not the guilt; the specific micro-sensation in the first three seconds after you said 'okay, I will come.' A relief, narrower than it should have been, followed almost immediately by a weight. That is the signature of a martyr-frame capitulation. Learn the signature. Next time, the three-second window is where you refuse.",
         emotion: "sad",
       },
       {

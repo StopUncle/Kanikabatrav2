@@ -600,7 +600,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "inner-voice",
-        text: "Watch that sentence. 'We will look at the forms together.' 'There\\'s a folder.' You agreed to a concept and she is now producing a document. The scope widening has already started — not in malice, in momentum. This is how scope widens on a conditional yes. Most of the damage is done in the twenty minutes after the yes, not at the yes itself.",
+        text: "Watch that sentence. 'We will look at the forms together.' 'There is a folder.' You agreed to a concept and she is now producing a document. The scope widening has already started — not in malice, in momentum. This is how scope widens on a conditional yes. Most of the damage is done in the twenty minutes after the yes, not at the yes itself.",
         emotion: "concerned",
       },
       {
@@ -696,7 +696,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "inner-voice",
-        text: "Three documents. One was agreed. Two were not. The scope widening is now visible as paper. This is the moment. You either re-assert the scope or you let the paper drag you forward. The paper is very good at dragging. Don\\'t let the paper drag you.",
+        text: "Three documents. One was agreed. Two were not. The scope widening is now visible as paper. This is the moment. You either re-assert the scope or you let the paper drag you forward. The paper is very good at dragging. Do not let the paper drag you.",
         emotion: "concerned",
       },
       {
@@ -771,7 +771,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "inner-voice",
-        text: "Total retreat is not a failure — it is a correction of a decision you made under warmer conditions. You can always sign a medical form in six weeks from a solicitor\\'s office. You cannot always un-sign one you signed at a kitchen desk.",
+        text: "Total retreat is not a failure — it is a correction of a decision you made under warmer conditions. You can always sign a medical form in six weeks from a solicitor's office. You cannot always un-sign one you signed at a kitchen desk.",
         emotion: "knowing",
       },
     ],
