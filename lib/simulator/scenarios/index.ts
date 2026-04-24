@@ -15,6 +15,10 @@ import {
   MALE_DATING_LEVEL_TITLES,
 } from "./male-dating";
 import { ANXIETY_SCENARIOS, ANXIETY_LEVEL_TITLES } from "./anxiety";
+import {
+  TOXIC_NARC_SCENARIOS,
+  TOXIC_NARC_LEVEL_TITLES,
+} from "./toxic-narc";
 import mission11 from "./mission-1-1";
 import mission12 from "./mission-1-2";
 import mission21 from "./mission-2-1";
@@ -67,13 +71,19 @@ export const FEMALE_SCENARIOS: Scenario[] = [
   mission112,
 ];
 
-export { MALE_BUSINESS_SCENARIOS, MALE_DATING_SCENARIOS, ANXIETY_SCENARIOS };
+export {
+  MALE_BUSINESS_SCENARIOS,
+  MALE_DATING_SCENARIOS,
+  ANXIETY_SCENARIOS,
+  TOXIC_NARC_SCENARIOS,
+};
 
 export const ALL_SCENARIOS: Scenario[] = [
   ...FEMALE_SCENARIOS,
   ...MALE_BUSINESS_SCENARIOS,
   ...MALE_DATING_SCENARIOS,
   ...ANXIETY_SCENARIOS,
+  ...TOXIC_NARC_SCENARIOS,
 ];
 
 /**
@@ -138,6 +148,7 @@ export function levelTitlesForTrack(
   if (track === "male-business") return MALE_BUSINESS_LEVEL_TITLES;
   if (track === "male-dating") return MALE_DATING_LEVEL_TITLES;
   if (track === "anxiety") return ANXIETY_LEVEL_TITLES;
+  if (track === "toxic-narc") return TOXIC_NARC_LEVEL_TITLES;
   return LEVEL_TITLES;
 }
 
