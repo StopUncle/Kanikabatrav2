@@ -364,3 +364,22 @@ export const SIBLING_YOUNGER: Character = {
   personalityType: "neurotypical-child",
   silhouetteType: "child",
 };
+
+/**
+ * Anxiety track — dating scenarios.
+ * Rhys is the warm man Noor sets the protagonist up with in anx-1-3
+ * and who appears across L3-L4 as the counter-example to Theo.
+ * Intentionally warm without being seductive; reads books; does not
+ * perform.
+ */
+export const RHYS: Character = {
+  id: "rhys",
+  name: "Rhys",
+  description:
+    "The warm man. Reads books. Does not perform. Does not grade you mid-sentence. The one Noor pointed you to after Theo. The counter-example, not a rebound.",
+  traits: ["warm", "steady", "readable"],
+  defaultEmotion: "neutral",
+  gender: "male",
+  personalityType: "secure",
+  silhouetteType: "male-average",
+};
