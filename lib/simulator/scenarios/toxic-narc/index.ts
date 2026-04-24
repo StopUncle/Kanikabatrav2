@@ -6,8 +6,9 @@
 
 import type { Scenario } from "../../types";
 import toxicNarc11 from "./l1-1-the-mothers-call";
+import toxicNarc12 from "./l1-2-the-missed-calls";
 
-export const TOXIC_NARC_SCENARIOS: Scenario[] = [toxicNarc11];
+export const TOXIC_NARC_SCENARIOS: Scenario[] = [toxicNarc11, toxicNarc12];
 
 export const TOXIC_NARC_LEVEL_TITLES: Record<
   number,
