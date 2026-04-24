@@ -303,3 +303,64 @@ export const THEO: Character = {
   personalityType: "avoidant",
   silhouetteType: "male-lean",
 };
+
+// ===================================================================
+// PC-CHILD TRACK — introduced in TRACK-pc-child
+// ===================================================================
+//
+// These characters are written with clinical restraint. The child at
+// any age is voiced sparingly — short lines, flat affect in the
+// telling details, age-appropriate performance in the social ones.
+// Never overwritten. Never cartoonish. The scenarios are primarily
+// the parent's interior.
+
+/**
+ * The co-parent. Sometimes aligned with the protagonist, sometimes
+ * not. Register shifts per scenario depending on where they are in
+ * the grief of raising this child. In L1 they are off-screen at the
+ * bank; referenced by name and reached by phone.
+ */
+export const THE_PARTNER: Character = {
+  id: "the-partner",
+  name: "Your partner",
+  description:
+    "Your co-parent. Reasonable. Exhausted in ways that will not become fully visible for years. Sometimes aligned with you on the pattern; sometimes still hoping you are wrong.",
+  traits: ["co-parent", "reasonable", "exhausted"],
+  defaultEmotion: "neutral",
+  personalityType: "secure-ally",
+  silhouetteType: "male-lean",
+};
+
+/**
+ * Finn at age 5. On-screen in L1-1. Voiced in short lines. The
+ * character is a child with a neurological condition — not a villain.
+ * The scenarios teach the parent to act on behaviour, not on the
+ * child's identity.
+ */
+export const CHILD_5: Character = {
+  id: "child-5",
+  name: "Finn",
+  description:
+    "Your son. Five years old. Bright, verbal, well-mannered in public. Odd in ways you have been noting without consciously cataloguing for about eighteen months.",
+  traits: ["young", "composed", "reads-adults"],
+  defaultEmotion: "neutral",
+  gender: "male",
+  personalityType: "pc-child",
+  silhouetteType: "child",
+};
+
+/**
+ * Finn's younger sibling. Two years younger. Voiced in L1-1 briefly
+ * for the protection-decision beat. Will recur through the track.
+ */
+export const SIBLING_YOUNGER: Character = {
+  id: "sibling-younger",
+  name: "Lily",
+  description:
+    "Your younger child. Three years old in L1. The reason the sibling-room-moved decision exists at all.",
+  traits: ["young", "attached-to-parent", "uncomplicated"],
+  defaultEmotion: "happy",
+  gender: "female",
+  personalityType: "neurotypical-child",
+  silhouetteType: "child",
+};

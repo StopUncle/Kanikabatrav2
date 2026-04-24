@@ -19,6 +19,7 @@ import {
   TOXIC_NARC_SCENARIOS,
   TOXIC_NARC_LEVEL_TITLES,
 } from "./toxic-narc";
+import { PC_CHILD_SCENARIOS, PC_CHILD_LEVEL_TITLES } from "./pc-child";
 import mission11 from "./mission-1-1";
 import mission12 from "./mission-1-2";
 import mission21 from "./mission-2-1";
@@ -76,6 +77,7 @@ export {
   MALE_DATING_SCENARIOS,
   ANXIETY_SCENARIOS,
   TOXIC_NARC_SCENARIOS,
+  PC_CHILD_SCENARIOS,
 };
 
 export const ALL_SCENARIOS: Scenario[] = [
@@ -84,6 +86,7 @@ export const ALL_SCENARIOS: Scenario[] = [
   ...MALE_DATING_SCENARIOS,
   ...ANXIETY_SCENARIOS,
   ...TOXIC_NARC_SCENARIOS,
+  ...PC_CHILD_SCENARIOS,
 ];
 
 /**
@@ -149,6 +152,7 @@ export function levelTitlesForTrack(
   if (track === "male-dating") return MALE_DATING_LEVEL_TITLES;
   if (track === "anxiety") return ANXIETY_LEVEL_TITLES;
   if (track === "toxic-narc") return TOXIC_NARC_LEVEL_TITLES;
+  if (track === "pc-child") return PC_CHILD_LEVEL_TITLES;
   return LEVEL_TITLES;
 }
 
