@@ -383,3 +383,21 @@ export const RHYS: Character = {
   personalityType: "secure",
   silhouetteType: "male-average",
 };
+
+/**
+ * Toxic-Narc track — long-term spouse.
+ * The covert narc husband from tn-4-x. Performs warmth publicly,
+ * runs a controlling register at home. Distinct from MARCUS (workplace)
+ * and MARIS (Maris-arc antagonist).
+ */
+export const THE_SPOUSE: Character = {
+  id: "spouse",
+  name: "Your husband",
+  description:
+    "The long-term spouse. Covert narcissist — performs warmth at his mother's Sunday lunch, runs a controlling register at the kitchen table. The marriage works on paper; the operational register inside it is not what the paper says.",
+  traits: ["covert", "controlling", "plausible-to-outsiders"],
+  defaultEmotion: "neutral",
+  gender: "male",
+  personalityType: "covert-narcissist",
+  silhouetteType: "male-imposing",
+};
