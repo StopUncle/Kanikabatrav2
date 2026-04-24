@@ -7,8 +7,9 @@
 
 import type { Scenario } from "../../types";
 import anxiety11 from "./l1-1-the-3am-draft";
+import anxiety12 from "./l1-2-the-morning-after";
 
-export const ANXIETY_SCENARIOS: Scenario[] = [anxiety11];
+export const ANXIETY_SCENARIOS: Scenario[] = [anxiety11, anxiety12];
 
 export const ANXIETY_LEVEL_TITLES: Record<
   number,
