@@ -26,6 +26,10 @@ const VALID_TRACKS: ScenarioTrack[] = [
   "female",
   "male-business",
   "male-dating",
+  "anxiety",
+  "toxic-narc",
+  "pc-child",
+  "cluster-b-lab",
 ];
 
 function resolveTrack(value?: string): ScenarioTrack {
@@ -221,10 +225,13 @@ export default async function SimulatorIndex({
         </div>
       </header>
 
-      {/* Track selector */}
+      {/* Track selector — wraps to a grid on narrow desktops. Seven tracks
+          in one row would crush the sublabel text; flex-wrap + basis gives
+          each tab a sensible minimum width and breaks to a second row when
+          the container is too narrow. */}
       <nav
         aria-label="Simulator track"
-        className="mb-8 flex flex-col sm:flex-row gap-2 p-1.5 rounded-xl border border-warm-gold/15 bg-deep-black/40"
+        className="mb-8 flex flex-col sm:flex-row sm:flex-wrap gap-2 p-1.5 rounded-xl border border-warm-gold/15 bg-deep-black/40"
       >
         {VALID_TRACKS.map((t) => {
           const tMeta = TRACK_META[t];
@@ -233,7 +240,7 @@ export default async function SimulatorIndex({
             <Link
               key={t}
               href={tMeta.href}
-              className={`flex-1 flex flex-col items-start px-4 py-3 rounded-lg transition-all ${
+              className={`flex-1 sm:basis-[220px] flex flex-col items-start px-4 py-3 rounded-lg transition-all ${
                 active
                   ? "bg-warm-gold/10 border border-warm-gold/40"
                   : "border border-transparent hover:bg-white/5"
@@ -287,7 +294,7 @@ export default async function SimulatorIndex({
       <div className="mt-12 p-5 rounded-xl border border-dashed border-warm-gold/15 bg-deep-black/30 text-center">
         <p className="inline-flex items-center justify-center gap-1.5 text-warm-gold/60 uppercase tracking-[0.3em] text-[10px] mb-2">
           <Sparkles size={10} strokeWidth={1.8} />
-          Full Library · {ALL_SCENARIOS.length} scenarios across 3 tracks
+          Full Library · {ALL_SCENARIOS.length} scenarios across {VALID_TRACKS.length} tracks
         </p>
         <p className="text-text-gray/70 text-sm font-light max-w-md mx-auto">
           Each track is a separate curriculum. Playing one doesn&apos;t lock
