@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { m } from "framer-motion";
-import { Heart, MessageCircle, Pin, Mic } from "lucide-react";
+import { Heart, MessageCircle, Pin, Mic, ChevronDown, ChevronUp } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import Link from "next/link";
 import ReactMarkdown from "react-markdown";
@@ -43,10 +43,52 @@ interface FeedPostProps {
   isNew?: boolean;
 }
 
+/**
+ * Pinned posts sort to the top of the feed and push the rest down. Once a
+ * member has acknowledged a pinned post, they can collapse it to a single
+ * header row so the feed reclaims the space. Choice persists per-post in
+ * localStorage, keyed on post id + createdAt so re-posting or re-pinning
+ * resets the default to expanded. Non-pinned posts never collapse.
+ */
+const PINNED_COLLAPSE_STORAGE_PREFIX = "feed-pinned-collapsed:";
+
+function pinnedCollapseKey(post: { id: string; createdAt: string }): string {
+  return `${PINNED_COLLAPSE_STORAGE_PREFIX}${post.id}:${post.createdAt}`;
+}
+
 export default function FeedPost({ post, isDetail = false, isNew = false }: FeedPostProps) {
   const [liked, setLiked] = useState(post.isLiked);
   const [likeCount, setLikeCount] = useState(post.likeCount);
   const [isToggling, setIsToggling] = useState(false);
+
+  // Collapsed state for pinned posts only. Detail pages ignore the toggle
+  // entirely — if a member navigated into the post directly, they want to
+  // see it. Hydration: start expanded on first render (matches SSR) then
+  // re-read localStorage on mount to avoid a mismatch flash.
+  const canCollapse = post.isPinned && !isDetail;
+  const [isCollapsed, setIsCollapsed] = useState(false);
+  useEffect(() => {
+    if (!canCollapse) return;
+    try {
+      const stored = localStorage.getItem(pinnedCollapseKey(post));
+      if (stored === "1") setIsCollapsed(true);
+    } catch {
+      // localStorage unavailable (private mode, quota, etc.) — start
+      // expanded and leave the toggle as an in-session-only affordance.
+    }
+  }, [canCollapse, post]);
+
+  const toggleCollapsed = () => {
+    const next = !isCollapsed;
+    setIsCollapsed(next);
+    if (!canCollapse) return;
+    try {
+      if (next) localStorage.setItem(pinnedCollapseKey(post), "1");
+      else localStorage.removeItem(pinnedCollapseKey(post));
+    } catch {
+      /* non-fatal */
+    }
+  };
 
   const handleLike = async () => {
     if (isToggling) return;
@@ -135,10 +177,28 @@ export default function FeedPost({ post, isDetail = false, isNew = false }: Feed
           </span>
         </div>
         {post.isPinned && (
-          <span className="inline-flex items-center gap-1 text-[10px] text-warm-gold uppercase tracking-wider font-medium bg-warm-gold/10 border border-warm-gold/25 px-2 py-0.5 rounded-full shrink-0">
-            <Pin className="w-2.5 h-2.5" />
-            Pinned
-          </span>
+          canCollapse ? (
+            <button
+              type="button"
+              onClick={toggleCollapsed}
+              aria-expanded={!isCollapsed}
+              aria-label={isCollapsed ? "Expand pinned post" : "Collapse pinned post"}
+              className="inline-flex items-center gap-1 text-[10px] text-warm-gold uppercase tracking-wider font-medium bg-warm-gold/10 border border-warm-gold/25 hover:bg-warm-gold/15 hover:border-warm-gold/40 transition-colors px-2 py-0.5 rounded-full shrink-0 tap-target"
+            >
+              <Pin className="w-2.5 h-2.5" />
+              Pinned
+              {isCollapsed ? (
+                <ChevronDown className="w-3 h-3 -mr-0.5" />
+              ) : (
+                <ChevronUp className="w-3 h-3 -mr-0.5" />
+              )}
+            </button>
+          ) : (
+            <span className="inline-flex items-center gap-1 text-[10px] text-warm-gold uppercase tracking-wider font-medium bg-warm-gold/10 border border-warm-gold/25 px-2 py-0.5 rounded-full shrink-0">
+              <Pin className="w-2.5 h-2.5" />
+              Pinned
+            </span>
+          )
         )}
         {isNew && !isDetail && (
           <span
@@ -151,7 +211,26 @@ export default function FeedPost({ post, isDetail = false, isNew = false }: Feed
         )}
       </div>
 
-      {isDetail ? (
+      {isCollapsed ? (
+        // Collapsed pinned post: title only, clickable to expand. The full
+        // detail page remains reachable via the member tapping the title
+        // row's expand button (the Pinned chip above); here the title
+        // itself is a plain span so expanding in-place doesn't race with
+        // navigation.
+        <button
+          type="button"
+          onClick={toggleCollapsed}
+          aria-expanded={false}
+          className="block w-full text-left -mb-1 group"
+        >
+          <h3 className="text-base sm:text-lg font-medium text-text-light/80 group-hover:text-accent-gold transition-colors truncate">
+            {post.title}
+          </h3>
+          <span className="text-[11px] text-text-gray/60 font-light">
+            Tap to expand
+          </span>
+        </button>
+      ) : isDetail ? (
         <h3 className="text-base sm:text-lg font-medium text-text-light mb-2">
           {post.title}
         </h3>
@@ -166,6 +245,7 @@ export default function FeedPost({ post, isDetail = false, isNew = false }: Feed
         </Link>
       )}
 
+      {!isCollapsed && (
       <div className="text-text-gray text-sm leading-relaxed mb-4 feed-markdown max-w-[65ch]">
         {/*
           react-markdown sanitizes by default (no dangerouslySetInnerHTML,
@@ -234,14 +314,15 @@ export default function FeedPost({ post, isDetail = false, isNew = false }: Feed
           </Link>
         )}
       </div>
+      )}
 
-      {post.type === "VOICE_NOTE" && post.voiceNoteUrl && (
+      {!isCollapsed && post.type === "VOICE_NOTE" && post.voiceNoteUrl && (
         <div className="mb-4">
           <VoiceNotePlayer src={post.voiceNoteUrl} />
         </div>
       )}
 
-      {post.type === "VIDEO" && post.videoUrl && (
+      {!isCollapsed && post.type === "VIDEO" && post.videoUrl && (
         <div className="mb-4">
           <VideoPlayer
             src={post.videoUrl}
@@ -251,13 +332,14 @@ export default function FeedPost({ post, isDetail = false, isNew = false }: Feed
         </div>
       )}
 
-      {post.type === "ANNOUNCEMENT" && !post.isPinned && (
+      {!isCollapsed && post.type === "ANNOUNCEMENT" && !post.isPinned && (
         <div className="flex items-center gap-1.5 text-accent-gold/50 text-xs mb-4">
           <Mic className="w-3 h-3" />
           <span className="uppercase tracking-wider">Announcement</span>
         </div>
       )}
 
+      {!isCollapsed && (
       <div className="flex items-center gap-2 pt-2 border-t border-warm-gold/10">
         <button
           onClick={handleLike}
@@ -286,6 +368,7 @@ export default function FeedPost({ post, isDetail = false, isNew = false }: Feed
           <span>{post.commentCount}</span>
         </Link>
       </div>
+      )}
     </m.article>
   );
 }
