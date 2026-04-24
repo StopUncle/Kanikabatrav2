@@ -3,8 +3,10 @@ import { requireServerAuth } from "@/lib/auth/server-auth";
 import { prisma } from "@/lib/prisma";
 import {
   ACHIEVEMENTS,
+  eventsObserved,
   type AchievementProgressSnapshot,
 } from "@/lib/simulator/achievements";
+import { getScenario } from "@/lib/simulator/scenarios";
 import type { OutcomeType, ChoiceRecord } from "@/lib/simulator/types";
 import {
   Award,
@@ -59,6 +61,7 @@ export default async function SimulatorAchievementsPage() {
       where: { userId, completedAt: { not: null } },
       select: {
         scenarioId: true,
+        currentSceneId: true,
         outcome: true,
         xpEarned: true,
         choicesMade: true,
@@ -72,14 +75,23 @@ export default async function SimulatorAchievementsPage() {
 
   const badgesHeld = new Set(badgeRows.map((b) => b.badgeKey));
   const snapshot: AchievementProgressSnapshot = {
-    completions: completions.map((r) => ({
-      scenarioId: r.scenarioId,
-      outcome: (r.outcome as OutcomeType | null) ?? null,
-      xpEarned: r.xpEarned,
-      choicesMade: ((r.choicesMade as unknown as ChoiceRecord[]) ?? []).map(
-        (m) => ({ wasOptimal: m.wasOptimal }),
-      ),
-    })),
+    completions: completions.map((r) => {
+      const choicesMade = (r.choicesMade as unknown as ChoiceRecord[]) ?? [];
+      const scenarioForEvents = getScenario(r.scenarioId);
+      const events = scenarioForEvents
+        ? eventsObserved(scenarioForEvents, {
+            choicesMade,
+            currentSceneId: r.currentSceneId,
+          })
+        : undefined;
+      return {
+        scenarioId: r.scenarioId,
+        outcome: (r.outcome as OutcomeType | null) ?? null,
+        xpEarned: r.xpEarned,
+        choicesMade: choicesMade.map((m) => ({ wasOptimal: m.wasOptimal })),
+        events,
+      };
+    }),
     badgesHeld,
   };
 

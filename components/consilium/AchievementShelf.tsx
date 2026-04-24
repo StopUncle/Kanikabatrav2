@@ -137,10 +137,19 @@ function Medallion({ meta, earned, earnedAt }: MedallionProps) {
   const haloId = `hex-halo-${safeId}`;
 
   return (
-    <div className="group relative">
+    // `tabIndex=0` + focus-within tooltip — gives mobile users a way to see
+    // the description via tap (which focuses the element) since pure CSS
+    // `:hover` doesn't fire on touch. Desktop keyboard users get tab-stop
+    // too. Aria-label carries the full semantic for screen readers.
+    <div
+      className="group relative focus:outline-none"
+      tabIndex={0}
+      role="button"
+      aria-label={`${displayName}${earned ? ". Earned." : ". Locked."} ${displayDesc}`}
+    >
       <div
         className={`relative transition-transform duration-200 ${
-          earned ? "hover:-translate-y-0.5" : ""
+          earned ? "hover:-translate-y-0.5 group-focus:-translate-y-0.5" : ""
         }`}
       >
         <svg
@@ -193,14 +202,17 @@ function Medallion({ meta, earned, earnedAt }: MedallionProps) {
             </div>
           </foreignObject>
 
-          {/* Lock overlay on locked */}
+          {/* Lock overlay on locked. Icon colour chosen for contrast against
+              the desaturated + 40%-opacity plate — a near-black lock on a
+              dark-burgundy background was invisible (~2:1 ratio), so we use
+              a light warm-gray instead. */}
           {!earned && (
             <foreignObject x="40" y="78" width="20" height="20">
               <div
                 style={{ width: 20, height: 20 }}
                 className="flex items-center justify-center"
               >
-                <Lock size={12} strokeWidth={2} color="#1a1a1a" />
+                <Lock size={12} strokeWidth={2} color="#c9c4bd" />
               </div>
             </foreignObject>
           )}
@@ -216,8 +228,11 @@ function Medallion({ meta, earned, earnedAt }: MedallionProps) {
         {displayName}
       </p>
 
-      {/* Hover tooltip — CSS only, no JS. */}
-      <div className="pointer-events-none absolute left-1/2 top-full z-20 w-56 -translate-x-1/2 translate-y-2 rounded-xl border border-accent-burgundy/40 bg-deep-black/95 p-3 text-left opacity-0 shadow-[0_12px_32px_-16px_rgba(0,0,0,0.9)] transition-opacity group-hover:opacity-100">
+      {/* Hover / focus tooltip — CSS only, no JS. `group-focus:` makes it
+          work for keyboard-tab and for mobile-tap (tap triggers focus on a
+          tabIndex=0 element). `group-focus-within:` covers nested focusable
+          children too. */}
+      <div className="pointer-events-none absolute left-1/2 top-full z-20 w-56 -translate-x-1/2 translate-y-2 rounded-xl border border-accent-burgundy/40 bg-deep-black/95 p-3 text-left opacity-0 shadow-[0_12px_32px_-16px_rgba(0,0,0,0.9)] transition-opacity group-hover:opacity-100 group-focus:opacity-100 group-focus-within:opacity-100">
         <div className="mb-1.5 flex items-center gap-1.5">
           <span
             className="inline-flex h-1.5 w-1.5 rounded-full"
@@ -359,7 +374,13 @@ export default async function AchievementShelf({
                   {items.filter((i) => earnedMap.has(i.slug)).length} / {items.length}
                 </span>
               </header>
-              <div className="grid grid-cols-3 xs:grid-cols-4 sm:grid-cols-5 md:grid-cols-6 lg:grid-cols-8 gap-4 sm:gap-5">
+              {/* Breakpoints: 3-wide on phones (≤640px), 5 on ≥640px,
+                  6 on ≥768px, 8 on ≥1024px. The `xs:` prefix isn't a
+                  configured breakpoint in this project's tailwind.config.js
+                  (`xs` there is a border-radius token, not a screen), so
+                  don't reach for `xs:grid-cols-4` — it would silently
+                  resolve to nothing and has already been removed. */}
+              <div className="grid grid-cols-3 sm:grid-cols-5 md:grid-cols-6 lg:grid-cols-8 gap-4 sm:gap-5">
                 {items.map((meta) => (
                   <Medallion
                     key={meta.slug}

@@ -91,6 +91,13 @@ export interface DialogLine {
   speakerId?: string | null;
   emotion?: EmotionType;
   delay?: number;
+  /**
+   * Optional instrumentation tag fired when the player passes through this
+   * dialog line. Read by the achievements evaluator (see
+   * `reference/ACHIEVEMENT-HOOKS.md`). Stable slugs like
+   * `tactic-named:triangulation` — never free-form sentences.
+   */
+  event?: string;
 }
 
 export interface Choice {
@@ -101,6 +108,13 @@ export interface Choice {
   isOptimal?: boolean;
   tactic?: string;
   feedback?: string;
+  /**
+   * Optional instrumentation tag fired when the player picks this choice.
+   * Read by the achievements evaluator (see `reference/ACHIEVEMENT-HOOKS.md`).
+   * Stable slugs like `optimal-with-grace`, `failure-rejected`,
+   * `restraint-shown` — see the hooks doc for the canonical vocabulary.
+   */
+  event?: string;
 }
 
 export interface Scene {

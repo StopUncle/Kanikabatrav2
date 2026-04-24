@@ -11,7 +11,7 @@
  */
 
 import { BADGE_BY_KEY, SIMULATOR_BADGES, type SimulatorBadgeDef } from "./badges";
-import type { OutcomeType } from "./types";
+import type { OutcomeType, Scenario, ChoiceRecord, SimulatorState } from "./types";
 import { ALL_SCENARIOS } from "./scenarios";
 
 export type AchievementProgressSnapshot = {
@@ -21,6 +21,13 @@ export type AchievementProgressSnapshot = {
     outcome: OutcomeType | null;
     xpEarned: number;
     choicesMade: Array<{ wasOptimal: boolean }>;
+    /**
+     * Optional event tags observed during this completed run. Populated by
+     * the snapshot builder (see /api/simulator/complete) when it has access
+     * to the scenario object. See `reference/ACHIEVEMENT-HOOKS.md` for the
+     * event vocabulary. Empty / undefined on un-instrumented scenarios.
+     */
+    events?: string[];
   }>;
   /** Set of badge keys the user already holds (from SimulatorBadge rows). */
   badgesHeld: Set<string>;
@@ -90,6 +97,72 @@ function countGood(
 ): number {
   return ids.filter((id) => goodOrMastery(snap, id)).length;
 }
+
+/**
+ * Walk a completed run and collect every `event` string fired by either a
+ * chosen Choice or a DialogLine in a visited Scene. Call this at snapshot
+ * construction time so the resulting events[] list rides along with the
+ * completion entry for event-based achievement evaluation.
+ *
+ * "Visited scenes" = start + every sceneId the player chose from + the
+ * ending scene. Dialog lines on non-visited branches are excluded.
+ * Duplicate events are deduped with a set preserving first-seen order,
+ * so a player who hit the same event twice only records it once.
+ */
+export function eventsObserved(
+  scenario: Scenario,
+  state: Pick<SimulatorState, "choicesMade" | "currentSceneId">,
+): string[] {
+  const sceneById = new Map(scenario.scenes.map((s) => [s.id, s]));
+  const visitedSceneIds = new Set<string>([scenario.startSceneId]);
+  const events = new Set<string>();
+
+  for (const c of state.choicesMade) {
+    visitedSceneIds.add(c.sceneId);
+    const scene = sceneById.get(c.sceneId);
+    if (!scene?.choices) continue;
+    const picked = scene.choices.find((ch) => ch.id === c.choiceId);
+    if (picked?.event) events.add(picked.event);
+  }
+  visitedSceneIds.add(state.currentSceneId);
+
+  // `for (const id of visitedSceneIds)` is blocked by Railway's ES5 tsc
+  // target without downlevelIteration — use Array.from for iteration.
+  const visitedArr = Array.from(visitedSceneIds);
+  for (const sceneId of visitedArr) {
+    const scene = sceneById.get(sceneId);
+    if (!scene?.dialog) continue;
+    for (const d of scene.dialog) {
+      if (d.event) events.add(d.event);
+    }
+  }
+
+  return Array.from(events);
+}
+
+/**
+ * Utility — snapshot-level event count. Sums `events.length` across
+ * completions, optionally filtered by prefix (e.g. "tactic-named:" to
+ * count uniquely named tactics across all runs).
+ */
+export function countEvents(
+  snap: AchievementProgressSnapshot,
+  prefix?: string,
+): number {
+  let n = 0;
+  for (const c of snap.completions) {
+    if (!c.events) continue;
+    for (const e of c.events) {
+      if (!prefix || e.startsWith(prefix)) n++;
+    }
+  }
+  return n;
+}
+
+// Re-export the ChoiceRecord alias so callers of eventsObserved can
+// construct the Pick<SimulatorState, ...> argument without reaching
+// into lib/simulator/types.ts directly.
+export type { ChoiceRecord };
 
 // ---------------------------------------------------------------------------
 // The eight
