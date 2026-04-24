@@ -267,6 +267,7 @@ const scenes: Scene[] = [
         tactic: "The structural decline. A reason he cannot argue with, no apology, no performed regret, no re-opening.",
         nextSceneId: "alone-in-house",
         isOptimal: true,
+        event: "failure-rejected",
       },
       {
         id: "accept-the-drive-in",
@@ -448,6 +449,7 @@ const scenes: Scene[] = [
         tactic: "The documentation is the obsidian-tier move. Two versions of the operational log — yours on the Gmail, your sister's on her drive — mean that if any one document is compromised the other survives. The logging itself takes eleven minutes and closes the Wednesday's loop.",
         nextSceneId: "ending-eighteen-month-infrastructure",
         isOptimal: true,
+        event: "optimal-with-grace",
       },
     ],
   },
@@ -582,6 +584,7 @@ const scenes: Scene[] = [
         tactic: "Boring, plausible, references a recurring real thing (your sister's actual landlord dispute), closes the question without inviting the next one.",
         nextSceneId: "spouse-leaves",
         isOptimal: true,
+        event: "restraint-shown",
       },
       {
         id: "elaborate-lie",

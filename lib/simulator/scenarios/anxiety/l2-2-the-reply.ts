@@ -173,6 +173,7 @@ const scenes: Scene[] = [
         tactic: "The length-match is the cleanest signal you can send. You are not rewarding his lateness; you are not punishing it; you are writing at the register the exchange is actually in. Booking the restaurant is the specific move — it is not deference, it is competence.",
         nextSceneId: "the-live-reply-sent",
         isOptimal: true,
+        event: "optimal-with-grace",
       },
       {
         id: "short-and-cold",
@@ -217,6 +218,7 @@ const scenes: Scene[] = [
         tactic: "The post-send discipline. The reply ended when you hit send; the scenario ends when you return to your Sunday. Watching for 'Read' or composing a follow-up is re-opening the ending the live reply closed.",
         nextSceneId: "ending-live-reply",
         isOptimal: true,
+        event: "failure-rejected",
       },
       {
         id: "check-read-once",
@@ -285,6 +287,7 @@ const scenes: Scene[] = [
         tactic: "The late-but-complete correction. The paragraph being in the compose box is not yet a sent paragraph; the cost of deleting it is exactly zero and the cost of sending it is several days of awkward recovery.",
         nextSceneId: "ninety-second-pause",
         isOptimal: true,
+        event: "restraint-shown",
       },
       {
         id: "send-the-paragraph",

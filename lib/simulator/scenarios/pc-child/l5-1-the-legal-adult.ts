@@ -139,6 +139,7 @@ const scenes: Scene[] = [
         tactic: "Structural. The decline plus the one-line text repeats the condition in writing. This is the textbook move when the 11 p.m. phone call is not itself the condition being met.",
         nextSceneId: "declined-structural",
         isOptimal: true,
+        event: "restraint-shown",
       },
       {
         id: "let-voicemail",
@@ -244,6 +245,7 @@ const scenes: Scene[] = [
         tactic: "The held condition. The scenario's primary discipline: the condition you named three months ago does not adjust to the register of the call. Whether this is a manipulation or a genuine crisis does not change the channel.",
         nextSceneId: "condition-held",
         isOptimal: true,
+        event: "failure-rejected",
       },
       {
         id: "propose-alternative-route",
@@ -782,6 +784,7 @@ const scenes: Scene[] = [
         speakerId: "inner-voice",
         text: "Two failures. The money, and the withholding. The triangulation is running now with the parent as vector, not as target. The recovery is a conversation with your partner tomorrow morning — a specific one, named as 'I need to tell you what I did last night and why it was a mistake.'",
         emotion: "serious",
+        event: "tactic-named:triangulation",
       },
     ],
     choices: [],
