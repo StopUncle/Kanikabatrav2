@@ -625,8 +625,15 @@ export default function SimulatorRunner({
           When choices are shown, the last dialog line is echoed above them
           so the player can see what they're replying to. The echo is
           compact (no typewriter, no advance button, muted styling) to
-          avoid competing visually with the choice cards. */}
-      <div className="absolute inset-x-0 bottom-16 sm:bottom-20 z-20 flex flex-col items-center justify-center gap-4 sm:gap-6 min-h-[280px] sm:min-h-[240px] px-4">
+          avoid competing visually with the choice cards.
+
+          z-[35] sits above the scenario-title banner (z-30) so tall
+          choice stacks — diagnostic scenes with long tactic text, and
+          any scene with 4+ cards — paint cleanly over the title without
+          the text bleeding through the cards' backdrop-blur. Still
+          below the letterbox (z-40) so the top/bottom frame reads as
+          the outermost layer. */}
+      <div className="absolute inset-x-0 bottom-16 sm:bottom-20 z-[35] flex flex-col items-center justify-center gap-4 sm:gap-6 min-h-[280px] sm:min-h-[240px] px-4">
         {/* Last-line echo. Only renders during the choices phase.
             Sits above the choice cards, in its own slot, so it cannot
             be covered by the choices grid. Animates in once with the

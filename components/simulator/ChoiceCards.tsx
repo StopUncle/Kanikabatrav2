@@ -22,15 +22,29 @@ export default function ChoiceCards({ choices, onPick }: Props) {
     setSelectedId(choice.id);
     setTimeout(() => onPick(choice), 220);
   }
+
+  // Choice-count → column layout. 4 choices deliberately break to a
+  // 2×2 grid rather than 3-cols-plus-orphan — 118 scenes catalogue-wide
+  // have 4 choices and were silently rendering 3+1 on desktop. 1/2
+  // choices get 2 columns (wider cards at low counts read better than
+  // stretched single columns); 3 → 3 cols; 5+ → 3 cols (accepts
+  // a 3+N tail for rare high-count scenes).
+  const desktopCols =
+    choices.length <= 2
+      ? "md:grid-cols-2"
+      : choices.length === 3
+        ? "md:grid-cols-3"
+        : choices.length === 4
+          ? "md:grid-cols-2"
+          : "md:grid-cols-3";
+
   return (
     <m.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: 12, transition: { duration: 0.25 } }}
       transition={{ duration: 0.5, delay: 0.1 }}
-      className={`max-w-4xl mx-auto w-full px-4 grid gap-4 ${
-        choices.length >= 3 ? "md:grid-cols-3" : "md:grid-cols-2"
-      } grid-cols-1`}
+      className={`max-w-4xl mx-auto w-full px-4 grid gap-4 grid-cols-1 ${desktopCols}`}
     >
       {choices.map((c, i) => {
         const isSelected = selectedId === c.id;
