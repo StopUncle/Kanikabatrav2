@@ -10,6 +10,7 @@ import toxicNarc12 from "./l1-2-the-missed-calls";
 import toxicNarc21 from "./l2-1-the-boss-email";
 import toxicNarc31 from "./l3-1-the-family-group-chat";
 import toxicNarc41 from "./l4-1-the-eighteen-month-exit";
+import toxicNarc51 from "./l5-1-christmas-at-his-parents";
 
 export const TOXIC_NARC_SCENARIOS: Scenario[] = [
   toxicNarc11,
@@ -17,6 +18,7 @@ export const TOXIC_NARC_SCENARIOS: Scenario[] = [
   toxicNarc21,
   toxicNarc31,
   toxicNarc41,
+  toxicNarc51,
 ];
 
 export const TOXIC_NARC_LEVEL_TITLES: Record<

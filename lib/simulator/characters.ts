@@ -385,6 +385,23 @@ export const RHYS: Character = {
 };
 
 /**
+ * Toxic-Narc track — partner's parent running the register on you.
+ * Covert, publicly gracious, privately punishing. Different from
+ * THE_MOTHER (your own mother). Appears in tn-5-x.
+ */
+export const MOTHER_IN_LAW: Character = {
+  id: "mother-in-law",
+  name: "His mother",
+  description:
+    "Your partner's mother. Covert narcissist. Plays gracious hostess, drops passive-aggressive lines across the Christmas table framed as 'just making conversation.' Your partner has largely not seen it because her register shifts when he is in the room.",
+  traits: ["covert", "gracious-on-surface", "plausible-to-her-son"],
+  defaultEmotion: "neutral",
+  gender: "female",
+  personalityType: "covert-narcissist",
+  silhouetteType: "female-elegant",
+};
+
+/**
  * Toxic-Narc track — long-term spouse.
  * The covert narc husband from tn-4-x. Performs warmth publicly,
  * runs a controlling register at home. Distinct from MARCUS (workplace)
