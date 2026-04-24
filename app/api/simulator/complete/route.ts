@@ -196,6 +196,36 @@ export async function POST(request: NextRequest) {
         }
       }
 
+      // Phase 5: `ach-all-optimal-first-try` — emitted inline because the
+      // "first try" aspect isn't recoverable from the snapshot after upsert.
+      // SimulatorProgress is best-of merged (one row per user/scenario),
+      // so we rely on the pre-upsert `existingRow` fetch above to know
+      // whether a prior completion existed. `existingRow === null` means
+      // the player had never touched this scenario; `existingRow.completedAt
+      // == null` means they started but didn't finish — both count as
+      // "first try." Replays can't earn this retroactively.
+      const wasFirstCompletion = !existingRow || !existingRow.completedAt;
+      const allOptimalThisRun =
+        body.choicesMade.length > 0 &&
+        body.choicesMade.every((c) => c.wasOptimal);
+      const isGoodOutcome =
+        body.outcome === "good" || body.outcome === "passed";
+      if (wasFirstCompletion && allOptimalThisRun && isGoodOutcome) {
+        const firstTryKey = "ach-all-optimal-first-try";
+        if (!heldNowSet.has(firstTryKey)) {
+          try {
+            await prisma.simulatorBadge.create({
+              data: { userId: user.id, badgeKey: firstTryKey },
+            });
+            newKeys.push(firstTryKey);
+            earnedKeys.push(firstTryKey);
+            heldNowSet.add(firstTryKey);
+          } catch {
+            // Unique constraint — already held somehow. Silent.
+          }
+        }
+      }
+
       // Meta-achievements — cumulative cross-scenario accolades. Evaluated
       // off the user's full completion history + current badge set. Any
       // that newly fire get inserted alongside scenario + level badges.
@@ -207,6 +237,8 @@ export async function POST(request: NextRequest) {
           outcome: true,
           xpEarned: true,
           choicesMade: true,
+          startedAt: true,
+          completedAt: true,
         },
       });
       const snapshot: AchievementProgressSnapshot = {
@@ -224,12 +256,22 @@ export async function POST(request: NextRequest) {
                 currentSceneId: r.currentSceneId,
               })
             : undefined;
+          // Wall-clock run duration — feeds the `speedrun` meta. Only set
+          // when both timestamps are populated; null completedAt filter
+          // above should have already excluded in-progress rows, but
+          // defensive check in case prisma returns a weirdly-shaped
+          // row.
+          const durationMs =
+            r.startedAt && r.completedAt
+              ? r.completedAt.getTime() - r.startedAt.getTime()
+              : undefined;
           return {
             scenarioId: r.scenarioId,
             outcome: (r.outcome as OutcomeType | null) ?? null,
             xpEarned: r.xpEarned,
             choicesMade: choicesMade.map((m) => ({ wasOptimal: m.wasOptimal })),
             events,
+            durationMs,
           };
         }),
         badgesHeld: heldNowSet,

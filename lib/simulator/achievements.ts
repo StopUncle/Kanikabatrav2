@@ -28,6 +28,13 @@ export type AchievementProgressSnapshot = {
      * event vocabulary. Empty / undefined on un-instrumented scenarios.
      */
     events?: string[];
+    /**
+     * Run wall-clock duration in ms (`completedAt − startedAt`). Populated
+     * when both timestamps are available on the SimulatorProgress row.
+     * Used by `speedrun` (<5min threshold). Undefined for in-progress or
+     * legacy rows without a startedAt.
+     */
+    durationMs?: number;
   }>;
   /** Set of badge keys the user already holds (from SimulatorBadge rows). */
   badgesHeld: Set<string>;
@@ -142,8 +149,9 @@ export function eventsObserved(
 
 /**
  * Utility — snapshot-level event count. Sums `events.length` across
- * completions, optionally filtered by prefix (e.g. "tactic-named:" to
- * count uniquely named tactics across all runs).
+ * completions (events are per-run deduped by `eventsObserved`, so this
+ * counts distinct events per run, not raw text matches within a run).
+ * Filtered by prefix (e.g. "tactic-named:") when provided.
  */
 export function countEvents(
   snap: AchievementProgressSnapshot,
@@ -157,6 +165,90 @@ export function countEvents(
     }
   }
   return n;
+}
+
+/**
+ * Snapshot-level DISTINCT event set — unions the per-completion event
+ * lists into a single set across all runs. Different from countEvents
+ * which treats each run's contribution as additive. Used by
+ * `the-whole-vocabulary` (needs ≥1 fire of each distinct tactic slug
+ * across all runs combined, not 1+ fires in any single run).
+ */
+export function distinctEvents(
+  snap: AchievementProgressSnapshot,
+  prefix?: string,
+): Set<string> {
+  const out = new Set<string>();
+  for (const c of snap.completions) {
+    if (!c.events) continue;
+    for (const e of c.events) {
+      if (!prefix || e.startsWith(prefix)) out.add(e);
+    }
+  }
+  return out;
+}
+
+// ---------------------------------------------------------------------------
+// Canonical tactic vocabulary.
+//
+// Mirrors the canonical table in `reference/ACHIEVEMENT-HOOKS.md`. The
+// doc is the human-facing authority; this constant is the machine-facing
+// one. When Claude A or Daisy adds a new slug, update both — the
+// `the-whole-vocabulary` meta uses the INSTRUMENTED-scenarios scan below
+// (so the achievement stays earnable as instrumentation catches up),
+// but this list documents the intent. Kebab-case, one canonical form
+// per tactic. Prefix `tactic-named:` is implicit for this list.
+// ---------------------------------------------------------------------------
+
+export const CANONICAL_TACTIC_SLUGS: string[] = [
+  // Original Phase 4 vocabulary (14)
+  "love-bombing",
+  "triangulation",
+  "darvo",
+  "gaslighting",
+  "future-faking",
+  "post-win-extraction",
+  "info-laundering",
+  "fog",
+  "martyr-register",
+  "grief-ranking",
+  "fawn",
+  "urge-surfing",
+  "pre-emptive-no",
+  "body-check",
+  // Phase 4 cluster-b-lab additions (2)
+  "borderline",
+  "antisocial",
+  // Phase 5 cluster-b-lab additions (2)
+  "narcissistic",
+  "histrionic",
+];
+
+/**
+ * Scan ALL_SCENARIOS and collect every distinct `tactic-named:*` event
+ * actually fired in a dialog or choice. The set of slugs a player must
+ * cover to unlock `the-whole-vocabulary` is this set, not
+ * CANONICAL_TACTIC_SLUGS — so the achievement stays earnable even when
+ * the canonical doc ships ahead of instrumentation.
+ *
+ * Computed lazily and cached: scenario data is static at module load.
+ */
+let _instrumentedTactics: Set<string> | null = null;
+export function instrumentedTactics(): Set<string> {
+  if (_instrumentedTactics) return _instrumentedTactics;
+  const set = new Set<string>();
+  for (const scenario of ALL_SCENARIOS) {
+    for (const scene of scenario.scenes) {
+      for (const d of scene.dialog ?? []) {
+        if (d.event?.startsWith("tactic-named:")) set.add(d.event);
+      }
+      for (const c of scene.choices ?? []) {
+        if (c.event?.startsWith("tactic-named:")) set.add(c.event);
+      }
+    }
+  }
+  _instrumentedTactics = set;
+  return set;
 }
 
 // Re-export the ChoiceRecord alias so callers of eventsObserved can
@@ -350,6 +442,208 @@ export const ACHIEVEMENTS: AchievementDef[] = [
       total: 4,
     }),
   },
+
+  // -----------------------------------------------------------------
+  // Phase 5 — event-based meta-achievements.
+  //
+  // Read off the Phase 4 instrumentation contract (see
+  // `reference/ACHIEVEMENT-HOOKS.md`). Events are populated per-completion
+  // by eventsObserved() at snapshot-build time. countEvents sums across
+  // runs; distinctEvents unions across runs. Thresholds chosen so the
+  // achievements are reachable by an engaged player — not gimmes — but
+  // not so rare they're invisible. `the-whole-vocabulary` is the
+  // obsidian prestige tier, keyed to the CURRENTLY INSTRUMENTED set of
+  // tactic-named:* slugs so it stays earnable as scenarios ship.
+  // -----------------------------------------------------------------
+  {
+    key: "named-the-move",
+    title: "Named The Move",
+    description: "Five tactic-naming beats hit across all runs. Naming it is the first defence.",
+    icon: "eye",
+    isEarned: (s) => countEvents(s, "tactic-named:") >= 5,
+    progress: (s) => ({
+      current: Math.min(countEvents(s, "tactic-named:"), 5),
+      total: 5,
+    }),
+  },
+  {
+    key: "grace-under",
+    title: "Grace Under",
+    description:
+      "Five optimal-with-grace choices. The disciplined move, kept warm. Harder than the cold version.",
+    icon: "sparkles",
+    isEarned: (s) => countEvents(s, "optimal-with-grace") >= 5,
+    progress: (s) => ({
+      current: Math.min(countEvents(s, "optimal-with-grace"), 5),
+      total: 5,
+    }),
+  },
+  {
+    key: "refused-the-frame",
+    title: "Refused The Frame",
+    description:
+      "Five failure-rejected choices. Each one a path the scenario tried to pull you into, and you stepped out of.",
+    icon: "shield",
+    isEarned: (s) => countEvents(s, "failure-rejected") >= 5,
+    progress: (s) => ({
+      current: Math.min(countEvents(s, "failure-rejected"), 5),
+      total: 5,
+    }),
+  },
+  {
+    key: "quiet-power",
+    title: "Quiet Power",
+    description:
+      "Five restraint-shown choices. Power available, power held back. The pc-child-track specialty — but not only there.",
+    icon: "shield",
+    isEarned: (s) => countEvents(s, "restraint-shown") >= 5,
+    progress: (s) => ({
+      current: Math.min(countEvents(s, "restraint-shown"), 5),
+      total: 5,
+    }),
+  },
+  {
+    key: "the-whole-vocabulary",
+    title: "The Whole Vocabulary",
+    description:
+      "One fire of each distinct tactic-named beat in the current instrumented catalogue. The rarest meta — requires running through every instrumented scenario.",
+    icon: "crown",
+    isEarned: (s) => {
+      const seen = distinctEvents(s, "tactic-named:");
+      const required = instrumentedTactics();
+      // `for (const slug of required)` blocked by Railway ES5 tsc target
+      // without downlevelIteration — use Array.from for iteration.
+      const requiredArr = Array.from(required);
+      return requiredArr.length > 0 && requiredArr.every((t) => seen.has(t));
+    },
+    progress: (s) => {
+      const seen = distinctEvents(s, "tactic-named:");
+      const required = instrumentedTactics();
+      const requiredArr = Array.from(required);
+      const hit = requiredArr.filter((t) => seen.has(t)).length;
+      return { current: hit, total: Math.max(1, requiredArr.length) };
+    },
+  },
+
+  // -----------------------------------------------------------------
+  // Phase 5 — story-arc meta-achievements.
+  //
+  // Multi-scenario arcs running through the catalogue. Each arc is a
+  // list of scenario IDs that must all complete with outcome:"good".
+  // Arc definitions sourced from reference/STORY-ARCS.md (published by
+  // Claude A). Rarity scales with arc depth + register:
+  //   rhys (3 scenarios, lighter register) → silver
+  //   theo (5 scenarios, breakup arc) → gold
+  //   mother (4 scenarios, narc family) → gold
+  //   partner (4 scenarios, co-parent thread) → gold
+  //   finn (5 scenarios, 15 in-story years, pc-child register) → obsidian
+  //
+  // Scenarios not yet shipped (tn-6-1) are still in the scenario ID list
+  // — the achievement simply stays unreachable until they ship, which is
+  // the correct behaviour (no false-positive earns).
+  // -----------------------------------------------------------------
+  {
+    key: "the-theo-arc",
+    title: "The Theo Arc",
+    description:
+      "Moved through the break-up across five scenarios. 3 a.m. spiral to ninety-second-pause reply, eleven weeks in.",
+    icon: "sparkles",
+    isEarned: (s) =>
+      allGood(s, ["anx-1-1", "anx-1-2", "anx-1-3", "anx-2-1", "anx-2-2"]),
+    progress: (s) => ({
+      current: countGood(s, ["anx-1-1", "anx-1-2", "anx-1-3", "anx-2-1", "anx-2-2"]),
+      total: 5,
+    }),
+  },
+  {
+    key: "the-rhys-arc",
+    title: "The Rhys Arc",
+    description:
+      "Met the warm man, held the first date, replied to his text without authoring a rejection into him.",
+    icon: "sparkles",
+    isEarned: (s) => allGood(s, ["anx-1-3", "anx-3-1", "anx-2-2"]),
+    progress: (s) => ({
+      current: countGood(s, ["anx-1-3", "anx-3-1", "anx-2-2"]),
+      total: 3,
+    }),
+  },
+  {
+    key: "the-mother-arc",
+    title: "The Mother Arc",
+    description:
+      "One mother in four registers — the Sunday call, missed-calls triage, grandmother's funeral, and the friend-capstone.",
+    icon: "shield",
+    isEarned: (s) => allGood(s, ["tn-1-1", "tn-1-2", "tn-3-1", "tn-6-1"]),
+    progress: (s) => ({
+      current: countGood(s, ["tn-1-1", "tn-1-2", "tn-3-1", "tn-6-1"]),
+      total: 4,
+    }),
+  },
+  {
+    key: "the-partner-arc",
+    title: "The Partner Arc",
+    description:
+      "Four scenarios across the child's arc — how the co-parenting alliance held, when it strained, and the 6:47 a.m. naming.",
+    icon: "award",
+    isEarned: (s) => allGood(s, ["pc-1-1", "pc-3-1", "pc-4-1", "pc-5-1"]),
+    progress: (s) => ({
+      current: countGood(s, ["pc-1-1", "pc-3-1", "pc-4-1", "pc-5-1"]),
+      total: 4,
+    }),
+  },
+  {
+    key: "the-finn-arc",
+    title: "The Finn Arc",
+    description:
+      "Fifteen in-story years with Finn, from the hamster at age five to the 11:12 p.m. phone call at twenty. The rarest arc.",
+    icon: "crown",
+    isEarned: (s) => allGood(s, ["pc-1-1", "pc-2-1", "pc-3-1", "pc-4-1", "pc-5-1"]),
+    progress: (s) => ({
+      current: countGood(s, ["pc-1-1", "pc-2-1", "pc-3-1", "pc-4-1", "pc-5-1"]),
+      total: 5,
+    }),
+  },
+
+  // -----------------------------------------------------------------
+  // Phase 5 — mastery / replay metas.
+  //
+  // `speedrun` reads the new `durationMs` field on the snapshot
+  // completion entry (populated by /api/simulator/complete and the
+  // profile snapshot builder from completedAt − startedAt). Threshold
+  // 300 seconds = 5 minutes.
+  //
+  // `all-optimal-first-try` is emitted directly by /api/simulator/
+  // complete on the first completion of a scenario where every choice
+  // was optimal — the "first try" aspect isn't recoverable from the
+  // snapshot (SimulatorProgress is best-of merged, not append-only),
+  // so the emission lives in the complete route. The isEarned check
+  // here just mirrors the persisted SimulatorBadge row.
+  //
+  // `three-time-reader` deferred to Phase 6 — requires a completion-
+  // count column on SimulatorProgress, which is a schema migration.
+  // -----------------------------------------------------------------
+  {
+    key: "speedrun",
+    title: "Decisive",
+    description: "Cleared a scenario in under five minutes. Decisions, not deliberation.",
+    icon: "flame",
+    isEarned: (s) =>
+      s.completions.some(
+        (c) => typeof c.durationMs === "number" && c.durationMs < 300_000,
+      ),
+  },
+  {
+    key: "all-optimal-first-try",
+    title: "All Optimal, First Try",
+    description:
+      "Any scenario cleared 100% optimal on the very first attempt. Emission tracked at completion time — replays can't backfill this one.",
+    icon: "award",
+    // Mirror-only — the complete route emits `ach-all-optimal-first-try`
+    // directly when it detects first-completion + all-optimal + good.
+    // Replays can't earn it because it's tied to the "existingRow === null"
+    // state which isn't observable from the snapshot.
+    isEarned: (s) => s.badgesHeld.has("ach-all-optimal-first-try"),
+  },
 ];
 
 /**
@@ -400,7 +694,9 @@ export type AchievementCategory =
   | "mastery"
   | "recovery"
   | "levels"
+  | "story-arcs"
   | "tracks"
+  | "vocabulary"
   | "discipline"
   | "legend";
 
@@ -410,17 +706,27 @@ export const CATEGORY_LABELS: Record<AchievementCategory, string> = {
   mastery: "Mastery",
   recovery: "Fail-paths",
   levels: "Levels",
+  "story-arcs": "Story Arcs",
   tracks: "Tracks",
+  vocabulary: "Vocabulary",
   discipline: "Discipline",
   legend: "Legend",
 };
 
+// Order on the shelf — arrivals first, then scenario-grained rewards,
+// then the higher-level meta bands (story arcs → tracks → vocabulary →
+// discipline), with fail-paths before the obsidian legend tier. Story
+// arcs sit above tracks because they're more meaningful to a player
+// than level-number rollups ("The Theo Arc" reads; "Level 2 cleared"
+// is a mechanic).
 export const CATEGORY_ORDER: AchievementCategory[] = [
   "arrival",
   "scenarios",
   "mastery",
   "levels",
+  "story-arcs",
   "tracks",
+  "vocabulary",
   "discipline",
   "recovery",
   "legend",
@@ -481,7 +787,12 @@ function scenarioMeta(def: SimulatorBadgeDef): AchievementMeta {
       name: title,
       description,
       icon,
-      rarity: "bronze",
+      // Rebalanced Phase 5 — legacy -good moved bronze → silver so the
+      // pyramid isn't 49% bronze / 18% silver. -good is "cleared the
+      // scenario on the intended path," which is meaningfully above
+      // the -neutral/-bad alternate endings (which stay bronze). The
+      // -mastery layer remains the gold top-tier.
+      rarity: "silver",
       category: "scenarios",
       secret: false,
       unlockHint: "Finish the scenario on a good ending.",
@@ -542,13 +853,28 @@ function metaAchievementMeta(a: AchievementDef): AchievementMeta {
     "cold-reader":     { rarity: "gold",     category: "discipline", secret: false },
     "endgame":         { rarity: "gold",     category: "tracks",     secret: false },
     "perfect-mirror":  { rarity: "obsidian", category: "legend",     secret: false },
-    // V3 track-completion metas
+    // V3 track-completion metas (Phase 4)
     "anxiety-l1-complete":          { rarity: "silver",   category: "tracks", secret: false },
     "anxiety-l2-complete":          { rarity: "gold",     category: "tracks", secret: false },
     "toxic-narc-l1-complete":       { rarity: "silver",   category: "tracks", secret: false },
     "toxic-narc-l2-l3-complete":    { rarity: "gold",     category: "tracks", secret: false },
     "pc-child-l1-l2-l3-complete":   { rarity: "gold",     category: "tracks", secret: false },
     "pc-child-complete-no-obsidian":{ rarity: "obsidian", category: "legend", secret: false },
+    // Event-based metas (Phase 5)
+    "named-the-move":       { rarity: "gold",     category: "vocabulary", secret: false },
+    "grace-under":          { rarity: "gold",     category: "vocabulary", secret: false },
+    "refused-the-frame":    { rarity: "silver",   category: "vocabulary", secret: false },
+    "quiet-power":          { rarity: "silver",   category: "vocabulary", secret: false },
+    "the-whole-vocabulary": { rarity: "obsidian", category: "legend",     secret: false },
+    // Story-arc metas (Phase 5)
+    "the-theo-arc":    { rarity: "gold",     category: "story-arcs", secret: false },
+    "the-rhys-arc":    { rarity: "silver",   category: "story-arcs", secret: false },
+    "the-mother-arc":  { rarity: "gold",     category: "story-arcs", secret: false },
+    "the-partner-arc": { rarity: "gold",     category: "story-arcs", secret: false },
+    "the-finn-arc":    { rarity: "obsidian", category: "legend",     secret: false },
+    // Mastery / replay metas (Phase 5)
+    "speedrun":              { rarity: "bronze", category: "mastery",    secret: false },
+    "all-optimal-first-try": { rarity: "gold",   category: "mastery",    secret: false },
   };
   const p = policy[a.key] ?? {
     rarity: "gold" as const,

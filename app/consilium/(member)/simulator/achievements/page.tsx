@@ -65,6 +65,8 @@ export default async function SimulatorAchievementsPage() {
         outcome: true,
         xpEarned: true,
         choicesMade: true,
+        startedAt: true,
+        completedAt: true,
       },
     }),
     prisma.simulatorBadge.findMany({
@@ -84,12 +86,17 @@ export default async function SimulatorAchievementsPage() {
             currentSceneId: r.currentSceneId,
           })
         : undefined;
+      const durationMs =
+        r.startedAt && r.completedAt
+          ? r.completedAt.getTime() - r.startedAt.getTime()
+          : undefined;
       return {
         scenarioId: r.scenarioId,
         outcome: (r.outcome as OutcomeType | null) ?? null,
         xpEarned: r.xpEarned,
         choicesMade: choicesMade.map((m) => ({ wasOptimal: m.wasOptimal })),
         events,
+        durationMs,
       };
     }),
     badgesHeld,
