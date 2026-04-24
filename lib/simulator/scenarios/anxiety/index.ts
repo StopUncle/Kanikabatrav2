@@ -10,6 +10,7 @@ import anxiety11 from "./l1-1-the-3am-draft";
 import anxiety12 from "./l1-2-the-morning-after";
 import anxiety13 from "./l1-3-the-read-receipt";
 import anxiety21 from "./l2-1-the-waiting";
+import anxiety22 from "./l2-2-the-reply";
 import anxiety31 from "./l3-1-the-first-date";
 
 export const ANXIETY_SCENARIOS: Scenario[] = [
@@ -17,6 +18,7 @@ export const ANXIETY_SCENARIOS: Scenario[] = [
   anxiety12,
   anxiety13,
   anxiety21,
+  anxiety22,
   anxiety31,
 ];
 
