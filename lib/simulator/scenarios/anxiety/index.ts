@@ -9,11 +9,13 @@ import type { Scenario } from "../../types";
 import anxiety11 from "./l1-1-the-3am-draft";
 import anxiety12 from "./l1-2-the-morning-after";
 import anxiety13 from "./l1-3-the-read-receipt";
+import anxiety21 from "./l2-1-the-waiting";
 
 export const ANXIETY_SCENARIOS: Scenario[] = [
   anxiety11,
   anxiety12,
   anxiety13,
+  anxiety21,
 ];
 
 export const ANXIETY_LEVEL_TITLES: Record<
