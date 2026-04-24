@@ -12,6 +12,7 @@ import PostCard from "@/components/blog/PostCard";
 import ConsiliumSimulatorTeaser from "@/components/consilium/ConsiliumSimulatorTeaser";
 import { getAllPosts } from "@/lib/mdx";
 import { SITE_CONFIG } from "@/lib/constants";
+import { catalogueStats } from "@/lib/simulator/stats";
 
 export const metadata: Metadata = {
   title: `${SITE_CONFIG.name} - ${SITE_CONFIG.title}`,
@@ -209,7 +210,7 @@ export default function Home() {
                   The Consilium
                 </h3>
                 <p className="text-text-gray text-sm font-light leading-relaxed mb-6">
-                  30 branching scenarios. 526 scenes. 83 manipulation tactics
+                  {catalogueStats.scenarios} branching scenarios. {catalogueStats.scenes} scenes. {catalogueStats.tacticsTaught} manipulation tactics
                   to spot. Plus voice notes, forum, and courses.
                 </p>
                 <div className="inline-flex items-center gap-2 text-warm-gold text-sm font-medium uppercase tracking-wider">

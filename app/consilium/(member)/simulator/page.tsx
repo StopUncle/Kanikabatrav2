@@ -8,6 +8,7 @@ import {
   levelTitlesForTrack,
   TRACK_META,
 } from "@/lib/simulator/scenarios";
+import { catalogueStats } from "@/lib/simulator/stats";
 import type { ScenarioTrack } from "@/lib/simulator/types";
 import { ArrowRight, Trophy, BarChart3, Sparkles } from "lucide-react";
 import LevelJourney, {
@@ -294,7 +295,7 @@ export default async function SimulatorIndex({
       <div className="mt-12 p-5 rounded-xl border border-dashed border-warm-gold/15 bg-deep-black/30 text-center">
         <p className="inline-flex items-center justify-center gap-1.5 text-warm-gold/60 uppercase tracking-[0.3em] text-[10px] mb-2">
           <Sparkles size={10} strokeWidth={1.8} />
-          Full Library · {ALL_SCENARIOS.length} scenarios across {VALID_TRACKS.length} tracks
+          Full Library · {catalogueStats.scenarios} scenarios across {catalogueStats.tracks} tracks
         </p>
         <p className="text-text-gray/70 text-sm font-light max-w-md mx-auto">
           Each track is a separate curriculum. Playing one doesn&apos;t lock

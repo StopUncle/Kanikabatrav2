@@ -2,9 +2,10 @@
 
 import { useState } from "react";
 import { ArrowRight, Loader2, CheckCircle } from "lucide-react";
+import { catalogueStats } from "@/lib/simulator/stats";
 
 const INCLUDED = [
-  "The Dark Mirror Simulator — 30 branching scenarios across three tracks",
+  `The Dark Mirror Simulator — ${catalogueStats.scenarios} branching scenarios across ${catalogueStats.tracks} tracks`,
   "Full course library — dark psychology, pattern recognition, career strategy",
   "Voice notes from Kanika — raw, unfiltered, members-only",
   "Daily psychology drops + discussion prompts",

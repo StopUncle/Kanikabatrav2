@@ -15,11 +15,11 @@ import {
   ArrowRight,
 } from "lucide-react";
 import ConsiliumSimulatorTeaser from "@/components/consilium/ConsiliumSimulatorTeaser";
+import { catalogueStats } from "@/lib/simulator/stats";
 
 export const metadata = {
   title: "The Consilium | Kanika Batra",
-  description:
-    "Home of the Dark Mirror Simulator — Duolingo for dark psychology. 30 branching scenarios, 526 scenes, 83 manipulation tactics to learn to spot. Plus courses, voice notes, and a private community.",
+  description: `Home of the Dark Mirror Simulator — Duolingo for dark psychology. ${catalogueStats.scenarios} branching scenarios, ${catalogueStats.scenes} scenes, ${catalogueStats.tacticsTaught} manipulation tactics to learn to spot. Plus courses, voice notes, and a private community.`,
 };
 
 export default async function InnerCircleLanding({
@@ -89,7 +89,7 @@ export default async function InnerCircleLanding({
     {
       heading: "Practice",
       items: [
-        "The Dark Mirror Simulator — 30 branching scenarios across three tracks, 83 manipulation tactics to learn to spot",
+        `The Dark Mirror Simulator — ${catalogueStats.scenarios} branching scenarios across ${catalogueStats.tracks} tracks, ${catalogueStats.tacticsTaught} manipulation tactics to learn to spot`,
         "New scenarios, courses, and content added regularly",
       ],
     },

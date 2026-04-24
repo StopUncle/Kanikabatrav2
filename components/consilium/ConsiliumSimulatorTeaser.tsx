@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ArrowRight, Sparkles, Target, PlayCircle } from "lucide-react";
 import SimulatorPreview from "./SimulatorPreview";
+import { catalogueStats, PUBLIC_TRACK_CHIPS } from "@/lib/simulator/stats";
 
 /**
  * The Consilium's flagship sales surface. Used on both the Consilium
@@ -106,32 +107,27 @@ export default function ConsiliumSimulatorTeaser({
                 <SimulatorPreview />
               </div>
 
-              {/* Depth, as one narrative line.
-                  The previous 4-card stat grid (30 / 526 / 83 / 79) read
-                  as the generic "our product in numbers" SaaS slab and
-                  added visual weight to an already busy section. A
-                  single prose sentence with the real numbers inlined
-                  carries the same information calmer — the gold-coloured
-                  numerals still carry the quantitative punch without a
-                  grid of bordered cards behind them. */}
+              {/* Depth, as one narrative line. Numbers are live-computed
+                  from ALL_SCENARIOS (see lib/simulator/stats.ts) so copy
+                  never drifts when a new scenario ships. The previous
+                  version hardcoded 30/526/83/79 and went stale the day
+                  V3 Phase 1 landed. */}
               <p className="text-text-gray/80 text-sm sm:text-base font-light leading-relaxed max-w-2xl mb-8">
-                <span className="text-warm-gold tabular-nums">30</span> scenarios across three tracks.{" "}
-                <span className="text-warm-gold tabular-nums">526</span> branching scenes.{" "}
-                <span className="text-warm-gold tabular-nums">83</span> manipulation tactics to learn to spot,{" "}
-                <span className="text-warm-gold tabular-nums">79</span> red flags catalogued. Enough to play for months without repeating yourself.
+                <span className="text-warm-gold tabular-nums">{catalogueStats.scenarios}</span> scenarios across {catalogueStats.tracks} tracks.{" "}
+                <span className="text-warm-gold tabular-nums">{catalogueStats.scenes}</span> branching scenes.{" "}
+                <span className="text-warm-gold tabular-nums">{catalogueStats.tacticsTaught}</span> manipulation tactics to learn to spot,{" "}
+                <span className="text-warm-gold tabular-nums">{catalogueStats.redFlagsTaught}</span> red flags catalogued. Enough to play for months without repeating yourself.
               </p>
 
-              {/* Three-track chip row. Each track is a deck of scenarios
-                  aimed at a specific audience — same engine, different
-                  situations. Compacted from the original three-card grid
-                  to a single chip row so it reads as a menu (not another
-                  features grid) and saves vertical space. */}
+              {/* Track chip row. Each chip is a public-facing label for
+                  one deck of scenarios. Full list in
+                  lib/simulator/stats.ts → PUBLIC_TRACK_CHIPS; pc-child is
+                  deliberately omitted from the marketing surface (too
+                  heavy for first-touch, discoverable once inside). On
+                  mobile the chips wrap to 2-3 rows; on desktop they fit
+                  one row in the max-w-2xl container. */}
               <div className="flex flex-wrap justify-center gap-2 mb-10 max-w-2xl">
-                {[
-                  { title: "Relationships", blurb: "Narcissists, love-bombers, gaslighters" },
-                  { title: "Career", blurb: "Credit thieves, power plays, soft sabotage" },
-                  { title: "Dating (men)", blurb: "Reading intent, holding frame" },
-                ].map((track) => (
+                {PUBLIC_TRACK_CHIPS.map((track) => (
                   <div
                     key={track.title}
                     className="flex items-center gap-2 px-3 py-1.5 rounded-full border border-white/10 bg-white/[0.02]"
