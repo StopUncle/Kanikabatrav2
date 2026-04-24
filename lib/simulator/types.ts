@@ -16,9 +16,16 @@ export type ScenarioCategory =
   | "social-dynamics"
   | "business"
   | "dating"
-  | "power";
+  | "power"
+  | "self-regulation";
 
-export type ScenarioTrack = "female" | "male-business" | "male-dating";
+export type ScenarioTrack =
+  | "female"
+  | "male-business"
+  | "male-dating"
+  | "anxiety"
+  | "toxic-narc"
+  | "pc-child";
 
 export type EmotionType =
   | "neutral"

@@ -242,3 +242,64 @@ export const DEVON: Character = {
   personalityType: "aspirant",
   silhouetteType: "hair-short",
 };
+
+// ===================================================================
+// ANXIETY TRACK — introduced in TRACK-anxiety
+// ===================================================================
+
+/**
+ * Noor — the steady friend in the anxiety track. Texts in lowercase.
+ * Cuts through spirals with one question. Doesn't over-comfort.
+ * Verbal tic: leads with "real talk," will say "log off" out loud.
+ * Sits in the same voice lineage as Priya (coach/ally) but colder —
+ * Priya coaches strategy, Noor coaches self-regulation.
+ */
+export const NOOR: Character = {
+  id: "noor",
+  name: "Noor",
+  description:
+    "Steady friend, two years older, has done her own anxious-attached deprogramming already. Answers texts at 3 a.m. without sounding sleepy. Will say 'log off' in a tone that sounds like a favour.",
+  traits: ["steady", "direct", "warm-but-bounded"],
+  defaultEmotion: "knowing",
+  gender: "female",
+  personalityType: "secure-ally",
+  silhouetteType: "hair-long",
+};
+
+/**
+ * The Critic — the toxic self-talk voice that runs the anxious-attached
+ * spiral. Distinct from INNER_VOICE (Kanika coaching). Starts sentences
+ * with "of course," uses "obviously," predicts catastrophes in
+ * second-person present tense. The track teaches the player to notice
+ * that this voice and the coaching voice are two different speakers —
+ * the on-screen separation is itself the pedagogy.
+ */
+export const THE_CRITIC: Character = {
+  id: "the-critic",
+  name: "The Critic",
+  description:
+    "The internal voice that keeps you awake at 3 a.m. Catastrophising, comparing, predicting rejection. Loud when the room is quiet. Silent when you are with a steady friend. Recognising it as a separate speaker is the first move.",
+  traits: ["catastrophising", "comparing", "second-person-present"],
+  defaultEmotion: "concerned",
+  personalityType: "inner-critic",
+  silhouetteType: "inner-voice",
+};
+
+/**
+ * Theo — the ex. Never on-screen directly. Referenced. May reply in
+ * L2. Not a predator — he is a normal emotionally unavailable man
+ * who said no. Keeping him flat (and mostly absent) is a deliberate
+ * choice: the scenario is not about him, it is about your nervous
+ * system's behaviour in his absence.
+ */
+export const THEO: Character = {
+  id: "theo",
+  name: "Theo",
+  description:
+    "The ex. Fifteen days of no contact at scenario start. Not written as a villain — written as a specific person who is no longer part of your life. His replies (or non-replies) happen off-screen.",
+  traits: ["emotionally-unavailable", "normal", "not-the-problem"],
+  defaultEmotion: "neutral",
+  gender: "male",
+  personalityType: "avoidant",
+  silhouetteType: "male-lean",
+};

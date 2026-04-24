@@ -14,6 +14,7 @@ import {
   MALE_DATING_SCENARIOS,
   MALE_DATING_LEVEL_TITLES,
 } from "./male-dating";
+import { ANXIETY_SCENARIOS, ANXIETY_LEVEL_TITLES } from "./anxiety";
 import mission11 from "./mission-1-1";
 import mission12 from "./mission-1-2";
 import mission21 from "./mission-2-1";
@@ -66,12 +67,13 @@ export const FEMALE_SCENARIOS: Scenario[] = [
   mission112,
 ];
 
-export { MALE_BUSINESS_SCENARIOS, MALE_DATING_SCENARIOS };
+export { MALE_BUSINESS_SCENARIOS, MALE_DATING_SCENARIOS, ANXIETY_SCENARIOS };
 
 export const ALL_SCENARIOS: Scenario[] = [
   ...FEMALE_SCENARIOS,
   ...MALE_BUSINESS_SCENARIOS,
   ...MALE_DATING_SCENARIOS,
+  ...ANXIETY_SCENARIOS,
 ];
 
 /**
@@ -135,6 +137,7 @@ export function levelTitlesForTrack(
 ): Record<number, { title: string; blurb: string }> {
   if (track === "male-business") return MALE_BUSINESS_LEVEL_TITLES;
   if (track === "male-dating") return MALE_DATING_LEVEL_TITLES;
+  if (track === "anxiety") return ANXIETY_LEVEL_TITLES;
   return LEVEL_TITLES;
 }
 
@@ -157,6 +160,21 @@ export const TRACK_META: Record<
     label: "Dating Line",
     sublabel: "Mate selection · BPD/HPD · gaslight · hoover · choose secure",
     href: "/consilium/simulator?track=male-dating",
+  },
+  anxiety: {
+    label: "Self-Regulation",
+    sublabel: "Interior work · the 3 a.m. text · urge-surfing · ally routing",
+    href: "/consilium/simulator?track=anxiety",
+  },
+  "toxic-narc": {
+    label: "Toxic Narcissist",
+    sublabel: "Narc parent · boss · sibling · spouse · in-law · friend",
+    href: "/consilium/simulator?track=toxic-narc",
+  },
+  "pc-child": {
+    label: "Psychopath Child",
+    sublabel: "Parental POV · conduct disorder · ages 5 to 20",
+    href: "/consilium/simulator?track=pc-child",
   },
 };
 
