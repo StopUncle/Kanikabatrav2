@@ -32,7 +32,7 @@ taskkill //F //PID [PID]           # Kill process on port
   - **Auth (members):** JWT cookie pair (`accessToken` 15m + `refreshToken` 7d), httpOnly + secure + sameSite=strict
   - **Auth (admin):** Separate 6-digit PIN → JWT cookie (`admin_session`, 24h, httpOnly). All admin API endpoints verify the cookie via `requireAdminSession()` from `lib/admin/auth.ts`.
   - **Payments:** **Stripe** (live mode, account `sk_live_kCEC...`). PayPal was fully removed in April 2026 — there's a PayPal MCP server still in `~/.claude.json` for refund tooling on legacy orders, but no PayPal integration in the live app.
-  - **Email transport:** Resend (preferred when `RESEND_API_KEY` set) → Nodemailer SMTP fallback. Microsoft Outlook routing has its own transport. Sequenced campaigns queued in the `EmailQueue` table (processor at `/api/admin/email-queue/process` — currently no scheduled trigger, see TODO).
+  - **Email transport:** Resend (preferred when `RESEND_API_KEY` set) → Nodemailer SMTP fallback. Microsoft Outlook routing has its own transport. Sequenced campaigns queued in the `EmailQueue` table (processor at `/api/admin/email-queue/process`, triggered every 15 min by `.github/workflows/cron.yml`).
   - **Real-time:** Pusher configured (lib/pusher/server.ts + client.ts), used by chat rooms. Inner Circle feed is currently server-rendered without real-time.
   - **Deployment:** **Railway** (Nixpacks builder, `npx prisma generate && npm run build`). Domain: `kanikarose.com`. Push to `master` auto-deploys.
   - **Storage:** Local filesystem under `private/books/` for book files (gitignored, deployed via git for now). Voice notes and member avatars on **Cloudflare R2** (`kanika-media` bucket, via `lib/storage/r2.ts`, S3-compatible).
@@ -98,8 +98,8 @@ Configured globally in `~/.claude.json`. Uses an OAuth flow with the Stripe acco
   - **Forum** (`/community/forum/*`): Member-authored threads with replies, likes. Bidirectional.
   - **Chat** (`/community/chat`): Pusher-backed real-time rooms with `accessTier` gating.
   - **Premium book bundled** with the membership.
-- **Daily auto-content:** 60 psychology cards (`prisma/seeds/daily-insights.ts`) + 28 weekday discussion prompts (`prisma/seeds/discussion-prompts.ts`) + 15 book chapter cards (`prisma/seeds/book-insights.ts`) + 6 viral quote prompts (`prisma/seeds/viral-quote-prompts.ts`). Cron routes at `/api/cron/daily-insight` and `/api/cron/discussion-prompt` create FeedPost rows from these on a schedule. **WARNING: there is no Railway scheduled job actually triggering these crons yet — content is seeded but never posted. Needs a Railway Cron service or external scheduler.**
-- **Email queue:** EmailQueue table holds queued sequence emails. `/api/admin/email-queue/process` is the processor — **also has no scheduled trigger**, queued emails won't fire until someone manually calls it.
+- **Daily auto-content:** 60 psychology cards (`prisma/seeds/daily-insights.ts`) + 28 weekday discussion prompts (`prisma/seeds/discussion-prompts.ts`) + 15 book chapter cards (`prisma/seeds/book-insights.ts`) + 6 viral quote prompts (`prisma/seeds/viral-quote-prompts.ts`). All 109 rows were seeded to prod on 2026-04-24 via `DATABASE_URL=<prod> npx tsx scripts/seed-insights.ts` (idempotent — re-runs skip existing rows). Cron routes at `/api/cron/daily-insight` (09:00 UTC daily) and `/api/cron/discussion-prompt` (10:00 UTC daily) create FeedPost rows from these. Schedule lives in `.github/workflows/cron.yml`; manual trigger via `gh workflow run cron.yml -f target=daily-insight`.
+- **Email queue:** EmailQueue table holds queued sequence emails. `/api/admin/email-queue/process` is the processor — triggered every 15 minutes by GitHub Actions (`.github/workflows/cron.yml` → `email-queue` job). Verified working end-to-end; multi-step book-buyer-welcome sequence (s1 immediate, s2 +48h, s3 +96h) is firing on schedule.
 
 ## 💼 Coaching Packages (Stripe one-time)
 
@@ -277,7 +277,8 @@ public/
 These came out of the April 2026 audit. Critical/high items only — see `findings.md` for the full punch list.
 
 ### Infrastructure (need decisions)
-- [ ] **Cron triggers for `/api/cron/*`** — daily-insight, discussion-prompt, retry-emails, AND `/api/admin/email-queue/process`. None of them fire on a schedule. Pick one: Railway Cron service, GitHub Actions on a schedule, or external (e.g. cron-job.org) hitting the endpoints with `x-cron-secret`.
+- [x] **Cron triggers for `/api/cron/*` — DONE** (2026-04-24). Running on GitHub Actions via `.github/workflows/cron.yml`. Schedules: email-queue every 15 min, retry-emails every 30 min, daily-insight 09:00 UTC, discussion-prompt 10:00 UTC, trial-expiry 09:30 UTC, weekly-digest Sunday 08:00 UTC. All jobs authed via `x-cron-secret` (set as a repo secret on GitHub and as env var on Railway — values must match). Manual trigger: `gh workflow run cron.yml -f target=<job-name>`. Watch runs at `https://github.com/StopUncle/Kanikabatrav2/actions/workflows/cron.yml`.
+  - **Prod seeding requirement noted:** `scripts/seed-insights.ts` must be run against the prod DB before daily-insight / discussion-prompt crons have anything to post. First seed happened 2026-04-24 (109 rows). Pool auto-resets when all insights are used, so a one-time seed is sufficient.
 - [x] **Voice notes cloud storage** — DONE. Uses Cloudflare R2 (`kanika-media` bucket) via `lib/storage/r2.ts`. All R2 env vars configured on Railway. Files persist across redeploys.
 - [ ] **Add `prisma migrate deploy` to nixpacks build** — Railway currently doesn't apply migrations on deploy. Schema changes have to be applied manually before pushing the code that references them.
 
@@ -524,6 +525,13 @@ The `ADMIN_SECRET` env var (server-side, not exposed) is still used as a fallbac
 - **TLS note:** When sending from local machine, add `tls: { rejectUnauthorized: false }` to nodemailer config
 
 ## 🔄 Recent Updates
+
+### April 2026 (24th) — simulator voice + cron infra + seed data
+- L1-1 through L5-2 narrative voice pass — 10 scenarios rewritten for Kanika-voice inner monologue (named tactics, physical-beat scene endings, old-money softeners). Reference voice: L11-1 / L11-2. See `reference/KANIKA-VOICE.md`.
+- Simulator UX polish: length-aware typewriter pacing, `prefers-reduced-motion` support across MoodBackground / ImmersionOverlay / SceneShake / DialogBox, mood-keyed particle motion (danger fast, peaceful slow, cold lateral), StreakIndicator threshold fix, Passed/Failed verdict pill on ending screen, last-line echo above choice cards so players can see what they're replying to.
+- Build unblock: `scripts/measure-path-lengths.ts` `[...Set]` spread was failing Railway's TS check, silently breaking deploys for 7 commits. Fixed with `Array.from()`.
+- Recommended-reading CTA on ending screen routed from `/blog/<slug>` to `/consilium/previews/<slug>` — the public blog route 404s on future-dated posts, the member preview route handles them correctly.
+- Cron validated end-to-end (GitHub Actions workflow was running fine — the actual problem was empty seed tables). `scripts/seed-insights.ts` executed against prod DB: 60 DailyInsight + 28 DiscussionPrompt + 15 BookInsight + 6 ViralQuotePrompt rows. Daily-insight post verified firing correctly.
 
 ### April 2026 — audit + payment hardening
 - 5-agent end-to-end audit (auth, membership, member experience, Stripe+email, security) — see `findings.md`
