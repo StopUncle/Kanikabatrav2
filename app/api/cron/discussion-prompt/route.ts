@@ -78,7 +78,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ message: "No prompts remaining", queueEmpty: true });
     }
 
-    await prisma.feedPost.create({
+    const post = await prisma.feedPost.create({
       data: {
         title: prompt.title,
         content: prompt.content,
@@ -92,12 +92,21 @@ export async function POST(request: NextRequest) {
           variation: prompt.variation,
         },
       },
+      select: { id: true },
     });
 
     await prisma.discussionPrompt.update({
       where: { id: prompt.id },
       data: { isUsed: true, postedAt: now },
     });
+
+    // Fire-and-forget bot engagement (Project B).
+    import("@/lib/bots/scheduler")
+      .then(({ scheduleBotActions }) => scheduleBotActions(post.id))
+      .then((r) => logger.info("[bots] scheduled", { postId: post.id, ...r }))
+      .catch((err) =>
+        logger.error("[bots] schedule failed", err as Error, { postId: post.id }),
+      );
 
     return NextResponse.json({
       success: true,
