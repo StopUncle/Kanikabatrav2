@@ -24,6 +24,10 @@ import {
   CLUSTER_B_LAB_SCENARIOS,
   CLUSTER_B_LAB_LEVEL_TITLES,
 } from "./cluster-b-lab";
+import {
+  DIVORCE_ARC_SCENARIOS,
+  DIVORCE_ARC_LEVEL_TITLES,
+} from "./divorce-arc";
 import mission11 from "./mission-1-1";
 import mission12 from "./mission-1-2";
 import mission21 from "./mission-2-1";
@@ -83,6 +87,7 @@ export {
   TOXIC_NARC_SCENARIOS,
   PC_CHILD_SCENARIOS,
   CLUSTER_B_LAB_SCENARIOS,
+  DIVORCE_ARC_SCENARIOS,
 };
 
 export const ALL_SCENARIOS: Scenario[] = [
@@ -93,6 +98,7 @@ export const ALL_SCENARIOS: Scenario[] = [
   ...TOXIC_NARC_SCENARIOS,
   ...PC_CHILD_SCENARIOS,
   ...CLUSTER_B_LAB_SCENARIOS,
+  ...DIVORCE_ARC_SCENARIOS,
 ];
 
 /**
@@ -160,6 +166,7 @@ export function levelTitlesForTrack(
   if (track === "toxic-narc") return TOXIC_NARC_LEVEL_TITLES;
   if (track === "pc-child") return PC_CHILD_LEVEL_TITLES;
   if (track === "cluster-b-lab") return CLUSTER_B_LAB_LEVEL_TITLES;
+  if (track === "divorce-arc") return DIVORCE_ARC_LEVEL_TITLES;
   return LEVEL_TITLES;
 }
 
@@ -202,6 +209,11 @@ export const TRACK_META: Record<
     label: "Cluster-B Lab",
     sublabel: "Short drills · BPD / NPD / ASPD / HPD · audit, diagnose, prescribe",
     href: "/consilium/simulator?track=cluster-b-lab",
+  },
+  "divorce-arc": {
+    label: "Divorce Arc",
+    sublabel: "Long-form · the speaking, the lawyer, the kids, the year after",
+    href: "/consilium/simulator?track=divorce-arc",
   },
 };
 

@@ -62,4 +62,5 @@ export const PUBLIC_TRACK_CHIPS: ReadonlyArray<{
   { title: "Self-Regulation", blurb: "3 a.m. spirals, the pre-authored reply, the read-receipt loop" },
   { title: "Toxic Families", blurb: "Narc parent, boss, sibling, spouse, in-law, friend" },
   { title: "Cluster-B Lab", blurb: "Short drills · BPD / NPD / ASPD / HPD" },
+  { title: "Divorce Arc", blurb: "The speaking, the lawyer, the kids, the year after" },
 ];

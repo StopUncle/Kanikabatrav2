@@ -31,6 +31,7 @@ const VALID_TRACKS: ScenarioTrack[] = [
   "toxic-narc",
   "pc-child",
   "cluster-b-lab",
+  "divorce-arc",
 ];
 
 function resolveTrack(value?: string): ScenarioTrack {

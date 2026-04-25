@@ -26,7 +26,8 @@ export type ScenarioTrack =
   | "anxiety"
   | "toxic-narc"
   | "pc-child"
-  | "cluster-b-lab";
+  | "cluster-b-lab"
+  | "divorce-arc";
 
 export type EmotionType =
   | "neutral"
