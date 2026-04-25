@@ -13,6 +13,7 @@ import anxiety21 from "./l2-1-the-waiting";
 import anxiety22 from "./l2-2-the-reply";
 import anxiety31 from "./l3-1-the-first-date";
 import anxiety41 from "./l4-1-the-group-chat";
+import anxiety51 from "./l5-1-the-presentation";
 
 export const ANXIETY_SCENARIOS: Scenario[] = [
   anxiety11,
@@ -22,6 +23,7 @@ export const ANXIETY_SCENARIOS: Scenario[] = [
   anxiety22,
   anxiety31,
   anxiety41,
+  anxiety51,
 ];
 
 export const ANXIETY_LEVEL_TITLES: Record<
