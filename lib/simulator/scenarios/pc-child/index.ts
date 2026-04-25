@@ -13,6 +13,7 @@
 import type { Scenario } from "../../types";
 import pcChild11 from "./l1-1-the-hamster";
 import pcChild21 from "./l2-1-the-school-calls";
+import pcChild22 from "./l2-2-the-school-saturday";
 import pcChild31 from "./l3-1-the-triangulation";
 import pcChild41 from "./l4-1-the-marriage-question";
 import pcChild51 from "./l5-1-the-legal-adult";
@@ -20,6 +21,7 @@ import pcChild51 from "./l5-1-the-legal-adult";
 export const PC_CHILD_SCENARIOS: Scenario[] = [
   pcChild11,
   pcChild21,
+  pcChild22,
   pcChild31,
   pcChild41,
   pcChild51,
