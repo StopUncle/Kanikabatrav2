@@ -86,8 +86,21 @@ export default async function FeedPage({
     },
   });
 
-  const hasMore = rows.length > PAGE_SIZE;
-  const posts = hasMore ? rows.slice(0, PAGE_SIZE) : rows;
+  // Drop unpinned posts whose title matches an already-pinned post.
+  // Re-pinning a fresh copy of an evergreen welcome/rules post used to
+  // leave the older non-pinned version in the feed twice. Since pinned
+  // posts sort first (see orderBy above), a single forward pass of the
+  // titles we've already seen is enough.
+  const pinnedTitles = new Set<string>();
+  for (const r of rows) {
+    if (r.isPinned) pinnedTitles.add(r.title.trim().toLowerCase());
+  }
+  const deduped = rows.filter(
+    (r) => r.isPinned || !pinnedTitles.has(r.title.trim().toLowerCase())
+  );
+
+  const hasMore = deduped.length > PAGE_SIZE;
+  const posts = hasMore ? deduped.slice(0, PAGE_SIZE) : deduped;
   const initialNextCursor = hasMore
     ? posts[posts.length - 1].createdAt.toISOString()
     : null;

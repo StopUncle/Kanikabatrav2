@@ -86,8 +86,23 @@ export async function GET(request: NextRequest) {
     },
   });
 
-  const hasMore = rows.length > PAGE_SIZE;
-  const posts = hasMore ? rows.slice(0, PAGE_SIZE) : rows;
+  // Drop unpinned dupes of pinned titles so an evergreen "Welcome /
+  // Read Before Posting" post that's been re-pinned doesn't reappear
+  // mid-scroll. Mirrors the dedupe in app/consilium/(member)/feed/page.tsx.
+  const pinnedTitles = new Set(
+    (
+      await prisma.feedPost.findMany({
+        where: { ...genderWhere, isPinned: true },
+        select: { title: true },
+      })
+    ).map((p) => p.title.trim().toLowerCase()),
+  );
+  const deduped = rows.filter(
+    (r) => !pinnedTitles.has(r.title.trim().toLowerCase()),
+  );
+
+  const hasMore = deduped.length > PAGE_SIZE;
+  const posts = hasMore ? deduped.slice(0, PAGE_SIZE) : deduped;
 
   const formatted = posts.map((post) => ({
     id: post.id,

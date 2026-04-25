@@ -2,7 +2,16 @@
 
 import { useState, useEffect } from "react";
 import { m } from "framer-motion";
-import { Heart, MessageCircle, Pin, Mic, ChevronDown, ChevronUp } from "lucide-react";
+import {
+  Heart,
+  MessageCircle,
+  Pin,
+  Mic,
+  ChevronDown,
+  ChevronUp,
+  Sparkles,
+  MessagesSquare,
+} from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import Link from "next/link";
 import ReactMarkdown from "react-markdown";
@@ -128,10 +137,8 @@ export default function FeedPost({ post, isDetail = false, isNew = false }: Feed
   };
 
   // System / cron-generated posts come through with author === null but
-  // render as "Kanika" in the UI (see line below). Treat those as admin-
-  // authored so the Queen badge (tier 12) shows instead of the default
-  // Initiate tier.
-  const isAdminAuthor = post.author?.role === "ADMIN" || !post.author;
+  // render as "Kanika" in the UI (see below). The default tier of 12
+  // (Queen) makes the badge match Kanika's rank for those rows.
   const authorTier = post.author?.tier ?? 12;
   const shouldTruncate = !isDetail && post.content.length > 500;
   const displayContent = shouldTruncate ? post.content.slice(0, 500) : post.content;
@@ -172,12 +179,25 @@ export default function FeedPost({ post, isDetail = false, isNew = false }: Feed
           <span className="text-sm font-medium text-text-light truncate">
             {post.author?.name || "Kanika"}
           </span>
-          {isAdminAuthor && (
-            <span className="text-[10px] bg-warm-gold/10 text-warm-gold border border-warm-gold/25 px-1.5 py-0.5 rounded-full uppercase tracking-wider shrink-0">
-              Kanika
+          <span className="text-xs text-text-gray/70 shrink-0">{timeAgo}</span>
+          {post.type === "AUTOMATED" && (
+            <span
+              className="hidden sm:inline-flex items-center gap-1 text-[10px] text-accent-gold/80 uppercase tracking-[0.18em] font-medium border border-accent-gold/20 bg-accent-gold/[0.04] px-1.5 py-0.5 rounded-full shrink-0"
+              aria-label="Daily insight"
+            >
+              <Sparkles className="w-2.5 h-2.5" />
+              Insight
             </span>
           )}
-          <span className="text-xs text-text-gray/70 shrink-0">{timeAgo}</span>
+          {post.type === "DISCUSSION_PROMPT" && (
+            <span
+              className="hidden sm:inline-flex items-center gap-1 text-[10px] text-purple-300/85 uppercase tracking-[0.18em] font-medium border border-purple-300/25 bg-purple-300/[0.05] px-1.5 py-0.5 rounded-full shrink-0"
+              aria-label="Discussion prompt"
+            >
+              <MessagesSquare className="w-2.5 h-2.5" />
+              Discussion
+            </span>
+          )}
           <span
             className="hidden sm:inline-flex items-center gap-1 text-[10px] text-text-gray/55 shrink-0"
             aria-label={`${viewing} members viewing`}
@@ -365,9 +385,11 @@ export default function FeedPost({ post, isDetail = false, isNew = false }: Feed
                 : "text-text-gray/50 group-hover:text-accent-gold"
             }`}
           />
-          <span className={liked ? "text-accent-gold" : "text-text-gray/50"}>
-            {likeCount}
-          </span>
+          {likeCount > 0 && (
+            <span className={liked ? "text-accent-gold" : "text-text-gray/50"}>
+              {likeCount}
+            </span>
+          )}
         </button>
 
         <Link
@@ -376,7 +398,7 @@ export default function FeedPost({ post, isDetail = false, isNew = false }: Feed
           className="flex items-center gap-1.5 text-sm text-text-gray/50 hover:text-accent-gold transition-colors px-2 py-2 -mx-2 rounded-lg active:bg-accent-gold/10 tap-target"
         >
           <MessageCircle className="w-5 h-5" />
-          <span>{post.commentCount}</span>
+          {post.commentCount > 0 && <span>{post.commentCount}</span>}
         </Link>
       </div>
       )}
