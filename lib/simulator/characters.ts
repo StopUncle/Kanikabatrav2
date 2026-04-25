@@ -418,3 +418,23 @@ export const THE_SPOUSE: Character = {
   personalityType: "covert-narcissist",
   silhouetteType: "male-imposing",
 };
+
+/**
+ * Toxic-Narc track — the narc friend.
+ * Chosen-relationship version of the mother register. Plays warm
+ * hostess in groups, runs asymmetric performance privately: over-
+ * celebrates the three friends who are less threatening to her, flat
+ * on the one friend whose life is going well. Appears in tn-6-1.
+ * Distinct from THE_MOTHER, MOTHER_IN_LAW, and PRIYA (the secure one).
+ */
+export const THE_FRIEND: Character = {
+  id: "the-friend",
+  name: "Elise",
+  description:
+    "A decade of closeness. The audit you are afraid to run because you love her. Warm, generous in groups, asymmetric in private — big performance for the friends who are less threatening, flat on the one whose life is going well. Learned it from her mother the way you learned yours.",
+  traits: ["warm-in-groups", "asymmetric-in-private", "old-friendship"],
+  defaultEmotion: "neutral",
+  gender: "female",
+  personalityType: "covert-narcissist",
+  silhouetteType: "female-soft",
+};
