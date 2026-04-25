@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 import Header from "@/components/Header";
 import BackgroundEffects from "@/components/BackgroundEffects";
+import DaughterEmailCapture from "@/components/quiz/DaughterEmailCapture";
 import {
   DAUGHTER_PROFILES,
   DAUGHTER_QUIZ_INFO,
@@ -282,6 +283,18 @@ export default function DaughterQuizResultsPage() {
               </p>
             </div>
           </m.div>
+
+          {/* Email capture — soft opt-in. Surfaces after the recovery
+              move (the most useful piece of content) so the user has
+              already received their full free result before being asked.
+              Tags the Subscriber with primary + secondary daughter type
+              for future segmented email sequences. Reuses /api/newsletter
+              — no new endpoint, no schema change. */}
+          <DaughterEmailCapture
+            primaryType={data.primaryType}
+            secondaryType={data.secondaryType}
+            primaryProfileName={profile.name}
+          />
 
           {/* Secondary profile — the runner-up */}
           {data.primaryType !== data.secondaryType && (
