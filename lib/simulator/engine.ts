@@ -51,6 +51,17 @@ export function autoAdvance(
   if (scene.choices && scene.choices.length > 0) return state;
   if (!scene.nextSceneId) return state;
 
+  // If the next scene is an ending, finalize directly — same pattern as
+  // applyChoice. Without this, no-choice scenes that point at an ending
+  // (e.g. mission-2-2 → ending-proxy-neutralized) move the cursor but
+  // never stamp outcome/endedAt, so isComplete() stays false and the
+  // /api/simulator/complete POST never fires. Symptom: completed runs
+  // sit forever as in-progress with currentSceneId === "ending-X".
+  const nextScene = scenario.scenes.find((s) => s.id === scene.nextSceneId);
+  if (nextScene?.isEnding) {
+    return finalizeEnding(nextScene, state);
+  }
+
   return {
     ...state,
     currentSceneId: scene.nextSceneId,
