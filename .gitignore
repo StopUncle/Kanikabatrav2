@@ -120,3 +120,6 @@ reference/
 .playwright-mcp/
 /*.png
 !public/**/*.png
+
+# Local git worktrees for feature branches (subagent-driven dev)
+.worktrees/
