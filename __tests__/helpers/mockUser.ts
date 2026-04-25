@@ -33,6 +33,8 @@ export interface MockUser {
   ipCountry: string | null;
   language: string | null;
   timezone: string | null;
+  isBot: boolean;
+  botActive: boolean;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -71,6 +73,8 @@ export function createMockUser(overrides: Partial<MockUser> = {}): MockUser {
     ipCountry: null,
     language: null,
     timezone: null,
+    isBot: false,
+    botActive: true,
     createdAt: new Date(),
     updatedAt: new Date(),
     ...overrides,
