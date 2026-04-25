@@ -44,16 +44,19 @@ interface FeedPostProps {
 }
 
 /**
- * Pinned posts sort to the top of the feed and push the rest down. Once a
- * member has acknowledged a pinned post, they can collapse it to a single
- * header row so the feed reclaims the space. Choice persists per-post in
- * localStorage, keyed on post id + createdAt so re-posting or re-pinning
- * resets the default to expanded. Non-pinned posts never collapse.
+ * Pinned posts sort to the top of the feed and push everything else down.
+ * They start COLLAPSED by default — a single header row with title + tap-
+ * to-expand affordance — so the feed reclaims the space immediately. The
+ * member can expand any pinned post with one tap; that choice persists
+ * per-post in localStorage, keyed on post id + createdAt. Re-posting or
+ * re-pinning produces a new key, which means a freshly-pinned post lands
+ * collapsed for everyone (including members who'd previously expanded a
+ * different pinned post). Non-pinned posts never collapse.
  */
-const PINNED_COLLAPSE_STORAGE_PREFIX = "feed-pinned-collapsed:";
+const PINNED_EXPAND_STORAGE_PREFIX = "feed-pinned-expanded:";
 
-function pinnedCollapseKey(post: { id: string; createdAt: string }): string {
-  return `${PINNED_COLLAPSE_STORAGE_PREFIX}${post.id}:${post.createdAt}`;
+function pinnedExpandKey(post: { id: string; createdAt: string }): string {
+  return `${PINNED_EXPAND_STORAGE_PREFIX}${post.id}:${post.createdAt}`;
 }
 
 export default function FeedPost({ post, isDetail = false, isNew = false }: FeedPostProps) {
@@ -62,19 +65,26 @@ export default function FeedPost({ post, isDetail = false, isNew = false }: Feed
   const [isToggling, setIsToggling] = useState(false);
 
   // Collapsed state for pinned posts only. Detail pages ignore the toggle
-  // entirely — if a member navigated into the post directly, they want to
-  // see it. Hydration: start expanded on first render (matches SSR) then
-  // re-read localStorage on mount to avoid a mismatch flash.
+  // entirely — if a member navigated into the post directly, they want
+  // to see it.
+  //
+  // Hydration: SSR doesn't have access to localStorage so we render the
+  // default-collapsed state on the server; on mount we re-read storage
+  // and expand if the member previously expanded *this specific* post.
+  // The match between SSR and the first client render is intentional —
+  // most members will see the collapsed shape immediately, no flash.
   const canCollapse = post.isPinned && !isDetail;
-  const [isCollapsed, setIsCollapsed] = useState(false);
+  const [isCollapsed, setIsCollapsed] = useState(canCollapse);
   useEffect(() => {
     if (!canCollapse) return;
     try {
-      const stored = localStorage.getItem(pinnedCollapseKey(post));
-      if (stored === "1") setIsCollapsed(true);
+      // "1" means the member explicitly expanded this post; treat as
+      // expanded on subsequent loads.
+      const stored = localStorage.getItem(pinnedExpandKey(post));
+      if (stored === "1") setIsCollapsed(false);
     } catch {
-      // localStorage unavailable (private mode, quota, etc.) — start
-      // expanded and leave the toggle as an in-session-only affordance.
+      // localStorage unavailable (private mode, quota, etc.) — leave
+      // collapsed and allow in-session expand only.
     }
   }, [canCollapse, post]);
 
@@ -83,8 +93,9 @@ export default function FeedPost({ post, isDetail = false, isNew = false }: Feed
     setIsCollapsed(next);
     if (!canCollapse) return;
     try {
-      if (next) localStorage.setItem(pinnedCollapseKey(post), "1");
-      else localStorage.removeItem(pinnedCollapseKey(post));
+      // Store "expanded"; collapse is the default and needs no key.
+      if (!next) localStorage.setItem(pinnedExpandKey(post), "1");
+      else localStorage.removeItem(pinnedExpandKey(post));
     } catch {
       /* non-fatal */
     }
