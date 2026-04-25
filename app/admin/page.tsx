@@ -39,7 +39,7 @@ export default function AdminDashboardPage() {
         : { count: 0 };
       const users = usersRes.status === "fulfilled" && usersRes.value.ok
         ? await usersRes.value.json()
-        : { count: 0 };
+        : { count: 0, memberCount: 0 };
       const email = emailRes.status === "fulfilled" && emailRes.value.ok
         ? await emailRes.value.json()
         : { pending: 0, sent: 0, failed: 0 };
@@ -47,7 +47,10 @@ export default function AdminDashboardPage() {
       setStats({
         pendingApplications: apps.count || 0,
         pendingComments: comments.count || 0,
-        totalMembers: users.count || 0,
+        // The "Total Members" tile means active Consilium members, not
+        // registered users. Endpoint returns both: memberCount is the
+        // membership table count, count is the user table count.
+        totalMembers: users.memberCount ?? 0,
         emailQueue: {
           pending: email.pending || 0,
           sent: email.sent || 0,

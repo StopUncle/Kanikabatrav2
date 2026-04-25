@@ -23,29 +23,39 @@ export async function GET(request: NextRequest) {
       where.isBanned = false;
     }
 
-    const users = await prisma.user.findMany({
-      where,
-      select: {
-        id: true,
-        email: true,
-        name: true,
-        displayName: true,
-        role: true,
-        isBanned: true,
-        banReason: true,
-        messagingRestricted: true,
-        messagingRestrictedReason: true,
-        createdAt: true,
-        communityMembership: {
-          select: {
-            id: true,
-            status: true,
+    // List view stays paginated at 100 — the dashboard table can't
+    // render thousands. But `count` and `memberCount` must reflect the
+    // full table; otherwise the admin dashboard tile reads
+    // formatted.length and gets capped forever once the userbase
+    // exceeds 100. Confirmed in prod April 2026: tile stuck at "100
+    // Total Members" for weeks while the userbase grew to 300+.
+    const [users, totalUsers, totalMembers] = await Promise.all([
+      prisma.user.findMany({
+        where,
+        select: {
+          id: true,
+          email: true,
+          name: true,
+          displayName: true,
+          role: true,
+          isBanned: true,
+          banReason: true,
+          messagingRestricted: true,
+          messagingRestrictedReason: true,
+          createdAt: true,
+          communityMembership: {
+            select: {
+              id: true,
+              status: true,
+            },
           },
         },
-      },
-      orderBy: { createdAt: "desc" },
-      take: 100,
-    });
+        orderBy: { createdAt: "desc" },
+        take: 100,
+      }),
+      prisma.user.count({ where }),
+      prisma.communityMembership.count({ where: { status: "ACTIVE" } }),
+    ]);
 
     const formatted = users.map((user) => ({
       id: user.id,
@@ -64,7 +74,8 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({
       success: true,
       users: formatted,
-      count: formatted.length,
+      count: totalUsers,
+      memberCount: totalMembers,
     });
   } catch (error) {
     console.error("Error fetching users:", error);
