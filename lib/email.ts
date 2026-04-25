@@ -939,6 +939,11 @@ interface QuizResultsEmailData {
     tagline: string;
     description: string;
   };
+  consiliumCredit?: {
+    code: string;
+    amount: number;
+    expiresAt: Date | string;
+  };
 }
 
 export const sendQuizResults = async (
@@ -1009,6 +1014,50 @@ export const sendQuizResults = async (
         `<li style="color: #94a3b8; margin: 8px 0;"><span style="color: #ef4444;">!</span> ${b}</li>`,
     )
     .join("");
+
+  const creditSection = data.consiliumCredit
+    ? (() => {
+        const c = data.consiliumCredit!;
+        const expiry = new Date(c.expiresAt).toLocaleDateString("en-US", {
+          month: "long",
+          day: "numeric",
+          year: "numeric",
+        });
+        return `
+    <tr>
+      <td style="padding: 0 30px 20px; border-left: 1px solid #d4af37; border-right: 1px solid #d4af37;">
+        <div style="background: linear-gradient(135deg, #1a0d11 0%, #0a0a0a 100%); padding: 28px; border-radius: 10px; border: 1px solid #d4af37;">
+          <p style="color: #d4af37; margin: 0 0 10px 0; font-size: 11px; text-transform: uppercase; letter-spacing: 2px; text-align: center; font-weight: 600;">
+            A thank-you from Kanika
+          </p>
+          <h3 style="color: #ffffff; margin: 0 0 12px 0; font-size: 22px; font-weight: 300; text-align: center; letter-spacing: 0.5px;">
+            Your $${c.amount.toFixed(2)} is credited toward The Consilium
+          </h3>
+          <p style="color: #94a3b8; margin: 0 0 22px 0; font-size: 14px; line-height: 1.7; text-align: center;">
+            Inside: the Dark Mirror Simulator (branching scenarios on the same axes you just scored on), the classroom, voice notes, and a moderated community. Use this code at checkout — it comes off your first month.
+          </p>
+          <div style="background: #050511; border: 1px dashed #d4af37; border-radius: 8px; padding: 18px 20px; text-align: center; margin: 0 0 20px 0;">
+            <p style="color: #94a3b8; margin: 0 0 6px 0; font-size: 10px; text-transform: uppercase; letter-spacing: 2px;">
+              Your code
+            </p>
+            <p style="color: #d4af37; margin: 0; font-family: 'Courier New', monospace; font-size: 22px; font-weight: 700; letter-spacing: 2px;">
+              ${c.code}
+            </p>
+          </div>
+          <p style="color: #666; margin: 0 0 18px 0; font-size: 11px; text-align: center;">
+            Expires ${expiry} · Single use · Applies to your first month
+          </p>
+          <div style="text-align: center;">
+            <a href="${baseUrl}/consilium" style="display: inline-block; background: #d4af37; color: #0a0a0a; padding: 14px 32px; text-decoration: none; border-radius: 50px; font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;">
+              Apply My Credit
+            </a>
+          </div>
+        </div>
+      </td>
+    </tr>
+  `;
+      })()
+    : "";
 
   const diagnosisSection = data.diagnosis
     ? `
@@ -1185,6 +1234,8 @@ export const sendQuizResults = async (
                   </div>
                 </td>
               </tr>
+
+              ${creditSection}
 
               <!-- Upsell Section -->
               <tr>

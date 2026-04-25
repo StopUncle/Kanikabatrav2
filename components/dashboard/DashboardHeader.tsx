@@ -2,7 +2,16 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { Menu, X, LogOut, BookOpen, Calendar, Home, Users } from "lucide-react";
+import {
+  Menu,
+  X,
+  LogOut,
+  BookOpen,
+  Calendar,
+  Home,
+  Users,
+  ArrowUpRight,
+} from "lucide-react";
 
 interface DashboardHeaderProps {
   userEmail: string;
@@ -12,10 +21,21 @@ const DashboardHeader = ({ userEmail }: DashboardHeaderProps) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
 
+  // Consilium is intentionally pulled OUT of the standard nav array and
+  // rendered as a distinct gold pill on the right (next to the profile
+  // chip) so it's the most visually distinct link in the chrome — every
+  // dashboard view has a one-tap shortcut to the member space without
+  // needing the user to remember it lives among the secondary links.
   const navLinks = [
     { href: "/", label: "Home", icon: Home },
     { href: "/book", label: "The Book", icon: BookOpen },
     { href: "/coaching", label: "Coaching", icon: Calendar },
+  ];
+
+  // Mobile-menu nav. Includes Consilium so the hamburger surface still
+  // exposes the shortcut; the desktop layout shows it as the gold pill.
+  const mobileMenuLinks = [
+    ...navLinks,
     { href: "/consilium/feed", label: "The Consilium", icon: Users },
   ];
 
@@ -37,7 +57,7 @@ const DashboardHeader = ({ userEmail }: DashboardHeaderProps) => {
           </Link>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center space-x-8">
+          <div className="hidden md:flex items-center space-x-6 lg:space-x-8">
             {navLinks.map((link) => (
               <Link
                 key={link.href}
@@ -48,6 +68,21 @@ const DashboardHeader = ({ userEmail }: DashboardHeaderProps) => {
                 {link.label}
               </Link>
             ))}
+
+            {/* The Consilium — distinct gold pill, sits between the
+                standard nav and the profile chip so it's the most
+                visually charged link in the chrome. */}
+            <Link
+              href="/consilium/feed"
+              className="group inline-flex items-center gap-1.5 pl-4 pr-3 py-1.5 rounded-full border border-accent-gold/60 text-accent-gold text-[11px] tracking-[0.22em] uppercase whitespace-nowrap hover:border-accent-gold hover:bg-accent-gold/10 hover:shadow-[0_0_20px_-6px_rgba(212,175,55,0.5)] transition-all duration-300"
+            >
+              The Consilium
+              <ArrowUpRight
+                size={13}
+                strokeWidth={1.5}
+                className="transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+              />
+            </Link>
 
             {/* Profile Dropdown */}
             <div className="relative">
@@ -105,11 +140,15 @@ const DashboardHeader = ({ userEmail }: DashboardHeaderProps) => {
                 <p className="text-xs text-text-gray">Signed in as</p>
                 <p className="text-sm text-text-light">{userEmail}</p>
               </div>
-              {navLinks.map((link) => (
+              {mobileMenuLinks.map((link) => (
                 <Link
                   key={link.href}
                   href={link.href}
-                  className="flex items-center gap-2 text-text-gray hover:text-accent-gold transition-colors py-2"
+                  className={`flex items-center gap-2 transition-colors py-2 ${
+                    link.href === "/consilium/feed"
+                      ? "text-accent-gold font-medium"
+                      : "text-text-gray hover:text-accent-gold"
+                  }`}
                   onClick={() => setIsMenuOpen(false)}
                 >
                   <link.icon size={18} />

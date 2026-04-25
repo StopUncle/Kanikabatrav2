@@ -334,6 +334,42 @@ export default function DashboardClient({ user }: DashboardClientProps) {
             </p>
           </div>
 
+          {/* Above-the-fold Consilium shortcut.
+              Sits between the welcome line and the stats row so it's
+              visible the moment the dashboard mounts — no scroll
+              required. State-aware: active members jump straight to
+              the feed; everyone else hits the landing/apply funnel. */}
+          <Link
+            href={
+              data?.user.communityMembership?.status === "ACTIVE"
+                ? "/consilium/feed"
+                : "/consilium"
+            }
+            className="group mb-8 flex items-center justify-between gap-4 px-5 py-4 rounded-2xl border border-accent-gold/40 bg-gradient-to-r from-accent-gold/10 via-accent-gold/5 to-transparent hover:border-accent-gold hover:bg-accent-gold/15 transition-all duration-300 shadow-[0_0_24px_-12px_rgba(212,175,55,0.4)] hover:shadow-[0_0_32px_-8px_rgba(212,175,55,0.55)]"
+          >
+            <div className="flex items-center gap-4 min-w-0">
+              <div className="shrink-0 w-11 h-11 rounded-full bg-accent-gold/15 border border-accent-gold/30 flex items-center justify-center">
+                <Crown className="w-5 h-5 text-accent-gold" strokeWidth={1.5} />
+              </div>
+              <div className="min-w-0">
+                <p className="text-accent-gold/80 text-[10px] uppercase tracking-[0.3em] mb-0.5">
+                  {data?.user.communityMembership?.status === "ACTIVE"
+                    ? "Your private space"
+                    : "Members only"}
+                </p>
+                <p className="text-text-light font-light text-base sm:text-lg truncate">
+                  {data?.user.communityMembership?.status === "ACTIVE"
+                    ? "Enter the Consilium"
+                    : "Step inside the Consilium"}
+                </p>
+              </div>
+            </div>
+            <ArrowRight
+              className="shrink-0 w-5 h-5 text-accent-gold transition-transform duration-300 group-hover:translate-x-1"
+              strokeWidth={1.5}
+            />
+          </Link>
+
           {/* Quick Stats - Always visible */}
           <div
             className={`mb-8 ${mobileTab !== "overview" ? "hidden md:block" : ""}`}

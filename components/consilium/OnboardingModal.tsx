@@ -12,6 +12,7 @@ import {
   Loader2,
 } from "lucide-react";
 import ConsiliumSeal from "@/components/ConsiliumSeal";
+import { catalogueStats } from "@/lib/simulator/stats";
 
 /**
  * First-visit welcome modal for new Consilium members.
@@ -229,7 +230,7 @@ export default function OnboardingModal({
               <OnboardingItem
                 icon={Gamepad2}
                 title="The Dark Mirror Simulator"
-                body="Interactive scenarios that teach manipulation + defense through play. Ten levels, twenty scenarios. Start at Level 1."
+                body={`Interactive scenarios that teach manipulation + defence through play. ${catalogueStats.scenarios} scenarios across ${catalogueStats.tracks} tracks — narcissist family, anxiety self-regulation, Cluster-B drills, and more. Pick the track that fits the week you're having.`}
               />
               <OnboardingItem
                 icon={AudioLines}

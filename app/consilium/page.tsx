@@ -45,8 +45,7 @@ export default async function InnerCircleLanding({
     {
       icon: Film,
       title: "The Dark Mirror Simulator",
-      description:
-        "Duolingo for dark psychology — 30 branching scenarios where you practice catching manipulation in real time. No theory. Every choice has a consequence",
+      description: `Duolingo for dark psychology — ${catalogueStats.scenarios} branching scenarios where you practice catching manipulation in real time. No theory. Every choice has a consequence`,
       highlight: true,
     },
     {

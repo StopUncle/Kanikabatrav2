@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { sendQuizResults } from "@/lib/email";
+import { QUIZ_CREDIT } from "@/lib/stripe-credits";
 import {
   PERSONALITY_PROFILES,
   PersonalityType,
@@ -90,6 +91,14 @@ export async function POST(request: NextRequest) {
         tagline: secondaryProfile.tagline,
         description: secondaryProfile.description,
       },
+      consiliumCredit:
+        quizResult.consiliumCreditCode && quizResult.consiliumCreditExpiresAt
+          ? {
+              code: quizResult.consiliumCreditCode,
+              amount: QUIZ_CREDIT.amount,
+              expiresAt: quizResult.consiliumCreditExpiresAt,
+            }
+          : undefined,
     });
 
     if (emailSent) {

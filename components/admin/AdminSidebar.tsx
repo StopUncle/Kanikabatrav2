@@ -15,6 +15,7 @@ import {
   Mail,
   BarChart3,
   ArrowLeft,
+  ArrowUpRight,
   LogOut,
   Loader2,
   Menu,
@@ -129,14 +130,28 @@ export default function AdminSidebar() {
 
   return (
     <>
-      {/* Mobile header bar */}
-      <div className="lg:hidden fixed top-0 left-0 right-0 z-50 bg-[#050511] border-b border-accent-gold/10 px-4 py-3 flex items-center justify-between">
-        <h1 className="text-sm font-light uppercase tracking-[0.2em] text-accent-gold">
+      {/* Mobile header bar.
+          Always visible on narrow viewports. Includes a prominent
+          Consilium pill in the centre so the most-used cross-area
+          shortcut doesn't require opening the slide-out sidebar. */}
+      <div className="lg:hidden fixed top-0 left-0 right-0 z-50 bg-[#050511] border-b border-accent-gold/10 px-4 py-3 flex items-center justify-between gap-3">
+        <h1 className="text-sm font-light uppercase tracking-[0.2em] text-accent-gold shrink-0">
           Admin
         </h1>
+        <Link
+          href="/consilium/feed"
+          className="group inline-flex items-center gap-1.5 pl-3 pr-2.5 py-1 rounded-full border border-accent-gold/60 text-accent-gold text-[10px] tracking-[0.2em] uppercase hover:border-accent-gold hover:bg-accent-gold/10 transition-all"
+        >
+          Consilium
+          <ArrowUpRight
+            size={11}
+            strokeWidth={1.5}
+            className="transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+          />
+        </Link>
         <button
           onClick={() => setMobileOpen(!mobileOpen)}
-          className="p-2 text-accent-gold"
+          className="p-2 text-accent-gold shrink-0"
           aria-label="Toggle menu"
         >
           {mobileOpen ? <X size={20} /> : <Menu size={20} />}
@@ -169,6 +184,22 @@ export default function AdminSidebar() {
             <X size={18} />
           </button>
         </div>
+        {/* Mirrors the desktop top-of-sidebar Consilium shortcut so
+            the mobile menu opens with the cross-area jump available
+            instantly, not buried at the bottom. */}
+        <div className="px-4 pt-4">
+          <Link
+            href="/consilium/feed"
+            className="group flex items-center justify-between gap-2 px-4 py-2.5 rounded-full border border-accent-gold/60 text-accent-gold text-[11px] tracking-[0.22em] uppercase hover:border-accent-gold hover:bg-accent-gold/10 transition-all"
+          >
+            <span>Enter Consilium</span>
+            <ArrowUpRight
+              size={13}
+              strokeWidth={1.5}
+              className="transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+            />
+          </Link>
+        </div>
         {navContent}
       </aside>
 
@@ -178,6 +209,25 @@ export default function AdminSidebar() {
           <h1 className="text-lg font-light uppercase tracking-[0.2em] text-accent-gold">
             Admin Panel
           </h1>
+        </div>
+        {/* Top-of-sidebar Consilium shortcut. The original "Preview
+            Consilium" link still lives at the bottom of the nav for
+            consistency, but most admin sessions need a one-tap jump
+            into the member view — surfacing it here means it's the
+            first thing visible after the panel title, no scroll
+            needed even on a 13" laptop. */}
+        <div className="px-4 pt-4">
+          <Link
+            href="/consilium/feed"
+            className="group flex items-center justify-between gap-2 px-4 py-2.5 rounded-full border border-accent-gold/60 text-accent-gold text-[11px] tracking-[0.22em] uppercase hover:border-accent-gold hover:bg-accent-gold/10 hover:shadow-[0_0_20px_-6px_rgba(212,175,55,0.5)] transition-all"
+          >
+            <span>Enter Consilium</span>
+            <ArrowUpRight
+              size={13}
+              strokeWidth={1.5}
+              className="transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+            />
+          </Link>
         </div>
         {navContent}
       </aside>

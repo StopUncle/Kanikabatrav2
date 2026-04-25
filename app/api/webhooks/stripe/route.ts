@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { stripe } from "@/lib/stripe";
 import { prisma } from "@/lib/prisma";
 import { sendBookDelivery, sendInnerCircleWelcomeNewUser, sendMembershipRenewed, sendMembershipSuspended, sendMembershipCancelled } from "@/lib/email";
+import { createQuizConsiliumCredit } from "@/lib/stripe-credits";
 import jwt from "jsonwebtoken";
 import crypto from "crypto";
 
@@ -191,11 +192,13 @@ export async function POST(request: NextRequest) {
           });
 
           const quizResultId = session.metadata?.quizResultId;
+          let unlockedQuizResultId: string | null = null;
           if (quizResultId) {
             await prisma.quizResult.update({
               where: { id: quizResultId },
               data: { paid: true, paypalOrderId: idempotencyKey },
             });
+            unlockedQuizResultId = quizResultId;
           } else {
             const quizResult = await prisma.quizResult.findFirst({
               where: { email, paid: false },
@@ -205,6 +208,24 @@ export async function POST(request: NextRequest) {
               await prisma.quizResult.update({
                 where: { id: quizResult.id },
                 data: { paid: true, paypalOrderId: idempotencyKey },
+              });
+              unlockedQuizResultId = quizResult.id;
+            }
+          }
+
+          // Generate a one-use $9.99 Stripe promotion code that
+          // credits the quiz price toward the buyer's first
+          // Consilium month. Non-blocking — a Stripe hiccup here
+          // doesn't fail the webhook. 14-day expiry.
+          if (unlockedQuizResultId) {
+            const credit = await createQuizConsiliumCredit(unlockedQuizResultId);
+            if (credit) {
+              await prisma.quizResult.update({
+                where: { id: unlockedQuizResultId },
+                data: {
+                  consiliumCreditCode: credit.code,
+                  consiliumCreditExpiresAt: credit.expiresAt,
+                },
               });
             }
           }

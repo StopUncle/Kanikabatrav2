@@ -70,6 +70,21 @@ export async function GET(request: NextRequest) {
       });
     }
 
+    // Credit is surfaced only for quiz-purchase unlocks (consiliumCreditCode
+    // is stamped on the QuizResult in the QUIZ webhook branch). Book-unlocks
+    // and active-Consilium unlocks get null — the upsell doesn't apply.
+    // Also null out codes that have expired so the UI can hide stale cards.
+    const credit =
+      quizResult.consiliumCreditCode &&
+      quizResult.consiliumCreditExpiresAt &&
+      quizResult.consiliumCreditExpiresAt.getTime() > Date.now() &&
+      !hasActiveConsilium
+        ? {
+            code: quizResult.consiliumCreditCode,
+            expiresAt: quizResult.consiliumCreditExpiresAt,
+          }
+        : null;
+
     return NextResponse.json({
       success: true,
       unlocked: true,
@@ -81,6 +96,7 @@ export async function GET(request: NextRequest) {
         diagnosis,
         createdAt: quizResult.createdAt,
       },
+      consiliumCredit: credit,
     });
   });
 }
