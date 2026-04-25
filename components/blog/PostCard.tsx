@@ -19,20 +19,6 @@ export default function PostCard({ post, index }: PostCardProps) {
     >
       <Link href={`/blog/${post.slug}`} className="block h-full">
         <div className="relative h-full overflow-hidden rounded-2xl bg-gradient-to-br from-deep-black/80 to-deep-navy/40 border border-white/10 hover:border-accent-gold/30 transition-all duration-500 flex flex-col">
-          {post.frontmatter.coverImage && (
-            <div className="relative h-52 overflow-hidden flex-shrink-0">
-              <div
-                className="absolute inset-0 bg-cover bg-center transform group-hover:scale-105 transition-transform duration-700"
-                style={{
-                  backgroundImage: `url(${post.frontmatter.coverImage})`,
-                }}
-                role="img"
-                aria-label={post.frontmatter.coverImageAlt || post.frontmatter.title}
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-deep-black via-deep-black/20 to-transparent" />
-            </div>
-          )}
-
           <div className="p-6 lg:p-7 flex flex-col flex-grow">
             <div className="flex items-center gap-3 mb-5">
               <span className="px-3 py-1.5 text-xs font-medium uppercase tracking-wider text-accent-gold bg-accent-gold/10 rounded-full border border-accent-gold/20">

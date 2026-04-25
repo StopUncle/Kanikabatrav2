@@ -37,22 +37,12 @@ export default function RelatedPosts({
             href={`/blog/${post.slug}`}
             className="group block bg-gradient-to-br from-deep-black/80 to-deep-navy/40 border border-white/10 rounded-xl overflow-hidden hover:border-accent-gold/30 transition-all duration-300"
           >
-            {post.coverImage && (
-              <div className="relative h-40 overflow-hidden">
-                <div
-                  className="absolute inset-0 bg-cover bg-center group-hover:scale-105 transition-transform duration-500"
-                  style={{ backgroundImage: `url(${post.coverImage})` }}
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-deep-black to-transparent" />
-                {post.category && (
-                  <span className="absolute bottom-3 left-3 text-xs px-3 py-1 bg-accent-gold/90 rounded-full text-deep-black font-medium">
-                    {post.category}
-                  </span>
-                )}
-              </div>
-            )}
-
             <div className="p-5">
+              {post.category && (
+                <span className="inline-block mb-3 text-xs px-3 py-1 bg-accent-gold/10 rounded-full text-accent-gold font-medium border border-accent-gold/20 uppercase tracking-wider">
+                  {post.category}
+                </span>
+              )}
               <h3 className="font-light text-lg text-white group-hover:text-accent-gold transition-colors line-clamp-2 mb-3 leading-snug">
                 {post.title}
               </h3>

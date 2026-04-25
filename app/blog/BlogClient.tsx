@@ -26,22 +26,7 @@ function FeaturedPost({ post }: { post: PostMeta }) {
     >
       <Link href={`/blog/${post.slug}`} className="group block">
         <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-deep-burgundy/40 to-deep-navy/40 border border-white/10 hover:border-accent-gold/30 transition-all duration-500">
-          <div className="grid md:grid-cols-2 gap-0">
-            {post.frontmatter.coverImage && (
-              <div className="relative h-64 md:h-96 overflow-hidden">
-                <div
-                  className="absolute inset-0 bg-cover bg-center transform group-hover:scale-105 transition-transform duration-700"
-                  style={{
-                    backgroundImage: `url(${post.frontmatter.coverImage})`,
-                  }}
-                  role="img"
-                  aria-label={post.frontmatter.coverImageAlt || post.frontmatter.title}
-                />
-                <div className="absolute inset-0 bg-gradient-to-r from-transparent to-deep-black/80 md:block hidden" />
-                <div className="absolute inset-0 bg-gradient-to-t from-deep-black to-transparent md:hidden" />
-              </div>
-            )}
-
+          <div>
             <div className="p-8 md:p-12 flex flex-col justify-center">
               <div className="flex items-center gap-4 mb-6">
                 <span className="px-4 py-1.5 text-xs font-medium uppercase tracking-wider text-deep-black bg-accent-gold rounded-full">
