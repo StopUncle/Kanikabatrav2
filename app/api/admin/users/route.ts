@@ -11,7 +11,9 @@ export async function GET(request: NextRequest) {
     const roleParam = searchParams.get("role") || "ALL";
     const bannedParam = searchParams.get("banned") || "false";
 
-    const where: Record<string, unknown> = {};
+    // Bots are real User rows but must NEVER appear in admin member views
+    // or counters. They have their own surface at /admin/bots.
+    const where: Record<string, unknown> = { isBot: false };
 
     if (roleParam !== "ALL") {
       where.role = roleParam;
@@ -54,7 +56,9 @@ export async function GET(request: NextRequest) {
         take: 100,
       }),
       prisma.user.count({ where }),
-      prisma.communityMembership.count({ where: { status: "ACTIVE" } }),
+      prisma.communityMembership.count({
+        where: { status: "ACTIVE", user: { isBot: false } },
+      }),
     ]);
 
     const formatted = users.map((user) => ({
