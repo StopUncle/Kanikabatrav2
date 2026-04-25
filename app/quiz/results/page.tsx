@@ -578,8 +578,11 @@ export default function QuizResultsPage() {
               )}
 
               <div className="mt-6 p-5 bg-deep-black/30 border border-accent-gold/10 rounded-xl text-center">
-                <p className="text-text-gray text-sm mb-3">
-                  Want ongoing support from women who think like you?
+                <p className="text-text-gray text-sm mb-2">
+                  Want to practise spotting these patterns in the wild?
+                </p>
+                <p className="text-text-gray/70 text-xs mb-3 max-w-md mx-auto leading-relaxed">
+                  The Dark Mirror Simulator inside The Consilium has a Cluster-B Lab — short diagnostic drills for BPD, NPD, ASPD, and HPD — plus 50+ branching scenarios across seven other tracks. Same axes you just scored on, in real-world artefacts.
                 </p>
                 <Link
                   href="/consilium"
@@ -774,8 +777,11 @@ export default function QuizResultsPage() {
               )}
 
               <div className="mt-6 p-5 bg-deep-black/30 border border-accent-gold/10 rounded-xl text-center">
-                <p className="text-text-gray text-sm mb-3">
-                  Want ongoing support from women who think like you?
+                <p className="text-text-gray text-sm mb-2">
+                  Want to practise spotting these patterns in the wild?
+                </p>
+                <p className="text-text-gray/70 text-xs mb-3 max-w-md mx-auto leading-relaxed">
+                  The Dark Mirror Simulator inside The Consilium has a Cluster-B Lab — short diagnostic drills for BPD, NPD, ASPD, and HPD — plus 50+ branching scenarios across seven other tracks. Same axes you just scored on, in real-world artefacts.
                 </p>
                 <Link
                   href="/consilium"

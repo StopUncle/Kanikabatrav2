@@ -382,12 +382,18 @@ export default function AboutContent() {
             Stop taking advice from people who lose. Learn from someone who
             can&apos;t.
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+          <div className="flex flex-col sm:flex-row gap-4 justify-center flex-wrap">
             <a
               href="/book"
               className="btn-primary rounded-full text-white px-8 py-4"
             >
               Get The Book
+            </a>
+            <a
+              href="/consilium"
+              className="btn-secondary rounded-full px-8 py-4"
+            >
+              The Consilium
             </a>
             <a
               href="/coaching"
