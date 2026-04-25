@@ -3,6 +3,11 @@ import { PrismaUserDatabase } from "@/lib/auth/prisma-database";
 import { generateTokenPair } from "@/lib/auth/jwt";
 import { CreateUserData } from "@/lib/auth/types";
 import { enforceRateLimit, getClientIp, limits } from "@/lib/rate-limit";
+import { prisma } from "@/lib/prisma";
+import {
+  buildAttributionRecord,
+  type AttributionPayload,
+} from "@/lib/attribution";
 
 export async function POST(request: NextRequest) {
   try {
@@ -10,7 +15,8 @@ export async function POST(request: NextRequest) {
     const rateLimited = await enforceRateLimit(limits.authRegister, ip);
     if (rateLimited) return rateLimited;
 
-    const body: CreateUserData = await request.json();
+    const body: CreateUserData & { attribution?: AttributionPayload } =
+      await request.json();
 
     // Validate input
     if (!body.email || !body.password) {
@@ -43,6 +49,23 @@ export async function POST(request: NextRequest) {
       password: body.password,
       name: body.name,
     });
+
+    // Stamp acquisition attribution. Done as a follow-up update so the
+    // legacy createUser signature stays clean. Errors here are
+    // non-fatal — the registration itself succeeded; missing attribution
+    // is a recoverable data-quality issue, not a user-facing failure.
+    try {
+      const attribution = buildAttributionRecord(body.attribution, request);
+      const hasSignal = Object.values(attribution).some((v) => v !== null);
+      if (hasSignal) {
+        await prisma.user.update({
+          where: { id: user.id },
+          data: attribution,
+        });
+      }
+    } catch (err) {
+      console.error("[register] attribution stamp failed:", err);
+    }
 
     // Generate tokens — embed tokenVersion (0 for new users) so password
     // resets and logouts can invalidate them immediately.

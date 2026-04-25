@@ -9,6 +9,7 @@ import {
   Mail,
   Loader2,
   ArrowRight,
+  Compass,
 } from "lucide-react";
 
 interface Stats {
@@ -91,6 +92,15 @@ export default function AdminDashboardPage() {
       icon: Mail,
       href: "/admin/email-queue",
       accent: "text-accent-gold",
+    },
+    {
+      label: "Traffic Sources",
+      // Value omitted on the tile — the destination page renders the
+      // full source/campaign/country breakdown for the chosen window.
+      value: "—",
+      icon: Compass,
+      href: "/admin/traffic",
+      accent: "text-accent-sapphire",
     },
   ];
 

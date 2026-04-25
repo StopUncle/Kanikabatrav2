@@ -19,6 +19,20 @@ export interface MockUser {
   messagingRestricted: boolean;
   messagingRestrictedAt: Date | null;
   messagingRestrictedReason: string | null;
+  utmSource: string | null;
+  utmMedium: string | null;
+  utmCampaign: string | null;
+  utmContent: string | null;
+  utmTerm: string | null;
+  gclid: string | null;
+  fbclid: string | null;
+  ttclid: string | null;
+  referrer: string | null;
+  landingPage: string | null;
+  userAgent: string | null;
+  ipCountry: string | null;
+  language: string | null;
+  timezone: string | null;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -43,6 +57,20 @@ export function createMockUser(overrides: Partial<MockUser> = {}): MockUser {
     messagingRestricted: false,
     messagingRestrictedAt: null,
     messagingRestrictedReason: null,
+    utmSource: null,
+    utmMedium: null,
+    utmCampaign: null,
+    utmContent: null,
+    utmTerm: null,
+    gclid: null,
+    fbclid: null,
+    ttclid: null,
+    referrer: null,
+    landingPage: null,
+    userAgent: null,
+    ipCountry: null,
+    language: null,
+    timezone: null,
     createdAt: new Date(),
     updatedAt: new Date(),
     ...overrides,

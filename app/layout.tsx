@@ -5,6 +5,7 @@ import Footer from "@/components/Footer";
 import LazySpeedInsights from "@/components/LazySpeedInsights";
 import MotionProvider from "@/components/providers/MotionProvider";
 import JsonLd from "@/components/JsonLd";
+import AttributionTracker from "@/components/AttributionTracker";
 import {
   generateOrganizationSchema,
   generateWebsiteSchema,
@@ -86,6 +87,7 @@ export default function RootLayout({
         </Script>
       </head>
       <body className={inter.className}>
+        <AttributionTracker />
         <MotionProvider>
           <main>{children}</main>
           <Footer />

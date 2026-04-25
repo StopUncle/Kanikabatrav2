@@ -7,6 +7,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { m } from "framer-motion";
 import { Eye, EyeOff, Mail, Lock, UserPlus } from "lucide-react";
+import { getAttributionForSubmit } from "@/lib/attribution";
 
 const registerSchema = z
   .object({
@@ -55,6 +56,10 @@ export default function RegisterForm() {
         body: JSON.stringify({
           email: data.email,
           password: data.password,
+          // First-touch attribution from localStorage (or fresh client
+          // read if storage is empty). Server validates + persists on
+          // the new User row.
+          attribution: getAttributionForSubmit(),
         }),
       });
 

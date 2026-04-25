@@ -26,6 +26,7 @@ import {
   QUIZ_INFO,
 } from "@/lib/quiz-data";
 import RadarChart from "@/components/quiz/RadarChart";
+import { getAttributionForSubmit } from "@/lib/attribution";
 
 interface QuizResultsData {
   scores: QuizScores;
@@ -52,6 +53,10 @@ interface ApiQuizResult {
     answers: Record<number, PersonalityType>;
     completedAt: string;
   };
+  consiliumCredit?: {
+    code: string;
+    expiresAt: string;
+  } | null;
 }
 
 type PageState =
@@ -101,6 +106,10 @@ export default function QuizResultsPage() {
               diagnosis: stored.diagnosis,
               answers: stored.answers,
               completedAt: stored.completedAt,
+              // First-touch attribution — only stamped on CREATE
+              // server-side, so a returning user's existing source is
+              // preserved.
+              attribution: getAttributionForSubmit(),
             }),
           });
           sessionStorage.removeItem("quizResults");
@@ -577,20 +586,56 @@ export default function QuizResultsPage() {
                 </div>
               )}
 
-              <div className="mt-6 p-5 bg-deep-black/30 border border-accent-gold/10 rounded-xl text-center">
-                <p className="text-text-gray text-sm mb-2">
-                  Want to practise spotting these patterns in the wild?
-                </p>
-                <p className="text-text-gray/70 text-xs mb-3 max-w-md mx-auto leading-relaxed">
-                  The Dark Mirror Simulator inside The Consilium has a Cluster-B Lab — short diagnostic drills for BPD, NPD, ASPD, and HPD — plus 50+ branching scenarios across seven other tracks. Same axes you just scored on, in real-world artefacts.
-                </p>
-                <Link
-                  href="/consilium"
-                  className="inline-block px-6 py-2 text-sm font-medium text-accent-gold border border-accent-gold/20 rounded-full hover:bg-accent-gold/10 transition-all"
-                >
-                  Explore The Consilium — $29/mo
-                </Link>
-              </div>
+              {apiData?.consiliumCredit ? (
+                <div className="mt-6 p-6 rounded-xl border border-accent-gold/40 bg-gradient-to-br from-accent-gold/[0.08] to-deep-burgundy/[0.1] text-center">
+                  <p className="text-accent-gold text-[10px] uppercase tracking-[0.25em] mb-3 font-semibold">
+                    A thank-you from Kanika
+                  </p>
+                  <p className="text-white font-light text-lg mb-2">
+                    Your ${QUIZ_INFO.price.toFixed(2)} is credited toward The Consilium
+                  </p>
+                  <p className="text-text-gray text-xs mb-4 max-w-md mx-auto leading-relaxed">
+                    Inside: the Dark Mirror Simulator, the classroom, voice notes, and a moderated community. Use this code at checkout — it comes off your first month.
+                  </p>
+                  <div className="inline-block bg-deep-black/60 border border-dashed border-accent-gold/50 rounded-lg px-5 py-3 mb-3">
+                    <p className="text-text-gray/70 text-[10px] uppercase tracking-[0.2em] mb-1">
+                      Your code
+                    </p>
+                    <p className="text-accent-gold font-mono text-lg font-bold tracking-[0.2em]">
+                      {apiData.consiliumCredit.code}
+                    </p>
+                  </div>
+                  <p className="text-text-gray/50 text-[10px] mb-4">
+                    Expires{" "}
+                    {new Date(apiData.consiliumCredit.expiresAt).toLocaleDateString(
+                      "en-US",
+                      { month: "long", day: "numeric", year: "numeric" },
+                    )}{" "}
+                    · Single use
+                  </p>
+                  <Link
+                    href="/consilium"
+                    className="inline-block px-8 py-3 text-sm font-medium uppercase tracking-wider text-deep-black bg-accent-gold rounded-full hover:bg-accent-gold/90 transition-all"
+                  >
+                    Apply My Credit
+                  </Link>
+                </div>
+              ) : (
+                <div className="mt-6 p-5 bg-deep-black/30 border border-accent-gold/10 rounded-xl text-center">
+                  <p className="text-text-gray text-sm mb-2">
+                    Want to practise spotting these patterns in the wild?
+                  </p>
+                  <p className="text-text-gray/70 text-xs mb-3 max-w-md mx-auto leading-relaxed">
+                    The Dark Mirror Simulator inside The Consilium — branching scenarios on the same axes you just scored on, in real-world artefacts. Plus courses, voice notes, and a moderated community.
+                  </p>
+                  <Link
+                    href="/consilium"
+                    className="inline-block px-6 py-2 text-sm font-medium text-accent-gold border border-accent-gold/20 rounded-full hover:bg-accent-gold/10 transition-all"
+                  >
+                    Explore The Consilium — $29/mo
+                  </Link>
+                </div>
+              )}
             </m.div>
 
             {/* Retake Option */}
@@ -776,20 +821,56 @@ export default function QuizResultsPage() {
                 </div>
               )}
 
-              <div className="mt-6 p-5 bg-deep-black/30 border border-accent-gold/10 rounded-xl text-center">
-                <p className="text-text-gray text-sm mb-2">
-                  Want to practise spotting these patterns in the wild?
-                </p>
-                <p className="text-text-gray/70 text-xs mb-3 max-w-md mx-auto leading-relaxed">
-                  The Dark Mirror Simulator inside The Consilium has a Cluster-B Lab — short diagnostic drills for BPD, NPD, ASPD, and HPD — plus 50+ branching scenarios across seven other tracks. Same axes you just scored on, in real-world artefacts.
-                </p>
-                <Link
-                  href="/consilium"
-                  className="inline-block px-6 py-2 text-sm font-medium text-accent-gold border border-accent-gold/20 rounded-full hover:bg-accent-gold/10 transition-all"
-                >
-                  Explore The Consilium — $29/mo
-                </Link>
-              </div>
+              {apiData?.consiliumCredit ? (
+                <div className="mt-6 p-6 rounded-xl border border-accent-gold/40 bg-gradient-to-br from-accent-gold/[0.08] to-deep-burgundy/[0.1] text-center">
+                  <p className="text-accent-gold text-[10px] uppercase tracking-[0.25em] mb-3 font-semibold">
+                    A thank-you from Kanika
+                  </p>
+                  <p className="text-white font-light text-lg mb-2">
+                    Your ${QUIZ_INFO.price.toFixed(2)} is credited toward The Consilium
+                  </p>
+                  <p className="text-text-gray text-xs mb-4 max-w-md mx-auto leading-relaxed">
+                    Inside: the Dark Mirror Simulator, the classroom, voice notes, and a moderated community. Use this code at checkout — it comes off your first month.
+                  </p>
+                  <div className="inline-block bg-deep-black/60 border border-dashed border-accent-gold/50 rounded-lg px-5 py-3 mb-3">
+                    <p className="text-text-gray/70 text-[10px] uppercase tracking-[0.2em] mb-1">
+                      Your code
+                    </p>
+                    <p className="text-accent-gold font-mono text-lg font-bold tracking-[0.2em]">
+                      {apiData.consiliumCredit.code}
+                    </p>
+                  </div>
+                  <p className="text-text-gray/50 text-[10px] mb-4">
+                    Expires{" "}
+                    {new Date(apiData.consiliumCredit.expiresAt).toLocaleDateString(
+                      "en-US",
+                      { month: "long", day: "numeric", year: "numeric" },
+                    )}{" "}
+                    · Single use
+                  </p>
+                  <Link
+                    href="/consilium"
+                    className="inline-block px-8 py-3 text-sm font-medium uppercase tracking-wider text-deep-black bg-accent-gold rounded-full hover:bg-accent-gold/90 transition-all"
+                  >
+                    Apply My Credit
+                  </Link>
+                </div>
+              ) : (
+                <div className="mt-6 p-5 bg-deep-black/30 border border-accent-gold/10 rounded-xl text-center">
+                  <p className="text-text-gray text-sm mb-2">
+                    Want to practise spotting these patterns in the wild?
+                  </p>
+                  <p className="text-text-gray/70 text-xs mb-3 max-w-md mx-auto leading-relaxed">
+                    The Dark Mirror Simulator inside The Consilium — branching scenarios on the same axes you just scored on, in real-world artefacts. Plus courses, voice notes, and a moderated community.
+                  </p>
+                  <Link
+                    href="/consilium"
+                    className="inline-block px-6 py-2 text-sm font-medium text-accent-gold border border-accent-gold/20 rounded-full hover:bg-accent-gold/10 transition-all"
+                  >
+                    Explore The Consilium — $29/mo
+                  </Link>
+                </div>
+              )}
             </m.div>
 
             {/* Retake Option */}

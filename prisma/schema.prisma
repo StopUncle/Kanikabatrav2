@@ -59,8 +59,34 @@ model User {
   reportsResolved           CommentReport[]      @relation("ReportsResolved")
   simulatorProgress         SimulatorProgress[]
   simulatorBadges           SimulatorBadge[]
+  // Acquisition attribution — captured from URL params + headers on
+  // the visit that ended in registration. Joinable against revenue
+  // (Purchase), retention (CommunityMembership), and quiz outcomes
+  // for source-level ROI. All nullable — pre-attribution users +
+  // direct/organic traffic stay null.
+  utmSource     String?
+  utmMedium     String?
+  utmCampaign   String?
+  utmContent    String?
+  utmTerm       String?
+  // Click IDs from ad platforms — survive even when UTM params are
+  // stripped by the platform (Meta sometimes does this on IG ads).
+  gclid         String?
+  fbclid        String?
+  ttclid        String?
+  // Last URL the visitor came from (document.referrer) and first
+  // path they hit on this site.
+  referrer      String?
+  landingPage   String?
+  // Device + locale — useful for region-specific funnel tuning.
+  userAgent     String?
+  ipCountry     String?
+  language      String?
+  timezone      String?
 
   @@index([email])
+  @@index([utmSource])
+  @@index([utmCampaign])
 }
 
 enum UserRole {
@@ -216,6 +242,29 @@ model QuizResult {
   paypalOrderId String?  @unique
   emailSent     Boolean  @default(false)
   shared        Boolean  @default(false)
+  // Consilium credit. On QUIZ purchase, the webhook generates a
+  // single-use Stripe promotion code equal to the quiz price ($9.99)
+  // that applies to the first Consilium month. Surfaced on the
+  // unlocked results page and in the quiz email. 14-day expiry.
+  consiliumCreditCode      String?   @unique
+  consiliumCreditExpiresAt DateTime?
+  // Acquisition attribution — same shape as User. Captured even for
+  // anonymous quiz takes so we can join free-tier traffic source
+  // against later registration + purchase. Nullable for legacy rows.
+  utmSource     String?
+  utmMedium     String?
+  utmCampaign   String?
+  utmContent    String?
+  utmTerm       String?
+  gclid         String?
+  fbclid        String?
+  ttclid        String?
+  referrer      String?
+  landingPage   String?
+  userAgent     String?
+  ipCountry     String?
+  language      String?
+  timezone      String?
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
   user          User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
@@ -224,6 +273,8 @@ model QuizResult {
   @@index([email])
   @@index([primaryType])
   @@index([paypalOrderId])
+  @@index([utmSource])
+  @@index([utmCampaign])
 }
 
 // Newsletter Subscribers

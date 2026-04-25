@@ -6,6 +6,10 @@ import {
   PersonalityType,
 } from "@/lib/quiz-data";
 import { enforceRateLimit, getClientIp, limits } from "@/lib/rate-limit";
+import {
+  buildAttributionRecord,
+  type AttributionPayload,
+} from "@/lib/attribution";
 
 export async function POST(request: NextRequest) {
   try {
@@ -15,7 +19,11 @@ export async function POST(request: NextRequest) {
     const rateLimited = await enforceRateLimit(limits.quizSubmit, ip);
     if (rateLimited) return rateLimited;
 
-    const { answers, email } = await request.json();
+    const { answers, email, attribution } = (await request.json()) as {
+      answers: Record<number, PersonalityType>;
+      email?: string;
+      attribution?: AttributionPayload;
+    };
 
     if (!answers || typeof answers !== "object") {
       return NextResponse.json(
@@ -27,6 +35,12 @@ export async function POST(request: NextRequest) {
     const scores = calculateScores(answers as Record<number, PersonalityType>);
     const types = getPersonalityTypes(scores);
 
+    // Anonymous quiz takes are the cleanest pre-funnel attribution
+    // signal — most quiz takers aren't registered yet, so this row
+    // captures source for visitors who would otherwise be invisible
+    // until they convert.
+    const attrRecord = buildAttributionRecord(attribution, request);
+
     const quizResult = await prisma.quizResult.create({
       data: {
         email: email || null,
@@ -37,6 +51,7 @@ export async function POST(request: NextRequest) {
         paid: false,
         emailSent: false,
         shared: false,
+        ...attrRecord,
       },
     });
 
