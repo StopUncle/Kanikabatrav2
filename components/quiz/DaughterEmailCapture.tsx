@@ -160,7 +160,7 @@ export default function DaughterEmailCapture({
             </h3>
             <p className="text-text-gray text-sm leading-relaxed">
               Many readers want to come back to their {primaryProfileName} read
-              after they've sat with it for a few days. I'll email you a copy of
+              after they&apos;ve sat with it for a few days. I&apos;ll email you a copy of
               the result, plus a short reading list tailored to your profile —
               the next two articles to read, the chapter of the book that maps
               onto your pattern, and the specific Inner Circle threads other

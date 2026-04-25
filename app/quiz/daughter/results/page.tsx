@@ -94,7 +94,7 @@ export default function DaughterQuizResultsPage() {
               No Results Found
             </h1>
             <p className="text-text-gray mb-8">
-              The Daughter Pattern Assessment hasn't been completed in this
+              The Daughter Pattern Assessment hasn&apos;t been completed in this
               browser session. Take the assessment to see your result.
             </p>
             <Link href="/quiz/daughter">
@@ -384,7 +384,7 @@ export default function DaughterQuizResultsPage() {
                   This assessment told you what your household built into you.
                   The Dark Mirror tells you what the resulting personality
                   pattern looks like across the six Cluster B axes — including
-                  whether you've absorbed any of her traits yourself.
+                  whether you&apos;ve absorbed any of her traits yourself.
                 </p>
               </Link>
 
@@ -407,7 +407,7 @@ export default function DaughterQuizResultsPage() {
                 </h3>
                 <p className="text-text-gray text-sm leading-relaxed">
                   70,000 words on the partner-detection side — how the man you
-                  keep ending up with maps onto your mother's pattern, and how
+                  keep ending up with maps onto your mother&apos;s pattern, and how
                   to interrupt the loop. Specifically useful for the
                   Hypervigilant and Fawn profiles.
                 </p>
@@ -433,7 +433,7 @@ export default function DaughterQuizResultsPage() {
                 <p className="text-text-gray text-sm leading-relaxed">
                   $29 a month. Private threads for women in this exact niche.
                   The members-only simulator runs the pc-child track scenarios
-                  — practice reps for the conversations you've spent years
+                  — practice reps for the conversations you&apos;ve spent years
                   rehearsing alone.
                 </p>
               </Link>
