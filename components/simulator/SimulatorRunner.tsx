@@ -4,8 +4,9 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { X } from "lucide-react";
+import { X, FastForward, AlertTriangle } from "lucide-react";
 import { AnimatePresence, m } from "framer-motion";
+import * as Sentry from "@sentry/nextjs";
 import type {
   Scenario,
   SimulatorState,
@@ -157,6 +158,13 @@ export default function SimulatorRunner({
   // right path and that works natively via the <button>s.
   // Also skipped while the intro is showing so the Begin button
   // owns the keypress.
+  // Ref to the latest dispatchTap. dispatchTap itself is declared further
+  // down (after derived `scene`/`lineIndex` are computed), but the keyboard
+  // listener below needs to call it. The ref pattern avoids the temporal-
+  // dead-zone error and lets us keep the listener bound exactly once.
+  const dispatchTapRef = useRef<
+    ((source: "background" | "keyboard" | "skip-button") => void) | null
+  >(null);
   useEffect(() => {
     function onKey(e: KeyboardEvent) {
       if (e.key !== " " && e.key !== "Enter") return;
@@ -165,17 +173,19 @@ export default function SimulatorRunner({
       const target = e.target as HTMLElement | null;
       if (target?.closest("button, a, input, textarea, select")) return;
       // Don't compete with the choices phase or the intro overlay.
-      const scene = currentScene(scenario, state);
-      const atEnding = !!scene?.isEnding;
+      const sceneNow = currentScene(scenario, state);
+      const atEnding = !!sceneNow?.isEnding;
       const choicesOut =
-        !!scene &&
-        !scene.isEnding &&
-        !!scene.choices &&
-        scene.choices.length > 0 &&
-        lineIndex >= (scene.dialog?.length ?? 0);
+        !!sceneNow &&
+        !sceneNow.isEnding &&
+        !!sceneNow.choices &&
+        sceneNow.choices.length > 0 &&
+        lineIndex >= (sceneNow.dialog?.length ?? 0);
       if (atEnding || choicesOut || showIntro) return;
       e.preventDefault();
-      window.dispatchEvent(new CustomEvent("simulator:tap"));
+      // Route through the same lock as taps so a held-down key can't
+      // outpace the AnimatePresence exit window and hit a stale listener.
+      dispatchTapRef.current?.("keyboard");
     }
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
@@ -189,6 +199,19 @@ export default function SimulatorRunner({
   const [streak, setStreak] = useState(0);
   // Ref avoids re-firing onComplete when React double-invokes in StrictMode.
   const completeFiredRef = useRef(false);
+
+  // Stuck-detector state. Tracks taps on the current scene and shows a
+  // recovery overlay when a player has been on the same scene for >60s,
+  // tapped >5 times, and made zero choices. The overlay offers a one-tap
+  // "Skip to choices" escape so the player is never permanently jammed.
+  // Triggers were specifically informed by the 2026-04-25 paid-member
+  // incident where laykanbass got stuck on `wake-up` for 9 minutes.
+  const tapCountRef = useRef(0);
+  const sceneEnteredAtRef = useRef<number>(Date.now());
+  const [showStuckRecovery, setShowStuckRecovery] = useState(false);
+  const stuckCheckTimerRef = useRef<ReturnType<typeof setInterval> | null>(
+    null,
+  );
 
   const scene = currentScene(scenario, state);
   const totalLines = scene?.dialog?.length ?? 0;
@@ -396,40 +419,147 @@ export default function SimulatorRunner({
   // — keeps the typewriter skip-vs-advance logic in one place and
   // avoids lifting the typewriter hook up.
   //
-  // Debounce guard: on auto-advance scenes (last line, no choices)
-  // a tap triggers a scene transition. During the ~350ms
-  // AnimatePresence exit of the old DialogBox, its window listener
-  // is still live — a second tap in that window would call the
-  // stale advanceLine on the NEW state and skip a scene.
-  // `tapLockRef` gates rapid taps so only one dispatch fires per
-  // transition window.
+  // Triple-defence against the 2026-04-25 stuck-on-scene-1 incident:
+  //
+  //   1. `lastDispatchAtRef` — wall-clock timestamp guard. iOS Safari
+  //      can synthesise a `click` ~50–300ms after a `touchend`, so a
+  //      single tap fires the handler twice. The timestamp guard
+  //      drops any second event within 75ms of the first.
+  //   2. `tapLockRef` — 500ms boolean lock that covers the
+  //      AnimatePresence exit (350ms) plus scheduling slack, so
+  //      a rapid second tap can't reach a stale DialogBox listener.
+  //   3. We bind via `onPointerUp` (not `onClick`) on the game div —
+  //      pointer events fire once per touch on every modern browser
+  //      and don't get the synthesized-click follow-up.
   //
   // Hoisted above the `if (!scene)` / `if (scene.isEnding)` early
   // returns below so the hooks are called unconditionally on every
   // render (React's rules-of-hooks).
   const tapLockRef = useRef(false);
-  const handleBackgroundTap = useCallback(
-    (e: React.MouseEvent) => {
-      if (showChoices) return;
-      // Don't advance dialog while the intro overlay is up — the
-      // player is reading the scenario meta and hasn't pressed
-      // Begin yet.
-      if (showIntro) return;
+  const lastDispatchAtRef = useRef(0);
+  const dispatchTap = useCallback(
+    (source: "background" | "keyboard" | "skip-button") => {
+      if (showChoices || showIntro) return;
+      const now =
+        typeof performance !== "undefined" ? performance.now() : Date.now();
+      // Timestamp dedupe — kills iOS double-fire (touchend + synthetic click).
+      if (now - lastDispatchAtRef.current < 75) return;
       if (tapLockRef.current) return;
+      lastDispatchAtRef.current = now;
+      tapLockRef.current = true;
+      // Telemetry breadcrumb — captured by Sentry on any later error and
+      // visible in the dashboard regardless. Lets us reconstruct exactly
+      // what scene + lineIndex the player was on when a loop is reported.
+      try {
+        Sentry.addBreadcrumb({
+          category: "simulator.tap",
+          level: "info",
+          message: `tap (${source})`,
+          data: {
+            scenarioId: scenario.id,
+            sceneId: scene?.id,
+            lineIndex,
+            choicesMade: state.choicesMade.length,
+            tapCount: tapCountRef.current,
+          },
+        });
+      } catch {
+        // Sentry not initialized in dev — non-fatal.
+      }
+      tapCountRef.current += 1;
+      window.dispatchEvent(new CustomEvent("simulator:tap"));
+      window.setTimeout(() => {
+        tapLockRef.current = false;
+      }, 500);
+    },
+    [
+      showChoices,
+      showIntro,
+      scenario.id,
+      scene?.id,
+      lineIndex,
+      state.choicesMade.length,
+    ],
+  );
+
+  const handleBackgroundTap = useCallback(
+    (e: React.PointerEvent) => {
       const target = e.target as HTMLElement;
       // Never intercept clicks on interactive elements.
       if (target.closest("button, a")) return;
-      tapLockRef.current = true;
-      window.dispatchEvent(new CustomEvent("simulator:tap"));
-      // 400ms covers the AnimatePresence exit (350ms) plus one frame
-      // of scheduling slack. Users can still tap through dialog lines
-      // at a comfortable reading pace.
-      window.setTimeout(() => {
-        tapLockRef.current = false;
-      }, 400);
+      dispatchTap("background");
     },
-    [showChoices, showIntro],
+    [dispatchTap],
   );
+
+  // Keep the keyboard handler's ref pointed at the latest dispatchTap.
+  useEffect(() => {
+    dispatchTapRef.current = dispatchTap;
+  }, [dispatchTap]);
+
+  // Reset tap counter + scene-entered timestamp whenever the scene changes.
+  // This is the heartbeat for the stuck-detector: every fresh scene starts
+  // a new 60s window, and a player who's progressing normally will reset
+  // long before the recovery overlay shows.
+  useEffect(() => {
+    tapCountRef.current = 0;
+    sceneEnteredAtRef.current = Date.now();
+    setShowStuckRecovery(false);
+    if (stuckCheckTimerRef.current) clearInterval(stuckCheckTimerRef.current);
+    // Only arm the detector for non-ending dialog scenes. Endings have
+    // their own UI; intro is gated separately.
+    if (!scene || scene.isEnding) return;
+    stuckCheckTimerRef.current = setInterval(() => {
+      const elapsed = Date.now() - sceneEnteredAtRef.current;
+      // Trigger: been on this scene >60s, tapped >5 times, no progress.
+      // The "no progress" check is on choicesMade for THIS scene — players
+      // who've made earlier choices and are mid-scenario re-reading dialog
+      // are not stuck.
+      const sceneChoicesMade = state.choicesMade.filter(
+        (c) => c.sceneId === scene.id,
+      ).length;
+      if (elapsed > 60_000 && tapCountRef.current > 5 && sceneChoicesMade === 0) {
+        setShowStuckRecovery(true);
+      }
+    }, 5_000);
+    return () => {
+      if (stuckCheckTimerRef.current) clearInterval(stuckCheckTimerRef.current);
+    };
+    // We deliberately do NOT include state.choicesMade in deps — the
+    // detector watches it by closure on each interval tick. Re-running
+    // the effect on every choice would reset the timer mid-scene.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [scene?.id]);
+
+  // Emergency-skip-to-choices. The reliable escape hatch: even if every
+  // tap-handler is broken, this button advances state directly. Only shown
+  // during the dialog phase of a non-ending scene that has choices.
+  const skipDialogToChoices = useCallback(() => {
+    if (!scene || scene.isEnding) return;
+    if (!scene.choices || scene.choices.length === 0) {
+      // No-choice scene — fall back to autoAdvance.
+      setState((prev) => autoAdvance(scenario, prev));
+      setLineIndex(0);
+      return;
+    }
+    setLineIndex(scene.dialog?.length ?? 0);
+    setShowStuckRecovery(false);
+    try {
+      Sentry.addBreadcrumb({
+        category: "simulator.skip",
+        level: "info",
+        message: "emergency skip to choices",
+        data: {
+          scenarioId: scenario.id,
+          sceneId: scene.id,
+          tapCount: tapCountRef.current,
+          msOnScene: Date.now() - sceneEnteredAtRef.current,
+        },
+      });
+    } catch {
+      // non-fatal
+    }
+  }, [scene, scenario]);
 
   if (!scene) {
     // Unknown scene id — bad data or tampered state. Fail gracefully.
@@ -486,16 +616,33 @@ export default function SimulatorRunner({
   // (Tap-anywhere-to-advance hook + handler are hoisted above the
   // early returns up top — see `tapLockRef` / `handleBackgroundTap`.)
 
+  // Whether the dialog phase is active for this non-ending scene.
+  // Used to gate the always-visible emergency skip-to-choices button —
+  // if the player ever loops on dialog, they have one reliable escape.
+  const inDialogPhase =
+    !showIntro &&
+    !showChoices &&
+    !scene.isEnding &&
+    !!scene.choices &&
+    scene.choices.length > 0;
+
   const game = (
     <div
       // cursor-pointer signals "tap anywhere to advance" during dialog;
       // dropped during the choices phase so the game doesn't falsely
       // suggest the background is clickable when the actual action is
       // to pick a choice.
-      className={`fixed inset-0 z-[60] bg-deep-black overflow-hidden ${
+      //
+      // Bound on `onPointerUp` (not `onClick`). iOS Safari emits a
+      // synthesised `click` after `touchend` when the parent has
+      // `cursor: pointer` set — that synthetic click was the prime
+      // suspect for the 2026-04-25 stuck-on-scene-1 incident. Pointer
+      // events fire once per touch on every modern engine and don't
+      // get the synthesised follow-up.
+      className={`fixed inset-0 z-[60] bg-deep-black overflow-hidden touch-manipulation ${
         showChoices ? "" : "cursor-pointer"
       }`}
-      onClick={handleBackgroundTap}
+      onPointerUp={handleBackgroundTap}
     >
       <MoodBackground mood={scene.mood} />
       <Letterbox />
@@ -514,6 +661,67 @@ export default function SimulatorRunner({
         previousBest={previousBest}
         onBegin={() => setShowIntro(false)}
       />
+
+      {/* Emergency skip-to-choices affordance.
+          Always rendered during the dialog phase of any choice-bearing
+          scene. The reliable escape hatch — even if every tap-handler
+          is broken, this button advances state directly via setLineIndex.
+          Quiet styling so it doesn't compete with the typewriter, but
+          always reachable. Top-left, opposite the exit button. */}
+      {inDialogPhase && (
+        <button
+          type="button"
+          onClick={skipDialogToChoices}
+          aria-label="Skip dialog, go to choices"
+          className="fixed top-[max(env(safe-area-inset-top),0.5rem)] left-[max(env(safe-area-inset-left),0.75rem)] z-[70] inline-flex items-center gap-1.5 px-3 h-11 rounded-full bg-deep-black/70 backdrop-blur-md border border-white/15 text-text-gray hover:text-accent-gold hover:border-accent-gold/40 active:scale-95 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-gold focus-visible:ring-offset-2 focus-visible:ring-offset-deep-black text-[10px] uppercase tracking-[0.25em]"
+        >
+          <FastForward size={12} strokeWidth={1.6} />
+          Skip
+        </button>
+      )}
+
+      {/* Stuck-recovery overlay.
+          Shown automatically when a player has been on the same scene
+          for >60s, tapped >5 times, and made zero choices on this scene.
+          Offers the same skipDialogToChoices escape but with framing
+          that makes the user feel acknowledged — "we noticed, here's
+          the way out" beats a silent UI failure every time. */}
+      {showStuckRecovery && (
+        <div className="fixed inset-0 z-[80] flex items-center justify-center p-4 bg-deep-black/80 backdrop-blur-sm">
+          <div className="max-w-sm w-full bg-gradient-to-br from-deep-burgundy/30 to-deep-navy/40 backdrop-blur-md border border-accent-gold/30 rounded-2xl p-6 text-center">
+            <div className="flex justify-center mb-4">
+              <div className="w-12 h-12 rounded-full bg-accent-gold/10 flex items-center justify-center">
+                <AlertTriangle
+                  className="w-5 h-5 text-accent-gold"
+                  strokeWidth={1.5}
+                />
+              </div>
+            </div>
+            <h3 className="text-text-light text-lg font-light tracking-wide mb-2">
+              Looks like you&apos;re stuck.
+            </h3>
+            <p className="text-text-gray text-sm font-light leading-relaxed mb-6">
+              The dialog should advance when you tap. If it&apos;s
+              looping, jump straight to your choices.
+            </p>
+            <button
+              type="button"
+              onClick={skipDialogToChoices}
+              className="w-full inline-flex items-center justify-center gap-2 py-3 px-6 bg-accent-gold text-deep-black font-medium rounded-full hover:bg-accent-gold/90 transition-all"
+            >
+              Skip to choices
+              <FastForward size={14} strokeWidth={1.6} />
+            </button>
+            <button
+              type="button"
+              onClick={() => setShowStuckRecovery(false)}
+              className="mt-3 text-text-gray/60 hover:text-text-gray text-xs font-light"
+            >
+              I&apos;m fine, dismiss
+            </button>
+          </div>
+        </div>
+      )}
 
       <SceneShake sceneId={scene.id} shake={scene.shakeOnEntry}>
 
