@@ -1,3 +1,4 @@
+import { redirect } from "next/navigation";
 import { requireServerAuth } from "@/lib/auth/server-auth";
 import { getViewerGender, feedPostGenderWhere } from "@/lib/community/gender-filter";
 import { prisma } from "@/lib/prisma";
@@ -40,6 +41,21 @@ export default async function FeedPage({
       },
     },
   });
+  // First-scenario intercept (mirrors /dashboard/page.tsx). The
+  // dashboard catches most new members, but anyone who deep-links
+  // straight to /consilium/feed (e.g. from the dashboard's gold
+  // "Enter the Consilium" pill, an email link, or a bookmark) needs
+  // the same nudge or they end up on a near-empty feed and bounce.
+  // Skipped when ?claimed=1 is set (post-bonus-month-claim flow has
+  // its own welcome state). The redirect stops firing the moment
+  // their first SimulatorProgress row exists.
+  if (
+    !justClaimed &&
+    (viewerRecord?._count.simulatorProgress ?? 0) === 0
+  ) {
+    redirect("/consilium/simulator/mission-1-1?welcome=1");
+  }
+
   const showOnboarding = viewerRecord?.onboardingSeenAt == null;
   // The modal collects gender + display name post-pay (the application
   // form used to collect them; now that it's gone, we capture them on
