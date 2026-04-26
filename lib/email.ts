@@ -2181,3 +2181,53 @@ export const sendConsiliumBonusMonth = async (
     html: luxuryEmailShell(inner, "A Bonus Month", "Another 30 days, on me"),
   });
 };
+
+// Fired when Kanika links a voice note or video to a member-submitted
+// question via /admin/questions. Closes the engagement loop — without
+// this email the asker has no reason to come back and check.
+export const sendQuestionAnswered = async (params: {
+  recipientEmail: string;
+  recipientName: string;
+  questionContent: string;
+  answerPostId: string;
+  answerType: "VOICE_NOTE" | "VIDEO";
+}): Promise<boolean> => {
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://kanikarose.com";
+  const answerUrl = `${baseUrl}/consilium/feed#post-${params.answerPostId}`;
+  const formatLabel = params.answerType === "VIDEO" ? "video" : "voice note";
+
+  const inner = `
+    <p style="color: #f5f0ed; font-size: 18px; margin: 0 0 20px 0; line-height: 1.6;">
+      Dear ${esc(params.recipientName)},
+    </p>
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 25px 0; font-size: 15px;">
+      Kanika answered your question in a new ${formatLabel} on the Consilium feed.
+    </p>
+    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="margin: 0 0 25px 0;">
+      <tr>
+        <td bgcolor="#1a0d11" style="padding: 22px; border-radius: 10px; border: 1px solid #d4af37;">
+          <p style="color: #d4af37; margin: 0 0 10px 0; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 1.5px;">Your Question</p>
+          <p style="color: #f5f0ed; margin: 0; font-size: 15px; line-height: 1.7; font-style: italic;">${esc(params.questionContent)}</p>
+        </td>
+      </tr>
+    </table>
+    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="margin: 0 0 25px 0;">
+      <tr>
+        <td align="center">
+          <a href="${answerUrl}" style="display: inline-block; padding: 14px 32px; background-color: #d4af37; color: #0a0a0a; text-decoration: none; border-radius: 6px; font-weight: 600; font-size: 14px; letter-spacing: 1px; text-transform: uppercase;">
+            Watch the answer
+          </a>
+        </td>
+      </tr>
+    </table>
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0; font-size: 13px; text-align: center;">
+      Have another question? Submit one anytime on the Consilium feed.
+    </p>
+  `;
+
+  return await sendEmail({
+    to: params.recipientEmail,
+    subject: "Kanika answered your question",
+    html: luxuryEmailShell(inner, "Answered", "Kanika replied"),
+  });
+};

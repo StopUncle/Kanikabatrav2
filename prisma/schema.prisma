@@ -62,30 +62,32 @@ model User {
   isBot                     Boolean              @default(false)
   botActive                 Boolean              @default(true)
   botActions                BotAction[]
+  memberQuestions           MemberQuestion[]     @relation("MemberQuestions")
+  questionUpvotes           QuestionUpvote[]     @relation("QuestionUpvotes")
   // Acquisition attribution — captured from URL params + headers on
   // the visit that ended in registration. Joinable against revenue
   // (Purchase), retention (CommunityMembership), and quiz outcomes
   // for source-level ROI. All nullable — pre-attribution users +
   // direct/organic traffic stay null.
-  utmSource     String?
-  utmMedium     String?
-  utmCampaign   String?
-  utmContent    String?
-  utmTerm       String?
+  utmSource                 String?
+  utmMedium                 String?
+  utmCampaign               String?
+  utmContent                String?
+  utmTerm                   String?
   // Click IDs from ad platforms — survive even when UTM params are
   // stripped by the platform (Meta sometimes does this on IG ads).
-  gclid         String?
-  fbclid        String?
-  ttclid        String?
+  gclid                     String?
+  fbclid                    String?
+  ttclid                    String?
   // Last URL the visitor came from (document.referrer) and first
   // path they hit on this site.
-  referrer      String?
-  landingPage   String?
+  referrer                  String?
+  landingPage               String?
   // Device + locale — useful for region-specific funnel tuning.
-  userAgent     String?
-  ipCountry     String?
-  language      String?
-  timezone      String?
+  userAgent                 String?
+  ipCountry                 String?
+  language                  String?
+  timezone                  String?
 
   @@index([email])
   @@index([utmSource])
@@ -235,17 +237,17 @@ model Post {
 
 // Quiz System - The Dark Mirror Assessment (Cluster B Personality Types)
 model QuizResult {
-  id            String   @id @default(cuid())
-  userId        String?
-  email         String?
-  primaryType   String // "psychopathic" | "sociopathic" | "narcissistic" | "borderline" | "histrionic"
-  secondaryType String?
-  scores        Json // { psychopathic: 25, sociopathic: 15, narcissistic: 30, borderline: 20, histrionic: 10 }
-  answers       Json // All question answers for analytics
-  paid          Boolean  @default(false)
-  paypalOrderId String?  @unique
-  emailSent     Boolean  @default(false)
-  shared        Boolean  @default(false)
+  id                       String    @id @default(cuid())
+  userId                   String?
+  email                    String?
+  primaryType              String // "psychopathic" | "sociopathic" | "narcissistic" | "borderline" | "histrionic"
+  secondaryType            String?
+  scores                   Json // { psychopathic: 25, sociopathic: 15, narcissistic: 30, borderline: 20, histrionic: 10 }
+  answers                  Json // All question answers for analytics
+  paid                     Boolean   @default(false)
+  paypalOrderId            String?   @unique
+  emailSent                Boolean   @default(false)
+  shared                   Boolean   @default(false)
   // Consilium credit. On QUIZ purchase, the webhook generates a
   // single-use Stripe promotion code equal to the quiz price ($9.99)
   // that applies to the first Consilium month. Surfaced on the
@@ -255,23 +257,23 @@ model QuizResult {
   // Acquisition attribution — same shape as User. Captured even for
   // anonymous quiz takes so we can join free-tier traffic source
   // against later registration + purchase. Nullable for legacy rows.
-  utmSource     String?
-  utmMedium     String?
-  utmCampaign   String?
-  utmContent    String?
-  utmTerm       String?
-  gclid         String?
-  fbclid        String?
-  ttclid        String?
-  referrer      String?
-  landingPage   String?
-  userAgent     String?
-  ipCountry     String?
-  language      String?
-  timezone      String?
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-  user          User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  utmSource                String?
+  utmMedium                String?
+  utmCampaign              String?
+  utmContent               String?
+  utmTerm                  String?
+  gclid                    String?
+  fbclid                   String?
+  ttclid                   String?
+  referrer                 String?
+  landingPage              String?
+  userAgent                String?
+  ipCountry                String?
+  language                 String?
+  timezone                 String?
+  createdAt                DateTime  @default(now())
+  updatedAt                DateTime  @updatedAt
+  user                     User?     @relation(fields: [userId], references: [id], onDelete: SetNull)
 
   @@index([userId])
   @@index([email])
@@ -686,31 +688,87 @@ model CommunityMembership {
 }
 
 model FeedPost {
-  id                   String         @id @default(cuid())
+  id                   String           @id @default(cuid())
   authorId             String?
   title                String
-  content              String         @db.Text
-  type                 FeedPostType   @default(ANNOUNCEMENT)
+  content              String           @db.Text
+  type                 FeedPostType     @default(ANNOUNCEMENT)
   voiceNoteUrl         String?
   videoUrl             String?
   videoPosterUrl       String?
   videoDurationSeconds Int?
-  isPinned     Boolean        @default(false)
-  isLocked     Boolean        @default(false)
-  likeCount    Int            @default(0)
-  commentCount Int            @default(0)
-  metadata     Json?
-  createdAt    DateTime       @default(now())
-  updatedAt    DateTime       @updatedAt
-  author       User?          @relation(fields: [authorId], references: [id], onDelete: SetNull)
-  comments     FeedComment[]
-  likes        FeedPostLike[]
-  botActions   BotAction[]    @relation("BotActionsOnPost")
+  isPinned             Boolean          @default(false)
+  isLocked             Boolean          @default(false)
+  likeCount            Int              @default(0)
+  commentCount         Int              @default(0)
+  metadata             Json?
+  createdAt            DateTime         @default(now())
+  updatedAt            DateTime         @updatedAt
+  author               User?            @relation(fields: [authorId], references: [id], onDelete: SetNull)
+  comments             FeedComment[]
+  likes                FeedPostLike[]
+  botActions           BotAction[]      @relation("BotActionsOnPost")
+  answersQuestions     MemberQuestion[] @relation("QuestionAnswers")
 
   @@index([authorId])
   @@index([type])
   @@index([createdAt])
   @@index([isPinned])
+}
+
+// Ask Kanika — members submit one question per rolling 24h. Other
+// members upvote. Kanika reviews the queue (pre-curated by votes) and
+// selects questions to answer in voice notes / videos. When she does,
+// the answering FeedPost is linked here, the asker is emailed, and
+// their pill nav flips to a green-dot state.
+model MemberQuestion {
+  id              String           @id @default(cuid())
+  userId          String // always stored even when isAnonymous=true; admin can reveal for moderation
+  user            User             @relation("MemberQuestions", fields: [userId], references: [id], onDelete: Cascade)
+  content         String           @db.Text
+  isAnonymous     Boolean          @default(false)
+  status          QuestionStatus   @default(PENDING)
+  upvoteCount     Int              @default(0) // denormalized so the "top voted" sort is index-cheap
+  answeredAt      DateTime?
+  answerPostId    String?
+  answerPost      FeedPost?        @relation("QuestionAnswers", fields: [answerPostId], references: [id], onDelete: SetNull)
+  rejectionReason String?
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+  upvotes         QuestionUpvote[]
+
+  @@index([userId, createdAt])
+  @@index([status, upvoteCount(sort: Desc)])
+  @@index([status, createdAt])
+}
+
+model QuestionUpvote {
+  id         String         @id @default(cuid())
+  questionId String
+  question   MemberQuestion @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  userId     String
+  user       User           @relation("QuestionUpvotes", fields: [userId], references: [id], onDelete: Cascade)
+  createdAt  DateTime       @default(now())
+
+  @@unique([questionId, userId])
+  @@index([userId])
+}
+
+// Singleton settings row. Lets Kanika change the daily cap (and other
+// limits) without a code change. Mirrors the BotEngagementSettings pattern.
+model MemberQuestionSettings {
+  id        String   @id @default("singleton")
+  dailyCap  Int      @default(1)
+  maxLength Int      @default(500)
+  updatedAt DateTime @updatedAt
+}
+
+enum QuestionStatus {
+  PENDING // in queue, awaiting Kanika's review
+  ANSWERING // marked by admin, voice/video being prepared
+  ANSWERED // has answerPostId
+  REJECTED // not appropriate / off-topic
+  HIDDEN // hidden from public list (spam / abuse)
 }
 
 model FeedComment {
@@ -923,25 +981,25 @@ model CommentReport {
 // for replay analytics, add a separate SimulatorRun table that this one
 // summarizes.
 model SimulatorProgress {
-  id             String    @id @default(cuid())
-  userId         String
-  user           User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  scenarioId     String
-  currentSceneId String
+  id              String    @id @default(cuid())
+  userId          String
+  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  scenarioId      String
+  currentSceneId  String
   // Full ordered list of choices as a JSON array of
   // { sceneId, choiceId, wasOptimal, timestamp }. Cheaper than a
   // join-table and we never query across users' choice history.
-  choicesMade    Json      @default("[]")
-  xpEarned       Int       @default(0)
-  startedAt      DateTime  @default(now())
-  completedAt    DateTime?
+  choicesMade     Json      @default("[]")
+  xpEarned        Int       @default(0)
+  startedAt       DateTime  @default(now())
+  completedAt     DateTime?
   // "good" | "neutral" | "bad" — null until an ending is reached.
-  outcome        String?
+  outcome         String?
   // Incremented by /api/simulator/complete every time a run reaches
   // an ending, including replays. Used by the `three-time-reader`
   // meta-achievement in `lib/simulator/achievements.ts`. Stays 0 for
   // in-progress rows; ticks to 1 on first completion, 2 on second, etc.
-  completionCount Int      @default(0)
+  completionCount Int       @default(0)
 
   @@unique([userId, scenarioId])
   @@index([userId])
