@@ -24,6 +24,7 @@ import {
   Lightbulb,
   Flag,
   Bot,
+  Megaphone,
 } from "lucide-react";
 
 const NAV_ITEMS = [
@@ -39,6 +40,7 @@ const NAV_ITEMS = [
   { href: "/admin/courses", label: "Courses", icon: BookOpen },
   { href: "/admin/members", label: "Members", icon: Users },
   { href: "/admin/email-queue", label: "Email Queue", icon: Mail },
+  { href: "/admin/marketing", label: "Marketing", icon: Megaphone },
   { href: "/admin/bots", label: "Bots", icon: Bot },
 ];
 

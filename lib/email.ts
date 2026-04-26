@@ -141,6 +141,13 @@ interface EmailOptions {
   html: string;
   text?: string;
   replyTo?: string;
+  /**
+   * Optional custom SMTP / Resend headers. Used by the marketing
+   * subsystem to attach List-Unsubscribe + RFC 8058 one-click
+   * headers so Gmail / Apple Mail render a native unsubscribe
+   * button next to the sender. Pass-through to both transports.
+   */
+  headers?: Record<string, string>;
 }
 
 interface ContactFormData {
@@ -178,6 +185,7 @@ export const sendEmail = async (
           html: options.html,
           text: options.text || options.html.replace(/<[^>]*>/g, ""),
           replyTo: options.replyTo,
+          headers: options.headers,
         });
         if (error) throw new Error(error.message);
         logger.info(`Email sent to ${options.to} via Resend (attempt ${attempt})`);
@@ -198,6 +206,7 @@ export const sendEmail = async (
         text: options.text || options.html.replace(/<[^>]*>/g, ""),
         html: options.html,
         replyTo: options.replyTo,
+        headers: options.headers,
       });
       logger.info(
         `Email sent to ${options.to} via ${isMicrosoftEmail(options.to) ? "Microsoft" : "Primary"} SMTP - Message ID: ${info.messageId}`,

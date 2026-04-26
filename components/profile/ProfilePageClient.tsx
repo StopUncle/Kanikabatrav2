@@ -22,6 +22,7 @@ import {
 import Header from "@/components/Header";
 import BackgroundEffects from "@/components/BackgroundEffects";
 import RadarChart from "@/components/quiz/RadarChart";
+import EmailPreferencesPanel from "@/components/profile/EmailPreferencesPanel";
 import { PERSONALITY_PROFILES, PersonalityType, QuizScores } from "@/lib/quiz-data";
 
 interface ProfilePageClientProps {
@@ -488,6 +489,13 @@ export default function ProfilePageClient({ userId: _userId, email }: ProfilePag
                 </div>
                 <ChevronRight size={16} className="text-text-gray group-hover:text-accent-gold transition-colors" />
               </Link>
+
+              {/* Email preferences — granular per-type opt-out.
+                  Surfaces all four prefs (marketing, product updates,
+                  weekly digest, session reminders) so users can leave
+                  any one channel without losing the others. Saves
+                  immediately on toggle; no extra Save button. */}
+              <EmailPreferencesPanel />
 
               {/* Privacy & data — GDPR export.
                   Hits /api/user/export which builds a JSON of everything
