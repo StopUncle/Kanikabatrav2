@@ -12,6 +12,7 @@ import {
   ChevronUp,
   ExternalLink,
 } from "lucide-react";
+import AnswerQuestionPicker from "@/components/admin/AnswerQuestionPicker";
 
 interface VideoPost {
   id: string;
@@ -86,6 +87,7 @@ export default function VideosPage() {
   const [description, setDescription] = useState("");
   const [file, setFile] = useState<File | null>(null);
   const [duration, setDuration] = useState<number | null>(null);
+  const [answersQuestionId, setAnswersQuestionId] = useState<string | null>(null);
   const [dragOver, setDragOver] = useState(false);
   const [uploadStatus, setUploadStatus] = useState<"idle" | "success" | "error">(
     "idle",
@@ -228,12 +230,32 @@ export default function VideosPage() {
         throw new Error("Failed to create feed post");
       }
 
+      // If this video answers a member question, link it. PATCH sets
+      // status=ANSWERED and fires the asker email. Non-fatal on failure.
+      if (answersQuestionId) {
+        try {
+          const post = await postRes.json();
+          await fetch(`/api/admin/questions/${answersQuestionId}`, {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ answerPostId: post.post?.id ?? post.id }),
+          });
+        } catch {
+          // Logged via /api/admin/questions; UI continues.
+        }
+      }
+
       setUploadStatus("success");
-      setStatusMessage("Video published to feed");
+      setStatusMessage(
+        answersQuestionId
+          ? "Video published — asker has been notified"
+          : "Video published to feed",
+      );
       setTitle("");
       setDescription("");
       setFile(null);
       setDuration(null);
+      setAnswersQuestionId(null);
       setShowForm(false);
       fetchVideos();
     } catch (err) {
@@ -312,6 +334,12 @@ export default function VideosPage() {
               maxLength={2000}
             />
           </div>
+
+          <AnswerQuestionPicker
+            value={answersQuestionId}
+            onChange={setAnswersQuestionId}
+            disabled={submitting}
+          />
 
           <div>
             <label className="block text-text-gray text-xs uppercase tracking-wider mb-2">

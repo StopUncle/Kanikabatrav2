@@ -133,6 +133,21 @@ Bot User emails follow the pattern `{slug}-bot@consilium.local` so the cron can 
 
 **Rollout state:** to deploy fresh, follow tasks 17–19 in the plan: apply migration to prod → run `npm run seed:bots` → deploy with `enabled=false` → flip `enabled=true, dryRun=true` → run `npm run backfill:bots` → observe 24h → flip `dryRun=false`.
 
+## ❓ Ask Kanika (member daily Q&A → Kanika voice/video answers)
+
+The retention loop. Members submit one question per rolling 24h, upvote others' questions in the queue, and get an email + green-dot pill when Kanika answers theirs in a new voice note or video. Designed to give every visit (especially day-1 new members) a daily reason to come back.
+
+- **Member surface:** Pill in `MemberPillNav` (top of `/consilium/feed`). Three states: `Ask Kanika` (idle gold pulse), `Ask Kanika · 12h` (rolling cooldown), `Ask Kanika 🟢` (your question was answered). Click → modal with the form + top-voted queue + answered-notification section stacked top-to-bottom.
+- **Admin surface:** `/admin/questions` — tabs (PENDING / ANSWERING / ANSWERED / REJECTED), sorted by upvote count desc. Identity hidden by default behind a "Show identity" button (separate `/reveal` endpoint, easy to audit-log later).
+- **Linkage:** voice-note + video uploaders (`/admin/voice-notes`, `/admin/videos`) include an `<AnswerQuestionPicker>` dropdown showing PENDING+ANSWERING questions. Selecting one means: post is published as normal → PATCH `/api/admin/questions/[id]` with `answerPostId` → status flips to ANSWERED → asker email fires (`sendQuestionAnswered`) → asker's pill flips to green-dot on next visit.
+- **Rate limit:** rolling 24h, configurable cap stored in `MemberQuestionSettings` singleton (`dailyCap` defaults to 1). Server-side enforced; client countdown is cosmetic. Upvoting is unlimited.
+- **Anonymity:** asker's choice per question. `MemberQuestion.userId` is always stored (admin can reveal for moderation), but the public list and the default admin queue show "Anonymous" when `isAnonymous=true`.
+- **Bots blocked:** the POST endpoint rejects users with `isBot=true` so the queue stays member-authentic.
+- **Schema:** `MemberQuestion` (with `answerPostId` FK back to FeedPost), `QuestionUpvote` (composite UQ on questionId+userId for idempotent toggle), `MemberQuestionSettings` singleton. Migration `20260427000000_add_member_questions`.
+- **Email:** `sendQuestionAnswered` in `lib/email.ts` (luxury template), wrapped by `lib/questions/notify-asker.ts` which fetches user + post details and respects the optional `emailPreferences.questionAnswered=false` opt-out.
+
+To raise the daily cap as the community grows: `UPDATE "MemberQuestionSettings" SET "dailyCap" = 3` (no code change). The 60s settings cache means it propagates within a minute.
+
 ## 💼 Coaching Packages (Stripe one-time)
 
 | productKey | Package | Sessions |

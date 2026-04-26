@@ -12,6 +12,7 @@ import {
   Newspaper,
   type LucideIcon,
 } from "lucide-react";
+import AskKanikaPill from "./AskKanikaPill";
 
 /**
  * Member-area secondary nav. Sits at the top of <main> in the
@@ -125,6 +126,11 @@ export default function MemberPillNav({ onlineCount }: Props) {
         <div
           className="flex items-center gap-2.5 sm:gap-3 overflow-x-auto snap-x snap-proximity scroll-px-4 sm:scroll-px-6 px-4 sm:px-6 lg:px-8 py-2.5 lg:py-3 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden lg:justify-center"
         >
+          {/* Ask Kanika sits FIRST in the pill row — it's the highest-
+              return interaction we can put on the feed (daily engagement
+              loop) and we want it visible before the swipe happens on
+              mobile, even at 360px. */}
+          <AskKanikaPill />
           {PILLS.map((pill, index) => {
             const isActive = activeHref === pill.href;
             const Icon = pill.icon;

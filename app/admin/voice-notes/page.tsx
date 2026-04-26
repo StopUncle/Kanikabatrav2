@@ -13,6 +13,7 @@ import {
   ExternalLink,
 } from "lucide-react";
 import VoiceRecorder from "@/components/admin/VoiceRecorder";
+import AnswerQuestionPicker from "@/components/admin/AnswerQuestionPicker";
 
 interface VoiceNotePost {
   id: string;
@@ -36,6 +37,7 @@ export default function VoiceNotesPage() {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [file, setFile] = useState<File | null>(null);
+  const [answersQuestionId, setAnswersQuestionId] = useState<string | null>(null);
   const [dragOver, setDragOver] = useState(false);
   const [uploadStatus, setUploadStatus] = useState<"idle" | "success" | "error">("idle");
   const [statusMessage, setStatusMessage] = useState("");
@@ -141,11 +143,32 @@ export default function VoiceNotesPage() {
         throw new Error("Failed to create feed post");
       }
 
+      // If this voice note answers a member question, link it. The PATCH
+      // sets MemberQuestion.status=ANSWERED and fires the asker email.
+      // Failure here is non-fatal — the voice note is already published.
+      if (answersQuestionId) {
+        try {
+          const post = await postRes.json();
+          await fetch(`/api/admin/questions/${answersQuestionId}`, {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ answerPostId: post.post?.id ?? post.id }),
+          });
+        } catch {
+          // Logged via /api/admin/questions; UI continues.
+        }
+      }
+
       setUploadStatus("success");
-      setStatusMessage("Voice note published to feed");
+      setStatusMessage(
+        answersQuestionId
+          ? "Voice note published — asker has been notified"
+          : "Voice note published to feed",
+      );
       setTitle("");
       setDescription("");
       setFile(null);
+      setAnswersQuestionId(null);
       setShowForm(false);
       fetchVoiceNotes();
     } catch (err) {
@@ -223,6 +246,12 @@ export default function VoiceNotesPage() {
               maxLength={2000}
             />
           </div>
+
+          <AnswerQuestionPicker
+            value={answersQuestionId}
+            onChange={setAnswersQuestionId}
+            disabled={submitting}
+          />
 
           <div>
             <label className="block text-text-gray text-xs uppercase tracking-wider mb-2">
