@@ -59,6 +59,9 @@ model User {
   reportsResolved           CommentReport[]      @relation("ReportsResolved")
   simulatorProgress         SimulatorProgress[]
   simulatorBadges           SimulatorBadge[]
+  isBot                     Boolean              @default(false)
+  botActive                 Boolean              @default(true)
+  botActions                BotAction[]
   // Acquisition attribution — captured from URL params + headers on
   // the visit that ended in registration. Joinable against revenue
   // (Purchase), retention (CommunityMembership), and quiz outcomes
@@ -87,6 +90,7 @@ model User {
   @@index([email])
   @@index([utmSource])
   @@index([utmCampaign])
+  @@index([isBot])
 }
 
 enum UserRole {
@@ -701,6 +705,7 @@ model FeedPost {
   author       User?          @relation(fields: [authorId], references: [id], onDelete: SetNull)
   comments     FeedComment[]
   likes        FeedPostLike[]
+  botActions   BotAction[]    @relation("BotActionsOnPost")
 
   @@index([authorId])
   @@index([type])
@@ -956,4 +961,55 @@ model SimulatorBadge {
 
   @@unique([userId, badgeKey])
   @@index([userId])
+}
+
+// ========================================
+// BOT ENGAGEMENT MODELS
+// ========================================
+
+enum BotActionType {
+  COMMENT
+  LIKE
+}
+
+enum BotActionStatus {
+  PENDING
+  EXECUTED
+  FAILED
+  SKIPPED
+}
+
+// Scheduled bot actions queued by the engagement engine.
+// Each row represents one bot doing one thing (comment or like)
+// on one FeedPost at a specific time. The bot is a real User row
+// with isBot = true. Processed by /api/cron/bot-engagement.
+model BotAction {
+  id            String          @id @default(cuid())
+  type          BotActionType
+  status        BotActionStatus @default(PENDING)
+  bot           User            @relation(fields: [botId], references: [id], onDelete: Cascade)
+  botId         String
+  post          FeedPost        @relation("BotActionsOnPost", fields: [postId], references: [id], onDelete: Cascade)
+  postId        String
+  scheduledAt   DateTime
+  executedAt    DateTime?
+  commentText   String?         @db.Text
+  commentId     String?
+  failureReason String?
+  attempts      Int             @default(0)
+  createdAt     DateTime        @default(now())
+
+  @@index([status, scheduledAt])
+  @@index([postId])
+  @@index([botId])
+}
+
+// Singleton settings row for the bot engagement engine.
+// Always queried with findUnique({ where: { id: "singleton" } }).
+// dryRun = true means actions are logged but not written to DB.
+model BotEngagementSettings {
+  id        String   @id @default("singleton")
+  enabled   Boolean  @default(false)
+  dryRun    Boolean  @default(true)
+  updatedAt DateTime @updatedAt
 }

@@ -10,8 +10,16 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     const statusParam = searchParams.get("status") || "PENDING_REVIEW";
 
+    // Bot-authored comments bypass moderation and must NEVER show up in
+    // the admin moderation queue, even when filtering ALL. Always filter
+    // bots out by joining on author.isBot.
     const where =
-      statusParam === "ALL" ? {} : { status: statusParam as "PENDING_REVIEW" };
+      statusParam === "ALL"
+        ? { author: { isBot: false } }
+        : {
+            status: statusParam as "PENDING_REVIEW",
+            author: { isBot: false },
+          };
 
     const comments = await prisma.feedComment.findMany({
       where,

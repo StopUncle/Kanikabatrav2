@@ -39,6 +39,7 @@ export async function POST(request: NextRequest) {
           gt: now,
           lte: sevenDaysFromNow,
         },
+        user: { isBot: false },
       },
       include: {
         user: {

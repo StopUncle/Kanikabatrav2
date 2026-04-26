@@ -49,7 +49,7 @@ export async function POST(request: NextRequest) {
     // Fetch all ACTIVE members. Join the user so we have email + gender
     // + name + emailPreferences in one query.
     const members = await prisma.communityMembership.findMany({
-      where: { status: "ACTIVE" },
+      where: { status: "ACTIVE", user: { isBot: false } },
       include: {
         user: {
           select: {

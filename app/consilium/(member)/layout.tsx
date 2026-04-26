@@ -31,6 +31,7 @@ export default async function MemberLayout({
       where: {
         communityMembership: { status: "ACTIVE" },
         updatedAt: { gte: fiveMinAgo },
+        isBot: false,
       },
     }),
     prisma.user.findUnique({

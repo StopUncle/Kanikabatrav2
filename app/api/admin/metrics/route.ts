@@ -62,15 +62,23 @@ export async function GET(_request: NextRequest) {
     });
 
     // ---------- Active Inner Circle members ----------
+    // Bot User rows have ACTIVE memberships too (from seed-bot-users.ts);
+    // exclude them so admin metrics reflect real members only.
     const activeMembers = await prisma.communityMembership.count({
-      where: { status: "ACTIVE" },
+      where: { status: "ACTIVE", user: { isBot: false } },
     });
 
     // ---------- Membership status breakdown ----------
-    const membershipBreakdown = await prisma.communityMembership.groupBy({
-      by: ["status"],
-      _count: true,
+    const membershipBreakdownRaw = await prisma.communityMembership.findMany({
+      where: { user: { isBot: false } },
+      select: { status: true },
     });
+    const membershipBreakdown = Object.entries(
+      membershipBreakdownRaw.reduce<Record<string, number>>((acc, m) => {
+        acc[m.status] = (acc[m.status] ?? 0) + 1;
+        return acc;
+      }, {}),
+    ).map(([status, count]) => ({ status, _count: count }));
 
     // ---------- 30d book sales ----------
     const bookSales30d = await prisma.purchase.count({
@@ -92,17 +100,17 @@ export async function GET(_request: NextRequest) {
       where: { createdAt: { gte: thirtyDaysAgo } },
     });
     const applicationsSubmitted30d = await prisma.communityMembership.count({
-      where: { appliedAt: { gte: thirtyDaysAgo } },
+      where: { appliedAt: { gte: thirtyDaysAgo }, user: { isBot: false } },
     });
     const membershipsActivated30d = await prisma.communityMembership.count({
-      where: { activatedAt: { gte: thirtyDaysAgo } },
+      where: { activatedAt: { gte: thirtyDaysAgo }, user: { isBot: false } },
     });
 
     // ---------- Churn (30d) ----------
     // Cancellations in the last 30 days as a percentage of active members at
     // the start of the window. Rough but directionally useful.
     const cancellations30d = await prisma.communityMembership.count({
-      where: { cancelledAt: { gte: thirtyDaysAgo } },
+      where: { cancelledAt: { gte: thirtyDaysAgo }, user: { isBot: false } },
     });
     const churnRatePct =
       activeMembers + cancellations30d > 0

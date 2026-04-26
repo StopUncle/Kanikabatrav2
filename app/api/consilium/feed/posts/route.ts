@@ -220,6 +220,14 @@ export async function POST(request: NextRequest) {
         type: true,
       },
     });
+    // Fire-and-forget: enqueue bot engagement (Project B). Failure here
+    // must NEVER break post creation, so it's not awaited.
+    import("@/lib/bots/scheduler")
+      .then(({ scheduleBotActions }) => scheduleBotActions(post.id))
+      .then((r) => logger.info("[bots] scheduled", { postId: post.id, ...r }))
+      .catch((err) =>
+        logger.error("[bots] schedule failed", err as Error, { postId: post.id }),
+      );
     return NextResponse.json({ success: true, post }, { status: 201 });
   } catch (err) {
     logger.error("[admin/feed-create] failed", err as Error, {
