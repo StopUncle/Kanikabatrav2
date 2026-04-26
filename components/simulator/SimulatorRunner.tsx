@@ -835,13 +835,27 @@ export default function SimulatorRunner({
           compact (no typewriter, no advance button, muted styling) to
           avoid competing visually with the choice cards.
 
+          Anchored to the bottom via `justify-end` rather than centred:
+          on mobile, 4-choice scenes with long tactic text overflow any
+          fixed min-height. Centring then split the overflow above and
+          below — pushing the echo up off-screen and the choice stack
+          down behind the bottom letterbox. Justify-end keeps the
+          choice cards pinned where the player expects them and lets
+          the echo sit directly above, never covered.
+
+          `max-h-[calc(...)]` caps the column at viewport-minus-letterbox-
+          frames so the echo can never push past the top letterbox even
+          on the tallest scenes; pair with `overflow-y-auto` so a 5-choice
+          scene on a short viewport scrolls within the column rather than
+          clipping silently.
+
           z-[35] sits above the scenario-title banner (z-30) so tall
           choice stacks — diagnostic scenes with long tactic text, and
           any scene with 4+ cards — paint cleanly over the title without
           the text bleeding through the cards' backdrop-blur. Still
           below the letterbox (z-40) so the top/bottom frame reads as
           the outermost layer. */}
-      <div className="absolute inset-x-0 bottom-16 sm:bottom-20 z-[35] flex flex-col items-center justify-center gap-4 sm:gap-6 min-h-[280px] sm:min-h-[240px] px-4">
+      <div className="absolute inset-x-0 bottom-16 sm:bottom-20 z-[35] flex flex-col items-center justify-end gap-3 sm:gap-5 px-4 max-h-[calc(100dvh-180px)] overflow-y-auto [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
         {/* Last-line echo. Only renders during the choices phase.
             Sits above the choice cards, in its own slot, so it cannot
             be covered by the choices grid. Animates in once with the

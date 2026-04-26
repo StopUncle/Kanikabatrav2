@@ -123,3 +123,4 @@ reference/
 
 # Local git worktrees for feature branches (subagent-driven dev)
 .worktrees/
+.qa-screenshots/
