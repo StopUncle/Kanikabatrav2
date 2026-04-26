@@ -33,15 +33,39 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ skipped: "daily-cap", todayCount });
   }
 
-  const due = await prisma.botAction.findMany({
-    where: { status: "PENDING", scheduledAt: { lte: new Date() } },
-    orderBy: { scheduledAt: "asc" },
-    take: PER_RUN_CAP,
-    include: {
-      bot: { select: { id: true, email: true } },
-      post: { select: { id: true, title: true, content: true, type: true } },
-    },
-  });
+  // Cap the run-batch by the remaining daily budget, so 50/run can't
+  // overshoot 1500/day on a hot Sunday.
+  const runCap = Math.min(PER_RUN_CAP, PER_DAY_CAP - todayCount);
+
+  // Atomic claim: push scheduledAt 30 min into the future for the rows
+  // we're about to process. If a concurrent cron run lands while we're
+  // mid-batch (e.g. Anthropic flaking and our 50 calls take >5min),
+  // it'll see our claimed rows as not-due-yet and skip them — preventing
+  // duplicate FeedComment inserts. SKIP LOCKED so simultaneous claimers
+  // don't block each other. Failure path (markFailed) reschedules the
+  // row to its own retry slot, overriding the +30min push.
+  const claimed = await prisma.$queryRaw<Array<{ id: string }>>`
+    UPDATE "BotAction"
+    SET "scheduledAt" = NOW() + INTERVAL '30 minutes'
+    WHERE id IN (
+      SELECT id FROM "BotAction"
+      WHERE status = 'PENDING' AND "scheduledAt" <= NOW()
+      ORDER BY "scheduledAt" ASC
+      LIMIT ${runCap}
+      FOR UPDATE SKIP LOCKED
+    )
+    RETURNING id
+  `;
+
+  const due = claimed.length === 0
+    ? []
+    : await prisma.botAction.findMany({
+        where: { id: { in: claimed.map((c) => c.id) } },
+        include: {
+          bot: { select: { id: true, email: true } },
+          post: { select: { id: true, title: true, content: true, type: true } },
+        },
+      });
 
   let executed = 0;
   let failed = 0;
@@ -76,7 +100,15 @@ export async function POST(request: NextRequest) {
       logger.error("[cron bot-actions] action failed", err as Error, {
         actionId: action.id,
       });
-      await markFailed(action.id, (err as Error).message);
+      // markFailed itself can fail (DB blip, optimistic lock) — don't let
+      // that abort the rest of the batch.
+      try {
+        await markFailed(action.id, (err as Error).message);
+      } catch (markErr) {
+        logger.error("[cron bot-actions] markFailed also failed", markErr as Error, {
+          actionId: action.id,
+        });
+      }
       failed++;
     }
   }
