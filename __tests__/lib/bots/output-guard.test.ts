@@ -2,8 +2,21 @@ import { validateBotComment } from "@/lib/bots/output-guard";
 
 describe("validateBotComment", () => {
   it("accepts a normal short comment", () => {
-    const r = validateBotComment("This hits hard. Been there.", []);
+    const r = validateBotComment("Took me ten years to learn this one.", []);
     expect(r.ok).toBe(true);
+  });
+
+  it("rejects em dashes and en dashes (AI tells)", () => {
+    expect(validateBotComment("This is the move — every time.", []).ok).toBe(false);
+    expect(validateBotComment("She left first – he's still spiralling.", []).ok).toBe(false);
+  });
+
+  it("rejects expanded lurker patterns", () => {
+    expect(validateBotComment("Love this take honestly.", []).ok).toBe(false);
+    expect(validateBotComment("This hits at exactly the right moment.", []).ok).toBe(false);
+    expect(validateBotComment("Needed this today, thank you.", []).ok).toBe(false);
+    expect(validateBotComment("So well said.", []).ok).toBe(false);
+    expect(validateBotComment("Great write-up Kanika!", []).ok).toBe(false);
   });
 
   it("rejects AI self-reveal", () => {

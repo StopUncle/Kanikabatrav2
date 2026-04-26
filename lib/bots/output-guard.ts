@@ -12,7 +12,18 @@ const LURKER_PATTERNS = [
   /\bthanks for sharing\b/i,
   /\bamazing content\b/i,
   /\binsightful as always\b/i,
+  /\blove this\b/i,
+  /\bthis hits\b/i,
+  /\bso well said\b/i,
+  /\bgreat write[\s-]?up\b/i,
+  /\bneeded this today\b/i,
 ];
+
+// Em dash and en dash are AI tells — humans typing on a phone never
+// reach for U+2014. The model uses them everywhere unprompted, so even
+// with a strong negative instruction in the system prompt we still
+// reject as a backstop.
+const TYPOGRAPHIC_DASH = /[—–]/;
 
 // Surrogate-pair-aware emoji match. Covers the dominant emoji blocks
 // without needing the `u` flag (which the project's ES5 target rejects).
@@ -33,6 +44,10 @@ export function validateBotComment(text: string, priorOnPost: string[]): GuardRe
   }
   for (const re of LURKER_PATTERNS) {
     if (re.test(trimmed)) return { ok: false, reason: "lurker-opener" };
+  }
+
+  if (TYPOGRAPHIC_DASH.test(trimmed)) {
+    return { ok: false, reason: "em-dash" };
   }
 
   const leadingEmojiMatch = trimmed.match(EMOJI_PIECE);

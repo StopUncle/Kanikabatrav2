@@ -291,7 +291,7 @@ export const BOT_PERSONAS: BotPersona[] = [
     locationVibe: "Manchester UK, working-class, brutally honest",
     voiceNotes: [
       "brutally honest",
-      "casually swears (fuck/shit/bloody — at most one per comment)",
+      "casually swears (fuck/shit/bloody, at most one per comment)",
       "Mancunian register",
     ],
     reactsTo: ["DISCUSSION_PROMPT", "VOICE_NOTE", "ANNOUNCEMENT"],
