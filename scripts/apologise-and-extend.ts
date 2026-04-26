@@ -27,9 +27,7 @@ config();
 import { sendEmail } from "../lib/email";
 
 const prisma = new PrismaClient();
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: "2025-09-30.clover" as Stripe.LatestApiVersion,
-});
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 
 const RECIPIENTS = [
   { email: "laykanbass@gmail.com", firstName: "Sundance" },
@@ -135,8 +133,12 @@ async function main() {
       const sub = await stripe.subscriptions.retrieve(subId, {
         expand: ["discounts"],
       });
-      const alreadyDiscounted = (sub as Stripe.Subscription & { discounts?: Stripe.Discount[] }).discounts?.some(
-        (d) => typeof d !== "string" && d.coupon?.id === couponId,
+      const alreadyDiscounted = (sub as Stripe.Subscription & { discounts?: unknown[] }).discounts?.some(
+        (d) => {
+          if (typeof d === "string") return false;
+          const dObj = d as { coupon?: { id?: string } };
+          return dObj.coupon?.id === couponId;
+        },
       );
       if (alreadyDiscounted) {
         console.log(`  ⊙ Coupon already applied to ${subId}`);
