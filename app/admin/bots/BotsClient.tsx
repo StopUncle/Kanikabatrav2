@@ -91,7 +91,7 @@ export default function BotsClient({
             onChange={(e) => patchSettings({ dryRun: e.target.checked })}
             disabled={busy === "settings"}
           />
-          <span>Dry-run (generate text + log, don't insert FeedComment/Like)</span>
+          <span>Dry-run (generate text + log, don&apos;t insert FeedComment/Like)</span>
         </label>
         <button
           onClick={runNow}
