@@ -9,7 +9,8 @@ import {
   TRACK_META,
 } from "@/lib/simulator/scenarios";
 import { catalogueStats } from "@/lib/simulator/stats";
-import type { ScenarioTrack } from "@/lib/simulator/types";
+import { computeStarsFromJson } from "@/lib/simulator/stars";
+import type { ScenarioTrack, OutcomeType } from "@/lib/simulator/types";
 import { ArrowRight, Trophy, BarChart3, Sparkles } from "lucide-react";
 import LevelJourney, {
   type LevelGroup,
@@ -71,6 +72,10 @@ export default async function SimulatorIndex({
         outcome: true,
         xpEarned: true,
         startedAt: true,
+        // choicesMade powers the 3-star rating per scenario card.
+        // Stored as Json on SimulatorProgress; computeStarsFromJson
+        // tolerates the unknown shape and returns 0 if malformed.
+        choicesMade: true,
       },
     }),
     prisma.simulatorBadge.count({ where: { userId } }),
@@ -133,11 +138,19 @@ export default async function SimulatorIndex({
     const nodes: ScenarioNode[] = scenariosInLevel.map((s) => {
       const { status, prereqTitles } = statusFor(s.id, s.prerequisites);
       const p = progressByScenario.get(s.id);
+      // Stars are computed from the BEST run we've seen — for v1 that's
+      // just the row in SimulatorProgress, since the table stores the
+      // most-recent run not a per-attempt history. If we add per-run
+      // history later, swap in a max() over the history here.
+      const stars = p?.completedAt
+        ? computeStarsFromJson(p.outcome as OutcomeType | null, p.choicesMade)
+        : 0;
       return {
         scenario: s,
         status,
         resumeSceneId: p?.currentSceneId,
         xpEarned: p?.xpEarned ?? 0,
+        stars,
         prerequisiteTitles: prereqTitles,
       };
     });

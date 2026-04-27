@@ -3,9 +3,10 @@
 import { useEffect, useState } from "react";
 import { m } from "framer-motion";
 import Link from "next/link";
-import { RotateCcw, ArrowRight, Award, BookOpen, Check, X, Minus } from "lucide-react";
+import { RotateCcw, ArrowRight, Award, BookOpen, Star } from "lucide-react";
 import type { Scene, Scenario, SimulatorState } from "@/lib/simulator/types";
 import { BADGE_BY_KEY } from "@/lib/simulator/badges";
+import { computeStars, masteryPercent } from "@/lib/simulator/stars";
 
 /**
  * Count-up hook. Animates a number from 0 → target over ~1.2s using
@@ -101,21 +102,23 @@ export default function EndingScreen({
   onRestart,
 }: Props) {
   const outcome = state.outcome ?? scene.outcomeType ?? "neutral";
-  const isPass = outcome === "good" || outcome === "passed";
-  const isFail = outcome === "bad" || outcome === "failed";
 
-  // The verdict pill is the FIRST thing a player reads on the ending
-  // screen. Previously this was tiny tracked-out text ("Mastery" / "Cost"
-  // / "Outcome") that players missed entirely — they'd read the ending
-  // title ("The Considered Return") as a win regardless of outcome.
-  // The pill fixes that with an unambiguous verb and icon.
-  const verdictLabel = isPass ? "Passed" : isFail ? "Failed" : "Complete";
-  const VerdictIcon = isPass ? Check : isFail ? X : Minus;
-  const verdictPillClasses = isPass
-    ? "bg-accent-gold text-deep-black border-accent-gold"
-    : isFail
-      ? "bg-red-500/90 text-white border-red-500"
-      : "bg-white/10 text-text-light border-white/20";
+  // Stars are the new verdict. ★/★★/★★★ replaces the old text pill
+  // because pass/fail alone leaves no replay incentive once a player
+  // has technically completed a scenario. Stars give them something
+  // to chase: "I 2-starred this — let me 3-star it."
+  //
+  // Earned 0  → loss with no completion (rare; we usually still show 1)
+  // Earned 1  → reached an ending, even a losing one
+  // Earned 2  → won (good or passed)
+  // Earned 3  → won AND optimal-choice ratio ≥ 80%
+  const earnedStars = computeStars({
+    outcome,
+    choicesMade: state.choicesMade,
+  });
+  const mastery = masteryPercent(state.choicesMade);
+  const optimalCount = state.choicesMade.filter((c) => c.wasOptimal).length;
+  const totalChoices = state.choicesMade.length;
 
   return (
     <m.div
@@ -126,19 +129,81 @@ export default function EndingScreen({
       className="relative z-10 min-h-screen flex items-center justify-center px-6 py-20 overflow-y-auto"
     >
       <div className="max-w-2xl w-full text-center">
+        {/* The 3-star verdict display.
+            Three slots ALWAYS render so the player sees what's possible
+            even on a loss — empty slots are the goalposts for the next
+            replay. Stars fill in sequence with a stagger so it lands
+            like a Clash-style reveal: ★ … ★★ … ★★★ rather than all at once. */}
         <m.div
-          initial={{ opacity: 0, scale: 0.9, y: -8 }}
-          animate={{ opacity: 1, scale: 1, y: 0 }}
+          initial={{ opacity: 0, y: -8 }}
+          animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.2 }}
-          className="mb-8 flex justify-center"
+          className="mb-3 flex justify-center"
         >
-          <span
-            className={`inline-flex items-center gap-2 px-5 py-2 rounded-full border-2 text-sm font-semibold uppercase tracking-[0.25em] ${verdictPillClasses}`}
-          >
-            <VerdictIcon size={18} strokeWidth={3} />
-            {verdictLabel}
-          </span>
+          <div className="flex items-center gap-3 px-7 py-3 rounded-full border border-accent-gold/30 bg-deep-black/60">
+            {[0, 1, 2].map((i) => {
+              const filled = i < earnedStars;
+              return (
+                <m.span
+                  key={i}
+                  initial={{ opacity: 0, scale: 0.4, rotate: -30 }}
+                  animate={{
+                    opacity: 1,
+                    scale: 1,
+                    rotate: 0,
+                  }}
+                  transition={{
+                    duration: 0.45,
+                    delay: 0.5 + i * 0.25,
+                    type: "spring",
+                    stiffness: 280,
+                    damping: 14,
+                  }}
+                  className="inline-flex"
+                  aria-label={filled ? "Star earned" : "Star not earned"}
+                >
+                  <Star
+                    size={i === 1 ? 36 : 30}
+                    strokeWidth={1.5}
+                    fill={filled ? "#d4af37" : "transparent"}
+                    color={filled ? "#d4af37" : "rgba(212,175,55,0.25)"}
+                    style={{
+                      filter: filled
+                        ? "drop-shadow(0 0 12px rgba(212,175,55,0.55))"
+                        : undefined,
+                    }}
+                  />
+                </m.span>
+              );
+            })}
+          </div>
         </m.div>
+
+        {/* Mastery readout — "X / Y optimal · Z%". Gives the player a
+            concrete number to chase on replay. The third star is keyed
+            off this percent vs the 80% threshold, so showing it here
+            makes the gap explicit ("I got 73%, need 80%"). */}
+        <m.p
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.4, delay: 1.4 }}
+          className="text-text-gray/70 text-[11px] uppercase tracking-[0.3em] mb-8"
+        >
+          {totalChoices > 0 ? (
+            <>
+              <span className="tabular-nums text-accent-gold/90">
+                {optimalCount} / {totalChoices}
+              </span>{" "}
+              optimal ·{" "}
+              <span className="tabular-nums text-accent-gold/90">{mastery}%</span>
+              {earnedStars === 3 && (
+                <span className="ml-2 text-accent-gold">· Mastered</span>
+              )}
+            </>
+          ) : (
+            <span>Run complete</span>
+          )}
+        </m.p>
 
         <m.h1
           initial={{ opacity: 0, y: 20 }}

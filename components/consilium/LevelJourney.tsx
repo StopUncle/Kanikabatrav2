@@ -13,6 +13,7 @@ import {
   Target,
   ArrowRight,
   Sparkles,
+  Star,
 } from "lucide-react";
 import type { Scenario } from "@/lib/simulator/types";
 
@@ -46,6 +47,10 @@ export interface ScenarioNode {
   /** XP earned on this scenario so far (running total for in-progress,
    *  final total for completed). */
   xpEarned: number;
+  /** Star rating earned on the player's BEST run of this scenario.
+   *  0 = not yet completed. 1 = completed. 2 = passed. 3 = mastered.
+   *  Drives the at-a-glance Clash-style ★/★★/★★★ on each card. */
+  stars: 0 | 1 | 2 | 3;
   /** Names of scenarios that gate this one — shown when locked. */
   prerequisiteTitles: string[];
 }
@@ -72,6 +77,33 @@ interface LevelJourneyProps {
   unlockedCount: number;
   completedCount: number;
   trackXp: number;
+}
+
+/**
+ * The 3-star rating shown on each completed scenario card. Always
+ * renders 3 slots so the empty ones serve as goalposts — the player
+ * sees what they're missing at a glance and replays to fill them.
+ *
+ * Compact (10px stars) so it fits on the card header next to the
+ * status tag without crowding the title.
+ */
+function StarRow({ earned }: { earned: 0 | 1 | 2 | 3 }) {
+  return (
+    <span
+      className="inline-flex items-center gap-0.5"
+      aria-label={`${earned} of 3 stars`}
+    >
+      {[0, 1, 2].map((i) => (
+        <Star
+          key={i}
+          size={10}
+          strokeWidth={1.8}
+          fill={i < earned ? "#d4af37" : "transparent"}
+          color={i < earned ? "#d4af37" : "rgba(212,175,55,0.3)"}
+        />
+      ))}
+    </span>
+  );
 }
 
 // Map status → visual treatment (icon, ring colour, tag label).
@@ -189,6 +221,7 @@ function ScenarioCard({
             >
               {v.tag}
             </span>
+            {node.stars > 0 && <StarRow earned={node.stars} />}
             {node.xpEarned > 0 && (
               <span className="text-warm-gold/70 text-[10px] tabular-nums">
                 +{node.xpEarned} XP
