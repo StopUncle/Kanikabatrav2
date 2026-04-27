@@ -25,6 +25,7 @@ const Footer = () => {
       { name: "Content", href: "/content" },
       { name: "Blog", href: "/blog" },
       { name: "Contact", href: "/contact" },
+      { name: "Donate", href: "/donate" },
     ],
     legal: [
       { name: "Terms & Conditions", href: "/terms" },

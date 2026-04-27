@@ -2182,6 +2182,56 @@ export const sendConsiliumBonusMonth = async (
   });
 };
 
+// Fired by the Stripe webhook on a successful donation. Stripe sends
+// its own receipt; this is the personal-voice acknowledgement on top.
+// Failure here is non-critical (logged but never thrown) — the
+// Purchase row is already committed by the time this dispatches.
+export const sendDonationThankYou = async (params: {
+  recipientEmail: string;
+  recipientName: string;
+  amount: number;
+  donorMessage: string;
+}): Promise<boolean> => {
+  const formattedAmount = new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "USD",
+    minimumFractionDigits: params.amount % 1 === 0 ? 0 : 2,
+  }).format(params.amount);
+
+  const inner = `
+    <p style="color: #f5f0ed; font-size: 18px; margin: 0 0 20px 0; line-height: 1.6;">
+      Dear ${esc(params.recipientName)},
+    </p>
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 25px 0; font-size: 15px;">
+      Your donation of <strong style="color: #d4af37;">${esc(formattedAmount)}</strong> came through. Thank you — genuinely. This kind of support is what keeps the writing, the simulator, and the community going.
+    </p>
+    ${
+      params.donorMessage
+        ? `<table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="margin: 0 0 25px 0;">
+      <tr>
+        <td bgcolor="#1a0d11" style="padding: 22px; border-radius: 10px; border: 1px solid #d4af37;">
+          <p style="color: #d4af37; margin: 0 0 10px 0; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 1.5px;">Your Note</p>
+          <p style="color: #f5f0ed; margin: 0; font-size: 15px; line-height: 1.7; font-style: italic;">${esc(params.donorMessage)}</p>
+        </td>
+      </tr>
+    </table>`
+        : ""
+    }
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 5px 0; font-size: 14px;">
+      Stripe will email you a receipt separately for your records.
+    </p>
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0; font-size: 14px;">
+      With gratitude,<br/>Kanika
+    </p>
+  `;
+
+  return await sendEmail({
+    to: params.recipientEmail,
+    subject: `Thank you for your donation — ${formattedAmount}`,
+    html: luxuryEmailShell(inner, "Thank You", "Your support means everything"),
+  });
+};
+
 // Fired when Kanika links a voice note or video to a member-submitted
 // question via /admin/questions. Closes the engagement loop — without
 // this email the asker has no reason to come back and check.

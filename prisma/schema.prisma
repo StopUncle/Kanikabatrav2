@@ -202,6 +202,7 @@ enum ProductType {
   COURSE
   COACHING
   QUIZ
+  DONATION
 }
 
 enum PurchaseStatus {

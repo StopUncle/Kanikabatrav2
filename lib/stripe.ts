@@ -48,6 +48,11 @@ export const STRIPE_PRICES: Record<string, string> = {
   // cleanly at end of term.
   BOOK_CONSILIUM_1MO: "price_1TMpaDJv9vx5CHTwGzAnGrMz", // $39 USD, 30 days access
   BOOK_CONSILIUM_3MO: "price_1TMpaEJv9vx5CHTwfYMIfOik", // $79 USD, 90 days access
+  // Custom-amount price ($2 floor / $1000 ceiling / $20 preset). The
+  // Checkout Session will render an "Enter amount" field. See
+  // scripts/create-donation-product.ts for the canonical create-once
+  // command that produced these IDs.
+  DONATION: "price_1TQiacJv9vx5CHTweR3SpX3k",
 };
 
 export const STRIPE_PUBLISHABLE_KEY = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!;

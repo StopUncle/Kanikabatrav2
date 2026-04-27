@@ -515,6 +515,81 @@ export async function POST(request: NextRequest) {
               );
             }
           }
+        } else if (productKey === "DONATION") {
+          // Pay-what-you-want donation. The amount is captured at the
+          // Stripe Checkout step (custom_unit_amount price) — webhook
+          // just records a Purchase row + fires the thank-you email.
+          //
+          // Idempotent on Stripe session id (mapped to paypalOrderId for
+          // legacy compat). Anonymous donations still get a Purchase row
+          // — the is_anonymous flag is preserved in metadata so the admin
+          // can decide whether to publicly thank them later.
+          //
+          // Re-narrow `name` locally — it was declared above as
+          // `customer_details?.name || email` while email was still
+          // `string | undefined`, and the early return (`!email`) doesn't
+          // retroactively narrow it. Falling back to email here keeps the
+          // contract identical and gives TS something concrete to type.
+          const safeName: string = name ?? email;
+          const idempotencyKey = `ST-${sessionId}`;
+          const existing = await prisma.purchase.findUnique({
+            where: { paypalOrderId: idempotencyKey },
+          });
+          if (existing) {
+            console.log(
+              `[stripe-webhook] DONATION ${idempotencyKey} already processed — skipping`,
+            );
+            break;
+          }
+
+          const donorMessage = session.metadata?.donor_message ?? "";
+          const isAnonymous = session.metadata?.is_anonymous === "true";
+
+          // Best-effort link to a User row if the email matches a known
+          // member. Not required — anonymous donors and never-registered
+          // donors both get a Purchase row with userId=null.
+          const matchedUser = await prisma.user.findUnique({
+            where: { email },
+            select: { id: true },
+          });
+
+          await prisma.purchase.create({
+            data: {
+              userId: matchedUser?.id,
+              type: "DONATION",
+              customerEmail: email,
+              customerName: safeName,
+              amount,
+              status: "COMPLETED",
+              paypalOrderId: idempotencyKey,
+              metadata: {
+                source: "stripe",
+                sessionId,
+                productKey,
+                donorMessage,
+                isAnonymous,
+              },
+            },
+          });
+
+          // Thank-you email — fire-and-forget so a transient SMTP failure
+          // doesn't unwind the Purchase write. The email is non-critical;
+          // Stripe sends its own receipt as a backstop.
+          import("@/lib/email")
+            .then(({ sendDonationThankYou }) =>
+              sendDonationThankYou({
+                recipientEmail: email,
+                recipientName: safeName,
+                amount,
+                donorMessage,
+              }),
+            )
+            .catch((err) =>
+              console.error(
+                "[stripe-webhook] DONATION thank-you email failed",
+                err,
+              ),
+            );
         } else if (productKey === "INNER_CIRCLE") {
           // Subscription — Stripe webhook gives us the subscription id; we
           // upsert membership here for immediate access. Renewals are then
