@@ -220,6 +220,74 @@ async function main() {
   }
 
   // ====================================================================
+  h("THREAD 2.5: ENTRY-SCENARIO SCENE-LEVEL DROP-OFF");
+  // ====================================================================
+
+  // mission-1-1 has a known 50% bounce rate. This slices abandoned runs
+  // by currentSceneId so we can see WHICH dialog beat is the killer.
+  // Repeated for the entry scenario of every track so we can compare
+  // entry friction across the catalog (is mission-1-1 uniquely broken,
+  // or are all level-1 scenarios bleeding?).
+  const ENTRY_SCENARIOS = [
+    "mission-1-1",
+    "mission-1-2",
+    "b1-first-win",
+    "d1-frame-challenge",
+  ];
+
+  for (const sid of ENTRY_SCENARIOS) {
+    const runs = allRuns.filter((r) => r.scenarioId === sid);
+    if (runs.length === 0) continue;
+    const completed = runs.filter((r) => r.completedAt).length;
+    const abandoned = runs.filter((r) => !r.completedAt);
+    const pct = Math.round((abandoned.length / runs.length) * 100);
+    console.log(
+      `\n  ${sid}: ${runs.length} starts · ${completed} done · ${abandoned.length} abandoned (${pct}%)`,
+    );
+    if (abandoned.length === 0) continue;
+
+    // Bucket abandons by currentSceneId — the actual quit point
+    const byScene = new Map<
+      string,
+      { runs: number; users: Set<string>; durations: number[] }
+    >();
+    for (const r of abandoned) {
+      const sceneId = r.currentSceneId || "(none)";
+      const e = byScene.get(sceneId) || {
+        runs: 0,
+        users: new Set<string>(),
+        durations: [],
+      };
+      e.runs++;
+      e.users.add(r.userId);
+      const minutesSinceStart =
+        (Date.now() - r.startedAt.getTime()) / 60000;
+      e.durations.push(minutesSinceStart);
+      byScene.set(sceneId, e);
+    }
+    const sceneRows = Array.from(byScene.entries()).sort(
+      (a, b) => b[1].runs - a[1].runs,
+    );
+    console.log(
+      `    ${"scene".padEnd(28)} ${"abnd".padStart(5)} ${"users".padStart(6)}  median age`,
+    );
+    console.log("    " + "─".repeat(64));
+    for (const [sceneId, stats] of sceneRows) {
+      const sorted = [...stats.durations].sort((a, b) => a - b);
+      const median = sorted[Math.floor(sorted.length / 2)] || 0;
+      const medStr =
+        median > 60 * 24
+          ? `${Math.round(median / (60 * 24))}d`
+          : median > 60
+            ? `${Math.round(median / 60)}h`
+            : `${Math.round(median)}m`;
+      console.log(
+        `    ${sceneId.padEnd(28)} ${String(stats.runs).padStart(5)} ${String(stats.users.size).padStart(6)}  ${medStr}`,
+      );
+    }
+  }
+
+  // ====================================================================
   h("THREAD 3: ZERO-COMMENTS FEED — WHY?");
   // ====================================================================
 
