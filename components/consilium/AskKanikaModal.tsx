@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, useCallback, useRef } from "react";
+import { createPortal } from "react-dom";
 import { X, ChevronUp, Mic, Film } from "lucide-react";
 
 type AnswerPost = {
@@ -189,7 +190,14 @@ export default function AskKanikaModal({ open, onClose }: Props) {
     }
   }, []);
 
-  if (!open) return null;
+  // Mount guard: createPortal needs document, which doesn't exist on the
+  // server. Render nothing until the component is hydrated client-side.
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!open || !mounted) return null;
 
   const fourteenDaysAgo = Date.now() - 14 * 24 * 60 * 60 * 1000;
   const unreadAnswered = myQuestions.filter(
@@ -202,8 +210,13 @@ export default function AskKanikaModal({ open, onClose }: Props) {
       : 0;
   const remainingChars = 500 - content.trim().length;
 
-  return (
+  return createPortal(
     <div
+      // Portaled to document.body so we escape any ancestor with `transform`
+      // / `backdrop-blur` / `will-change`, which would otherwise become the
+      // containing block for `position: fixed` and clip the modal to the
+      // feed column. Without this, the header gets cropped above the
+      // viewport on the consilium feed page.
       className="fixed inset-0 z-[80] flex items-center justify-center p-4 bg-deep-black/85 backdrop-blur-sm"
       onClick={onClose}
       role="dialog"
@@ -393,7 +406,8 @@ export default function AskKanikaModal({ open, onClose }: Props) {
           </section>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 }
 
