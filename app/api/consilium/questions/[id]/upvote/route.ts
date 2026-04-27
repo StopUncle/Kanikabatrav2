@@ -1,7 +1,16 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { resolveActiveUserId } from "@/lib/auth/resolve-user";
+import { getAdminUserId } from "@/lib/auth/server-auth";
 import { checkMembership } from "@/lib/community/membership";
+
+// Same dual-session resolver as the submit endpoint. Member or admin
+// can both upvote — admins testing the surface shouldn't 401.
+async function resolveActor(): Promise<string | null> {
+  const active = await resolveActiveUserId();
+  if (active) return active;
+  return await getAdminUserId();
+}
 
 /**
  * POST /api/consilium/questions/[id]/upvote
@@ -18,8 +27,13 @@ export async function POST(
   _req: Request,
   { params }: { params: Promise<{ id: string }> },
 ) {
-  const userId = await resolveActiveUserId();
-  if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  const userId = await resolveActor();
+  if (!userId) {
+    return NextResponse.json(
+      { error: "Your session expired — please refresh and log in again" },
+      { status: 401 },
+    );
+  }
 
   const m = await checkMembership(userId);
   if (!m.isMember) return NextResponse.json({ error: "Members only" }, { status: 403 });

@@ -1,7 +1,15 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { resolveActiveUserId } from "@/lib/auth/resolve-user";
+import { getAdminUserId } from "@/lib/auth/server-auth";
 import { checkAskCooldown } from "@/lib/questions/cooldown";
+
+// Same dual-session resolver as the submit + upvote endpoints.
+async function resolveActor(): Promise<string | null> {
+  const active = await resolveActiveUserId();
+  if (active) return active;
+  return await getAdminUserId();
+}
 
 /**
  * GET /api/consilium/questions/me
@@ -15,8 +23,17 @@ import { checkAskCooldown } from "@/lib/questions/cooldown";
  * Single endpoint to keep the pill cheap on every feed-page render.
  */
 export async function GET() {
-  const userId = await resolveActiveUserId();
-  if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  const userId = await resolveActor();
+  if (!userId) {
+    // Soft-fail: if the pill mounts on a logged-out page (race condition
+    // during logout, or admin previewing as anon), don't 401-spam the
+    // browser console. Return an empty state and let the pill show idle.
+    return NextResponse.json({
+      cooldown: null,
+      questions: [],
+      hasUnreadAnswer: false,
+    });
+  }
 
   const [cooldown, mine] = await Promise.all([
     checkAskCooldown(userId),

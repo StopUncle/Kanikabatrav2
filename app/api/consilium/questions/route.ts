@@ -2,10 +2,23 @@ import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 import { resolveActiveUserId } from "@/lib/auth/resolve-user";
+import { getAdminUserId } from "@/lib/auth/server-auth";
 import { checkMembership } from "@/lib/community/membership";
 import { checkAskCooldown } from "@/lib/questions/cooldown";
 import { getQuestionSettings } from "@/lib/questions/settings";
 import { logger } from "@/lib/logger";
+
+// Resolve the acting user across BOTH session types:
+//   - member session (accessToken cookie) — normal member submitting a question
+//   - admin session (admin_session cookie) — Kanika testing or seeding
+// Mirrors the pattern in /api/consilium/feed/posts so admins aren't
+// 401-walled out of their own surfaces. Returns null if neither session
+// is valid (anonymous visitor or expired member token).
+async function resolveActor(): Promise<string | null> {
+  const active = await resolveActiveUserId();
+  if (active) return active;
+  return await getAdminUserId();
+}
 
 /**
  * GET /api/consilium/questions
@@ -19,8 +32,13 @@ import { logger } from "@/lib/logger";
  * asker's pill picks them up via /api/consilium/questions/me.
  */
 export async function GET() {
-  const userId = await resolveActiveUserId();
-  if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  const userId = await resolveActor();
+  if (!userId) {
+    return NextResponse.json(
+      { error: "Your session expired — please refresh the page and log in again" },
+      { status: 401 },
+    );
+  }
 
   const m = await checkMembership(userId);
   if (!m.isMember) return NextResponse.json({ error: "Members only" }, { status: 403 });
@@ -67,8 +85,13 @@ const submitSchema = z.object({
  * existing posts via the BotAction queue, not by submitting questions.
  */
 export async function POST(req: NextRequest) {
-  const userId = await resolveActiveUserId();
-  if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  const userId = await resolveActor();
+  if (!userId) {
+    return NextResponse.json(
+      { error: "Your session expired — please refresh the page and log in again" },
+      { status: 401 },
+    );
+  }
 
   const user = await prisma.user.findUnique({
     where: { id: userId },
