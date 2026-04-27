@@ -150,15 +150,19 @@ export default function EmailPreferencesPanel() {
                   <p className="text-sm text-text-light font-light">{title}</p>
                   <p className="text-xs text-text-gray/80 mt-0.5">{desc}</p>
                 </div>
-                {/* Switch */}
+                {/* Switch — role="switch" requires aria-checked
+                    (not aria-pressed). The outer <button> already
+                    handles the click; this inner div is purely the
+                    visual presentation. */}
                 <div
                   className={`shrink-0 relative w-10 h-6 rounded-full border transition-all duration-200 ${
                     on
                       ? "bg-accent-gold/20 border-accent-gold/60"
                       : "bg-deep-black/50 border-text-gray/30"
                   }`}
-                  aria-pressed={on}
                   role="switch"
+                  aria-checked={on}
+                  aria-label={`${title}: ${on ? "on" : "off"}`}
                 >
                   <span
                     className={`absolute top-0.5 w-5 h-5 rounded-full transition-all duration-200 ${

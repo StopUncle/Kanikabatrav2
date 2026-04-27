@@ -248,7 +248,7 @@ export default function AskKanikaModal({ open, onClose }: Props) {
                     className="rounded-lg border border-emerald-400/30 bg-emerald-400/5 p-3.5"
                   >
                     <p className="text-text-gray/80 text-[12px] mb-2 italic line-clamp-2">
-                      "{q.content}"
+                      &ldquo;{q.content}&rdquo;
                     </p>
                     {q.answerPost && (
                       <a
@@ -286,7 +286,7 @@ export default function AskKanikaModal({ open, onClose }: Props) {
             ) : cooldown && !cooldown.allowed ? (
               <div className="rounded-lg border border-warm-gold/15 bg-warm-gold/[0.03] p-4 text-center">
                 <p className="text-text-gray/80 text-sm mb-1">
-                  You've used today's question.
+                  You&rsquo;ve used today&rsquo;s question.
                 </p>
                 <p className="text-warm-gold/90 text-[12px] tracking-wider tabular-nums">
                   Next slot opens in {formatCountdown(cooldownMs)}

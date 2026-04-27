@@ -6,17 +6,6 @@ import { transcodeToMp3 } from "@/lib/audio/transcode";
 import { logger } from "@/lib/logger";
 import crypto from "crypto";
 
-const ALLOWED_EXTENSIONS = new Set([
-  "mp3",
-  "mp4",
-  "m4a",
-  "wav",
-  "ogg",
-  "webm",
-  "aac",
-  "caf",
-]);
-
 const ALLOWED_BASE_MIMES = new Set([
   "audio/mpeg",
   "audio/mp3",
@@ -32,16 +21,6 @@ const ALLOWED_BASE_MIMES = new Set([
   "audio/x-caf",
   "video/mp4",
 ]);
-
-// Sniffed MIME → canonical extension. Used when the extension/MIME on the
-// incoming file is missing or clearly wrong (common from iPhone Safari).
-const SNIFFED_TO_EXT: Record<string, string> = {
-  "audio/mpeg": "mp3",
-  "audio/mp4": "m4a",
-  "audio/ogg": "ogg",
-  "audio/wav": "wav",
-  "audio/webm": "webm",
-};
 
 function sniffAudio(buffer: Buffer): string | null {
   if (buffer.length < 12) return null;
