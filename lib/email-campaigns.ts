@@ -23,7 +23,8 @@ export type CampaignId =
   | "drip-book"
   | "drip-simulator"
   | "drip-consilium"
-  | "drip-coaching";
+  | "drip-coaching"
+  | "drip-ask-kanika";
 
 interface RecipientCtx {
   userId: string;
@@ -218,12 +219,61 @@ const coaching: CampaignDef = {
     ),
 };
 
+// ---- Campaign 6: Ask Kanika (NEW feature → Consilium pitch) ----
+// Anchored on the just-shipped Ask Kanika feature as the news hook.
+// Body pivots the news into the Consilium pitch — "this lives inside
+// the membership, here's why now is the time to join." Targeted at
+// non-members; opt-out check still happens at send time so members
+// (who should already see the pill) don't get re-pitched their own
+// product. We may want a hasActiveMembership filter later — for now,
+// the broad blast is OK because the email reads as exciting news,
+// not a hard sell, even to existing members.
+const askKanika: CampaignDef = {
+  id: "drip-ask-kanika",
+  type: "marketing",
+  label: "6. Ask Kanika — direct access (NEW)",
+  hook: "You can ask me anything now — and I'll answer in voice",
+  subject: () => "You can ask me anything now",
+  html: (r) =>
+    shell(
+      `${r.firstName}, this is new. I want you in for it.`,
+      "Ask Kanika · just shipped",
+      `
+        <p style="font-size:15.5px;line-height:1.7;color:#efe7d6;margin:0 0 18px 0;">
+          As of today, members of the Consilium can ask me one question every twenty-four hours, and I answer the top-voted ones in voice or on video. Direct. No middleman, no filter, no DM you'll have to scroll past.
+        </p>
+        <p style="font-size:15.5px;line-height:1.7;color:#efe7d6;margin:0 0 18px 0;">
+          You write the question. The community upvotes the ones that resonate. I work my way down the queue and answer the ones that make me think. When yours gets answered, you get an email and a green-dot notification on your pill.
+        </p>
+        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin: 0 0 24px 0;">
+          <tr>
+            <td bgcolor="#22151a" style="background:#22151a;border-left:3px solid #d4af37;border-radius:6px;padding:16px 18px;">
+              <p style="color:#f3d98a;font-size:11px;letter-spacing:1.5px;text-transform:uppercase;margin:0 0 8px 0;font-weight:600;">Who actually uses this</p>
+              <p style="color:#efe7d6;font-size:14px;line-height:1.65;margin:0;">
+                The questions in the queue right now: <em>"How do I read someone who refuses to be read?"</em> · <em>"What's the tell when an apology is performance?"</em> · <em>"How do you stop a smear campaign before it starts?"</em>
+              </p>
+            </td>
+          </tr>
+        </table>
+        <p style="font-size:15.5px;line-height:1.7;color:#efe7d6;margin:0 0 18px 0;">
+          This isn't a coaching call. It's not a course module. It's the closest thing to <strong style="color:#f3d98a;">unfiltered access</strong> I'm willing to give &mdash; and it lives inside the Consilium for the same reason the simulator does: the room has to stay tight.
+        </p>
+        <p style="font-size:15.5px;line-height:1.7;color:#efe7d6;margin:0 0 28px 0;">
+          <strong style="color:#f3d98a;">$29/month.</strong> Cancel anytime. The book comes free with it. The simulator, the courses, the daily psychology drops, and now this.
+        </p>
+      `,
+      withUtm("/consilium", "drip-ask-kanika"),
+      "Step inside",
+    ),
+};
+
 export const CAMPAIGNS: Record<CampaignId, CampaignDef> = {
   "drip-quiz": quiz,
   "drip-book": book,
   "drip-simulator": simulator,
   "drip-consilium": consilium,
   "drip-coaching": coaching,
+  "drip-ask-kanika": askKanika,
 };
 
 export function listCampaigns(): CampaignDef[] {
