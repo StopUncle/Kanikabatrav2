@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { requireAuth } from "@/lib/auth/middleware";
 import { isAdmin } from "@/lib/community/membership";
 import { isR2Configured, uploadToR2 } from "@/lib/storage/r2";
+import { transcodeToMp3 } from "@/lib/audio/transcode";
 import { logger } from "@/lib/logger";
 import crypto from "crypto";
 
@@ -91,7 +92,6 @@ export async function POST(request: NextRequest) {
     }
 
     const reportedMime = baseMime(file.type || "");
-    const rawExt = file.name.split(".").pop()?.toLowerCase() || "";
 
     // Read the buffer once so we can sniff magic bytes. Sniffing is the source
     // of truth — extension and MIME from iOS Safari are often wrong (recorder
@@ -112,23 +112,8 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Pick the extension we'll store under. Order of preference:
-    //   1. raw extension if it's in the allow-list AND consistent with sniff
-    //   2. canonical extension derived from sniffed type
-    //   3. sniffed type's default (safety net)
-    let finalExt: string;
-    if (rawExt && ALLOWED_EXTENSIONS.has(rawExt)) {
-      finalExt = rawExt;
-    } else {
-      finalExt = SNIFFED_TO_EXT[sniffed] ?? "bin";
-    }
-
     // Accept if EITHER the reported MIME is in our allowlist OR the sniff passed.
-    // iOS commonly reports MIMEs we don't have verbatim (codec suffixes, x-m4a
-    // variants, empty string). The sniff is authoritative.
     if (reportedMime && !ALLOWED_BASE_MIMES.has(reportedMime)) {
-      // MIME explicitly disallowed but sniff succeeded → still accept, just log
-      // for visibility in case a new format shows up in the wild.
       logger.info("[voice-notes] accepting via sniff despite unknown MIME", {
         reportedMime,
         sniffed,
@@ -136,14 +121,48 @@ export async function POST(request: NextRequest) {
       });
     }
 
-    const storeContentType = reportedMime && ALLOWED_BASE_MIMES.has(reportedMime)
-      ? reportedMime
-      : sniffed;
+    // Universal-playback step: anything that isn't already mp3 gets
+    // transcoded server-side. iOS Safari refuses to play webm/Opus
+    // (MediaRecorder's default), and m4a/wav/ogg have their own corner-
+    // case quirks across older Android browsers. mp3 plays everywhere.
+    // Files reported as mp3 are passed through unchanged to save CPU.
+    let finalBuffer: Buffer = buffer;
+    let finalExt: string;
+    let storeContentType: string;
+    const isMp3 = sniffed === "audio/mpeg";
+
+    if (isMp3) {
+      finalBuffer = buffer;
+      finalExt = "mp3";
+      storeContentType = "audio/mpeg";
+    } else {
+      try {
+        const t0 = Date.now();
+        finalBuffer = await transcodeToMp3(buffer);
+        logger.info("[voice-notes] transcoded to mp3", {
+          fromMime: sniffed,
+          fromSize: buffer.length,
+          toSize: finalBuffer.length,
+          ms: Date.now() - t0,
+        });
+      } catch (err) {
+        logger.error("[voice-notes] transcode failed", err as Error, {
+          sniffed,
+          size: buffer.length,
+        });
+        return NextResponse.json(
+          { error: "Couldn't convert your recording. Please try again." },
+          { status: 422 },
+        );
+      }
+      finalExt = "mp3";
+      storeContentType = "audio/mpeg";
+    }
 
     const key = `voice-notes/vn-${Date.now()}-${crypto.randomBytes(6).toString("hex")}.${finalExt}`;
 
     try {
-      const result = await uploadToR2(key, buffer, storeContentType);
+      const result = await uploadToR2(key, finalBuffer, storeContentType);
       return NextResponse.json(
         { success: true, url: result.url, key: result.key },
         { status: 201 },
@@ -151,7 +170,7 @@ export async function POST(request: NextRequest) {
     } catch (err) {
       logger.error("[voice-notes] R2 upload failed", err as Error, {
         key,
-        size: file.size,
+        size: finalBuffer.length,
         mime: file.type,
       });
       return NextResponse.json(

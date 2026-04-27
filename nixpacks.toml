@@ -1,5 +1,9 @@
 [phases.setup]
-nixPkgs = ["nodejs_20", "openssl"]
+# ffmpeg-full needed for voice-note transcoding. Browser MediaRecorder
+# emits webm/Opus by default, which iOS Safari refuses to play in an
+# <audio> tag. The upload route runs every non-mp3 file through ffmpeg
+# (libmp3lame) so storage is mp3-only and every device plays it.
+nixPkgs = ["nodejs_20", "openssl", "ffmpeg-full"]
 
 [phases.install]
 # `--include=dev` overrides the NODE_ENV=production variable set below,
