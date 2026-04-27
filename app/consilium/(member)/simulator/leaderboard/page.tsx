@@ -68,7 +68,11 @@ function PodiumCard({
       </div>
 
       <p
-        className={`text-base font-light tracking-wide text-center mb-1 truncate w-full ${rankColor}`}
+        // line-clamp-2 + break-words so a long display name (e.g.
+        // "Mistress Quintessa") wraps to a second line instead of
+        // ellipsis-clipping. leading-tight keeps two-line names from
+        // pushing the XP figure past the card bottom.
+        className={`text-base font-light tracking-wide text-center mb-1 leading-tight line-clamp-2 break-words w-full ${rankColor}`}
         title={entry.name}
       >
         {entry.isViewer ? `${entry.name} (you)` : entry.name}
