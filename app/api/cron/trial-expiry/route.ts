@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import jwt from "jsonwebtoken";
 import { prisma } from "@/lib/prisma";
 import { sendMembershipEndingSoon } from "@/lib/email";
 
@@ -69,11 +70,32 @@ export async function POST(request: NextRequest) {
         ),
       );
 
+      // For bundle holders, mint a one-click resubscribe JWT so the
+      // email link goes straight to Stripe Checkout for the standard
+      // $29/mo subscription — no re-application, no re-login. Other
+      // cycles (trial, gift) keep the default upgrade page which
+      // already routes through the right pitch flow.
+      let resubLink: string | undefined;
+      if (
+        membership.billingCycle === "bundle-1mo" ||
+        membership.billingCycle === "bundle-3mo"
+      ) {
+        const baseUrl =
+          process.env.NEXT_PUBLIC_BASE_URL || "https://kanikarose.com";
+        const token = jwt.sign(
+          { userId: membership.userId, type: "bundle-resub" },
+          process.env.JWT_SECRET!,
+          { expiresIn: "14d" },
+        );
+        resubLink = `${baseUrl}/api/consilium/bundle-resubscribe?token=${token}`;
+      }
+
       const emailSent = await sendMembershipEndingSoon(
         membership.user.email,
         membership.user.name || "there",
         daysLeft,
         membership.billingCycle,
+        resubLink,
       );
 
       if (emailSent) {

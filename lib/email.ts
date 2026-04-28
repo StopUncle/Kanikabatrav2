@@ -2001,9 +2001,16 @@ export const sendMembershipEndingSoon = async (
   memberName: string,
   daysLeft: number,
   billingCycle: string,
+  /**
+   * Optional one-click resubscribe link (e.g. /api/consilium/bundle-resubscribe?token=...)
+   * For bundle holders we mint a JWT-tokened URL so they go straight to
+   * Stripe Checkout without re-applying. For trial/gift cycles the
+   * default upgrade page (which has the apply flow) is still right.
+   */
+  resubLink?: string,
 ): Promise<boolean> => {
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://kanikarose.com";
-  const upgradeUrl = `${baseUrl}/consilium?upgrade=1`;
+  const upgradeUrl = resubLink || `${baseUrl}/consilium?upgrade=1`;
 
   const cycleLabel =
     billingCycle === "gift"
