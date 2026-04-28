@@ -222,6 +222,10 @@ export default function BookShowcase() {
                     />
                   </div>
 
+                  <p className="text-[11px] text-text-gray/70 text-center leading-relaxed -mt-1">
+                    Bundle covers your first month or three. Then $29/mo · cancel anytime.
+                  </p>
+
                   {/* Guarantee */}
                   <div className="flex items-center justify-center gap-2 text-text-gray text-xs">
                     <ShieldCheck size={14} className="text-accent-gold" />

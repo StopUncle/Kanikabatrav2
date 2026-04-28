@@ -58,7 +58,18 @@ export const STRIPE_PRICES: Record<string, string> = {
 export const STRIPE_PUBLISHABLE_KEY = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!;
 
 /**
- * Create a Stripe Checkout Session
+ * Create a Stripe Checkout Session.
+ *
+ * Supports three shapes:
+ *   1. mode="payment" — single one-time price (book, coaching, ask, donation).
+ *   2. mode="subscription" with one recurring price — straight monthly/annual
+ *      sub (INNER_CIRCLE).
+ *   3. mode="subscription" with a recurring price PLUS a one-time price as
+ *      `bundleAddOnPriceId`, plus `trialPeriodDays` — used for the
+ *      BOOK_CONSILIUM bundles. The one-time price is charged on the first
+ *      invoice; the recurring price kicks in after the trial. End result for
+ *      the buyer: pays $39 (or $79) today, then $29/mo after 30 (or 90) days
+ *      until they cancel.
  */
 export async function createCheckoutSession(options: {
   priceId: string;
@@ -67,16 +78,38 @@ export async function createCheckoutSession(options: {
   cancelUrl: string;
   customerEmail?: string;
   metadata?: Record<string, string>;
+  /** Stripe price id to add as a one-time line item alongside `priceId`. */
+  bundleAddOnPriceId?: string;
+  /** Trial length when bundling — keeps the recurring price free during the bundle period. */
+  trialPeriodDays?: number;
 }) {
+  const lineItems = [
+    { price: options.priceId, quantity: 1 },
+  ];
+  if (options.bundleAddOnPriceId) {
+    lineItems.push({ price: options.bundleAddOnPriceId, quantity: 1 });
+  }
+
   const session = await stripe.checkout.sessions.create({
     payment_method_types: ["card"],
-    line_items: [{ price: options.priceId, quantity: 1 }],
+    line_items: lineItems,
     mode: options.mode,
     success_url: options.successUrl,
     cancel_url: options.cancelUrl,
     customer_email: options.customerEmail,
     metadata: options.metadata,
     allow_promotion_codes: true,
+    ...(options.mode === "subscription" && options.trialPeriodDays
+      ? {
+          subscription_data: {
+            trial_period_days: options.trialPeriodDays,
+            // Mirror the session metadata onto the subscription so the
+            // invoice.payment_succeeded handler can recognise
+            // bundle-originated subs without doing an extra lookup.
+            metadata: options.metadata,
+          },
+        }
+      : {}),
   });
 
   return session;

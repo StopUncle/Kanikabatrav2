@@ -75,10 +75,26 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // Determine mode based on product. BOOK and BOOK_MEMBER are one-time
-    // payments; only INNER_CIRCLE is a subscription, and it's gated out
-    // above anyway.
-    const mode: "payment" | "subscription" = "payment";
+    // BOOK_CONSILIUM_*MO bundles are sold as a Stripe subscription with
+    // a trial: the bundle price ($39 or $79) is charged on day 0 as a
+    // one-time line item, the trial covers the bundle period (30 or 90
+    // days), and the recurring INNER_CIRCLE line ($29/mo) takes over after
+    // the trial. The buyer pays the bundle price today, gets the book,
+    // and rolls into the standard monthly subscription unless they cancel.
+    const isBundle =
+      priceKey === "BOOK_CONSILIUM_1MO" || priceKey === "BOOK_CONSILIUM_3MO";
+
+    const mode: "payment" | "subscription" = isBundle ? "subscription" : "payment";
+    const trialPeriodDays = isBundle
+      ? priceKey === "BOOK_CONSILIUM_1MO"
+        ? 30
+        : 90
+      : undefined;
+
+    // Subscription-mode bundles need the recurring price as the primary
+    // line item and the one-time bundle premium as the add-on.
+    const checkoutPriceId = isBundle ? STRIPE_PRICES.INNER_CIRCLE : priceId;
+    const bundleAddOnPriceId = isBundle ? priceId : undefined;
 
     const baseUrl =
       process.env.NEXT_PUBLIC_BASE_URL || "https://kanikarose.com";
@@ -87,8 +103,10 @@ export async function POST(request: NextRequest) {
     // existing BOOK branch fires and delivers the book exactly the same
     // way regardless of which price the member paid.
     const session = await createCheckoutSession({
-      priceId,
+      priceId: checkoutPriceId,
       mode,
+      bundleAddOnPriceId,
+      trialPeriodDays,
       successUrl:
         successUrl ||
         `${baseUrl}/success?session_id={CHECKOUT_SESSION_ID}&product=${priceKey}`,

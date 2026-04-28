@@ -433,6 +433,12 @@ export default function BookPage() {
                   </div>
                 )}
 
+                {!BOOK_INFO.isPresale && (
+                  <p className="text-[11px] text-text-gray/70 leading-relaxed">
+                    Bundle covers your first month or three. Then $29/mo · cancel anytime.
+                  </p>
+                )}
+
                 <div className="flex items-center gap-3 p-4 rounded-xl bg-white/[0.03] border border-white/[0.06]">
                   <ShieldCheck size={24} className="text-accent-gold shrink-0" />
                   <div>

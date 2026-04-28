@@ -22,7 +22,13 @@ export async function GET(request: NextRequest) {
 
     // Determine type from product key or metadata
     const type = productKey || session.metadata?.product_key || "purchase";
-    const isBook = type === "BOOK";
+    // BOOK_CONSILIUM_*MO bundles also deliver the book — they need the
+    // same download-token surfacing on the success page so buyers see
+    // the immediate-download button rather than only relying on email.
+    const isBook =
+      type === "BOOK" ||
+      type === "BOOK_CONSILIUM_1MO" ||
+      type === "BOOK_CONSILIUM_3MO";
     const isCoaching = type.startsWith("COACHING");
 
     // For book purchases, find the purchase record with download token

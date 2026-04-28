@@ -316,14 +316,24 @@ export async function POST(request: NextRequest) {
           productKey === "BOOK_CONSILIUM_1MO" ||
           productKey === "BOOK_CONSILIUM_3MO"
         ) {
-          // Book + timed Consilium bundle. One-time purchase that:
-          //   1. Creates a Purchase + delivers the book (same as BOOK)
-          //   2. Creates/upserts a User (same as INNER_CIRCLE if new)
-          //   3. Grants Consilium access with expiresAt = now + 30 or 90
-          //      days. NO Stripe subscription is created — the bundle
-          //      ends cleanly at expiresAt, no surprise charges.
-          const daysGranted =
-            productKey === "BOOK_CONSILIUM_1MO" ? 30 : 90;
+          // Book + Consilium bundle, sold as a Stripe subscription with a
+          // trial. The buyer pays $39 (or $79) at checkout for the book +
+          // 30 (or 90) days of access; the trial covers the bundle period;
+          // when the trial ends, the recurring INNER_CIRCLE line ($29/mo)
+          // takes over until they cancel.
+          //
+          // Two events per bundle: this checkout.session.completed (run
+          // ONCE — books, user, membership wired up) and a chain of
+          // invoice.payment_succeeded events (handled by the existing
+          // INNER_CIRCLE renewal path via paypalSubscriptionId lookup).
+          const subscriptionId = session.subscription as string;
+          if (!subscriptionId) {
+            console.error(
+              `[stripe-webhook] ${productKey} checkout has no subscription id`,
+              { sessionId },
+            );
+            break;
+          }
           const bundleLabel =
             productKey === "BOOK_CONSILIUM_1MO" ? "bundle-1mo" : "bundle-3mo";
 
@@ -354,7 +364,7 @@ export async function POST(request: NextRequest) {
               downloadToken,
               expiresAt: bookExpiresAt,
               maxDownloads: 10,
-              metadata: { source: "stripe", sessionId, productKey },
+              metadata: { source: "stripe", sessionId, productKey, subscriptionId },
             },
           });
 
@@ -373,6 +383,7 @@ export async function POST(request: NextRequest) {
                   source: "stripe",
                   sessionId,
                   productKey,
+                  subscriptionId,
                   emailDeliveryFailed: true,
                 },
               },
@@ -411,15 +422,11 @@ export async function POST(request: NextRequest) {
             isNewUser = true;
           }
 
-          // Grant Consilium access — no Stripe subscription, just a
-          // dated membership row.
-          //
-          // Guard against downgrading an active paying subscription. If
-          // the buyer already has a monthly/annual subscription, we do
-          // NOT overwrite their billingCycle or expiresAt — that would
-          // lose subscription state and effectively demote them. The
-          // book has already been delivered above, so they still get
-          // full value from the bundle purchase.
+          // Anti-double-billing guard. If the buyer already has an active
+          // INNER_CIRCLE subscription, we cancel the bundle's just-created
+          // sub so they don't get charged twice ($29 + $29 a month from
+          // now). They keep their book (already delivered) and their
+          // existing subscription is untouched.
           const existingMembership =
             await prisma.communityMembership.findUnique({
               where: { userId: user.id },
@@ -434,25 +441,55 @@ export async function POST(request: NextRequest) {
 
           const hasActiveSubscription =
             existingMembership?.status === "ACTIVE" &&
-            (existingMembership.paypalSubscriptionId !== null ||
-              existingMembership.billingCycle === "monthly" ||
-              existingMembership.billingCycle === "annual");
+            existingMembership.paypalSubscriptionId !== null &&
+            existingMembership.paypalSubscriptionId !== `ST-${subscriptionId}`;
 
           if (hasActiveSubscription) {
             console.log(
-              `[stripe-webhook] ${productKey} buyer ${email} already has an active subscription (${existingMembership.billingCycle}) — not downgrading to bundle`,
+              `[stripe-webhook] ${productKey} buyer ${email} already has subscription ${existingMembership.paypalSubscriptionId} — cancelling new bundle sub ${subscriptionId} to prevent double-charge`,
             );
+            try {
+              await stripe.subscriptions.cancel(subscriptionId);
+            } catch (err) {
+              console.error(
+                `[stripe-webhook] failed to cancel duplicate bundle sub ${subscriptionId}:`,
+                err,
+              );
+            }
           } else {
-            const consiliumExpiresAt = new Date();
-            consiliumExpiresAt.setDate(
-              consiliumExpiresAt.getDate() + daysGranted,
-            );
+            // Pull current_period_end from the subscription — during the
+            // trial this IS the bundle end date (30 or 90 days out).
+            // After trial it auto-extends via invoice.payment_succeeded.
+            let consiliumExpiresAt: Date;
+            try {
+              const sub = await stripe.subscriptions.retrieve(subscriptionId);
+              const periodEnd = (sub as { current_period_end?: number })
+                .current_period_end;
+              const trialEnd = (sub as { trial_end?: number }).trial_end;
+              const endUnix = trialEnd ?? periodEnd;
+              if (endUnix) {
+                consiliumExpiresAt = new Date(endUnix * 1000);
+              } else {
+                consiliumExpiresAt = new Date();
+                consiliumExpiresAt.setDate(
+                  consiliumExpiresAt.getDate() +
+                    (productKey === "BOOK_CONSILIUM_1MO" ? 30 : 90),
+                );
+              }
+            } catch {
+              consiliumExpiresAt = new Date();
+              consiliumExpiresAt.setDate(
+                consiliumExpiresAt.getDate() +
+                  (productKey === "BOOK_CONSILIUM_1MO" ? 30 : 90),
+              );
+            }
 
             await prisma.communityMembership.upsert({
               where: { userId: user.id },
               create: {
                 userId: user.id,
                 status: "ACTIVE",
+                paypalSubscriptionId: `ST-${subscriptionId}`,
                 billingCycle: bundleLabel,
                 activatedAt: new Date(),
                 approvedAt: new Date(),
@@ -460,6 +497,7 @@ export async function POST(request: NextRequest) {
               },
               update: {
                 status: "ACTIVE",
+                paypalSubscriptionId: `ST-${subscriptionId}`,
                 billingCycle: bundleLabel,
                 activatedAt: new Date(),
                 approvedAt: new Date(),
