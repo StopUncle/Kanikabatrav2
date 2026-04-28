@@ -91,7 +91,7 @@ export default function DonateClient() {
               className="w-full rounded-lg border border-warm-gold/15 bg-deep-black/60 px-3 py-2.5 text-text-light placeholder:text-text-gray/40 focus:outline-none focus:border-warm-gold/45"
             />
             <p className="mt-1 text-[11px] text-text-gray/55">
-              For the thank-you email. Leave blank if you'd rather not be
+              For the thank-you email. Leave blank if you&apos;d rather not be
               contacted — Stripe will still send a receipt.
             </p>
           </div>
@@ -126,7 +126,7 @@ export default function DonateClient() {
               className="mt-0.5 accent-warm-gold"
             />
             <span className="text-[12px] text-text-gray leading-relaxed">
-              Donate anonymously. Your name won't appear in any
+              Donate anonymously. Your name won&apos;t appear in any
               public acknowledgement, even if you include one in the
               message above.
             </span>
@@ -155,7 +155,7 @@ export default function DonateClient() {
           </button>
 
           <p className="mt-4 text-[11px] text-text-gray/50 text-center leading-relaxed">
-            You'll set the amount on the next page. Stripe handles the payment
+            You&apos;ll set the amount on the next page. Stripe handles the payment
             securely — Kanika never sees your card details. One-time donation;
             this is not a subscription.
           </p>
