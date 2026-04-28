@@ -59,7 +59,7 @@ export default function ConsiliumSimulatorTeaser({
                 />
                 <p className="text-warm-gold text-xs uppercase tracking-[0.3em]">
                   {isHomepage
-                    ? "The Consilium · flagship"
+                    ? "Inside the membership · flagship feature"
                     : "The only place you can practice this"}
                 </p>
               </div>

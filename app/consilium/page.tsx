@@ -4,17 +4,9 @@ import { prisma } from "@/lib/prisma";
 import Link from "next/link";
 import Header from "@/components/Header";
 import BackgroundEffects from "@/components/BackgroundEffects";
-import ConsiliumSeal from "@/components/ConsiliumSeal";
-import {
-  BookOpen,
-  Mic,
-  Shield,
-  Users,
-  Zap,
-  Film,
-  ArrowRight,
-} from "lucide-react";
+import { ArrowRight, Check, ShieldCheck } from "lucide-react";
 import ConsiliumSimulatorTeaser from "@/components/consilium/ConsiliumSimulatorTeaser";
+import FloatingConsiliumSeal from "@/components/consilium/FloatingConsiliumSeal";
 import { catalogueStats } from "@/lib/simulator/stats";
 
 export const metadata = {
@@ -40,45 +32,6 @@ export default async function InnerCircleLanding({
       redirect("/consilium/feed");
     }
   }
-
-  const features = [
-    {
-      icon: Film,
-      title: "The Dark Mirror Simulator",
-      description: `Duolingo for dark psychology — ${catalogueStats.scenarios} branching scenarios where you practice catching manipulation in real time. No theory. Every choice has a consequence`,
-      highlight: true,
-    },
-    {
-      icon: BookOpen,
-      title: "Full Course Library",
-      description:
-        "Dark psychology foundations, pattern recognition, career power dynamics — learn at your own pace",
-    },
-    {
-      icon: Mic,
-      title: "Voice Notes from Kanika",
-      description:
-        "Raw, unfiltered insights dropped when something needs to be said — not on a schedule",
-    },
-    {
-      icon: Zap,
-      title: "Daily Psychology Drops",
-      description:
-        "Fresh insights on manipulation tactics, power dynamics, and strategic psychology — posted daily",
-    },
-    {
-      icon: Shield,
-      title: "Troll-Free Zone",
-      description:
-        "Every comment is reviewed. Bad actors are removed fast. This space is protected",
-    },
-    {
-      icon: Users,
-      title: "People Who Get It",
-      description:
-        "Connect with others navigating the same power dynamics — in relationships, career, and life",
-    },
-  ];
 
   // Benefits grouped into three clusters so the card reads as a
   // three-beat promise (practice / access / people) rather than a
@@ -117,7 +70,7 @@ export default async function InnerCircleLanding({
           single <main>; a nested <main> here creates two "main content"
           landmarks which confuses assistive tech. */}
       <div className="min-h-screen pt-28 pb-16 relative z-10">
-        <div className="max-w-5xl mx-auto px-4">
+        <div className="max-w-6xl mx-auto px-4">
 
           {statusParam === "suspended" && (
             <div className="mb-8 p-4 bg-red-900/20 border border-red-500/30 rounded-xl text-center">
@@ -142,104 +95,83 @@ export default async function InnerCircleLanding({
             </div>
           )}
 
-          {/* Hero */}
-          <div className="text-center mb-20">
-            <div className="flex justify-center mb-8">
-              <ConsiliumSeal size="xl" haloed />
+          {/* Hero — 2-column on tablet+: animated seal on the left,
+              eyebrow + H1 + pitch + CTA on the right. On mobile the
+              two columns stack with the seal above the text. Mirrors
+              BookShowcase's layout shape so the two pillar pages feel
+              built from the same template. */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 lg:gap-16 items-center mb-20">
+            {/* LEFT — animated seal as the section anchor */}
+            <div className="flex justify-center order-1">
+              <FloatingConsiliumSeal frameSize="w-64 h-64 sm:w-72 sm:h-72 md:w-80 md:h-80 lg:w-96 lg:h-96" sealSize="!w-36 !h-36 sm:!w-44 sm:!h-44 lg:!w-56 lg:!h-56" />
             </div>
-            <p className="text-warm-gold/90 uppercase tracking-[0.3em] text-sm mb-4">
-              A Private Council
-            </p>
-            {/* H1 uses the same 3-stop warm-gold gradient as the Seal
-                (#f3d98a -> #d4af37 -> #9c7a1f) so the heading reads as
-                struck from the same metal as the medallion above. */}
-            <h1
-              className="text-5xl md:text-6xl lg:text-7xl font-extralight tracking-wider uppercase mb-3"
-              style={{
-                background:
-                  "linear-gradient(135deg, #f3d98a 0%, #d4af37 50%, #9c7a1f 100%)",
-                WebkitBackgroundClip: "text",
-                WebkitTextFillColor: "transparent",
-                backgroundClip: "text",
-              }}
-            >
-              The Consilium
-            </h1>
-            {/* Literary sub-line. Downgraded from uppercase-tracked
-                ("KON·SIL·I·UM · LATIN: COUNCIL, STRATEGY, DELIBERATION")
-                to lower-case italic serif so the H1 above owns the moment
-                and the eye stops bouncing between three tracked eyebrows.
-                The decorative gold hairline that used to sit between this
-                line and the body was a break in rhythm — removed. */}
-            <p className="text-text-gray/85 italic text-sm mb-8 font-light">
-              kon·sil·i·um &nbsp;·&nbsp; Latin: council, strategy, deliberation
-            </p>
-            <p className="text-xl text-text-gray max-w-2xl mx-auto mb-4 font-light leading-relaxed">
-              A private council for people who are done being the ones who get
-              played. Practice catching manipulation in real time. Courses,
-              voice notes, a space that&apos;s actually safe.
-            </p>
-            {/* Secondary positioning line. Previously uppercase tracked
-                gold ("HOME OF THE DARK MIRROR SIMULATOR — DUOLINGO FOR
-                DARK PSYCHOLOGY") which made it a third eyebrow
-                competing with "A PRIVATE COUNCIL" at the top of the
-                hero. Demoted to the same quiet serif italic treatment
-                as the latin sub-line so the hero holds a single strong
-                eyebrow above the H1 and one literary whisper below. */}
-            <p className="text-text-gray/60 italic text-sm max-w-2xl mx-auto mb-10 font-light">
-              Home of the Dark Mirror Simulator — Duolingo for dark psychology
-            </p>
 
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              {/* Primary conversion CTA. Uses the same warm-gold solid
-                  treatment as every other Consilium CTA on the page
-                  ("Start Practicing", "Step Inside") so the palette stays
-                  coherent — no tacked-on indigo stop. */}
-              <Link
-                href="/consilium/apply"
-                className="inline-flex items-center justify-center gap-2 py-4 px-10 rounded-full bg-warm-gold text-deep-black font-medium text-lg tracking-wider uppercase transition-all hover:bg-warm-gold/90 hover:shadow-[0_8px_24px_-4px_rgba(212,175,55,0.45)]"
+            {/* RIGHT — full pitch column */}
+            <div className="text-center md:text-left order-2">
+              <p className="text-warm-gold/90 uppercase tracking-[0.3em] text-xs sm:text-sm mb-4">
+                Private Community · Membership
+              </p>
+              <h1
+                className="text-5xl md:text-6xl lg:text-7xl font-extralight tracking-wider uppercase mb-3"
+                style={{
+                  background:
+                    "linear-gradient(135deg, #f3d98a 0%, #d4af37 50%, #9c7a1f 100%)",
+                  WebkitBackgroundClip: "text",
+                  WebkitTextFillColor: "transparent",
+                  backgroundClip: "text",
+                }}
               >
-                Join — $29/month
-                <ArrowRight size={20} />
-              </Link>
-            </div>
+                The Consilium
+              </h1>
+              <p className="text-text-gray/85 italic text-sm mb-6 font-light">
+                kon·sil·i·um &nbsp;·&nbsp; Latin: council, strategy, deliberation
+              </p>
+              <p className="text-lg lg:text-xl text-text-gray max-w-xl mx-auto md:mx-0 mb-8 font-light leading-relaxed">
+                The book teaches you the patterns. The Consilium is the
+                private membership where you{" "}
+                <strong className="text-text-light">practice them</strong> —
+                every day, with members navigating the same situations you
+                are.
+              </p>
 
-            <p className="text-text-gray/75 text-sm mt-4">
-              Instant access. Cancel anytime. No bullshit.
-            </p>
+              <div className="flex flex-col sm:flex-row gap-4 justify-center md:justify-start">
+                <Link
+                  href="/consilium/apply"
+                  className="inline-flex items-center justify-center gap-2 py-4 px-10 rounded-full bg-warm-gold text-deep-black font-medium text-base tracking-wider uppercase transition-all hover:bg-warm-gold/90 hover:shadow-[0_8px_24px_-4px_rgba(212,175,55,0.45)]"
+                >
+                  Join the Community — $29/month
+                  <ArrowRight size={18} />
+                </Link>
+              </div>
+
+              <p className="text-text-gray/75 text-sm mt-4">
+                Instant access · cancel anytime · no application required
+              </p>
+            </div>
           </div>
 
-          {/* Features Grid.
-              The simulator card gets a highlight treatment (warm-gold
-              border + subtle gradient) so it reads as the flagship
-              surface at a glance — everything else is supporting
-              material.
-              Previously each card carried a ~48px icon-in-colored-circle
-              at the top-left — the single most recognisable AI-SaaS-
-              template pattern. Replaced with a bare icon at larger size
-              in warm-gold; the icon now reads as a *mark* rather than
-              as a decorative chip, and six icons-in-circles no longer
-              hammer the eye in a single grid. Calmer. */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-20">
-            {features.map((feature) => (
+          {/* Concrete feature blocks — replaces the 6-card icon grid
+              (which read as AI-template) with the same checkmark-and-
+              accent-bar pattern the BookShowcase uses. Real numbers,
+              specific verbs, no decorative icons-in-circles. */}
+          <div className="max-w-3xl mx-auto space-y-3 mb-20">
+            {[
+              `${catalogueStats.scenarios} branching scenarios across ${catalogueStats.tracks} tracks. ${catalogueStats.scenes} scenes. ${catalogueStats.tacticsTaught} manipulation tactics. ${catalogueStats.redFlagsTaught} red flags catalogued.`,
+              "60 daily psychology drops + 28 themed weekday discussion prompts in your community feed",
+              "Voice notes from Kanika — raw, unfiltered, dropped when something needs to be said",
+              "Premium Sociopathic Dating Bible bundled in. Plus member-only $9.99 pricing on extras (normally $24.99)",
+              "Forum, live chat, daily insights — connect with members navigating the same patterns",
+              "Every comment human-reviewed. Bad actors removed fast. Troll-free by design",
+            ].map((feature, index) => (
               <div
-                key={feature.title}
-                className={`backdrop-blur-sm rounded-2xl p-6 transition-all duration-300 group ${
-                  feature.highlight
-                    ? "bg-gradient-to-br from-deep-burgundy/25 via-deep-black/60 to-deep-navy/25 border border-warm-gold/45 hover:border-warm-gold/70 shadow-[0_8px_40px_-12px_rgba(212,175,55,0.25)]"
-                    : "bg-deep-black/50 border border-warm-gold/15 hover:border-warm-gold/40 hover:shadow-[0_8px_40px_-12px_rgba(212,175,55,0.2)]"
-                }`}
+                key={index}
+                className="flex items-start gap-3 sm:gap-4 p-3 sm:p-4 bg-gradient-to-r from-deep-burgundy/20 to-deep-navy/10 border-l-2 sm:border-l-4 border-warm-gold hover:translate-x-1 sm:hover:translate-x-2 transition-transform"
               >
-                <feature.icon
-                  className={`w-7 h-7 mb-5 transition-colors ${
-                    feature.highlight
-                      ? "text-warm-gold"
-                      : "text-warm-gold/70 group-hover:text-warm-gold"
-                  }`}
-                  strokeWidth={1.25}
+                <Check
+                  className="text-warm-gold mt-0.5 shrink-0"
+                  size={20}
                 />
-                <h3 className="text-text-light font-light text-lg mb-2">{feature.title}</h3>
-                <p className="text-sm text-text-gray font-light leading-relaxed">{feature.description}</p>
+                <span className="text-text-light">{feature}</span>
               </div>
             ))}
           </div>
@@ -252,6 +184,20 @@ export default async function InnerCircleLanding({
               block. */}
           <div className="mb-20">
             <ConsiliumSimulatorTeaser variant="landing" />
+          </div>
+
+          {/* Testimonial — short, real, mirrors the BookShowcase's
+              "Sarah K." pull-quote. Same line as the homepage so cross-
+              page voice stays consistent. */}
+          <div className="max-w-2xl mx-auto mb-20">
+            <div className="glass-card p-6 sm:p-8 border-l-4 border-warm-gold text-center">
+              <p className="text-text-light italic text-xl sm:text-2xl leading-relaxed font-light">
+                &ldquo;Life changing.&rdquo;
+              </p>
+              <p className="text-warm-gold text-sm mt-3 uppercase tracking-[0.3em] font-light">
+                — Inner Circle member
+              </p>
+            </div>
           </div>
 
           {/* What's Inside.
@@ -331,12 +277,19 @@ export default async function InnerCircleLanding({
                 href="/consilium/apply"
                 className="inline-flex items-center justify-center gap-2 py-4 px-10 bg-warm-gold text-deep-black font-medium tracking-wider uppercase rounded-full transition-all hover:bg-warm-gold/90 hover:shadow-[0_8px_24px_-4px_rgba(212,175,55,0.45)]"
               >
-                Step Inside
+                Join the Community
                 <ArrowRight size={18} />
               </Link>
               <p className="text-text-gray/75 text-xs mt-4">
                 Instant access. Cancel anytime.
               </p>
+              <div className="flex items-center justify-center gap-2 text-text-gray text-xs mt-4 pt-4 border-t border-warm-gold/10">
+                <ShieldCheck size={14} className="text-warm-gold" />
+                <span>
+                  Spend 7 days inside. If it&apos;s not the most useful $29
+                  you&apos;ve spent, full refund.
+                </span>
+              </div>
             </div>
           </div>
 

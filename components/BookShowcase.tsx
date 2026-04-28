@@ -208,7 +208,7 @@ export default function BookShowcase() {
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <StripeButton
                       priceKey="BOOK_CONSILIUM_1MO"
-                      label="+ 1 month Consilium"
+                      label="+ 1 month membership"
                       price="$39"
                       icon="none"
                       className="w-full py-3 px-5 rounded-full border border-warm-gold/40 bg-warm-gold/[0.04] text-warm-gold text-sm font-medium tracking-wider transition-all duration-300 hover:bg-warm-gold/[0.08] hover:border-warm-gold/70 disabled:opacity-50 flex items-center justify-center gap-2 whitespace-nowrap"
@@ -225,6 +225,28 @@ export default function BookShowcase() {
                   <p className="text-[11px] text-text-gray/70 text-center leading-relaxed -mt-1">
                     Bundle covers your first month or three. Then $29/mo · cancel anytime.
                   </p>
+
+                  {/* Breadcrumb to the Consilium pitch — pulls book-only
+                      readers one section down so they see what the
+                      community actually delivers, not just the bundle
+                      price tag. */}
+                  <div className="text-center py-3 border-y border-warm-gold/10 my-1">
+                    <a
+                      href="#consilium"
+                      className="inline-flex items-center gap-2 text-warm-gold/90 hover:text-warm-gold text-xs sm:text-sm font-light tracking-wide transition-colors group"
+                    >
+                      <span>
+                        The book is the field guide. The community is where members{" "}
+                        <span className="text-warm-gold font-medium">use it daily</span>.
+                      </span>
+                      <span className="transition-transform group-hover:translate-y-0.5">
+                        ↓
+                      </span>
+                    </a>
+                    <p className="text-[10px] text-text-gray/50 mt-1 font-light">
+                      Voice notes · live discussion · daily insights · simulator
+                    </p>
+                  </div>
 
                   {/* Guarantee */}
                   <div className="flex items-center justify-center gap-2 text-text-gray text-xs">

@@ -418,7 +418,7 @@ export default function BookPage() {
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
                     <StripeButton
                       priceKey="BOOK_CONSILIUM_1MO"
-                      label="+ 1 month Consilium"
+                      label="+ 1 month membership"
                       price="$39"
                       icon="none"
                       className="w-full py-3 px-5 rounded-full border border-warm-gold/40 bg-warm-gold/[0.04] text-warm-gold text-sm font-medium tracking-wider transition-all duration-300 hover:bg-warm-gold/[0.08] hover:border-warm-gold/70 disabled:opacity-50 flex items-center justify-center gap-2 whitespace-nowrap"

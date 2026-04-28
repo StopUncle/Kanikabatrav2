@@ -10,6 +10,7 @@ import NewsletterForm from "@/components/NewsletterForm";
 import SocialHub from "@/components/SocialHub";
 import PostCard from "@/components/blog/PostCard";
 import ConsiliumSimulatorTeaser from "@/components/consilium/ConsiliumSimulatorTeaser";
+import ConsiliumOverview from "@/components/consilium/ConsiliumOverview";
 import { getAllPosts } from "@/lib/mdx";
 import { SITE_CONFIG } from "@/lib/constants";
 import { catalogueStats } from "@/lib/simulator/stats";
@@ -93,7 +94,16 @@ export default function Home() {
         {/* PRIMARY #1 — Book (the tangible field guide) */}
         <BookShowcase />
 
-        {/* PRIMARY #2 — Consilium (the interactive flagship) */}
+        {/* PRIMARY #2 — Consilium overview. Plain-English pitch of what
+            the membership IS so cold traffic can answer "what does
+            $29/mo get me?" in one glance. Lives ABOVE the simulator
+            teaser so visitors understand the product before being
+            asked to feel one feature of it. */}
+        <ConsiliumOverview />
+
+        {/* PRIMARY #2 (continued) — Live simulator demo. Now framed as
+            the flagship feature inside the Consilium, not a separate
+            offer. Eyebrow updated accordingly. */}
         <ConsiliumSimulatorTeaser variant="homepage" />
 
         <section id="testimonials">

@@ -111,7 +111,7 @@ export default function Hero() {
             href="/consilium"
             className="inline-flex items-center justify-center px-8 py-3.5 rounded-full border border-warm-gold/40 text-warm-gold font-medium text-sm tracking-[0.2em] uppercase transition-all hover:bg-warm-gold/10 hover:border-warm-gold/70"
           >
-            The Consilium
+            Join the Consilium
           </Link>
         </m.div>
 
@@ -121,7 +121,7 @@ export default function Hero() {
           transition={{ duration: 0.8, delay: 0.9 }}
           className="text-text-gray/60 text-xs sm:text-sm mt-6 font-light tracking-wide"
         >
-          Try the simulator free below — no signup, ten minutes.
+          Read the playbook. Practice it inside the community.
         </m.p>
       </div>
 
