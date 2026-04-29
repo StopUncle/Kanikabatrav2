@@ -928,8 +928,80 @@ model ContentIdea {
   createdAt DateTime          @default(now())
   updatedAt DateTime          @updatedAt
 
+  // Pipeline development fields. UI on /admin/content "Develop" tab walks
+  // an APPROVED idea through hook → line2 → line3, with the framework's
+  // recommended L2/L3 mechanisms surfaced based on the chosen hookType.
+  // See docs/content-research/lines-2-3-framework.md.
+  line2            String? @db.Text
+  line3            String? @db.Text
+  // FIRST_PERSON_MECHANISM | DIAGNOSTIC_CORRECTION | INTERIOR_MONOLOGUE | METHOD_EXPOSURE
+  hookType         String?
+  // INVALIDATE | SPECIFICITY_ESCALATION | PERSONAL_STAKE | REFRAME
+  line2Mechanism   String?
+  // SPECIFIC_MECHANISM | DIAGNOSTIC | PROTECTIVE_INVERSION | CONTINUATION
+  line3Mechanism   String?
+  // PROTECTIVE | PREDATORY | NEUTRAL — algorithm + shareability signal
+  frame            String?
+  // CONCEPT | HOOK_DRAFTED | LINES_DRAFTED | READY_TO_FILM | FILMED | PUBLISHED
+  developmentStage String  @default("CONCEPT")
+
+  // Full 60-second architecture beats (see middle-end-architecture.md).
+  // 8-15s — orient the viewer to the framework
+  setup              String? @db.Text
+  // 30-45s — the deepening beat
+  deepening          String? @db.Text
+  // SECOND_EXAMPLE | OBJECTION_HANDLE | PERSONAL_DISCLOSURE | ESCALATION
+  deepeningMechanism String?
+  // 45-55s — the close beat (distinct from prior "line3 closes the loop")
+  closeBeat          String? @db.Text
+  // FRAMEWORK_SUMMARY (saves) | PROTECTIVE_HANDOFF (shares) | DIAGNOSTIC_QUESTION (comments) | IMPLIED_CATALOGUE (follows)
+  closeMechanism     String?
+  // 55-60s — optional rewatch trigger
+  tail               String? @db.Text
+  // LONG (45-60s) | SHORT (15-25s) — different optimization for each
+  videoFormat        String  @default("LONG")
+
+  // Optional link to a shock-and-awe confession line drawn from the bank.
+  // When set, the API bumps usedCount + stamps lastUsedAt on the confession
+  // so we don't burn the same legendary line twice in 6 months.
+  confessionId       String?
+  confession         ContentConfession? @relation(fields: [confessionId], references: [id], onDelete: SetNull)
+
   @@index([status])
   @@index([source])
+  @@index([developmentStage])
+  @@index([confessionId])
+}
+
+// Shock-and-awe confession bank. See docs/content-research/shock-and-awe-framework.md.
+// Each row is a single confession line. Categories grouped in UI.
+// Pull from this bank when scripting videos — don't generate on-the-fly.
+model ContentConfession {
+  id         String   @id @default(cuid())
+  // LYING_WITHOUT_GUILT | CALCULATED_KINDNESS | EXPLOITING_VULNERABILITY |
+  // INDIFFERENCE_TO_HARM | PERFORMING_EMOTIONS | FINDING_VULNERABILITY_BORING |
+  // MIMICKING_GRIEF_OR_LOVE | MANIPULATING_LOVED_ONES |
+  // TREATING_RELATIONSHIPS_AS_SYSTEMS | NOT_FEELING_EXPECTED_THINGS | (custom)
+  category   String
+  // The actual confession line, in its rawest form (softening stripped).
+  text       String   @db.Text
+  // STANDARD | STRONG | LEGENDARY — quality tier.
+  // Aim for ~1 LEGENDARY per 5 lines. 3-4 LEGENDARY per 20 videos shipped.
+  tier       String   @default("STANDARD")
+  // HOOK | TAIL | DEEPENING — where this line plays best.
+  placement  String?
+  // Set when shipped in a video (manual or via future ContentIdea linkage).
+  // Don't burn the same legendary line twice in 6 months.
+  usedCount  Int      @default(0)
+  lastUsedAt DateTime?
+  notes      String?  @db.Text
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  ideas      ContentIdea[]
+
+  @@index([category])
+  @@index([tier])
 }
 
 model ResearchNote {

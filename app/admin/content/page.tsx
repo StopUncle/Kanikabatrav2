@@ -17,7 +17,15 @@ import {
   Youtube,
   Instagram,
   FileText,
+  Wand2,
+  Flame,
+  Camera,
+  TrendingUp,
 } from "lucide-react";
+import DevelopTab from "./_components/DevelopTab";
+import ConfessionsTab from "./_components/ConfessionsTab";
+import FilmingQueueTab from "./_components/FilmingQueueTab";
+import ShippedReportTab from "./_components/ShippedReportTab";
 
 // ── Types ──
 
@@ -736,6 +744,10 @@ function AnalysisTab() {
 
 const TABS = [
   { id: "ideas", label: "Ideas Triage", icon: Lightbulb },
+  { id: "develop", label: "Develop", icon: Wand2 },
+  { id: "filming", label: "Filming Queue", icon: Camera },
+  { id: "shipped", label: "Shipped", icon: TrendingUp },
+  { id: "confessions", label: "Confessions", icon: Flame },
   { id: "research", label: "Research Hub", icon: Search },
   { id: "analysis", label: "Video Analysis", icon: FileText },
 ] as const;
@@ -776,6 +788,10 @@ export default function ContentDashboard() {
 
       {/* Tab content */}
       {activeTab === "ideas" && <IdeasTab />}
+      {activeTab === "develop" && <DevelopTab />}
+      {activeTab === "filming" && <FilmingQueueTab />}
+      {activeTab === "shipped" && <ShippedReportTab />}
+      {activeTab === "confessions" && <ConfessionsTab />}
       {activeTab === "research" && <ResearchTab />}
       {activeTab === "analysis" && <AnalysisTab />}
     </div>

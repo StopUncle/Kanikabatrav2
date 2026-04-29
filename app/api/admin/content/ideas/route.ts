@@ -8,14 +8,27 @@ export async function GET(request: NextRequest) {
 
   const status = request.nextUrl.searchParams.get("status") || "PENDING";
   const source = request.nextUrl.searchParams.get("source");
+  const stage = request.nextUrl.searchParams.get("stage");
 
   const where: Record<string, unknown> = {};
   if (status !== "ALL") where.status = status;
   if (source) where.source = source;
+  if (stage) where.developmentStage = stage;
 
   const ideas = await prisma.contentIdea.findMany({
     where,
     orderBy: [{ sortOrder: "asc" }, { createdAt: "asc" }],
+    include: {
+      confession: {
+        select: {
+          id: true,
+          category: true,
+          text: true,
+          tier: true,
+          placement: true,
+        },
+      },
+    },
   });
 
   const counts = await prisma.contentIdea.groupBy({
@@ -23,9 +36,19 @@ export async function GET(request: NextRequest) {
     _count: true,
   });
 
+  // Stage counts only for APPROVED ideas (the develop pipeline).
+  const stageCountsRaw = await prisma.contentIdea.groupBy({
+    by: ["developmentStage"],
+    where: { status: "APPROVED" },
+    _count: true,
+  });
+
   return NextResponse.json({
     ideas,
     counts: Object.fromEntries(counts.map((c) => [c.status, c._count])),
+    stageCounts: Object.fromEntries(
+      stageCountsRaw.map((c) => [c.developmentStage, c._count]),
+    ),
   });
 }
 
