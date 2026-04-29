@@ -17,6 +17,7 @@ import type { SimulatorState } from "@/lib/simulator/types";
 import { getScenario } from "@/lib/simulator/scenarios";
 import { replayXp } from "@/lib/simulator/engine";
 import { mergeProgress } from "@/lib/simulator/progress-merge";
+import { bumpSimulatorStreak } from "@/lib/simulator/streak";
 import { logger } from "@/lib/logger";
 
 const ProgressBody = z.object({
@@ -127,6 +128,15 @@ export async function POST(request: NextRequest) {
           ...create,
         },
         update,
+      });
+
+      // Daily-streak bump. Fire-and-forget — a failure here must not 500
+      // the progress save itself. See `lib/simulator/streak.ts` for the
+      // UTC-day rollover logic.
+      bumpSimulatorStreak(prisma, user.id).catch((err) => {
+        logger.error("[simulator-progress] streak bump failed", err as Error, {
+          userId: user.id,
+        });
       });
 
       return NextResponse.json({ progress: saved });

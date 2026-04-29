@@ -32,6 +32,8 @@ import XpFloater from "./XpFloater";
 import StreakIndicator from "./StreakIndicator";
 import SceneProgress from "./SceneProgress";
 import ScenarioIntro from "./ScenarioIntro";
+import ChoiceTimer from "./ChoiceTimer";
+import ChoicePopularityReveal from "./ChoicePopularityReveal";
 
 type Props = {
   scenario: Scenario;
@@ -200,6 +202,37 @@ export default function SimulatorRunner({
   // Ref avoids re-firing onComplete when React double-invokes in StrictMode.
   const completeFiredRef = useRef(false);
 
+  // Choice-popularity reveal state. We fetch the per-(sceneId,choiceId)
+  // pick rates once at scenario start, then look up the rate for whatever
+  // choice the player just made and flash the % briefly.
+  // `rates` is { [sceneId]: { [choiceId]: 0..1 } } — see /api/simulator/choice-popularity.
+  const [popularityRates, setPopularityRates] = useState<Record<
+    string,
+    Record<string, number>
+  > | null>(null);
+  const [lastPickReveal, setLastPickReveal] = useState<{
+    rate: number | null;
+    resetKey: string;
+  } | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    fetch(
+      `/api/simulator/choice-popularity?scenarioId=${encodeURIComponent(scenario.id)}`,
+    )
+      .then((r) => (r.ok ? r.json() : null))
+      .then((data) => {
+        if (cancelled || !data) return;
+        setPopularityRates(data.rates ?? {});
+      })
+      .catch(() => {
+        // Non-fatal — the reveal just won't show. Game keeps working.
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [scenario.id]);
+
   // Stuck-detector state. Tracks taps on the current scene and shows a
   // recovery overlay when a player has been on the same scene for >60s,
   // tapped >5 times, and made zero choices. The overlay offers a one-tap
@@ -355,6 +388,17 @@ export default function SimulatorRunner({
       }
       setStreak(nextStreak);
 
+      // Choice popularity reveal — look up the rate for the choice we just
+      // picked on the scene we're leaving. Suppressed on scenes with too
+      // few aggregated picks (the API returns no entry, falling through
+      // to null which the reveal component renders as nothing).
+      const pickRate =
+        popularityRates?.[state.currentSceneId]?.[choice.id] ?? null;
+      setLastPickReveal({
+        rate: pickRate,
+        resetKey: `${state.currentSceneId}:${choice.id}:${Date.now()}`,
+      });
+
       setState((prev) => {
         const next = applyChoice(scenario, prev, choice.id);
         return streakBonus > 0
@@ -363,7 +407,7 @@ export default function SimulatorRunner({
       });
       setLineIndex(0);
     },
-    [scenario, streak],
+    [scenario, streak, state.currentSceneId, popularityRates],
   );
 
   const restart = useCallback(() => {
@@ -649,6 +693,13 @@ export default function SimulatorRunner({
       <ImmersionOverlay sceneId={scene.id} trigger={scene.immersionTrigger} />
       <SceneProgress scenario={scenario} state={state} />
       <StreakIndicator streak={streak} />
+      {/* Brief social-proof reveal after a choice resolves —
+          "Only 23% of players chose this." Suppresses on rare
+          aggregations (<5 picks per scene). */}
+      <ChoicePopularityReveal
+        rate={lastPickReveal?.rate ?? null}
+        resetKey={lastPickReveal?.resetKey ?? "none"}
+      />
       {exitButton}
       <XpFloater
         show={!!xpFloat}
@@ -898,12 +949,20 @@ export default function SimulatorRunner({
               completion behind the intro and the player hits Begin
               to find an already-revealed first line. */}
           {showIntro ? null : showChoices && scene.choices ? (
-            <ChoiceCards
-              key={`choices-${scene.id}`}
-              choices={scene.choices}
-              onPick={pickChoice}
-              scenario={scenario}
-            />
+            <div className="w-full" key={`choices-wrap-${scene.id}`}>
+              {/* Soft choice timer — only on `mood: danger` scenes. Fills
+                  a slim 12s bar above the cards; never auto-picks. The
+                  timer is a felt-pressure tool, not a mechanic. */}
+              {scene.mood === "danger" && (
+                <ChoiceTimer resetKey={scene.id} />
+              )}
+              <ChoiceCards
+                key={`choices-${scene.id}`}
+                choices={scene.choices}
+                onPick={pickChoice}
+                scenario={scenario}
+              />
+            </div>
           ) : currentLine ? (
             <DialogBox
               key={`line-${scene.id}-${lineIndex}`}

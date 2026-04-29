@@ -35,6 +35,9 @@ export interface MockUser {
   timezone: string | null;
   isBot: boolean;
   botActive: boolean;
+  simulatorStreakCurrent: number;
+  simulatorStreakLongest: number;
+  simulatorLastSession: Date | null;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -75,6 +78,9 @@ export function createMockUser(overrides: Partial<MockUser> = {}): MockUser {
     timezone: null,
     isBot: false,
     botActive: true,
+    simulatorStreakCurrent: 0,
+    simulatorStreakLongest: 0,
+    simulatorLastSession: null,
     createdAt: new Date(),
     updatedAt: new Date(),
     ...overrides,

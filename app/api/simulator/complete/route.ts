@@ -33,6 +33,7 @@ import type {
 } from "@/lib/simulator/types";
 import { replayXp } from "@/lib/simulator/engine";
 import { mergeProgress } from "@/lib/simulator/progress-merge";
+import { bumpSimulatorStreak } from "@/lib/simulator/streak";
 import { logger } from "@/lib/logger";
 
 const CompleteBody = z.object({
@@ -124,6 +125,19 @@ export async function POST(request: NextRequest) {
         endedAt: body.endedAt,
       });
 
+      // Endings-found tracking — push the current ending sceneId onto the
+      // user's set of distinct endings reached on this scenario, idempotently.
+      // Length of this array vs scenes.filter(isEnding).length renders the
+      // "X / Y endings found" counter on catalog cards.
+      const priorEndings = existingRow?.endingsReached ?? [];
+      const endingsReached = priorEndings.includes(body.currentSceneId)
+        ? priorEndings
+        : [...priorEndings, body.currentSceneId];
+      // mergeProgress keeps the best-of payload; we just need to add our
+      // endings field on top of both branches.
+      const createWithEndings = { ...create, endingsReached };
+      const updateWithEndings = { ...update, endingsReached };
+
       // Persist progress + badges in one round-trip.
       const [, existing] = await prisma.$transaction([
         prisma.simulatorProgress.upsert({
@@ -136,9 +150,9 @@ export async function POST(request: NextRequest) {
           create: {
             userId: user.id,
             scenarioId: body.scenarioId,
-            ...create,
+            ...createWithEndings,
           },
-          update,
+          update: updateWithEndings,
         }),
         prisma.simulatorBadge.findMany({
           where: { userId: user.id, badgeKey: { in: earnedKeys } },
@@ -295,6 +309,16 @@ export async function POST(request: NextRequest) {
           earnedKeys.push(k);
         }
       }
+
+      // Daily-streak bump — completion always counts as a session, even if
+      // /progress already bumped earlier in the same scenario. Idempotent
+      // within a UTC calendar day. Fire-and-forget per the streak helper's
+      // contract: a streak-bump failure must never 500 the completion.
+      bumpSimulatorStreak(prisma, user.id).catch((err) => {
+        logger.error("[simulator-complete] streak bump failed", err as Error, {
+          userId: user.id,
+        });
+      });
 
       return NextResponse.json({
         success: true,

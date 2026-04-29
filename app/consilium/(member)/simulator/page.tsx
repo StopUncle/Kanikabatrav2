@@ -17,6 +17,8 @@ import LevelJourney, {
   type ScenarioNode,
   type ScenarioStatus,
 } from "@/components/consilium/LevelJourney";
+import StreakBanner from "@/components/simulator/StreakBanner";
+import { readSimulatorStreak } from "@/lib/simulator/streak";
 
 export const metadata = {
   title: "The Dark Mirror — Simulator | Kanika Batra",
@@ -62,7 +64,7 @@ export default async function SimulatorIndex({
   const params = await searchParams;
   const track = resolveTrack(params.track);
 
-  const [progress, badgeCount] = await Promise.all([
+  const [progress, badgeCount, streak] = await Promise.all([
     prisma.simulatorProgress.findMany({
       where: { userId },
       select: {
@@ -76,9 +78,13 @@ export default async function SimulatorIndex({
         // Stored as Json on SimulatorProgress; computeStarsFromJson
         // tolerates the unknown shape and returns 0 if malformed.
         choicesMade: true,
+        // Length vs scenes.filter(isEnding).length renders the
+        // "X / Y endings" counter on each completed scenario card.
+        endingsReached: true,
       },
     }),
     prisma.simulatorBadge.count({ where: { userId } }),
+    readSimulatorStreak(prisma, userId),
   ]);
 
   const progressByScenario = new Map(progress.map((p) => [p.scenarioId, p]));
@@ -145,12 +151,19 @@ export default async function SimulatorIndex({
       const stars = p?.completedAt
         ? computeStarsFromJson(p.outcome as OutcomeType | null, p.choicesMade)
         : 0;
+      // Endings counter: distinct ending sceneIds the player has reached
+      // / total endings declared in the scenario. The total is computed
+      // from the scenario object directly so it stays in sync with content.
+      const endingsTotal = s.scenes.filter((sc) => sc.isEnding).length;
+      const endingsFound = p?.endingsReached?.length ?? 0;
       return {
         scenario: s,
         status,
         resumeSceneId: p?.currentSceneId,
         xpEarned: p?.xpEarned ?? 0,
         stars,
+        endingsFound,
+        endingsTotal,
         prerequisiteTitles: prereqTitles,
       };
     });
@@ -218,7 +231,15 @@ export default async function SimulatorIndex({
           Every choice teaches you something — whether it costs you or not.
         </p>
 
-        <div className="mt-7 flex flex-wrap gap-x-6 gap-y-3 text-sm">
+        <div className="mt-7">
+          <StreakBanner
+            current={streak.current}
+            longest={streak.longest}
+            isAtRisk={streak.isAtRisk}
+          />
+        </div>
+
+        <div className="mt-5 flex flex-wrap gap-x-6 gap-y-3 text-sm">
           <Stat label="Track XP" value={trackXp.toLocaleString()} />
           <Stat label="Total XP" value={totalXp.toLocaleString()} />
           <Stat label="Badges" value={badgeCount} />

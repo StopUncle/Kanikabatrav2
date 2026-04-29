@@ -368,19 +368,89 @@ export default function EndingScreen({
             <RotateCcw size={16} strokeWidth={1.5} />
             Replay
           </button>
-          {customCta
-            ? customCta
-            : nextScenarioHref && (
-                <Link
-                  href={nextScenarioHref}
-                  className="inline-flex items-center justify-center gap-2 px-8 py-3 bg-accent-gold text-deep-black font-medium tracking-wider uppercase text-sm rounded-full hover:bg-accent-gold/90 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-gold focus-visible:ring-offset-2 focus-visible:ring-offset-deep-black"
-                >
-                  Next Scenario
-                  <ArrowRight size={16} strokeWidth={1.5} />
-                </Link>
-              )}
+          {customCta ? (
+            customCta
+          ) : nextScenarioHref ? (
+            <NextScenarioButton
+              href={nextScenarioHref}
+              autoAdvance={outcome === "good" || outcome === "passed"}
+            />
+          ) : null}
         </m.div>
       </div>
     </m.div>
+  );
+}
+
+/**
+ * Next-scenario CTA with optional 5-second auto-advance.
+ *
+ * On winning outcomes (good / passed), starts a ~6.5s countdown that
+ * fills a progress bar inside the button. The user can:
+ *   - Click Next at any time (immediate advance)
+ *   - Hover the button to pause the countdown (gives them reading time)
+ *   - Click "Stay on this screen" to cancel auto-advance entirely
+ *
+ * Doesn't fire on losing outcomes — auto-advancing into another scenario
+ * after a loss is punishment, not retention. Players need a beat.
+ */
+function NextScenarioButton({
+  href,
+  autoAdvance,
+}: {
+  href: string;
+  autoAdvance: boolean;
+}) {
+  const [paused, setPaused] = useState(false);
+  const [cancelled, setCancelled] = useState(false);
+
+  useEffect(() => {
+    if (!autoAdvance || cancelled || paused) return;
+    const timer = setTimeout(() => {
+      window.location.href = href;
+    }, 6500);
+    return () => clearTimeout(timer);
+  }, [autoAdvance, cancelled, paused, href]);
+
+  const showAutoUI = autoAdvance && !cancelled;
+
+  return (
+    <div className="inline-flex flex-col items-center gap-2">
+      <Link
+        href={href}
+        onMouseEnter={() => setPaused(true)}
+        onMouseLeave={() => setPaused(false)}
+        className="relative inline-flex items-center justify-center gap-2 px-8 py-3 bg-accent-gold text-deep-black font-medium tracking-wider uppercase text-sm rounded-full hover:bg-accent-gold/90 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-gold focus-visible:ring-offset-2 focus-visible:ring-offset-deep-black overflow-hidden"
+      >
+        {/* Progress fill — sweeps left-to-right behind the label.
+            Pure CSS animation so pause is a one-line attribute change. */}
+        {showAutoUI && (
+          <span
+            aria-hidden
+            className="absolute inset-y-0 left-0 right-0 bg-deep-black/15 origin-left"
+            style={{
+              animation: "ending-autoadvance-fill 6500ms linear forwards",
+              animationPlayState: paused ? "paused" : "running",
+            }}
+          />
+        )}
+        <span className="relative">Next Scenario</span>
+        <ArrowRight size={16} strokeWidth={1.5} className="relative" />
+      </Link>
+      {showAutoUI && (
+        <button
+          onClick={() => setCancelled(true)}
+          className="text-text-gray/60 hover:text-text-gray text-[10px] uppercase tracking-[0.25em] transition-colors"
+        >
+          Stay on this screen
+        </button>
+      )}
+      <style>{`
+        @keyframes ending-autoadvance-fill {
+          from { transform: scaleX(0); }
+          to   { transform: scaleX(1); }
+        }
+      `}</style>
+    </div>
   );
 }

@@ -58,6 +58,15 @@ model User {
   reportsFiled              CommentReport[]      @relation("ReportsFiled")
   reportsResolved           CommentReport[]      @relation("ReportsResolved")
   simulatorProgress         SimulatorProgress[]
+  // Simulator daily-streak. simulatorStreakCurrent ticks up by 1 the first
+  // time the user takes a simulator action on a calendar day; resets to 0
+  // if a full day passes without one. simulatorStreakLongest is monotonically
+  // increasing — read-only "all-time best" displayed on the catalog header.
+  // simulatorLastSession is the timestamp of the last action; the day-rollover
+  // check compares its date to today's date in UTC.
+  simulatorStreakCurrent    Int                  @default(0)
+  simulatorStreakLongest    Int                  @default(0)
+  simulatorLastSession      DateTime?
   simulatorBadges           SimulatorBadge[]
   isBot                     Boolean              @default(false)
   botActive                 Boolean              @default(true)
@@ -1073,6 +1082,12 @@ model SimulatorProgress {
   // meta-achievement in `lib/simulator/achievements.ts`. Stays 0 for
   // in-progress rows; ticks to 1 on first completion, 2 on second, etc.
   completionCount Int       @default(0)
+  // Distinct ending sceneIds the user has reached on this scenario across
+  // all their replays. Length vs scenes.filter(isEnding).length renders
+  // the "X / Y endings found" counter on catalog cards. Each replay adds
+  // its endSceneId only if it isn't already in the array — so it's a set,
+  // not a log. Empty until first completion.
+  endingsReached  String[]  @default([])
 
   @@unique([userId, scenarioId])
   @@index([userId])

@@ -51,6 +51,10 @@ export interface ScenarioNode {
    *  0 = not yet completed. 1 = completed. 2 = passed. 3 = mastered.
    *  Drives the at-a-glance Clash-style ★/★★/★★★ on each card. */
   stars: 0 | 1 | 2 | 3;
+  /** Endings the player has reached on this scenario (set, not log). */
+  endingsFound: number;
+  /** Total endings in this scenario (count of scenes with isEnding=true). */
+  endingsTotal: number;
   /** Names of scenarios that gate this one — shown when locked. */
   prerequisiteTitles: string[];
 }
@@ -225,6 +229,25 @@ function ScenarioCard({
             {node.xpEarned > 0 && (
               <span className="text-warm-gold/70 text-[10px] tabular-nums">
                 +{node.xpEarned} XP
+              </span>
+            )}
+            {/* Endings counter — only shows once the player has reached
+                at least one. Hides on scenarios with a single ending so
+                we don't render a tautology like "1 / 1 endings". */}
+            {node.endingsFound > 0 && node.endingsTotal > 1 && (
+              <span
+                className={`text-[10px] tabular-nums ${
+                  node.endingsFound === node.endingsTotal
+                    ? "text-accent-gold"
+                    : "text-text-gray/70"
+                }`}
+                title={
+                  node.endingsFound === node.endingsTotal
+                    ? "All endings discovered"
+                    : `${node.endingsTotal - node.endingsFound} more ending${node.endingsTotal - node.endingsFound === 1 ? "" : "s"} to find`
+                }
+              >
+                {node.endingsFound} / {node.endingsTotal} endings
               </span>
             )}
           </div>
