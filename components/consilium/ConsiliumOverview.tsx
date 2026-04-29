@@ -25,18 +25,20 @@ import FloatingConsiliumSeal from "@/components/consilium/FloatingConsiliumSeal"
  * brand name "The Consilium" doesn't have to do the explaining alone.
  */
 export default function ConsiliumOverview() {
-  // What's inside, with concrete numbers and dollar anchors.
+  // What's inside, with concrete numbers and dollar anchors. Book is
+  // not bundled — that's a separate purchase. Member-only pricing on
+  // it is listed last as the discount benefit, not as inclusion.
   const inside = [
-    {
-      title: "The Sociopathic Dating Bible",
-      detail:
-        "Premium edition included — 70,000 words, 15 chapters + 2 bonus chapters on narcissists & avoidants",
-      value: "$24.99",
-    },
     {
       title: "The Dark Mirror Simulator",
       detail:
         "20 branching scenarios · 342 scenes · 129 endings · 83 manipulation tactics · 79 red flags catalogued",
+      value: "Members only",
+    },
+    {
+      title: "Ask Kanika",
+      detail:
+        "Submit one question per day. Top-voted get answered by Kanika — by voice or video, in your feed",
       value: "Members only",
     },
     {
@@ -60,7 +62,7 @@ export default function ConsiliumOverview() {
     {
       title: "Member-Only Book Pricing",
       detail:
-        "If you ever want extra copies of the book — $9.99 each instead of $24.99",
+        "Want the book too? Members get the Sociopathic Dating Bible at $9.99 (normally $24.99)",
       value: "Save 60%",
     },
   ];
@@ -71,6 +73,54 @@ export default function ConsiliumOverview() {
       className="py-16 sm:py-24 lg:py-32 px-4 sm:px-6 lg:px-8 overflow-hidden relative"
     >
       <div className="max-w-7xl mx-auto">
+        {/* Section break header — explicitly separates this pillar from
+            BookShowcase above so the floating-seal-on-left layout doesn't
+            read as a continuation of the floating-book-on-left layout
+            on desktop. Centered, gold-bracketed, with a thin gradient
+            divider above and below. Stays understated on mobile where
+            the sections naturally separate by stacking. */}
+        <div className="text-center mb-12 sm:mb-16 lg:mb-20">
+          {/* Top divider — short gold gradient line */}
+          <div className="flex items-center justify-center gap-4 mb-6">
+            <span className="h-px w-16 sm:w-24 bg-gradient-to-r from-transparent to-warm-gold/50" />
+            <span className="text-warm-gold/70 text-[10px] sm:text-xs uppercase tracking-[0.4em] font-light whitespace-nowrap">
+              Pillar Two · The Membership
+            </span>
+            <span className="h-px w-16 sm:w-24 bg-gradient-to-l from-transparent to-warm-gold/50" />
+          </div>
+
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extralight tracking-wide leading-tight">
+            <span className="text-text-light">Where the </span>
+            <span
+              style={{
+                background:
+                  "linear-gradient(135deg, #f3d98a 0%, #d4af37 50%, #9c7a1f 100%)",
+                WebkitBackgroundClip: "text",
+                WebkitTextFillColor: "transparent",
+                backgroundClip: "text",
+              }}
+            >
+              field guide
+            </span>
+            <span className="text-text-light"> meets the </span>
+            <span
+              style={{
+                background:
+                  "linear-gradient(135deg, #f3d98a 0%, #d4af37 50%, #9c7a1f 100%)",
+                WebkitBackgroundClip: "text",
+                WebkitTextFillColor: "transparent",
+                backgroundClip: "text",
+              }}
+            >
+              practice ground
+            </span>
+          </h2>
+          <p className="text-text-gray/80 text-sm sm:text-base font-light italic mt-4 max-w-2xl mx-auto">
+            The book stays the book. This is the private community where
+            members go to use it.
+          </p>
+        </div>
+
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 sm:gap-12 lg:gap-16 items-center">
           {/* LEFT — the section's brand object. Mirrors the floating
               book on BookShowcase: large, animated, gives the section a
@@ -131,9 +181,9 @@ export default function ConsiliumOverview() {
             <div className="space-y-3">
               {[
                 "342 branching scenes inside the Dark Mirror Simulator — every choice has a consequence",
-                "60 daily psychology drops + 28 themed discussion prompts in your feed",
+                "Ask Kanika — one question a day, answered by voice or video in your feed",
+                "60 daily psychology drops + 28 themed discussion prompts",
                 "Voice notes from Kanika — raw insights you won't hear anywhere else",
-                "Premium Sociopathic Dating Bible bundled in, plus member-only $9.99 pricing on extras",
               ].map((feature, index) => (
                 <m.div
                   key={index}

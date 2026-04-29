@@ -153,15 +153,18 @@ export default async function InnerCircleLanding({
           {/* Concrete feature blocks — replaces the 6-card icon grid
               (which read as AI-template) with the same checkmark-and-
               accent-bar pattern the BookShowcase uses. Real numbers,
-              specific verbs, no decorative icons-in-circles. */}
+              specific verbs, no decorative icons-in-circles. The
+              Sociopathic Dating Bible is sold separately — members get
+              it at the discounted $9.99, but the book is not bundled. */}
           <div className="max-w-3xl mx-auto space-y-3 mb-20">
             {[
               `${catalogueStats.scenarios} branching scenarios across ${catalogueStats.tracks} tracks. ${catalogueStats.scenes} scenes. ${catalogueStats.tacticsTaught} manipulation tactics. ${catalogueStats.redFlagsTaught} red flags catalogued.`,
+              "Ask Kanika — submit one question per day, top-voted get answered by voice or video in your feed",
               "60 daily psychology drops + 28 themed weekday discussion prompts in your community feed",
               "Voice notes from Kanika — raw, unfiltered, dropped when something needs to be said",
-              "Premium Sociopathic Dating Bible bundled in. Plus member-only $9.99 pricing on extras (normally $24.99)",
               "Forum, live chat, daily insights — connect with members navigating the same patterns",
               "Every comment human-reviewed. Bad actors removed fast. Troll-free by design",
+              "Want the book? Members get the Sociopathic Dating Bible at $9.99 (normally $24.99) — separate purchase",
             ].map((feature, index) => (
               <div
                 key={index}
