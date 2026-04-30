@@ -6,6 +6,7 @@ import { memberSafeName } from "@/lib/community/privacy";
 import FeedList from "@/components/consilium/FeedList";
 import OnboardingModal from "@/components/consilium/OnboardingModal";
 import FirstMovesChecklist from "@/components/consilium/FirstMovesChecklist";
+import FirstSevenDays from "@/components/consilium/FirstSevenDays";
 import { MessageCircle, Mail } from "lucide-react";
 import { tierForMember } from "@/components/consilium/badge-tiers";
 
@@ -32,6 +33,7 @@ export default async function FeedPage({
       onboardingSeenAt: true,
       displayName: true,
       gender: true,
+      communityMembership: { select: { activatedAt: true } },
       _count: {
         select: {
           quizResults: true,
@@ -197,6 +199,13 @@ export default async function FeedPage({
           </p>
         </div>
 
+        <FirstSevenDays
+          activatedAt={
+            viewerRecord?.communityMembership?.activatedAt?.toISOString() ??
+            null
+          }
+          signals={firstMovesSignals}
+        />
         <FirstMovesChecklist signals={firstMovesSignals} />
 
         {formatted.length === 0 ? (
