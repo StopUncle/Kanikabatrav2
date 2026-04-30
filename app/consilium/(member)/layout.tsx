@@ -5,6 +5,8 @@ import BackgroundEffects from "@/components/BackgroundEffects";
 import InnerCircleSidebar from "@/components/consilium/InnerCircleSidebar";
 import MemberPillNav from "@/components/consilium/MemberPillNav";
 import SessionWatermark from "@/components/consilium/SessionWatermark";
+import ServiceWorkerRegister from "@/components/pwa/ServiceWorkerRegister";
+import InstallPrompt from "@/components/pwa/InstallPrompt";
 import { prisma } from "@/lib/prisma";
 import { tierForMember, daysToNextTier } from "@/components/consilium/badge-tiers";
 import { computeFingerprint } from "@/lib/community/fingerprint";
@@ -98,6 +100,11 @@ export default async function MemberLayout({
         </main>
       </div>
       <SessionWatermark fingerprint={fingerprint} />
+      {/* PWA hooks: SW registration + tasteful install banner.
+          Mounted member-side only — non-members don't get pestered
+          to install an app they can't use. */}
+      <ServiceWorkerRegister />
+      <InstallPrompt />
     </div>
   );
 }
