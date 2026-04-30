@@ -126,10 +126,16 @@ export default async function InnerCircleLanding({
               <p className="text-text-gray/85 italic text-sm mb-6 font-light">
                 kon·sil·i·um &nbsp;·&nbsp; Latin: council, strategy, deliberation
               </p>
-              <p className="text-lg lg:text-xl text-text-gray max-w-xl mx-auto md:mx-0 mb-8 font-light leading-relaxed">
+              <p className="text-lg lg:text-xl text-text-gray max-w-xl mx-auto md:mx-0 mb-3 font-light leading-relaxed">
+                <strong className="text-text-light">
+                  30 days from now you&apos;ll spot the move before it lands.
+                </strong>{" "}
+                Not by accident. Because someone trained you.
+              </p>
+              <p className="text-base lg:text-lg text-text-gray/85 max-w-xl mx-auto md:mx-0 mb-8 font-light leading-relaxed">
                 The book teaches you the patterns. The Consilium is the
                 private membership where you{" "}
-                <strong className="text-text-light">practice them</strong> —
+                <strong className="text-text-light">practice them</strong>,
                 every day, with members navigating the same situations you
                 are.
               </p>
@@ -245,10 +251,148 @@ export default async function InnerCircleLanding({
             </div>
           </div>
 
-          {/* Price Anchor */}
+          {/* Value Stack.
+              Component-by-component standalone pricing, then the
+              bundled reveal. Each row names what the component
+              would cost if sold separately, totals at the bottom,
+              then the actual $29/mo lands as the punch. The effect
+              is anchor-and-drop, the prospect reads $515 first and
+              metabolises the $29 against that ceiling, not against
+              "is $29 worth it on its own". */}
+          <div className="mb-20">
+            <div className="max-w-2xl mx-auto">
+              <div className="text-center mb-8">
+                <p className="text-warm-gold/70 text-[11px] uppercase tracking-[0.35em] mb-3">
+                  What you&apos;re actually getting
+                </p>
+                <h2 className="text-3xl font-extralight tracking-wider uppercase text-text-light">
+                  The Stack
+                </h2>
+              </div>
+
+              <div className="bg-gradient-to-br from-deep-navy/60 to-deep-burgundy/40 backdrop-blur-sm border border-warm-gold/25 rounded-2xl overflow-hidden">
+                {[
+                  {
+                    name: "The Sociopathic Dating Bible",
+                    sub: "Full ebook + PDF + 2 addendum chapters (Narcissists, Avoidants)",
+                    price: "$24.99",
+                  },
+                  {
+                    name: "Weekly voice-note debriefs from Kanika",
+                    sub: "52 a year, dropped when something needs to be said",
+                    price: "$200 / yr",
+                  },
+                  {
+                    name: "The Dark Mirror Simulator",
+                    sub: `${catalogueStats.scenarios} branching scenarios, ${catalogueStats.tacticsTaught} tactics, live-fire practice`,
+                    price: "$97",
+                  },
+                  {
+                    name: "Daily Dark Insight cards",
+                    sub: "60 rotating psychology drops + 28 themed weekday discussion prompts",
+                    price: "$47",
+                  },
+                  {
+                    name: "Ask Kanika queue",
+                    sub: "One question per 24h, top-voted answered by voice or video in your feed",
+                    price: "$147",
+                  },
+                ].map((row, i, arr) => (
+                  <div
+                    key={row.name}
+                    className={`flex items-start justify-between gap-4 px-5 sm:px-7 py-4 ${
+                      i < arr.length - 1 ? "border-b border-warm-gold/10" : ""
+                    }`}
+                  >
+                    <div className="flex-1 min-w-0">
+                      <p className="text-text-light font-light text-sm sm:text-base leading-snug">
+                        {row.name}
+                      </p>
+                      <p className="text-text-gray/75 text-xs sm:text-sm font-light leading-relaxed mt-0.5">
+                        {row.sub}
+                      </p>
+                    </div>
+                    <p className="text-warm-gold/85 font-light text-sm sm:text-base tabular-nums shrink-0 pt-0.5">
+                      {row.price}
+                    </p>
+                  </div>
+                ))}
+
+                {/* Total row, separated by a heavier divider so the
+                    eye reads "this is the total of the rows above"
+                    before it lands on the $29 reveal. */}
+                <div className="flex items-baseline justify-between gap-4 px-5 sm:px-7 py-4 border-t-2 border-warm-gold/30 bg-deep-black/40">
+                  <p className="text-text-gray text-xs sm:text-sm uppercase tracking-[0.25em] font-light">
+                    Standalone value
+                  </p>
+                  <p className="text-warm-gold text-xl sm:text-2xl font-extralight tabular-nums">
+                    ~$515
+                  </p>
+                </div>
+
+                {/* The drop. Big, gold, no decoration, the page has
+                    been building up to this single number, give it
+                    the room. */}
+                <div className="text-center px-5 sm:px-7 py-7 bg-gradient-to-b from-warm-gold/[0.04] to-warm-gold/[0.10] border-t border-warm-gold/30">
+                  <p className="text-text-gray/80 text-xs uppercase tracking-[0.3em] font-light mb-2">
+                    Inside the Consilium
+                  </p>
+                  <div className="flex items-baseline justify-center gap-2 mb-1">
+                    <span className="text-5xl sm:text-6xl font-extralight text-warm-gold leading-none">
+                      $29
+                    </span>
+                    <span className="text-text-gray font-light">/ month</span>
+                  </div>
+                  <p className="text-text-gray/75 text-xs sm:text-sm font-light">
+                    Cancel any time. Keep the book.
+                  </p>
+                </div>
+              </div>
+
+              {/* Guarantee, promoted from footnote to its own card.
+                  Sits directly under the stack so the risk-reversal
+                  message lands before the CTA, not after. */}
+              <div className="mt-5 flex items-start gap-3 px-5 py-4 bg-deep-black/40 border border-warm-gold/20 rounded-xl">
+                <ShieldCheck
+                  size={20}
+                  className="text-warm-gold mt-0.5 shrink-0"
+                />
+                <div>
+                  <p className="text-text-light font-light text-sm sm:text-base">
+                    Spend 7 days inside.
+                  </p>
+                  <p className="text-text-gray/85 font-light text-xs sm:text-sm mt-0.5 leading-relaxed">
+                    If it&apos;s not the most useful $29 you&apos;ve spent
+                    this year, message us for a full refund. No form, no
+                    survey. You keep the book.
+                  </p>
+                </div>
+              </div>
+
+              <div className="mt-7 text-center">
+                <Link
+                  href="/consilium/apply"
+                  className="inline-flex items-center justify-center gap-2 py-4 px-10 rounded-full bg-warm-gold text-deep-black font-medium text-base tracking-wider uppercase transition-all hover:bg-warm-gold/90 hover:shadow-[0_8px_24px_-4px_rgba(212,175,55,0.45)]"
+                >
+                  Join the Consilium
+                  <ArrowRight size={18} />
+                </Link>
+                <p className="text-text-gray/75 text-xs mt-3">
+                  Instant access. Cancel anytime.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Price comparison anchor.
+              Kept the 3-tier bar as a secondary anchor: the value
+              stack above does the "$515 collapsed to $29" reveal,
+              this card does the comparable-spend frame ("less than a
+              single coaching session"). Two different anchor moves
+              targeting two different price-shopping mental models. */}
           <div className="mb-20">
             <div className="max-w-2xl mx-auto text-center p-10 bg-deep-black/50 border border-warm-gold/25 rounded-2xl">
-              <p className="text-text-gray text-sm uppercase tracking-[0.25em] mb-4">The Math</p>
+              <p className="text-text-gray text-sm uppercase tracking-[0.25em] mb-4">For comparison</p>
               <div className="flex items-baseline justify-center gap-2 mb-2">
                 <span className="text-5xl font-extralight text-warm-gold">$29</span>
                 <span className="text-text-gray font-light">/month</span>
@@ -276,23 +420,11 @@ export default async function InnerCircleLanding({
                   <div className="text-text-gray text-xs">The Consilium</div>
                 </div>
               </div>
-              <Link
-                href="/consilium/apply"
-                className="inline-flex items-center justify-center gap-2 py-4 px-10 bg-warm-gold text-deep-black font-medium tracking-wider uppercase rounded-full transition-all hover:bg-warm-gold/90 hover:shadow-[0_8px_24px_-4px_rgba(212,175,55,0.45)]"
-              >
-                Join the Community
-                <ArrowRight size={18} />
-              </Link>
-              <p className="text-text-gray/75 text-xs mt-4">
-                Instant access. Cancel anytime.
+              <p className="text-text-gray/85 text-sm font-light leading-relaxed">
+                One coaching session covers ten months inside the Consilium.
+                The book alone is $24.99 retail and comes bundled. Pricing
+                isn&apos;t the question. Showing up is.
               </p>
-              <div className="flex items-center justify-center gap-2 text-text-gray text-xs mt-4 pt-4 border-t border-warm-gold/10">
-                <ShieldCheck size={14} className="text-warm-gold" />
-                <span>
-                  Spend 7 days inside. If it&apos;s not the most useful $29
-                  you&apos;ve spent, full refund.
-                </span>
-              </div>
             </div>
           </div>
 
