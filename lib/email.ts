@@ -2,6 +2,12 @@ import nodemailer from "nodemailer";
 import type { Transporter } from "nodemailer";
 import { Resend } from "resend";
 import { escapeHtml as esc } from "@/lib/escape-html";
+import {
+  PERSONALITY_PROFILES,
+  type PersonalityType,
+  type QuizScores,
+} from "@/lib/quiz-data";
+import { STARTER_PATTERNS } from "@/lib/starter-pack-content";
 
 const logger = {
   info: (message: string) => console.log(`[EMAIL INFO] ${message}`),
@@ -2286,5 +2292,267 @@ export const sendQuestionAnswered = async (params: {
     to: params.recipientEmail,
     subject: "Kanika answered your question",
     html: luxuryEmailShell(inner, "Answered", "Kanika replied"),
+  });
+};
+
+// ============================================================
+// Mini Dark Mirror — top-of-funnel free email-capture deliveries
+// ============================================================
+
+/** Mini Dark Mirror result email. Visitor handed over their email
+ *  after the 7-question free quiz; the on-page result was a single-
+ *  axis teaser. This delivers the full read across all 6 axes plus
+ *  the dominant-type description, and softly upsells the book + the
+ *  full $9.99 assessment. No Stripe credit code generated (those are
+ *  reserved for paid-quiz takers). */
+export const sendMiniDarkMirrorResult = async (params: {
+  email: string;
+  dominantType: PersonalityType;
+  scores: QuizScores;
+}): Promise<boolean> => {
+  const baseUrl =
+    process.env.NEXT_PUBLIC_BASE_URL || "https://kanikarose.com";
+  const profile = PERSONALITY_PROFILES[params.dominantType];
+
+  // Score rows sorted descending. The dominant axis gets the gold
+  // pill; everyone else gets neutral grey. Neurotypical is colour-coded
+  // green so the audience can spot it as the only "balanced" option.
+  const scoreRows = Object.entries(params.scores)
+    .sort(([, a], [, b]) => b - a)
+    .map(([type, score]) => {
+      const isPrimary = type === params.dominantType;
+      const isNeurotypical = type === "neurotypical";
+      const typeName = type.charAt(0).toUpperCase() + type.slice(1);
+      const pillColor = isNeurotypical
+        ? "#22c55e"
+        : isPrimary
+          ? "#d4af37"
+          : "#94a3b8";
+      const pillBg = isNeurotypical
+        ? "rgba(34,197,94,0.12)"
+        : isPrimary
+          ? "rgba(212,175,55,0.18)"
+          : "rgba(148,163,184,0.08)";
+      return `
+        <tr>
+          <td style="padding: 10px 0; color: ${isPrimary ? "#d4af37" : "#d6cfc4"}; font-weight: ${isPrimary ? "600" : "400"}; font-size: 14px;">
+            ${esc(typeName)}${isPrimary ? " (your axis)" : ""}
+          </td>
+          <td style="padding: 10px 0; text-align: right;">
+            <span style="display: inline-block; background: ${pillBg}; color: ${pillColor}; padding: 4px 14px; border-radius: 999px; font-weight: 600; font-size: 13px;">
+              ${score}%
+            </span>
+          </td>
+        </tr>
+      `;
+    })
+    .join("");
+
+  const traitsList = profile.traits
+    .map(
+      (t) =>
+        `<li style="color: #d6cfc4; margin: 8px 0; font-size: 14px; line-height: 1.7;">${esc(t)}</li>`,
+    )
+    .join("");
+  const blindSpotsList = profile.blindSpots
+    .map(
+      (t) =>
+        `<li style="color: #d6cfc4; margin: 8px 0; font-size: 14px; line-height: 1.7;">${esc(t)}</li>`,
+    )
+    .join("");
+
+  const inner = `
+    <p class="lux-text" style="color: #f5efe2; font-size: 16px; line-height: 1.75; margin: 0 0 18px 0;">
+      You scored highest on
+    </p>
+    <p style="color: #d4af37; font-size: 28px; font-weight: 300; letter-spacing: 1.5px; text-transform: uppercase; margin: 0 0 8px 0;">
+      ${esc(profile.name)}
+    </p>
+    <p style="color: #d4af37; font-style: italic; font-size: 15px; margin: 0 0 24px 0;">
+      ${esc(profile.tagline)}
+    </p>
+
+    <p class="lux-muted" style="color: #d6cfc4; font-size: 15px; line-height: 1.8; margin: 0 0 28px 0;">
+      ${esc(profile.description)}
+    </p>
+
+    <div style="margin: 0 0 28px 0; padding: 24px; background: rgba(0,0,0,0.25); border-left: 3px solid #d4af37; border-radius: 6px;">
+      <p style="color: #d4af37; font-size: 11px; text-transform: uppercase; letter-spacing: 2px; margin: 0 0 12px 0;">
+        Your relationship pattern
+      </p>
+      <p class="lux-muted" style="color: #d6cfc4; font-size: 14px; line-height: 1.75; margin: 0;">
+        ${esc(profile.relationshipPattern)}
+      </p>
+    </div>
+
+    <p style="color: #d4af37; font-size: 11px; text-transform: uppercase; letter-spacing: 2px; margin: 0 0 14px 0;">
+      Your full radar
+    </p>
+    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="margin: 0 0 28px 0;">
+      ${scoreRows}
+    </table>
+
+    <p style="color: #d4af37; font-size: 11px; text-transform: uppercase; letter-spacing: 2px; margin: 0 0 14px 0;">
+      What this looks like in you
+    </p>
+    <ul style="margin: 0 0 28px 0; padding-left: 20px;">
+      ${traitsList}
+    </ul>
+
+    <p style="color: #d4af37; font-size: 11px; text-transform: uppercase; letter-spacing: 2px; margin: 0 0 14px 0;">
+      Your blind spots
+    </p>
+    <ul style="margin: 0 0 32px 0; padding-left: 20px;">
+      ${blindSpotsList}
+    </ul>
+
+    <hr style="border: none; border-top: 1px solid rgba(212,175,55,0.2); margin: 32px 0;" />
+
+    <p style="color: #d4af37; font-size: 11px; text-transform: uppercase; letter-spacing: 2px; margin: 0 0 12px 0;">
+      Want to go deeper
+    </p>
+    <p class="lux-muted" style="color: #d6cfc4; font-size: 14px; line-height: 1.7; margin: 0 0 20px 0;">
+      The mini gives you the dominant axis. The full assessment is
+      20 questions instead of 7, with a functioning analysis and the
+      secondary-axis read. $9.99. Comes with a $9.99 credit toward
+      Consilium membership if you ever want to use it.
+    </p>
+    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="margin: 0 0 20px 0;">
+      <tr>
+        <td align="center">
+          <a href="${baseUrl}/quiz" style="display: inline-block; padding: 14px 32px; background-color: #d4af37; color: #0a0a0a; text-decoration: none; border-radius: 999px; font-weight: 600; font-size: 13px; letter-spacing: 1.2px; text-transform: uppercase;">
+            Take the full assessment
+          </a>
+        </td>
+      </tr>
+    </table>
+
+    <p class="lux-muted" style="color: #d6cfc4; font-size: 13px; line-height: 1.7; margin: 24px 0 8px 0; text-align: center;">
+      Or, if you want the full clinical framework, the same one the
+      simulator scenarios are built from:
+    </p>
+    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0">
+      <tr>
+        <td align="center">
+          <a href="${baseUrl}/book" style="color: #d4af37; text-decoration: none; font-size: 14px; border-bottom: 1px solid rgba(212,175,55,0.4); padding-bottom: 2px;">
+            The Sociopathic Dating Bible →
+          </a>
+        </td>
+      </tr>
+    </table>
+  `;
+
+  return await sendEmail({
+    to: params.email,
+    subject: `Your Dark Mirror result, ${profile.name}`,
+    html: luxuryEmailShell(
+      inner,
+      profile.name,
+      "Your full Dark Mirror read",
+    ),
+  });
+};
+
+/** Pattern Recognition Starter Pack delivery email. Visitor handed
+ *  over email; this delivers the 5 named tactics with examples and
+ *  the tell for each, formatted for inbox reading. Soft cross-sells
+ *  to the mini quiz (if they didn't take it yet) and the book. */
+export const sendStarterPack = async (params: {
+  email: string;
+}): Promise<boolean> => {
+  const baseUrl =
+    process.env.NEXT_PUBLIC_BASE_URL || "https://kanikarose.com";
+
+  const patternsHtml = STARTER_PATTERNS.map((p, i) => {
+    const examplesList = p.examples
+      .map(
+        (ex) =>
+          `<li style="color: #d6cfc4; font-size: 14px; line-height: 1.75; margin: 6px 0;">${esc(ex)}</li>`,
+      )
+      .join("");
+    const isLast = i === STARTER_PATTERNS.length - 1;
+    return `
+      <div style="margin: 0 0 ${isLast ? "16px" : "36px"} 0;">
+        <p style="color: #d4af37; font-size: 11px; text-transform: uppercase; letter-spacing: 2px; margin: 0 0 6px 0;">
+          Pattern ${i + 1}
+        </p>
+        <h2 style="color: #f5efe2; font-size: 22px; font-weight: 300; letter-spacing: 0.8px; margin: 0 0 12px 0;">
+          ${esc(p.name)}
+        </h2>
+        <p class="lux-muted" style="color: #d6cfc4; font-size: 15px; line-height: 1.8; margin: 0 0 18px 0;">
+          ${esc(p.definition)}
+        </p>
+        <p style="color: #d4af37; font-size: 11px; text-transform: uppercase; letter-spacing: 2px; margin: 0 0 8px 0;">
+          Examples
+        </p>
+        <ul style="margin: 0 0 18px 0; padding-left: 20px;">
+          ${examplesList}
+        </ul>
+        <div style="background: rgba(0,0,0,0.25); border-left: 3px solid #d4af37; padding: 16px 20px; margin: 0 0 14px 0; border-radius: 4px;">
+          <p style="color: #d4af37; font-size: 11px; text-transform: uppercase; letter-spacing: 2px; margin: 0 0 6px 0;">
+            The tell
+          </p>
+          <p class="lux-muted" style="color: #d6cfc4; font-size: 14px; line-height: 1.75; margin: 0;">
+            ${esc(p.tell)}
+          </p>
+        </div>
+        <p style="color: #d4af37; font-style: italic; font-size: 14px; line-height: 1.6; margin: 8px 0 0 0;">
+          ${esc(p.closer)}
+        </p>
+      </div>
+      ${!isLast ? '<hr style="border: none; border-top: 1px solid rgba(212,175,55,0.15); margin: 0 0 36px 0;" />' : ""}
+    `;
+  }).join("");
+
+  const inner = `
+    <p class="lux-text" style="color: #f5efe2; font-size: 16px; line-height: 1.75; margin: 0 0 24px 0;">
+      Five named tactics. Memorise the names. Once you have a word
+      for the move, you stop forgiving it.
+    </p>
+
+    ${patternsHtml}
+
+    <hr style="border: none; border-top: 1px solid rgba(212,175,55,0.2); margin: 36px 0 28px 0;" />
+
+    <p style="color: #d4af37; font-size: 11px; text-transform: uppercase; letter-spacing: 2px; margin: 0 0 12px 0;">
+      Next
+    </p>
+    <p class="lux-muted" style="color: #d6cfc4; font-size: 14px; line-height: 1.75; margin: 0 0 20px 0;">
+      The mini quiz tells you which of six personality patterns YOU
+      sit closest to. 90 seconds. Free. Same axis the patterns above
+      come from, but read against your own answers.
+    </p>
+    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="margin: 0 0 24px 0;">
+      <tr>
+        <td align="center">
+          <a href="${baseUrl}/dark-mirror/mini" style="display: inline-block; padding: 14px 32px; background-color: #d4af37; color: #0a0a0a; text-decoration: none; border-radius: 999px; font-weight: 600; font-size: 13px; letter-spacing: 1.2px; text-transform: uppercase;">
+            Take the mini quiz
+          </a>
+        </td>
+      </tr>
+    </table>
+
+    <p class="lux-muted" style="color: #d6cfc4; font-size: 13px; line-height: 1.7; margin: 24px 0 8px 0; text-align: center;">
+      Or, the full framework these patterns are drawn from:
+    </p>
+    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0">
+      <tr>
+        <td align="center">
+          <a href="${baseUrl}/book" style="color: #d4af37; text-decoration: none; font-size: 14px; border-bottom: 1px solid rgba(212,175,55,0.4); padding-bottom: 2px;">
+            The Sociopathic Dating Bible →
+          </a>
+        </td>
+      </tr>
+    </table>
+  `;
+
+  return await sendEmail({
+    to: params.email,
+    subject: "The Pattern Recognition Starter Pack, inside.",
+    html: luxuryEmailShell(
+      inner,
+      "Starter Pack",
+      "Five named tactics",
+    ),
   });
 };
