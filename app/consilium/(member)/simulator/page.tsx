@@ -35,6 +35,7 @@ const VALID_TRACKS: ScenarioTrack[] = [
   "pc-child",
   "cluster-b-lab",
   "divorce-arc",
+  "loving-mira",
 ];
 
 function resolveTrack(value?: string): ScenarioTrack {
