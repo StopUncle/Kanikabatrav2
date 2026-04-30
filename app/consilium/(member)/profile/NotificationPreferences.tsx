@@ -139,10 +139,10 @@ export default function NotificationPreferences() {
     <div className="max-w-2xl mx-auto rounded-2xl border border-warm-gold/15 bg-deep-black/40 p-6 sm:p-8 space-y-4">
       {!supported && (
         <p className="text-xs text-text-gray/60 leading-relaxed pb-3 border-b border-warm-gold/10">
-          Push notifications aren't enabled in this browser. Toggles
-          below still save your preferences for the next time you open
-          the Consilium on a device that supports them — for example,
-          installing the home-screen app on iPhone or Android.
+          Push notifications aren&apos;t enabled in this browser.
+          Toggles below still save your preferences for the next time
+          you open the Consilium on a device that supports them, for
+          example installing the home-screen app on iPhone or Android.
         </p>
       )}
 
