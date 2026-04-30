@@ -1,5 +1,5 @@
 /**
- * anxiety-3-1 — "The Grocery Store"
+ * anxiety-3-1, "The Grocery Store"
  *
  * Anxiety track, Level 3, order 1. The hardest scene in the arc.
  * The bottom of the trough. Sam at the Trader Joe's on Court Street
@@ -17,7 +17,7 @@
  *     shortness of breath, chest tightness, dizziness, derealisation,
  *     fear of dying.
  *   - The minute-by-minute toolkit. Choices are not 'what do I
- *     think' — they are 'what do I do with my body in the next
+ *     think', they are 'what do I do with my body in the next
  *     30 seconds.' Each path produces a different arc for the
  *     next 4-6 minutes.
  *   - The avoidance trap. Leaving the store immediately resolves
@@ -58,7 +58,7 @@ const SAM: Character = {
   id: "sam",
   name: "Sam",
   description:
-    "28. Sunday morning, 11:23 a.m. At the Trader Joe's on Court Street. The body has been firing low-grade activation since Friday evening; this is when it produces a real panic attack.",
+    "28. Sunday morning, 11:23 a.m. at the Trader Joe's on Court Street. The body has been firing low-grade activation since Friday evening; this is when it produces a real panic attack.",
   traits: ["sensitive", "in-treatment", "in-acute-state"],
   defaultEmotion: "concerned",
   gender: "female",
@@ -79,7 +79,7 @@ const MIA: Character = {
 
 const scenes: Scene[] = [
   // ===================================================================
-  // KANIKA FRAME — what panic actually is, crisis resources
+  // KANIKA FRAME, what panic actually is, crisis resources
   // ===================================================================
   {
     id: "the-frame",
@@ -89,7 +89,7 @@ const scenes: Scene[] = [
     dialog: [
       {
         speakerId: "inner-voice",
-        text: "This is the hardest scene in the arc. The body is going to produce a real panic attack in the next ninety seconds — not the catastrophising staircase you have been working with at 3 a.m. and 2:47 p.m. and 8:11 p.m. Those were cognitive worry-loops, body-amplified. This is the somatic event itself, the one the DSM lists with thirteen possible symptoms and the criterion 'abrupt surge of intense fear or discomfort reaching peak within minutes.' This is what the disorder feels like at peak.",
+        text: "This is the hardest scene in the arc. The body is going to produce a real panic attack in the next ninety seconds, not the catastrophising staircase you have been working with at 3 a.m. and 2:47 p.m. and 8:11 p.m. those were cognitive worry-loops, body-amplified. This is the somatic event itself, the one the DSM lists with thirteen possible symptoms and the criterion 'abrupt surge of intense fear or discomfort reaching peak within minutes.' This is what the disorder feels like at peak.",
         emotion: "knowing",
       },
       {
@@ -120,7 +120,7 @@ const scenes: Scene[] = [
   },
 
   // ===================================================================
-  // THE STORE — context, the body's pre-conditions
+  // THE STORE, context, the body's pre-conditions
   // ===================================================================
   {
     id: "the-store",
@@ -138,7 +138,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: null,
-        text: "The body's pre-conditions: five hours of mediocre Friday sleep, four hours of bad Saturday sleep. Three coffees this morning instead of two. You skipped breakfast. The Christmas worry-time on Wednesday at 5 p.m. produced its concrete fears and concrete actions — and the body has been carrying low-grade activation about Christmas across the entire weekend that the worry-time was supposed to discharge. The discharge worked partially. The activation is not gone.",
+        text: "The body's pre-conditions: five hours of mediocre Friday sleep, four hours of bad Saturday sleep. Three coffees this morning instead of two. You skipped breakfast. The Christmas worry-time on Wednesday at 5 p.m. produced its concrete fears and concrete actions and the body has been carrying low-grade activation about Christmas across the entire weekend that the worry-time was supposed to discharge. The discharge worked partially. The activation is not gone.",
       },
       {
         speakerId: null,
@@ -161,7 +161,7 @@ const scenes: Scene[] = [
   },
 
   // ===================================================================
-  // THE ONSET — the panic begins, somatic profile
+  // THE ONSET, the panic begins, somatic profile
   // ===================================================================
   {
     id: "the-onset",
@@ -171,7 +171,7 @@ const scenes: Scene[] = [
     dialog: [
       {
         speakerId: null,
-        text: "Chest tightening. Real this time — physically tight, the way it gets after running uphill, except you have not been running.",
+        text: "Chest tightening. Real this time, physically tight, the way it gets after running uphill, except you have not been running.",
       },
       {
         speakerId: null,
@@ -219,12 +219,12 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "inner-voice",
-        text: "What just happened in the last ninety seconds, in clinical language: amygdala-driven sympathetic-nervous-system activation, producing the symptom set the DSM lists for panic. The chest, breath, heart, hands, lights, cognitive 'I'm dying' content — ALL OF IT is the chemistry of panic. None of it is what the cognitive content says it is. Your heart is fine. Your lungs are fine. You are not collapsing. You are not going crazy. The body is producing the somatic signature of acute threat in the absence of acute threat, and the cognitive content is the body's interpretation of the somatic signature.",
+        text: "What just happened in the last ninety seconds, in clinical language: amygdala-driven sympathetic-nervous-system activation, producing the symptom set the DSM lists for panic. The chest, breath, heart, hands, lights, cognitive 'I'm dying' content. ALL OF IT is the chemistry of panic. None of it is what the cognitive content says it is. Your heart is fine. Your lungs are fine. You are not collapsing. You are not going crazy. The body is producing the somatic signature of acute threat in the absence of acute threat, and the cognitive content is the body's interpretation of the somatic signature.",
         emotion: "knowing",
       },
       {
         speakerId: "inner-voice",
-        text: "Five available moves in the next thirty seconds. Two of them install the maintenance fear — by tomorrow your body will associate Trader Joe's with panic. By next month all grocery stores. By month four, Instacart for everything. The avoidance trap is opening. Three of the moves close it.",
+        text: "Five available moves in the next thirty seconds. Two of them install the maintenance fear, by tomorrow your body will associate Trader Joe's with panic. By next month all grocery stores. By month four, Instacart for everything. The avoidance trap is opening. Three of the moves close it.",
         emotion: "knowing",
       },
     ],
@@ -232,27 +232,27 @@ const scenes: Scene[] = [
       {
         id: "leave",
         text: "Leave immediately. Abandon the cart in the aisle. Drive home.",
-        tactic: "The escape. Body's tension drops 60% within ninety seconds of being out of the store. The drop is real and the relief is psychoactive. The cost lands tomorrow — the body has now associated Trader Joe's with panic, which is the conditioning step for the maintenance fear. Across the next month, the avoidance generalises.",
+        tactic: "The escape. Body's tension drops 60% within ninety seconds of being out of the store. The drop is real and the relief is psychoactive. The cost lands tomorrow, the body has now associated Trader Joe's with panic, which is the conditioning step for the maintenance fear. Across the next month, the avoidance generalises.",
         nextSceneId: "leave-1",
         isOptimal: false,
       },
       {
         id: "leave-pull-over",
         text: "Leave. Make it to the car. Pull over after one block; panic in the parked car for six minutes.",
-        tactic: "The partial escape. The panic continues in the car, naturally peaks at minute 3, falls. By minute 6 it is functional. The avoidance is partial — the conditioning is weaker than abandoning the store outright but it is still present.",
+        tactic: "The partial escape. The panic continues in the car, naturally peaks at minute 3, falls. By minute 6 it is functional. The avoidance is partial, the conditioning is weaker than abandoning the store outright but it is still present.",
         nextSceneId: "leave-pull-over-1",
         isOptimal: false,
       },
       {
         id: "dissociate",
         text: "Stay; dissociate. The body floats. The next ten minutes happen on autopilot. Ring up. Drive home.",
-        tactic: "The autopilot path. Body completes the shopping but does not consciously process the panic. The maintenance fear is mid — present but blunted. You will not remember much of the next ten minutes when you replay them later.",
+        tactic: "The autopilot path. Body completes the shopping but does not consciously process the panic. The maintenance fear is mid, present but blunted. You will not remember much of the next ten minutes when you replay them later.",
         nextSceneId: "dissociate-1",
         isOptimal: false,
       },
       {
         id: "ride-it",
-        text: "Stay. Stop the cart. Pretend to read a label. Box breathing — 4 in, 4 hold, 4 out, 4 hold. Five cycles.",
+        text: "Stay. Stop the cart. Pretend to read a label. Box breathing, 4 in, 4 hold, 4 out, 4 hold. Five cycles.",
         tactic: "The ride. The body does NOT instantly calm. The panic peaks at minute 3 of the cycle, then begins to descend. By aisle 7 the body has dropped two notches. By checkout, shaky but functional. The body learned, in one trial, that panic CAN be ridden in public. Most powerful single intervention available in this moment.",
         nextSceneId: "ride-it-1",
         isOptimal: true,
@@ -260,7 +260,7 @@ const scenes: Scene[] = [
       {
         id: "call-mia",
         text: "Phone in hand. Call Mia. 'I'm having a panic attack at Trader Joe's. I'm going to keep shopping. Can you stay on the line?'",
-        tactic: "The witness call. Mia picks up. She does NOT say 'you're not having a heart attack' — she does the right thing, which is to stay on the line and talk about the cart. The body is held by an external presence. By checkout, body is functional. The panic was witnessed. The body learned that public panic + witness on the phone is survivable.",
+        tactic: "The witness call. Mia picks up. She does NOT say 'you're not having a heart attack', she does the right thing, which is to stay on the line and talk about the cart. The body is held by an external presence. By checkout, body is functional. The panic was witnessed. The body learned that public panic + witness on the phone is survivable.",
         nextSceneId: "call-mia-1",
         isOptimal: true,
       },
@@ -278,7 +278,7 @@ const scenes: Scene[] = [
     dialog: [
       {
         speakerId: null,
-        text: "You leave the cart in the aisle. You walk fast — fast enough that the woman with the stroller looks up. You walk past the registers without looking at them. You push the door. The cold air hits you on the sidewalk.",
+        text: "You leave the cart in the aisle. You walk fast, fast enough that the woman with the stroller looks up. You walk past the registers without looking at them. You push the door. The cold air hits you on the sidewalk.",
       },
       {
         speakerId: null,
@@ -286,7 +286,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: null,
-        text: "You drive home. You park. You sit in the car in the parking spot for another four minutes before going up. The relief is real and the relief is psychoactive — your body has just received the strongest possible signal that LEAVING WAS THE RIGHT MOVE.",
+        text: "You drive home. You park. You sit in the car in the parking spot for another four minutes before going up. The relief is real and the relief is psychoactive, your body has just received the strongest possible signal that LEAVING WAS THE RIGHT MOVE.",
       },
       {
         speakerId: null,
@@ -299,7 +299,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "inner-voice",
-        text: "This is the avoidance trap. It is one of the most reliable engines of chronic panic disorder. It is also one of the cleanest examples in clinical anxiety of why the obvious move is the wrong move. The repair, when you go to therapy on Wednesday and tell Lin what happened, will be exposure therapy — which is the structured re-entry into the avoided environment, with the body deliberately remaining in the panic-triggering condition until the panic peaks and falls without leaving. The exposure work is hard. It is also one of the highest-effect-size treatments in mental health.",
+        text: "This is the avoidance trap. It is one of the most reliable engines of chronic panic disorder. It is also one of the cleanest examples in clinical anxiety of why the obvious move is the wrong move. The repair, when you go to therapy on Wednesday and tell Lin what happened, will be exposure therapy, which is the structured re-entry into the avoided environment, with the body deliberately remaining in the panic-triggering condition until the panic peaks and falls without leaving. The exposure work is hard. It is also one of the highest-effect-size treatments in mental health.",
         emotion: "knowing",
       },
     ],
@@ -337,12 +337,12 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "inner-voice",
-        text: "The pull-over version is structurally similar to the full-leave version, with the somewhat saving grace that the panic was experienced through to its natural peak-and-fall in the car. The body learned partial good news — panic ends on its own when not interrupted — but the body also learned that you LEFT before doing this, which means the conditioning between Trader Joe's and panic is still present. The maintenance picture for the next month is somewhat better than the full-leave path, somewhat worse than the ride-it path.",
+        text: "The pull-over version is structurally similar to the full-leave version, with the somewhat saving grace that the panic was experienced through to its natural peak-and-fall in the car. The body learned partial good news, panic ends on its own when not interrupted but the body also learned that you LEFT before doing this, which means the conditioning between Trader Joe's and panic is still present. The maintenance picture for the next month is somewhat better than the full-leave path, somewhat worse than the ride-it path.",
         emotion: "knowing",
       },
       {
         speakerId: "inner-voice",
-        text: "The eggs-from-Instacart move at the end is the small first instance of avoidance generalising. It is not a moral failing. It is a structural feature of how the body conditions. The repair, on Wednesday in Lin's office, will be the same — exposure work. Lin will likely propose returning to Trader Joe's specifically, with a structured graded plan — first time, in and out for one item, possibly with Mia present, possibly during a less-busy hour. Over weeks of structured re-entry, the conditioning extinguishes.",
+        text: "The eggs-from-Instacart move at the end is the small first instance of avoidance generalising. It is not a moral failing. It is a structural feature of how the body conditions. The repair, on Wednesday in Lin's office, will be the same, exposure work. Lin will likely propose returning to Trader Joe's specifically, with a structured graded plan, first time, in and out for one item, possibly with Mia present, possibly during a less-busy hour. Over weeks of structured re-entry, the conditioning extinguishes.",
         emotion: "knowing",
       },
     ],
@@ -368,11 +368,11 @@ const scenes: Scene[] = [
     dialog: [
       {
         speakerId: null,
-        text: "Something happens in your body that is not a decision. The body floats. The chest is still tight but the tightness has become distant — like you are watching the chest tighten on someone else's body. The lights stop being too bright because you have stopped being present to the lights.",
+        text: "Something happens in your body that is not a decision. The body floats. The chest is still tight but the tightness has become distant, like you are watching the chest tighten on someone else's body. The lights stop being too bright because you have stopped being present to the lights.",
       },
       {
         speakerId: null,
-        text: "The next ten minutes happen on autopilot. You finish the shopping. You add a thing to the cart that you do not need — a small jar of olives — because some part of you is still operating but it is operating at the level of acquiring objects, not at the level of integrating what is happening.",
+        text: "The next ten minutes happen on autopilot. You finish the shopping. You add a thing to the cart that you do not need, a small jar of olives, because some part of you is still operating but it is operating at the level of acquiring objects, not at the level of integrating what is happening.",
       },
       {
         speakerId: null,
@@ -384,12 +384,12 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "inner-voice",
-        text: "Dissociation during panic is one of the listed DSM symptoms (derealisation / depersonalisation). It is not a separate event from the panic; it IS the panic, in a different shape. The body's chemistry is the same; the body's protective response has shifted from fight-or-flight to a third option, which is functional-but-not-present. The maintenance fear from this path is mid — your body did the shopping, which gave the body weak counter-evidence to the avoidance conditioning, but the body did not consciously witness either the panic or its descent, which means the body did not get the lesson available on the ride-it path.",
+        text: "Dissociation during panic is one of the listed DSM symptoms (derealisation / depersonalisation). It is not a separate event from the panic; it IS the panic, in a different shape. The body's chemistry is the same; the body's protective response has shifted from fight-or-flight to a third option, which is functional-but-not-present. The maintenance fear from this path is mid, your body did the shopping, which gave the body weak counter-evidence to the avoidance conditioning, but the body did not consciously witness either the panic or its descent, which means the body did not get the lesson available on the ride-it path.",
         emotion: "knowing",
       },
       {
         speakerId: "inner-voice",
-        text: "Dissociation paths often look fine from the outside and feel fine in the immediate aftermath. The cost lands the next time the body is in a similar trigger condition — the body has not learned that panic is rideable, just that panic can be skipped via floating. The trigger condition will produce another float, which is itself a slow draw on the body's reserve. Across years, dissociation as a panic-management strategy hollows the body out.",
+        text: "Dissociation paths often look fine from the outside and feel fine in the immediate aftermath. The cost lands the next time the body is in a similar trigger condition, the body has not learned that panic is rideable, just that panic can be skipped via floating. The trigger condition will produce another float, which is itself a slow draw on the body's reserve. Across years, dissociation as a panic-management strategy hollows the body out.",
         emotion: "knowing",
       },
     ],
@@ -405,7 +405,7 @@ const scenes: Scene[] = [
   },
 
   // ===================================================================
-  // RIDE-IT PATH (skill — the work)
+  // RIDE-IT PATH (skill, the work)
   // ===================================================================
   {
     id: "ride-it-1",
@@ -427,7 +427,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: null,
-        text: "Cycle two. The body still does not calm. The cognitive content is loud — 'this isn't working, you should leave, you are about to faint, leave NOW.'",
+        text: "Cycle two. The body still does not calm. The cognitive content is loud, 'this isn't working, you should leave, you are about to faint, leave NOW.'",
       },
       {
         speakerId: null,
@@ -443,12 +443,12 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "inner-voice",
-        text: "What just happened, mechanically: the parasympathetic nervous system, recruited by slow exhalation, has begun to compete with the sympathetic activation that was producing the panic. The body cannot run both at high resolution simultaneously. The breath is a mechanical lever on the autonomic nervous system. The cycle three peak is the test — most people leave at cycle three because cycle three is when the body is most sure that the breath is not working. Cycle three is when the breath is doing its hardest work.",
+        text: "What just happened, mechanically: the parasympathetic nervous system, recruited by slow exhalation, has begun to compete with the sympathetic activation that was producing the panic. The body cannot run both at high resolution simultaneously. The breath is a mechanical lever on the autonomic nervous system. The cycle three peak is the test. Most people leave at cycle three because cycle three is when the body is most sure that the breath is not working. Cycle three is when the breath is doing its hardest work.",
         emotion: "knowing",
       },
       {
         speakerId: null,
-        text: "You move the cart. You do not pick up the Honey Bunches of Oats. You go on to the next aisle. By aisle 7 — frozen — the body has dropped to a 6. By the checkout — 5. Shaky, but functional.",
+        text: "You move the cart. You do not pick up the Honey Bunches of Oats. You go on to the next aisle. By aisle 7, frozen, the body has dropped to a 6. By the checkout, 5. Shaky, but functional.",
       },
       {
         speakerId: null,
@@ -460,11 +460,11 @@ const scenes: Scene[] = [
       },
       {
         speakerId: null,
-        text: "You sit on the couch. Your body is tired in the specific way bodies are tired after riding panic — the post-adrenaline crash flavour. You text Mia: 'I had a panic attack at Trader Joe's. I rode it. I want to tell you about it when I'm less wobbly.' Mia replies: 'I love you. tea is on the way.'",
+        text: "You sit on the couch. Your body is tired in the specific way bodies are tired after riding panic, the post-adrenaline crash flavour. You text Mia: 'I had a panic attack at Trader Joe's. I rode it. I want to tell you about it when I'm less wobbly.' Mia replies: 'I love you. Tea is on the way.'",
       },
       {
         speakerId: "inner-voice",
-        text: "What you just learned, in one trial, is the most important lesson available in the entire arc. Panic CAN be ridden in public. Panic descends on its own when not interrupted by leaving. Box breathing is a mechanical lever that competes with the sympathetic activation. The body, having learned this once, has the foundation for learning it forty more times — which is the structural shape of recovery from panic disorder. Across forty trials, the body's conditioning of grocery-store-equals-panic gets overwritten by grocery-store-equals-rideable, and the avoidance trap closes back up.",
+        text: "What you just learned, in one trial, is the most important lesson available in the entire arc. Panic CAN be ridden in public. Panic descends on its own when not interrupted by leaving. Box breathing is a mechanical lever that competes with the sympathetic activation. The body, having learned this once, has the foundation for learning it forty more times, which is the structural shape of recovery from panic disorder. Across forty trials, the body's conditioning of grocery-store-equals-panic gets overwritten by grocery-store-equals-rideable, and the avoidance trap closes back up.",
         emotion: "knowing",
       },
     ],
@@ -480,7 +480,7 @@ const scenes: Scene[] = [
   },
 
   // ===================================================================
-  // CALL MIA PATH (skill — witness)
+  // CALL MIA PATH (skill, witness)
   // ===================================================================
   {
     id: "call-mia-1",
@@ -504,7 +504,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: null,
-        text: "There is a half-second pause. You can hear her shifting on the couch. She does not say 'are you okay.' She does not say 'do you need to leave.' She does not say 'you're not having a heart attack' — which would be the most well-meaning wrong thing for her to say, and which most untrained partners would say within the first fifteen seconds of this kind of call.",
+        text: "There is a half-second pause. You can hear her shifting on the couch. She does not say 'are you okay.' She does not say 'do you need to leave.' She does not say 'you're not having a heart attack', which would be the most well-meaning wrong thing for her to say, and which most untrained partners would say within the first fifteen seconds of this kind of call.",
       },
       {
         speakerId: "mia",
@@ -555,12 +555,12 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "inner-voice",
-        text: "What Mia just did is the partner-side version of the witness-without-certainty-granting move, applied to acute panic. She did NOT say 'you're not having a heart attack' — that sentence, while medically true, would have been received by your panicked body as a denial of what your body was experiencing, and would have escalated the panic. She did not promise that anything would be okay. She gave you a concrete external task — items in produce, items by the avocados — that competed with the interoceptive scanning your body was doing. The cilantro and the limes did the work that two minutes of unfocused 'are you okay' would not have done.",
+        text: "What Mia just did is the partner-side version of the witness-without-certainty-granting move, applied to acute panic. She did NOT say 'you're not having a heart attack', that sentence, while medically true, would have been received by your panicked body as a denial of what your body was experiencing, and would have escalated the panic. She did not promise that anything would be okay. She gave you a concrete external task, items in produce, items by the avocados, that competed with the interoceptive scanning your body was doing. The cilantro and the limes did the work that two minutes of unfocused 'are you okay' would not have done.",
         emotion: "knowing",
       },
       {
         speakerId: "inner-voice",
-        text: "This is what right-relating looks like in acute panic. Most untrained partners cannot produce it on the first try; Mia's calibration is the result of two years of accidental practice plus her own intuitive temperament. In L4-2 you will see her produce a similar move under harder conditions — when she is tired and you are spiralling and the easy move is to provide reassurance and the right move is to hold the line. Today she had the easy version.",
+        text: "This is what right-relating looks like in acute panic. Most untrained partners cannot produce it on the first try; Mia's calibration is the result of two years of accidental practice plus her own intuitive temperament. In L4-2 you will see her produce a similar move under harder conditions, when she is tired and you are spiralling and the easy move is to provide reassurance and the right move is to hold the line. Today she had the easy version.",
         emotion: "knowing",
       },
     ],
@@ -586,11 +586,11 @@ const scenes: Scene[] = [
     outcomeType: "bad",
     endingTitle: "The Avoidance Trap",
     endingLearnPrompt:
-      "You left. The body's relief on the sidewalk was real and the relief was psychoactive. The relief was also the conditioning event — your body just learned that grocery stores produce panic and that leaving solves it. By tomorrow the body will fire low-grade anticipatory anxiety at the thought of any grocery store. By next week, two Instacart orders. By month two, regular Instacart. By month four, the IDEA of a Trader Joe's produces stomach-tightening at home in your kitchen. The repair on Wednesday in Lin's office will be exposure therapy — structured graded re-entry, possibly with Mia present, possibly during a less-busy hour. The exposure work is hard. It is also one of the highest-effect-size treatments in mental health, with response rates in the 60-80% range across well-conducted studies.",
+      "You left. The body's relief on the sidewalk was real and the relief was psychoactive. The relief was also the conditioning event, your body just learned that grocery stores produce panic and that leaving solves it. By tomorrow the body will fire low-grade anticipatory anxiety at the thought of any grocery store. By next week, two Instacart orders. By month two, regular Instacart. By month four, the IDEA of a Trader Joe's produces stomach-tightening at home in your kitchen. The repair on Wednesday in Lin's office will be exposure therapy, structured graded re-entry, possibly with Mia present, possibly during a less-busy hour. The exposure work is hard. It is also one of the highest-effect-size treatments in mental health, with response rates in the 60-80% range across well-conducted studies.",
     dialog: [
       {
         speakerId: "inner-voice",
-        text: "Avoidance is the single most reliable predictor of chronic panic disorder. The bodies whose avoidance is most thorough are the bodies whose disorder persists most stably across years. The bodies that re-enter the avoided environments — uncomfortable, deliberate, with a structured plan — are the bodies whose disorder shrinks. Today you got a clean lesson in the trap. Wednesday's session will name it and give you the protocol for closing it. The protocol works. The protocol is also non-negotiable in a way that most CBT for anxiety is not.",
+        text: "Avoidance is the single most reliable predictor of chronic panic disorder. The bodies whose avoidance is most thorough are the bodies whose disorder persists most stably across years. The bodies that re-enter the avoided environments, uncomfortable, deliberate, with a structured plan, are the bodies whose disorder shrinks. Today you got a clean lesson in the trap. Wednesday's session will name it and give you the protocol for closing it. The protocol works. The protocol is also non-negotiable in a way that most CBT for anxiety is not.",
         emotion: "knowing",
       },
     ],
@@ -605,7 +605,7 @@ const scenes: Scene[] = [
     outcomeType: "bad",
     endingTitle: "The Laundromat",
     endingLearnPrompt:
-      "You left, but the panic continued in the parked car, and you experienced its natural peak-and-fall. The body learned partial good news — panic ends on its own when not interrupted — and partial bad news — leaving was the move that produced the relief. The maintenance picture for the next month is somewhat better than the full-leave path, somewhat worse than the ride-it path. The eggs-from-Instacart move at the end is the first small instance of avoidance generalising. It is structural, not a moral failing. Lin's likely Wednesday plan will be graded re-entry to Trader Joe's specifically — first time, one item, possibly with Mia, possibly off-peak.",
+      "You left, but the panic continued in the parked car, and you experienced its natural peak-and-fall. The body learned partial good news, panic ends on its own when not interrupted and partial bad news, leaving was the move that produced the relief. The maintenance picture for the next month is somewhat better than the full-leave path, somewhat worse than the ride-it path. The eggs-from-Instacart move at the end is the first small instance of avoidance generalising. It is structural, not a moral failing. Lin's likely Wednesday plan will be graded re-entry to Trader Joe's specifically, first time, one item, possibly with Mia, possibly off-peak.",
     dialog: [
       {
         speakerId: "inner-voice",
@@ -624,11 +624,11 @@ const scenes: Scene[] = [
     outcomeType: "bad",
     endingTitle: "The Float",
     endingLearnPrompt:
-      "You stayed in the store. The body did the shopping, which gave the body weak counter-evidence to the avoidance conditioning. The body did not consciously witness either the panic or its descent, which means the body did not get the lesson available on the ride-it path. Dissociation is not a separate event from panic; it is panic in a different shape, the body's third option after fight-or-flight. Dissociation paths look fine from the outside and feel fine in the immediate aftermath. The cost lands the next time the body is in a similar trigger condition — your body has not learned that panic is rideable, just that panic can be skipped via floating. Across years, dissociation as a panic-management strategy hollows the body out.",
+      "You stayed in the store. The body did the shopping, which gave the body weak counter-evidence to the avoidance conditioning. The body did not consciously witness either the panic or its descent, which means the body did not get the lesson available on the ride-it path. Dissociation is not a separate event from panic; it is panic in a different shape, the body's third option after fight-or-flight. Dissociation paths look fine from the outside and feel fine in the immediate aftermath. The cost lands the next time the body is in a similar trigger condition, your body has not learned that panic is rideable, just that panic can be skipped via floating. Across years, dissociation as a panic-management strategy hollows the body out.",
     dialog: [
       {
         speakerId: "inner-voice",
-        text: "The treatment plan for dissociative panic management is similar to the avoidance treatment plan, with one addition — the early sessions of exposure focus on STAYING PRESENT during the panic, not just staying physically in the environment. Lin will introduce grounding-during-panic specifically (5-4-3-2-1 deployed mid-attack, the hand on the cart handle as the touch-anchor). The skill is to not float. The float is the disorder. The presence is the work.",
+        text: "The treatment plan for dissociative panic management is similar to the avoidance treatment plan, with one addition, the early sessions of exposure focus on STAYING PRESENT during the panic, not just staying physically in the environment. Lin will introduce grounding-during-panic specifically (5-4-3-2-1 deployed mid-attack, the hand on the cart handle as the touch-anchor). The skill is to not float. The float is the disorder. The presence is the work.",
         emotion: "knowing",
       },
     ],
@@ -643,11 +643,11 @@ const scenes: Scene[] = [
     outcomeType: "good",
     endingTitle: "Cycle Four",
     endingLearnPrompt:
-      "You stopped the cart. You stared at Honey Bunches of Oats. You ran five cycles of box breathing while panic peaked at cycle three. The body did not instantly calm. The body learned, in one trial, that panic CAN be ridden in public — that box breathing recruits parasympathetic activation as a mechanical lever on the autonomic nervous system, and that staying through cycle three is what the work requires. By the checkout your body was at a 5, shaky but functional. SCOTT the cashier got a real smile and a real sentence. You did not buy the olives. You drove home present. You sent Mia a text that named the event and asked for nothing. She replied with tea. The body has the foundation, after this trial, for learning it forty more times. That is the structural shape of recovery from panic.",
+      "You stopped the cart. You stared at Honey Bunches of Oats. You ran five cycles of box breathing while panic peaked at cycle three. The body did not instantly calm. The body learned, in one trial, that panic CAN be ridden in public, that box breathing recruits parasympathetic activation as a mechanical lever on the autonomic nervous system, and that staying through cycle three is what the work requires. By the checkout your body was at a 5, shaky but functional. SCOTT the cashier got a real smile and a real sentence. You did not buy the olives. You drove home present. You sent Mia a text that named the event and asked for nothing. She replied with tea. The body has the foundation, after this trial, for learning it forty more times. That is the structural shape of recovery from panic.",
     dialog: [
       {
         speakerId: "inner-voice",
-        text: "The ride-it path is the single most powerful panic-management skill available, and it is also the hardest to deploy on the first attempt. The reason it is hard is that cycle three is the moment the body is most certain the breath is not working — and most people leave at cycle three because the body's certainty is overwhelming. Cycle three is when the breath is doing its hardest work. Knowing this in advance is most of what makes cycle three survivable. You just gave your body the proof. Across the next year of treatment, this proof becomes the foundation for the interoceptive exposure work Lin will introduce in L4-1 — deliberately producing the somatic sensations of panic in controlled settings, with the body learning that the sensations themselves are not dangerous. The ride-it experience today is what makes the L4-1 homework possible.",
+        text: "The ride-it path is the single most powerful panic-management skill available, and it is also the hardest to deploy on the first attempt. The reason it is hard is that cycle three is the moment the body is most certain the breath is not working and most people leave at cycle three because the body's certainty is overwhelming. Cycle three is when the breath is doing its hardest work. Knowing this in advance is most of what makes cycle three survivable. You just gave your body the proof. Across the next year of treatment, this proof becomes the foundation for the interoceptive exposure work Lin will introduce in L4-1, deliberately producing the somatic sensations of panic in controlled settings, with the body learning that the sensations themselves are not dangerous. The ride-it experience today is what makes the L4-1 homework possible.",
         emotion: "knowing",
       },
     ],
@@ -662,11 +662,11 @@ const scenes: Scene[] = [
     outcomeType: "good",
     endingTitle: "The Cilantro",
     endingLearnPrompt:
-      "You called Mia. She did the right thing — did NOT say 'you're not having a heart attack,' did NOT promise everything would be okay, did NOT ask 'what do you need.' She gave you a concrete external task — items in produce, items by the avocados — that competed with your interoceptive scanning. The cilantro and the limes did the work that two minutes of unfocused reassurance would not have done. By the checkout your body was at a 4. The panic was held by an external presence. The body learned that public panic plus witness on the phone is survivable. This is the partner-side of right-relating to panic, applied in acute conditions, and Mia's calibration is the result of two years of accidental practice plus her own intuitive temperament. The L4-2 scene shows what this same calibration looks like under harder conditions.",
+      "You called Mia. She did the right thing, did NOT say 'you're not having a heart attack,' did NOT promise everything would be okay, did NOT ask 'what do you need.' She gave you a concrete external task, items in produce, items by the avocados, that competed with your interoceptive scanning. The cilantro and the limes did the work that two minutes of unfocused reassurance would not have done. By the checkout your body was at a 4. The panic was held by an external presence. The body learned that public panic plus witness on the phone is survivable. This is the partner-side of right-relating to panic, applied in acute conditions, and Mia's calibration is the result of two years of accidental practice plus her own intuitive temperament. The L4-2 scene shows what this same calibration looks like under harder conditions.",
     dialog: [
       {
         speakerId: "inner-voice",
-        text: "The witness-call path produces a slightly different body-learning than the ride-it-alone path. Both are good. The ride-it-alone path teaches the body that panic is rideable WITHOUT external scaffolding, which is the foundation for solo recovery. The witness-call path teaches the body that panic is rideable WITH calibrated witness, which is the foundation for partnered recovery. Most people who recover from panic disorder use both — solo skills for the surprise attacks, partner-witness for the bigger ones. The toolkit is fuller for having both.",
+        text: "The witness-call path produces a slightly different body-learning than the ride-it-alone path. Both are good. The ride-it-alone path teaches the body that panic is rideable WITHOUT external scaffolding, which is the foundation for solo recovery. The witness-call path teaches the body that panic is rideable WITH calibrated witness, which is the foundation for partnered recovery. Most people who recover from panic disorder use both, solo skills for the surprise attacks, partner-witness for the bigger ones. The toolkit is fuller for having both.",
         emotion: "knowing",
       },
     ],
@@ -677,9 +677,9 @@ const scenes: Scene[] = [
 export const anxiety31: Scenario = {
   id: "anx-3-1",
   title: "The Grocery Store",
-  tagline: "Sunday, 11:23 a.m. Cereal aisle. The body fires. Real panic, the somatic event itself.",
+  tagline: "Sunday, 11:23 a.m. cereal aisle. The body fires. Real panic, the somatic event itself.",
   description:
-    "The hardest scene in the arc. Sam at the Trader Joe's on Court Street on a Sunday morning, with bad sleep, three coffees, and lingering Christmas activation. In the cereal aisle, the body produces a real panic attack — the somatic event with the recognised DSM symptom set: chest tightness, shallow breath, tachycardia, cold hands, derealised lights, and the cognitive 'I am dying' content. Five available moves: leave immediately (avoidance trap, conditioning event); leave and pull over (partial avoidance, partial peak-and-fall lesson); stay-but-dissociate (autopilot, body skips the lesson); stay-and-ride-it via box breathing (the skill — cycle three peak, cycle four descent, body learns panic is rideable in public); call Mia for witness-without-certainty-granting (the partner-side of the right-relating move, applied in acute panic). Five endings, with crisis resources surfaced in opening Kanika frame.",
+    "The hardest scene in the arc. Sam at the Trader Joe's on Court Street on a Sunday morning, with bad sleep, three coffees, and lingering Christmas activation. In the cereal aisle, the body produces a real panic attack, the somatic event with the recognised DSM symptom set: chest tightness, shallow breath, tachycardia, cold hands, derealised lights, and the cognitive 'I am dying' content. Five available moves: leave immediately (avoidance trap, conditioning event); leave and pull over (partial avoidance, partial peak-and-fall lesson); stay-but-dissociate (autopilot, body skips the lesson); stay-and-ride-it via box breathing (the skill, cycle three peak, cycle four descent, body learns panic is rideable in public); call Mia for witness-without-certainty-granting (the partner-side of the right-relating move, applied in acute panic). Five endings, with crisis resources surfaced in opening Kanika frame.",
   tier: "premium",
   track: "anxiety",
   level: 3,
@@ -691,17 +691,17 @@ export const anxiety31: Scenario = {
   badgeId: "rode-the-panic",
   startSceneId: "the-frame",
   tacticsLearned: [
-    "Box breathing as autonomic lever — 4 in, 4 hold, 4 out, 4 hold; recruits parasympathetic activation; cycle three is the peak where most people leave; cycle four is when the breath is doing its hardest work",
-    "Witness-call protocol — partner gives concrete external tasks (cilantro, limes) instead of reassurance; competes with interoceptive scanning; does NOT promise certainty",
-    "Panic phenomenology recognised as clinical event — chest, breath, heart, lights, dying-thought are the chemistry of panic, not the condition of dying",
-    "The body learns in one trial — panic ridden once becomes the foundation for forty more; structural shape of panic recovery",
-    "Crisis resources surfaced — 988 / Crisis Text Line as live tools at the moment they may be needed",
+    "Box breathing as autonomic lever, 4 in, 4 hold, 4 out, 4 hold; recruits parasympathetic activation; cycle three is the peak where most people leave; cycle four is when the breath is doing its hardest work",
+    "Witness-call protocol, partner gives concrete external tasks (cilantro, limes) instead of reassurance; competes with interoceptive scanning; does NOT promise certainty",
+    "Panic phenomenology recognised as clinical event, chest, breath, heart, lights, dying-thought are the chemistry of panic, not the condition of dying",
+    "The body learns in one trial, panic ridden once becomes the foundation for forty more; structural shape of panic recovery",
+    "Crisis resources surfaced, 988 / Crisis Text Line as live tools at the moment they may be needed",
   ],
   redFlagsTaught: [
-    "The avoidance trap — leaving the store conditions the body that grocery-stores-produce-panic and leaving-solves-it; generalises to all grocery stores within a month, all public places within a year",
-    "The pull-over partial-avoidance — body learns partial good news (panic ends on its own) and partial bad news (leaving was the move that produced the relief)",
-    "Dissociation as panic-management — looks fine from outside, feels fine immediately; body did not consciously witness panic or descent; the float is the disorder, the presence is the work",
-    "The well-meaning wrong sentence — 'you're not having a heart attack' from a partner mid-panic reads as denial of what the body is experiencing and escalates the attack; medical truth at the wrong moment is the wrong intervention",
+    "The avoidance trap, leaving the store conditions the body that grocery-stores-produce-panic and leaving-solves-it; generalises to all grocery stores within a month, all public places within a year",
+    "The pull-over partial-avoidance, body learns partial good news (panic ends on its own) and partial bad news (leaving was the move that produced the relief)",
+    "Dissociation as panic-management, looks fine from outside, feels fine immediately; body did not consciously witness panic or descent; the float is the disorder, the presence is the work",
+    "The well-meaning wrong sentence, 'you're not having a heart attack' from a partner mid-panic reads as denial of what the body is experiencing and escalates the attack; medical truth at the wrong moment is the wrong intervention",
   ],
   characters: [INNER_VOICE, SAM, MIA],
   scenes,

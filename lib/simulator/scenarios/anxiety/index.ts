@@ -1,16 +1,16 @@
 /**
- * Anxiety track — long-form arc following Sam Ruiz across roughly twelve
+ * Anxiety track, long-form arc following Sam Ruiz across roughly twelve
  * months of CBT-grounded recovery from GAD with social-anxiety overlap.
  * Replaces the previous 8-vignette anxiety track. See
  * reference/RESEARCH-anxiety.md and reference/TRACK-anxiety-design.md
  * for full design.
  *
  * The arc:
- *   L1 — Recognising the Pattern (3 a.m. spiral / morning-after gap)
- *   L2 — The Loop in Daylight (the waiting / wrong-source reassurance)
- *   L3 — The Bottom of the Trough (panic in public / the avoidance fork)
- *   L4 — The Tools (interoceptive exposure / the witnessed spiral)
- *   L5 — The Witness (twelve months later — the wedding)
+ *   L1. Recognising the Pattern (3 a.m. spiral / morning-after gap)
+ *   L2. The Loop in Daylight (the waiting / wrong-source reassurance)
+ *   L3. The Bottom of the Trough (panic in public / the avoidance fork)
+ *   L4. The Tools (interoceptive exposure / the witnessed spiral)
+ *   L5. The Witness (twelve months later, the wedding)
  *
  * POV: player IS Sam throughout, with one 90-second flip to Mia in L4-2.
  *

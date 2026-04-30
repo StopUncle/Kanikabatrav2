@@ -1,10 +1,10 @@
 /**
- * anxiety-4-1 — "Therapy"
+ * anxiety-4-1, "Therapy"
  *
  * Anxiety track, Level 4, order 1. Wednesday afternoon, 4:30 p.m.
  * Dr. Lin's midtown office. The 47th session of an eight-month
  * course of CBT. Today is the session in which Lin introduces
- * INTEROCEPTIVE EXPOSURE as the next step in treatment — the
+ * INTEROCEPTIVE EXPOSURE as the next step in treatment, the
  * deliberate production of the somatic sensations of panic in
  * controlled settings, with the patient learning that the
  * sensations themselves are not dangerous.
@@ -13,16 +13,16 @@
  *   - Interoceptive exposure as the most effective single
  *     intervention for panic disorder. Response rates 60-80% in
  *     well-conducted studies. The patient deliberately produces
- *     the somatic sensations they have been avoiding — rapid heart
+ *     the somatic sensations they have been avoiding, rapid heart
  *     rate via stairs, dizziness via head-spinning, hyperventilation
- *     via deliberate fast breathing — and learns that the
+ *     via deliberate fast breathing and learns that the
  *     sensations are not dangerous in themselves. The conditioning
  *     between somatic-sensation-and-doom extinguishes.
  *   - The five available stances at the moment Lin proposes the
  *     homework. Three of them stall the work. Two of them
  *     metabolise it. The proposing-of-hard-homework moment is one
  *     of the most well-studied gating moments in CBT clinical
- *     practice — patients who can negotiate or curiosity-receive
+ *     practice, patients who can negotiate or curiosity-receive
  *     it produce the work; patients who verbal-yes-internal-no
  *     show up the next session with the homework not done.
  *   - The CBT-rigorous voice (Lin) versus the DBT-warmer voice
@@ -37,7 +37,7 @@
  *     metabolisable form. Compliance produces verbal yes, internal
  *     no, and a homework not-done.
  *
- * Voice: Lin's office. Specific texture from the design doc — the
+ * Voice: Lin's office. Specific texture from the design doc, the
  * Pepper-the-black-Lab framed photo on the desk, the narrow glasses
  * she pushes back up before delivering hard feedback, the columns
  * drawn on the notepad. CBT-rigorous register. Sam in chair across
@@ -76,7 +76,7 @@ const LIN: Character = {
 
 const scenes: Scene[] = [
   // ===================================================================
-  // KANIKA FRAME — interoceptive exposure, the gating moment
+  // KANIKA FRAME, interoceptive exposure, the gating moment
   // ===================================================================
   {
     id: "the-frame",
@@ -96,7 +96,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "inner-voice",
-        text: "What she is about to propose is interoceptive exposure. The deliberate production of the somatic sensations of panic — rapid heart rate via stairs, dizziness via head-spinning, hyperventilation via deliberate fast breathing — in controlled settings, with the patient learning that the sensations themselves are not dangerous. It is one of the most effective single interventions in mental health, with response rates of 60-80% in well-conducted studies. It is also one of the hardest to convince a patient to do, because it asks the patient to deliberately bring on the thing they have been avoiding.",
+        text: "What she is about to propose is interoceptive exposure. The deliberate production of the somatic sensations of panic, rapid heart rate via stairs, dizziness via head-spinning, hyperventilation via deliberate fast breathing, in controlled settings, with the patient learning that the sensations themselves are not dangerous. It is one of the most effective single interventions in mental health, with response rates of 60-80% in well-conducted studies. It is also one of the hardest to convince a patient to do, because it asks the patient to deliberately bring on the thing they have been avoiding.",
         emotion: "knowing",
       },
       {
@@ -117,7 +117,7 @@ const scenes: Scene[] = [
   },
 
   // ===================================================================
-  // THE PROPOSAL — Lin introduces interoceptive exposure
+  // THE PROPOSAL. Lin introduces interoceptive exposure
   // ===================================================================
   {
     id: "the-proposal",
@@ -132,7 +132,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: null,
-        text: "Lin pushes the narrow glasses back up. The push is the tell — she is about to deliver the piece that the session was structured to arrive at.",
+        text: "Lin pushes the narrow glasses back up. The push is the tell, she is about to deliver the piece that the session was structured to arrive at.",
       },
       {
         speakerId: "sam",
@@ -141,7 +141,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "lin",
-        text: "Good. The intervention is called interoceptive exposure. It is one of the best-evidenced single interventions for panic disorder — response rates 60 to 80 percent across well-conducted studies. The mechanism: you deliberately produce, in controlled settings, the somatic sensations that occur during a panic attack. Rapid heart rate via two minutes of stair-climbing. Dizziness via thirty seconds of head-spinning in a chair. Hyperventilation via sixty seconds of deliberate fast shallow breathing. You produce the sensation, you experience it without acting on it, and you observe that the sensation is not dangerous in itself. The body learns, across repeated trials, that somatic-sensation-and-doom is a CONDITIONED association, not a real one. The conditioning extinguishes.",
+        text: "Good. The intervention is called interoceptive exposure. It is one of the best-evidenced single interventions for panic disorder, response rates 60 to 80 percent across well-conducted studies. The mechanism: you deliberately produce, in controlled settings, the somatic sensations that occur during a panic attack. Rapid heart rate via two minutes of stair-climbing. Dizziness via thirty seconds of head-spinning in a chair. Hyperventilation via sixty seconds of deliberate fast shallow breathing. You produce the sensation, you experience it without acting on it, and you observe that the sensation is not dangerous in itself. The body learns, across repeated trials, that somatic-sensation-and-doom is a CONDITIONED association, not a real one. The conditioning extinguishes.",
         emotion: "knowing",
       },
       {
@@ -163,11 +163,11 @@ const scenes: Scene[] = [
       },
       {
         speakerId: null,
-        text: "She sets down the pen. She has produced the proposal in approximately ninety seconds. The proposal is, by design, complete — there is nothing further she needs to add. The next move is yours.",
+        text: "She sets down the pen. She has produced the proposal in approximately ninety seconds. The proposal is, by design, complete, there is nothing further she needs to add. The next move is yours.",
       },
       {
         speakerId: null,
-        text: "Your body, having heard the proposal, is producing the predictable response. The chest is slightly tight. The cognitive content is arriving — 'she wants me to deliberately make myself panic,' 'this sounds insane,' 'why would I do this to myself,' 'what if it triggers another full attack and I cannot stop it.' The body's response is the conditioning Lin is proposing to undo. The proposal is, in this exact moment, producing the small version of the very sensations the homework is designed to render harmless.",
+        text: "Your body, having heard the proposal, is producing the predictable response. The chest is slightly tight. The cognitive content is arriving, 'she wants me to deliberately make myself panic,' 'this sounds insane,' 'why would I do this to myself,' 'what if it triggers another full attack and I cannot stop it.' The body's response is the conditioning Lin is proposing to undo. The proposal is, in this exact moment, producing the small version of the very sensations the homework is designed to render harmless.",
       },
       {
         speakerId: "inner-voice",
@@ -186,14 +186,14 @@ const scenes: Scene[] = [
       {
         id: "verbal-protest",
         text: "Verbal protest. 'I don't want to do that. That sounds insane. Why would I deliberately make myself panic.'",
-        tactic: "Honest. Lin can work with this — the protest IS metabolisable. She walks Sam through the mechanism in detail. By the end of the session Sam has agreed to one specific small piece (one minute of jumping jacks at home with Mia present). The work proceeds at half-speed but it proceeds.",
+        tactic: "Honest. Lin can work with this, the protest IS metabolisable. She walks Sam through the mechanism in detail. By the end of the session Sam has agreed to one specific small piece (one minute of jumping jacks at home with Mia present). The work proceeds at half-speed but it proceeds.",
         nextSceneId: "verbal-protest-1",
         isOptimal: true,
       },
       {
         id: "negotiate",
         text: "Negotiate. 'I'm scared of doing this on my own. Can I do the first round in your office.'",
-        tactic: "The professional-spotter ask. Lin says yes. The first interoceptive exposure happens in-session — sixty seconds of deliberate hyperventilation while she watches and tracks. Sam survives it. Sam goes home with the foothold of having done it once with the therapist. The homework is now metabolisable because the body has a successful trial in its archive.",
+        tactic: "The professional-spotter ask. Lin says yes. The first interoceptive exposure happens in-session, sixty seconds of deliberate hyperventilation while she watches and tracks. Sam survives it. Sam goes home with the foothold of having done it once with the therapist. The homework is now metabolisable because the body has a successful trial in its archive.",
         nextSceneId: "negotiate-1",
         isOptimal: true,
       },
@@ -207,7 +207,7 @@ const scenes: Scene[] = [
       {
         id: "curiosity",
         text: "Curiosity. 'Walk me through what's going to happen in my body. What does the research show about this. How do I know if I'm doing it wrong.'",
-        tactic: "The receptive stance. The hardest to produce because the body is hot from the proposal and curiosity is a slower thing. Lin walks Sam through the mechanism in clinical detail. The curiosity stance metabolises the resistance into the same homework as the protest path, but with a different posture going in — the body has already done the cognitive work of UNDERSTANDING what the homework is for, which makes the deployment easier.",
+        tactic: "The receptive stance. The hardest to produce because the body is hot from the proposal and curiosity is a slower thing. Lin walks Sam through the mechanism in clinical detail. The curiosity stance metabolises the resistance into the same homework as the protest path, but with a different posture going in, the body has already done the cognitive work of UNDERSTANDING what the homework is for, which makes the deployment easier.",
         nextSceneId: "curiosity-1",
         isOptimal: true,
       },
@@ -230,7 +230,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: null,
-        text: "Lin watches you for a beat. The watch is calm. She does not seem to be reading the difference between the verbal yes and the internal yes — but she is. She has been doing this for sixteen years and she has had this exact compliance-toned yes from approximately three hundred patients. She knows what it predicts.",
+        text: "Lin watches you for a beat. The watch is calm. She does not seem to be reading the difference between the verbal yes and the internal yes but she is. She has been doing this for sixteen years and she has had this exact compliance-toned yes from approximately three hundred patients. She knows what it predicts.",
       },
       {
         speakerId: "lin",
@@ -243,16 +243,16 @@ const scenes: Scene[] = [
       },
       {
         speakerId: null,
-        text: "Wednesday next week, in the chair, Lin asks. You admit. She does not push. She does not show disappointment. She makes a small adjustment to the homework — one trial per day instead of three, the easiest one (stair-climbing) only — and proposes it again. The work has effectively stalled by one week. Across the next three months, the verbal-yes shape repeats two more times before you and Lin together identify the pattern.",
+        text: "Wednesday next week, in the chair, Lin asks. You admit. She does not push. She does not show disappointment. She makes a small adjustment to the homework, one trial per day instead of three, the easiest one (stair-climbing) only and proposes it again. The work has effectively stalled by one week. Across the next three months, the verbal-yes shape repeats two more times before you and Lin together identify the pattern.",
       },
       {
         speakerId: "inner-voice",
-        text: "Verbal-yes-internal-no is the most common pattern of CBT homework non-completion, and it is the most under-discussed because it is invisible to the patient at the moment of saying yes. The patient genuinely intends to do the homework when saying yes — the no is downstream, in the body, when the moment of doing the homework arrives. Lin can work with this. Lin's protocol for it is patience plus calibration plus eventually naming the pattern explicitly. The treatment continues. It just takes longer.",
+        text: "Verbal-yes-internal-no is the most common pattern of CBT homework non-completion, and it is the most under-discussed because it is invisible to the patient at the moment of saying yes. The patient genuinely intends to do the homework when saying yes, the no is downstream, in the body, when the moment of doing the homework arrives. Lin can work with this. Lin's protocol for it is patience plus calibration plus eventually naming the pattern explicitly. The treatment continues. It just takes longer.",
         emotion: "knowing",
       },
       {
         speakerId: "inner-voice",
-        text: "The repair, when Lin eventually names this in three months, will be a session about HOW you receive proposals — specifically, that 'verbal yes' as your default has been one of the maintenance shapes of your social anxiety as well, where saying yes to things you don't want to do is the lifelong habit. The therapy will then thread the homework-compliance work into the social-anxiety work, which is the kind of integration that good CBT does. Today's stance, however, has cost three months of the simpler version.",
+        text: "The repair, when Lin eventually names this in three months, will be a session about HOW you receive proposals, specifically, that 'verbal yes' as your default has been one of the maintenance shapes of your social anxiety as well, where saying yes to things you don't want to do is the lifelong habit. The therapy will then thread the homework-compliance work into the social-anxiety work, which is the kind of integration that good CBT does. Today's stance, however, has cost three months of the simpler version.",
         emotion: "knowing",
       },
     ],
@@ -268,7 +268,7 @@ const scenes: Scene[] = [
   },
 
   // ===================================================================
-  // VERBAL-PROTEST PATH (skill — workable)
+  // VERBAL-PROTEST PATH (skill, workable)
   // ===================================================================
   {
     id: "verbal-protest-1",
@@ -283,11 +283,11 @@ const scenes: Scene[] = [
       },
       {
         speakerId: null,
-        text: "Lin's face changes microscopically. The change is approval — she has been waiting for the protest, because the protest is workable in a way the polite yes is not.",
+        text: "Lin's face changes microscopically. The change is approval, she has been waiting for the protest, because the protest is workable in a way the polite yes is not.",
       },
       {
         speakerId: "lin",
-        text: "Good. That is the right question. Let me answer it in two pieces. First piece: the goal is not to make you panic. The goal is to produce the SOMATIC SENSATIONS — fast heart rate, lightheadedness, shortness of breath — and have you experience that the sensations are not dangerous in themselves. The sensations are not the panic. The panic is the body's interpretation of the sensations as danger. We are intervening on the interpretation, not on the sensations.",
+        text: "Good. That is the right question. Let me answer it in two pieces. First piece: the goal is not to make you panic. The goal is to produce the SOMATIC SENSATIONS, fast heart rate, lightheadedness, shortness of breath and have you experience that the sensations are not dangerous in themselves. The sensations are not the panic. The panic is the body's interpretation of the sensations as danger. We are intervening on the interpretation, not on the sensations.",
         emotion: "knowing",
       },
       {
@@ -297,7 +297,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "lin",
-        text: "I hear that three trials a day starting tomorrow is too much. Let's calibrate. What if we start with one trial per day. The lightest one — sixty seconds of jumping jacks at home, with Mia present, before bed. Just to see what your body actually does when you produce the sensation deliberately. We meet next week. We add to it then.",
+        text: "I hear that three trials a day starting tomorrow is too much. Let's calibrate. What if we start with one trial per day. The lightest one, sixty seconds of jumping jacks at home, with Mia present, before bed. Just to see what your body actually does when you produce the sensation deliberately. We meet next week. We add to it then.",
         emotion: "knowing",
       },
       {
@@ -312,11 +312,11 @@ const scenes: Scene[] = [
       },
       {
         speakerId: null,
-        text: "The session ends at 5:22. Outside on the sidewalk, the body has done the integration of the protest plus the calibrated re-proposal — a body-state that is approximately 'I do not love this homework but I have agreed to a version of it that I can actually do.' This is the texture in which CBT homework gets done.",
+        text: "The session ends at 5:22. Outside on the sidewalk, the body has done the integration of the protest plus the calibrated re-proposal, a body-state that is approximately 'I do not love this homework but I have agreed to a version of it that I can actually do.' This is the texture in which CBT homework gets done.",
       },
       {
         speakerId: "inner-voice",
-        text: "The protest stance is one of the most under-recognised positive prognostic indicators in CBT. Patients who protest are patients whose internal yes is currently a no — and the protest is the data that lets the clinician calibrate. Lin's response to the protest was the model — accept the protest as legitimate, deliver the mechanism in detail, propose a calibrated smaller version. Most of the highest-effect-size CBT in the published literature happens with patients who protest and clinicians who respond by calibrating, not with patients who comply.",
+        text: "The protest stance is one of the most under-recognised positive prognostic indicators in CBT. Patients who protest are patients whose internal yes is currently a no and the protest is the data that lets the clinician calibrate. Lin's response to the protest was the model, accept the protest as legitimate, deliver the mechanism in detail, propose a calibrated smaller version. Most of the highest-effect-size CBT in the published literature happens with patients who protest and clinicians who respond by calibrating, not with patients who comply.",
         emotion: "knowing",
       },
     ],
@@ -332,7 +332,7 @@ const scenes: Scene[] = [
   },
 
   // ===================================================================
-  // NEGOTIATE PATH (skill — professional spotter)
+  // NEGOTIATE PATH (skill, professional spotter)
   // ===================================================================
   {
     id: "negotiate-1",
@@ -347,7 +347,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "lin",
-        text: "Yes. Yes, that is a good ask. We have about twenty minutes left in the session — we can do one trial right now if you are available for that.",
+        text: "Yes. Yes, that is a good ask. We have about twenty minutes left in the session, we can do one trial right now if you are available for that.",
         emotion: "knowing",
       },
       {
@@ -357,12 +357,12 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "lin",
-        text: "Okay. We will start with the lightest trial — sixty seconds of deliberate fast breathing. The goal is to produce mild lightheadedness and chest sensation, not full hyperventilation. Sit forward in the chair. Feet on the floor. Breathe in through the mouth, out through the mouth, fast, every two seconds. I will count. We will stop at sixty.",
+        text: "Okay. We will start with the lightest trial, sixty seconds of deliberate fast breathing. The goal is to produce mild lightheadedness and chest sensation, not full hyperventilation. Sit forward in the chair. Feet on the floor. Breathe in through the mouth, out through the mouth, fast, every two seconds. I will count. We will stop at sixty.",
         emotion: "knowing",
       },
       {
         speakerId: null,
-        text: "She sets a quiet timer on her phone. You sit forward. You begin breathing. The breath is fast, shallow, all-mouth. Within fifteen seconds the body's chest sensation is firing. Within thirty the lightheadedness arrives. The cognitive content is loud — 'this is happening, this is the panic, I need to stop, this is dangerous.' Lin is watching with a calm face. She is also breathing slowly herself, which is a quiet co-regulation move.",
+        text: "She sets a quiet timer on her phone. You sit forward. You begin breathing. The breath is fast, shallow, all-mouth. Within fifteen seconds the body's chest sensation is firing. Within thirty the lightheadedness arrives. The cognitive content is loud, 'this is happening, this is the panic, I need to stop, this is dangerous.' Lin is watching with a calm face. She is also breathing slowly herself, which is a quiet co-regulation move.",
       },
       {
         speakerId: "lin",
@@ -385,7 +385,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "lin",
-        text: "Yes. That is the mechanism. The 'some other part of me' is the prefrontal-to-amygdala regulatory pathway that we are training. Each repetition strengthens it. The homework now is to produce that same trial at home tomorrow, with Mia present. The first home trial will be harder than this one, because you do not have me watching. That is by design — your prefrontal pathway needs to learn that it can do this without external scaffolding. By trial four it will be largely automatic.",
+        text: "Yes. That is the mechanism. The 'some other part of me' is the prefrontal-to-amygdala regulatory pathway that we are training. Each repetition strengthens it. The homework now is to produce that same trial at home tomorrow, with Mia present. The first home trial will be harder than this one, because you do not have me watching. That is by design, your prefrontal pathway needs to learn that it can do this without external scaffolding. By trial four it will be largely automatic.",
         emotion: "knowing",
       },
       {
@@ -425,7 +425,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: null,
-        text: "Lin's face does not change but her notebook hand pauses. She has read the eager yes — recognises it as a different kind of yes from the verbal-yes-internal-no, but is wary of it for a different reason. The eager yes is the want-to-be-a-good-patient yes. It is well-meaning. It is also premature.",
+        text: "Lin's face does not change but her notebook hand pauses. She has read the eager yes, recognises it as a different kind of yes from the verbal-yes-internal-no, but is wary of it for a different reason. The eager yes is the want-to-be-a-good-patient yes. It is well-meaning. It is also premature.",
       },
       {
         speakerId: "lin",
@@ -442,7 +442,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: null,
-        text: "Wednesday in Lin's chair, you tell her. She nods. She does not show disappointment. She gently re-paces the protocol — back to one trial per day, the lightest one, with explicit re-commitment.",
+        text: "Wednesday in Lin's chair, you tell her. She nods. She does not show disappointment. She gently re-paces the protocol, back to one trial per day, the lightest one, with explicit re-commitment.",
       },
       {
         speakerId: "lin",
@@ -451,7 +451,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "inner-voice",
-        text: "Eager yes is the want-to-be-a-good-patient compliance shape. It is well-meaning. It also pushes the body into the homework before the body is ready, which produces failure trials that compound the conditioning rather than extinguish it. The repair is the same as the verbal-yes path — Lin re-paces. The cost is approximately one week of trials done at the wrong intensity, which is recoverable but not free. The substitution is the protest stance or the negotiate stance — both of which calibrate the homework to what the body can actually do on the first day.",
+        text: "Eager yes is the want-to-be-a-good-patient compliance shape. It is well-meaning. It also pushes the body into the homework before the body is ready, which produces failure trials that compound the conditioning rather than extinguish it. The repair is the same as the verbal-yes path. Lin re-paces. The cost is approximately one week of trials done at the wrong intensity, which is recoverable but not free. The substitution is the protest stance or the negotiate stance. Both of which calibrate the homework to what the body can actually do on the first day.",
         emotion: "knowing",
       },
     ],
@@ -467,7 +467,7 @@ const scenes: Scene[] = [
   },
 
   // ===================================================================
-  // CURIOSITY PATH (skill — receptive)
+  // CURIOSITY PATH (skill, receptive)
   // ===================================================================
   {
     id: "curiosity-1",
@@ -486,17 +486,17 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "lin",
-        text: "Good. Three pieces. First — what happens in your body. The trials produce a transient sympathetic-nervous-system activation. Heart rate up, blood pressure up, mild lightheadedness, mild chest sensation. The peak is at thirty to ninety seconds depending on the trial. The descent is at one to three minutes. Each trial recruits the parasympathetic recovery, which strengthens the parasympathetic baseline. After ten trials your resting parasympathetic tone is measurably higher than at trial one.",
+        text: "Good. Three pieces. First, what happens in your body. The trials produce a transient sympathetic-nervous-system activation. Heart rate up, blood pressure up, mild lightheadedness, mild chest sensation. The peak is at thirty to ninety seconds depending on the trial. The descent is at one to three minutes. Each trial recruits the parasympathetic recovery, which strengthens the parasympathetic baseline. After ten trials your resting parasympathetic tone is measurably higher than at trial one.",
         emotion: "knowing",
       },
       {
         speakerId: "lin",
-        text: "Second — the research. The Craske inhibitory-learning literature has the cleanest data. Forty trials over four to six weeks produces 60 to 80 percent response rates in panic disorder, defined as 50 percent or greater reduction in panic frequency at three months. The drop-out rate during exposure work is high — about 20 to 25 percent — almost entirely due to patients who refuse to start, not patients who start and quit. Once you are past trial five, you are statistically very likely to complete.",
+        text: "Second, the research. The Craske inhibitory-learning literature has the cleanest data. Forty trials over four to six weeks produces 60 to 80 percent response rates in panic disorder, defined as 50 percent or greater reduction in panic frequency at three months. The drop-out rate during exposure work is high, about 20 to 25 percent. Almost entirely due to patients who refuse to start, not patients who start and quit. Once you are past trial five, you are statistically very likely to complete.",
         emotion: "knowing",
       },
       {
         speakerId: "lin",
-        text: "Third — how to know if you are doing it wrong. Two markers. One: if you are not producing the sensations, you are doing it wrong. The sensations are the medicine. People often instinctively under-produce the sensations to spare themselves; this means the trial fails to provide counter-evidence because there were no sensations to counter-condition. Two: if you are producing the sensations and then immediately reaching for safety behaviors — calling Mia, taking a long breath, opening the window, drinking water mid-trial — you are doing it wrong. The trial requires sitting WITH the sensations until the timer or until natural descent. Safety behaviors during exposure are the single most common protocol violation.",
+        text: "Third, how to know if you are doing it wrong. Two markers. One: if you are not producing the sensations, you are doing it wrong. The sensations are the medicine. People often instinctively under-produce the sensations to spare themselves; this means the trial fails to provide counter-evidence because there were no sensations to counter-condition. Two: if you are producing the sensations and then immediately reaching for safety behaviors, calling Mia, taking a long breath, opening the window, drinking water mid-trial, you are doing it wrong. The trial requires sitting WITH the sensations until the timer or until natural descent. Safety behaviors during exposure are the single most common protocol violation.",
         emotion: "knowing",
       },
       {
@@ -506,7 +506,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "lin",
-        text: "Possible. Approximately one in ten patients has at least one full re-panic during the early trials. The protocol is the same as for any other panic — ride it. Box breathing. Stay in the room. Do not leave. The re-panic provides bonus exposure data — you experience that the panic ends on its own even when you did not deliberately produce it. Your Sunday at TJs has already given you this evidence; the re-panic during a trial would be re-confirmation, not novel information.",
+        text: "Possible. Approximately one in ten patients has at least one full re-panic during the early trials. The protocol is the same as for any other panic, ride it. Box breathing. Stay in the room. Do not leave. The re-panic provides bonus exposure data, you experience that the panic ends on its own even when you did not deliberately produce it. Your Sunday at TJs has already given you this evidence; the re-panic during a trial would be re-confirmation, not novel information.",
         emotion: "knowing",
       },
       {
@@ -521,7 +521,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: null,
-        text: "Lin runs you through the same hyperventilation trial as the negotiate path. You sit forward, breathe fast, ride the sixty seconds, descend by ninety. The body's archive now contains one successful trial — produced under curiosity stance with a clinical understanding of the mechanism. The homework that begins tomorrow does so on the strongest possible foundation in this scenario.",
+        text: "Lin runs you through the same hyperventilation trial as the negotiate path. You sit forward, breathe fast, ride the sixty seconds, descend by ninety. The body's archive now contains one successful trial, produced under curiosity stance with a clinical understanding of the mechanism. The homework that begins tomorrow does so on the strongest possible foundation in this scenario.",
       },
       {
         speakerId: "inner-voice",
@@ -551,11 +551,11 @@ const scenes: Scene[] = [
     outcomeType: "neutral",
     endingTitle: "The Polite Yes",
     endingLearnPrompt:
-      "You said yes. You went home. You did not do the homework. The work has stalled. Across the next three months the verbal-yes shape will repeat two more times before you and Lin together identify the pattern — and the pattern, when named, will turn out to be the same shape as your social anxiety, where saying yes to things you don't want to do is the lifelong habit. The integration is the work. Today's stance has cost three months of the simpler version. Lin will not punish. Lin will calibrate. Treatment continues at the slower pace.",
+      "You said yes. You went home. You did not do the homework. The work has stalled. Across the next three months the verbal-yes shape will repeat two more times before you and Lin together identify the pattern and the pattern, when named, will turn out to be the same shape as your social anxiety, where saying yes to things you don't want to do is the lifelong habit. The integration is the work. Today's stance has cost three months of the simpler version. Lin will not punish. Lin will calibrate. Treatment continues at the slower pace.",
     dialog: [
       {
         speakerId: "inner-voice",
-        text: "Verbal-yes-internal-no is the most common CBT homework non-completion pattern, partly because patients genuinely intend to do the homework when saying yes. The 'no' is downstream, in the body, when the moment of doing the homework arrives. The skill substitution is the protest or the curiosity stance — both produce a calibrated smaller-first-step that the body can actually do. Compliance produces yes that does not survive the walk home.",
+        text: "Verbal-yes-internal-no is the most common CBT homework non-completion pattern, partly because patients genuinely intend to do the homework when saying yes. The 'no' is downstream, in the body, when the moment of doing the homework arrives. The skill substitution is the protest or the curiosity stance. Both produce a calibrated smaller-first-step that the body can actually do. Compliance produces yes that does not survive the walk home.",
         emotion: "knowing",
       },
     ],
@@ -570,7 +570,7 @@ const scenes: Scene[] = [
     outcomeType: "good",
     endingTitle: "The Protest",
     endingLearnPrompt:
-      "You protested. Lin received the protest as data, walked you through the mechanism in detail, and proposed a calibrated smaller version — one trial per day, the lightest one (sixty seconds of jumping jacks), with Mia present, before bed. You agreed to a version you can actually do. The work is now proceeding at half-speed but it is proceeding. Across the next month, the calibrated trials produce real data and the trials get harder as the body's archive grows. The protest stance is one of the most under-recognised positive prognostic indicators in CBT.",
+      "You protested. Lin received the protest as data, walked you through the mechanism in detail, and proposed a calibrated smaller version, one trial per day, the lightest one (sixty seconds of jumping jacks), with Mia present, before bed. You agreed to a version you can actually do. The work is now proceeding at half-speed but it is proceeding. Across the next month, the calibrated trials produce real data and the trials get harder as the body's archive grows. The protest stance is one of the most under-recognised positive prognostic indicators in CBT.",
     dialog: [
       {
         speakerId: "inner-voice",
@@ -589,7 +589,7 @@ const scenes: Scene[] = [
     outcomeType: "good",
     endingTitle: "The Spotter",
     endingLearnPrompt:
-      "You asked to do the first trial in Lin's office. She said yes. You ran a sixty-second hyperventilation trial under her watch. You experienced the sensations, recognised them as sensations, watched them descend. The body's archive now contains one successful trial — done under professional supervision — which provides the foundation for tomorrow's home trial. The professional-spotter ask is significantly under-used in CBT exposure protocols; the first trial with the therapist is worth approximately five solo trials in confidence-building because the body's archive contains a successful exposure rather than a hypothetical one when it goes home.",
+      "You asked to do the first trial in Lin's office. She said yes. You ran a sixty-second hyperventilation trial under her watch. You experienced the sensations, recognised them as sensations, watched them descend. The body's archive now contains one successful trial, done under professional supervision, which provides the foundation for tomorrow's home trial. The professional-spotter ask is significantly under-used in CBT exposure protocols; the first trial with the therapist is worth approximately five solo trials in confidence-building because the body's archive contains a successful exposure rather than a hypothetical one when it goes home.",
     dialog: [
       {
         speakerId: "inner-voice",
@@ -608,11 +608,11 @@ const scenes: Scene[] = [
     outcomeType: "neutral",
     endingTitle: "Want to Be a Good Patient",
     endingLearnPrompt:
-      "You said yes eagerly. You went home and did all three trials that night. Thursday's trials were harder. Friday's harder again. By Saturday you were dreading the trials in a way that was itself a maintenance condition. By Sunday you were skipping the head-spinning. By Tuesday completion was at 50%. Wednesday Lin re-paced — back to one trial per day, the lightest one, with explicit re-commitment. The cost was approximately one week of trials done at the wrong intensity, recoverable but not free. The eager-yes shape pushes the body into homework before the body is ready, which produces failure trials that compound the conditioning rather than extinguish it.",
+      "You said yes eagerly. You went home and did all three trials that night. Thursday's trials were harder. Friday's harder again. By Saturday you were dreading the trials in a way that was itself a maintenance condition. By Sunday you were skipping the head-spinning. By Tuesday completion was at 50%. Wednesday Lin re-paced, back to one trial per day, the lightest one, with explicit re-commitment. The cost was approximately one week of trials done at the wrong intensity, recoverable but not free. The eager-yes shape pushes the body into homework before the body is ready, which produces failure trials that compound the conditioning rather than extinguish it.",
     dialog: [
       {
         speakerId: "inner-voice",
-        text: "Eager yes is the want-to-be-a-good-patient compliance shape. It is well-meaning. The substitution is the protest stance or the negotiate stance — both calibrate the homework to what the body can actually do on the first day. The mathematics of CBT exposure work are clear: well-paced slow trials compound; over-paced fast trials produce drop-outs and failure-trials that have to be unwound before the work resumes.",
+        text: "Eager yes is the want-to-be-a-good-patient compliance shape. It is well-meaning. The substitution is the protest stance or the negotiate stance. Both calibrate the homework to what the body can actually do on the first day. The mathematics of CBT exposure work are clear: well-paced slow trials compound; over-paced fast trials produce drop-outs and failure-trials that have to be unwound before the work resumes.",
         emotion: "knowing",
       },
     ],
@@ -627,7 +627,7 @@ const scenes: Scene[] = [
     outcomeType: "good",
     endingTitle: "The Right Question",
     endingLearnPrompt:
-      "You asked for the mechanism. You asked for the research. You asked how to know if you were doing it wrong. Lin walked you through all three pieces — the somatic profile, the Craske inhibitory-learning data, the safety-behaviors warning. You asked the contingency question (what if I have a real panic during a trial). She answered it. You agreed to one in-office trial today plus the homework starting tomorrow. The trial in office produced clean data — sensations rode and descended in 90 seconds. The homework now begins on the strongest possible foundation in this scenario. The Craske literature names curiosity as the leading single predictor of CBT response, ahead of patient motivation, therapeutic alliance, and even diagnostic severity.",
+      "You asked for the mechanism. You asked for the research. You asked how to know if you were doing it wrong. Lin walked you through all three pieces, the somatic profile, the Craske inhibitory-learning data, the safety-behaviors warning. You asked the contingency question (what if I have a real panic during a trial). She answered it. You agreed to one in-office trial today plus the homework starting tomorrow. The trial in office produced clean data, sensations rode and descended in 90 seconds. The homework now begins on the strongest possible foundation in this scenario. The Craske literature names curiosity as the leading single predictor of CBT response, ahead of patient motivation, therapeutic alliance, and even diagnostic severity.",
     dialog: [
       {
         speakerId: "inner-voice",
@@ -644,7 +644,7 @@ export const anxiety41: Scenario = {
   title: "Therapy",
   tagline: "Wednesday, 4:30 p.m. Lin pushes the narrow glasses up. The proposal is interoceptive exposure. Five available stances at the gating moment.",
   description:
-    "POV is Sam in Dr. Lin's chair for the 47th session, three days after the L3-1 panic and the L3-2 successful F-train graded exposure. Lin proposes interoceptive exposure as the next-level intervention — the deliberate production of panic-adjacent somatic sensations in controlled settings, one of the best-evidenced single interventions in mental health. Five available stances at the moment of the proposal: verbal yes / internal no (compliance, treatment plateau); verbal protest (workable, calibration follows); negotiate (professional-spotter ask, first trial in-office with therapist); eager yes (premature compliance, over-paced first week); curiosity (the receptive stance, asks for mechanism + research + how-to-tell-if-wrong). Two stances stall the work; three metabolise it. Five endings.",
+    "POV is Sam in Dr. Lin's chair for the 47th session, three days after the L3-1 panic and the L3-2 successful F-train graded exposure. Lin proposes interoceptive exposure as the next-level intervention, the deliberate production of panic-adjacent somatic sensations in controlled settings, one of the best-evidenced single interventions in mental health. Five available stances at the moment of the proposal: verbal yes / internal no (compliance, treatment plateau); verbal protest (workable, calibration follows); negotiate (professional-spotter ask, first trial in-office with therapist); eager yes (premature compliance, over-paced first week); curiosity (the receptive stance, asks for mechanism + research + how-to-tell-if-wrong). Two stances stall the work; three metabolise it. Five endings.",
   tier: "premium",
   track: "anxiety",
   level: 4,
@@ -656,17 +656,17 @@ export const anxiety41: Scenario = {
   badgeId: "the-curiosity-stance",
   startSceneId: "the-frame",
   tacticsLearned: [
-    "Interoceptive exposure as best-evidenced single intervention for panic — 60-80% response rate, 40 trials over 4-6 weeks, the medicine is the sensation",
-    "The protest stance as positive prognostic indicator — protests are calibration data; clinicians who respond by re-pacing produce higher-effect-size CBT than those whose patients comply",
-    "The professional-spotter ask — request first trial in the therapist's office; one supervised trial worth ~5 solo trials in confidence-building",
-    "Curiosity stance as leading single predictor of CBT response — ahead of motivation, alliance, severity; ask for mechanism, research, and how-to-tell-if-wrong",
-    "Inhibitory-learning framing (Craske) — exposure works by recruiting prefrontal regulation that competes with amygdala conditioning, not by simply 'getting used to' panic",
-    "Safety behaviors as the single most common protocol violation — calling Mia mid-trial, opening the window, taking long breath; trial requires sitting WITH sensations until natural descent",
+    "Interoceptive exposure as best-evidenced single intervention for panic, 60-80% response rate, 40 trials over 4-6 weeks, the medicine is the sensation",
+    "The protest stance as positive prognostic indicator, protests are calibration data; clinicians who respond by re-pacing produce higher-effect-size CBT than those whose patients comply",
+    "The professional-spotter ask, request first trial in the therapist's office; one supervised trial worth ~5 solo trials in confidence-building",
+    "Curiosity stance as leading single predictor of CBT response, ahead of motivation, alliance, severity; ask for mechanism, research, and how-to-tell-if-wrong",
+    "Inhibitory-learning framing (Craske), exposure works by recruiting prefrontal regulation that competes with amygdala conditioning, not by simply 'getting used to' panic",
+    "Safety behaviors as the single most common protocol violation, calling Mia mid-trial, opening the window, taking long breath; trial requires sitting WITH sensations until natural descent",
   ],
   redFlagsTaught: [
-    "Verbal yes / internal no — most common CBT homework non-completion pattern; the no is downstream, in the body, when the moment of doing the homework arrives; produces three-month treatment plateau",
-    "Eager yes — want-to-be-a-good-patient compliance shape; pushes body into homework before ready; produces failure trials that compound rather than extinguish conditioning; recoverable but costs approximately one week",
-    "Under-producing the sensations to spare yourself — the sensations are the medicine; trials that fail to produce sensations fail to provide counter-evidence",
+    "Verbal yes / internal no. Most common CBT homework non-completion pattern; the no is downstream, in the body, when the moment of doing the homework arrives; produces three-month treatment plateau",
+    "Eager yes, want-to-be-a-good-patient compliance shape; pushes body into homework before ready; produces failure trials that compound rather than extinguish conditioning; recoverable but costs approximately one week",
+    "Under-producing the sensations to spare yourself, the sensations are the medicine; trials that fail to produce sensations fail to provide counter-evidence",
   ],
   characters: [INNER_VOICE, SAM, LIN],
   scenes,

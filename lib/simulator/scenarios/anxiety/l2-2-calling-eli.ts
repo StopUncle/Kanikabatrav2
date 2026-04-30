@@ -1,16 +1,16 @@
 /**
- * anxiety-2-2 — "Calling Eli"
+ * anxiety-2-2, "Calling Eli"
  *
  * Anxiety track, Level 2, order 2. The wrong-source-reassurance
- * scenario. Tuesday evening, 8:11 p.m. The Mia text-gap from L2-1
+ * scenario. Tuesday evening, 8:11 p.m. the Mia text-gap from L2-1
  * resolved at 4 p.m. but the body has a low-grade leftover anxiety
- * that has now attached to a smaller new object — the upcoming
+ * that has now attached to a smaller new object, the upcoming
  * family Christmas at Ellen's, three weeks away. Sam reaches for
  * the phone and is about to call Eli.
  *
  * What this scene teaches:
  *   - Reassurance-seeking from the wrong source. Eli loves Sam.
- *     Eli is also dismissal-coded — his coping style is aggressive
+ *     Eli is also dismissal-coded, his coping style is aggressive
  *     non-introspection, the 'just don't think about it' brother.
  *     Each of his typical reassurance moves (dismissal, bright-side,
  *     comparison, the fix) resolves Sam's body for 12-25 minutes,
@@ -24,9 +24,9 @@
  *     de-escalates through the act of having something on the
  *     calendar.
  *   - Worry-postponement reaches its limits. Three weeks is far
- *     enough away that the body protests harder than at 3 a.m. The
+ *     enough away that the body protests harder than at 3 a.m. the
  *     skill is the same; the body has to learn that postponement
- *     scales — three days, three weeks, three months — and the
+ *     scales. Three days, three weeks, three months and the
  *     mechanic is the same.
  *   - The hello-frame call as a substitute for the venting-frame
  *     call. Eli is fine to call ABOUT NOTHING. Eli is bad to call
@@ -49,7 +49,7 @@ const SAM: Character = {
   id: "sam",
   name: "Sam",
   description:
-    "28. At home. Tuesday 8:11 p.m. Body in the leftover-shape from the afternoon's text-gap, now attaching to the family Christmas three weeks away.",
+    "28. At home. Tuesday 8:11 p.m. body in the leftover-shape from the afternoon's text-gap, now attaching to the family Christmas three weeks away.",
   traits: ["sensitive", "in-treatment", "post-spiral"],
   defaultEmotion: "concerned",
   gender: "female",
@@ -61,7 +61,7 @@ const ELI: Character = {
   id: "eli",
   name: "Eli",
   description:
-    "33. Sam's older brother. Senior accountant in Connecticut. Married to Lauren, 2-year-old daughter Maeve. Loves Sam. Wrong-relates by reflex — 'just don't think about it' is his lifelong coping strategy and he is offering it as care.",
+    "33. Sam's older brother. Senior accountant in Connecticut. Married to Lauren, 2-year-old daughter Maeve. Loves Sam. Wrong-relates by reflex, 'just don't think about it' is his lifelong coping strategy and he is offering it as care.",
   traits: ["dismissive-affectionate", "bright-side-coded"],
   defaultEmotion: "neutral",
   gender: "male",
@@ -82,7 +82,7 @@ const MIA: Character = {
 
 const scenes: Scene[] = [
   // ===================================================================
-  // KANIKA FRAME — wrong-source reassurance
+  // KANIKA FRAME, wrong-source reassurance
   // ===================================================================
   {
     id: "the-frame",
@@ -92,17 +92,17 @@ const scenes: Scene[] = [
     dialog: [
       {
         speakerId: "inner-voice",
-        text: "Tuesday, 8:11 p.m. You are home. The Mia text-gap resolved at 4 p.m. — she replied with the meeting note, the day proceeded, you came home, you ate the lentil soup. Mia is on her way back from a client call, ETA 9:15.",
+        text: "Tuesday, 8:11 p.m. you are home. The Mia text-gap resolved at 4 p.m., she replied with the meeting note, the day proceeded, you came home, you ate the lentil soup. Mia is on her way back from a client call, ETA 9:15.",
         emotion: "knowing",
       },
       {
         speakerId: "inner-voice",
-        text: "The afternoon spiral did not fully discharge. The body has a low-grade leftover activation that has, in the absence of a current target, attached to a smaller new object — the family Christmas at Ellen's, three weeks away. The Christmas is going to be hard. Ellen will be Ellen. Eli will be Eli. The cousins. The ham. The four hours during which all of you pretend the divorce was sixteen years ago.",
+        text: "The afternoon spiral did not fully discharge. The body has a low-grade leftover activation that has, in the absence of a current target, attached to a smaller new object, the family Christmas at Ellen's, three weeks away. The Christmas is going to be hard. Ellen will be Ellen. Eli will be Eli. The cousins. The ham. The four hours during which all of you pretend the divorce was sixteen years ago.",
         emotion: "knowing",
       },
       {
         speakerId: "inner-voice",
-        text: "Your phone is in your hand. You are about to call Eli. The reach-for-Eli is the wrong-source-reassurance move. Eli loves you. Eli is also coded for dismissal — his lifelong coping strategy is aggressive non-introspection, and he offers it as care because he genuinely believes it is care. Each of his typical responses (dismissal, bright-side, comparison, the fix) will resolve your body for 12-25 minutes. The cost is paid in a small undigested resentment afterward toward the person whose dismissal you invited.",
+        text: "Your phone is in your hand. You are about to call Eli. The reach-for-Eli is the wrong-source-reassurance move. Eli loves you. Eli is also coded for dismissal, his lifelong coping strategy is aggressive non-introspection, and he offers it as care because he genuinely believes it is care. Each of his typical responses (dismissal, bright-side, comparison, the fix) will resolve your body for 12-25 minutes. The cost is paid in a small undigested resentment afterward toward the person whose dismissal you invited.",
         emotion: "knowing",
       },
       {
@@ -123,7 +123,7 @@ const scenes: Scene[] = [
   },
 
   // ===================================================================
-  // THE REACH — Eli's contact, the framing choice
+  // THE REACH. Eli's contact, the framing choice
   // ===================================================================
   {
     id: "the-reach",
@@ -133,7 +133,7 @@ const scenes: Scene[] = [
     dialog: [
       {
         speakerId: null,
-        text: "You are on the couch. Phone in hand. Eli's contact is up. He is in the car — you can tell from the location-share he leaves on for Lauren — driving from a client in Greenwich back home to Stamford. About twenty-two minutes of drive.",
+        text: "You are on the couch. Phone in hand. Eli's contact is up. He is in the car, you can tell from the location-share he leaves on for Lauren, driving from a client in Greenwich back home to Stamford. About twenty-two minutes of drive.",
       },
       {
         speakerId: null,
@@ -145,7 +145,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "inner-voice",
-        text: "The most common version of this move, in clinical anxiety, is to call the loved one whose voice the body is hungry for, in a frame the loved one cannot actually meet. The body is hungry for Mia. Eli is the available substitute. Substituting Eli for Mia produces 25 minutes of his version of relief and adds the resentment as a tax. Substituting Eli for nothing — calling Eli ABOUT his life — produces a different conversation that does not feed the loop. Substituting Eli for Mia by waiting for Mia is the third option, which is harder because the body protests at having to wait.",
+        text: "The most common version of this move, in clinical anxiety, is to call the loved one whose voice the body is hungry for, in a frame the loved one cannot actually meet. The body is hungry for Mia. Eli is the available substitute. Substituting Eli for Mia produces 25 minutes of his version of relief and adds the resentment as a tax. Substituting Eli for nothing, calling Eli ABOUT his life, produces a different conversation that does not feed the loop. Substituting Eli for Mia by waiting for Mia is the third option, which is harder because the body protests at having to wait.",
         emotion: "knowing",
       },
     ],
@@ -153,35 +153,35 @@ const scenes: Scene[] = [
       {
         id: "vent-frame-absorb",
         text: "Call Eli. Vent-frame. Tell him about Mom and Christmas. Let his dismissal land and don't push back.",
-        tactic: "The most common version. Eli's reflexive 'just don't think about it' will resolve your body for 18 minutes. You will hang up at 8:34 with the resentment as a tax — and the body still has the underlying Christmas activation, which has just been suppressed rather than addressed.",
+        tactic: "The most common version. Eli's reflexive 'just don't think about it' will resolve your body for 18 minutes. You will hang up at 8:34 with the resentment as a tax and the body still has the underlying Christmas activation, which has just been suppressed rather than addressed.",
         nextSceneId: "vent-absorb-1",
         isOptimal: false,
       },
       {
         id: "vent-frame-push",
         text: "Call Eli. Vent-frame. Push back when he dismisses. 'Eli, I'm not overthinking it. I need you to actually hear this.'",
-        tactic: "The escalation version. Eli will get defensive — 'I AM hearing it, you're being weird about it.' The call will end with both of you irritated and your body more activated than before. Eli is not the sibling who can rise to a request to be a better listener; that is also not his fault.",
+        tactic: "The escalation version. Eli will get defensive, 'I AM hearing it, you're being weird about it.' The call will end with both of you irritated and your body more activated than before. Eli is not the sibling who can rise to a request to be a better listener; that is also not his fault.",
         nextSceneId: "vent-push-1",
         isOptimal: false,
       },
       {
         id: "hello-frame",
         text: "Call Eli. Hello-frame. Ask about Maeve, ask about Lauren's mother who was sick, just talk. Don't bring up Christmas.",
-        tactic: "The substitution. Calls Eli about Eli's life. The body that wanted a witness gets the second-best alternative — ordinary brother conversation. The Christmas anxiety stays in your body, but is not metabolised by being thrown at the wrong witness, which means it remains available for the right witness later.",
+        tactic: "The substitution. Calls Eli about Eli's life. The body that wanted a witness gets the second-best alternative, ordinary brother conversation. The Christmas anxiety stays in your body, but is not metabolised by being thrown at the wrong witness, which means it remains available for the right witness later.",
         nextSceneId: "hello-1",
         isOptimal: true,
       },
       {
         id: "mia-frame",
         text: "Don't call Eli. Text Mia: 'Building up about Christmas. Can we talk about it tonight when you're home?'",
-        tactic: "Routing the anxiety to the right witness, on a frame that respects her arrival. Mia replies within two minutes: 'yeah, of course. 9:15.' The body now has a scheduled witness moment. Anxiety not solved yet, but held — something is on the calendar. Body de-escalates through the next hour.",
+        tactic: "Routing the anxiety to the right witness, on a frame that respects her arrival. Mia replies within two minutes: 'yeah, of course. 9:15.' The body now has a scheduled witness moment. Anxiety not solved yet, but held, something is on the calendar. Body de-escalates through the next hour.",
         nextSceneId: "mia-frame-1",
         isOptimal: true,
       },
       {
         id: "postponement",
-        text: "Don't call anyone. Open the notebook. Write: 'Christmas — Ellen — three weeks. Worry-time tomorrow at 5 p.m.'",
-        tactic: "Worry-postponement applied to a 3-week-out worry. The body protests harder than at 3 a.m. or 2:47 p.m. — Christmas is far away and the body does not understand why now isn't a good time. The skill is the same. The protest is louder. Holds on the second try.",
+        text: "Don't call anyone. Open the notebook. Write: 'Christmas. Ellen. Three weeks. Worry-time tomorrow at 5 p.m.'",
+        tactic: "Worry-postponement applied to a 3-week-out worry. The body protests harder than at 3 a.m. or 2:47 p.m. Christmas is far away and the body does not understand why now isn't a good time. The skill is the same. The protest is louder. Holds on the second try.",
         nextSceneId: "postponement-1",
         isOptimal: true,
       },
@@ -208,7 +208,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "sam",
-        text: "Hey — are you driving? I just wanted to talk for a sec. About Christmas. Mom's. I'm getting in my head about it.",
+        text: "Hey, are you driving? I just wanted to talk for a sec. About Christmas. Mom's. I'm getting in my head about it.",
         emotion: "concerned",
       },
       {
@@ -218,11 +218,11 @@ const scenes: Scene[] = [
       },
       {
         speakerId: null,
-        text: "The dismissal lands. The body, which had been holding low-grade Christmas activation since the afternoon, gets the message that the activation is unjustified. Within ninety seconds the body has dropped two notches. The relief is real — Eli's voice, the steady highway noise, the verdict that you are 'doing this' (where 'this' is the lifelong shape of being the brother who gets in their head).",
+        text: "The dismissal lands. The body, which had been holding low-grade Christmas activation since the afternoon, gets the message that the activation is unjustified. Within ninety seconds the body has dropped two notches. The relief is real. Eli's voice, the steady highway noise, the verdict that you are 'doing this' (where 'this' is the lifelong shape of being the brother who gets in their head).",
       },
       {
         speakerId: "sam",
-        text: "Yeah. Yeah, you're right. I just — Mom is going to ask about Mia again, and last year she —",
+        text: "Yeah. Yeah, you're right. I just. Mom is going to ask about Mia again, and last year she —",
         emotion: "concerned",
       },
       {
@@ -232,7 +232,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: null,
-        text: "The body drops further. The relief now includes the deeper shape Eli is offering — you are an adult, you can handle this, you are bigger than the disorder is making you feel. The shape feels true. The body believes it. The conversation continues for another six minutes. Eli tells you about Maeve learning to say 'no.' You laugh. You hang up at 8:34.",
+        text: "The body drops further. The relief now includes the deeper shape Eli is offering, you are an adult, you can handle this, you are bigger than the disorder is making you feel. The shape feels true. The body believes it. The conversation continues for another six minutes. Eli tells you about Maeve learning to say 'no.' You laugh. You hang up at 8:34.",
       },
       {
         speakerId: null,
@@ -240,12 +240,12 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "inner-voice",
-        text: "Eli is offering what he has. What he has is dismissal-as-care. Most family members who wrong-relate to anxiety are doing exactly this — offering their own coping strategy as a gift. Eli's coping is non-introspection. He has run his life on it. It works for him. He is not lying when he says it should work for you. He is offering you the only tool he has. The cost on your side is real. The cost on his side is also real, because he leaves the call thinking he did something good, when in fact he provided a 25-minute analgesic that ate the actual signal.",
+        text: "Eli is offering what he has. What he has is dismissal-as-care. Most family members who wrong-relate to anxiety are doing exactly this, offering their own coping strategy as a gift. Eli's coping is non-introspection. He has run his life on it. It works for him. He is not lying when he says it should work for you. He is offering you the only tool he has. The cost on your side is real. The cost on his side is also real, because he leaves the call thinking he did something good, when in fact he provided a 25-minute analgesic that ate the actual signal.",
         emotion: "knowing",
       },
       {
         speakerId: "inner-voice",
-        text: "The repair, if you want to make one, is not a fight with Eli about how he listens. The repair is a calibration of WHAT YOU ASK ELI FOR. Hello-frame calls preserve the relationship. Vent-frame calls erode it on both sides. This calibration is the skill — and most people do not learn it until their fourth or fifth wrong-source-reassurance cycle with a wrong-source family member.",
+        text: "The repair, if you want to make one, is not a fight with Eli about how he listens. The repair is a calibration of WHAT YOU ASK ELI FOR. Hello-frame calls preserve the relationship. Vent-frame calls erode it on both sides. This calibration is the skill and most people do not learn it until their fourth or fifth wrong-source-reassurance cycle with a wrong-source family member.",
         emotion: "knowing",
       },
     ],
@@ -304,7 +304,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "sam",
-        text: "I'm not saying you're not — okay, look, never mind. I'll talk to Mia about it. Forget I called.",
+        text: "I'm not saying you're not, okay, look, never mind. I'll talk to Mia about it. Forget I called.",
         emotion: "concerned",
       },
       {
@@ -318,7 +318,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "inner-voice",
-        text: "The push-back is a reasonable request. It is also a request Eli's body is not currently equipped to receive. There is a version of this conversation that produces growth between the two of you over time — but it is not a version that happens in one call, with him in his car after a ten-hour day, with you mid-spiral. The skill of choosing WHICH SIBLING gets WHICH REQUEST is its own piece of the work. Eli can grow. The growing happens slowly, in low-stakes moments, not in mid-spiral asks.",
+        text: "The push-back is a reasonable request. It is also a request Eli's body is not currently equipped to receive. There is a version of this conversation that produces growth between the two of you over time but it is not a version that happens in one call, with him in his car after a ten-hour day, with you mid-spiral. The skill of choosing WHICH SIBLING gets WHICH REQUEST is its own piece of the work. Eli can grow. The growing happens slowly, in low-stakes moments, not in mid-spiral asks.",
         emotion: "knowing",
       },
     ],
@@ -349,7 +349,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "sam",
-        text: "Hey — just calling to say hi. How was the Greenwich client.",
+        text: "Hey, just calling to say hi. How was the Greenwich client.",
         emotion: "neutral",
       },
       {
@@ -364,7 +364,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: null,
-        text: "He launches into the story. Maeve has learned to say 'NO' and is using it about everything — the bath, the broccoli, the cat. Lauren is half-amused, half-exhausted. He laughs as he tells it. The highway noise is steady behind him.",
+        text: "He launches into the story. Maeve has learned to say 'NO' and is using it about everything, the bath, the broccoli, the cat. Lauren is half-amused, half-exhausted. He laughs as he tells it. The highway noise is steady behind him.",
       },
       {
         speakerId: null,
@@ -372,7 +372,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: null,
-        text: "The Christmas anxiety stays in your body throughout. You do not bring it up. You also do not feel relieved of it — it is still there, low-grade, waiting. What HAS happened is that you remembered Eli is a person whose life you are interested in. The hello-frame does not metabolise the anxiety, but it preserves the relationship in a shape that protects both of you from the venting-frame harm.",
+        text: "The Christmas anxiety stays in your body throughout. You do not bring it up. You also do not feel relieved of it, it is still there, low-grade, waiting. What HAS happened is that you remembered Eli is a person whose life you are interested in. The hello-frame does not metabolise the anxiety, but it preserves the relationship in a shape that protects both of you from the venting-frame harm.",
       },
       {
         speakerId: null,
@@ -380,12 +380,12 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "inner-voice",
-        text: "The hello-frame call is the substitution that most people with anxious-dismissive sibling pairs never figure out. The body that reaches for the brother is reaching for a brother-shaped relational hit, which the brother CAN provide — in the shape of ordinary brother content, not in the shape of anxiety processing. Calling Eli about Maeve is one of the small skills that lets the brother relationship survive your treatment, instead of the relationship eroding under the weight of repeated wrong-source asks.",
+        text: "The hello-frame call is the substitution that most people with anxious-dismissive sibling pairs never figure out. The body that reaches for the brother is reaching for a brother-shaped relational hit, which the brother CAN provide. In the shape of ordinary brother content, not in the shape of anxiety processing. Calling Eli about Maeve is one of the small skills that lets the brother relationship survive your treatment, instead of the relationship eroding under the weight of repeated wrong-source asks.",
         emotion: "knowing",
       },
       {
         speakerId: "inner-voice",
-        text: "The Christmas anxiety, which is still in your body, is now correctly routed. Mia is the right witness. 9:15 is the right time. The hour between now and 9:15 is the body's holding-time — the body does not love it, but the calendar holds it.",
+        text: "The Christmas anxiety, which is still in your body, is now correctly routed. Mia is the right witness. 9:15 is the right time. The hour between now and 9:15 is the body's holding-time, the body does not love it, but the calendar holds it.",
         emotion: "knowing",
       },
     ],
@@ -419,29 +419,29 @@ const scenes: Scene[] = [
       },
       {
         speakerId: null,
-        text: "You hit send at 8:13 p.m. Three dots come up within forty seconds.",
+        text: "You hit send at 8:13 p.m. three dots come up within forty seconds.",
       },
       {
         speakerId: "mia",
-        text: "yeah of course. 9:15. love you. would tea help while you wait? i'll pick up the chamomile if so",
+        text: "yeah of course. 9:15. Love you. Would tea help while you wait? i'll pick up the chamomile if so",
         emotion: "neutral",
       },
       {
         speakerId: null,
-        text: "The 'would tea help' is the kind of small calibration Mia does without thinking — she is not asking 'what do you need from me,' which is the high-burden form of the offer; she is asking 'is THIS specific thing a thing,' which lets you say yes or no without performing the coordination of your own state.",
+        text: "The 'would tea help' is the kind of small calibration Mia does without thinking, she is not asking 'what do you need from me,' which is the high-burden form of the offer; she is asking 'is THIS specific thing a thing,' which lets you say yes or no without performing the coordination of your own state.",
       },
       {
         speakerId: "sam",
-        text: "yeah tea would. thank you. love you.",
+        text: "yeah tea would. Thank you. Love you.",
         emotion: "neutral",
       },
       {
         speakerId: null,
-        text: "You set the phone down. The Christmas anxiety is still in your body, but the body now has something on the calendar — 9:15, Mia, the named topic, the chamomile that is being picked up on the way home. The body does not love the hour between now and 9:15. It is not, however, spiralling the way it would have been at 8:14 if you had instead called Eli.",
+        text: "You set the phone down. The Christmas anxiety is still in your body, but the body now has something on the calendar, 9:15, Mia, the named topic, the chamomile that is being picked up on the way home. The body does not love the hour between now and 9:15. It is not, however, spiralling the way it would have been at 8:14 if you had instead called Eli.",
       },
       {
         speakerId: null,
-        text: "You spend the hour reading. You make rice. You do not Google anything. The body is not soothed but it is held. At 9:14 the front door opens. Mia is carrying a small bag from the bodega — chamomile and something else, you can't tell what. She walks in. She says 'hi.' She sets the bag down. She comes over to the couch and sits next to you and puts her hand on your leg.",
+        text: "You spend the hour reading. You make rice. You do not Google anything. The body is not soothed but it is held. At 9:14 the front door opens. Mia is carrying a small bag from the bodega, chamomile and something else, you can't tell what. She walks in. She says 'hi.' She sets the bag down. She comes over to the couch and sits next to you and puts her hand on your leg.",
       },
       {
         speakerId: "mia",
@@ -450,12 +450,12 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "inner-voice",
-        text: "The scheduled witness is one of the most under-deployed relational anxiety skills, mostly because anxious bodies want their witness IMMEDIATELY and the act of accepting a calendar slot feels like denial of need. The opposite is true. Scheduling the witness routes the anxiety to the right person at the right time — preserving Mia's nervous system from being woken up to a low-grade evening leftover, preserving your body's experience that anxiety can be CONTAINED rather than just discharged, and producing a 9:15 conversation that is calmer and more useful than an 8:13 one would have been.",
+        text: "The scheduled witness is one of the most under-deployed relational anxiety skills, mostly because anxious bodies want their witness IMMEDIATELY and the act of accepting a calendar slot feels like denial of need. The opposite is true. Scheduling the witness routes the anxiety to the right person at the right time, preserving Mia's nervous system from being woken up to a low-grade evening leftover, preserving your body's experience that anxiety can be CONTAINED rather than just discharged, and producing a 9:15 conversation that is calmer and more useful than an 8:13 one would have been.",
         emotion: "knowing",
       },
       {
         speakerId: "inner-voice",
-        text: "The 'would tea help' offer is what right-relating looks like in 2026 from a partner who has been doing this work intuitively for two years. It is the question that does not require you to articulate a state. It is the question that gives you a yes/no. Most partners of anxious people, with no training, do not ask this question — they ask the high-burden version, 'what do you need.' Mia stumbled into the calibrated version. She does not know it is calibrated. She just knows it works.",
+        text: "The 'would tea help' offer is what right-relating looks like in 2026 from a partner who has been doing this work intuitively for two years. It is the question that does not require you to articulate a state. It is the question that gives you a yes/no. Most partners of anxious people, with no training, do not ask this question, they ask the high-burden version, 'what do you need.' Mia stumbled into the calibrated version. She does not know it is calibrated. She just knows it works.",
         emotion: "knowing",
       },
     ],
@@ -493,11 +493,11 @@ const scenes: Scene[] = [
       },
       {
         speakerId: null,
-        text: "The body protests. The protest is louder than at 3 a.m. or 2:47 p.m. — three weeks is far enough away that the body does not understand why now isn't a good time, and 'too far away' is itself a feature of the protest. 'But it's three WEEKS, what if waiting until tomorrow makes it worse, what if I forget to use worry-time, what if the worry needs more than 20 minutes —'",
+        text: "The body protests. The protest is louder than at 3 a.m. or 2:47 p.m. three weeks is far enough away that the body does not understand why now isn't a good time, and 'too far away' is itself a feature of the protest. 'But it's three WEEKS, what if waiting until tomorrow makes it worse, what if I forget to use worry-time, what if the worry needs more than 20 minutes —'",
       },
       {
         speakerId: "inner-voice",
-        text: "The body's protest is the body's standard move. The shape of the protest is 'this worry is special.' The body has not yet learned that worry-postponement scales — three days, three weeks, three months. The mechanic is identical. The skill is to hold the postponement against the protest WITHOUT arguing, and to trust that the worry-time tomorrow will absorb whatever the body still has at 5 p.m.",
+        text: "The body's protest is the body's standard move. The shape of the protest is 'this worry is special.' The body has not yet learned that worry-postponement scales. Three days, three weeks, three months. The mechanic is identical. The skill is to hold the postponement against the protest WITHOUT arguing, and to trust that the worry-time tomorrow will absorb whatever the body still has at 5 p.m.",
         emotion: "knowing",
       },
       {
@@ -540,11 +540,11 @@ const scenes: Scene[] = [
     outcomeType: "neutral",
     endingTitle: "The Verdict",
     endingLearnPrompt:
-      "You called Eli with a venting-frame and absorbed his dismissal. The 25 minutes of relief were real. The resentment that arrived at 8:36 was also real. You can no longer call him about Christmas this week because you have used your call. The Christmas anxiety remains in your body at the same level it was at 8:11, with a small new layer of brother-resentment on top. The skill substitution is one of the three named — hello-frame call (preserves the relationship without paying the cost), Mia-frame text (routes to right witness), or worry-postponement notebook (containment without involving anyone). Eli is not the problem. The frame was. The frame is choosable.",
+      "You called Eli with a venting-frame and absorbed his dismissal. The 25 minutes of relief were real. The resentment that arrived at 8:36 was also real. You can no longer call him about Christmas this week because you have used your call. The Christmas anxiety remains in your body at the same level it was at 8:11, with a small new layer of brother-resentment on top. The skill substitution is one of the three named, hello-frame call (preserves the relationship without paying the cost), Mia-frame text (routes to right witness), or worry-postponement notebook (containment without involving anyone). Eli is not the problem. The frame was. The frame is choosable.",
     dialog: [
       {
         speakerId: "inner-voice",
-        text: "Eli is offering the only tool he has. His coping is non-introspection. He runs his life on it. He is not lying when he gives it to you. He is offering care in the shape he can produce. The skill on your side is not to fight him about that shape; it is to call him about things that match the shape — Maeve, Lauren, his work, the highway he is on. The brother relationship is preservable in years of hello-frame calls. It erodes in years of vent-frame calls. The calibration is yours.",
+        text: "Eli is offering the only tool he has. His coping is non-introspection. He runs his life on it. He is not lying when he gives it to you. He is offering care in the shape he can produce. The skill on your side is not to fight him about that shape; it is to call him about things that match the shape. Maeve, Lauren, his work, the highway he is on. The brother relationship is preservable in years of hello-frame calls. It erodes in years of vent-frame calls. The calibration is yours.",
         emotion: "knowing",
       },
     ],
@@ -563,7 +563,7 @@ const scenes: Scene[] = [
     dialog: [
       {
         speakerId: "inner-voice",
-        text: "Some siblings can absorb the request 'I need you to listen, not fix.' Most siblings cannot — not because they are bad siblings, but because the request itself reads as a critique of their listening. Eli reads it that way. The skill is to know which sibling can grow into which request and at what tempo. Eli can grow. The growing happens in low-stakes moments — a Sunday-morning catch-up call, a holiday dinner, a co-walk during a future visit. Not in his car after Greenwich.",
+        text: "Some siblings can absorb the request 'I need you to listen, not fix.' Most siblings cannot, not because they are bad siblings, but because the request itself reads as a critique of their listening. Eli reads it that way. The skill is to know which sibling can grow into which request and at what tempo. Eli can grow. The growing happens in low-stakes moments, a Sunday-morning catch-up call, a holiday dinner, a co-walk during a future visit. Not in his car after Greenwich.",
         emotion: "knowing",
       },
     ],
@@ -578,11 +578,11 @@ const scenes: Scene[] = [
     outcomeType: "good",
     endingTitle: "The Hello",
     endingLearnPrompt:
-      "You called Eli about Maeve. The conversation was indistinguishable from the calls you used to have at 22 and worked. The Christmas anxiety stayed in your body — not metabolised, but not thrown at the wrong witness either, which means it remains available for the right witness later. You also remembered Eli is a person whose life you are interested in. The hello-frame is the skill that lets the brother relationship survive your treatment instead of eroding under repeated wrong-source asks. Then you texted Mia and routed the actual anxiety to her, on a scheduled frame, which is the second skill of the evening.",
+      "You called Eli about Maeve. The conversation was indistinguishable from the calls you used to have at 22 and worked. The Christmas anxiety stayed in your body, not metabolised, but not thrown at the wrong witness either, which means it remains available for the right witness later. You also remembered Eli is a person whose life you are interested in. The hello-frame is the skill that lets the brother relationship survive your treatment instead of eroding under repeated wrong-source asks. Then you texted Mia and routed the actual anxiety to her, on a scheduled frame, which is the second skill of the evening.",
     dialog: [
       {
         speakerId: "inner-voice",
-        text: "The hello-frame is one of the most under-taught family-relational skills in clinical anxiety, partly because clinical anxiety literature focuses on individual interior work and the family-system literature is a separate field. The integration is: not all loved ones can hold all topics. The skill is matching topic to witness. Some loved ones can hold the work topics. Some can hold the family-of-origin topics. Some can hold ordinary life. Knowing which sibling holds which topic — and respecting the brother whose topic-shape is 'Maeve, my work, the cat, the highway' — is itself a form of love.",
+        text: "The hello-frame is one of the most under-taught family-relational skills in clinical anxiety, partly because clinical anxiety literature focuses on individual interior work and the family-system literature is a separate field. The integration is: not all loved ones can hold all topics. The skill is matching topic to witness. Some loved ones can hold the work topics. Some can hold the family-of-origin topics. Some can hold ordinary life. Knowing which sibling holds which topic and respecting the brother whose topic-shape is 'Maeve, my work, the cat, the highway', is itself a form of love.",
         emotion: "knowing",
       },
     ],
@@ -597,7 +597,7 @@ const scenes: Scene[] = [
     outcomeType: "good",
     endingTitle: "9:15",
     endingLearnPrompt:
-      "You routed the anxiety to the right witness on a scheduled frame. Mia replied within forty seconds. The chamomile was already on the way. The hour between 8:13 and 9:14 was the body's holding-time — not soothed, but contained. At 9:14 the front door opened. Mia sat down. Said 'okay, tell me.' This is what right-relating with an anxious partner looks like in its sustainable shape. Most anxious bodies want their witness immediately and read the act of scheduling as denial of need. The opposite is true: scheduling preserves Mia's ground, gives the anxiety a real container, and produces a 9:15 conversation that is calmer and more useful than an 8:13 one would have been.",
+      "You routed the anxiety to the right witness on a scheduled frame. Mia replied within forty seconds. The chamomile was already on the way. The hour between 8:13 and 9:14 was the body's holding-time, not soothed, but contained. At 9:14 the front door opened. Mia sat down. Said 'okay, tell me.' This is what right-relating with an anxious partner looks like in its sustainable shape. Most anxious bodies want their witness immediately and read the act of scheduling as denial of need. The opposite is true: scheduling preserves Mia's ground, gives the anxiety a real container, and produces a 9:15 conversation that is calmer and more useful than an 8:13 one would have been.",
     dialog: [
       {
         speakerId: "inner-voice",
@@ -616,11 +616,11 @@ const scenes: Scene[] = [
     outcomeType: "good",
     endingTitle: "Three Weeks Out",
     endingLearnPrompt:
-      "You wrote the worry down for a 3-week-out trigger. The body protested harder than at 3 a.m. or 2:47 p.m. — abstraction-level worries protest against postponement more loudly than acute ones, because the body cannot easily believe that something three weeks away can actually wait until 5 p.m. tomorrow. You held it. By 5 p.m. tomorrow the worry-time will produce concrete fears (Ellen, Eli, four hours) and concrete actions (the kid-walk, the leave-by-4 plan, the Mia-script if Ellen asks). Concrete fears de-fuse better than abstract ones. The disorder loses one of its most reliable engines, which is operating at the abstraction level.",
+      "You wrote the worry down for a 3-week-out trigger. The body protested harder than at 3 a.m. or 2:47 p.m., abstraction-level worries protest against postponement more loudly than acute ones, because the body cannot easily believe that something three weeks away can actually wait until 5 p.m. tomorrow. You held it. By 5 p.m. tomorrow the worry-time will produce concrete fears (Ellen, Eli, four hours) and concrete actions (the kid-walk, the leave-by-4 plan, the Mia-script if Ellen asks). Concrete fears de-fuse better than abstract ones. The disorder loses one of its most reliable engines, which is operating at the abstraction level.",
     dialog: [
       {
         speakerId: "inner-voice",
-        text: "Worry-postponement deployed on 3-week timescales is the proof that the skill scales. The body that can postpone a 3-week worry can postpone a 3-month one. The body that can convert a 3-week abstraction into 5-p.m.-tomorrow concrete actions has just learned to do something most CBT clients do not learn until their second year. The notebook on top of the fridge is one of the most under-priced anxiety instruments available — it costs $12 and an evening of practice, and across enough entries it becomes the body's external memory for what worries actually do versus what worries say they will do.",
+        text: "Worry-postponement deployed on 3-week timescales is the proof that the skill scales. The body that can postpone a 3-week worry can postpone a 3-month one. The body that can convert a 3-week abstraction into 5-p.m.-tomorrow concrete actions has just learned to do something most CBT clients do not learn until their second year. The notebook on top of the fridge is one of the most under-priced anxiety instruments available, it costs $12 and an evening of practice, and across enough entries it becomes the body's external memory for what worries actually do versus what worries say they will do.",
         emotion: "knowing",
       },
     ],
@@ -631,9 +631,9 @@ const scenes: Scene[] = [
 export const anxiety22: Scenario = {
   id: "anx-2-2",
   title: "Calling Eli",
-  tagline: "8:11 p.m. The phone is in your hand. Eli is in his car. Five framings of the call you are about to make.",
+  tagline: "8:11 p.m. the phone is in your hand. Eli is in his car. Five framings of the call you are about to make.",
   description:
-    "The wrong-source-reassurance scenario. Sam at home Tuesday evening with leftover anxiety from the afternoon, now attached to the family Christmas three weeks away. The reach for the older brother Eli — who loves Sam, who is dismissal-coded, whose lifelong coping strategy is non-introspection offered as care. Five framings of the call: vent-and-absorb (loop-feeder, 25 minutes of relief plus undigested resentment); vent-and-push (escalates Eli into defensiveness; both bodies more activated); hello-frame (preserves the brother relationship by calling about Eli's life); Mia-frame text (routes the anxiety to the right witness on a scheduled frame); worry-postponement notebook (containment without involving anyone, 3-week timescale). Five endings.",
+    "The wrong-source-reassurance scenario. Sam at home Tuesday evening with leftover anxiety from the afternoon, now attached to the family Christmas three weeks away. The reach for the older brother Eli, who loves Sam, who is dismissal-coded, whose lifelong coping strategy is non-introspection offered as care. Five framings of the call: vent-and-absorb (loop-feeder, 25 minutes of relief plus undigested resentment); vent-and-push (escalates Eli into defensiveness; both bodies more activated); hello-frame (preserves the brother relationship by calling about Eli's life); Mia-frame text (routes the anxiety to the right witness on a scheduled frame); worry-postponement notebook (containment without involving anyone, 3-week timescale). Five endings.",
   tier: "premium",
   track: "anxiety",
   level: 2,
@@ -645,16 +645,16 @@ export const anxiety22: Scenario = {
   badgeId: "wrong-source",
   startSceneId: "the-frame",
   tacticsLearned: [
-    "Wrong-source reassurance recognised — the loved one whose voice the body is hungry for is not always the loved one who can hold the topic",
-    "Hello-frame substitution — calling the dismissal-coded sibling about ordinary life preserves the relationship while routing anxiety elsewhere",
-    "Scheduled witness — routing anxiety to the right partner on a calendar frame; preserves their ground, contains your body, produces a calmer 9:15 conversation than 8:13 would have been",
-    "Worry-postponement scales — 3-week-out triggers postpone on the same mechanic as 3-hour-out ones; abstract worries become concrete by 5 p.m. tomorrow",
-    "The 'would tea help' calibrated offer — yes/no questions that don't require state-articulation are what right-relating partners produce; below-conscious-threshold skill",
+    "Wrong-source reassurance recognised, the loved one whose voice the body is hungry for is not always the loved one who can hold the topic",
+    "Hello-frame substitution, calling the dismissal-coded sibling about ordinary life preserves the relationship while routing anxiety elsewhere",
+    "Scheduled witness, routing anxiety to the right partner on a calendar frame; preserves their ground, contains your body, produces a calmer 9:15 conversation than 8:13 would have been",
+    "Worry-postponement scales, 3-week-out triggers postpone on the same mechanic as 3-hour-out ones; abstract worries become concrete by 5 p.m. tomorrow",
+    "The 'would tea help' calibrated offer, yes/no questions that don't require state-articulation are what right-relating partners produce; below-conscious-threshold skill",
   ],
   redFlagsTaught: [
-    "The vent-and-absorb call — Eli's dismissal lands as relief, costs 25 minutes of underlying anxiety being suppressed plus a brother-resentment tax that compounds across years",
-    "The vent-and-push call — pushing the dismissal-coded sibling to listen better mid-spiral reads as critique of their listening; defensive escalation; both bodies more activated than before",
-    "Calling the wrong sibling for the wrong topic — Eli is the right call about Maeve; he is the wrong call about anxiety; the calibration is yours",
+    "The vent-and-absorb call. Eli's dismissal lands as relief, costs 25 minutes of underlying anxiety being suppressed plus a brother-resentment tax that compounds across years",
+    "The vent-and-push call, pushing the dismissal-coded sibling to listen better mid-spiral reads as critique of their listening; defensive escalation; both bodies more activated than before",
+    "Calling the wrong sibling for the wrong topic. Eli is the right call about Maeve; he is the wrong call about anxiety; the calibration is yours",
   ],
   characters: [INNER_VOICE, SAM, ELI, MIA],
   scenes,

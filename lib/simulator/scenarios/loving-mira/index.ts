@@ -1,5 +1,5 @@
 /**
- * Loving-Mira track. Long-form BPD narrative — the friend you can't
+ * Loving-Mira track. Long-form BPD narrative, the friend you can't
  * save, learning to stay in love without losing yourself. Nine
  * scenarios across five levels, alternating outside-POV (the friend)
  * and inside-POV (Mira herself) so the player feels both halves of
@@ -7,7 +7,7 @@
  *
  * Register: warmer than other tracks. Kanika in italics between
  * beats. Names DBT skills explicitly (TIPP, GIVE, DEAR MAN, validation
- * levels). Anti-stigma stance throughout — Mira is not a villain,
+ * levels). Anti-stigma stance throughout. Mira is not a villain,
  * she is the only character in any track who is also her own victim.
  *
  * The arc: meet (L1-1), the early-attachment escalation (L1-2),
@@ -52,7 +52,7 @@ export const LOVING_MIRA_LEVEL_TITLES: Record<
   1: {
     title: "Meeting",
     blurb:
-      "The loft, the three-week mark — the early-attachment escalation that feels like recognition.",
+      "The loft, the three-week mark, the early-attachment escalation that feels like recognition.",
   },
   2: {
     title: "The First Spiral",

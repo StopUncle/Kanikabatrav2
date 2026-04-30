@@ -1,11 +1,11 @@
 /**
- * anxiety-4-2 — "The Witnessed Spiral"
+ * anxiety-4-2, "The Witnessed Spiral"
  *
  * Anxiety track, Level 4, order 2. The relational core of the arc.
  * Friday, 9:18 p.m. Sam at home with Mia. Dinner at Aisha's at 10.
  * Sam has been quiet since coming home from work. Body building a
  * spiral about whether Sam will have a panic at the restaurant.
- * Mia notices. Mia is also having a longer day than usual — her
+ * Mia notices. Mia is also having a longer day than usual, her
  * own deadline missed, a frustrating call with her mother, tired.
  * The interaction has stakes for both bodies.
  *
@@ -18,7 +18,7 @@
  *     sees Mia's face and decision in the moment of choosing
  *     whether to provide the reassurance Sam reaches for, or to
  *     hold the line. This is structurally parallel to the L4-2
- *     Vee call in Loving Mira — a brief switch to a different
+ *     Vee call in Loving Mira, a brief switch to a different
  *     consciousness, designed to teach the player what is happening
  *     on the other side of the relational dynamic.
  *   - The cost of fold versus the cost of hold. Mia folding (i.e.
@@ -71,7 +71,7 @@ const MIA: Character = {
 
 const scenes: Scene[] = [
   // ===================================================================
-  // KANIKA FRAME — relational core, the shape of the ask
+  // KANIKA FRAME, relational core, the shape of the ask
   // ===================================================================
   {
     id: "the-frame",
@@ -81,17 +81,17 @@ const scenes: Scene[] = [
     dialog: [
       {
         speakerId: "inner-voice",
-        text: "Friday, 9:18 p.m. The relational core of the arc. You are home with Mia. The dinner at Aisha's is in 42 minutes. Your body has been building a low-grade spiral since 7 p.m. about whether you will have a panic at the restaurant.",
+        text: "Friday, 9:18 p.m. the relational core of the arc. You are home with Mia. The dinner at Aisha's is in 42 minutes. Your body has been building a low-grade spiral since 7 p.m. about whether you will have a panic at the restaurant.",
         emotion: "knowing",
       },
       {
         speakerId: "inner-voice",
-        text: "Mia has been intuitively right-relating to your anxiety for two years without anyone naming what she is doing. Tonight she is also having a longer day than usual — she missed her own deadline this afternoon, she had a frustrating call with her mother an hour ago, she is tired in a way she has not had the room to process. Tonight is the night the dynamic gets stress-tested.",
+        text: "Mia has been intuitively right-relating to your anxiety for two years without anyone naming what she is doing. Tonight she is also having a longer day than usual, she missed her own deadline this afternoon, she had a frustrating call with her mother an hour ago, she is tired in a way she has not had the room to process. Tonight is the night the dynamic gets stress-tested.",
         emotion: "knowing",
       },
       {
         speakerId: "inner-voice",
-        text: "What you ask for in the next four minutes will set the shape of the next two years of how anxiety lives in this relationship. The shape of the ASK matters more than the relationship. Even Mia can only respond well if asked well. There are five available asks. Two of them are loop-feeders — reassurance-seeking, isolation. One is the cancellation move. Two are the work — explicit witness-asking, and naming-the-state-while-asking-for-nothing-specific.",
+        text: "What you ask for in the next four minutes will set the shape of the next two years of how anxiety lives in this relationship. The shape of the ASK matters more than the relationship. Even Mia can only respond well if asked well. There are five available asks. Two of them are loop-feeders, reassurance-seeking, isolation. One is the cancellation move. Two are the work, explicit witness-asking, and naming-the-state-while-asking-for-nothing-specific.",
         emotion: "knowing",
       },
       {
@@ -112,7 +112,7 @@ const scenes: Scene[] = [
   },
 
   // ===================================================================
-  // THE KITCHEN — context, the spiral, Mia notices
+  // THE KITCHEN, context, the spiral, Mia notices
   // ===================================================================
   {
     id: "the-kitchen",
@@ -122,11 +122,11 @@ const scenes: Scene[] = [
     dialog: [
       {
         speakerId: null,
-        text: "You are at the kitchen counter. You have been at the kitchen counter for nine minutes, doing the thing you do when you are spiralling and pretending not to be — moving objects from the counter to the sink, then from the sink to the drying rack, then back to the counter. The objects are clean. The motion is the medicine.",
+        text: "You are at the kitchen counter. You have been at the kitchen counter for nine minutes, doing the thing you do when you are spiralling and pretending not to be, moving objects from the counter to the sink, then from the sink to the drying rack, then back to the counter. The objects are clean. The motion is the medicine.",
       },
       {
         speakerId: null,
-        text: "Mia is on the couch. She is reading a book that you bought her in October. She has been on the same page for about three minutes — you can tell because she has not turned the page and she is not actually reading.",
+        text: "Mia is on the couch. She is reading a book that you bought her in October. She has been on the same page for about three minutes, you can tell because she has not turned the page and she is not actually reading.",
       },
       {
         speakerId: null,
@@ -139,7 +139,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: null,
-        text: "Her voice is the calm version. Not the worried version. She has noticed without sirening. The sentence is one of the cleanest open-ended check-ins available — yes/no, no demand to articulate state, no positioning of her as the rescuer.",
+        text: "Her voice is the calm version. Not the worried version. She has noticed without sirening. The sentence is one of the cleanest open-ended check-ins available, yes/no, no demand to articulate state, no positioning of her as the rescuer.",
       },
       {
         speakerId: "inner-voice",
@@ -151,7 +151,7 @@ const scenes: Scene[] = [
       {
         id: "ask-reassurance",
         text: "Ask for reassurance. 'Tell me dinner is going to be fine.'",
-        tactic: "The reassurance-seeking ask. Tonight Mia has two options — fold (provide it) or hold (refuse to provide it). The branch shows both. Fold costs across years. Hold costs ten minutes of mutual discomfort and is the longer-term skill.",
+        tactic: "The reassurance-seeking ask. Tonight Mia has two options, fold (provide it) or hold (refuse to provide it). The branch shows both. Fold costs across years. Hold costs ten minutes of mutual discomfort and is the longer-term skill.",
         nextSceneId: "ask-reassurance-1",
         isOptimal: false,
       },
@@ -172,14 +172,14 @@ const scenes: Scene[] = [
       {
         id: "name-state",
         text: "Name the state, ask for nothing specific. 'I'm spiralling about dinner. I don't need anything from you. I just want you to know it's loud right now.'",
-        tactic: "The cleanest single ask available. Names without demanding. Leaves Mia free to respond from her own ground — sit, do laundry next to you, make tea, stay on the couch. All valid. Body de-escalates because the secret is no longer secret.",
+        tactic: "The cleanest single ask available. Names without demanding. Leaves Mia free to respond from her own ground, sit, do laundry next to you, make tea, stay on the couch. All valid. Body de-escalates because the secret is no longer secret.",
         nextSceneId: "name-state-1",
         isOptimal: true,
       },
       {
         id: "cancel",
-        text: "Cancel the dinner. 'Hey — I'm not feeling great, can we tell Aisha we'll do it next week.'",
-        tactic: "The avoidance ending. Body's tension drops 60% in 90 seconds — same dynamic as L3-1's leave-the-store move. The cost is the same: tomorrow the body will associate restaurants with panic. The L3 lessons have not generalised yet.",
+        text: "Cancel the dinner. 'Hey. I'm not feeling great, can we tell Aisha we'll do it next week.'",
+        tactic: "The avoidance ending. Body's tension drops 60% in 90 seconds. Same dynamic as L3-1's leave-the-store move. The cost is the same: tomorrow the body will associate restaurants with panic. The L3 lessons have not generalised yet.",
         nextSceneId: "cancel-1",
         isOptimal: false,
       },
@@ -219,7 +219,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: null,
-        text: "She has been carrying her own day. The deadline she missed at 4 p.m. is still vibrating in her chest. The call with her mother — fifty-four minutes of her mother circling the same complaint about her aunt — is still in her shoulders. She has not eaten since lunch. Her own anxiety, the version she does not name as anxiety, is at a 4 tonight.",
+        text: "She has been carrying her own day. The deadline she missed at 4 p.m. is still vibrating in her chest. The call with her mother, fifty-four minutes of her mother circling the same complaint about her aunt, is still in her shoulders. She has not eaten since lunch. Her own anxiety, the version she does not name as anxiety, is at a 4 tonight.",
       },
       {
         speakerId: null,
@@ -231,7 +231,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: null,
-        text: "She has two options. Fold — say the four words. Hold — say something different.",
+        text: "She has two options. Fold, say the four words. Hold, say something different.",
       },
       {
         speakerId: "inner-voice",
@@ -253,7 +253,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: null,
-        text: "The body's first response is the small wounded thing — she did not give it to you. The body's second response, slower, arriving over the next forty seconds, is something quieter. Something that recognises the move as care. The hold is more accurate to the situation than the fold would have been. She does not know if dinner will be fine. Lying to your body to soothe it is a small lie that compounds across years. She refused to lie.",
+        text: "The body's first response is the small wounded thing, she did not give it to you. The body's second response, slower, arriving over the next forty seconds, is something quieter. Something that recognises the move as care. The hold is more accurate to the situation than the fold would have been. She does not know if dinner will be fine. Lying to your body to soothe it is a small lie that compounds across years. She refused to lie.",
       },
       {
         speakerId: null,
@@ -271,12 +271,12 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "inner-voice",
-        text: "What just happened on both sides is the relational version of the GIVE move from the BPD track, applied to anxiety. Mia validated the feeling (your fear is real) without conceding to the claim (that the dinner outcome is knowable in advance). She refused the easy fold and offered the harder hold — and named her own presence as the actual deliverable instead of certainty about an outcome. This is the relational shape of right-relating to anxiety in 2026, and almost no untrained partner produces it on the first try. Mia produced it tonight on a tired evening because she has been intuitively practicing the shape for two years.",
+        text: "What just happened on both sides is the relational version of the GIVE move from the BPD track, applied to anxiety. Mia validated the feeling (your fear is real) without conceding to the claim (that the dinner outcome is knowable in advance). She refused the easy fold and offered the harder hold and named her own presence as the actual deliverable instead of certainty about an outcome. This is the relational shape of right-relating to anxiety in 2026, and almost no untrained partner produces it on the first try. Mia produced it tonight on a tired evening because she has been intuitively practicing the shape for two years.",
         emotion: "knowing",
       },
       {
         speakerId: "inner-voice",
-        text: "Across years, the hold-versus-fold ratio is what determines whether the relationship sustains the disorder or bends under it. Couples in which the partner folds reliably end up with one body becoming the other's regulator, which is the structural shape that is unsustainable past about year three. Couples in which the partner holds — gently, lovingly, without certainty-granting — produce two bodies that both stay grounded across decades.",
+        text: "Across years, the hold-versus-fold ratio is what determines whether the relationship sustains the disorder or bends under it. Couples in which the partner folds reliably end up with one body becoming the other's regulator, which is the structural shape that is unsustainable past about year three. Couples in which the partner holds, gently, lovingly, without certainty-granting, produce two bodies that both stay grounded across decades.",
         emotion: "knowing",
       },
     ],
@@ -292,7 +292,7 @@ const scenes: Scene[] = [
   },
 
   // ===================================================================
-  // ASK-WITNESS PATH (skill — explicit ask)
+  // ASK-WITNESS PATH (skill, explicit ask)
   // ===================================================================
   {
     id: "ask-witness-1",
@@ -307,7 +307,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: null,
-        text: "Mia exhales — a small audible release. She has been waiting, in some part of her body, for a version of this sentence. The structured ask makes the response easy: she does not have to choose between fold and hold; she has been told what is wanted.",
+        text: "Mia exhales, a small audible release. She has been waiting, in some part of her body, for a version of this sentence. The structured ask makes the response easy: she does not have to choose between fold and hold; she has been told what is wanted.",
       },
       {
         speakerId: "mia",
@@ -316,7 +316,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: null,
-        text: "She moves over on the couch. You walk over. You sit next to her. She puts one hand on your leg — not a squeeze, not a stroke, just a hand. She does not speak. She does not pick up the book. She does not check her phone.",
+        text: "She moves over on the couch. You walk over. You sit next to her. She puts one hand on your leg, not a squeeze, not a stroke, just a hand. She does not speak. She does not pick up the book. She does not check her phone.",
       },
       {
         speakerId: null,
@@ -324,7 +324,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: null,
-        text: "The body de-escalates in the way that bodies de-escalate when they are held by a presence that is not asking anything of them. The chest tightness drops from a 6 to a 3. The breath lengthens. The cognitive content — the dinner, the restaurant, the panic-at-Aisha's narrative — loses energy.",
+        text: "The body de-escalates in the way that bodies de-escalate when they are held by a presence that is not asking anything of them. The chest tightness drops from a 6 to a 3. The breath lengthens. The cognitive content, the dinner, the restaurant, the panic-at-Aisha's narrative, loses energy.",
       },
       {
         speakerId: null,
@@ -351,12 +351,12 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "inner-voice",
-        text: "The explicit-witness ask is one of the cleanest moves available in partnered anxiety, and it is significantly under-used because most anxious bodies have never been taught that 'sit with me without saying anything' is a real available request. The structure of the ask is what makes it land — it is specific (sit with me), it is bounded (ten minutes), it removes the burden of fixing (without saying anything), and it does not reach for certainty. Mia could deploy this on a tired Friday because the ask did not require her to choose between fold and hold; the ask told her what to do.",
+        text: "The explicit-witness ask is one of the cleanest moves available in partnered anxiety, and it is significantly under-used because most anxious bodies have never been taught that 'sit with me without saying anything' is a real available request. The structure of the ask is what makes it land, it is specific (sit with me), it is bounded (ten minutes), it removes the burden of fixing (without saying anything), and it does not reach for certainty. Mia could deploy this on a tired Friday because the ask did not require her to choose between fold and hold; the ask told her what to do.",
         emotion: "knowing",
       },
       {
         speakerId: "inner-voice",
-        text: "The hand-on-leg-without-squeeze is the calibrated touch. Squeezes signal 'I am holding you up.' Strokes signal 'I am soothing you.' The flat hand signals 'I am here.' The flat hand is the right deliverable for the witness ask — it is presence without intervention, which is what the body needs.",
+        text: "The hand-on-leg-without-squeeze is the calibrated touch. Squeezes signal 'I am holding you up.' Strokes signal 'I am soothing you.' The flat hand signals 'I am here.' The flat hand is the right deliverable for the witness ask, it is presence without intervention, which is what the body needs.",
         emotion: "knowing",
       },
     ],
@@ -400,7 +400,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: null,
-        text: "By the time you are out of the shower, the body is at a 7 — higher than when you went in. The shower amplified it because there was no external regulating presence. You dress for dinner. You walk back into the kitchen. Mia is doing dishes. The dinner-tension is now in BOTH of you, because she has spent eleven minutes alone with the awareness that you are not fine and she has been refused entry.",
+        text: "By the time you are out of the shower, the body is at a 7, higher than when you went in. The shower amplified it because there was no external regulating presence. You dress for dinner. You walk back into the kitchen. Mia is doing dishes. The dinner-tension is now in BOTH of you, because she has spent eleven minutes alone with the awareness that you are not fine and she has been refused entry.",
       },
       {
         speakerId: null,
@@ -408,7 +408,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "inner-voice",
-        text: "The avoidance-of-asking is its own anxiety move and across months it is one of the most damaging shapes in partnered anxiety. The body that hides the spiral from the partner has decided that the partner cannot handle it OR that asking is itself a failure-of-self. Both readings are the disorder talking. The substitution is one of the two skill paths — the explicit-witness ask or the name-the-state ask. Both are easier to say than they sound. Both produce dramatically better outcomes than isolation.",
+        text: "The avoidance-of-asking is its own anxiety move and across months it is one of the most damaging shapes in partnered anxiety. The body that hides the spiral from the partner has decided that the partner cannot handle it OR that asking is itself a failure-of-self. Both readings are the disorder talking. The substitution is one of the two skill paths, the explicit-witness ask or the name-the-state ask. Both are easier to say than they sound. Both produce dramatically better outcomes than isolation.",
         emotion: "knowing",
       },
       {
@@ -429,7 +429,7 @@ const scenes: Scene[] = [
   },
 
   // ===================================================================
-  // NAME-STATE PATH (skill — cleanest single ask)
+  // NAME-STATE PATH (skill, cleanest single ask)
   // ===================================================================
   {
     id: "name-state-1",
@@ -444,7 +444,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: null,
-        text: "Mia's face produces the small approval-shape that you have learned, over two years, to recognise. You have asked the right thing — or, more accurately, you have NOT asked, which is the right thing.",
+        text: "Mia's face produces the small approval-shape that you have learned, over two years, to recognise. You have asked the right thing, or, more accurately, you have NOT asked, which is the right thing.",
       },
       {
         speakerId: "mia",
@@ -458,15 +458,15 @@ const scenes: Scene[] = [
       },
       {
         speakerId: null,
-        text: "She gets up. She walks to the kitchen. She fills the kettle. She does not look at you in the meaningful-eye-contact way that signals 'I am performing care.' She does not check on your state. She just makes tea — same way she would have made tea if you had not said anything. The tea-making is the deliverable.",
+        text: "She gets up. She walks to the kitchen. She fills the kettle. She does not look at you in the meaningful-eye-contact way that signals 'I am performing care.' She does not check on your state. She just makes tea. Same way she would have made tea if you had not said anything. The tea-making is the deliverable.",
       },
       {
         speakerId: null,
-        text: "You stay at the counter. You finish moving the clean objects from the sink to the drying rack. The motion is now a different motion than it was four minutes ago — the secret is no longer secret; you are just doing dishes.",
+        text: "You stay at the counter. You finish moving the clean objects from the sink to the drying rack. The motion is now a different motion than it was four minutes ago, the secret is no longer secret; you are just doing dishes.",
       },
       {
         speakerId: null,
-        text: "Mia hands you the mint tea at 9:31 p.m. She does not say anything. The mug is warm. The smell of mint is bright and green, the way it was that day in L1-2 when Maya was making it at the kitchenette. You both drink the tea. By 9:42 your body is at a 3. By 9:48 you are putting on your shoes.",
+        text: "Mia hands you the mint tea at 9:31 p.m. she does not say anything. The mug is warm. The smell of mint is bright and green, the way it was that day in L1-2 when Maya was making it at the kitchenette. You both drink the tea. By 9:42 your body is at a 3. By 9:48 you are putting on your shoes.",
       },
       {
         speakerId: null,
@@ -474,12 +474,12 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "inner-voice",
-        text: "The name-the-state-ask-for-nothing-specific move is, in clinical estimation, the cleanest single ask available in partnered anxiety, and it is significantly under-taught. The mechanism: the request is not for content from the partner; it is for AWARENESS in the partner of your current state. Naming the state to the witness compounds metabolisation across two bodies — same mechanism as the L1-2 'three sentences to Mia' move, deployed in real-time at the moment of activation rather than the morning after.",
+        text: "The name-the-state-ask-for-nothing-specific move is, in clinical estimation, the cleanest single ask available in partnered anxiety, and it is significantly under-taught. The mechanism: the request is not for content from the partner; it is for AWARENESS in the partner of your current state. Naming the state to the witness compounds metabolisation across two bodies. Same mechanism as the L1-2 'three sentences to Mia' move, deployed in real-time at the moment of activation rather than the morning after.",
         emotion: "knowing",
       },
       {
         speakerId: "inner-voice",
-        text: "The 'do you want tea' offer is what right-relating looks like at calibrated low-burden. Mia did not ask 'what do you need.' She did not ask 'are you okay.' She offered something specific that you could yes/no, in the shape of an ordinary couple-routine. The tea is the tea. The tea is also the deliverable. Across years of right-relating, the ordinary ritual deliverables — the tea, the hand on the leg, the regular hand-hold on the walk — are what carries the work. The dramatic interventions are not what sustains the relationship. The ordinary ones are.",
+        text: "The 'do you want tea' offer is what right-relating looks like at calibrated low-burden. Mia did not ask 'what do you need.' She did not ask 'are you okay.' She offered something specific that you could yes/no, in the shape of an ordinary couple-routine. The tea is the tea. The tea is also the deliverable. Across years of right-relating, the ordinary ritual deliverables, the tea, the hand on the leg, the regular hand-hold on the walk, are what carries the work. The dramatic interventions are not what sustains the relationship. The ordinary ones are.",
         emotion: "knowing",
       },
     ],
@@ -505,12 +505,12 @@ const scenes: Scene[] = [
     dialog: [
       {
         speakerId: "sam",
-        text: "Hey — I'm not feeling great, can we tell Aisha we'll do it next week.",
+        text: "Hey. I'm not feeling great, can we tell Aisha we'll do it next week.",
         emotion: "neutral",
       },
       {
         speakerId: null,
-        text: "Mia's face does a thing that is small and she does not let consolidate. She is choosing not to let you read the disappointment. She is also a person who has been looking forward to the dinner — Aisha is her closest non-romantic friend, the four of you have not all been in the same room since September, and she has had her own bad week and was looking forward to a meal with people she likes.",
+        text: "Mia's face does a thing that is small and she does not let consolidate. She is choosing not to let you read the disappointment. She is also a person who has been looking forward to the dinner. Aisha is her closest non-romantic friend, the four of you have not all been in the same room since September, and she has had her own bad week and was looking forward to a meal with people she likes.",
       },
       {
         speakerId: "mia",
@@ -519,7 +519,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: null,
-        text: "She picks up her phone. She types. She sets the phone down. The body's tension drops 60% within ninety seconds — same dynamic as L3-1's leave-the-store move. The relief is real and the relief is psychoactive.",
+        text: "She picks up her phone. She types. She sets the phone down. The body's tension drops 60% within ninety seconds. Same dynamic as L3-1's leave-the-store move. The relief is real and the relief is psychoactive.",
       },
       {
         speakerId: null,
@@ -531,12 +531,12 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "inner-voice",
-        text: "Cancellation as anxiety-management is the most invisible form of avoidance in partnered relationships. Each individual cancellation feels reasonable. The cumulative shape — across months — is the social-life version of the L3-2 morning-after-panic Instacart trap. Same mechanism. Different content slot.",
+        text: "Cancellation as anxiety-management is the most invisible form of avoidance in partnered relationships. Each individual cancellation feels reasonable. The cumulative shape. Across months, is the social-life version of the L3-2 morning-after-panic Instacart trap. Same mechanism. Different content slot.",
         emotion: "knowing",
       },
       {
         speakerId: "inner-voice",
-        text: "The repair is the L3-2 protocol — exposure to the avoided category (restaurants), with structured graded plans. Lin will likely propose, in next Wednesday's session, going to dinner with Mia AT a restaurant before the rescheduled Aisha dinner — first time, off-peak hour, low-stakes location, with the explicit goal of NOT cancelling. The exposure work is hard. It is also the only way the conditioning extinguishes.",
+        text: "The repair is the L3-2 protocol, exposure to the avoided category (restaurants), with structured graded plans. Lin will likely propose, in next Wednesday's session, going to dinner with Mia AT a restaurant before the rescheduled Aisha dinner, first time, off-peak hour, low-stakes location, with the explicit goal of NOT cancelling. The exposure work is hard. It is also the only way the conditioning extinguishes.",
         emotion: "knowing",
       },
     ],
@@ -562,11 +562,11 @@ const scenes: Scene[] = [
     outcomeType: "good",
     endingTitle: "She Held the Line",
     endingLearnPrompt:
-      "You asked for the four-word reassurance. Mia, on a tired Friday with her own load on her shoulders, chose the hold over the fold. She loved you. She did not lie to you. She offered her presence at dinner instead of certainty about the outcome of dinner. The body's first response was the small wounded thing — she did not give it to you. The body's second response was something quieter that recognised the move as care. Across years, the hold-versus-fold ratio is what determines whether the relationship sustains the disorder or bends under it. Couples in which the partner folds reliably end up with one body becoming the other's regulator. Couples in which the partner holds produce two bodies that both stay grounded across decades.",
+      "You asked for the four-word reassurance. Mia, on a tired Friday with her own load on her shoulders, chose the hold over the fold. She loved you. She did not lie to you. She offered her presence at dinner instead of certainty about the outcome of dinner. The body's first response was the small wounded thing, she did not give it to you. The body's second response was something quieter that recognised the move as care. Across years, the hold-versus-fold ratio is what determines whether the relationship sustains the disorder or bends under it. Couples in which the partner folds reliably end up with one body becoming the other's regulator. Couples in which the partner holds produce two bodies that both stay grounded across decades.",
     dialog: [
       {
         speakerId: "inner-voice",
-        text: "What you saw in the 90-second POV flip is what right-relating costs from the partner side. The hold is more expensive in the next ninety seconds than the fold. The fold is more expensive across the next year. Mia's intuitive skill — built over two years of accidental practice — is to choose the long-term cost over the short-term one even on tired evenings. This is the relational shape that lets a partnered anxiety arc reach the L5-1 wedding ending in a healthy state, instead of in the brittle late-stage shape of one body managing both nervous systems.",
+        text: "What you saw in the 90-second POV flip is what right-relating costs from the partner side. The hold is more expensive in the next ninety seconds than the fold. The fold is more expensive across the next year. Mia's intuitive skill, built over two years of accidental practice, is to choose the long-term cost over the short-term one even on tired evenings. This is the relational shape that lets a partnered anxiety arc reach the L5-1 wedding ending in a healthy state, instead of in the brittle late-stage shape of one body managing both nervous systems.",
         emotion: "knowing",
       },
     ],
@@ -581,11 +581,11 @@ const scenes: Scene[] = [
     outcomeType: "good",
     endingTitle: "Eight Minutes of Hand on Leg",
     endingLearnPrompt:
-      "You asked for the explicit witness — sit with me for ten minutes without saying anything. Mia exhaled, sat next to you, put one hand on your leg, did not speak. Eight minutes. The body de-escalated in the way that bodies de-escalate when held by a presence that is not asking anything. Dinner was fine. The flat-hand-without-squeeze is the calibrated touch — squeezes signal 'I am holding you up,' strokes signal 'I am soothing you,' the flat hand signals 'I am here.' The structured ask removes the burden of fixing from your partner, which is what makes the ask deployable on tired evenings.",
+      "You asked for the explicit witness, sit with me for ten minutes without saying anything. Mia exhaled, sat next to you, put one hand on your leg, did not speak. Eight minutes. The body de-escalated in the way that bodies de-escalate when held by a presence that is not asking anything. Dinner was fine. The flat-hand-without-squeeze is the calibrated touch, squeezes signal 'I am holding you up,' strokes signal 'I am soothing you,' the flat hand signals 'I am here.' The structured ask removes the burden of fixing from your partner, which is what makes the ask deployable on tired evenings.",
     dialog: [
       {
         speakerId: "inner-voice",
-        text: "The explicit-witness ask is significantly under-used because most anxious bodies have never been taught that 'sit with me without saying anything' is a real available request. Most bodies reach for either reassurance (fold-or-hold dynamic) or isolation (door closes), neither of which produces what the witness ask produces. The structure of the ask is what makes it land — specific, bounded, low-burden, no certainty-reach. Worth teaching to every partnered anxious patient in CBT.",
+        text: "The explicit-witness ask is significantly under-used because most anxious bodies have never been taught that 'sit with me without saying anything' is a real available request. Most bodies reach for either reassurance (fold-or-hold dynamic) or isolation (door closes), neither of which produces what the witness ask produces. The structure of the ask is what makes it land, specific, bounded, low-burden, no certainty-reach. Worth teaching to every partnered anxious patient in CBT.",
         emotion: "knowing",
       },
     ],
@@ -600,7 +600,7 @@ const scenes: Scene[] = [
     outcomeType: "bad",
     endingTitle: "The Closed Door",
     endingLearnPrompt:
-      "You went to the shower. The shower was the place you could spiral without anyone watching, which was exactly the appeal and exactly the cost. By the time you got out the body was at a 7 — higher than when you went in, because there was no external regulating presence. Mia spent eleven minutes alone with the awareness that you were not fine and that she had been refused entry. The dinner was uncomfortable for both of you. Mia did not bring up the refusal until the next morning. The avoidance-of-asking is one of the most damaging shapes in partnered anxiety because it teaches the partner that their presence is not wanted — which is the conditioning that, across 50 isolation transactions, closes the door her intuitive right-relating has been holding open for two years.",
+      "You went to the shower. The shower was the place you could spiral without anyone watching, which was exactly the appeal and exactly the cost. By the time you got out the body was at a 7, higher than when you went in, because there was no external regulating presence. Mia spent eleven minutes alone with the awareness that you were not fine and that she had been refused entry. The dinner was uncomfortable for both of you. Mia did not bring up the refusal until the next morning. The avoidance-of-asking is one of the most damaging shapes in partnered anxiety because it teaches the partner that their presence is not wanted, which is the conditioning that, across 50 isolation transactions, closes the door her intuitive right-relating has been holding open for two years.",
     dialog: [
       {
         speakerId: "inner-voice",
@@ -619,11 +619,11 @@ const scenes: Scene[] = [
     outcomeType: "good",
     endingTitle: "The Mint Tea",
     endingLearnPrompt:
-      "You named the state and asked for nothing specific. 'I'm spiralling about dinner. I don't need anything from you. I just want you to know it's loud right now.' Mia made mint tea. The tea was the tea. The tea was also the deliverable. By 9:42 the body was at a 3. The walk to Aisha's was a regular walk. The dinner was fine. The cleanest single ask available in partnered anxiety is the one that does not ask for content from the partner, just for AWARENESS in the partner of your current state. The ordinary ritual deliverables — tea, hand-on-leg, regular hand-hold — are what carries the work across years. The dramatic interventions are not what sustains the relationship; the ordinary ones are.",
+      "You named the state and asked for nothing specific. 'I'm spiralling about dinner. I don't need anything from you. I just want you to know it's loud right now.' Mia made mint tea. The tea was the tea. The tea was also the deliverable. By 9:42 the body was at a 3. The walk to Aisha's was a regular walk. The dinner was fine. The cleanest single ask available in partnered anxiety is the one that does not ask for content from the partner, just for AWARENESS in the partner of your current state. The ordinary ritual deliverables, tea, hand-on-leg, regular hand-hold, are what carries the work across years. The dramatic interventions are not what sustains the relationship; the ordinary ones are.",
     dialog: [
       {
         speakerId: "inner-voice",
-        text: "Naming-the-state-asking-for-nothing is structurally similar to the L1-2 three-sentences-to-Mia move, deployed at the moment of activation rather than the morning after. The mechanism is the same — metabolisation across two bodies via witness — but the in-the-moment version produces a real-time de-escalation that the next-morning version does not. Most clinically anxious people in long relationships under-deploy the in-the-moment version, partly because they have been taught (by culture, not by clinicians) that asking for witness during activation is itself a burden. The opposite is the case. The naming is what protects the partner FROM the burden of guessing.",
+        text: "Naming-the-state-asking-for-nothing is structurally similar to the L1-2 three-sentences-to-Mia move, deployed at the moment of activation rather than the morning after. The mechanism is the same, metabolisation across two bodies via witness but the in-the-moment version produces a real-time de-escalation that the next-morning version does not. Most clinically anxious people in long relationships under-deploy the in-the-moment version, partly because they have been taught (by culture, not by clinicians) that asking for witness during activation is itself a burden. The opposite is the case. The naming is what protects the partner FROM the burden of guessing.",
         emotion: "knowing",
       },
     ],
@@ -638,11 +638,11 @@ const scenes: Scene[] = [
     outcomeType: "bad",
     endingTitle: "We'll Do It Next Week",
     endingLearnPrompt:
-      "You cancelled. The body's tension dropped 60% in 90 seconds. The relief was real and the relief was psychoactive. The cost lands tomorrow — your body now associates restaurants with pre-panic tension. Next Friday's anticipatory anxiety will fire at a higher baseline than tonight's. By the third reschedule the conditioning has compounded into restaurant-equals-dread. Mia's cost is harder to see and lands across months — the third dinner-out cancelled in three months. Across the year the social-plans-kept ratio drops below 0.5, which is the structural shape that ends most partnered social lives. Same mechanism as L3-1 leave-the-store and L3-2 stay-home-Monday. Different content slot.",
+      "You cancelled. The body's tension dropped 60% in 90 seconds. The relief was real and the relief was psychoactive. The cost lands tomorrow, your body now associates restaurants with pre-panic tension. Next Friday's anticipatory anxiety will fire at a higher baseline than tonight's. By the third reschedule the conditioning has compounded into restaurant-equals-dread. Mia's cost is harder to see and lands across months, the third dinner-out cancelled in three months. Across the year the social-plans-kept ratio drops below 0.5, which is the structural shape that ends most partnered social lives. Same mechanism as L3-1 leave-the-store and L3-2 stay-home-Monday. Different content slot.",
     dialog: [
       {
         speakerId: "inner-voice",
-        text: "Cancellation as anxiety-management is the most invisible form of avoidance in partnered relationships. Each individual cancellation feels reasonable; the cumulative shape across months is the social-life version of the L3-2 Instacart trap. The repair is the L3-2 protocol — graded exposure with structured plans. Lin will likely propose dinner-at-a-restaurant before the rescheduled Aisha dinner. The exposure work is hard. It is also the only way the conditioning extinguishes.",
+        text: "Cancellation as anxiety-management is the most invisible form of avoidance in partnered relationships. Each individual cancellation feels reasonable; the cumulative shape across months is the social-life version of the L3-2 Instacart trap. The repair is the L3-2 protocol, graded exposure with structured plans. Lin will likely propose dinner-at-a-restaurant before the rescheduled Aisha dinner. The exposure work is hard. It is also the only way the conditioning extinguishes.",
         emotion: "knowing",
       },
     ],
@@ -653,9 +653,9 @@ const scenes: Scene[] = [
 export const anxiety42: Scenario = {
   id: "anx-4-2",
   title: "The Witnessed Spiral",
-  tagline: "Friday, 9:18 p.m. Dinner at Aisha's at 10. The shape of the ask matters more than the relationship.",
+  tagline: "Friday, 9:18 p.m. dinner at Aisha's at 10. The shape of the ask matters more than the relationship.",
   description:
-    "The relational core of the arc. Sam at home Friday evening with Mia, body building a low-grade spiral about the dinner at Aisha's at 10 p.m. Mia notices. Mia is also tired tonight — missed deadline, frustrating call with her mother, has not eaten. Five available asks: ask for reassurance (with the only POV flip in the arc — 90 seconds inside Mia's body as she chooses between fold and hold); ask for explicit witness (sit-with-me-without-saying-anything, structured low-burden); isolate via shower (avoidance of asking, closes the door her intuitive right-relating has been holding); name the state and ask for nothing (the cleanest single ask, mint-tea outcome); cancel the dinner (avoidance, conditions restaurants with dread, third reschedule of three). Five endings.",
+    "The relational core of the arc. Sam at home Friday evening with Mia, body building a low-grade spiral about the dinner at Aisha's at 10 p.m. Mia notices. Mia is also tired tonight, missed deadline, frustrating call with her mother, has not eaten. Five available asks: ask for reassurance (with the only POV flip in the arc, 90 seconds inside Mia's body as she chooses between fold and hold); ask for explicit witness (sit-with-me-without-saying-anything, structured low-burden); isolate via shower (avoidance of asking, closes the door her intuitive right-relating has been holding); name the state and ask for nothing (the cleanest single ask, mint-tea outcome); cancel the dinner (avoidance, conditions restaurants with dread, third reschedule of three). Five endings.",
   tier: "premium",
   track: "anxiety",
   level: 4,
@@ -667,17 +667,17 @@ export const anxiety42: Scenario = {
   badgeId: "the-hold",
   startSceneId: "the-frame",
   tacticsLearned: [
-    "Witness-without-certainty-granting as the relational version of the GIVE move applied to anxiety — validate the feeling, refuse to lie about the outcome, offer presence as the deliverable",
-    "The hold versus the fold — across years, the ratio determines whether the relationship sustains the disorder or bends under it",
-    "Explicit witness ask — 'sit with me for ten minutes without saying anything' as a structured low-burden request that survives tired evenings",
-    "Name-the-state-ask-for-nothing-specific as the cleanest single ask — does not ask for content, asks for awareness; produces real-time de-escalation via metabolisation across two bodies",
-    "The flat-hand-without-squeeze as the calibrated touch during witness — presence without intervention",
-    "The 'do you want tea' calibrated offer — yes/no questions in the shape of ordinary couple-routine, which is what carries the work across years",
+    "Witness-without-certainty-granting as the relational version of the GIVE move applied to anxiety, validate the feeling, refuse to lie about the outcome, offer presence as the deliverable",
+    "The hold versus the fold. Across years, the ratio determines whether the relationship sustains the disorder or bends under it",
+    "Explicit witness ask, 'sit with me for ten minutes without saying anything' as a structured low-burden request that survives tired evenings",
+    "Name-the-state-ask-for-nothing-specific as the cleanest single ask, does not ask for content, asks for awareness; produces real-time de-escalation via metabolisation across two bodies",
+    "The flat-hand-without-squeeze as the calibrated touch during witness, presence without intervention",
+    "The 'do you want tea' calibrated offer, yes/no questions in the shape of ordinary couple-routine, which is what carries the work across years",
   ],
   redFlagsTaught: [
-    "Reassurance-seeking that pushes the partner into the fold — short-term ninety-second relief, long-term cost as the partner's body becomes the regulator the partnered body reaches for at the moment it should reach for its own skill",
-    "Isolation via shower / closed bathroom door — the most damaging long-term shape, teaches partner that her presence is not wanted, closes the door across 50 transactions",
-    "Cancellation as anxiety-management — invisible avoidance, individual cancellations feel reasonable, cumulative shape across months ends partnered social lives",
+    "Reassurance-seeking that pushes the partner into the fold, short-term ninety-second relief, long-term cost as the partner's body becomes the regulator the partnered body reaches for at the moment it should reach for its own skill",
+    "Isolation via shower / closed bathroom door, the most damaging long-term shape, teaches partner that her presence is not wanted, closes the door across 50 transactions",
+    "Cancellation as anxiety-management, invisible avoidance, individual cancellations feel reasonable, cumulative shape across months ends partnered social lives",
   ],
   characters: [INNER_VOICE, SAM, MIA],
   scenes,

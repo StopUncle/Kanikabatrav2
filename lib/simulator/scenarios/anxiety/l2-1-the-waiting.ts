@@ -1,5 +1,5 @@
 /**
- * anxiety-2-1 — "The Waiting"
+ * anxiety-2-1, "The Waiting"
  *
  * Anxiety track, Level 2, order 1. The daylight version of the
  * loop. Sam at the agency, Tuesday 2:47 p.m., between meetings. A
@@ -11,9 +11,9 @@
  * What this scene teaches:
  *   - The catastrophising staircase fires in daylight too. The
  *     content shifts (relationship instead of work) but the engine
- *     is identical. The same five distortions — catastrophising,
+ *     is identical. The same five distortions, catastrophising,
  *     mind-reading, fortune-telling, probability inflation,
- *     emotional reasoning — produce the same staircase regardless
+ *     emotional reasoning, produce the same staircase regardless
  *     of trigger.
  *   - Worry-postponement applied in a daylight, work-environment
  *     context. The notebook-on-desk variant works as well as the
@@ -23,7 +23,7 @@
  *     against current cognitive content. The act of naming
  *     de-fuses.
  *   - Peer normalisation as the most efficient anxiety-reset
- *     available in a workplace — Maya from L1-2 returns. Walking
+ *     available in a workplace. Maya from L1-2 returns. Walking
  *     to the bodega together is itself an exteroceptive grounding
  *     skill.
  *   - The two loop-feeders specific to this trigger: sending the
@@ -79,7 +79,7 @@ const MAYA: Character = {
 
 const scenes: Scene[] = [
   // ===================================================================
-  // KANIKA FRAME — daylight loop
+  // KANIKA FRAME, daylight loop
   // ===================================================================
   {
     id: "the-frame",
@@ -89,12 +89,12 @@ const scenes: Scene[] = [
     dialog: [
       {
         speakerId: "inner-voice",
-        text: "Tuesday, 2:47 p.m. The agency. The air-conditioning is making the ambient hum it makes. The light is the office daylight, slightly too bright. You are between the 2 p.m. and 3 p.m. meetings.",
+        text: "Tuesday, 2:47 p.m. the agency. The air-conditioning is making the ambient hum it makes. The light is the office daylight, slightly too bright. You are between the 2 p.m. and 3 p.m. meetings.",
         emotion: "knowing",
       },
       {
         speakerId: "inner-voice",
-        text: "Last night you and Mia had a hard but resolved conversation about her mother — Beatriz — moving in for a week starting Saturday. You said something at the end that landed slightly off, in a tone you did not mean. You apologised this morning at the door. Mia said 'yeah, I love you, talk later.' That was 11:14 a.m. It is now 2:47 p.m.",
+        text: "Last night you and Mia had a hard but resolved conversation about her mother. Beatriz, moving in for a week starting Saturday. You said something at the end that landed slightly off, in a tone you did not mean. You apologised this morning at the door. Mia said 'yeah, I love you, talk later.' That was 11:14 a.m. it is now 2:47 p.m.",
         emotion: "knowing",
       },
       {
@@ -104,7 +104,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "inner-voice",
-        text: "What follows is the daylight version of the 3 a.m. loop. Different content slot — relationship instead of work — same cognitive engine. Same five distortions ready to deploy. The available skills are the same. Two of the available moves feed the loop. Three reset it.",
+        text: "What follows is the daylight version of the 3 a.m. loop. Different content slot, relationship instead of work. Same cognitive engine. Same five distortions ready to deploy. The available skills are the same. Two of the available moves feed the loop. Three reset it.",
         emotion: "knowing",
       },
     ],
@@ -120,7 +120,7 @@ const scenes: Scene[] = [
   },
 
   // ===================================================================
-  // THE STAIRCASE — daylight version
+  // THE STAIRCASE, daylight version
   // ===================================================================
   {
     id: "the-staircase",
@@ -134,11 +134,11 @@ const scenes: Scene[] = [
       },
       {
         speakerId: null,
-        text: "12:10 p.m. — your text. 'Hey, hope your morning's good. Lentil soup tonight?'",
+        text: "12:10 p.m., your text. 'Hey, hope your morning's good. Lentil soup tonight?'",
       },
       {
         speakerId: null,
-        text: "12:10 p.m. — read receipt. She read it within four minutes.",
+        text: "12:10 p.m., read receipt. She read it within four minutes.",
       },
       {
         speakerId: null,
@@ -166,7 +166,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: null,
-        text: "Step five. I should send a follow-up. No — that would be needy. Yes — that would show I care. No — she will read it as more of the same anxious pattern she has been tolerating. Yes — silence is worse than the pattern.",
+        text: "Step five. I should send a follow-up. No, that would be needy. Yes, that would show I care. No, she will read it as more of the same anxious pattern she has been tolerating. Yes, silence is worse than the pattern.",
       },
       {
         speakerId: null,
@@ -174,7 +174,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "inner-voice",
-        text: "Six steps. Three minutes. Same engine as last night, in daylight. The distortions are catastrophising, mind-reading, fortune-telling. There is a fourth shape inside the spiral that did not appear at 3 a.m. — the meta-loop, which is the loop ABOUT whether to send the follow-up text. The meta-loop is itself a feature of relationship-anxiety in 2026; the technology gives the body a real action to fixate on (compose, send, don't send), which makes the meta-loop more grippy than the worry it is wrapped around.",
+        text: "Six steps. Three minutes. Same engine as last night, in daylight. The distortions are catastrophising, mind-reading, fortune-telling. There is a fourth shape inside the spiral that did not appear at 3 a.m., the meta-loop, which is the loop ABOUT whether to send the follow-up text. The meta-loop is itself a feature of relationship-anxiety in 2026; the technology gives the body a real action to fixate on (compose, send, don't send), which makes the meta-loop more grippy than the worry it is wrapped around.",
         emotion: "knowing",
       },
       {
@@ -186,8 +186,8 @@ const scenes: Scene[] = [
     choices: [
       {
         id: "follow-up",
-        text: "Send a follow-up. Draft three; send one. 'Hey just checking in, hope all good — soup or sushi tonight?'",
-        tactic: "The unprompted follow-up. Will resolve the body's tension when Mia eventually replies — about 40 minutes from now, with a normal 'hi, in a meeting until 4, soup yes love you.' Cost: the second-text-unprompted is an anxious-attachment tell that careful partners can feel. Mia's nervous system, across months, learns that she has to reply within X minutes or you will second-text. That clock erodes her own ground.",
+        text: "Send a follow-up. Draft three; send one. 'Hey just checking in, hope all good, soup or sushi tonight?'",
+        tactic: "The unprompted follow-up. Will resolve the body's tension when Mia eventually replies, about 40 minutes from now, with a normal 'hi, in a meeting until 4, soup yes love you.' Cost: the second-text-unprompted is an anxious-attachment tell that careful partners can feel. Mia's nervous system, across months, learns that she has to reply within X minutes or you will second-text. That clock erodes her own ground.",
         nextSceneId: "follow-up-1",
         isOptimal: false,
       },
@@ -215,7 +215,7 @@ const scenes: Scene[] = [
       {
         id: "maya",
         text: "Walk to the kitchenette. Maya is there making 4 p.m. English Breakfast. Lean against the counter. 'I'm in the silly version of the relationship-anxiety thing right now.'",
-        tactic: "Peer normalisation, deployed mid-spiral. Maya laughs at the right place. Asks the right question — 'has she ever ghosted you, like ever, ghost-style.' Sam: 'No.' Maya: 'Cool, so you're worrying about a thing that has never happened. Want to walk to the bodega.' Walking + peer + naming + open air = the most efficient anxiety reset available in a workplace.",
+        tactic: "Peer normalisation, deployed mid-spiral. Maya laughs at the right place. Asks the right question, 'has she ever ghosted you, like ever, ghost-style.' Sam: 'No.' Maya: 'Cool, so you're worrying about a thing that has never happened. Want to walk to the bodega.' Walking + peer + naming + open air = the most efficient anxiety reset available in a workplace.",
         nextSceneId: "maya-1",
         isOptimal: true,
       },
@@ -233,23 +233,23 @@ const scenes: Scene[] = [
     dialog: [
       {
         speakerId: null,
-        text: "You draft three. The first is too long. The second is too neutral. The third is the one — casual, light, plausibly-deniable as not-anxious.",
+        text: "You draft three. The first is too long. The second is too neutral. The third is the one, casual, light, plausibly-deniable as not-anxious.",
       },
       {
         speakerId: null,
-        text: "YOU: 'Hey just checking in, hope all good — soup or sushi tonight?'",
+        text: "YOU: 'Hey just checking in, hope all good, soup or sushi tonight?'",
       },
       {
         speakerId: null,
-        text: "You hit send at 3:11 p.m. The body's tension drops about 25% just from having sent it. The relief is not because the text resolved anything. The relief is from the simple act of having taken an action that the body had been straining to take for an hour.",
+        text: "You hit send at 3:11 p.m. the body's tension drops about 25% just from having sent it. The relief is not because the text resolved anything. The relief is from the simple act of having taken an action that the body had been straining to take for an hour.",
       },
       {
         speakerId: null,
-        text: "Mia replies at 4:02 p.m. — about 50 minutes after your follow-up.",
+        text: "Mia replies at 4:02 p.m., about 50 minutes after your follow-up.",
       },
       {
         speakerId: "mia",
-        text: "hi babe! sorry, in a meeting since 1, just got out. soup is great. love you. see you at 7.",
+        text: "hi babe! sorry, in a meeting since 1, just got out. Soup is great. Love you. See you at 7.",
         emotion: "neutral",
       },
       {
@@ -258,7 +258,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "inner-voice",
-        text: "The undefined unease has a name. The unprompted follow-up is what careful partners can feel. Mia is a careful partner. Her nervous system, when it pinged her at 3:11 with your second text, had a small registration that did not consciously surface — something is going on with Sam — which she didn't have time to attend to in the meeting. Across months, this micro-registration accumulates. Her body learns to track your reply windows. Her own ground starts to shift toward managing them. She will not name this for at least six months. By the time she names it, the pattern will have been installed for forty trial cycles.",
+        text: "The undefined unease has a name. The unprompted follow-up is what careful partners can feel. Mia is a careful partner. Her nervous system, when it pinged her at 3:11 with your second text, had a small registration that did not consciously surface, something is going on with Sam, which she didn't have time to attend to in the meeting. Across months, this micro-registration accumulates. Her body learns to track your reply windows. Her own ground starts to shift toward managing them. She will not name this for at least six months. By the time she names it, the pattern will have been installed for forty trial cycles.",
         emotion: "knowing",
       },
       {
@@ -305,7 +305,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: null,
-        text: "By 3:30 p.m. you have spent 45 minutes in the relationship-anxiety internet. Your body is more activated than it was at 2:47, not less, because each piece of content gave the body more SCRIPTS for what could be happening — the avoidant partner script, the slow-fade script, the just-busy script — and the body has now been rehearsing all three at low resolution for 45 minutes.",
+        text: "By 3:30 p.m. you have spent 45 minutes in the relationship-anxiety internet. Your body is more activated than it was at 2:47, not less, because each piece of content gave the body more SCRIPTS for what could be happening, the avoidant partner script, the slow-fade script, the just-busy script and the body has now been rehearsing all three at low resolution for 45 minutes.",
       },
       {
         speakerId: "inner-voice",
@@ -314,7 +314,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "inner-voice",
-        text: "Mia replies at 4:02 with the normal 'in a meeting' text. The body's tension drops. The 45 lost minutes are gone. Tonight you will be tired in a way that is hard to source — chronic Googling produces a specific somatic flavour, a low-grade humming exhaustion, that sleep does not fully discharge.",
+        text: "Mia replies at 4:02 with the normal 'in a meeting' text. The body's tension drops. The 45 lost minutes are gone. Tonight you will be tired in a way that is hard to source, chronic Googling produces a specific somatic flavour, a low-grade humming exhaustion, that sleep does not fully discharge.",
         emotion: "knowing",
       },
     ],
@@ -348,7 +348,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: null,
-        text: "You close the notebook. You put it back in the drawer. You whisper, in your head, the postponement promise. We will worry about Mia at 5 p.m. We will. The body will get its time.",
+        text: "You close the notebook. You put it back in the drawer. You whisper, in your head, the postponement promise. We will worry about Mia at 5 p.m. we will. The body will get its time.",
       },
       {
         speakerId: null,
@@ -368,7 +368,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "mia",
-        text: "hi babe! sorry, in a meeting since 1, just got out. soup is great. love you. see you at 7.",
+        text: "hi babe! sorry, in a meeting since 1, just got out. Soup is great. Love you. See you at 7.",
         emotion: "neutral",
       },
       {
@@ -377,7 +377,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "inner-voice",
-        text: "Postponement works on the body's natural attention-economy. Worries that get scheduled stop competing for cognitive bandwidth in the moment. Most worries scheduled for later are dissolved by reality before later arrives. The notebook is the cumulative external memory of this fact. Across forty entries, the body learns that worry-postponement does not just defer — it sometimes reveals that the worry was never load-bearing. The fortieth entry teaches the body more than the first one. By the hundredth, the postponement is automatic.",
+        text: "Postponement works on the body's natural attention-economy. Worries that get scheduled stop competing for cognitive bandwidth in the moment. Most worries scheduled for later are dissolved by reality before later arrives. The notebook is the cumulative external memory of this fact. Across forty entries, the body learns that worry-postponement does not just defer, it sometimes reveals that the worry was never load-bearing. The fortieth entry teaches the body more than the first one. By the hundredth, the postponement is automatic.",
         emotion: "knowing",
       },
     ],
@@ -403,7 +403,7 @@ const scenes: Scene[] = [
     dialog: [
       {
         speakerId: null,
-        text: "You open the notes app. You type a header: 2:47 p.m. — Mia text gap, distortion check.",
+        text: "You open the notes app. You type a header: 2:47 p.m. Mia text gap, distortion check.",
       },
       {
         speakerId: null,
@@ -411,27 +411,27 @@ const scenes: Scene[] = [
       },
       {
         speakerId: null,
-        text: "1. Catastrophising — staircase from 'no reply' to 'she's gone when I get home.' Six steps. Each one inflated.",
+        text: "1. Catastrophising, staircase from 'no reply' to 'she's gone when I get home.' Six steps. Each one inflated.",
       },
       {
         speakerId: null,
-        text: "2. Mind-reading — 'she is currently making a decision about our relationship.' No evidence. Pure projection.",
+        text: "2. Mind-reading, 'she is currently making a decision about our relationship.' No evidence. Pure projection.",
       },
       {
         speakerId: null,
-        text: "3. Fortune-telling — 'she's going to break up with me tonight.' Specific future, certain tone, no evidence.",
+        text: "3. Fortune-telling, 'she's going to break up with me tonight.' Specific future, certain tone, no evidence.",
       },
       {
         speakerId: null,
-        text: "4. Emotional reasoning — 'I FEEL panicked, therefore the situation MUST BE bad.' The feeling is being treated as evidence FOR the feeling.",
+        text: "4. Emotional reasoning, 'I FEEL panicked, therefore the situation MUST BE bad.' The feeling is being treated as evidence FOR the feeling.",
       },
       {
         speakerId: null,
-        text: "5. Probability inflation — base rate of 'partner ends two-year relationship via 3-hour text gap on a Tuesday' is approximately zero. Weighting it as if it were 30%.",
+        text: "5. Probability inflation, base rate of 'partner ends two-year relationship via 3-hour text gap on a Tuesday' is approximately zero. Weighting it as if it were 30%.",
       },
       {
         speakerId: null,
-        text: "You read the list back. The act of having the list in front of you, in dry CBT-worksheet shape, changes the relationship between you and the cognitive content. The thoughts have not stopped — they continue arriving. They are now arriving as labelled objects rather than as truth-claims.",
+        text: "You read the list back. The act of having the list in front of you, in dry CBT-worksheet shape, changes the relationship between you and the cognitive content. The thoughts have not stopped, they continue arriving. They are now arriving as labelled objects rather than as truth-claims.",
       },
       {
         speakerId: null,
@@ -443,11 +443,11 @@ const scenes: Scene[] = [
       },
       {
         speakerId: null,
-        text: "RESOLUTION: 4:02 p.m. — Mia in meeting since 1. Catastrophe did not materialise. Probability inflation confirmed.",
+        text: "RESOLUTION: 4:02 p.m. Mia in meeting since 1. Catastrophe did not materialise. Probability inflation confirmed.",
       },
       {
         speakerId: "inner-voice",
-        text: "The distortion checklist is the workhorse of CBT for anxiety. It is also one of the cleanest examples of a skill that requires repetition before the BODY believes it works. The first time you do this exercise, the cognitive content does not visibly de-fuse — it just gets labelled, which feels procedural and unsatisfying. The fifth time, the labelling itself produces a small drop in body activation. The twentieth time, the labelling and the de-fusion happen almost simultaneously. Across hundreds of trials, the labelling has compressed into automatic — your brain produces 'fortune-telling' as a tag at the same moment it produces the fortune-telling thought, and the tag prevents the thought from being acted on.",
+        text: "The distortion checklist is the workhorse of CBT for anxiety. It is also one of the cleanest examples of a skill that requires repetition before the BODY believes it works. The first time you do this exercise, the cognitive content does not visibly de-fuse, it just gets labelled, which feels procedural and unsatisfying. The fifth time, the labelling itself produces a small drop in body activation. The twentieth time, the labelling and the de-fusion happen almost simultaneously. Across hundreds of trials, the labelling has compressed into automatic, your brain produces 'fortune-telling' as a tag at the same moment it produces the fortune-telling thought, and the tag prevents the thought from being acted on.",
         emotion: "knowing",
       },
     ],
@@ -532,12 +532,12 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "mia",
-        text: "hi babe! sorry, in a meeting since 1, just got out. soup is great. love you. see you at 7.",
+        text: "hi babe! sorry, in a meeting since 1, just got out. Soup is great. Love you. See you at 7.",
         emotion: "neutral",
       },
       {
         speakerId: null,
-        text: "You read the message. You smile. You text Maya: 'banana situation: handled. mia situation: handled. you: a national treasure.'",
+        text: "You read the message. You smile. You text Maya: 'banana situation: handled. Mia situation: handled. You: a national treasure.'",
       },
       {
         speakerId: "maya",
@@ -572,11 +572,11 @@ const scenes: Scene[] = [
     outcomeType: "neutral",
     endingTitle: "The Second Text",
     endingLearnPrompt:
-      "You sent the follow-up. The body's tension dropped 25% on the act of sending. Mia replied an hour later with a normal 'in a meeting' text. The relief landed. The undefined unease beneath the relief is the cost — the unprompted second-text is an anxious-attachment tell that careful partners can feel below conscious threshold. Mia's nervous system registered something at 3:11; she didn't have time to attend to it. Across months and forty trial cycles, her body learns to track your reply windows. Her own ground starts to shift toward managing them. The first one is free; the fortieth is not. The skill substitution is one of the three named in the choice list.",
+      "You sent the follow-up. The body's tension dropped 25% on the act of sending. Mia replied an hour later with a normal 'in a meeting' text. The relief landed. The undefined unease beneath the relief is the cost, the unprompted second-text is an anxious-attachment tell that careful partners can feel below conscious threshold. Mia's nervous system registered something at 3:11; she didn't have time to attend to it. Across months and forty trial cycles, her body learns to track your reply windows. Her own ground starts to shift toward managing them. The first one is free; the fortieth is not. The skill substitution is one of the three named in the choice list.",
     dialog: [
       {
         speakerId: "inner-voice",
-        text: "The unprompted follow-up is one of the most invisible loop-feeders in modern relationship-anxiety. It looks reasonable. It looks polite. It is also, structurally, the daylight version of the L1-1 wake-Mia move — a partner-mediated reassurance reach dressed as a casual check-in. The diagnostic test is internal: did you compose the second text from a place of calm care, or did you compose it from a place of needing the gap to close? If the second, the cost is being paid by both bodies, slowly, across months.",
+        text: "The unprompted follow-up is one of the most invisible loop-feeders in modern relationship-anxiety. It looks reasonable. It looks polite. It is also, structurally, the daylight version of the L1-1 wake-Mia move, a partner-mediated reassurance reach dressed as a casual check-in. The diagnostic test is internal: did you compose the second text from a place of calm care, or did you compose it from a place of needing the gap to close? If the second, the cost is being paid by both bodies, slowly, across months.",
         emotion: "knowing",
       },
     ],
@@ -591,11 +591,11 @@ const scenes: Scene[] = [
     outcomeType: "bad",
     endingTitle: "The Internet",
     endingLearnPrompt:
-      "Forty-five minutes in the relationship-anxiety internet. Three new scripts your body now knows. The avoidant-partner script, the slow-fade script, the just-busy script. Each one is a cognitive lane the body can ride down at the next text gap. The body did not learn that text gaps are usually meetings. The body learned that text gaps are explicable in three ways, all of which require attention. The next gap will fire all three. The internet specialises in producing scripts — that is what it sells — and a body in chronic anxiety that visits the internet for reassurance is a body buying scripts at the highest possible price, in cognitive bandwidth.",
+      "Forty-five minutes in the relationship-anxiety internet. Three new scripts your body now knows. The avoidant-partner script, the slow-fade script, the just-busy script. Each one is a cognitive lane the body can ride down at the next text gap. The body did not learn that text gaps are usually meetings. The body learned that text gaps are explicable in three ways, all of which require attention. The next gap will fire all three. The internet specialises in producing scripts, that is what it sells and a body in chronic anxiety that visits the internet for reassurance is a body buying scripts at the highest possible price, in cognitive bandwidth.",
     dialog: [
       {
         speakerId: "inner-voice",
-        text: "The relationship-anxiety internet has the same structural problem as the 3 a.m. phone — content as loop-feeder. The daylight twist is that the content is more LITERATE; the scripts are more sophisticated; the rehearsals are more vivid. By the end of an afternoon, the body has not learned anything about the actual relationship. The body has learned three new shapes for what could go wrong. This is a structural backwards step, and it is the maintenance shape of relationship-anxiety in 2026.",
+        text: "The relationship-anxiety internet has the same structural problem as the 3 a.m. phone, content as loop-feeder. The daylight twist is that the content is more LITERATE; the scripts are more sophisticated; the rehearsals are more vivid. By the end of an afternoon, the body has not learned anything about the actual relationship. The body has learned three new shapes for what could go wrong. This is a structural backwards step, and it is the maintenance shape of relationship-anxiety in 2026.",
         emotion: "knowing",
       },
     ],
@@ -610,11 +610,11 @@ const scenes: Scene[] = [
     outcomeType: "good",
     endingTitle: "The Notebook (Daylight)",
     endingLearnPrompt:
-      "You wrote the worry down and named the worry-time at 5 p.m. The body protested. You held the postponement. The 3 p.m. meeting carried you through. By 3:48 Mia had replied. By 5 p.m. the worry-time was empty. The notebook is the third entry this month that resolved itself before worry-time. The cumulative external memory of these dissolutions is, across enough entries, the structural counter-weight to the in-the-moment certainty the disorder produces. The fortieth entry teaches the body more than the first one. By the hundredth, the postponement is automatic.",
+      "You wrote the worry down and named the worry-time at 5 p.m. the body protested. You held the postponement. The 3 p.m. meeting carried you through. By 3:48 Mia had replied. By 5 p.m. the worry-time was empty. The notebook is the third entry this month that resolved itself before worry-time. The cumulative external memory of these dissolutions is, across enough entries, the structural counter-weight to the in-the-moment certainty the disorder produces. The fortieth entry teaches the body more than the first one. By the hundredth, the postponement is automatic.",
     dialog: [
       {
         speakerId: "inner-voice",
-        text: "Worry postponement applied across both 3 a.m. and 2:47 p.m. is the hallmark of a body that has internalised the worry-time container. Across treatment, the postponement becomes one of the few interventions that GENERALISES — meaning, the body does not need to relearn it for each new content slot. The notebook entries do not need to be elaborate. They need to be CONSISTENT. Lin's longest-running clients have notebooks that look like grocery lists from a distance. The grocery-list aesthetic is the skill working.",
+        text: "Worry postponement applied across both 3 a.m. and 2:47 p.m. is the hallmark of a body that has internalised the worry-time container. Across treatment, the postponement becomes one of the few interventions that GENERALISES, meaning, the body does not need to relearn it for each new content slot. The notebook entries do not need to be elaborate. They need to be CONSISTENT. Lin's longest-running clients have notebooks that look like grocery lists from a distance. The grocery-list aesthetic is the skill working.",
         emotion: "knowing",
       },
     ],
@@ -633,7 +633,7 @@ const scenes: Scene[] = [
     dialog: [
       {
         speakerId: "inner-voice",
-        text: "The distortion checklist is one of the few CBT skills that scales linearly with practice. There is no plateau curve — the twentieth use is genuinely better than the tenth, and the hundredth is genuinely better than the twentieth. The reason is mechanical: each repetition strengthens the prefrontal-to-amygdala regulatory pathway through the same neuroplastic mechanism that strengthens any motor skill. The list does not have to be elaborate. The five names — catastrophising, mind-reading, fortune-telling, emotional reasoning, probability inflation — handle approximately 90% of clinical anxiety content.",
+        text: "The distortion checklist is one of the few CBT skills that scales linearly with practice. There is no plateau curve, the twentieth use is genuinely better than the tenth, and the hundredth is genuinely better than the twentieth. The reason is mechanical: each repetition strengthens the prefrontal-to-amygdala regulatory pathway through the same neuroplastic mechanism that strengthens any motor skill. The list does not have to be elaborate. The five names, catastrophising, mind-reading, fortune-telling, emotional reasoning, probability inflation, handle approximately 90% of clinical anxiety content.",
         emotion: "knowing",
       },
     ],
@@ -648,11 +648,11 @@ const scenes: Scene[] = [
     outcomeType: "good",
     endingTitle: "Banana Situation Handled",
     endingLearnPrompt:
-      "Fifteen minutes with Maya. The base-rate question ('has she ever ghosted you, ever') was an intervention the brain could not easily refuse. The walk to the bodega was exteroceptive grounding plus mild aerobic activity plus peer-body proximity. The banana was the banana. The combination produced a body-state in fifteen minutes that the same skills deployed alone would have taken ninety to reach. The peer-witnessing thread that opened in L1-2 is now reciprocally functional — Maya can also call on you, and across the next year of your treatment this peer-relation will be the most under-priced asset in your work environment.",
+      "Fifteen minutes with Maya. The base-rate question ('has she ever ghosted you, ever') was an intervention the brain could not easily refuse. The walk to the bodega was exteroceptive grounding plus mild aerobic activity plus peer-body proximity. The banana was the banana. The combination produced a body-state in fifteen minutes that the same skills deployed alone would have taken ninety to reach. The peer-witnessing thread that opened in L1-2 is now reciprocally functional. Maya can also call on you, and across the next year of your treatment this peer-relation will be the most under-priced asset in your work environment.",
     dialog: [
       {
         speakerId: "inner-voice",
-        text: "The peer-co-regulation move is structurally different from the partner-co-regulation move. With Mia, co-regulation risks installing the dependence shape — Mia's nervous system shifts to manage yours. With Maya, the relation is symmetrical — she is also in treatment, she also has bad afternoons, you can be both regulated and regulating depending on the day. This symmetry is what makes peer-witnessing scale better than partner-witnessing across years. The Mia witness is precious and finite. The Maya witness is durable and reciprocal.",
+        text: "The peer-co-regulation move is structurally different from the partner-co-regulation move. With Mia, co-regulation risks installing the dependence shape. Mia's nervous system shifts to manage yours. With Maya, the relation is symmetrical, she is also in treatment, she also has bad afternoons, you can be both regulated and regulating depending on the day. This symmetry is what makes peer-witnessing scale better than partner-witnessing across years. The Mia witness is precious and finite. The Maya witness is durable and reciprocal.",
         emotion: "knowing",
       },
     ],
@@ -663,7 +663,7 @@ const scenes: Scene[] = [
 export const anxiety21: Scenario = {
   id: "anx-2-1",
   title: "The Waiting",
-  tagline: "Tuesday, 2:47 p.m. She read it. She didn't reply. The body fills the silence.",
+  tagline: "Tuesday, 2:47 p.m. she read it. She didn't reply. The body fills the silence.",
   description:
     "Daylight version of the anxiety loop. Sam at the agency between meetings, three hours twenty-three minutes after sending Mia a text that has gone unanswered. The catastrophising staircase fires in daylight on the same engine as 3 a.m., with relationship-content instead of work-content. Five available moves: send the unprompted follow-up (anxious-attachment loop-feeder), reassurance-Google relationship-anxiety threads (script-purchase loop-feeder), worry-postponement (notebook variant), CBT distortion checklist, or mid-spiral peer co-regulation with Maya. Three of the five compound the work; two reinforce the disorder. Five endings.",
   tier: "premium",
@@ -677,15 +677,15 @@ export const anxiety21: Scenario = {
   badgeId: "the-waiting",
   startSceneId: "the-frame",
   tacticsLearned: [
-    "Same engine, daylight content — the staircase fires on relationship gaps as readily as on Slack messages; five distortions, identical mechanics",
-    "Worry-postponement deployed in daylight via desk-drawer notebook — one skill that generalises across trigger contexts",
-    "CBT distortion checklist as workhorse skill — the 5 named distortions handle ~90% of clinical anxiety content; scales linearly with practice",
-    "Mid-spiral peer co-regulation — base-rate question + walk + open air + symmetrical peer presence produces 90-minute work in 15 minutes",
-    "Symmetrical peer-witnessing as durable across years — distinct from partner-witnessing, which risks dependence-shape installation",
+    "Same engine, daylight content, the staircase fires on relationship gaps as readily as on Slack messages; five distortions, identical mechanics",
+    "Worry-postponement deployed in daylight via desk-drawer notebook, one skill that generalises across trigger contexts",
+    "CBT distortion checklist as workhorse skill, the 5 named distortions handle ~90% of clinical anxiety content; scales linearly with practice",
+    "Mid-spiral peer co-regulation, base-rate question + walk + open air + symmetrical peer presence produces 90-minute work in 15 minutes",
+    "Symmetrical peer-witnessing as durable across years, distinct from partner-witnessing, which risks dependence-shape installation",
   ],
   redFlagsTaught: [
-    "The unprompted second-text — careful partners feel it below conscious threshold; trains their nervous system to track reply windows; cost compounds across forty trials",
-    "Reassurance-Googling as script-purchase — the relationship-anxiety internet sells cognitive lanes the body did not previously have; structural backwards step",
+    "The unprompted second-text, careful partners feel it below conscious threshold; trains their nervous system to track reply windows; cost compounds across forty trials",
+    "Reassurance-Googling as script-purchase, the relationship-anxiety internet sells cognitive lanes the body did not previously have; structural backwards step",
   ],
   characters: [INNER_VOICE, SAM, MIA, MAYA],
   scenes,

@@ -1,19 +1,19 @@
 /**
- * loving-mira-3-1 — "The Numb Day" (INSIDE)
+ * loving-mira-3-1, "The Numb Day" (INSIDE)
  *
  * Loving Mira, Level 3, order 1. Second inside-POV scenario. Player
- * is Mira. Saturday. Chronic emptiness — the BPD symptom that doesn't
+ * is Mira. Saturday. Chronic emptiness, the BPD symptom that doesn't
  * make the news.
  *
  * What this scene teaches:
  *   - Emptiness as DISTINCT from depression. Depression has texture
  *     (sad, hopeless, distressing thoughts). Emptiness is the absence
  *     of feeling itself. Many people with BPD describe it as worse
- *     than pain — because the absence is worse than the presence of
+ *     than pain, because the absence is worse than the presence of
  *     suffering. The player has to FEEL this distinction to teach it.
  *   - Feeling-generators as the underlying mechanism. People with BPD
  *     don't pick fights, drink, text exes, or hurt themselves because
- *     of "drama" — they do these things to escape the numbness. The
+ *     of "drama", they do these things to escape the numbness. The
  *     behavior is ANTI-emptiness, not anti-anything-rational.
  *   - Behavioral activation as the boring, unsexy, skilled choice.
  *     Walk the dog. Make coffee. Call your sister. The skill is to
@@ -32,12 +32,12 @@
  *   self-harm.
  *
  * Voice: continuing the inside-POV pattern from L2-1. Sparse
- * narration during the body-on-couch frozen beat — let the absence
+ * narration during the body-on-couch frozen beat, let the absence
  * of internal voice itself communicate the absence of feeling. Then
  * tighter narration at the choice points and at endings.
  *
  * Cast: MIRA (POV), VEE (referenced and called in one path), Ezra
- * (the dog — non-character but present), INNER_VOICE.
+ * (the dog, non-character but present), INNER_VOICE.
  */
 
 import type { Scenario, Scene, Character } from "../../types";
@@ -68,7 +68,7 @@ const VEE: Character = {
 
 const scenes: Scene[] = [
   // ===================================================================
-  // KANIKA FRAME — POV SWITCH + emptiness vs depression
+  // KANIKA FRAME. POV SWITCH + emptiness vs depression
   // ===================================================================
   {
     id: "the-frame",
@@ -83,7 +83,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "inner-voice",
-        text: "Depression has texture — heavy, dull, distressing. Emptiness has no texture at all. Research participants describe it as numbness, as 'a sense of not-being,' as a dead leg you can see but not sense. Many people with BPD say emptiness is worse than pain. They will do destabilising things to feel ANYTHING — pick fights, drink, text exes, hurt themselves — because the absence is worse than the presence of suffering.",
+        text: "Depression has texture, heavy, dull, distressing. Emptiness has no texture at all. Research participants describe it as numbness, as 'a sense of not-being,' as a dead leg you can see but not sense. Many people with BPD say emptiness is worse than pain. They will do destabilising things to feel ANYTHING, pick fights, drink, text exes, hurt themselves, because the absence is worse than the presence of suffering.",
         emotion: "knowing",
       },
       {
@@ -93,7 +93,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "inner-voice",
-        text: "If reading this scene activates your own current experience of self-harm impulses or suicidal ideation: you can leave the scenario at any point. In the United States: 988 (call or text). Crisis Text Line: text HOME to 741741. Both are free, confidential, and answer immediately. If you stay, the scenario will not depict self-harm. It will treat the impulse the way it actually shows up — as an option Mira sees and chooses what to do with.",
+        text: "If reading this scene activates your own current experience of self-harm impulses or suicidal ideation: you can leave the scenario at any point. In the United States: 988 (call or text). Crisis Text Line: text HOME to 741741. Both are free, confidential, and answer immediately. If you stay, the scenario will not depict self-harm. It will treat the impulse the way it actually shows up, as an option Mira sees and chooses what to do with.",
         emotion: "knowing",
       },
     ],
@@ -109,7 +109,7 @@ const scenes: Scene[] = [
   },
 
   // ===================================================================
-  // THE COUCH FROZEN — the absence
+  // THE COUCH FROZEN, the absence
   // ===================================================================
   {
     id: "the-couch-frozen",
@@ -127,7 +127,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: null,
-        text: "The TV is on the menu screen of a movie you started last night and did not watch. The screen has been showing the same trailer-on-loop for the entire two hours. The volume is low. You did not turn it down — you turned it on at this volume last night and the volume has been the volume since then.",
+        text: "The TV is on the menu screen of a movie you started last night and did not watch. The screen has been showing the same trailer-on-loop for the entire two hours. The volume is low. You did not turn it down, you turned it on at this volume last night and the volume has been the volume since then.",
       },
       {
         speakerId: null,
@@ -163,7 +163,7 @@ const scenes: Scene[] = [
   },
 
   // ===================================================================
-  // THE ITCH — first stirring of the feeling-generator urge
+  // THE ITCH, first stirring of the feeling-generator urge
   // ===================================================================
   {
     id: "the-itch",
@@ -177,7 +177,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: null,
-        text: "Something starts. It is not a thought. It is closer to an itch — a low-grade body-restlessness that announces itself in the chest first. You do not know what it is. Then it announces itself again, slightly louder.",
+        text: "Something starts. It is not a thought. It is closer to an itch, a low-grade body-restlessness that announces itself in the chest first. You do not know what it is. Then it announces itself again, slightly louder.",
       },
       {
         speakerId: null,
@@ -185,11 +185,11 @@ const scenes: Scene[] = [
       },
       {
         speakerId: null,
-        text: "The body has decided that the absence is no longer tolerable. The body wants ANYTHING — a fight, a song, a fuck, a drink, a cold shower, a phone call, an injury. The body is not picky. The body is asking for evidence that there is a body.",
+        text: "The body has decided that the absence is no longer tolerable. The body wants ANYTHING, a fight, a song, a fuck, a drink, a cold shower, a phone call, an injury. The body is not picky. The body is asking for evidence that there is a body.",
       },
       {
         speakerId: null,
-        text: "You sit up. Ezra adjusts. You become aware that your phone is on the coffee table. You become aware that the kitchen is in the next room. You become aware of the impulses your body is generating — the impulses that, in the past, have been the path out of the empty room.",
+        text: "You sit up. Ezra adjusts. You become aware that your phone is on the coffee table. You become aware that the kitchen is in the next room. You become aware of the impulses your body is generating, the impulses that, in the past, have been the path out of the empty room.",
       },
       {
         speakerId: null,
@@ -197,11 +197,11 @@ const scenes: Scene[] = [
       },
       {
         speakerId: null,
-        text: "1) Pick a fight. Text the FP. Find the thing she did this week that bothered you and inflate it to verdict-size. The drama-feeling that follows will be terrible — and it will be A FEELING.",
+        text: "1) Pick a fight. Text the FP. Find the thing she did this week that bothered you and inflate it to verdict-size. The drama-feeling that follows will be terrible and it will be A FEELING.",
       },
       {
         speakerId: null,
-        text: "2) Text Cameron. The previous FP. He left without saying goodbye. Texting him will produce a response. The response will produce humiliation, anger, longing, regret — all of which are FEELINGS.",
+        text: "2) Text Cameron. The previous FP. He left without saying goodbye. Texting him will produce a response. The response will produce humiliation, anger, longing, regret. All of which are FEELINGS.",
       },
       {
         speakerId: null,
@@ -226,7 +226,7 @@ const scenes: Scene[] = [
       {
         id: "pick-the-fight",
         text: "Pick up the phone. Open the FP's thread. Find the thing this week. Type it.",
-        tactic: "The drama-feeling generator. Cheapest, fastest, will produce hours of feeling. Will also damage the relationship by lunch. The cost is not in the next thirty minutes — it is in tomorrow's repair morning.",
+        tactic: "The drama-feeling generator. Cheapest, fastest, will produce hours of feeling. Will also damage the relationship by lunch. The cost is not in the next thirty minutes, it is in tomorrow's repair morning.",
         nextSceneId: "the-fight-picked",
         isOptimal: false,
       },
@@ -240,14 +240,14 @@ const scenes: Scene[] = [
       {
         id: "the-bottle",
         text: "Stand up. Walk to the kitchen. Reach for the bottle.",
-        tactic: "The chemical feeling generator. Slowest of the three drama-paths. The drink at noon will not produce relief — it will produce slowness. By 4 p.m. the slowness will have produced its own depression-shaped feeling, which the body will then mistake for an ending of the empty episode. It is not an ending. It is a swap.",
+        tactic: "The chemical feeling generator. Slowest of the three drama-paths. The drink at noon will not produce relief, it will produce slowness. By 4 p.m. the slowness will have produced its own depression-shaped feeling, which the body will then mistake for an ending of the empty episode. It is not an ending. It is a swap.",
         nextSceneId: "the-bottle-reached",
         isOptimal: false,
       },
       {
         id: "walk-ezra",
         text: "Get up. Find Ezra's leash. Put on shoes. Take Ezra outside.",
-        tactic: "Behavioral activation. The boring skill. It does not deliver a feeling. It delivers a sequence of actions: leash, shoes, door, sidewalk, ten minutes of cold air. By minute eight, Ezra will pull on the leash to greet a dog you do not know. The unknown dog will produce a small, unexpected feeling. That feeling — accidental, unrequested — is what walking through the empty room produces.",
+        tactic: "Behavioral activation. The boring skill. It does not deliver a feeling. It delivers a sequence of actions: leash, shoes, door, sidewalk, ten minutes of cold air. By minute eight, Ezra will pull on the leash to greet a dog you do not know. The unknown dog will produce a small, unexpected feeling. That feeling, accidental, unrequested, is what walking through the empty room produces.",
         nextSceneId: "the-walk",
         isOptimal: true,
       },
@@ -255,7 +255,7 @@ const scenes: Scene[] = [
   },
 
   // ===================================================================
-  // THE FIGHT PICKED — drama-feeling generator
+  // THE FIGHT PICKED, drama-feeling generator
   // ===================================================================
   {
     id: "the-fight-picked",
@@ -265,7 +265,7 @@ const scenes: Scene[] = [
     dialog: [
       {
         speakerId: null,
-        text: "You find the thing this week. It is real — she did do it, she did say something dismissive about your work on Tuesday and you let it go. You let it go because at the time it was a small thing in a good week.",
+        text: "You find the thing this week. It is real, she did do it, she did say something dismissive about your work on Tuesday and you let it go. You let it go because at the time it was a small thing in a good week.",
       },
       {
         speakerId: null,
@@ -277,7 +277,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: null,
-        text: "The relief is immediate. THE BODY HAS A FEELING. The feeling is rage — clean, articulate, justified-feeling rage. The empty room is gone. You are now in a different room.",
+        text: "The relief is immediate. THE BODY HAS A FEELING. The feeling is rage, clean, articulate, justified-feeling rage. The empty room is gone. You are now in a different room.",
       },
       {
         speakerId: null,
@@ -285,7 +285,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "inner-voice",
-        text: "You generated the feeling. The feeling came from the place you knew it would come from — a real grievance, inflated. The cost is now coming for you. The fight will run for two hours, possibly four. By the time it ends, you will have feelings of regret and shame to add to the rage, which is more feelings, which is the goal — but the FP will have moved one inch closer to the conclusion that this is unsustainable. The empty room you escaped is still there. It will be there next Saturday.",
+        text: "You generated the feeling. The feeling came from the place you knew it would come from, a real grievance, inflated. The cost is now coming for you. The fight will run for two hours, possibly four. By the time it ends, you will have feelings of regret and shame to add to the rage, which is more feelings, which is the goal but the FP will have moved one inch closer to the conclusion that this is unsustainable. The empty room you escaped is still there. It will be there next Saturday.",
         emotion: "knowing",
       },
     ],
@@ -301,7 +301,7 @@ const scenes: Scene[] = [
   },
 
   // ===================================================================
-  // THE CAMERON TEXT — boundary-violation feeling generator
+  // THE CAMERON TEXT, boundary-violation feeling generator
   // ===================================================================
   {
     id: "the-cameron-text",
@@ -328,7 +328,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: null,
-        text: "His message: 'mira. you can't text me. you know you can't text me. are you okay.'",
+        text: "His message: 'mira. You can't text me. You know you can't text me. Are you okay.'",
       },
       {
         speakerId: null,
@@ -336,11 +336,11 @@ const scenes: Scene[] = [
       },
       {
         speakerId: null,
-        text: "You are out of the empty room. The feeling-generator worked. You are now in a different room — one that will require you to lie to your therapist on Tuesday, to keep this from your FP forever, and to live for the next nine days with the knowledge that you texted an engaged man because you needed to feel something.",
+        text: "You are out of the empty room. The feeling-generator worked. You are now in a different room, one that will require you to lie to your therapist on Tuesday, to keep this from your FP forever, and to live for the next nine days with the knowledge that you texted an engaged man because you needed to feel something.",
       },
       {
         speakerId: "inner-voice",
-        text: "The cost compounds. Most BPD damage runs on this engine: the empty room is so unbearable that you reach for any feeling-generator, including the ones that violate other people. Cameron just had to choose between answering his ex's 'hi' and ignoring it. He chose to answer — kindly. You also just dropped a small bomb in his Saturday morning. The bomb is not abstract. It is in his actual marriage.",
+        text: "The cost compounds. Most BPD damage runs on this engine: the empty room is so unbearable that you reach for any feeling-generator, including the ones that violate other people. Cameron just had to choose between answering his ex's 'hi' and ignoring it. He chose to answer, kindly. You also just dropped a small bomb in his Saturday morning. The bomb is not abstract. It is in his actual marriage.",
         emotion: "knowing",
       },
     ],
@@ -356,7 +356,7 @@ const scenes: Scene[] = [
   },
 
   // ===================================================================
-  // THE BOTTLE REACHED — chemical feeling generator
+  // THE BOTTLE REACHED, chemical feeling generator
   // ===================================================================
   {
     id: "the-bottle-reached",
@@ -370,7 +370,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: null,
-        text: "You pour an inch into a coffee mug, because at noon on a Saturday you cannot use a glass — using a glass would be admitting it.",
+        text: "You pour an inch into a coffee mug, because at noon on a Saturday you cannot use a glass, using a glass would be admitting it.",
       },
       {
         speakerId: null,
@@ -403,7 +403,7 @@ const scenes: Scene[] = [
   },
 
   // ===================================================================
-  // THE WALK — behavioral activation
+  // THE WALK, behavioral activation
   // ===================================================================
   {
     id: "the-walk",
@@ -413,7 +413,7 @@ const scenes: Scene[] = [
     dialog: [
       {
         speakerId: null,
-        text: "You stand up. Ezra reads it instantly — his head comes up, ears forward. You go to the door. Pick up the leash. Find your shoes.",
+        text: "You stand up. Ezra reads it instantly, his head comes up, ears forward. You go to the door. Pick up the leash. Find your shoes.",
       },
       {
         speakerId: null,
@@ -421,7 +421,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: null,
-        text: "Door. Stairs. Sidewalk. The cold air on your face is not a feeling — it is a sensation. There is a difference. You are aware of the difference.",
+        text: "Door. Stairs. Sidewalk. The cold air on your face is not a feeling, it is a sensation. There is a difference. You are aware of the difference.",
       },
       {
         speakerId: null,
@@ -437,7 +437,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "inner-voice",
-        text: "This is what walking through the empty room produces. Not a curing — a small, unrequested feeling that arrives by accident, on the sidewalk, because of a dog you don't know and a man with a kind face. The skill of behavioral activation is not 'distract yourself from the emptiness.' It is 'put your body in motion in places where small unrequested feelings can find you.' The feelings find you. They are quieter than the ones the feeling-generators produce. They are also not poison.",
+        text: "This is what walking through the empty room produces. Not a curing, a small, unrequested feeling that arrives by accident, on the sidewalk, because of a dog you don't know and a man with a kind face. The skill of behavioral activation is not 'distract yourself from the emptiness.' It is 'put your body in motion in places where small unrequested feelings can find you.' The feelings find you. They are quieter than the ones the feeling-generators produce. They are also not poison.",
         emotion: "knowing",
       },
     ],
@@ -460,7 +460,7 @@ const scenes: Scene[] = [
   },
 
   // ===================================================================
-  // THE VEE ON WALK — calling Vee mid-walk
+  // THE VEE ON WALK, calling Vee mid-walk
   // ===================================================================
   {
     id: "the-vee-on-walk",
@@ -511,7 +511,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "inner-voice",
-        text: "Vee just modeled the highest form of witnessing — the form where she is not trying to fix anything. She didn't ask 'what triggered this' or 'do you need to talk to Alana.' She just talked through a Saturday with a sister who was walking it off. Most attempts to help during emptiness fail because they ASK something of the empty body. Vee asked nothing. She gave a voice. The voice produced a laugh. The laugh produced a feeling. None of it was engineered.",
+        text: "Vee just modeled the highest form of witnessing, the form where she is not trying to fix anything. She didn't ask 'what triggered this' or 'do you need to talk to Alana.' She just talked through a Saturday with a sister who was walking it off. Most attempts to help during emptiness fail because they ASK something of the empty body. Vee asked nothing. She gave a voice. The voice produced a laugh. The laugh produced a feeling. None of it was engineered.",
         emotion: "knowing",
       },
     ],
@@ -537,7 +537,7 @@ const scenes: Scene[] = [
     outcomeType: "bad",
     endingTitle: "The Fight",
     endingLearnPrompt:
-      "You generated the feeling. It worked. The empty room is gone. The cost is now landing. The fight will run for hours. By tonight you will have rage, shame, regret, exhaustion — the full menu of feelings the body asked for. You will also have spent a piece of relational capital that takes weeks to rebuild. Most BPD relationships die from cumulative use of THIS feeling-generator: the manufactured grievance during the empty room. Your therapist has a name for it. The skill is to recognise the empty room as the trigger BEFORE the feeling-generator deploys, because once it deploys, the architecture of the cascade does the rest. Tomorrow you can repair this — small, honest, no five-paragraph apology. Today: drink water, walk Ezra, sleep early.",
+      "You generated the feeling. It worked. The empty room is gone. The cost is now landing. The fight will run for hours. By tonight you will have rage, shame, regret, exhaustion, the full menu of feelings the body asked for. You will also have spent a piece of relational capital that takes weeks to rebuild. Most BPD relationships die from cumulative use of THIS feeling-generator: the manufactured grievance during the empty room. Your therapist has a name for it. The skill is to recognise the empty room as the trigger BEFORE the feeling-generator deploys, because once it deploys, the architecture of the cascade does the rest. Tomorrow you can repair this, small, honest, no five-paragraph apology. Today: drink water, walk Ezra, sleep early.",
     dialog: [
       {
         speakerId: "inner-voice",
@@ -575,7 +575,7 @@ const scenes: Scene[] = [
     outcomeType: "bad",
     endingTitle: "Whiskey at Noon",
     endingLearnPrompt:
-      "You generated the feeling. It worked. By 4 p.m. you have had four ounces and the slowness has replaced the emptiness. The body did not ask for a nice feeling — it asked for any feeling. It got one. The cost is that the body just learned, again, that whiskey at noon is a tool it can use. Each use makes the next use cheaper. Most BPD addiction does not start as recreation. It starts as feeling-generation in empty rooms. Tomorrow's empty room — and there will be one — will be slightly more whiskey-shaped than today's was. The skill is to break the engine before it becomes architecture.",
+      "You generated the feeling. It worked. By 4 p.m. you have had four ounces and the slowness has replaced the emptiness. The body did not ask for a nice feeling, it asked for any feeling. It got one. The cost is that the body just learned, again, that whiskey at noon is a tool it can use. Each use makes the next use cheaper. Most BPD addiction does not start as recreation. It starts as feeling-generation in empty rooms. Tomorrow's empty room and there will be one, will be slightly more whiskey-shaped than today's was. The skill is to break the engine before it becomes architecture.",
     dialog: [
       {
         speakerId: "inner-voice",
@@ -594,11 +594,11 @@ const scenes: Scene[] = [
     outcomeType: "good",
     endingTitle: "The Long Way Home",
     endingLearnPrompt:
-      "You walked through it. The empty room did not get cured — it got walked through. By the time you got home, Ezra was tired, you had picked up a bagel from the place around the corner, the cold air had produced four small feelings in forty-five minutes, none of them engineered. None of them were the size of a fight or a chemical violation. All of them were sustainable. You will have empty mornings again. The skill is to know what to reach for next time. You just practiced. The next empty morning will be slightly easier, because today's body learned that the walk produced what the feeling-generators promised — without the cost.",
+      "You walked through it. The empty room did not get cured, it got walked through. By the time you got home, Ezra was tired, you had picked up a bagel from the place around the corner, the cold air had produced four small feelings in forty-five minutes, none of them engineered. None of them were the size of a fight or a chemical violation. All of them were sustainable. You will have empty mornings again. The skill is to know what to reach for next time. You just practiced. The next empty morning will be slightly easier, because today's body learned that the walk produced what the feeling-generators promised, without the cost.",
     dialog: [
       {
         speakerId: "inner-voice",
-        text: "Behavioral activation is the most underrated skill in BPD recovery. It is boring. It does not deliver feelings. It puts the body in places where small unrequested feelings can find it. The walking, the dog, the bagel, the man with the kind face — none of it was engineered. All of it was the skill working. Most healthy mornings, including for people without BPD, look like this.",
+        text: "Behavioral activation is the most underrated skill in BPD recovery. It is boring. It does not deliver feelings. It puts the body in places where small unrequested feelings can find it. The walking, the dog, the bagel, the man with the kind face. None of it was engineered. All of it was the skill working. Most healthy mornings, including for people without BPD, look like this.",
         emotion: "knowing",
       },
     ],
@@ -613,11 +613,11 @@ const scenes: Scene[] = [
     outcomeType: "good",
     endingTitle: "Voice in the Ear",
     endingLearnPrompt:
-      "You walked. You called Vee. She gave you a voice without asking you to be okay. You laughed twice in fifteen minutes — both times at things her landlord did. You bought a bagel. By 1 p.m. you were home. The empty room was not cured; it was filled by accident, with cold air and dog leash and a sister telling a story about a hallway color. This is what witness-relationships are for. They do not solve the symptom. They make it possible to walk through the symptom without filling it with poison. Most people with BPD do not have a Vee. You do. Use her every time the cascade tries to convince you that you don't need her.",
+      "You walked. You called Vee. She gave you a voice without asking you to be okay. You laughed twice in fifteen minutes. Both times at things her landlord did. You bought a bagel. By 1 p.m. you were home. The empty room was not cured; it was filled by accident, with cold air and dog leash and a sister telling a story about a hallway color. This is what witness-relationships are for. They do not solve the symptom. They make it possible to walk through the symptom without filling it with poison. Most people with BPD do not have a Vee. You do. Use her every time the cascade tries to convince you that you don't need her.",
     dialog: [
       {
         speakerId: "inner-voice",
-        text: "The first sentence on the call was three words: 'I had a numb morning.' That sentence is the skill. The shame about saying it is what most empty bodies will not do. You did. The bagel got bought. The morning got walked. The pattern got broken without anyone seeing it break — including you, until afterwards. That is what 93% remission across ten years actually looks like, in the wild.",
+        text: "The first sentence on the call was three words: 'I had a numb morning.' That sentence is the skill. The shame about saying it is what most empty bodies will not do. You did. The bagel got bought. The morning got walked. The pattern got broken without anyone seeing it break, including you, until afterwards. That is what 93% remission across ten years actually looks like, in the wild.",
         emotion: "knowing",
       },
     ],
@@ -630,7 +630,7 @@ export const lovingMira31: Scenario = {
   title: "The Numb Day",
   tagline: "Saturday. Two hours frozen. The fourth option lives one shelf in from the others.",
   description:
-    "Second inside-POV scenario. The player is Mira on a Saturday morning, two hours into chronic emptiness. The scenario teaches the BPD-specific symptom of emptiness as DISTINCT from depression — the absence of feeling itself, often described as worse than pain. Four feeling-generator paths play out the cost of each: the manufactured fight with the FP, the boundary-violating text to an old FP, the bottle on top of the fridge, and the walking-with-the-dog skill. NSSI is acknowledged in the kitchen-impulse beat without being depicted; crisis resources are surfaced in the opening frame.",
+    "Second inside-POV scenario. The player is Mira on a Saturday morning, two hours into chronic emptiness. The scenario teaches the BPD-specific symptom of emptiness as DISTINCT from depression, the absence of feeling itself, often described as worse than pain. Four feeling-generator paths play out the cost of each: the manufactured fight with the FP, the boundary-violating text to an old FP, the bottle on top of the fridge, and the walking-with-the-dog skill. NSSI is acknowledged in the kitchen-impulse beat without being depicted; crisis resources are surfaced in the opening frame.",
   tier: "premium",
   track: "loving-mira",
   level: 3,
@@ -642,16 +642,16 @@ export const lovingMira31: Scenario = {
   badgeId: "emptiness-walked",
   startSceneId: "the-frame",
   tacticsLearned: [
-    "Emptiness as distinct from depression — absence of feeling, not heavy feeling",
-    "Behavioral activation as the boring skilled choice — the only path that does not deliver a feeling but DOES produce sustainable feelings by accident",
+    "Emptiness as distinct from depression, absence of feeling, not heavy feeling",
+    "Behavioral activation as the boring skilled choice, the only path that does not deliver a feeling but DOES produce sustainable feelings by accident",
     "The first-sentence-out-loud move ('I had a numb morning') as the witness-relationship skill",
     "Recognising the empty room as the trigger before the feeling-generator deploys",
   ],
   redFlagsTaught: [
-    "The manufactured fight as drama-feeling-generator — fastest, most relationally expensive",
-    "Reaching for old FPs as boundary-violation feeling-generator — costs cascade across other people",
-    "Whiskey at noon as chemical feeling-generator — slowest poison, becomes architecture across years",
-    "The fourth-option (NSSI) named-not-depicted — acknowledged as part of lived experience without instruction",
+    "The manufactured fight as drama-feeling-generator, fastest, most relationally expensive",
+    "Reaching for old FPs as boundary-violation feeling-generator, costs cascade across other people",
+    "Whiskey at noon as chemical feeling-generator, slowest poison, becomes architecture across years",
+    "The fourth-option (NSSI) named-not-depicted, acknowledged as part of lived experience without instruction",
   ],
   characters: [INNER_VOICE, MIRA, VEE],
   scenes,
