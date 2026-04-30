@@ -28,6 +28,10 @@ import {
   DIVORCE_ARC_SCENARIOS,
   DIVORCE_ARC_LEVEL_TITLES,
 } from "./divorce-arc";
+import {
+  LOVING_MIRA_SCENARIOS,
+  LOVING_MIRA_LEVEL_TITLES,
+} from "./loving-mira";
 import mission11 from "./mission-1-1";
 import mission12 from "./mission-1-2";
 import mission21 from "./mission-2-1";
@@ -90,6 +94,7 @@ export {
   PC_CHILD_SCENARIOS,
   CLUSTER_B_LAB_SCENARIOS,
   DIVORCE_ARC_SCENARIOS,
+  LOVING_MIRA_SCENARIOS,
 };
 
 export const ALL_SCENARIOS: Scenario[] = [
@@ -101,6 +106,7 @@ export const ALL_SCENARIOS: Scenario[] = [
   ...PC_CHILD_SCENARIOS,
   ...CLUSTER_B_LAB_SCENARIOS,
   ...DIVORCE_ARC_SCENARIOS,
+  ...LOVING_MIRA_SCENARIOS,
 ];
 
 /**
@@ -169,6 +175,7 @@ export function levelTitlesForTrack(
   if (track === "pc-child") return PC_CHILD_LEVEL_TITLES;
   if (track === "cluster-b-lab") return CLUSTER_B_LAB_LEVEL_TITLES;
   if (track === "divorce-arc") return DIVORCE_ARC_LEVEL_TITLES;
+  if (track === "loving-mira") return LOVING_MIRA_LEVEL_TITLES;
   return LEVEL_TITLES;
 }
 
@@ -216,6 +223,12 @@ export const TRACK_META: Record<
     label: "Divorce Arc",
     sublabel: "Long-form · the speaking, the lawyer, the kids, the year after",
     href: "/consilium/simulator?track=divorce-arc",
+  },
+  "loving-mira": {
+    label: "Loving Mira",
+    sublabel:
+      "Long-form BPD narrative · the friend you can't save · learn to stay in love without losing yourself",
+    href: "/consilium/simulator?track=loving-mira",
   },
 };
 
