@@ -51,7 +51,10 @@ function delayAfter(char: string, baseRate: number): number {
  * within a chunk. `revealed` is an array of progressively-typed strings,
  * one per chunk. `revealed[i]` is the prefix of `chunks[i]` shown so far.
  *
- * Reduced-motion: skip the entire animation, mount fully revealed.
+ * Note: this deliberately does NOT honor prefers-reduced-motion. The
+ * typewriter is text reveal, not motion, and the immersive pacing is
+ * core to the simulator's experience. Other reduced-motion respects
+ * (SceneShake, ImmersionOverlay, particle motion) remain in place.
  */
 function useChunkedTypewriter(text: string) {
   const chunks = splitIntoChunks(text);
@@ -71,15 +74,6 @@ function useChunkedTypewriter(text: string) {
   }
 
   useEffect(() => {
-    if (
-      typeof window !== "undefined" &&
-      window.matchMedia?.("(prefers-reduced-motion: reduce)").matches
-    ) {
-      setRevealed(chunks);
-      setDone(true);
-      return;
-    }
-
     cancelledRef.current = false;
     setRevealed([]);
     setDone(false);
