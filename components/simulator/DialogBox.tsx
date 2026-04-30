@@ -164,6 +164,14 @@ export default function DialogBox({
 }: Props) {
   const { chunks, revealed, done, skip } = useChunkedTypewriter(line.text);
 
+  useEffect(() => {
+    if (typeof window !== "undefined" && !(window as unknown as { __dialogV2?: boolean }).__dialogV2) {
+      (window as unknown as { __dialogV2?: boolean }).__dialogV2 = true;
+      // eslint-disable-next-line no-console
+      console.log("[DialogBox] chunked-v2 active — chunks per line:", chunks.length);
+    }
+  }, [chunks.length]);
+
   function handleClick() {
     if (!done) {
       skip();
@@ -216,7 +224,7 @@ export default function DialogBox({
             "who's speaking" without re-reading the label every line. */}
         <span
           aria-hidden
-          className={`absolute left-0 top-1 bottom-1 w-[3px] rounded-full ${railColor}`}
+          className={`absolute left-0 top-1 bottom-1 w-[4px] rounded-full ${railColor} shadow-[0_0_8px_rgba(212,175,55,0.4)]`}
         />
 
         {speakerLabel && (
@@ -234,7 +242,7 @@ export default function DialogBox({
             chat-stream rhythm even though we're inside a single dialog
             line semantically. The blinking cursor lives only on the
             currently-typing chunk. */}
-        <div className="space-y-3">
+        <div className="space-y-5" data-dialog-version="chunked-v2">
           {chunks.map((chunk, i) => {
             const visible = revealed[i] ?? "";
             const isActive = !done && i === activeChunkIdx;
