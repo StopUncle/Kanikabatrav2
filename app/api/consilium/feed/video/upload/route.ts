@@ -10,16 +10,16 @@ import crypto from "crypto";
  * (same R2 bucket, same magic-byte sniff philosophy) so the feed can
  * carry Kanika-on-camera posts alongside audio and essays.
  *
- * Sniffing is the source of truth — phone cameras / share-sheets
+ * Sniffing is the source of truth, phone cameras / share-sheets
  * regularly arrive with empty MIME, codec-suffixed MIME, or wrong
  * extension. We trust the bytes first, the extension/MIME second.
  *
  * Cap is 500MB. The 50MB voice-note cap doesn't fit a 60-90s 1080p clip.
  * Beyond 500MB the right answer is to encode before upload, not to bump
- * the cap further — Next.js body parsing memory will become the bottleneck.
+ * the cap further. Next.js body parsing memory will become the bottleneck.
  */
 
-// Force the Node runtime — the Edge runtime can't buffer multi-hundred-MB
+// Force the Node runtime, the Edge runtime can't buffer multi-hundred-MB
 // uploads through formData(). Long timeout for slow connections pushing
 // 500MB clips.
 export const runtime = "nodejs";
@@ -116,7 +116,7 @@ export async function POST(request: NextRequest) {
     const sniffed = sniffVideo(buffer);
 
     if (!sniffed) {
-      logger.warn("[feed-video] upload rejected — sniff failed", {
+      logger.warn("[feed-video] upload rejected, sniff failed", {
         name: file.name,
         mime: file.type,
         size: file.size,

@@ -19,7 +19,7 @@ export default async function ProfilePage() {
 }
 
 export const metadata = {
-  title: "Your Profile — Kanika Batra",
+  title: "Your Profile. Kanika Batra",
   description: "Your personality profile and account overview",
   robots: { index: false, follow: false },
 };

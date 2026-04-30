@@ -57,7 +57,7 @@ import mission112 from "./mission-11-2";
 import mission121 from "./mission-12-1";
 
 /**
- * Female track — the original Maris-arc scenarios. `track` is implicit
+ * Female track, the original Maris-arc scenarios. `track` is implicit
  * ("female") on these when omitted. The `getTrack()` helper resolves it.
  */
 export const FEMALE_SCENARIOS: Scenario[] = [
@@ -232,7 +232,7 @@ export const TRACK_META: Record<
   },
 };
 
-/** Human title for each level — shown as section headers on the catalog. */
+/** Human title for each level, shown as section headers on the catalog. */
 export const LEVEL_TITLES: Record<number, { title: string; blurb: string }> = {
   1: {
     title: "Awareness",
@@ -276,7 +276,7 @@ export const LEVEL_TITLES: Record<number, { title: string; blurb: string }> = {
   },
   11: {
     title: "The Weight",
-    blurb: "Five years of silence, then the envelope. The return — on your curfew, not hers.",
+    blurb: "Five years of silence, then the envelope. The return, on your curfew, not hers.",
   },
   12: {
     title: "The Lateral",

@@ -4,7 +4,7 @@ import { prisma } from "@/lib/prisma";
 import DashboardClient from "@/components/dashboard/DashboardClient";
 
 export default async function DashboardPage() {
-  // Ban-aware auth — deleted / banned / tokenVersion-revoked sessions
+  // Ban-aware auth, deleted / banned / tokenVersion-revoked sessions
   // bounce back to login instead of rendering a partially-broken shell
   // against an orphaned userId.
   const userId = await resolveActiveUserId();
@@ -33,7 +33,7 @@ export default async function DashboardPage() {
   // audit (scripts/why-they-left.ts): 9 of 11 paid members who went
   // dark in their first week had ZERO recorded activity beyond
   // signup. The dashboard didn't tell them where to go, so they
-  // didn't go anywhere. This redirect runs ONCE — the moment they
+  // didn't go anywhere. This redirect runs ONCE, the moment they
   // hit /dashboard with an ACTIVE membership and no SimulatorProgress
   // rows. As soon as they click BEGIN on `mission-1-1`, a row is
   // created and the redirect stops firing for them. The `welcome=1`

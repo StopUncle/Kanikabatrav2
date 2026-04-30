@@ -10,7 +10,7 @@ export default function InlineBookCTA() {
         Want the full playbook?
       </p>
       <p className="text-text-gray text-base mb-4">
-        The Sociopathic Dating Bible gives you the complete framework — 17
+        The Sociopathic Dating Bible gives you the complete framework, 17
         chapters of strategy most dating advice won&apos;t touch.
       </p>
       <div className="flex flex-wrap gap-4">
@@ -26,7 +26,7 @@ export default function InlineBookCTA() {
           rel="noopener noreferrer"
           className="text-sm text-text-gray hover:text-white underline underline-offset-4 decoration-white/30 transition-colors"
         >
-          Get it on Amazon — ${BOOK_INFO.kdpPrice}
+          Get it on Amazon, ${BOOK_INFO.kdpPrice}
         </a>
       </div>
     </div>

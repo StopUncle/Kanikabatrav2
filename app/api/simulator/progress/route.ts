@@ -1,10 +1,10 @@
 /**
- * GET  /api/simulator/progress             — list the user's progress across all scenarios
- * GET  /api/simulator/progress?scenarioId= — load one scenario's progress (for resume)
- * POST /api/simulator/progress             — upsert progress for one scenario
+ * GET  /api/simulator/progress            , list the user's progress across all scenarios
+ * GET  /api/simulator/progress?scenarioId=, load one scenario's progress (for resume)
+ * POST /api/simulator/progress            , upsert progress for one scenario
  *
  * The POST is called from the client on every meaningful state transition
- * (scene change, choice, ending). It's fire-and-forget — client-side game
+ * (scene change, choice, ending). It's fire-and-forget, client-side game
  * state is authoritative during play; the server-side copy is for resume
  * and analytics.
  */
@@ -93,16 +93,16 @@ export async function POST(request: NextRequest) {
       // the actual XP earned. The persisted value is clamped to
       // min(client, server) so a cheater sending xpEarned=10000
       // via curl can't inflate the leaderboard. Honest clients
-      // will hit equality — the extra work is only penalised on
+      // will hit equality, the extra work is only penalised on
       // tampering.
       const authoritative = replayXp(scenario, body.choicesMade);
       const safeXp = Math.min(body.xpEarned, authoritative.xp);
 
-      // Best-of merge — shared with /api/simulator/complete via
+      // Best-of merge, shared with /api/simulator/complete via
       // lib/simulator/progress-merge so both routes agree on
       // personal-best preservation. Without the shared helper, a
       // replay completion would go through /complete, which used to
-      // clobber the existing row with a destructive upsert — losing
+      // clobber the existing row with a destructive upsert, losing
       // the player's prior mastery.
       const existing = await prisma.simulatorProgress.findUnique({
         where: {
@@ -130,7 +130,7 @@ export async function POST(request: NextRequest) {
         update,
       });
 
-      // Daily-streak bump. Fire-and-forget — a failure here must not 500
+      // Daily-streak bump. Fire-and-forget, a failure here must not 500
       // the progress save itself. See `lib/simulator/streak.ts` for the
       // UTC-day rollover logic.
       bumpSimulatorStreak(prisma, user.id).catch((err) => {

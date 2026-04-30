@@ -158,7 +158,7 @@ async function handleOrderCompleted(event: PayPalWebhookEvent) {
 
   if (existingPurchase) {
     // If capture-order already handled this, the purchase exists with a valid token.
-    // Nothing more to do — email was already sent by capture-order.
+    // Nothing more to do, email was already sent by capture-order.
     return;
   }
 
@@ -220,7 +220,7 @@ async function handleOrderCompleted(event: PayPalWebhookEvent) {
   }
 
   // Only send emails if we created the row (webhook won the race)
-  // Check if the token we generated is the one stored — if so, we created it
+  // Check if the token we generated is the one stored, if so, we created it
   if (purchase.downloadToken === downloadToken) {
     if (purchaseType === "BOOK") {
       await sendOrderConfirmation({

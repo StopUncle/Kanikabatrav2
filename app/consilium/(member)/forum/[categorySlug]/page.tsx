@@ -125,7 +125,7 @@ export default async function CategoryPage({ params, searchParams }: Props) {
     likeCount: post.likeCount,
     replyCount: post._count.replies,
     createdAt: post.createdAt.toISOString(),
-    // Privacy: strip the real `name` field — client components must only
+    // Privacy: strip the real `name` field, client components must only
     // see displayName (with a generic fallback) so a malicious member can
     // never harvest identities from network responses or SSR'd HTML.
     author: {
@@ -214,7 +214,7 @@ export default async function CategoryPage({ params, searchParams }: Props) {
             ))}
           </div>
           {/* Pagination. Previously a hard take: 20 dropped posts 21+
-              silently — categories with lively discussion were
+              silently, categories with lively discussion were
               effectively capped. Offset-based paging works across all
               three sort modes (latest/popular/active) and keeps the
               category URL shareable. */}

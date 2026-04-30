@@ -2,7 +2,7 @@
  * GET /api/simulator/choice-popularity?scenarioId=X
  *
  * Returns per-(sceneId, choiceId) pick rates across all completed runs of
- * the scenario. Cached in-memory for 1h — pick rates move slowly, and a
+ * the scenario. Cached in-memory for 1h, pick rates move slowly, and a
  * cold query scans the JSON `choicesMade` column on every progress row
  * for the scenario, which is too expensive to do on every choice.
  *
@@ -35,7 +35,7 @@ interface PopularityResponse {
 }
 
 // In-memory cache. Keyed by scenarioId. Survives the lifetime of the
-// serverless lambda — Vercel/Railway containers stay warm long enough that
+// serverless lambda. Vercel/Railway containers stay warm long enough that
 // hot scenarios get the benefit; cold ones recompute infrequently anyway.
 type CacheEntry = { value: PopularityResponse; expiresAt: number };
 const cache = new Map<string, CacheEntry>();
@@ -44,7 +44,7 @@ const TTL_MS = 60 * 60 * 1000; // 1h
 /**
  * Aggregate pick rates from raw progress rows. For a scene with 2 choices
  * picked 30 and 70 times respectively, returns { sceneId: { c1: 0.3, c2: 0.7 } }.
- * Scenes with fewer than 5 total picks are excluded — the rate isn't
+ * Scenes with fewer than 5 total picks are excluded, the rate isn't
  * meaningful and showing "Only 100% chose this" reads as broken.
  */
 function aggregate(

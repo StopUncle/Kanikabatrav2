@@ -1,5 +1,5 @@
 Chapter 5: The Predator's Gaze: A Field Guide to Weakness Detection
-Most people navigate the world through a fog of social conditioning—a soft-focus filter of empathy, reciprocity, and mutual vulnerability. They see potential partners, friends, and allies. We see a landscape of exploitable weaknesses, a target-rich environment of emotional leverage points. This is not cruelty; it is clarity. It is the predator's gaze, the ability to see the world as it is, not as it pretends to be. It is the difference between being a pawn in the game and owning the board.
+Most people navigate the world through a fog of social conditioning, a soft-focus filter of empathy, reciprocity, and mutual vulnerability. They see potential partners, friends, and allies. We see a landscape of exploitable weaknesses, a target-rich environment of emotional leverage points. This is not cruelty; it is clarity. It is the predator's gaze, the ability to see the world as it is, not as it pretends to be. It is the difference between being a pawn in the game and owning the board.
 
 This chapter is not about control; that comes later. This is about diagnosis. Before you can manipulate a system, you must first understand it. Before you can pull the levers of human behavior, you must first identify where they are. This is a field guide to the subtle art of weakness detection, a masterclass in seeing the cracks in the armor of every person you meet. The empath waits to be chosen. The predator already knows who is weakest.
 
@@ -165,7 +165,7 @@ The 'Damsel in Distress' Test: Fabricate a small, easily solvable problem. You c
 The 'Opinion' Probe: Ask for his opinion on a controversial topic. Politics. Religion. The latest celebrity scandal. Then, disagree with him. Gently, at first, then more forcefully. Does he get defensive? Does he try to change your mind? Does he shut down? Or does he engage in a respectful debate? You are testing his emotional resilience, his ability to handle conflict, his attachment to his own ego.
 
 Final Doctrine: The Predator's Advantage
-The empath enters the world with an open heart, hoping to find connection. The predator enters the world with open eyes, looking for opportunity. The empath is a tourist, marveling at the beauty of the landscape. The predator is a hunter, mapping the terrain, identifying the watering holes, and tracking the movements of her prey. The empath waits to be chosen. The predator already knows who is weakest — and sharpens her teeth accordingly.
+The empath enters the world with an open heart, hoping to find connection. The predator enters the world with open eyes, looking for opportunity. The empath is a tourist, marveling at the beauty of the landscape. The predator is a hunter, mapping the terrain, identifying the watering holes, and tracking the movements of her prey. The empath waits to be chosen. The predator already knows who is weakest and sharpens her teeth accordingly.
 
 In-Depth Case Studies: Full Psychological Autopsies
 Case File #5: The 'Enlightened' Tech Bro

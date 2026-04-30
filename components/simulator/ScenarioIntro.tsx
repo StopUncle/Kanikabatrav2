@@ -17,7 +17,7 @@ type Props = {
 
 /**
  * Pre-game curtain. Shown once at mount (and again after a Replay)
- * to give the player a beat before the scenario starts — scenario
+ * to give the player a beat before the scenario starts, scenario
  * title, tagline, a glance at the cast, and a prominent "Begin"
  * button. On replays it also shows the previous best so the player
  * knows what they're gunning for.

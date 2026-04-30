@@ -344,7 +344,7 @@ export default function ProfilePageClient({ userId: _userId, email }: ProfilePag
               </m.div>
             </>
           ) : profile && !isUnlocked ? (
-            /* Locked State — quiz taken but not unlocked */
+            /* Locked State, quiz taken but not unlocked */
             <m.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -385,13 +385,13 @@ export default function ProfilePageClient({ userId: _userId, email }: ProfilePag
                     style={{ background: "linear-gradient(135deg, #720921, #6366f1)", boxShadow: "0 8px 20px rgba(114,9,33,0.3), 0 8px 20px rgba(99,102,241,0.3)" }}
                   >
                     <BookOpen size={18} />
-                    Get the Book — $24.99
+                    Get the Book, $24.99
                   </Link>
                   <Link
                     href="/quiz/results"
                     className="inline-flex items-center justify-center gap-2 px-8 py-3.5 border border-accent-gold/30 text-accent-gold font-medium tracking-wider uppercase rounded-full transition-all hover:bg-accent-gold/10"
                   >
-                    Unlock Results Only — $9.99
+                    Unlock Results Only, $9.99
                   </Link>
                 </div>
               </div>
@@ -490,14 +490,14 @@ export default function ProfilePageClient({ userId: _userId, email }: ProfilePag
                 <ChevronRight size={16} className="text-text-gray group-hover:text-accent-gold transition-colors" />
               </Link>
 
-              {/* Email preferences — granular per-type opt-out.
+              {/* Email preferences, granular per-type opt-out.
                   Surfaces all four prefs (marketing, product updates,
                   weekly digest, session reminders) so users can leave
                   any one channel without losing the others. Saves
                   immediately on toggle; no extra Save button. */}
               <EmailPreferencesPanel />
 
-              {/* Privacy & data — GDPR export.
+              {/* Privacy & data. GDPR export.
                   Hits /api/user/export which builds a JSON of everything
                   Kanika Rose holds about the viewer, then streams it as
                   a file download. */}
@@ -511,7 +511,7 @@ export default function ProfilePageClient({ userId: _userId, email }: ProfilePag
                 </div>
                 <div className="flex-1">
                   <p className="text-text-light font-light">Download my data</p>
-                  <p className="text-text-gray text-xs">GDPR data export — everything we hold about you as JSON</p>
+                  <p className="text-text-gray text-xs">GDPR data export, everything we hold about you as JSON</p>
                 </div>
                 <ChevronRight size={16} className="text-text-gray group-hover:text-accent-gold transition-colors" />
               </a>

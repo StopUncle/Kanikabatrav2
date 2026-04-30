@@ -12,7 +12,7 @@
  *   }
  *
  * Untagged = rows created in the window with no utmSource AND no
- * recognizable referrer — direct/organic/dark traffic.
+ * recognizable referrer, direct/organic/dark traffic.
  */
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
@@ -27,7 +27,7 @@ export async function GET(request: NextRequest) {
   const days = Math.min(Math.max(daysParam, 1), 90);
   const since = new Date(Date.now() - days * 86400_000);
 
-  // Run all aggregations in parallel — each one is small
+  // Run all aggregations in parallel. Each one is small
   const [
     userTotal,
     userBySource,

@@ -1,12 +1,12 @@
 "use client";
 
 /**
- * AchievementToast — mid-scenario / end-of-run unlock notifications.
+ * AchievementToast, mid-scenario / end-of-run unlock notifications.
  *
  * Takes a list of achievement slugs that just unlocked and displays them
  * one-at-a-time in the top-right corner. Queue-safe (multi-unlock runs
  * don't overlap), reduced-motion aware (no slides, instant swap),
- * and compact — one hex medallion + a short name + rarity pill.
+ * and compact, one hex medallion + a short name + rarity pill.
  *
  * The shelf on /consilium/profile is the permanent record. This is the
  * ephemeral "you just earned it" moment, nothing more.
@@ -40,15 +40,15 @@ type RarityPalette = {
   glow: string;
   /** Small uppercase label shown in the toast rarity pill. */
   label: string;
-  /** Pill text color — ensures it's legible on the toast's dark bg. */
+  /** Pill text color, ensures it's legible on the toast's dark bg. */
   pill: string;
 };
 
 const RARITY_COLORS: Record<AchievementRarity, RarityPalette> = {
-  bronze:   { light: "#c79670", mid: "#8B5A3C", dark: "#4a2e1d", rim: "#722139", glow: "rgba(139,90,60,0.55)", label: "Bronze",   pill: "#d4af37" },
-  silver:   { light: "#d4d6e0", mid: "#8d8f9e", dark: "#3e4049", rim: "#2a2b33", glow: "rgba(141,143,158,0.5)", label: "Silver",   pill: "#d4d6e0" },
-  gold:     { light: "#e8c877", mid: "#a27a1d", dark: "#5a4310", rim: "#4d2818", glow: "rgba(162,122,29,0.6)",  label: "Gold",     pill: "#e8c877" },
-  obsidian: { light: "#4a3f55", mid: "#1e1825", dark: "#05030a", rim: "#5a2238", glow: "rgba(90,34,56,0.7)",    label: "Obsidian", pill: "#e6c8f0" },
+  bronze:   { light: "#c79670", mid: "#8B5A3C", dark: "#4a2e1d", rim: "#722139", glow: "rgba(139,90,60,0.55)", label: "Bronze",  pill: "#d4af37" },
+  silver:   { light: "#d4d6e0", mid: "#8d8f9e", dark: "#3e4049", rim: "#2a2b33", glow: "rgba(141,143,158,0.5)", label: "Silver",  pill: "#d4d6e0" },
+  gold:     { light: "#e8c877", mid: "#a27a1d", dark: "#5a4310", rim: "#4d2818", glow: "rgba(162,122,29,0.6)", label: "Gold",    pill: "#e8c877" },
+  obsidian: { light: "#4a3f55", mid: "#1e1825", dark: "#05030a", rim: "#5a2238", glow: "rgba(90,34,56,0.7)",   label: "Obsidian", pill: "#e6c8f0" },
 };
 
 function iconFor(name: SimulatorBadgeDef["icon"], color: string) {

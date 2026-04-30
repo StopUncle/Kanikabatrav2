@@ -7,8 +7,8 @@ import { deleteFromR2, isR2Configured } from "@/lib/storage/r2";
 /**
  * Admin-only feed post mutations.
  *
- * - PATCH  /api/consilium/feed/:postId — toggle isPinned / isLocked
- * - DELETE /api/consilium/feed/:postId — hard delete (cascades comments + likes
+ * - PATCH  /api/consilium/feed/:postId, toggle isPinned / isLocked
+ * - DELETE /api/consilium/feed/:postId, hard delete (cascades comments + likes
  *   via Prisma onDelete: Cascade)
  *
  * Both gate on the admin_session cookie via requireAdminSession, matching the
@@ -77,7 +77,7 @@ export async function DELETE(_request: NextRequest, { params }: RouteParams) {
     // We strip the public-URL prefix to recover the object key, then best-
     // effort delete from R2 AFTER the DB row is gone. DB is authoritative
     // so a failed R2 delete leaves an orphan object but the user-facing
-    // state is consistent — easier to garbage-collect orphans later than
+    // state is consistent, easier to garbage-collect orphans later than
     // to leave the DB referencing deleted audio.
     const post = await prisma.feedPost.findUnique({
       where: { id: postId },

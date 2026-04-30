@@ -162,7 +162,7 @@ export async function POST(request: NextRequest) {
   // Analyze
   const analysis = transcript
     ? analyzeTranscript(transcript)
-    : { error: "No transcript available — video may not have captions" };
+    : { error: "No transcript available, video may not have captions" };
 
   // Save to database
   const record = await prisma.videoAnalysis.create({

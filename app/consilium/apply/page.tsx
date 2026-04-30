@@ -6,13 +6,13 @@ import JoinPanel from "@/components/consilium/JoinPanel";
 import { XCircle } from "lucide-react";
 
 export const metadata = {
-  title: "Join — The Consilium | Kanika Batra",
+  title: "Join. The Consilium | Kanika Batra",
   description:
-    "Join The Consilium — instant access to the Dark Mirror Simulator, voice notes, courses, and community.",
+    "Join The Consilium, instant access to the Dark Mirror Simulator, voice notes, courses, and community.",
 };
 
 /**
- * Join page. The application gate was removed (2026-04-19) — this used
+ * Join page. The application gate was removed (2026-04-19). This used
  * to be a multi-field form that PENDING'd the user for admin review.
  * Now it's a single-button checkout entry. Anyone authenticated and
  * eligible jumps straight to Stripe; anyone not authenticated bounces

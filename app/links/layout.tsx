@@ -3,14 +3,14 @@ import Script from "next/script";
 import { SITE_CONFIG } from "@/lib/constants";
 
 export const metadata: Metadata = {
-  title: "Kanika Batra — I see what you can't.",
+  title: "Kanika Batra. I see what you can't.",
   description:
     "Diagnosed ASPD. Author. Soprano. Take the quiz, ask a question, or book a private session.",
   alternates: {
     canonical: `${SITE_CONFIG.url}/links`,
   },
   openGraph: {
-    title: "Kanika Batra — I see what you can't.",
+    title: "Kanika Batra. I see what you can't.",
     description:
       "Diagnosed ASPD. Author. Soprano. Take the quiz, ask a question, or book a private session.",
     url: `${SITE_CONFIG.url}/links`,
@@ -39,7 +39,7 @@ export default function LinksLayout({
 }) {
   return (
     <>
-      {/* Google Analytics 4 — replace GA_MEASUREMENT_ID with your actual ID */}
+      {/* Google Analytics 4, replace GA_MEASUREMENT_ID with your actual ID */}
       <Script
         src="https://www.googletagmanager.com/gtag/js?id=GA_MEASUREMENT_ID"
         strategy="afterInteractive"
@@ -53,7 +53,7 @@ export default function LinksLayout({
         `}
       </Script>
 
-      {/* Meta Pixel — replace META_PIXEL_ID with your actual Pixel ID */}
+      {/* Meta Pixel, replace META_PIXEL_ID with your actual Pixel ID */}
       <Script id="meta-pixel" strategy="afterInteractive">
         {`
           !function(f,b,e,v,n,t,s)

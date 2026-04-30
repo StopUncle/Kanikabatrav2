@@ -8,7 +8,7 @@ import { logger } from "@/lib/logger";
  *
  * Returns the asker's identity for an anonymous question. Separate
  * endpoint (not bundled into the list payload) so the action is an
- * explicit moderation step — easy to audit-log later if needed, and
+ * explicit moderation step, easy to audit-log later if needed, and
  * Kanika can't accidentally see identities by glancing at the queue.
  */
 export async function POST(

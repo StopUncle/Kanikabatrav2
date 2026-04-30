@@ -1,5 +1,5 @@
 /**
- * Toxic Narcissist track — everyday-context narcissism.
+ * Toxic Narcissist track, everyday-context narcissism.
  * See reference/TRACK-toxic-narc.md for full design.
  * Phase 1: L1-1 only. L1-2 and L2-1 are skeletons in the design doc.
  */

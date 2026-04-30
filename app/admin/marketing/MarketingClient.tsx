@@ -186,7 +186,7 @@ export default function MarketingClient({ campaigns }: { campaigns: Campaign[] }
                 </p>
               )}
               <p className="text-text-gray/70 text-xs mt-1">
-                Cron processor sends ~50 every 15 min — full delivery time depends on
+                Cron processor sends ~50 every 15 min, full delivery time depends on
                 opted-in count.
               </p>
             </div>

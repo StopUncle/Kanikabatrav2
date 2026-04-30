@@ -9,7 +9,7 @@ import { m, AnimatePresence } from "framer-motion";
  * You are a gold light, radiant, unguarded. A dark presence sits far
  * off. One by one, fine red threads extend from the presence toward
  * you. Each arrives from a different angle. Each touches. Each dims
- * you by a degree. By the end, the web is complete — you are
+ * you by a degree. By the end, the web is complete, you are
  * surrounded, eclipsed, and being pulled in.
  *
  * No dialogue, no tactic names, no scene labels. The story is told
@@ -17,13 +17,13 @@ import { m, AnimatePresence } from "framer-motion";
  *
  * Implementation:
  *   - Threads are SVG Bezier curves whose stroke-dasharray animates
- *     from 0 to full length — creates the "drawing in" motion.
+ *     from 0 to full length, creates the "drawing in" motion.
  *   - The gold orb dims slightly each time a thread touches it,
  *     using a CSS variable tied to the number of revealed threads.
  *   - A final contraction pulls gold toward the dark presence.
  */
 
-// Thread endpoints — each is (startXPercent, startYPercent) from the
+// Thread endpoints. Each is (startXPercent, startYPercent) from the
 // dark presence to the gold orb. The starting points are near each
 // other (the presence), the ends all converge on the gold orb.
 //
@@ -32,7 +32,7 @@ import { m, AnimatePresence } from "framer-motion";
 type Thread = {
   start: [number, number];
   end: [number, number];
-  /** Control point for the bezier — gives each thread its own bend. */
+  /** Control point for the bezier, gives each thread its own bend. */
   control: [number, number];
 };
 
@@ -43,7 +43,7 @@ const DARK_POS: [number, number] = [82, 22];
 // Six threads, each curving in from a slightly different starting
 // point around the dark presence, hitting the gold orb from a
 // different angle. Control points chosen so they bow inward toward
-// the center — the web "gathers" the gold into it.
+// the center, the web "gathers" the gold into it.
 const THREADS: Thread[] = [
   {
     start: [80, 20],
@@ -103,7 +103,7 @@ const PHASE_ORDER: Phase[] = [
 ];
 
 const PHASE_MS: Record<Phase, number> = {
-  prelude: 1400, // calm — just the gold
+  prelude: 1400, // calm, just the gold
   t1: 900,
   t2: 850,
   t3: 800,
@@ -151,7 +151,7 @@ export default function WebPreview() {
     const tPhases: Phase[] = ["t1", "t2", "t3", "t4", "t5", "t6"];
     const at = tPhases.indexOf(phase);
     if (at >= 0) return at + 1;
-    return 6; // pulse/pull — all shown
+    return 6; // pulse/pull. All shown
   })();
 
   // Gold orb dims as more threads connect. 6 threads → almost gone.
@@ -171,7 +171,7 @@ export default function WebPreview() {
       aria-label="Demo · Web"
     >
       <div className="relative aspect-[16/10] rounded-xl overflow-hidden border border-warm-gold/20 bg-gradient-to-br from-[#090614] via-[#050309] to-[#090614]">
-        {/* Ambient backdrop — cold void feel. Very subtle radial from
+        {/* Ambient backdrop, cold void feel. Very subtle radial from
             the dark presence and the gold, so the eye reads the space
             as "two forces in a field". */}
         <div
@@ -183,7 +183,7 @@ export default function WebPreview() {
           }}
         />
 
-        {/* SVG overlay — renders all threads + the dark presence. */}
+        {/* SVG overlay, renders all threads + the dark presence. */}
         <svg
           className="absolute inset-0 w-full h-full"
           aria-hidden
@@ -203,7 +203,7 @@ export default function WebPreview() {
             </linearGradient>
           </defs>
 
-          {/* Threads — each draws in when its phase activates. Uses
+          {/* Threads. Each draws in when its phase activates. Uses
               pathLength animation for the "line being pulled in from
               infinity" feel. */}
           {THREADS.map((thread, i) => {
@@ -236,8 +236,8 @@ export default function WebPreview() {
             );
           })}
 
-          {/* Dark presence — a tight knot at the origin of the threads.
-              Pulses in rhythm with the reveal — like a heart. */}
+          {/* Dark presence, a tight knot at the origin of the threads.
+              Pulses in rhythm with the reveal, like a heart. */}
           <m.circle
             cx={DARK_POS[0]}
             cy={DARK_POS[1]}
@@ -272,7 +272,7 @@ export default function WebPreview() {
           />
         </svg>
 
-        {/* Gold orb — "you". Animated via framer so position + dim
+        {/* Gold orb, "you". Animated via framer so position + dim
             transition smoothly, including the final pull into the
             dark presence. */}
         <m.div
@@ -323,7 +323,7 @@ export default function WebPreview() {
           Scene 01
         </div>
 
-        {/* Verdict — brief, on pull. One word. */}
+        {/* Verdict, brief, on pull. One word. */}
         <AnimatePresence>
           {phase === "pull" && (
             <m.p

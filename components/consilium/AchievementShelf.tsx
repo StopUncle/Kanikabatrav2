@@ -1,10 +1,10 @@
 /**
- * AchievementShelf — the trophy case for the Dark Mirror simulator.
+ * AchievementShelf, the trophy case for the Dark Mirror simulator.
  *
  * Server component. Reads the user's SimulatorBadge rows directly, joins
  * against the static catalogue in lib/simulator/achievements.ts, groups by
  * category, and renders hex medallions. No JS shipped for the shelf itself
- * — the hover detail is a pure CSS `group-hover` overlay.
+ *, the hover detail is a pure CSS `group-hover` overlay.
  *
  * Visual language is deliberately different from the round tenure MemberBadge
  * (the 12-tier ranking system). This shelf uses hex plates with burgundy +
@@ -41,7 +41,7 @@ import {
 // ---------------------------------------------------------------------------
 
 type Palette = {
-  /** Hex fill gradient — light / mid / dark stops. */
+  /** Hex fill gradient, light / mid / dark stops. */
   light: string;
   mid: string;
   dark: string;
@@ -60,7 +60,7 @@ const PALETTES: Record<AchievementRarity, Palette> = {
     light: "#c79670",
     mid: "#8B5A3C",
     dark: "#4a2e1d",
-    rim: "#722139", // accent-burgundy — ties the medallion to the brand
+    rim: "#722139", // accent-burgundy, ties the medallion to the brand
     icon: "#e8c4a3",
     halo: "rgba(139,90,60,0.45)",
     label: "Bronze",
@@ -137,7 +137,7 @@ function Medallion({ meta, earned, earnedAt }: MedallionProps) {
   const haloId = `hex-halo-${safeId}`;
 
   return (
-    // `tabIndex=0` + focus-within tooltip — gives mobile users a way to see
+    // `tabIndex=0` + focus-within tooltip, gives mobile users a way to see
     // the description via tap (which focuses the element) since pure CSS
     // `:hover` doesn't fire on touch. Desktop keyboard users get tab-stop
     // too. Aria-label carries the full semantic for screen readers.
@@ -155,7 +155,7 @@ function Medallion({ meta, earned, earnedAt }: MedallionProps) {
         <svg
           viewBox="0 0 100 115"
           className={`w-full h-auto ${earned ? "" : "opacity-40 grayscale"}`}
-          aria-label={`${displayName} — ${palette.label} achievement${earned ? ", earned" : ", locked"}`}
+          aria-label={`${displayName}, ${palette.label} achievement${earned ? ", earned" : ", locked"}`}
         >
           <defs>
             <linearGradient id={fillId} x1="0" y1="0" x2="0" y2="1">
@@ -169,7 +169,7 @@ function Medallion({ meta, earned, earnedAt }: MedallionProps) {
             </radialGradient>
           </defs>
 
-          {/* Halo (only on earned) — soft rarity glow, mobile-safe single layer. */}
+          {/* Halo (only on earned), soft rarity glow, mobile-safe single layer. */}
           {earned && <polygon points={HEX_POINTS} fill={`url(#${haloId})`} />}
 
           {/* Main plate */}
@@ -189,7 +189,7 @@ function Medallion({ meta, earned, earnedAt }: MedallionProps) {
             opacity="0.6"
           />
 
-          {/* Rarity notch at bottom — four small pips for obsidian, three for gold, etc. */}
+          {/* Rarity notch at bottom. Four small pips for obsidian, three for gold, etc. */}
           <RarityPips rarity={meta.rarity} fill={palette.rim} />
 
           {/* Central icon */}
@@ -203,7 +203,7 @@ function Medallion({ meta, earned, earnedAt }: MedallionProps) {
           </foreignObject>
 
           {/* Lock overlay on locked. Icon colour chosen for contrast against
-              the desaturated + 40%-opacity plate — a near-black lock on a
+              the desaturated + 40%-opacity plate, a near-black lock on a
               dark-burgundy background was invisible (~2:1 ratio), so we use
               a light warm-gray instead. */}
           {!earned && (
@@ -228,7 +228,7 @@ function Medallion({ meta, earned, earnedAt }: MedallionProps) {
         {displayName}
       </p>
 
-      {/* Hover / focus tooltip — CSS only, no JS. `group-focus:` makes it
+      {/* Hover / focus tooltip. CSS only, no JS. `group-focus:` makes it
           work for keyboard-tab and for mobile-tap (tap triggers focus on a
           tabIndex=0 element). `group-focus-within:` covers nested focusable
           children too. */}
@@ -310,7 +310,7 @@ export default async function AchievementShelf({
   // scenario badges whose reward keys aren't registered in badges.ts yet).
   // They render as generic bronze fallbacks rather than disappearing.
   const extraEarned: AchievementMeta[] = [];
-  // Array.from(...) instead of spread/iterator for-of — Railway's TS target
+  // Array.from(...) instead of spread/iterator for-of. Railway's TS target
   // doesn't enable downlevelIteration, so `for (const k of map.keys())`
   // errors in build even though it runs locally. Same gotcha that tripped
   // `measure-path-lengths.ts` recently.
@@ -378,7 +378,7 @@ export default async function AchievementShelf({
                   6 on ≥768px, 8 on ≥1024px. The `xs:` prefix isn't a
                   configured breakpoint in this project's tailwind.config.js
                   (`xs` there is a border-radius token, not a screen), so
-                  don't reach for `xs:grid-cols-4` — it would silently
+                  don't reach for `xs:grid-cols-4`, it would silently
                   resolve to nothing and has already been removed. */}
               <div className="grid grid-cols-3 sm:grid-cols-5 md:grid-cols-6 lg:grid-cols-8 gap-4 sm:gap-5">
                 {items.map((meta) => (

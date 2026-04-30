@@ -21,7 +21,7 @@ import {
 // narcissist quiz" / "am I the scapegoat or the golden child" / "is this
 // a real diagnosis" / "what's the difference between this and the dark
 // mirror." Each Q gets 50–80-word A so the FAQPage rich result captures
-// well. Disclaimers surface here too (Q3, Q8) — Google's FAQ rich result
+// well. Disclaimers surface here too (Q3, Q8). Google's FAQ rich result
 // is one of the few places we can guarantee disclaimer visibility in the
 // SERP itself, before the user even clicks.
 const FAQ_ITEMS = [
@@ -29,45 +29,45 @@ const FAQ_ITEMS = [
     question:
       "What is the Daughter Pattern Assessment and what does it actually measure?",
     answer:
-      "The Daughter Pattern Assessment is a 20-scenario reflective tool for adult daughters (and sons) of mothers with strong narcissistic traits. It scores you on two parallel axes: which trauma response shape your nervous system developed (six profiles — Hypervigilant, Fawn, Over-Functioner, Scapegoat, Golden Cage, Sovereign) and how strongly your mother's behaviour matches the NPD pattern. It's a mirror, not a verdict.",
+      "The Daughter Pattern Assessment is a 20-scenario reflective tool for adult daughters (and sons) of mothers with strong narcissistic traits. It scores you on two parallel axes: which trauma response shape your nervous system developed (six profiles. Hypervigilant, Fawn, Over-Functioner, Scapegoat, Golden Cage, Sovereign) and how strongly your mother's behaviour matches the NPD pattern. It's a mirror, not a verdict.",
   },
   {
     question:
       "Is this a clinical diagnosis? Can a quiz tell me if my mother is a narcissist?",
     answer:
-      "No. This is not a diagnostic instrument and we are explicit about that — only a licensed clinician with a full history can diagnose any personality disorder, in your mother or in you. What this assessment can do is help you see whether the pattern you grew up in matches the cluster of behaviours that NPD-mother households produce, and how your nervous system has organised itself in response. Use it for self-recognition, not for confronting her.",
+      "No. This is not a diagnostic instrument and we are explicit about that, only a licensed clinician with a full history can diagnose any personality disorder, in your mother or in you. What this assessment can do is help you see whether the pattern you grew up in matches the cluster of behaviours that NPD-mother households produce, and how your nervous system has organised itself in response. Use it for self-recognition, not for confronting her.",
   },
   {
     question: "How is this different from the Dark Mirror Assessment?",
     answer:
-      "The Dark Mirror profiles your own personality across six Cluster B types (Psychopathic, Sociopathic, Narcissistic, Borderline, Histrionic, Neurotypical). The Daughter Pattern profiles your trauma response to a specific kind of household — one likely run by an NPD-trait-heavy mother. Many women take both: the Daughter Pattern explains the household; the Dark Mirror explains how the household shaped the personality you walk around in now.",
+      "The Dark Mirror profiles your own personality across six Cluster B types (Psychopathic, Sociopathic, Narcissistic, Borderline, Histrionic, Neurotypical). The Daughter Pattern profiles your trauma response to a specific kind of household, one likely run by an NPD-trait-heavy mother. Many women take both: the Daughter Pattern explains the household; the Dark Mirror explains how the household shaped the personality you walk around in now.",
   },
   {
     question:
       "I don't know if my mother is 'really' a narcissist. Should I take this anyway?",
     answer:
-      "Yes. A good half of the women this assessment is built for arrive uncertain — they suspect the pattern but feel guilty naming it, or they've been told for years they're 'overreacting.' The Mother Signal axis is built precisely for this case: it returns one of four bands (Likely NPD / Trait-Heavy / Difficult-but-not-NPD / Unlikely), so an honest read of the household is part of what you receive. Sometimes the answer comes back 'unlikely' and that is genuinely useful information.",
+      "Yes. A good half of the women this assessment is built for arrive uncertain, they suspect the pattern but feel guilty naming it, or they've been told for years they're 'overreacting.' The Mother Signal axis is built precisely for this case: it returns one of four bands (Likely NPD / Trait-Heavy / Difficult-but-not-NPD / Unlikely), so an honest read of the household is part of what you receive. Sometimes the answer comes back 'unlikely' and that is genuinely useful information.",
   },
   {
     question: "What if I'm a son, not a daughter?",
     answer:
-      "Take it. The 'Daughter' framing reflects the typical user — daughters of NPD mothers are the largest demographic in this niche — but the trauma patterns the assessment maps (anxious-attached, fawn, parentified, scapegoat, golden child) are not gender-specific. Sons of NPD mothers develop the same six profiles. The results page will speak in second-person 'you' regardless.",
+      "Take it. The 'Daughter' framing reflects the typical user, daughters of NPD mothers are the largest demographic in this niche but the trauma patterns the assessment maps (anxious-attached, fawn, parentified, scapegoat, golden child) are not gender-specific. Sons of NPD mothers develop the same six profiles. The results page will speak in second-person 'you' regardless.",
   },
   {
     question:
-      "Will the result tell me what to do — go no-contact, stay in touch, confront her?",
+      "Will the result tell me what to do, go no-contact, stay in touch, confront her?",
     answer:
-      "No, and we'd be wary of any quiz that claimed to. Major life decisions about a parent are not quiz-territory; they involve safety, finances, children, culture, your own capacity, and timing — none of which a 20-question assessment can know. What the result *will* give you is a clearer read of the dynamic and a recovery move scaled to your specific profile. Decisions about contact level should involve a therapist, a trusted friend, or both.",
+      "No, and we'd be wary of any quiz that claimed to. Major life decisions about a parent are not quiz-territory; they involve safety, finances, children, culture, your own capacity, and timing. None of which a 20-question assessment can know. What the result *will* give you is a clearer read of the dynamic and a recovery move scaled to your specific profile. Decisions about contact level should involve a therapist, a trusted friend, or both.",
   },
   {
     question: "How long does it take? Is it free?",
-    answer: `The 20-scenario assessment is free — about 5 to 7 minutes. Your daughter-pattern profile, mother-signal band, and a tailored recovery move are returned for free on the results page. There's no paywall on the core read.`,
+    answer: `The 20-scenario assessment is free, about 5 to 7 minutes. Your daughter-pattern profile, mother-signal band, and a tailored recovery move are returned for free on the results page. There's no paywall on the core read.`,
   },
   {
     question:
       "I'm in active distress about my mother. Is this the right time to take this?",
     answer:
-      "Probably not in this order. If you are in active crisis, in an unsafe family situation, or considering immediate action — please prioritise a licensed therapist and (if needed) a crisis line over a self-assessment. This tool is most useful at the contemplation stage: you've started suspecting the pattern, you want a sharper read, and you're stable enough to take in the answer. If that's not where you are right now, bookmark the page and come back when it is.",
+      "Probably not in this order. If you are in active crisis, in an unsafe family situation, or considering immediate action, please prioritise a licensed therapist and (if needed) a crisis line over a self-assessment. This tool is most useful at the contemplation stage: you've started suspecting the pattern, you want a sharper read, and you're stable enough to take in the answer. If that's not where you are right now, bookmark the page and come back when it is.",
   },
 ];
 
@@ -82,28 +82,28 @@ const RELATED_LINKS: Array<{
     title:
       "Narcissistic Mother: 14 Signs, the Daughter Pattern, and the Specific Move That Cuts the Cord",
     description:
-      "The long-form companion to this assessment. Read it before, during, or after the quiz — many women say the article is what made them realise the assessment was for them.",
+      "The long-form companion to this assessment. Read it before, during, or after the quiz, many women say the article is what made them realise the assessment was for them.",
     type: "Read first",
   },
   {
     href: "/quiz",
     title: "The Dark Mirror Assessment",
     description:
-      "Profiles your own personality across six Cluster B types — Psychopathic, Sociopathic, Narcissistic, Borderline, Histrionic, Neurotypical. Most women in the daughter-of-narcissist niche take both.",
+      "Profiles your own personality across six Cluster B types. Psychopathic, Sociopathic, Narcissistic, Borderline, Histrionic, Neurotypical. Most women in the daughter-of-narcissist niche take both.",
     type: "Companion quiz",
   },
   {
     href: "/blog/cluster-b-personality-disorders-overview",
     title: "Cluster B Personality Disorders: An Overview",
     description:
-      "ASPD, NPD, BPD, HPD — what each one looks like at the dinner table. The diagnostic frame the Mother Signal axis is built on.",
+      "ASPD, NPD, BPD, HPD, what each one looks like at the dinner table. The diagnostic frame the Mother Signal axis is built on.",
     type: "Foundation",
   },
   {
     href: "/blog/narcissist-playbook-how-they-actually-operate",
     title: "The Narcissist Playbook",
     description:
-      "The full operating system of NPD — wound, supply, three-phase cycle, why they're easier to read than therapy culture admits. Pairs with the Mother Signal axis.",
+      "The full operating system of NPD, wound, supply, three-phase cycle, why they're easier to read than therapy culture admits. Pairs with the Mother Signal axis.",
     type: "Foundation",
   },
   {
@@ -117,7 +117,7 @@ const RELATED_LINKS: Array<{
     href: "/book",
     title: "The Sociopathic Dating Bible",
     description:
-      "70,000-word manual covering the partner-detection side — how the man you keep ending up with maps onto your mother's pattern, and how to interrupt the loop.",
+      "70,000-word manual covering the partner-detection side, how the man you keep ending up with maps onto your mother's pattern, and how to interrupt the loop.",
     type: "Book",
   },
   {
@@ -169,7 +169,7 @@ export default function DaughterQuizLanding() {
       <Header />
       <main className="min-h-screen pt-24 pb-16 relative z-10">
         <div className="container mx-auto px-4 max-w-4xl">
-          {/* Disclaimer banner — surfaces above the fold so visitors see the
+          {/* Disclaimer banner, surfaces above the fold so visitors see the
               "not medical advice / not a diagnosis" framing before they
               start. Daisy explicitly required this. Visual treatment is
               deliberately understated (small, accent-burgundy outline)
@@ -275,7 +275,7 @@ export default function DaughterQuizLanding() {
             </h2>
             <p className="text-text-gray text-center max-w-xl mx-auto mb-8 text-sm">
               Twenty years of being raised by a narcissistic mother does not
-              produce one shape. It produces six — and which one your nervous
+              produce one shape. It produces six and which one your nervous
               system locked into is the most diagnostic single fact about your
               adult life.
             </p>
@@ -337,19 +337,19 @@ export default function DaughterQuizLanding() {
                   step: "01",
                   title: "Twenty Real Scenarios",
                   description:
-                    "Specific moments — Sunday calls, sibling rotations, the signature sentence. No abstract agree/disagree statements. The scenarios are the assessment.",
+                    "Specific moments. Sunday calls, sibling rotations, the signature sentence. No abstract agree/disagree statements. The scenarios are the assessment.",
                 },
                 {
                   step: "02",
                   title: "Two-Axis Read",
                   description:
-                    "Your daughter pattern (one of six profiles) plus a mother-signal band — Likely NPD, Trait-Heavy, Difficult, or Unlikely. Both axes returned together.",
+                    "Your daughter pattern (one of six profiles) plus a mother-signal band. Likely NPD, Trait-Heavy, Difficult, or Unlikely. Both axes returned together.",
                 },
                 {
                   step: "03",
                   title: "Specific Recovery Move",
                   description:
-                    "Each profile gets a tailored recovery move — the single intervention most useful for your specific shape. Plus a 12-month arc so you know what good looks like.",
+                    "Each profile gets a tailored recovery move, the single intervention most useful for your specific shape. Plus a 12-month arc so you know what good looks like.",
                 },
               ].map((item, index) => (
                 <m.div
@@ -386,7 +386,7 @@ export default function DaughterQuizLanding() {
                 The clinical assessment of NPD requires a licensed clinician
                 with a full history. The diagnostic assessment of trauma
                 response requires a therapist, time, and trust. This is
-                neither of those — it is a 20-scenario instrument designed to
+                neither of those, it is a 20-scenario instrument designed to
                 surface the recognition that a clinician can later confirm.
               </p>
               <p className="text-text-gray text-center max-w-2xl mx-auto text-sm italic">

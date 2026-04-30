@@ -18,7 +18,7 @@ type LoginFormData = z.infer<typeof loginSchema>;
 export default function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  // Accept both param names — server-auth redirects send ?redirect=…,
+  // Accept both param names, server-auth redirects send ?redirect=…,
   // the profile/quiz-results pages send ?returnTo=…, and some legacy
   // components use ?redirect=… too. Without this dual read, anyone
   // hitting a protected page while logged out landed on /dashboard
@@ -57,7 +57,7 @@ export default function LoginForm() {
         throw new Error(result.error || "Login failed");
       }
 
-      // Login successful — redirect to returnTo or dashboard
+      // Login successful, redirect to returnTo or dashboard
       router.push(returnTo || "/dashboard");
       router.refresh();
     } catch (err) {

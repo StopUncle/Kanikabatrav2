@@ -297,7 +297,7 @@ export async function POST(request: NextRequest) {
             },
           });
 
-          // Sync CommunityMembership — extend by 1 month
+          // Sync CommunityMembership, extend by 1 month
           const paymentCM = await prisma.communityMembership.findFirst({
             where: { paypalSubscriptionId: billingAgreementId },
           });
@@ -315,7 +315,7 @@ export async function POST(request: NextRequest) {
 
       case "BILLING.SUBSCRIPTION.PAYMENT.FAILED":
         console.error("Subscription payment failed:", resource.id || resource.billing_agreement_id);
-        // Don't immediately revoke — PayPal will retry and eventually suspend
+        // Don't immediately revoke. PayPal will retry and eventually suspend
         break;
 
       default:

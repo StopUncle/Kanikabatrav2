@@ -25,7 +25,7 @@ export async function GET(request: NextRequest) {
       where.isBanned = false;
     }
 
-    // List view stays paginated at 100 — the dashboard table can't
+    // List view stays paginated at 100, the dashboard table can't
     // render thousands. But `count` and `memberCount` must reflect the
     // full table; otherwise the admin dashboard tile reads
     // formatted.length and gets capped forever once the userbase

@@ -1,9 +1,9 @@
 /**
- * tn-3-1 — "The Family Group Chat"
+ * tn-3-1, "The Family Group Chat"
  *
  * Toxic-Narcissist track, Level 3 (The Narc Sibling), order 1. Your
  * grandmother died yesterday. The family group chat has 47 unread
- * messages by the time you look. Ren — the golden sibling — has
+ * messages by the time you look. Ren, the golden sibling, has
  * already offered to "handle everything." Your mother is running
  * the martyr register publicly in the chat. You have said nothing
  * yet, and the silence is, inside the family's performance economy,
@@ -15,15 +15,15 @@
  * move that declines to play without producing fresh ammunition.
  *
  * Teaches:
- *  - The grief-ranking performance economy — how narc families
+ *  - The grief-ranking performance economy, how narc families
  *    transform a death into a contest, and how neither winning it
  *    nor refusing to enter it is free
- *  - The written-message advantage over the voice call — a
+ *  - The written-message advantage over the voice call, a
  *    two-sentence warm note is stronger than a phone sob
  *  - The private-sibling channel as the correct first move when the
  *    golden sibling has already volunteered to "handle it"
  *  - The funeral-week framework: practical work (logistics) beats
- *    feelings-work (performance) as a contribution — and is the
+ *    feelings-work (performance) as a contribution and is the
  *    only contribution the narc parent cannot re-frame
  *
  * Voice: reference/KANIKA-VOICE.md and reference/TRACK-toxic-narc.md.
@@ -44,7 +44,7 @@ const scenes: Scene[] = [
     dialog: [
       {
         speakerId: null,
-        text: "Tuesday, 2:47 p.m. Your grandmother died yesterday. Your mother's mother. You were not close; you had not seen her in three years. The last call you had with her, nineteen months ago, she called you by your cousin's name twice and then cried about it.",
+        text: "Tuesday, 2:47 p.m. your grandmother died yesterday. Your mother's mother. You were not close; you had not seen her in three years. The last call you had with her, nineteen months ago, she called you by your cousin's name twice and then cried about it.",
       },
       {
         speakerId: null,
@@ -66,7 +66,7 @@ const scenes: Scene[] = [
       },
       {
         id: "text-ren-first",
-        text: "Text Ren privately first — before opening the chat.",
+        text: "Text Ren privately first, before opening the chat.",
         tactic: "The private sibling channel is the correct first move. It calibrates what is real vs. what is performance in the public thread.",
         nextSceneId: "ren-private",
         isOptimal: true,
@@ -81,7 +81,7 @@ const scenes: Scene[] = [
       {
         id: "leave-it",
         text: "Leave the phone on the counter. Walk away for an hour.",
-        tactic: "Valid for grief. Not valid for this specific chat, where delay is currency — the longer you wait, the more the thread is authoring a read of your silence.",
+        tactic: "Valid for grief. Not valid for this specific chat, where delay is currency, the longer you wait, the more the thread is authoring a read of your silence.",
         nextSceneId: "hour-later",
         isOptimal: false,
       },
@@ -89,7 +89,7 @@ const scenes: Scene[] = [
   },
 
   // ===================================================================
-  // BRANCH 1 — OPEN THE CHAT FIRST
+  // BRANCH 1. OPEN THE CHAT FIRST
   // ===================================================================
   {
     id: "chat-opened",
@@ -108,7 +108,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "sibling",
-        text: '"Mum we are here for you. I am taking tomorrow off — I will handle the celebrant, the flowers, and the venue. Please rest. You have done enough already."',
+        text: '"Mum we are here for you. I am taking tomorrow off. I will handle the celebrant, the flowers, and the venue. Please rest. You have done enough already."',
         emotion: "neutral",
       },
       {
@@ -118,7 +118,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: null,
-        text: "Your mother has posted fourteen messages. Ren has posted eight. Your father has posted one (a heart). Your Aunt Prue — your grandmother's sister, the one adult who actually knew her as a person — has not posted.",
+        text: "Your mother has posted fourteen messages. Ren has posted eight. Your father has posted one (a heart). Your Aunt Prue, your grandmother's sister, the one adult who actually knew her as a person, has not posted.",
       },
       {
         speakerId: "inner-voice",
@@ -129,14 +129,14 @@ const scenes: Scene[] = [
     choices: [
       {
         id: "warm-brief",
-        text: 'Post a two-sentence warm message. "Thinking of you all. Grateful for everything Nan was — tell me how I can help this week."',
+        text: 'Post a two-sentence warm message. "Thinking of you all. Grateful for everything Nan was, tell me how I can help this week."',
         tactic: "Warm, brief, offer-of-practical-help. The offer of practical help is the only contribution that cannot be downgraded in a grief-ranking economy.",
         nextSceneId: "warm-brief-posted",
         isOptimal: true,
       },
       {
         id: "text-ren-private-late",
-        text: 'Skip the public reply. Text Ren privately. "I saw the chat. Can I help with anything specific — venue, catering, Nan\'s things?"',
+        text: 'Skip the public reply. Text Ren privately. "I saw the chat. Can I help with anything specific, venue, catering, Nan\'s things?"',
         tactic: "The private channel to the golden sibling is a workaround for the public theatre. Coordination first; public performance second, if at all.",
         nextSceneId: "ren-private",
         isOptimal: true,
@@ -151,7 +151,7 @@ const scenes: Scene[] = [
       {
         id: "private-to-prue",
         text: "Text your Aunt Prue privately. She is the one person in this family who actually lost her sister.",
-        tactic: "The move that names who actually lost someone here. Not a competitive play; an accurate one. A second-order move — requires the public thread to be handled separately.",
+        tactic: "The move that names who actually lost someone here. Not a competitive play; an accurate one. A second-order move, requires the public thread to be handled separately.",
         nextSceneId: "prue-texted",
         isOptimal: true,
       },
@@ -222,7 +222,7 @@ const scenes: Scene[] = [
   },
 
   // ===================================================================
-  // REN COORDINATED — GOOD ENDING PATH
+  // REN COORDINATED. GOOD ENDING PATH
   // ===================================================================
   {
     id: "ren-coordinated",
@@ -232,12 +232,12 @@ const scenes: Scene[] = [
     dialog: [
       {
         speakerId: "sibling",
-        text: '"Thank you. Honestly — the funeral is Thursday at 2. If you can pick up Aunt Prue from the airport Wednesday afternoon that would be the biggest help. She is flying in alone and Mum is not going to be in a state to drive."',
+        text: '"Thank you. Honestly, the funeral is Thursday at 2. If you can pick up Aunt Prue from the airport Wednesday afternoon that would be the biggest help. She is flying in alone and Mum is not going to be in a state to drive."',
         emotion: "neutral",
       },
       {
         speakerId: "inner-voice",
-        text: "Ren has given you the specific task — the one that is actually about your grandmother, not about your mother. Aunt Prue is the person who lost her sister.",
+        text: "Ren has given you the specific task, the one that is actually about your grandmother, not about your mother. Aunt Prue is the person who lost her sister.",
         emotion: "knowing",
       },
       {
@@ -303,7 +303,7 @@ const scenes: Scene[] = [
     dialog: [
       {
         speakerId: null,
-        text: "Thursday, 2:00 p.m. The funeral holds. Your mother delivers a eulogy that is about herself. Ren manages it. You sit next to Aunt Prue. You hold her hand during the committal.",
+        text: "Thursday, 2:00 p.m. the funeral holds. Your mother delivers a eulogy that is about herself. Ren manages it. You sit next to Aunt Prue. You hold her hand during the committal.",
       },
       {
         speakerId: null,
@@ -349,11 +349,11 @@ const scenes: Scene[] = [
       },
       {
         speakerId: null,
-        text: "'I just saw the news. Tell me what you need. Happy to handle anything specific — venue, Nan's things, driving someone from the airport.'",
+        text: "'I just saw the news. Tell me what you need. Happy to handle anything specific, venue, Nan's things, driving someone from the airport.'",
       },
       {
         speakerId: "sibling",
-        text: '"Thank you. Mum is already in the deep end publicly — fair warning when you open the chat. Aunt Prue is flying in Wednesday, can you collect her from the airport? That\'s the one thing I genuinely can\'t do."',
+        text: '"Thank you. Mum is already in the deep end publicly, fair warning when you open the chat. Aunt Prue is flying in Wednesday, can you collect her from the airport? That\'s the one thing I genuinely can\'t do."',
         emotion: "neutral",
       },
       {
@@ -373,7 +373,7 @@ const scenes: Scene[] = [
       {
         id: "ask-about-chat-first",
         text: "'How bad is the chat? Do I need to post something?'",
-        tactic: "Reasonable question but a subtle cost — it asks Ren to coach you through the public theatre, which pulls Ren back into managing you instead of managing Mum. The instinct is right; the execution adds weight to Ren's load.",
+        tactic: "Reasonable question but a subtle cost, it asks Ren to coach you through the public theatre, which pulls Ren back into managing you instead of managing Mum. The instinct is right; the execution adds weight to Ren's load.",
         nextSceneId: "ren-briefs",
         isOptimal: false,
       },
@@ -409,7 +409,7 @@ const scenes: Scene[] = [
   },
 
   // ===================================================================
-  // PRUE DIRECT ROUTE — GOOD BUT DIFFERENT ENDING
+  // PRUE DIRECT ROUTE. GOOD BUT DIFFERENT ENDING
   // ===================================================================
   {
     id: "prue-texted",
@@ -423,7 +423,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: null,
-        text: "'Aunt Prue — I'm so sorry. I know the chat will be loud. Tell me how I can help when you land this week. I'd like to see you.'",
+        text: "'Aunt Prue. I'm so sorry. I know the chat will be loud. Tell me how I can help when you land this week. I'd like to see you.'",
       },
       {
         speakerId: null,
@@ -514,7 +514,7 @@ const scenes: Scene[] = [
       },
       {
         id: "explain-the-delay",
-        text: "Explain the delay. 'I'm sorry I'm late to the chat — I needed a moment. I loved her.'",
+        text: "Explain the delay. 'I'm sorry I'm late to the chat. I needed a moment. I loved her.'",
         tactic: "The explanation is true. The problem: an explanation of a delay inside a narc thread is treated as a confession, not context.",
         nextSceneId: "explained-the-delay",
         isOptimal: false,
@@ -539,12 +539,12 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "inner-voice",
-        text: "The grief message has been received and re-scored as evidence that you had more of her than your mother did — and therefore owe her more now. The competition has a new leaderboard, and you are not on top of it.",
+        text: "The grief message has been received and re-scored as evidence that you had more of her than your mother did and therefore owe her more now. The competition has a new leaderboard, and you are not on top of it.",
         emotion: "knowing",
       },
       {
         speakerId: "sibling",
-        text: '"Mum — that is lovely too. Everyone loved her differently. Let\'s not rank it."',
+        text: '"Mum, that is lovely too. Everyone loved her differently. Let\'s not rank it."',
         emotion: "neutral",
       },
     ],
@@ -665,7 +665,7 @@ const scenes: Scene[] = [
     dialog: [
       {
         speakerId: "inner-voice",
-        text: "The week held. The funeral happened. You did the practical work. You held Aunt Prue's hand during the committal. You made a relationship that will outlast the thread — one that is about the woman who died, not the woman who performed the grief.",
+        text: "The week held. The funeral happened. You did the practical work. You held Aunt Prue's hand during the committal. You made a relationship that will outlast the thread, one that is about the woman who died, not the woman who performed the grief.",
         emotion: "knowing",
       },
       {
@@ -688,7 +688,7 @@ const scenes: Scene[] = [
     outcomeType: "bad",
     endingTitle: "The Permanent Record",
     endingLearnPrompt:
-      "Inside a narc family's grief-ranking economy, an apology is not absolution — it is a file. It will be re-cited at every future moment your independence needs to be punished. Defence and apology are shapes the thread eats; practical work is the only shape it cannot metabolise.",
+      "Inside a narc family's grief-ranking economy, an apology is not absolution, it is a file. It will be re-cited at every future moment your independence needs to be punished. Defence and apology are shapes the thread eats; practical work is the only shape it cannot metabolise.",
     dialog: [
       {
         speakerId: "inner-voice",
@@ -707,7 +707,7 @@ const scenes: Scene[] = [
     outcomeType: "bad",
     endingTitle: "The Grief Competition",
     endingLearnPrompt:
-      "You entered the grief-ranking contest. Every move after entering is scored. The correct move is to not enter — the same discipline that applies to covert-narc work emails. Brevity is a move; silence is a move; practical work is a move. Performance is not a move; it is the instrument being used on you.",
+      "You entered the grief-ranking contest. Every move after entering is scored. The correct move is to not enter, the same discipline that applies to covert-narc work emails. Brevity is a move; silence is a move; practical work is a move. Performance is not a move; it is the instrument being used on you.",
     dialog: [
       {
         speakerId: "inner-voice",
@@ -724,7 +724,7 @@ export const toxicNarc31: Scenario = {
   title: "The Family Group Chat",
   tagline: "Your grandmother died yesterday. The chat has forty-seven messages. You have said nothing yet.",
   description:
-    "A grief-ranking contest has already been scored in your absence. The question is not how you grieve — it is which move declines to play without producing fresh ammunition for the next family event.",
+    "A grief-ranking contest has already been scored in your absence. The question is not how you grieve, it is which move declines to play without producing fresh ammunition for the next family event.",
   tier: "premium",
   track: "toxic-narc",
   level: 3,
@@ -737,7 +737,7 @@ export const toxicNarc31: Scenario = {
   startSceneId: "the-news",
   prerequisites: ["tn-1-1"],
   tacticsLearned: [
-    "Read before writing — never post into a narc thread you have not first read in full",
+    "Read before writing, never post into a narc thread you have not first read in full",
     "The private sibling channel as first move when the golden sibling has volunteered to 'handle it'",
     "The two-sentence warm brief as the only public post worth making",
     "Practical work outside the thread as the only contribution narc parents cannot re-frame",
@@ -747,7 +747,7 @@ export const toxicNarc31: Scenario = {
     "The grief-ranking economy: narc families transform a death into a contest",
     "The reframe: a warm-brief message gets downgraded to a cold-brief when the parent wants ammunition",
     "The apology-as-permanent-record: what you write in a narc chat is cited at every future event",
-    "The 'my everything' post as a territorial claim on the grief role — any match is read as challenge",
+    "The 'my everything' post as a territorial claim on the grief role, any match is read as challenge",
   ],
   characters: [INNER_VOICE, THE_MOTHER, GOLDEN_SIBLING, PRIYA],
   scenes,

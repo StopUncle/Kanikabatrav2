@@ -51,13 +51,13 @@ interface Props {
  * The Ask Kanika modal. Single tall scrollable view that stacks three
  * sections so members can do everything in one trip:
  *
- *   1. KANIKA ANSWERED — only renders if member has an unread answer.
+ *   1. KANIKA ANSWERED, only renders if member has an unread answer.
  *      Front-loaded because it's the dopamine moment.
- *   2. ASK — submit form, or cooldown message + countdown if used today.
- *   3. TOP VOTED — pending queue, upvote-able.
+ *   2. ASK, submit form, or cooldown message + countdown if used today.
+ *   3. TOP VOTED, pending queue, upvote-able.
  *
  * All three pieces share a single fetch on open so the modal feels
- * instant. We don't poll while open — a single load is enough for a
+ * instant. We don't poll while open, a single load is enough for a
  * ~30s session.
  */
 export default function AskKanikaModal({ open, onClose }: Props) {
@@ -149,7 +149,7 @@ export default function AskKanikaModal({ open, onClose }: Props) {
   }, [content, isAnonymous, submitting]);
 
   const toggleVote = useCallback(async (questionId: string) => {
-    // Optimistic flip — reverted on failure.
+    // Optimistic flip, reverted on failure.
     setQueue((prev) =>
       prev.map((q) =>
         q.id === questionId
@@ -248,7 +248,7 @@ export default function AskKanikaModal({ open, onClose }: Props) {
         </div>
 
         <div className="px-6 py-5 space-y-7">
-          {/* SECTION 1 — Answered notification (only if relevant) */}
+          {/* SECTION 1. Answered notification (only if relevant) */}
           {unreadAnswered.length > 0 && (
             <section>
               <h3 className="text-emerald-300/90 text-[10px] font-semibold tracking-[0.25em] uppercase mb-3">
@@ -283,7 +283,7 @@ export default function AskKanikaModal({ open, onClose }: Props) {
             </section>
           )}
 
-          {/* SECTION 2 — Ask form / cooldown */}
+          {/* SECTION 2. Ask form / cooldown */}
           <section>
             <h3 className="text-warm-gold/80 text-[10px] font-semibold tracking-[0.25em] uppercase mb-3">
               Your Question
@@ -351,7 +351,7 @@ export default function AskKanikaModal({ open, onClose }: Props) {
             )}
           </section>
 
-          {/* SECTION 3 — Top voted queue */}
+          {/* SECTION 3. Top voted queue */}
           <section>
             <div className="flex items-center justify-between mb-3">
               <h3 className="text-warm-gold/80 text-[10px] font-semibold tracking-[0.25em] uppercase">

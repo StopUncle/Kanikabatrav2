@@ -10,7 +10,7 @@ interface CommentAuthor {
   id: string;
   name: string | null;
   role: string;
-  /** 1..12 — rank badge used as the avatar. */
+  /** 1..12, rank badge used as the avatar. */
   tier: number;
 }
 
@@ -151,7 +151,7 @@ export default function FeedComment({
             </button>
           )}
 
-          {/* Report — hidden on admin comments (can't report Kanika).
+          {/* Report, hidden on admin comments (can't report Kanika).
               Once a report is filed, the button flips to a muted
               "Reported" state and stays disabled for this session. */}
           {!isAdminAuthor && (

@@ -41,7 +41,7 @@ export default function AskKanikaPill() {
       setCooldown(body.cooldown ?? null);
       setHasUnreadAnswer(Boolean(body.hasUnreadAnswer));
     } catch {
-      // Silent — pill renders in default state if the fetch fails.
+      // Silent, pill renders in default state if the fetch fails.
     }
   }, []);
 
@@ -128,7 +128,7 @@ export default function AskKanikaPill() {
   );
 }
 
-/** Compact countdown for the pill chip — hours-and-minutes only. */
+/** Compact countdown for the pill chip, hours-and-minutes only. */
 function formatShortCountdown(ms: number): string {
   const totalMin = Math.max(0, Math.floor(ms / 60_000));
   const h = Math.floor(totalMin / 60);

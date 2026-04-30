@@ -27,7 +27,7 @@ async function resolveUserId(): Promise<string | null> {
  * Cursor is the ISO timestamp of the oldest post already visible. We fetch
  * posts with `createdAt < cursor` to get the next page. Pinned posts are
  * excluded from the cursor fetch since they're already at the top of the
- * initial render — otherwise they'd re-appear on every "load more".
+ * initial render, otherwise they'd re-appear on every "load more".
  */
 export async function GET(request: NextRequest) {
   const userId = await resolveUserId();
@@ -141,9 +141,9 @@ export async function GET(request: NextRequest) {
 }
 
 // ---------------------------------------------------------------------------
-// POST — admin creates a feed post (announcement / discussion prompt /
+// POST, admin creates a feed post (announcement / discussion prompt /
 // voice-note post). Gated on the admin_session cookie. This was silently
-// missing — /admin/posts and /admin/voice-notes both POSTed to a 404.
+// missing, /admin/posts and /admin/voice-notes both POSTed to a 404.
 // ---------------------------------------------------------------------------
 
 const CreatePostBody = z.object({
@@ -187,7 +187,7 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  // Same rule for VIDEO — never let the feed render a placeholder card
+  // Same rule for VIDEO, never let the feed render a placeholder card
   // with no actual video attached (the Apr 1 voice-note bug taught us this).
   if (payload.type === "VIDEO" && !payload.videoUrl) {
     return NextResponse.json(
@@ -197,7 +197,7 @@ export async function POST(request: NextRequest) {
   }
 
   // Attribute to Kanika's admin user so the feed avatar + Queen badge
-  // render correctly. getAdminUserId() pulls the first ADMIN user.
+  // render correctly. GetAdminUserId() pulls the first ADMIN user.
   const authorId = await getAdminUserId();
 
   try {

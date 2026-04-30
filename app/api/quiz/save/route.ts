@@ -27,7 +27,7 @@ export async function POST(request: NextRequest) {
       orderBy: { createdAt: "desc" },
     });
 
-    // Only stamp attribution on CREATE — never overwrite on update.
+    // Only stamp attribution on CREATE, never overwrite on update.
     // First-touch wins (same rule as the localStorage TTL on the
     // client). Otherwise a returning user retaking the quiz would
     // lose their original source.

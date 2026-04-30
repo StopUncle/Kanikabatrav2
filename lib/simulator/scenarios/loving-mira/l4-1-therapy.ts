@@ -387,7 +387,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: null,
-        text: "YOU: 'Oh god. I'm a monster. I'm doing it to her. I should just... I should never text anyone again.'",
+        text: "YOU: 'Oh god. I'm a monster. I'm doing it to her. I should just... i should never text anyone again.'",
       },
       {
         speakerId: null,

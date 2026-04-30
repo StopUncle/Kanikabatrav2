@@ -172,7 +172,7 @@ export default function AskPageClient() {
                   </h3>
                 </div>
                 <p className="text-text-gray text-sm">
-                  A personal voice memo — raw, unfiltered, and direct.
+                  A personal voice memo, raw, unfiltered, and direct.
                 </p>
               </button>
             </div>
@@ -215,7 +215,7 @@ export default function AskPageClient() {
                         </p>
                         <p className="text-text-gray text-xs mt-1">
                           {count === 3
-                            ? "Best value — ask everything"
+                            ? "Best value, ask everything"
                             : "Single focused question"}
                         </p>
                       </div>

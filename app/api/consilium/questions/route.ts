@@ -9,8 +9,8 @@ import { getQuestionSettings } from "@/lib/questions/settings";
 import { logger } from "@/lib/logger";
 
 // Resolve the acting user across BOTH session types:
-//   - member session (accessToken cookie) — normal member submitting a question
-//   - admin session (admin_session cookie) — Kanika testing or seeding
+//   - member session (accessToken cookie), normal member submitting a question
+//   - admin session (admin_session cookie). Kanika testing or seeding
 // Mirrors the pattern in /api/consilium/feed/posts so admins aren't
 // 401-walled out of their own surfaces. Returns null if neither session
 // is valid (anonymous visitor or expired member token).
@@ -27,7 +27,7 @@ async function resolveActor(): Promise<string | null> {
  * Each entry is annotated with `hasUpvoted` for the current member so
  * the upvote button can show on/off state without a second round-trip.
  *
- * ANSWERED questions are deliberately NOT in this list — they're
+ * ANSWERED questions are deliberately NOT in this list, they're
  * surfaced on the answering FeedPost itself ("This answers: ..."). The
  * asker's pill picks them up via /api/consilium/questions/me.
  */
@@ -35,7 +35,7 @@ export async function GET() {
   const userId = await resolveActor();
   if (!userId) {
     return NextResponse.json(
-      { error: "Your session expired — please refresh the page and log in again" },
+      { error: "Your session expired, please refresh the page and log in again" },
       { status: 401 },
     );
   }
@@ -81,14 +81,14 @@ const submitSchema = z.object({
  * POST /api/consilium/questions
  *
  * Submit a new question. Server-side cooldown enforcement (rolling 24h,
- * configurable cap). Bot users are explicitly rejected — bots engage on
+ * configurable cap). Bot users are explicitly rejected, bots engage on
  * existing posts via the BotAction queue, not by submitting questions.
  */
 export async function POST(req: NextRequest) {
   const userId = await resolveActor();
   if (!userId) {
     return NextResponse.json(
-      { error: "Your session expired — please refresh the page and log in again" },
+      { error: "Your session expired, please refresh the page and log in again" },
       { status: 401 },
     );
   }

@@ -76,7 +76,7 @@ export async function POST(request: NextRequest) {
     });
 
     // sendContactNotification returns false on delivery failure (doesn't
-    // throw — sendEmail swallows after 3 retries). Check the return value
+    // throw, sendEmail swallows after 3 retries). Check the return value
     // to avoid telling the user "message sent" when it wasn't.
     const emailSent = await sendContactNotification(body);
 

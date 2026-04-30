@@ -43,7 +43,7 @@ export default function BookShowcase() {
     >
       <div className="max-w-7xl mx-auto">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 sm:gap-12 lg:gap-16 items-center">
-          {/* Book 3D Display — transform removed (was x: -50 → 0), SSR now
+          {/* Book 3D Display, transform removed (was x: -50 → 0), SSR now
               matches final layout so Lighthouse stops counting the slide-in
               animation as a layout shift. */}
           <m.div
@@ -152,7 +152,7 @@ export default function BookShowcase() {
               )}
 
               <p className="text-warm-gold uppercase tracking-[0.2em] text-xs mb-4">
-                Premium Edition — What You Get
+                Premium Edition. What You Get
               </p>
 
               {/* Value Stack */}
@@ -202,7 +202,7 @@ export default function BookShowcase() {
                     icon="card"
                   />
 
-                  {/* Book + Consilium bundles — matched to the book page so
+                  {/* Book + Consilium bundles, matched to the book page so
                       the landing page captures the same upsell. Only shown
                       post-launch. */}
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -226,7 +226,7 @@ export default function BookShowcase() {
                     Bundle covers your first month or three. Then $29/mo · cancel anytime.
                   </p>
 
-                  {/* Breadcrumb to the Consilium pitch — pulls book-only
+                  {/* Breadcrumb to the Consilium pitch, pulls book-only
                       readers one section down so they see what the
                       community actually delivers, not just the bundle
                       price tag. */}

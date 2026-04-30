@@ -11,14 +11,14 @@ import { logger } from "@/lib/logger";
  * Site-wide search. Accepts ?q=<query>, returns grouped results across:
  *   - Public blog posts (MDX, via lib/mdx)
  *   - Courses (ACTIVE only, any logged-in viewer can see them)
- *   - Inner Circle feed posts — ONLY if the caller is an ACTIVE member,
+ *   - Inner Circle feed posts. ONLY if the caller is an ACTIVE member,
  *     and gender-filtered to match the live feed rules
  *
  * Non-members searching will see blog + course results; trying to hit
  * feed posts without an active membership returns an empty feed section.
  * No info leak because courses and blog are public-adjacent content.
  *
- * Uses ILIKE for fuzzy matching — Postgres trigrams (pg_trgm) would be
+ * Uses ILIKE for fuzzy matching. Postgres trigrams (pg_trgm) would be
  * better at scale but require a migration. For the current content volume
  * (20 blog posts, dozens of courses, hundreds of feed posts) ILIKE is
  * plenty fast.
@@ -26,7 +26,7 @@ import { logger } from "@/lib/logger";
 
 const MAX_RESULTS_PER_GROUP = 10;
 
-// Rate limit search separately from the auth/comment limits — 30/min per
+// Rate limit search separately from the auth/comment limits, 30/min per
 // IP is generous but prevents scraping.
 const SEARCH_LIMIT = {
   action: "search",
@@ -53,8 +53,8 @@ export async function GET(request: NextRequest) {
     );
   }
 
-  // Look up the viewer (if any) — determines whether feed results are
-  // included and what gender filter applies. resolveActiveUserIdFromRequest
+  // Look up the viewer (if any), determines whether feed results are
+  // included and what gender filter applies. ResolveActiveUserIdFromRequest
   // returns null for banned / tokenVersion-revoked sessions, so banned
   // users drop to the anonymous-viewer path (blog + courses only).
   const viewerUserId = await resolveActiveUserIdFromRequest(request);
@@ -133,7 +133,7 @@ export async function GET(request: NextRequest) {
     // ---------- Blog posts ----------
     // MDX is read from disk; getAllPosts returns metadata only, which is
     // enough to search title + excerpt + tags. Content-body search would
-    // need a full read of every MDX file — skipped for now since the
+    // need a full read of every MDX file, skipped for now since the
     // frontmatter is the high-signal text.
     const allBlog = getAllPosts();
     const qLower = q.toLowerCase();

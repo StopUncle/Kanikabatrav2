@@ -1,5 +1,5 @@
 /**
- * Mission 2-1 — "The Group Chat"
+ * Mission 2-1, "The Group Chat"
  *
  * Level 2, order 1. Teaches information discipline under peer pressure.
  * The group chat is the primary manipulation surface of adult life —
@@ -21,7 +21,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: null,
-        text: "Morgan always pings when you are tired enough to answer. She has learned your schedule better than you have — she does not do it on purpose, but she does do it, and her instinct for when you will say the thing you meant to keep to yourself is almost supernatural.",
+        text: "Morgan always pings when you are tired enough to answer. She has learned your schedule better than you have, she does not do it on purpose, but she does do it, and her instinct for when you will say the thing you meant to keep to yourself is almost supernatural.",
       },
       {
         speakerId: null,
@@ -33,7 +33,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "inner-voice",
-        text: "Note the rhythm of those two messages. She did not ask 'do you know anything,' because that is answerable with 'no.' She asked 'who is' — a presupposition question, which only accepts a named answer. The second message removes the option of pleading ignorance. She has engineered a conversation in which the only socially frictionless reply is a name.",
+        text: "Note the rhythm of those two messages. She did not ask 'do you know anything,' because that is answerable with 'no.' She asked 'who is', a presupposition question, which only accepts a named answer. The second message removes the option of pleading ignorance. She has engineered a conversation in which the only socially frictionless reply is a name.",
         emotion: "knowing",
       },
       {
@@ -117,7 +117,7 @@ const scenes: Scene[] = [
     choices: [
       {
         id: "give-something-small",
-        text: '"she was with her usual group. nothing weird."',
+        text: '"she was with her usual group. Nothing weird."',
         tactic: "Even 'nothing' is a datapoint. Morgan will reinterpret.",
         nextSceneId: "morgan-reinterprets",
       },
@@ -156,7 +156,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: null,
-        text: 'MORGAN (DM): "come onnn. just between us. you saw her with someone right?"',
+        text: 'MORGAN (DM): "come onnn. Just between us. You saw her with someone right?"',
       },
       {
         speakerId: "inner-voice",
@@ -199,7 +199,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: null,
-        text: 'MORGAN (DM): "okay fine. caleb asked me to find out. i said i\'d ask around"',
+        text: 'MORGAN (DM): "okay fine. Caleb asked me to find out. I said i\'d ask around"',
       },
       {
         speakerId: "inner-voice",
@@ -242,7 +242,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: null,
-        text: '"source says maris was with her usual group — meaning HIM"',
+        text: '"source says maris was with her usual group, meaning HIM"',
       },
       {
         speakerId: "inner-voice",
@@ -268,7 +268,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "inner-voice",
-        text: "The word 'boring' in that message is not a judgement. It is a concession. Morgan has just admitted she will not get the story from you. You are a dead well. She will remember this, which is actually useful — collectors prefer to ask productive sources, and you have just removed yourself from that list.",
+        text: "The word 'boring' in that message is not a judgement. It is a concession. Morgan has just admitted she will not get the story from you. You are a dead well. She will remember this, which is actually useful, collectors prefer to ask productive sources, and you have just removed yourself from that list.",
         emotion: "knowing",
       },
       {
@@ -329,12 +329,12 @@ const scenes: Scene[] = [
     dialog: [
       {
         speakerId: "priya",
-        text: '"(DM) that was smooth. morgan will circle back in a week on something else."',
+        text: '"(DM) that was smooth. Morgan will circle back in a week on something else."',
         emotion: "knowing",
       },
       {
         speakerId: "priya",
-        text: '"the game is never about what they ask. it\'s about what you confirm."',
+        text: '"the game is never about what they ask. It\'s about what you confirm."',
         emotion: "serious",
       },
     ],
@@ -349,7 +349,7 @@ const scenes: Scene[] = [
       {
         id: "brush-off",
         text: "\"I was just trying to get her to stop\"",
-        tactic: "Downplaying — but Priya's gift here was real. Take it.",
+        tactic: "Downplaying but Priya's gift here was real. Take it.",
         nextSceneId: "ending-info-held",
       },
       {
@@ -392,12 +392,12 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "priya",
-        text: '"Three. \'Just between us\' does not exist. The second it is typed, it is evidence. The phrase itself is the tell — people who mean privacy do not announce it; they simply do it."',
+        text: '"Three. \'Just between us\' does not exist. The second it is typed, it is evidence. The phrase itself is the tell, people who mean privacy do not announce it; they simply do it."',
         emotion: "knowing",
       },
       {
         speakerId: "inner-voice",
-        text: "Memorise those three. They apply to every group chat, every Slack channel, every text thread, every corporate email you will ever touch. The rules do not change when the stakes go up — which is good news, because the stakes absolutely will.",
+        text: "Memorise those three. They apply to every group chat, every Slack channel, every text thread, every corporate email you will ever touch. The rules do not change when the stakes go up, which is good news, because the stakes absolutely will.",
         emotion: "knowing",
       },
     ],
@@ -432,7 +432,7 @@ const scenes: Scene[] = [
     outcomeType: "good",
     endingTitle: "Three Rules",
     endingSummary:
-      "You didn't just survive the group chat — you levelled up. Public documents, no authoring stories for others, no such thing as 'just between us'. Tonight's lesson costs nothing. Tomorrow's tuition would have been far higher.",
+      "You didn't just survive the group chat, you levelled up. Public documents, no authoring stories for others, no such thing as 'just between us'. Tonight's lesson costs nothing. Tomorrow's tuition would have been far higher.",
     dialog: [
       {
         speakerId: "inner-voice",
@@ -449,7 +449,7 @@ const scenes: Scene[] = [
     outcomeType: "neutral",
     endingTitle: "Nothing Leaked",
     endingSummary:
-      "You kept the information in. Morgan moved on. You didn't learn much about the system — but the system also didn't learn anything about you. Call it a wash.",
+      "You kept the information in. Morgan moved on. You didn't learn much about the system but the system also didn't learn anything about you. Call it a wash.",
     dialog: [
       {
         speakerId: "inner-voice",
@@ -473,7 +473,7 @@ const scenes: Scene[] = [
     dialog: [
       {
         speakerId: "inner-voice",
-        text: "Speculation costs you twice — once for being wrong, again for being the named source.",
+        text: "Speculation costs you twice. Once for being wrong, again for being the named source.",
         emotion: "sad",
       },
     ],
@@ -489,7 +489,7 @@ const scenes: Scene[] = [
     failureBlogTitle: "Mask Collection: The Four Personas Sociopaths Wear",
     endingTitle: "Caught in the Lie",
     endingSummary:
-      "The lie you told was disproved in the same chat thread, within the hour. Now your name is associated with dishonesty and bad judgment — in a public document. 'Lying about being there' is a smaller story people love to retell.",
+      "The lie you told was disproved in the same chat thread, within the hour. Now your name is associated with dishonesty and bad judgment, in a public document. 'Lying about being there' is a smaller story people love to retell.",
     dialog: [
       {
         speakerId: "inner-voice",
@@ -509,7 +509,7 @@ const scenes: Scene[] = [
     failureBlogTitle: "Narcissist Playbook: How They Actually Operate",
     endingTitle: "Informant",
     endingSummary:
-      "You offered intel to someone working for Caleb. Congratulations — you're now a tool in someone else's campaign, and every word you send forward gets routed back to Maris. She doesn't need to extract anything from you anymore. You'll volunteer.",
+      "You offered intel to someone working for Caleb. Congratulations, you're now a tool in someone else's campaign, and every word you send forward gets routed back to Maris. She doesn't need to extract anything from you anymore. You'll volunteer.",
     dialog: [
       {
         speakerId: "inner-voice",

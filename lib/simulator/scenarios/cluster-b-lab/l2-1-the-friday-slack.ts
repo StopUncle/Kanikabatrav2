@@ -1,5 +1,5 @@
 /**
- * cbl-2-1 — "The 4:47 p.m. Slack"
+ * cbl-2-1, "The 4:47 p.m. Slack"
  *
  * Cluster-B Identification Lab, Level 2 (The Professional Register),
  * order 1. Drill format proven at L1 scales into the workplace.
@@ -22,7 +22,7 @@ import { INNER_VOICE } from "../../characters";
 
 const scenes: Scene[] = [
   // ===================================================================
-  // OPENING — THE MESSAGE
+  // OPENING. THE MESSAGE
   // ===================================================================
   {
     id: "the-message",
@@ -32,11 +32,11 @@ const scenes: Scene[] = [
     dialog: [
       {
         speakerId: null,
-        text: "Friday, 4:47 p.m. You have been ten minutes from logging off. Slack pings. The DM is from your director. The screen reads:",
+        text: "Friday, 4:47 p.m. you have been ten minutes from logging off. Slack pings. The DM is from your director. The screen reads:",
       },
       {
         speakerId: null,
-        text: "'Hey — when you have a sec, I have been thinking about the Q4 deliverables and would love to brainstorm some adjustments. Let me know when you are free 🙂'",
+        text: "'Hey, when you have a sec, I have been thinking about the Q4 deliverables and would love to brainstorm some adjustments. Let me know when you are free 🙂'",
       },
       {
         speakerId: "inner-voice",
@@ -48,7 +48,7 @@ const scenes: Scene[] = [
       {
         id: "to-audit",
         text: "Audit the message. What is each phrase actually doing?",
-        tactic: "Drill — the teaching is in the parsing.",
+        tactic: "Drill, the teaching is in the parsing.",
         nextSceneId: "the-audit",
         isOptimal: true,
       },
@@ -71,28 +71,28 @@ const scenes: Scene[] = [
       },
       {
         speakerId: null,
-        text: "1. 'Hey —' — softener. Reads as casual; sets up plausible deniability that this is a low-stakes ask.",
+        text: "1. 'Hey —', softener. Reads as casual; sets up plausible deniability that this is a low-stakes ask.",
       },
       {
         speakerId: null,
-        text: "2. 'when you have a sec' — fake-flexibility. Implies the request is small. The actual request will not be small.",
+        text: "2. 'when you have a sec', fake-flexibility. Implies the request is small. The actual request will not be small.",
       },
       {
         speakerId: "inner-voice",
-        text: "3. 'I have been thinking' — pre-positions the conversation as already-formed in his head. You are joining a conversation he has been having alone.",
+        text: "3. 'I have been thinking', pre-positions the conversation as already-formed in his head. You are joining a conversation he has been having alone.",
         emotion: "knowing",
       },
       {
         speakerId: null,
-        text: "4. 'would love to brainstorm' — packages a directive as collaboration. 'Brainstorm' implies open-ended; the verdict is already written.",
+        text: "4. 'would love to brainstorm', packages a directive as collaboration. 'Brainstorm' implies open-ended; the verdict is already written.",
       },
       {
         speakerId: null,
-        text: "5. 'some adjustments' — load-bearing vagueness. Forces YOU to do the diagnostic work of figuring out what he actually wants. The vagueness is the move.",
+        text: "5. 'some adjustments', load-bearing vagueness. Forces YOU to do the diagnostic work of figuring out what he actually wants. The vagueness is the move.",
       },
       {
         speakerId: null,
-        text: "6. 'let me know when you are free 🙂' — passes the calendar burden to you. The smiley is the specific covert softener; it lets him deny coercion if you ever name it.",
+        text: "6. 'let me know when you are free 🙂', passes the calendar burden to you. The smiley is the specific covert softener; it lets him deny coercion if you ever name it.",
       },
       {
         speakerId: "inner-voice",
@@ -138,7 +138,7 @@ const scenes: Scene[] = [
       {
         id: "antisocial",
         text: "Antisocial. The cost-asymmetry is the tell.",
-        tactic: "Close — ASPD and NPD overlap on instrumental use of others — but ASPD wouldn't bother with the smiley or the 'I have been thinking' ego-load. ASPD's professional ask is colder, more direct. The specific warmth-veneer here is NPD.",
+        tactic: "Close. ASPD and NPD overlap on instrumental use of others but ASPD wouldn't bother with the smiley or the 'I have been thinking' ego-load. ASPD's professional ask is colder, more direct. The specific warmth-veneer here is NPD.",
         nextSceneId: "diagnosis-near-miss",
         isOptimal: false,
       },
@@ -211,14 +211,14 @@ const scenes: Scene[] = [
       },
       {
         id: "warm-flexible-reply",
-        text: '"Of course! Free anytime — Monday works, or I can hop on a quick call now if easier."',
+        text: '"Of course! Free anytime. Monday works, or I can hop on a quick call now if easier."',
         tactic: "The warm-flexible reply is what most professionals send. It hands him the calendar, declines to demand specificity, and offers the now-call which converts your Friday evening into his agenda. Lands the job; costs the weekend; trains the pattern.",
         nextSceneId: "ending-warm-flexible",
         isOptimal: false,
       },
       {
         id: "monday-only-but-vague",
-        text: '"Sure — let us catch up Monday. What time works?"',
+        text: '"Sure, let us catch up Monday. What time works?"',
         tactic: "Half-correct. The Monday-only protects the weekend. The missing half: no specificity request, no time-bound. The Monday meeting will run an hour, cover unwritten territory, and produce a 'send me your plan by Tuesday' wrap-up. Better than warm-flexible; below the structural.",
         nextSceneId: "ending-monday-vague",
         isOptimal: false,
@@ -260,7 +260,7 @@ const scenes: Scene[] = [
     dialog: [
       {
         speakerId: "inner-voice",
-        text: "Miss. The diagnostic for covert NPD is the calm vagueness — paired with warmth, plausible deniability, and your-calendar burden. Re-read the audit columns with that filter.",
+        text: "Miss. The diagnostic for covert NPD is the calm vagueness, paired with warmth, plausible deniability, and your-calendar burden. Re-read the audit columns with that filter.",
         emotion: "knowing",
       },
     ],
@@ -305,7 +305,7 @@ const scenes: Scene[] = [
     outcomeType: "bad",
     endingTitle: "The Weekend Consumed",
     failureBlogSlug: "architecture-of-control-how-emotional-dependency-is-built",
-    failureBlogTitle: "Architecture of Control — How Emotional Dependency Is Built",
+    failureBlogTitle: "Architecture of Control. How Emotional Dependency Is Built",
     endingLearnPrompt:
       "The warm-flexible reply is what most professionals send. It hands him the calendar, declines to demand specificity, and either pulls you into a Friday-evening call or signs you up for a vague Monday meeting. Either way the weekend is rumination. The pattern trains: he learned today that the Friday-late move works on you; the next message comes in three weeks. The drill identified the register correctly and the reply executed against the wrong move.",
     dialog: [
@@ -343,7 +343,7 @@ export const clusterBLab21: Scenario = {
   title: "The 4:47 p.m. Slack",
   tagline: "Twenty-six words. One emoji. Your weekend.",
   description:
-    "Cluster-B Lab, Level 2 (The Professional Register). Drill format proven at L1 scales into the workplace. Same audit-diagnose-prescribe shape on a Friday-late Slack DM from a covert-NPD boss. Six audit columns, four diagnosis options, three prescription replies — only one of which protects the weekend.",
+    "Cluster-B Lab, Level 2 (The Professional Register). Drill format proven at L1 scales into the workplace. Same audit-diagnose-prescribe shape on a Friday-late Slack DM from a covert-NPD boss. Six audit columns, four diagnosis options, three prescription replies, only one of which protects the weekend.",
   tier: "premium",
   track: "cluster-b-lab",
   level: 2,
@@ -358,7 +358,7 @@ export const clusterBLab21: Scenario = {
   tacticsLearned: [
     "The six-column message audit: softener, fake-flexibility, ego-load, packaged-directive, load-bearing-vagueness, calendar-burden",
     "Calm vagueness + warmth as the covert-NPD professional fingerprint (vs ASPD coldness, BPD urgency)",
-    "The structural reply: force specificity, bound the meeting, push to Monday — three moves in one message",
+    "The structural reply: force specificity, bound the meeting, push to Monday. Three moves in one message",
     "The cost-ratio frame: his eleven seconds vs your weekend (roughly 1:200) makes the asymmetry visible",
   ],
   redFlagsTaught: [

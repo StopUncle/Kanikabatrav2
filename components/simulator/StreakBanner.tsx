@@ -16,7 +16,7 @@ type Props = {
  *   - 7+: prominent ring + glow. Personal best shown alongside.
  *   - At risk: amber pulse + "Don't break it" copy. Loss-aversion mode.
  *
- * The number is the message — the copy is mostly reinforcement. We don't
+ * The number is the message, the copy is mostly reinforcement. We don't
  * count "streak freezes used" or week-state here; v1 keeps the mechanic
  * brutally simple. If a player wants to extend their streak, they play.
  */
@@ -26,7 +26,7 @@ export default function StreakBanner({ current, longest, isAtRisk }: Props) {
       <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-white/10 bg-white/[0.02] text-text-gray text-xs">
         <Flame size={13} className="text-text-gray/50" strokeWidth={1.5} />
         <span className="uppercase tracking-[0.2em] text-[10px]">
-          Start a streak — play one scenario today
+          Start a streak, play one scenario today
         </span>
       </div>
     );

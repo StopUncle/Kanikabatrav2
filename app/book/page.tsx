@@ -22,7 +22,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Sociopathic Dating Bible",
     description:
-      "Dark psychology and manipulation — written by a clinically diagnosed sociopath. Never feel helpless again.",
+      "Dark psychology and manipulation, written by a clinically diagnosed sociopath. Never feel helpless again.",
     images: ["/api/og?title=Sociopathic+Dating+Bible&subtitle=A+Cure+For+Empathy"],
   },
 };

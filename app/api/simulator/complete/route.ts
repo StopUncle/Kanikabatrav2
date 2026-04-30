@@ -1,5 +1,5 @@
 /**
- * POST /api/simulator/complete — called on ending scene reach.
+ * POST /api/simulator/complete, called on ending scene reach.
  *
  * Server responsibilities:
  *   1. Resolve the badge keys earned by this run (via badgesEarnedFromState)
@@ -8,7 +8,7 @@
  *      silently skips duplicates)
  *   4. Return the list of NEW badge keys so the ending screen can celebrate
  *
- * Failure is non-fatal for the player — if the request dies, the client
+ * Failure is non-fatal for the player, if the request dies, the client
  * still shows the ending; the badge just won't register until they replay.
  */
 
@@ -84,7 +84,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Anti-cheat: recompute XP from the claimed choicesMade and clamp.
-    // See /api/simulator/progress for the same rationale — the server
+    // See /api/simulator/progress for the same rationale, the server
     // owns the engine, so it computes the truth and never trusts the
     // client number beyond it.
     const authoritative = replayXp(scenario, body.choicesMade);
@@ -102,7 +102,7 @@ export async function POST(request: NextRequest) {
     const earnedKeys = badgesEarnedFromState(scenario, state);
 
     try {
-      // Best-of merge — shared with /api/simulator/progress so a replay
+      // Best-of merge, shared with /api/simulator/progress so a replay
       // completion doesn't overwrite a better prior completion. The
       // previous destructive upsert here silently negated the best-of
       // logic /progress enforces: if a player's first run was 100 XP /
@@ -125,7 +125,7 @@ export async function POST(request: NextRequest) {
         endedAt: body.endedAt,
       });
 
-      // Endings-found tracking — push the current ending sceneId onto the
+      // Endings-found tracking, push the current ending sceneId onto the
       // user's set of distinct endings reached on this scenario, idempotently.
       // Length of this array vs scenes.filter(isEnding).length renders the
       // "X / Y endings found" counter on catalog cards.
@@ -170,7 +170,7 @@ export async function POST(request: NextRequest) {
         });
       }
 
-      // Level-complete check — if this run just completed every scenario in
+      // Level-complete check, if this run just completed every scenario in
       // the level with a good/mastery badge, award the level-clear badge too.
       // We re-read the full badge set so the check includes the badges we
       // just inserted above.
@@ -206,17 +206,17 @@ export async function POST(request: NextRequest) {
           earnedKeys.push(levelKey);
           heldNowSet.add(levelKey);
         } catch {
-          // Unique constraint — already had it. Silent.
+          // Unique constraint, already had it. Silent.
         }
       }
 
-      // Phase 5: `ach-all-optimal-first-try` — emitted inline because the
+      // Phase 5: `ach-all-optimal-first-try`, emitted inline because the
       // "first try" aspect isn't recoverable from the snapshot after upsert.
       // SimulatorProgress is best-of merged (one row per user/scenario),
       // so we rely on the pre-upsert `existingRow` fetch above to know
       // whether a prior completion existed. `existingRow === null` means
       // the player had never touched this scenario; `existingRow.completedAt
-      // == null` means they started but didn't finish — both count as
+      // == null` means they started but didn't finish. Both count as
       // "first try." Replays can't earn this retroactively.
       const wasFirstCompletion = !existingRow || !existingRow.completedAt;
       const allOptimalThisRun =
@@ -235,12 +235,12 @@ export async function POST(request: NextRequest) {
             earnedKeys.push(firstTryKey);
             heldNowSet.add(firstTryKey);
           } catch {
-            // Unique constraint — already held somehow. Silent.
+            // Unique constraint, already held somehow. Silent.
           }
         }
       }
 
-      // Meta-achievements — cumulative cross-scenario accolades. Evaluated
+      // Meta-achievements, cumulative cross-scenario accolades. Evaluated
       // off the user's full completion history + current badge set. Any
       // that newly fire get inserted alongside scenario + level badges.
       const allCompletions = await prisma.simulatorProgress.findMany({
@@ -262,7 +262,7 @@ export async function POST(request: NextRequest) {
             (r.choicesMade as unknown as ChoiceRecord[]) ?? [];
           const scenarioForEvents = getScenario(r.scenarioId);
           // Populate observed events only when we have the scenario object
-          // in memory — unregistered / deleted scenarios leave events
+          // in memory, unregistered / deleted scenarios leave events
           // undefined, and achievements that read events should short-
           // circuit gracefully on the absence.
           const events = scenarioForEvents
@@ -271,7 +271,7 @@ export async function POST(request: NextRequest) {
                 currentSceneId: r.currentSceneId,
               })
             : undefined;
-          // Wall-clock run duration — feeds the `speedrun` meta. Only set
+          // Wall-clock run duration, feeds the `speedrun` meta. Only set
           // when both timestamps are populated; null completedAt filter
           // above should have already excluded in-progress rows, but
           // defensive check in case prisma returns a weirdly-shaped
@@ -310,7 +310,7 @@ export async function POST(request: NextRequest) {
         }
       }
 
-      // Daily-streak bump — completion always counts as a session, even if
+      // Daily-streak bump, completion always counts as a session, even if
       // /progress already bumped earlier in the same scenario. Idempotent
       // within a UTC calendar day. Fire-and-forget per the streak helper's
       // contract: a streak-bump failure must never 500 the completion.

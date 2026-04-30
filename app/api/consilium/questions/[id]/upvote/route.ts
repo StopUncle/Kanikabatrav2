@@ -5,7 +5,7 @@ import { getAdminUserId } from "@/lib/auth/server-auth";
 import { checkMembership } from "@/lib/community/membership";
 
 // Same dual-session resolver as the submit endpoint. Member or admin
-// can both upvote — admins testing the surface shouldn't 401.
+// can both upvote, admins testing the surface shouldn't 401.
 async function resolveActor(): Promise<string | null> {
   const active = await resolveActiveUserId();
   if (active) return active;
@@ -30,7 +30,7 @@ export async function POST(
   const userId = await resolveActor();
   if (!userId) {
     return NextResponse.json(
-      { error: "Your session expired — please refresh and log in again" },
+      { error: "Your session expired, please refresh and log in again" },
       { status: 401 },
     );
   }

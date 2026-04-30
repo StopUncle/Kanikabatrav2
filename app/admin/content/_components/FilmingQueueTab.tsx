@@ -238,7 +238,7 @@ export default function FilmingQueueTab() {
           </div>
         )}
 
-        {/* Beats — only show those with text */}
+        {/* Beats, only show those with text */}
         <div className="space-y-2.5">
           {!isShort ? (
             <>
@@ -342,7 +342,7 @@ export default function FilmingQueueTab() {
         <div>Nothing in the filming queue yet.</div>
         <div className="text-xs mt-2 opacity-60">
           Advance ideas to <span className="text-text-light">Ready to film</span>{" "}
-          in the Develop tab — they show up here grouped by format.
+          in the Develop tab, they show up here grouped by format.
         </div>
       </div>
     );

@@ -1,5 +1,5 @@
 Chapter 6: The Architecture of Control: Building Your Emotional Empire
-Control is not something you take. It is something you build. Brick by brick, manipulation by manipulation, until your target finds themselves living in a prison of your design—and thanking you for the privilege. This is the architecture of control, the systematic construction of psychological dependency that transforms free-willed individuals into willing servants of your agenda.
+Control is not something you take. It is something you build. Brick by brick, manipulation by manipulation, until your target finds themselves living in a prison of your design and thanking you for the privilege. This is the architecture of control, the systematic construction of psychological dependency that transforms free-willed individuals into willing servants of your agenda.
 
 Most people think control is about force, about dominance, about making someone do what you want through threats or intimidation. This is the thinking of amateurs, of brutes who mistake volume for power. True control is invisible. It is the art of making someone want to do what you want them to do, of convincing them that your desires are their own, of creating a reality where serving you feels like serving themselves.
 
@@ -46,7 +46,7 @@ This is for the man who is defined by his sense of duty and responsibility. You 
 The Triangulation Cage
 This is the most sophisticated of the psychological cages, and it is reserved for the most challenging targets. You construct this cage by introducing a third person into the dynamic. This could be an ex-boyfriend who is still in love with you, a male friend who is "just a friend," or even a completely imaginary rival. The purpose of the third person is to create a constant state of low-grade anxiety and competition. The target is never secure in your affections, because there is always someone else waiting in the wings. He is not in a relationship with you; he is in a competition with a ghost, and it is a competition he can never win.
 
-Empaths call it gaslighting. Predators call it interior design—rearranging the furniture in his head so he bumps into it in the dark.
+Empaths call it gaslighting. Predators call it interior design, rearranging the furniture in his head so he bumps into it in the dark.
 
 Case Files: Blueprints for Domination
 Case File #1: The 'Creative Genius'

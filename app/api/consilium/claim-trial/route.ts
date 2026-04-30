@@ -3,17 +3,17 @@ import jwt from "jsonwebtoken";
 import { prisma } from "@/lib/prisma";
 
 /**
- * Legacy book-buyer trial-claim endpoint — now a thin bridge into the
+ * Legacy book-buyer trial-claim endpoint, now a thin bridge into the
  * current magic-claim flow.
  *
  * History: the old implementation (replaced April 2026) was a GET that
  * created a user account, set session cookies, and activated a 30-day
- * membership — all on a raw URL click. That had two problems:
+ * membership. All on a raw URL click. That had two problems:
  *
  *   1. Email pre-scanners (Outlook SafeLinks, Gmail image proxy) GET
  *      the URL before the human clicks → the link could auto-consume.
  *   2. If a user record already existed for the email, the endpoint
- *      took over that account by cookie-setting — even if it was a
+ *      took over that account by cookie-setting, even if it was a
  *      paying member or an admin.
  *
  * Both are fixed in /consilium/claim (server-action + existing-account

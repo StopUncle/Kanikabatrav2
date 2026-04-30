@@ -6,7 +6,7 @@
  *
  * Format convention: 6-8 scenes each, ~7-9 minutes, one specific
  * artefact, one diagnostic choice, one prescription. The drill shape
- * is deliberately repetitive across the track — seeing the same
+ * is deliberately repetitive across the track, seeing the same
  * audit → diagnose → prescribe pattern many times is how the player
  * internalises the diagnostic instincts.
  *
@@ -43,12 +43,12 @@ export const CLUSTER_B_LAB_LEVEL_TITLES: Record<
   2: {
     title: "The Professional Register",
     blurb:
-      "Cluster-B at work — the subordinate, the boss, the client, the peer. Same diagnostic instincts, higher professional cost.",
+      "Cluster-B at work, the subordinate, the boss, the client, the peer. Same diagnostic instincts, higher professional cost.",
   },
   3: {
     title: "The Family Register",
     blurb:
-      "Cluster-B at family tables — the cousin, the aunt, the sibling-in-law. The drill that most readers need twice.",
+      "Cluster-B at family tables, the cousin, the aunt, the sibling-in-law. The drill that most readers need twice.",
   },
   4: {
     title: "Comorbidity",

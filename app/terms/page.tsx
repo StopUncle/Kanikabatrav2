@@ -132,7 +132,7 @@ export default function TermsPage() {
                       The Consilium is a paid monthly subscription at
                       $29/month. Your subscription will automatically renew each
                       month until you cancel. You can cancel anytime from your
-                      dashboard or by emailing Kanika@kanikarose.com — your
+                      dashboard or by emailing Kanika@kanikarose.com, your
                       access continues until the end of the paid period.
                     </p>
                     <p className="text-text-gray leading-relaxed mb-4">
@@ -272,7 +272,7 @@ export default function TermsPage() {
                     </h3>
                     <p className="text-text-gray leading-relaxed">
                       If a session is terminated due to a violation of this
-                      policy, no refund will be issued — no exceptions. You may
+                      policy, no refund will be issued, no exceptions. You may
                       also be permanently banned from all future services. We
                       reserve the right to report any illegal conduct to the
                       relevant authorities.

@@ -5,18 +5,18 @@ import { ArrowRight, Loader2, CheckCircle } from "lucide-react";
 import { catalogueStats } from "@/lib/simulator/stats";
 
 const INCLUDED = [
-  `The Dark Mirror Simulator — ${catalogueStats.scenarios} branching scenarios across ${catalogueStats.tracks} tracks`,
-  "Full course library — dark psychology, pattern recognition, career strategy",
-  "Voice notes from Kanika — raw, unfiltered, members-only",
+  `The Dark Mirror Simulator, ${catalogueStats.scenarios} branching scenarios across ${catalogueStats.tracks} tracks`,
+  "Full course library, dark psychology, pattern recognition, career strategy",
+  "Voice notes from Kanika, raw, unfiltered, members-only",
   "Daily psychology drops + discussion prompts",
   "Forum + live chat with the council",
-  "Member price on the Sociopathic Dating Bible — $9.99 (vs $24.99)",
+  "Member price on the Sociopathic Dating Bible, $9.99 (vs $24.99)",
 ];
 
 /**
  * Single-button join card. Replaces the old multi-field application
  * form. POSTs to the subscription/create endpoint and redirects the
- * browser to Stripe — payment success activates the membership via
+ * browser to Stripe, payment success activates the membership via
  * the existing webhook + redirects to /consilium/feed.
  */
 export default function JoinPanel() {
@@ -89,7 +89,7 @@ export default function JoinPanel() {
           </>
         ) : (
           <>
-            Join — $29/month
+            Join, $29/month
             <ArrowRight size={16} />
           </>
         )}

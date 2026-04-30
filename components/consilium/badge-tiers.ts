@@ -1,7 +1,7 @@
 /**
  * Badge tier data + tenure math for the Consilium's 12-tier system.
  *
- * Pure TS — no React, no "use client" directive. Safe to import from
+ * Pure TS, no React, no "use client" directive. Safe to import from
  * server components, client components, scripts, and tests alike.
  * The visual MemberBadge component is a separate client module that
  * imports from here.
@@ -197,7 +197,7 @@ export const BADGE_TIERS: BadgeTier[] = [
  *   0   months  -> tier 1  (Initiate, day 1)
  *   1   month   -> tier 2  (Scribe)
  *   11  months  -> tier 12 (Queen)
- *   12+ months  -> tier 12 (stays Queen — no further ranks exist)
+ *   12+ months  -> tier 12 (stays Queen, no further ranks exist)
  */
 export function tierFromMonths(months: number): number {
   return Math.min(Math.max(Math.floor(months) + 1, 1), 12);
@@ -205,7 +205,7 @@ export function tierFromMonths(months: number): number {
 
 /**
  * Elapsed whole months from an activation date up to now.
- * Uses 30-day blocks — good enough for tier gating.
+ * Uses 30-day blocks, good enough for tier gating.
  */
 export function monthsSince(date: Date | null | undefined): number {
   if (!date) return 0;
@@ -233,12 +233,12 @@ export function getBadge(tier: number): BadgeTier {
 }
 
 /**
- * Tier for a given member. Admins always show as Queen (tier 12) — the
+ * Tier for a given member. Admins always show as Queen (tier 12), the
  * tenure math doesn't apply to Kanika. For everyone else, tier is
  * derived from CommunityMembership.activatedAt.
  *
  * Pass the member's role and the activation date. Both may be null
- * (anonymous / applied-but-not-activated accounts) — we default to
+ * (anonymous / applied-but-not-activated accounts), we default to
  * tier 1 (Initiate) in that case.
  */
 export function tierForMember(input: {

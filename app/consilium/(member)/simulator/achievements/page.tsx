@@ -23,7 +23,7 @@ import {
 } from "lucide-react";
 
 export const metadata = {
-  title: "Achievements — Dark Mirror | Kanika Batra",
+  title: "Achievements. Dark Mirror | Kanika Batra",
   description:
     "Cross-scenario accolades for your Dark Mirror simulator runs.",
 };

@@ -16,7 +16,7 @@ export async function POST(request: NextRequest) {
           data: { tokenVersion: { increment: 1 } },
         });
       } catch {
-        // Token already expired/invalid — clearing cookies is sufficient
+        // Token already expired/invalid, clearing cookies is sufficient
       }
     }
 

@@ -339,7 +339,7 @@ export default function ContactPage() {
                 </p>
                 <p className="text-text-gray leading-relaxed">
                   For urgent psychological strategy needs, mention
-                  &ldquo;PRIORITY&rdquo; in your subject line—I reserve a few
+                  &ldquo;PRIORITY&rdquo; in your subject line. I reserve a few
                   slots monthly for time-sensitive situations.
                 </p>
               </div>

@@ -12,10 +12,10 @@ export async function POST(request: NextRequest) {
     // Application gate removed (2026-04-19). Anyone authenticated can
     // proceed to Stripe checkout. Three guard clauses still apply:
     //
-    //   1. Already an active paying subscriber — nothing to buy.
-    //   2. Suspended for a violation — refunds + bans go through admin,
+    //   1. Already an active paying subscriber, nothing to buy.
+    //   2. Suspended for a violation, refunds + bans go through admin,
     //      not a self-service repurchase.
-    //   3. Previously rejected at the application stage — kept as a
+    //   3. Previously rejected at the application stage, kept as a
     //      defensive block for legacy users with rejectedAt stamped on
     //      their applicationData. The form is gone; nobody new can land
     //      in this state.

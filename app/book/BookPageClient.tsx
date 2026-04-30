@@ -19,7 +19,7 @@ const CHAPTER_LIST = [
   {
     num: 1,
     title: "The Doctrine of Cold",
-    desc: "Why emotional detachment is magnetic — and how to master it",
+    desc: "Why emotional detachment is magnetic and how to master it",
   },
   {
     num: 2,
@@ -49,7 +49,7 @@ const CHAPTER_LIST = [
   {
     num: 7,
     title: "The Shit Test Matrix",
-    desc: "Read what people actually mean — before they finish talking",
+    desc: "Read what people actually mean, before they finish talking",
   },
   {
     num: 8,
@@ -79,7 +79,7 @@ const CHAPTER_LIST = [
   {
     num: 13,
     title: "The Upgrade Protocol",
-    desc: "Know exactly when to level up — and how to do it gracefully",
+    desc: "Know exactly when to level up and how to do it gracefully",
   },
   {
     num: 14,
@@ -115,7 +115,7 @@ const TESTIMONIALS = [
     title: "Marketing Director",
   },
   {
-    quote: "Strategic, practical, powerful. This isn't feel-good fluff — it's a tactical manual for winning at modern dating.",
+    quote: "Strategic, practical, powerful. This isn't feel-good fluff, it's a tactical manual for winning at modern dating.",
     name: "Daniel R.",
     title: "Sales Director",
   },
@@ -281,7 +281,7 @@ export default function BookPage() {
           </div>
         </section>
 
-        {/* Social Proof — Right After Hero */}
+        {/* Social Proof. Right After Hero */}
         <section className="py-20 px-4 bg-gradient-to-b from-transparent via-deep-burgundy/10 to-transparent">
           <div className="max-w-4xl mx-auto">
             <h3 className="text-3xl font-serif text-center mb-12 gradient-text">
@@ -295,7 +295,7 @@ export default function BookPage() {
                     &ldquo;{t.quote}&rdquo;
                   </p>
                   <p className="text-accent-gold text-sm">
-                    — {t.name}{t.title ? `, ${t.title}` : ""}
+                   , {t.name}{t.title ? `, ${t.title}` : ""}
                   </p>
                 </div>
               ))}
@@ -311,7 +311,7 @@ export default function BookPage() {
                 <span className="gradient-text">15 Chapters + 2 Bonus</span>
               </h3>
               <p className="text-text-gray text-lg max-w-2xl mx-auto">
-                Each chapter gives you a specific framework you can use immediately. No filler, no fluff — just the system.
+                Each chapter gives you a specific framework you can use immediately. No filler, no fluff, just the system.
               </p>
             </div>
 
@@ -345,7 +345,7 @@ export default function BookPage() {
                     &ldquo;{t.quote}&rdquo;
                   </p>
                   <p className="text-accent-gold">
-                    — {t.name}{t.title ? `, ${t.title}` : ""}
+                   , {t.name}{t.title ? `, ${t.title}` : ""}
                   </p>
                 </div>
               ))}
@@ -353,7 +353,7 @@ export default function BookPage() {
           </div>
         </section>
 
-        {/* CTA Section — Value Stack */}
+        {/* CTA Section. Value Stack */}
         <section className="py-20 px-4 border-t border-accent-gold/10">
           <div className="max-w-2xl mx-auto">
             <div className="text-center mb-8">
@@ -413,7 +413,7 @@ export default function BookPage() {
                   />
                 )}
 
-                {/* Upgrade bundles — book + Consilium community access. */}
+                {/* Upgrade bundles, book + Consilium community access. */}
                 {!BOOK_INFO.isPresale && (
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
                     <StripeButton
@@ -494,8 +494,8 @@ export default function BookPage() {
 
             <p className="text-text-gray text-sm mt-6 text-center">
               {BOOK_INFO.isPresale
-                ? `Launches ${formattedDate} — be the first to know`
-                : "Instant digital download — lifetime access"}
+                ? `Launches ${formattedDate}, be the first to know`
+                : "Instant digital download, lifetime access"}
             </p>
           </div>
         </section>

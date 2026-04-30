@@ -7,7 +7,7 @@ import Link from "next/link";
 export default function AskKanika() {
   return (
     <section className="relative py-20 sm:py-28 lg:py-36 px-4 sm:px-6 lg:px-8 overflow-hidden">
-      {/* Background — strong visual break from surrounding sections */}
+      {/* Background, strong visual break from surrounding sections */}
       <div className="absolute inset-0 bg-gradient-to-b from-deep-black via-[#0c0618] to-deep-black" />
       <div className="absolute inset-0 opacity-30">
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[600px] bg-accent-burgundy/8 rounded-full blur-[120px]" />
@@ -32,7 +32,7 @@ export default function AskKanika() {
           </h2>
           <p className="text-text-gray text-base sm:text-lg max-w-lg mx-auto leading-relaxed">
             One question. One honest answer from someone who doesn&apos;t
-            sugarcoat. Written or voice — your choice.
+            sugarcoat. Written or voice, your choice.
           </p>
         </m.div>
 
@@ -128,7 +128,7 @@ export default function AskKanika() {
                   Voice Answer
                 </h3>
                 <p className="text-text-gray/70 text-sm">
-                  A personal voice memo — raw, unfiltered, and direct to you.
+                  A personal voice memo, raw, unfiltered, and direct to you.
                 </p>
               </div>
 

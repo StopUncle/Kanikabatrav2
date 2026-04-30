@@ -55,7 +55,7 @@ export async function POST(request: NextRequest) {
             const adminEmail = process.env.ADMIN_EMAIL || "Kanika@kanikarose.com";
             await sendEmail({
               to: adminEmail,
-              subject: `Customer hasn't received their book — ${purchase.customerName}`,
+              subject: `Customer hasn't received their book, ${purchase.customerName}`,
               html: `
                 <p style="font-family: Georgia, serif; font-size: 16px; color: #f5f0ed;">Hey Kanika,</p>
                 <p style="font-family: Georgia, serif; font-size: 15px; color: #94a3b8; line-height: 1.6;">
@@ -79,7 +79,7 @@ export async function POST(request: NextRequest) {
               },
             });
             logger.error(
-              "[retry-emails] permanent delivery failure — admin alerted",
+              "[retry-emails] permanent delivery failure, admin alerted",
               undefined,
               { purchaseId: purchase.id, email: purchase.customerEmail },
             );
@@ -168,11 +168,11 @@ export async function POST(request: NextRequest) {
               process.env.ADMIN_EMAIL || "Kanika@kanikarose.com";
             await sendEmail({
               to: adminEmail,
-              subject: `Member locked out — welcome email failed (${purchase.customerEmail})`,
+              subject: `Member locked out, welcome email failed (${purchase.customerEmail})`,
               html: `
                 <p style="font-family: Georgia, serif; font-size: 16px; color: #f5f0ed;">Hey Kanika,</p>
                 <p style="font-family: Georgia, serif; font-size: 15px; color: #94a3b8; line-height: 1.6;">
-                  A member paid but the welcome email containing their password-reset link never delivered after several tries. Their account exists with a random password — they can't log in.
+                  A member paid but the welcome email containing their password-reset link never delivered after several tries. Their account exists with a random password, they can't log in.
                 </p>
                 <table style="font-family: Georgia, serif; font-size: 14px; color: #94a3b8; background: #1a0d11; padding: 16px; border-radius: 8px; margin: 16px 0;">
                   <tr><td style="padding: 4px 12px 4px 0;"><strong style="color: #d4af37;">Name:</strong></td><td>${recipientName}</td></tr>
@@ -206,7 +206,7 @@ export async function POST(request: NextRequest) {
         continue;
       }
 
-      // Regenerate a fresh 7-day reset token — the original is likely
+      // Regenerate a fresh 7-day reset token, the original is likely
       // expired by the time we're retrying (the cron runs infrequently).
       let sent = false;
       try {

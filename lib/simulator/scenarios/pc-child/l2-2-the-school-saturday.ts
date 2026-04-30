@@ -1,5 +1,5 @@
 /**
- * pc-2-2 — "The School Saturday"
+ * pc-2-2, "The School Saturday"
  *
  * PC-Child track, Level 2 (age 10), order 2. Companion to pc-2-1.
  * Where pc-2-1 was the principal's call and the meeting that bought
@@ -12,7 +12,7 @@
  * morning is the harder register. Crisis has shape; Saturday has
  * none. The pc-child read between you and your partner is now, a
  * year in, embedded in the small operational decisions you make
- * before 10 a.m. — who walks Lily to her swimming class, who
+ * before 10 a.m., who walks Lily to her swimming class, who
  * supervises Finn's screen time, what counts as "an unsupervised
  * hour" in a way that is not visible to either child.
  *
@@ -43,7 +43,7 @@ const scenes: Scene[] = [
     dialog: [
       {
         speakerId: null,
-        text: "Content note. This is the second age-10 scenario in the pc-child track. Where pc-2-1 was a crisis (the principal's call), this scenario is an ordinary Saturday morning — the register some readers find heavier because it doesn't resolve, it just continues.",
+        text: "Content note. This is the second age-10 scenario in the pc-child track. Where pc-2-1 was a crisis (the principal's call), this scenario is an ordinary Saturday morning, the register some readers find heavier because it doesn't resolve, it just continues.",
       },
       {
         speakerId: null,
@@ -58,7 +58,7 @@ const scenes: Scene[] = [
       {
         id: "continue",
         text: "Continue.",
-        tactic: "Saturday, 8:14 a.m. Kitchen. Coffee on. Lily at the table. Finn upstairs. Your partner at the bench.",
+        tactic: "Saturday, 8:14 a.m. kitchen. Coffee on. Lily at the table. Finn upstairs. Your partner at the bench.",
         nextSceneId: "saturday-morning",
       },
       {
@@ -78,7 +78,7 @@ const scenes: Scene[] = [
     outcomeType: "neutral",
     endingTitle: "Not Tonight",
     endingLearnPrompt:
-      "The opt-out is a complete move. Steady-state register requires its own bandwidth — the absence of a crisis can be heavier than a crisis when the bandwidth isn't there. Come back when it is.",
+      "The opt-out is a complete move. Steady-state register requires its own bandwidth, the absence of a crisis can be heavier than a crisis when the bandwidth isn't there. Come back when it is.",
     dialog: [
       {
         speakerId: "inner-voice",
@@ -100,16 +100,16 @@ const scenes: Scene[] = [
     dialog: [
       {
         speakerId: null,
-        text: "Saturday, 8:14 a.m. The kitchen. Lily is at the table with cereal and a book about a horse. Your partner is making coffee at the bench. Finn is upstairs — has been since 7:40, awake earlier than that. The household log is open on the laptop on the side counter.",
+        text: "Saturday, 8:14 a.m. the kitchen. Lily is at the table with cereal and a book about a horse. Your partner is making coffee at the bench. Finn is upstairs, has been since 7:40, awake earlier than that. The household log is open on the laptop on the side counter.",
       },
       {
         speakerId: "the-partner",
-        text: '"Finn ate at 7:50. Took an apple. Asked for the iPad — said no, said weekend rules, no screen until 10. He went up without arguing."',
+        text: '"Finn ate at 7:50. Took an apple. Asked for the iPad, said no, said weekend rules, no screen until 10. He went up without arguing."',
         emotion: "neutral",
       },
       {
         speakerId: "inner-voice",
-        text: "Three pieces of operational data, delivered at 8:14 a.m. on a Saturday, in the casual voice of someone who has been doing this for a year. The without-arguing is the data point — Finn arguing would mean the morning was Finn-shaped. The without-arguing means today is, possibly, a Saturday.",
+        text: "Three pieces of operational data, delivered at 8:14 a.m. on a Saturday, in the casual voice of someone who has been doing this for a year. The without-arguing is the data point. Finn arguing would mean the morning was Finn-shaped. The without-arguing means today is, possibly, a Saturday.",
         emotion: "knowing",
       },
     ],
@@ -125,14 +125,14 @@ const scenes: Scene[] = [
       {
         id: "trust-the-without-arguing",
         text: 'Pour coffee. Say: "good. Lily, what is happening on page seventy-three of the horse book."',
-        tactic: "The trust move is warm and present, and on a regular family it is the right one. In a pc-child household, skipping the log is the small invisible cost — three months from now the data is not retrievable. Combine: log briefly, then ask Lily about the horse.",
+        tactic: "The trust move is warm and present, and on a regular family it is the right one. In a pc-child household, skipping the log is the small invisible cost. Three months from now the data is not retrievable. Combine: log briefly, then ask Lily about the horse.",
         nextSceneId: "skipped-the-log",
         isOptimal: false,
       },
       {
         id: "go-check-on-finn",
         text: "Go upstairs. See what he's doing.",
-        tactic: "The go-check is a surveillance move that the without-arguing suggests is unnecessary today. Going up sends a small signal to Finn — your partner just established weekend rules without argument; arriving thirty seconds later is a check on your partner's read more than a check on Finn.",
+        tactic: "The go-check is a surveillance move that the without-arguing suggests is unnecessary today. Going up sends a small signal to Finn, your partner just established weekend rules without argument; arriving thirty seconds later is a check on your partner's read more than a check on Finn.",
         nextSceneId: "checked-too-soon",
         isOptimal: false,
       },
@@ -150,7 +150,7 @@ const scenes: Scene[] = [
     dialog: [
       {
         speakerId: null,
-        text: "8:17 a.m. The three data points are in the log. You close the laptop. You pour coffee. You sit down at the table next to Lily. She turns the book to show you a watercolour drawing of a horse mid-jump.",
+        text: "8:17 a.m. the three data points are in the log. You close the laptop. You pour coffee. You sit down at the table next to Lily. She turns the book to show you a watercolour drawing of a horse mid-jump.",
       },
       {
         speakerId: "sibling-younger",
@@ -166,7 +166,7 @@ const scenes: Scene[] = [
     choices: [
       {
         id: "swim-class-conversation",
-        text: 'To your partner: "Swim class — you taking, or me? Both of us?"',
+        text: 'To your partner: "Swim class, you taking, or me? Both of us?"',
         tactic: "The Saturday operational handoff happens at coffee, not at the door. Booking who does what at 8:18 prevents the 9:42 small misunderstanding about who is supervising which child at which moment.",
         nextSceneId: "swim-handoff",
         isOptimal: true,
@@ -192,19 +192,19 @@ const scenes: Scene[] = [
     dialog: [
       {
         speakerId: "the-partner",
-        text: '"I was going to take Lily — gives me an hour with her one-on-one. You stay with Finn? Screen time at 10, I would put it at thirty minutes max today."',
+        text: '"I was going to take Lily, gives me an hour with her one-on-one. You stay with Finn? Screen time at 10, I would put it at thirty minutes max today."',
         emotion: "neutral",
       },
       {
         speakerId: "inner-voice",
-        text: "The proposal is structurally sound. You with Finn for the morning, your partner with Lily — same roles you ran last Saturday and the Saturday before. The thirty-minute screen cap is your partner's specific judgement; you don't need to relitigate it.",
+        text: "The proposal is structurally sound. You with Finn for the morning, your partner with Lily. Same roles you ran last Saturday and the Saturday before. The thirty-minute screen cap is your partner's specific judgement; you don't need to relitigate it.",
         emotion: "knowing",
       },
     ],
     choices: [
       {
         id: "agree-and-name-window",
-        text: '"Yes. I will be with him from 10 to noon — outside walk after the screen-time, weather looks fine."',
+        text: '"Yes. I will be with him from 10 to noon, outside walk after the screen-time, weather looks fine."',
         tactic: "The yes plus the named window. 'I will be with him from 10 to noon' converts the agreement into an operational commitment your partner can plan against. The walk after screens is a small additional structural choice that the partner doesn't need to ask for.",
         nextSceneId: "specific-handoff-set",
         isOptimal: true,
@@ -231,7 +231,7 @@ const scenes: Scene[] = [
     dialog: [
       {
         speakerId: null,
-        text: "9:48 a.m. Your partner and Lily have left for the swim class. The house is quiet. You are at the table with the second coffee and the laptop. Finn comes downstairs at 9:52 — you hear his step on the third stair, the one that creaks, before you see him.",
+        text: "9:48 a.m. your partner and Lily have left for the swim class. The house is quiet. You are at the table with the second coffee and the laptop. Finn comes downstairs at 9:52, you hear his step on the third stair, the one that creaks, before you see him.",
       },
       {
         speakerId: "child-5",
@@ -240,14 +240,14 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "inner-voice",
-        text: "Finn is asking eight minutes before the rule allows. Not arguing it; just asking. The structural answer is: rule is the rule, eight minutes is not a stretch — say no, suggest the eight minutes go to something else. The relational answer matters too — eight minutes early is not a confrontation move, it is an eleven-year-old being eleven.",
+        text: "Finn is asking eight minutes before the rule allows. Not arguing it; just asking. The structural answer is: rule is the rule, eight minutes is not a stretch, say no, suggest the eight minutes go to something else. The relational answer matters too, eight minutes early is not a confrontation move, it is an eleven-year-old being eleven.",
         emotion: "knowing",
       },
     ],
     choices: [
       {
         id: "rule-as-stated",
-        text: '"Ten on the dot. What do you want to do for eight minutes — toast, talk to me, walk to the corner?"',
+        text: '"Ten on the dot. What do you want to do for eight minutes, toast, talk to me, walk to the corner?"',
         tactic: "Hold the rule + offer three concrete alternatives. The alternatives convert the eight-minute gap from a 'denied' into an 'offered.' Eleven-year-olds do not want abstract empathy; they want specific things to do for the next eight minutes.",
         nextSceneId: "rule-held",
         isOptimal: true,
@@ -255,7 +255,7 @@ const scenes: Scene[] = [
       {
         id: "give-the-eight",
         text: '"Sure, go ahead."',
-        tactic: "The eight-minute concession is not, on its own, a problem. The pattern it would build across a Saturday — '8 minutes early on screens, 12 minutes longer on screens, 7 minutes past the walk' — is the cumulative drift the household-log is built to prevent. The rule was the right rule.",
+        tactic: "The eight-minute concession is not, on its own, a problem. The pattern it would build across a Saturday, '8 minutes early on screens, 12 minutes longer on screens, 7 minutes past the walk', is the cumulative drift the household-log is built to prevent. The rule was the right rule.",
         nextSceneId: "eight-conceded",
         isOptimal: false,
       },
@@ -289,7 +289,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "inner-voice",
-        text: "Twelve months of this exact register — small specific holds, no escalation, no concession, no lecture — has produced a Saturday morning in which Finn closes the iPad on time without being told. The data is small, not narratively interesting, and absolutely the operational point.",
+        text: "Twelve months of this exact register, small specific holds, no escalation, no concession, no lecture, has produced a Saturday morning in which Finn closes the iPad on time without being told. The data is small, not narratively interesting, and absolutely the operational point.",
         emotion: "knowing",
       },
     ],
@@ -323,7 +323,7 @@ const scenes: Scene[] = [
       {
         id: "log-it-now",
         text: "Walk back to the laptop. Log it now.",
-        tactic: "Recovery is free at 8:18 — the data is fresh. Five seconds of muscle memory.",
+        tactic: "Recovery is free at 8:18, the data is fresh. Five seconds of muscle memory.",
         nextSceneId: "logged",
         isOptimal: true,
       },
@@ -365,7 +365,7 @@ const scenes: Scene[] = [
     dialog: [
       {
         speakerId: null,
-        text: "9:42 a.m. Your partner is at the door with Lily and the swim bag. The conversation about who-takes-Lily and who-stays-with-Finn happens in twenty seconds in the hallway. There is a moment of friction about screen-time timing because neither of you has explicitly named it. Lily is in the doorway; Finn is upstairs. The door closes; the morning continues, slightly less smoothly than the previous Saturday.",
+        text: "9:42 a.m. your partner is at the door with Lily and the swim bag. The conversation about who-takes-Lily and who-stays-with-Finn happens in twenty seconds in the hallway. There is a moment of friction about screen-time timing because neither of you has explicitly named it. Lily is in the doorway; Finn is upstairs. The door closes; the morning continues, slightly less smoothly than the previous Saturday.",
       },
       {
         speakerId: "inner-voice",
@@ -392,7 +392,7 @@ const scenes: Scene[] = [
     dialog: [
       {
         speakerId: "the-partner",
-        text: '"OK — call me if anything weird, I will be home by 11:15."',
+        text: '"OK, call me if anything weird, I will be home by 11:15."',
         emotion: "neutral",
       },
       {
@@ -404,7 +404,7 @@ const scenes: Scene[] = [
     choices: [
       {
         id: "tighten-now",
-        text: '"Wait — to be specific: I am with him from 10 to noon. Walk after screens."',
+        text: '"Wait, to be specific: I am with him from 10 to noon. Walk after screens."',
         tactic: "Recovery at the door is free. Specifying now beats the call from your partner at 11:08 asking 'where is he.'",
         nextSceneId: "specific-handoff-set",
         isOptimal: true,
@@ -434,7 +434,7 @@ const scenes: Scene[] = [
       },
       {
         id: "reset-mid-morning",
-        text: '"Actually — let us reset. Ten on the dot, thirty minutes, walk after."',
+        text: '"Actually, let us reset. Ten on the dot, thirty minutes, walk after."',
         tactic: "Mid-morning reset is awkward but not impossible. Finn will be slightly annoyed; the rule resets. Better than letting the precedent sit through next Saturday.",
         nextSceneId: "ending-mid-reset",
         isOptimal: true,
@@ -466,7 +466,7 @@ const scenes: Scene[] = [
     choices: [
       {
         id: "repair-the-morning",
-        text: "Go upstairs at 10:35. Knock. Say: 'Sorry — that was my register, not the rule. Want to do the walk?'",
+        text: "Go upstairs at 10:35. Knock. Say: 'Sorry, that was my register, not the rule. Want to do the walk?'",
         tactic: "The specific repair: name the misstep without overcorrecting, offer the walk as the structural reset. Finn at 11 will accept this cleanly.",
         nextSceneId: "ending-repair-walked",
         isOptimal: true,
@@ -496,7 +496,7 @@ const scenes: Scene[] = [
     dialog: [
       {
         speakerId: "inner-voice",
-        text: "10:32 a.m. Finn is outside. The log is updated. Your partner is back at 11:11 with Lily. The morning held the way the previous fifty-one Saturdays have held: structurally, quietly, without argument.",
+        text: "10:32 a.m. finn is outside. The log is updated. Your partner is back at 11:11 with Lily. The morning held the way the previous fifty-one Saturdays have held: structurally, quietly, without argument.",
         emotion: "knowing",
       },
     ],
@@ -511,7 +511,7 @@ const scenes: Scene[] = [
     outcomeType: "neutral",
     endingTitle: "The Eight-Minute Drift",
     endingLearnPrompt:
-      "The eight-minute concession produced a fourteen-minute over-run by lunchtime and a missed walk. None of it was bad; all of it was drift. The pc-child household runs on the cumulative discipline of small specific holds. The recovery lives in next Saturday's 9:52 ask — the rule is the rule, eight minutes is not a stretch, here are three things you can do for eight minutes.",
+      "The eight-minute concession produced a fourteen-minute over-run by lunchtime and a missed walk. None of it was bad; all of it was drift. The pc-child household runs on the cumulative discipline of small specific holds. The recovery lives in next Saturday's 9:52 ask, the rule is the rule, eight minutes is not a stretch, here are three things you can do for eight minutes.",
     dialog: [
       {
         speakerId: "inner-voice",
@@ -583,9 +583,9 @@ const scenes: Scene[] = [
 export const pcChild22: Scenario = {
   id: "pc-2-2",
   title: "The School Saturday",
-  tagline: "Saturday, 8:14 a.m. Twelve months of household-log discipline. The morning has shape.",
+  tagline: "Saturday, 8:14 a.m. twelve months of household-log discipline. The morning has shape.",
   description:
-    "Companion to pc-2-1. Where the principal's call was a crisis, the school Saturday is the steady-state — the ordinary morning one year in. The household log is current, the marriage is holding, the specialist relationship is steady. The scenario teaches what nobody warns you about: ongoing discipline is the heavier register because it doesn't resolve, it just continues. Mandatory content gate. The teaching is the absence of incident.",
+    "Companion to pc-2-1. Where the principal's call was a crisis, the school Saturday is the steady-state, the ordinary morning one year in. The household log is current, the marriage is holding, the specialist relationship is steady. The scenario teaches what nobody warns you about: ongoing discipline is the heavier register because it doesn't resolve, it just continues. Mandatory content gate. The teaching is the absence of incident.",
   tier: "vip",
   track: "pc-child",
   level: 2,
@@ -598,10 +598,10 @@ export const pcChild22: Scenario = {
   startSceneId: "content-gate",
   prerequisites: ["pc-2-1"],
   tacticsLearned: [
-    "The steady-state log entry — the unremarkable data point that becomes load-bearing in three years",
-    "The 8:18 coffee handoff — booking the operational morning before the door rather than at it",
-    "Holding the rule + offering three concrete alternatives — eleven-year-olds want specific things to do, not abstract empathy",
-    "Naming the misstep without overcorrecting — 'that was my register, not the rule' separates parent state from structural rule",
+    "The steady-state log entry, the unremarkable data point that becomes load-bearing in three years",
+    "The 8:18 coffee handoff, booking the operational morning before the door rather than at it",
+    "Holding the rule + offering three concrete alternatives, eleven-year-olds want specific things to do, not abstract empathy",
+    "Naming the misstep without overcorrecting, 'that was my register, not the rule' separates parent state from structural rule",
   ],
   redFlagsTaught: [
     "The eight-minute concession that builds into a fourteen-minute over-run by lunch",

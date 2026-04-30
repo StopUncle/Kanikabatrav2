@@ -73,14 +73,14 @@ export async function POST(request: NextRequest) {
     const reportedMime = baseMime(file.type || "");
 
     // Read the buffer once so we can sniff magic bytes. Sniffing is the source
-    // of truth — extension and MIME from iOS Safari are often wrong (recorder
+    // of truth, extension and MIME from iOS Safari are often wrong (recorder
     // returns "audio/mp4;codecs=mp4a.40.2", share-sheet drops extension entirely,
     // etc.) so we trust the bytes first.
     const buffer = Buffer.from(await file.arrayBuffer());
     const sniffed = sniffAudio(buffer);
 
     if (!sniffed) {
-      logger.warn("[voice-notes] upload rejected — sniff failed", {
+      logger.warn("[voice-notes] upload rejected, sniff failed", {
         name: file.name,
         mime: file.type,
         size: file.size,
@@ -101,9 +101,9 @@ export async function POST(request: NextRequest) {
     }
 
     // Universal-playback step: anything that isn't already mp3 gets
-    // transcoded server-side. iOS Safari refuses to play webm/Opus
+    // transcoded server-side. IOS Safari refuses to play webm/Opus
     // (MediaRecorder's default), and m4a/wav/ogg have their own corner-
-    // case quirks across older Android browsers. mp3 plays everywhere.
+    // case quirks across older Android browsers. Mp3 plays everywhere.
     // Files reported as mp3 are passed through unchanged to save CPU.
     let finalBuffer: Buffer = buffer;
     let finalExt: string;

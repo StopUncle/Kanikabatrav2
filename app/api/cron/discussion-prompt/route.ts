@@ -11,12 +11,12 @@ export async function POST(request: NextRequest) {
 
   try {
     const now = new Date();
-    const dayOfWeek = now.getDay(); // 0=Sunday, 1=Monday ... 6=Saturday
+    const dayOfWeek = now.getDay(); // 0=Sunday, 1=Monday .. 6=Saturday
 
-    // Skip Sunday (dayOfWeek=0) — seeds are weekday-only (Mon–Fri) and
+    // Skip Sunday (dayOfWeek=0), seeds are weekday-only (Mon–Fri) and
     // firing on Sunday would cannibalize a Monday prompt via the fallback.
     if (dayOfWeek === 0 || dayOfWeek === 6) {
-      return NextResponse.json({ success: true, message: "Skipped — weekends have no prompts", skipped: true });
+      return NextResponse.json({ success: true, message: "Skipped, weekends have no prompts", skipped: true });
     }
 
     // Idempotency: if a discussion prompt was already posted today,
@@ -33,11 +33,11 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ success: true, message: "Already posted today", skipped: true });
     }
 
-    // Year-cycle reset: same as daily-insight — reset the pool when exhausted.
+    // Year-cycle reset: same as daily-insight, reset the pool when exhausted.
     const unusedCount = await prisma.discussionPrompt.count({ where: { isUsed: false } });
     if (unusedCount === 0) {
       await prisma.discussionPrompt.updateMany({ data: { isUsed: false, postedAt: null } });
-      logger.info("[cron discussion-prompt] all prompts used — reset pool for new cycle");
+      logger.info("[cron discussion-prompt] all prompts used, reset pool for new cycle");
     }
 
     let prompt = await prisma.discussionPrompt.findFirst({
@@ -53,19 +53,19 @@ export async function POST(request: NextRequest) {
     }
 
     if (!prompt) {
-      logger.error("[cron discussion-prompt] queue empty — feed will go silent");
+      logger.error("[cron discussion-prompt] queue empty, feed will go silent");
       try {
         const adminEmail = process.env.ADMIN_EMAIL || "Kanika@kanikarose.com";
         await sendEmail({
           to: adminEmail,
-          subject: "Heads up — your discussion prompt library is running low",
+          subject: "Heads up, your discussion prompt library is running low",
           html: `
             <p style="font-family: Georgia, serif; font-size: 16px; color: #f5f0ed;">Hey Kanika,</p>
             <p style="font-family: Georgia, serif; font-size: 15px; color: #94a3b8; line-height: 1.6;">
               The weekly discussion prompts that auto-post to the Consilium feed (Manipulation Monday, etc.) have run out. No prompt will post today.
             </p>
             <p style="font-family: Georgia, serif; font-size: 15px; color: #94a3b8; line-height: 1.6;">
-              Ask your developer to add more — no action needed from you, just a heads up.
+              Ask your developer to add more, no action needed from you, just a heads up.
             </p>
             <p style="font-family: Georgia, serif; font-size: 13px; color: #94a3b8; margin-top: 24px; font-style: italic;">
               You're getting this because the system sends a one-time alert when the automated content queue is empty.

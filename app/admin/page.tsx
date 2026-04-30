@@ -95,7 +95,7 @@ export default function AdminDashboardPage() {
     },
     {
       label: "Traffic Sources",
-      // Value omitted on the tile — the destination page renders the
+      // Value omitted on the tile, the destination page renders the
       // full source/campaign/country breakdown for the chosen window.
       value: "—",
       icon: Compass,

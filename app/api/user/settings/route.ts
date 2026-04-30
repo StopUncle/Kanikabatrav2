@@ -6,7 +6,7 @@ import {
 import { prisma } from "@/lib/prisma";
 
 // Defaults applied when a user has never saved their preferences. The
-// weekly digest is opt-OUT (default true) — active members are auto-
+// weekly digest is opt-OUT (default true), active members are auto-
 // enrolled when the cron lands, and can opt out from settings or via the
 // one-click unsubscribe link in the digest email itself.
 const DEFAULT_PREFERENCES = {

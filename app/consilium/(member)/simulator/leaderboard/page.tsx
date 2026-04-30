@@ -6,9 +6,9 @@ import MemberBadge from "@/components/consilium/MemberBadge";
 import { ArrowLeft, ArrowRight, Crown, Trophy, Medal, Flame } from "lucide-react";
 
 export const metadata = {
-  title: "Leaderboard — Dark Mirror | Kanika Batra",
+  title: "Leaderboard. Dark Mirror | Kanika Batra",
   description:
-    "The Consilium's simulator standings — XP earned, scenarios mastered.",
+    "The Consilium's simulator standings. XP earned, scenarios mastered.",
 };
 
 function lastActiveLabel(days: number): string {
@@ -70,7 +70,7 @@ function PodiumCard({
       <p
         // line-clamp-2 + break-words so a long display name (e.g.
         // "Mistress Quintessa") wraps to a second line instead of
-        // ellipsis-clipping. leading-tight keeps two-line names from
+        // ellipsis-clipping. Leading-tight keeps two-line names from
         // pushing the XP figure past the card bottom.
         className={`text-base font-light tracking-wide text-center mb-1 leading-tight line-clamp-2 break-words w-full ${rankColor}`}
         title={entry.name}
@@ -185,7 +185,7 @@ export default async function LeaderboardPage() {
         </p>
       </div>
 
-      {/* Podium — only render when we have at least one entry. The
+      {/* Podium, only render when we have at least one entry. The
           ordering on screen is 2nd / 1st / 3rd so the tallest middle
           column draws the eye. */}
       {podium.length > 0 && (
@@ -217,7 +217,7 @@ export default async function LeaderboardPage() {
         ))}
       </div>
 
-      {/* Pinned "Your standing" card — only when the viewer didn't make
+      {/* Pinned "Your standing" card, only when the viewer didn't make
           the visible top 50. Gives them a clear answer to "where am I"
           without making them scan. */}
       {viewer && !viewerInTop && (
@@ -230,7 +230,7 @@ export default async function LeaderboardPage() {
       )}
 
       {/* Empty-state CTA for members who haven't started a single
-          scenario yet — points them straight at the simulator catalog
+          scenario yet, points them straight at the simulator catalog
           rather than leaving them staring at someone else's leaderboard. */}
       {!viewer && (
         <div className="mt-8 pt-6 border-t border-warm-gold/15 text-center">

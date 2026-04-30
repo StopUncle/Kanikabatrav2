@@ -101,7 +101,7 @@ export default function InnerCircleSidebar({
   const [loggingOut, setLoggingOut] = useState(false);
 
   // Swipe-to-close gesture state. We track the initial touch point
-  // and only close if the user swipes LEFT by at least 50px — smaller
+  // and only close if the user swipes LEFT by at least 50px, smaller
   // movements (or a vertical scroll) don't dismiss the panel.
   const touchStartX = useRef<number | null>(null);
   const touchStartY = useRef<number | null>(null);
@@ -153,7 +153,7 @@ export default function InnerCircleSidebar({
           setChatRooms(d.rooms || []);
         }
       } catch {
-        // Sidebar nav is non-critical — fail silently
+        // Sidebar nav is non-critical, fail silently
       }
     }
     fetchNav();
@@ -176,7 +176,7 @@ export default function InnerCircleSidebar({
 
   const navContent = (
     <>
-      {/* Brand header — Consilium seal + wordmark + live online dot */}
+      {/* Brand header. Consilium seal + wordmark + live online dot */}
       <div className="px-5 py-5 border-b border-accent-gold/10">
         <div className="flex items-center gap-3">
           <ConsiliumSeal size="sm" />
@@ -199,7 +199,7 @@ export default function InnerCircleSidebar({
         )}
       </div>
 
-      {/* Identity tile — rank badge + handle + 3 live stats. Stats give
+      {/* Identity tile, rank badge + handle + 3 live stats. Stats give
           the card motion every page load instead of feeling static. */}
       {badge && (
         <Link
@@ -335,7 +335,7 @@ export default function InnerCircleSidebar({
           </div>
         )}
 
-        {/* Live in the Council — recent activity strip. Real signals
+        {/* Live in the Council, recent activity strip. Real signals
             (comments, likes, new members, simulator wins) merged with
             deterministic time-of-day mocks if real activity is thin.
             Solves the "is anyone else here" problem on first sight. */}
@@ -377,7 +377,7 @@ export default function InnerCircleSidebar({
         )}
       </nav>
 
-      {/* Footer — back-out links + logout. Members no longer have the
+      {/* Footer, back-out links + logout. Members no longer have the
           public Header chrome to log out from, so logout has to live
           here now. */}
       <div className="px-5 py-4 border-t border-accent-gold/10 space-y-2.5">
@@ -423,7 +423,7 @@ export default function InnerCircleSidebar({
 
   return (
     <>
-      {/* Mobile header bar — sits at the top of the viewport now that
+      {/* Mobile header bar, sits at the top of the viewport now that
           the public marketing Header is gone from member pages. */}
       <div className="lg:hidden fixed top-0 left-0 right-0 z-40 bg-deep-black/95 backdrop-blur-md border-b border-accent-gold/10 px-4 py-2.5 flex items-center justify-between pt-safe">
         <div className="flex items-center gap-2.5">
@@ -460,7 +460,7 @@ export default function InnerCircleSidebar({
         {navContent}
       </aside>
 
-      {/* Desktop sidebar — full-height now that the public header is
+      {/* Desktop sidebar, full-height now that the public header is
           gone. Sticky from top:0. */}
       <aside className="hidden lg:flex w-64 h-screen bg-deep-black/95 border-r border-accent-gold/10 flex-col shrink-0 sticky top-0">
         {navContent}

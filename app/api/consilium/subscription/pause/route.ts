@@ -14,7 +14,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Pause the actual Stripe subscription so the user isn't charged on the
-    // next cycle. Without this the local DB lies — we mark them SUSPENDED
+    // next cycle. Without this the local DB lies, we mark them SUSPENDED
     // but Stripe keeps billing. `pause_collection` with `void` is the right
     // mode for member-requested pauses; we keep the subscription itself
     // alive so resume is just unpause.

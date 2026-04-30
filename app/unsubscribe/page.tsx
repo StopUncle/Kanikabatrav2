@@ -10,12 +10,12 @@ import {
 import { logger } from "@/lib/logger";
 
 export const metadata = {
-  title: "Unsubscribe — Kanika Batra",
+  title: "Unsubscribe. Kanika Batra",
   description: "Manage your email preferences",
   robots: { index: false, follow: false },
 };
 
-// Don't cache — every request must hit the verify + update path.
+// Don't cache. Every request must hit the verify + update path.
 export const dynamic = "force-dynamic";
 
 interface PageProps {
@@ -32,12 +32,12 @@ const TYPE_LABELS: Record<UnsubscribeType, string> = {
 /**
  * Public unsubscribe page. Reads ?token=<jwt>, verifies the signature
  * server-side, and flips the corresponding `User.emailPreferences` key
- * to false. No login required — the signed token is the auth.
+ * to false. No login required, the signed token is the auth.
  *
  * Three render states:
- *   1. success — token verified, pref updated
- *   2. invalid — bad/expired/forged token
- *   3. missing — no token in URL (someone hit /unsubscribe directly)
+ *   1. Success, token verified, pref updated
+ *   2. Invalid, bad/expired/forged token
+ *   3. Missing, no token in URL (someone hit /unsubscribe directly)
  */
 export default async function UnsubscribePage({ searchParams }: PageProps) {
   const params = await searchParams;
@@ -60,7 +60,7 @@ export default async function UnsubscribePage({ searchParams }: PageProps) {
 
         if (!user) {
           // Token signed for a user that no longer exists. Treat as
-          // success — there's nothing to opt out of, the unsubscribe
+          // success, there's nothing to opt out of, the unsubscribe
           // intent is satisfied.
           state = "success";
           unsubscribedFrom = payload.type;
@@ -115,7 +115,7 @@ export default async function UnsubscribePage({ searchParams }: PageProps) {
             </p>
             <p className="text-text-gray/70 text-sm mb-8">
               Transactional emails (purchases, password resets, application
-              status) are not affected — those will still reach you.
+              status) are not affected. Those will still reach you.
             </p>
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
               <Link

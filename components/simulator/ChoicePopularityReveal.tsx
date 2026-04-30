@@ -22,7 +22,7 @@ import { Users } from "lucide-react";
 type Props = {
   /** Pick rate 0..1, or null to suppress. */
   rate: number | null;
-  /** Stable id (the picked choice id) — change resets the reveal. */
+  /** Stable id (the picked choice id), change resets the reveal. */
   resetKey: string;
 };
 

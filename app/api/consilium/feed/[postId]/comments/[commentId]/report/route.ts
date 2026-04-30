@@ -12,7 +12,7 @@ import { prisma } from "@/lib/prisma";
  * constraint means a member can only report a given comment once —
  * subsequent calls are a no-op (returns the existing report).
  *
- * Comments aren't auto-hidden on report — a single troll can't make
+ * Comments aren't auto-hidden on report, a single troll can't make
  * another member's comment vanish. Admin triages reports via
  * /admin/reports and decides what to do.
  */
@@ -41,7 +41,7 @@ export async function POST(
   }
 
   // Rate-limit to prevent report-storming (shared bucket with posting
-  // comments — aggressive by design; reports should be rare per user).
+  // comments, aggressive by design; reports should be rare per user).
   const rateLimited = await enforceRateLimit(
     limits.feedComment,
     `report:${userId}`,
@@ -61,7 +61,7 @@ export async function POST(
     );
   }
 
-  // Don't let a user report their own comment — confusing UX and not
+  // Don't let a user report their own comment, confusing UX and not
   // what the button is for.
   if (comment.authorId === userId) {
     return NextResponse.json(
@@ -77,7 +77,7 @@ export async function POST(
       reason = body.reason.trim().slice(0, 500) || null;
     }
   } catch {
-    /* reason is optional — ignore body parse errors */
+    /* reason is optional, ignore body parse errors */
   }
 
   // Upsert so the UI can always call this without caring whether

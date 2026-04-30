@@ -93,7 +93,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Normalize for lookup — register stores lowercase, so we must too.
+    // Normalize for lookup, register stores lowercase, so we must too.
     const normalizedEmail = email.toLowerCase().trim();
 
     // Rate limit by IP + email (prevents both IP-based flooding AND
@@ -130,7 +130,7 @@ export async function POST(request: NextRequest) {
       const resetUrl = `${baseUrl}/reset-password?token=${resetToken}`;
 
       // Wrap in try/catch so a sendEmail failure (SMTP down) returns
-      // the same 200 as a nonexistent email — preventing an attacker
+      // the same 200 as a nonexistent email, preventing an attacker
       // from distinguishing known vs unknown accounts by observing
       // 500 vs 200 response codes.
       try {

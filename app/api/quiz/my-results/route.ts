@@ -15,7 +15,7 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: "No quiz results found" }, { status: 404 });
     }
 
-    // Case-insensitive match — Purchase rows carry whatever was entered
+    // Case-insensitive match. Purchase rows carry whatever was entered
     // at Stripe checkout (often mixed-case). User.email is lowercased at
     // register time. Straight equality misses historical rows.
     const hasBookPurchase = await prisma.purchase.findFirst({
@@ -37,7 +37,7 @@ export async function GET(request: NextRequest) {
 
     // Side-effect: lazily flip the paid flag when a book purchase exists.
     // Wrap in try/catch so a transient DB error here doesn't crash the
-    // whole GET — the unlock will retry next page load.
+    // whole GET, the unlock will retry next page load.
     if (hasBookPurchase && !quizResult.paid) {
       try {
         await prisma.quizResult.update({
@@ -72,7 +72,7 @@ export async function GET(request: NextRequest) {
 
     // Credit is surfaced only for quiz-purchase unlocks (consiliumCreditCode
     // is stamped on the QuizResult in the QUIZ webhook branch). Book-unlocks
-    // and active-Consilium unlocks get null — the upsell doesn't apply.
+    // and active-Consilium unlocks get null, the upsell doesn't apply.
     // Also null out codes that have expired so the UI can hide stale cards.
     const credit =
       quizResult.consiliumCreditCode &&

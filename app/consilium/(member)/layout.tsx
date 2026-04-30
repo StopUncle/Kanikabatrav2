@@ -52,7 +52,7 @@ export default async function MemberLayout({
     getRecentActivity(5),
   ]);
 
-  // Current tier is pure function of (role, activatedAt) — no DB
+  // Current tier is pure function of (role, activatedAt), no DB
   // column to keep in sync, no cron to run, no drift. Admins always
   // read as Queen regardless of tenure.
   const currentTier = tierForMember({
@@ -89,7 +89,7 @@ export default async function MemberLayout({
         />
         <main className="flex-1 min-w-0 pt-14 lg:pt-0">
           {/* Quick-access pill nav. Sits at the top of every member
-              page as a sticky strip — the equivalent of "below the
+              page as a sticky strip, the equivalent of "below the
               header" for a space that uses the sidebar instead of
               the marketing Header. Re-uses the same `onlineCount`
               already fetched for the sidebar (no extra round-trip). */}

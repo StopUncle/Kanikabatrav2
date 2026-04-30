@@ -6,17 +6,17 @@ import { requireAdminSession } from "@/lib/admin/auth";
 /**
  * Admin Applications API.
  *
- * Scope: only returns rows where `applicationData` is not null — i.e. the
+ * Scope: only returns rows where `applicationData` is not null, i.e. the
  * member filled out the apply form. Gift-campaign claims, manual comps,
  * and any other back-door paths skip the form so they never appear here.
  * This is what Kanika asked for: the "Applications" view should be a
  * review surface, not a membership dashboard.
  *
  * Status tabs:
- *   - PENDING   — just submitted, waiting for Kanika's approval
- *   - APPROVED  — approved, not yet paid (Stripe checkout outstanding)
- *   - ACTIVE    — approved + paid (what used to vanish into "All")
- *   - ALL       — every application regardless of state
+ *   - PENDING  , just submitted, waiting for Kanika's approval
+ *   - APPROVED , approved, not yet paid (Stripe checkout outstanding)
+ *   - ACTIVE   , approved + paid (what used to vanish into "All")
+ *   - ALL      . Every application regardless of state
  *
  * Every response also includes a `counts` block so the admin UI can
  * show "Pending (3) / Approved (1) / Active (12)" without firing three
@@ -30,7 +30,7 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     const statusParam = searchParams.get("status") || "PENDING";
 
-    // Only rows with a submitted application — removes gift claims and
+    // Only rows with a submitted application, removes gift claims and
     // manual back-door memberships from every tab, since those aren't
     // applications. `not: Prisma.JsonNull` matches any JSON value.
     const hasApplication: Prisma.CommunityMembershipWhereInput = {

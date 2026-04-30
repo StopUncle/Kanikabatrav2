@@ -1,11 +1,11 @@
-// The Daughter Pattern Assessment — questions, types, and scoring.
+// The Daughter Pattern Assessment, questions, types, and scoring.
 //
 // A 20-scenario assessment for adult children of (likely) narcissistic mothers,
 // scoring on two parallel axes:
 //
 //   1. Daughter Pattern (primary axis): which trauma response shape did
 //      twenty years in the household build into the user's nervous system?
-//      Six profiles — Hypervigilant / Fawn / Over-Functioner / Scapegoat /
+//      Six profiles. Hypervigilant / Fawn / Over-Functioner / Scapegoat /
 //      Golden Cage / Sovereign.
 //
 //   2. Mother NPD Signal (secondary axis): based on the user's recognition
@@ -15,7 +15,7 @@
 //
 // IMPORTANT: This is not a clinical instrument and not a diagnosis.
 // See `DAUGHTER_QUIZ_INFO.disclaimer` for the full text. Disclaimers
-// must surface on every page — landing, take, results.
+// must surface on every page, landing, take, results.
 //
 // Voice locked to reference/KANIKA-VOICE.md throughout: specific brand-
 // and-object anchors, named tactics, old-money softeners, scenes ending
@@ -58,7 +58,7 @@ export interface DaughterQuestion {
   scenario: string;
   answers: DaughterAnswer[];
   /**
-   * Question category — "self" probes the user's own pattern,
+   * Question category, "self" probes the user's own pattern,
    * "mother" probes the mother's behaviour. Used by scoring to weight
    * the two axes correctly.
    */
@@ -103,7 +103,7 @@ export interface DaughterDiagnosis {
 // ---------------------------------------------------------------------------
 // The six daughter profiles.
 //
-// Each profile is written for the woman who got it — not for a clinician
+// Each profile is written for the woman who got it, not for a clinician
 // reading over her shoulder. Specific. Recognisable. Kanika voice. The
 // blindSpots are written so the woman who got this type sees herself
 // in them and feels the recognition land before the recovery move arrives.
@@ -126,7 +126,7 @@ export const DAUGHTER_PROFILES: Record<DaughterType, DaughterProfile> = {
       "You confuse 'I am the only one paying attention to this' with 'I am the only one who cares'",
     ],
     recoveryMove:
-      "Your single most useful intervention is the eleven-minute outlast — when you feel the urge to text/check/scan, you put the phone face-down and wait eleven minutes, doing literally anything else. The urge will peak at four minutes and resolve at eleven. Your nervous system needs to learn that the catastrophe doesn't arrive when you stop watching for it.",
+      "Your single most useful intervention is the eleven-minute outlast, when you feel the urge to text/check/scan, you put the phone face-down and wait eleven minutes, doing literally anything else. The urge will peak at four minutes and resolve at eleven. Your nervous system needs to learn that the catastrophe doesn't arrive when you stop watching for it.",
     twelveMonthArc:
       "Month one: the eleven-minute outlast becomes a tool. Month three: you notice you can sit through a partner's quiet ten-minute drive without inventing a problem. Month six: you make a friend who is calm without it feeling boring. Month twelve: someone else's mood passes through a room you're in and you don't catch it. You watch it pass.",
   },
@@ -135,18 +135,18 @@ export const DAUGHTER_PROFILES: Record<DaughterType, DaughterProfile> = {
     name: "The Fawn",
     tagline: "Apologise first. Sort it out later.",
     description:
-      "The fight-flight-freeze trauma response model has a fourth option that most therapy curricula skim past: fawn. You learned, before you could name it, that the safest response to a threat was to please it. Your body deploys this reflex now — under any pressure, in any conflict, with anyone. You apologise in the supermarket queue. You apologise to your boss for the thing your colleague did. You apologise to the man on the train who stepped on your foot.",
+      "The fight-flight-freeze trauma response model has a fourth option that most therapy curricula skim past: fawn. You learned, before you could name it, that the safest response to a threat was to please it. Your body deploys this reflex now, under any pressure, in any conflict, with anyone. You apologise in the supermarket queue. You apologise to your boss for the thing your colleague did. You apologise to the man on the train who stepped on your foot.",
     childhoodPattern:
       "The fastest way to make her stop was to agree with her. About everything. Including the things you did not agree about. You learned to apologise for behaviours you did not perform, because the apology stopped the storm. Your sense of what is true got bent around what was safe.",
     adultPattern:
       "You self-erase. In conflict, you cannot locate your own position because you've been finding the other person's position so reflexively for so long. You leave conversations realising you've agreed to things you don't believe. You date men whose preferences you adopt within six weeks.",
     blindSpots: [
-      "You think you 'don't care' about most things — you have, in fact, lost track of caring",
+      "You think you 'don't care' about most things, you have, in fact, lost track of caring",
       "You confuse self-erasure with being easy-going, and read your partner's frustration with it as them being demanding",
       "You apologise for crying. You apologise for being tired. You apologise for needing food.",
     ],
     recoveryMove:
-      "Before any conversation that might involve disagreement, write down — privately, on paper — what *you* think. One sentence. Don't share it. Just have it. The act of locating your own position before entering the room is what re-trains the muscle the household trained out of you. Over months, the position-locating becomes automatic. Over years, you find you have preferences again.",
+      "Before any conversation that might involve disagreement, write down, privately, on paper, what *you* think. One sentence. Don't share it. Just have it. The act of locating your own position before entering the room is what re-trains the muscle the household trained out of you. Over months, the position-locating becomes automatic. Over years, you find you have preferences again.",
     twelveMonthArc:
       "Month one: writing down your position before a hard conversation feels strange. Month three: you catch yourself almost-apologising for something that wasn't your fault and stop mid-sentence. Month six: you say 'no' to a request from a friend and don't follow it with three sentences of justification. Month twelve: you eat what you actually want for dinner.",
   },
@@ -155,14 +155,14 @@ export const DAUGHTER_PROFILES: Record<DaughterType, DaughterProfile> = {
     name: "The Over-Functioner",
     tagline: "If she doesn't do it, no one will.",
     description:
-      "You were the parentified child — promoted, against your will and often before age ten, into the role of household manager. You ran the calendar, the emotional logistics, the explanations to the relatives. You are still doing this. Your friends call you organised. Your colleagues call you reliable. Your partners call you, eventually, exhausting — because nobody can be loved the way you can be relied on, and you've never quite learned the difference.",
+      "You were the parentified child, promoted, against your will and often before age ten, into the role of household manager. You ran the calendar, the emotional logistics, the explanations to the relatives. You are still doing this. Your friends call you organised. Your colleagues call you reliable. Your partners call you, eventually, exhausting, because nobody can be loved the way you can be relied on, and you've never quite learned the difference.",
     childhoodPattern:
       "You knew her medication schedule, her boss's name, her sister's grievances. You were the one who remembered the bills. You were ten years old, certainly no older, when you started managing an adult woman's life on her behalf because she could not.",
     adultPattern:
       "You manage your friends' moods. You confirm everyone's reservations. You text the morning of to make sure everyone is on time. You are the one who makes the spreadsheet for the holiday. You are also the one who is, somewhat quietly, depleted in a way nobody around you has noticed because they have never seen you not-functioning.",
     blindSpots: [
       "You confuse being needed with being loved",
-      "You don't actually know how to receive — you redirect care into a small task you can do for the person caring for you",
+      "You don't actually know how to receive, you redirect care into a small task you can do for the person caring for you",
       "You hold low-grade contempt for people who let things slip; that contempt is the leak telling you the load is too heavy",
     ],
     recoveryMove:
@@ -175,38 +175,38 @@ export const DAUGHTER_PROFILES: Record<DaughterType, DaughterProfile> = {
     name: "The Scapegoat",
     tagline: "She's the one who 'always overreacts.'",
     description:
-      "Every NPD household has a designated difficult one. That was you. Your sibling — the golden child — was the mirror that showed her the version of herself she liked. You were the contrast that made the mirror work. You held the family's projected shame and you got blamed for the household's tension because someone had to be blamed and she could not be. You are now an adult who is still, to your faint horror, the one who 'always overreacts' in family group chats about events you remember more accurately than anyone.",
+      "Every NPD household has a designated difficult one. That was you. Your sibling, the golden child, was the mirror that showed her the version of herself she liked. You were the contrast that made the mirror work. You held the family's projected shame and you got blamed for the household's tension because someone had to be blamed and she could not be. You are now an adult who is still, to your faint horror, the one who 'always overreacts' in family group chats about events you remember more accurately than anyone.",
     childhoodPattern:
-      "You were 'too sensitive,' 'too dramatic,' 'too much.' Your accurate observation that something was wrong was treated as the wrong itself. You learned, painfully, that being right made things worse — that the family system required your silence as the price of dinner.",
+      "You were 'too sensitive,' 'too dramatic,' 'too much.' Your accurate observation that something was wrong was treated as the wrong itself. You learned, painfully, that being right made things worse, that the family system required your silence as the price of dinner.",
     adultPattern:
-      "You apologise for noticing things. You doubt your own memory of events because the household consensus was always against your memory. You stay quiet at work even when you're right, because you've been trained that being right has a price. Sometimes you swing the other way and explode — not because the trigger was big, but because you spent twenty years not exploding at the bigger ones.",
+      "You apologise for noticing things. You doubt your own memory of events because the household consensus was always against your memory. You stay quiet at work even when you're right, because you've been trained that being right has a price. Sometimes you swing the other way and explode, not because the trigger was big, but because you spent twenty years not exploding at the bigger ones.",
     blindSpots: [
       "You read your accurate emotional read of a situation as 'overreacting' before checking",
       "You sometimes pre-blame yourself in conversations to beat the other person to it",
       "Your siblings, especially the golden one, may not be your allies, however much you want them to be",
     ],
     recoveryMove:
-      "Start a single private file — paper or notes app — where you write down events that happen in family interactions, with dates and your own read of them. Not for confrontation. For your own memory. Within three months of doing this, you will have an external record that confirms what you have always remembered, and the gaslit feeling will start lifting. The file is what gives you back your reality.",
+      "Start a single private file, paper or notes app, where you write down events that happen in family interactions, with dates and your own read of them. Not for confrontation. For your own memory. Within three months of doing this, you will have an external record that confirms what you have always remembered, and the gaslit feeling will start lifting. The file is what gives you back your reality.",
     twelveMonthArc:
-      "Month one: the file feels weird. Like surveillance. Month three: you check the file and confirm your memory of an event your sibling has 'misremembered.' Something settles. Month six: you stop arguing in the family group chat. The lack of supply visibly destabilises the system. Month twelve: you have, somewhat unexpectedly, become harder to scapegoat — not because you fought back, but because you stopped showing up to the role.",
+      "Month one: the file feels weird. Like surveillance. Month three: you check the file and confirm your memory of an event your sibling has 'misremembered.' Something settles. Month six: you stop arguing in the family group chat. The lack of supply visibly destabilises the system. Month twelve: you have, somewhat unexpectedly, become harder to scapegoat, not because you fought back, but because you stopped showing up to the role.",
   },
   "golden-cage": {
     type: "golden-cage",
     name: "The Golden Cage",
     tagline: "Approved of. Trapped.",
     description:
-      "You were the golden child — and the trap, which most therapy frameworks miss, is that the golden child has the harder recovery, not the easier one. The scapegoat at least knew something was wrong; the golden child got the carrots and the praise and the 'you're so much more mature than your sister,' and was therefore enrolled in the system without ever consciously consenting. You learned that her approval was the air in the room. You optimised for the approval. You won. You are now an adult who has never, internally, been allowed to disappoint her.",
+      "You were the golden child and the trap, which most therapy frameworks miss, is that the golden child has the harder recovery, not the easier one. The scapegoat at least knew something was wrong; the golden child got the carrots and the praise and the 'you're so much more mature than your sister,' and was therefore enrolled in the system without ever consciously consenting. You learned that her approval was the air in the room. You optimised for the approval. You won. You are now an adult who has never, internally, been allowed to disappoint her.",
     childhoodPattern:
-      "She was proud of you. You knew it. You also knew the conditions under which she was proud of you, and you stayed, with what was almost pathological precision, inside those conditions. You did not become an artist when you wanted to. You did not date the person you wanted. You did the things that kept her proud, and her pride was real — which is the cruellest part.",
+      "She was proud of you. You knew it. You also knew the conditions under which she was proud of you, and you stayed, with what was almost pathological precision, inside those conditions. You did not become an artist when you wanted to. You did not date the person you wanted. You did the things that kept her proud, and her pride was real, which is the cruellest part.",
     adultPattern:
-      "You are high-achieving. You are also vaguely numb. The life you live looks correct on paper and feels, in private, like someone else's. You suspect you have replicated some of her patterns yourself — you can be, in your own friendships, a small version of her. You are the only one of the daughter types who is statistically likely to score elevated on the [Dark Mirror Assessment](/quiz)'s Narcissistic axis, because the household selected for the same trait pattern in you.",
+      "You are high-achieving. You are also vaguely numb. The life you live looks correct on paper and feels, in private, like someone else's. You suspect you have replicated some of her patterns yourself, you can be, in your own friendships, a small version of her. You are the only one of the daughter types who is statistically likely to score elevated on the [Dark Mirror Assessment](/quiz)'s Narcissistic axis, because the household selected for the same trait pattern in you.",
     blindSpots: [
       "You confuse your mother's approval with your own preferences",
-      "You may treat your own children, partners, or friends with the same conditional warmth you grew up with — without noticing",
+      "You may treat your own children, partners, or friends with the same conditional warmth you grew up with, without noticing",
       "You experience genuine disappointment from her as more painful than most people experience genuine emergencies",
     ],
     recoveryMove:
-      "The hardest move available to you is also the most diagnostic one: do something this month that you know she will disapprove of. Not as rebellion — as data. Take the holiday she'll dislike. Take the haircut. Take the relationship choice. Notice what your body does when she finds out. The intensity of that body reaction is the measurement of how much of your life has been calibrated to her opinion. The work is to feel that reaction and not undo the choice.",
+      "The hardest move available to you is also the most diagnostic one: do something this month that you know she will disapprove of. Not as rebellion, as data. Take the holiday she'll dislike. Take the haircut. Take the relationship choice. Notice what your body does when she finds out. The intensity of that body reaction is the measurement of how much of your life has been calibrated to her opinion. The work is to feel that reaction and not undo the choice.",
     twelveMonthArc:
       "Month one: the disapproval-on-purpose move terrifies you in advance and is anti-climactic in execution. Month three: you start noticing how often, in any decision, her opinion arrives in your head before yours does. Month six: you have a preference she doesn't know about. Month twelve: you find out who you would have been at 22 if the household had been different. That woman has been waiting.",
   },
@@ -215,18 +215,18 @@ export const DAUGHTER_PROFILES: Record<DaughterType, DaughterProfile> = {
     name: "The Sovereign",
     tagline: "She named it. She left it. She rebuilt.",
     description:
-      "You scored as a Sovereign, which means one of two things: either you have done substantial recovery work already and your nervous system has settled into a new baseline — or, less commonly, your mother is genuinely difficult but not NPD, and the patterns the household installed in you were less structural than this assessment is built to detect. Either way, you are not, at this moment, in active dysregulation about her. That is rarer than you think.",
+      "You scored as a Sovereign, which means one of two things: either you have done substantial recovery work already and your nervous system has settled into a new baseline, or, less commonly, your mother is genuinely difficult but not NPD, and the patterns the household installed in you were less structural than this assessment is built to detect. Either way, you are not, at this moment, in active dysregulation about her. That is rarer than you think.",
     childhoodPattern:
-      "Your childhood may have included some of the patterns this assessment names, but the household had enough other adults, enough other rooms, or enough quiet that your nervous system was not formed in chronic threat detection. Or you have been doing the work — therapy, no-contact, grey rock, community — long enough that the old patterns have lost their grip.",
+      "Your childhood may have included some of the patterns this assessment names, but the household had enough other adults, enough other rooms, or enough quiet that your nervous system was not formed in chronic threat detection. Or you have been doing the work, therapy, no-contact, grey rock, community, long enough that the old patterns have lost their grip.",
     adultPattern:
-      "You can sit through silence without inventing a problem. You can disagree with someone without erasing yourself. You can be needed without being defined by it. You can be approved-of without bending. The work, if you are in active recovery, is to not get cocky — recovery is a maintenance practice, not an achievement. The next bad week will test the baseline.",
+      "You can sit through silence without inventing a problem. You can disagree with someone without erasing yourself. You can be needed without being defined by it. You can be approved-of without bending. The work, if you are in active recovery, is to not get cocky, recovery is a maintenance practice, not an achievement. The next bad week will test the baseline.",
     blindSpots: [
-      "You may underestimate how much the work continues — the next big stressor will surface old patterns you thought you'd retired",
+      "You may underestimate how much the work continues, the next big stressor will surface old patterns you thought you'd retired",
       "Your friends who are still in the soup may, occasionally, find your settledness alienating; this is information about them, not you",
       "You may find yourself coaching or rescuing people in earlier stages, which is its own version of over-functioning if you don't watch it",
     ],
     recoveryMove:
-      "Your work is now structural maintenance, not crisis intervention. A weekly hour of body work (not therapy — body. Strength training, swimming, dance, walking). A monthly check-in with the file (the dated record of where you came from). A quarterly review of who has access to you and at what levels. The recovered nervous system needs feeding, like any garden. Tend it.",
+      "Your work is now structural maintenance, not crisis intervention. A weekly hour of body work (not therapy, body. Strength training, swimming, dance, walking). A monthly check-in with the file (the dated record of where you came from). A quarterly review of who has access to you and at what levels. The recovered nervous system needs feeding, like any garden. Tend it.",
     twelveMonthArc:
       "Month one: the maintenance practices feel light. Month three: a stressor arrives and you handle it with capacity you did not have two years ago. Month six: someone newer to recovery asks you for advice and you give it briefly, without taking on their work. Month twelve: you have the rare and underrated experience of looking at your own life and recognising it as yours.",
   },
@@ -237,7 +237,7 @@ export const DAUGHTER_PROFILES: Record<DaughterType, DaughterProfile> = {
 //
 // Mix of self-probing (the daughter pattern) and mother-probing (the NPD
 // signal). Each answer maps to one DaughterType + a motherSignal weight 0-3.
-// Scenarios written as specific, recognisable moments — not abstract
+// Scenarios written as specific, recognisable moments, not abstract
 // agree/disagree. Voice locked.
 // ---------------------------------------------------------------------------
 
@@ -329,7 +329,7 @@ export const DAUGHTER_QUESTIONS: DaughterQuestion[] = [
       },
       {
         id: "3c",
-        text: "I was the only child, but the dynamic was still the same — I was either approved-of or in trouble, with no third option.",
+        text: "I was the only child, but the dynamic was still the same. I was either approved-of or in trouble, with no third option.",
         type: "fawn",
         motherSignal: 3,
       },
@@ -345,7 +345,7 @@ export const DAUGHTER_QUESTIONS: DaughterQuestion[] = [
     id: 4,
     title: "Good news week.",
     scenario:
-      "You've just told her something genuinely good — a job, an engagement, a flat, a pregnancy. Within ten days, what arrives?",
+      "You've just told her something genuinely good, a job, an engagement, a flat, a pregnancy. Within ten days, what arrives?",
     category: "mother",
     answers: [
       {
@@ -356,7 +356,7 @@ export const DAUGHTER_QUESTIONS: DaughterQuestion[] = [
       },
       {
         id: "4b",
-        text: "A subtle reframing of my news that puts her closer to its centre — she introduced me to the colleague who got me the job, she always knew this would happen, etc.",
+        text: "A subtle reframing of my news that puts her closer to its centre, she introduced me to the colleague who got me the job, she always knew this would happen, etc.",
         type: "golden-cage",
         motherSignal: 3,
       },
@@ -378,7 +378,7 @@ export const DAUGHTER_QUESTIONS: DaughterQuestion[] = [
     id: 5,
     title: "The conflict reflex.",
     scenario:
-      "An ordinary disagreement happens at work — your boss has, in fact, gotten a fact wrong, and the room is looking at you for the correction. What does your body actually do?",
+      "An ordinary disagreement happens at work, your boss has, in fact, gotten a fact wrong, and the room is looking at you for the correction. What does your body actually do?",
     category: "self",
     answers: [
       {
@@ -411,7 +411,7 @@ export const DAUGHTER_QUESTIONS: DaughterQuestion[] = [
     id: 6,
     title: "The ask.",
     scenario:
-      "She calls and the first sixty seconds are unusually warm — more than usual. You catch yourself doing what?",
+      "She calls and the first sixty seconds are unusually warm, more than usual. You catch yourself doing what?",
     category: "mother",
     answers: [
       {
@@ -500,7 +500,7 @@ export const DAUGHTER_QUESTIONS: DaughterQuestion[] = [
       },
       {
         id: "8d",
-        text: "I scan my phone for the perceived absence of someone — a partner who hasn't texted, a friend whose Stories suggest a dinner I wasn't invited to. The free afternoon goes to surveillance.",
+        text: "I scan my phone for the perceived absence of someone, a partner who hasn't texted, a friend whose Stories suggest a dinner I wasn't invited to. The free afternoon goes to surveillance.",
         type: "hypervigilant",
         motherSignal: 1,
       },
@@ -515,7 +515,7 @@ export const DAUGHTER_QUESTIONS: DaughterQuestion[] = [
     answers: [
       {
         id: "9a",
-        text: "Used as a marker. She bought me things. None of it was framed as a loan. Two years later, all of it gets weaponised — 'after everything I've done for you.'",
+        text: "Used as a marker. She bought me things. None of it was framed as a loan. Two years later, all of it gets weaponised, 'after everything I've done for you.'",
         type: "golden-cage",
         motherSignal: 3,
       },
@@ -543,7 +543,7 @@ export const DAUGHTER_QUESTIONS: DaughterQuestion[] = [
     id: 10,
     title: "The signature sentence.",
     scenario:
-      "She has a sentence she has said your whole life — a specific phrase that, when she deploys it, produces a body reaction in you before your mind has processed it. Which one is closest?",
+      "She has a sentence she has said your whole life, a specific phrase that, when she deploys it, produces a body reaction in you before your mind has processed it. Which one is closest?",
     category: "mother",
     answers: [
       {
@@ -620,7 +620,7 @@ export const DAUGHTER_QUESTIONS: DaughterQuestion[] = [
       },
       {
         id: "12b",
-        text: "Defend myself to her — explain at length why the criticism is wrong. The defence is its own confession that the criticism landed.",
+        text: "Defend myself to her, explain at length why the criticism is wrong. The defence is its own confession that the criticism landed.",
         type: "fawn",
         motherSignal: 3,
       },
@@ -653,7 +653,7 @@ export const DAUGHTER_QUESTIONS: DaughterQuestion[] = [
       },
       {
         id: "13b",
-        text: "Whoever's most organised — sometimes me, sometimes someone else. We rotate.",
+        text: "Whoever's most organised. Sometimes me, sometimes someone else. We rotate.",
         type: "sovereign",
         motherSignal: 0,
       },
@@ -665,7 +665,7 @@ export const DAUGHTER_QUESTIONS: DaughterQuestion[] = [
       },
       {
         id: "13d",
-        text: "Mine — but I resent it. The contempt for the rest of the group leaks through; they notice; the trip is, by the end, slightly poisoned.",
+        text: "Mine but I resent it. The contempt for the rest of the group leaks through; they notice; the trip is, by the end, slightly poisoned.",
         type: "over-functioner",
         motherSignal: 1,
       },
@@ -675,7 +675,7 @@ export const DAUGHTER_QUESTIONS: DaughterQuestion[] = [
     id: 14,
     title: "The disapproval test.",
     scenario:
-      "Imagine you tell her, this month, about a major life choice you know she will disapprove of — a partner, a career, a haircut, a city. What does your body do as you imagine telling her?",
+      "Imagine you tell her, this month, about a major life choice you know she will disapprove of, a partner, a career, a haircut, a city. What does your body do as you imagine telling her?",
     category: "self",
     answers: [
       {
@@ -719,7 +719,7 @@ export const DAUGHTER_QUESTIONS: DaughterQuestion[] = [
       },
       {
         id: "15b",
-        text: "A loyalty test. My one boundary — a flight back on Sunday — produces a four-paragraph text on Saturday night.",
+        text: "A loyalty test. My one boundary, a flight back on Sunday, produces a four-paragraph text on Saturday night.",
         type: "fawn",
         motherSignal: 3,
       },
@@ -774,7 +774,7 @@ export const DAUGHTER_QUESTIONS: DaughterQuestion[] = [
     id: 17,
     title: "The dating pattern.",
     scenario:
-      "Looking at the men (or women) you have dated seriously — not the one-offs, the actual relationships — what is the through-line?",
+      "Looking at the men (or women) you have dated seriously, not the one-offs, the actual relationships, what is the through-line?",
     category: "self",
     answers: [
       {
@@ -807,7 +807,7 @@ export const DAUGHTER_QUESTIONS: DaughterQuestion[] = [
     id: 18,
     title: "The field guide question.",
     scenario:
-      "If a younger woman — a niece, a junior colleague, a cousin — confided in you that her own mother sounded a lot like yours, what would you, honestly, tell her?",
+      "If a younger woman, a niece, a junior colleague, a cousin, confided in you that her own mother sounded a lot like yours, what would you, honestly, tell her?",
     category: "self",
     answers: [
       {
@@ -840,7 +840,7 @@ export const DAUGHTER_QUESTIONS: DaughterQuestion[] = [
     id: 19,
     title: "The body honest.",
     scenario:
-      "Where in your body — physically, anatomically — does the thought of her live?",
+      "Where in your body, physically, anatomically, does the thought of her live?",
     category: "self",
     answers: [
       {
@@ -873,12 +873,12 @@ export const DAUGHTER_QUESTIONS: DaughterQuestion[] = [
     id: 20,
     title: "The sovereignty test.",
     scenario:
-      "What would your life look like, today, if you knew — with complete certainty — that her opinion of your choices was no longer a factor in any decision you made?",
+      "What would your life look like, today, if you knew, with complete certainty, that her opinion of your choices was no longer a factor in any decision you made?",
     category: "self",
     answers: [
       {
         id: "20a",
-        text: "Significantly different. The career, the partner, the city, the haircut — at least one would change in a major way. I'd have to grieve.",
+        text: "Significantly different. The career, the partner, the city, the haircut, at least one would change in a major way. I'd have to grieve.",
         type: "golden-cage",
         motherSignal: 3,
       },
@@ -1037,11 +1037,11 @@ export function generateDaughterDiagnosis(
 
   let description: string;
   if (stage === "late") {
-    description = `You are reading as ${profile.name} on the daughter axis, with a clearly elevated mother-NPD signal. The combination — sovereign baseline + recognition of the household pattern — suggests you are deep into recovery, possibly years in. The work for you now is maintenance, not crisis intervention.`;
+    description = `You are reading as ${profile.name} on the daughter axis, with a clearly elevated mother-NPD signal. The combination, sovereign baseline + recognition of the household pattern, suggests you are deep into recovery, possibly years in. The work for you now is maintenance, not crisis intervention.`;
   } else if (stage === "middle") {
     description = `You are reading as ${profile.name}. The mother-signal sits in the ${MOTHER_BAND_LABELS[motherSignal].toLowerCase()} band, which suggests the household pattern was either lighter than the diagnostic threshold, or you have already done substantial work to settle the worst of it. The next twelve months are about consolidating gains.`;
   } else {
-    description = `You are reading as ${profile.name}, with a ${MOTHER_BAND_LABELS[motherSignal].toLowerCase()}. The daughter-pattern is currently active — your nervous system is still doing the things the household trained it to do — and the work is, somewhat unavoidably, ahead of you rather than behind. This is, in fact, the right time to start.`;
+    description = `You are reading as ${profile.name}, with a ${MOTHER_BAND_LABELS[motherSignal].toLowerCase()}. The daughter-pattern is currently active, your nervous system is still doing the things the household trained it to do and the work is, somewhat unavoidably, ahead of you rather than behind. This is, in fact, the right time to start.`;
   }
 
   return {
@@ -1065,7 +1065,7 @@ export const MOTHER_BAND_COPY: Record<
   "likely-npd": {
     name: "Likely NPD-pattern mother",
     description:
-      "Your answers consistently identified behaviours that match the diagnostic profile of Narcissistic Personality Disorder — calibration compliments, story laundering, illness around your good news, surveillance disguised as concern, the signature sentence. This is not a clinical diagnosis (only a licensed clinician can give one), but it is the cluster the assessment is built to detect, and you recognised most of it.",
+      "Your answers consistently identified behaviours that match the diagnostic profile of Narcissistic Personality Disorder, calibration compliments, story laundering, illness around your good news, surveillance disguised as concern, the signature sentence. This is not a clinical diagnosis (only a licensed clinician can give one), but it is the cluster the assessment is built to detect, and you recognised most of it.",
   },
   "trait-heavy": {
     name: "Trait-heavy / strong NPD signal",
@@ -1075,12 +1075,12 @@ export const MOTHER_BAND_COPY: Record<
   difficult: {
     name: "Difficult-but-not-NPD register",
     description:
-      "Your answers identified some painful patterns but the cluster of NPD-specific markers didn't saturate. Possible reads: a difficult mother whose difficulty is not personality-disordered (depression, untreated trauma, cultural rigidity, or just a hard temperament); a household with one NPD parent who is not your mother; or a relationship that is genuinely strained but more bidirectional than this assessment is built for. The daughter-pattern findings still apply — the trauma response is real even if the NPD frame doesn't fit.",
+      "Your answers identified some painful patterns but the cluster of NPD-specific markers didn't saturate. Possible reads: a difficult mother whose difficulty is not personality-disordered (depression, untreated trauma, cultural rigidity, or just a hard temperament); a household with one NPD parent who is not your mother; or a relationship that is genuinely strained but more bidirectional than this assessment is built for. The daughter-pattern findings still apply, the trauma response is real even if the NPD frame doesn't fit.",
   },
   unlikely: {
     name: "Unlikely NPD-pattern mother",
     description:
-      "Your answers don't saturate the NPD-mother profile. Your relationship may be hard for other reasons, or it may be largely all right. The daughter-pattern result above is still meaningful — many anxious or fawn-trained nervous systems develop without an NPD mother — but the diagnostic frame here may not be the right lens. If the result feels wrong, trust your read of your own life over the assessment.",
+      "Your answers don't saturate the NPD-mother profile. Your relationship may be hard for other reasons, or it may be largely all right. The daughter-pattern result above is still meaningful, many anxious or fawn-trained nervous systems develop without an NPD mother but the diagnostic frame here may not be the right lens. If the result feels wrong, trust your read of your own life over the assessment.",
   },
 };
 
@@ -1089,7 +1089,7 @@ export const DAUGHTER_QUIZ_INFO = {
   name: "The Daughter Pattern Assessment",
   tagline: "What twenty years of being raised by her built into you.",
   description:
-    "A 20-scenario assessment for adult daughters (and sons) of mothers with strong narcissistic patterns. Maps your daughter-of-narcissist trauma profile across six types — Hypervigilant, Fawn, Over-Functioner, Scapegoat, Golden Cage, Sovereign — and gives an honest read on whether your mother's behaviour matches the NPD register.",
+    "A 20-scenario assessment for adult daughters (and sons) of mothers with strong narcissistic patterns. Maps your daughter-of-narcissist trauma profile across six types. Hypervigilant, Fawn, Over-Functioner, Scapegoat, Golden Cage, Sovereign and gives an honest read on whether your mother's behaviour matches the NPD register.",
   price: 9.99,
   currency: "USD",
   questionCount: 20,

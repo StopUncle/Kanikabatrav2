@@ -9,13 +9,13 @@ The Therapist: Empathetic, understanding, and an exceptional listener. This mask
 
 The Femme Fatale: Mysterious, seductive, and slightly dangerous. This mask is for the thrill-seekers, the men who are bored with good girls and crave a challenge. She is a puzzle to be solved, a prize to be won, a storm that promises to be worth the destruction. She keeps them on their toes, always guessing, always wanting more.
 
-The Boring Wife: Stable, nurturing, and utterly conventional. This is the mask we wear when we have decided a man is a long-term asset worth securing. She is the woman he can bring home to his mother, the woman who will run his household with quiet efficiency, the woman who will never cause him any trouble. She is the comfortable, predictable choice that he will make when he is tired of the game—never realizing that the game has just entered its final, most insidious stage.
+The Boring Wife: Stable, nurturing, and utterly conventional. This is the mask we wear when we have decided a man is a long-term asset worth securing. She is the woman he can bring home to his mother, the woman who will run his household with quiet efficiency, the woman who will never cause him any trouble. She is the comfortable, predictable choice that he will make when he is tired of the game, never realizing that the game has just entered its final, most insidious stage.
 
-This is not deception—this is adaptation. We are social chameleons, capable of becoming exactly what any situation requires. We do not have a "true self" in the way you understand it. We have a collection of selves, each one perfectly calibrated for maximum effectiveness.
+This is not deception, this is adaptation. We are social chameleons, capable of becoming exactly what any situation requires. We do not have a "true self" in the way you understand it. We have a collection of selves, each one perfectly calibrated for maximum effectiveness.
 
 You see this as dishonest. We see this as efficient.
 
-When you meet us, you are not meeting a person—you are meeting a performance. And it is a performance designed specifically for you, based on what we have observed about your desires, your insecurities, your weaknesses.
+When you meet us, you are not meeting a person, you are meeting a performance. And it is a performance designed specifically for you, based on what we have observed about your desires, your insecurities, your weaknesses.
 
 You never stood a chance.
 
@@ -24,11 +24,11 @@ Let's talk about those butterflies you feel when you meet someone "exciting." Yo
 
 You've been lied to.
 
-Those butterflies are not romance—they are your autonomic nervous system screaming that this person is incapable of protection and provision. Your body is literally trying to warn you that you are in the presence of someone who represents danger, instability, and potential harm.
+Those butterflies are not romance, they are your autonomic nervous system screaming that this person is incapable of protection and provision. Your body is literally trying to warn you that you are in the presence of someone who represents danger, instability, and potential harm.
 
 Your foremothers understood this. For thousands of years, women who felt calm and secure around a man knew he was a good choice for survival and reproduction. They trusted safety. They valued stability. They chose partners who would build a life with them, not burn it to the ground. Your foremothers knew that butterflies were actually nature taking the trash out. Modern women, in their infinite wisdom, have decided to chase chaos and call it empowerment. They have traded the security of the fortress for the thrill of the rollercoaster, and then wonder why they feel sick all the time.
 
-This is what the sexual revolution really gave us: the repackaging of male convenience as female empowerment. We were told that giving men what they wanted—cheap intimacy with no investment required—was somehow liberating for us. We were told that ignoring our biological warning systems was progressive. We were told that accepting breadcrumbs was equality.
+This is what the sexual revolution really gave us: the repackaging of male convenience as female empowerment. We were told that giving men what they wanted, cheap intimacy with no investment required, was somehow liberating for us. We were told that ignoring our biological warning systems was progressive. We were told that accepting breadcrumbs was equality.
 
 And like idiots, we believed it.
 
@@ -48,7 +48,7 @@ This is why you keep choosing the wrong men. This is why you keep getting hurt. 
 
 It's because you've been trained to interpret your body's warning signals as attraction. You've been taught to run toward danger and away from safety. You've been programmed to value excitement over security, passion over peace, intensity over intimacy.
 
-And if you're sitting there right now, crying because some man has gone cold on you, let me tell you what you should do: Shut the fuck up. Get your hair done. Get your nails done. Call your friends—assuming you're smart enough to have maintained friendships instead of disappearing into his world the moment he showed interest.
+And if you're sitting there right now, crying because some man has gone cold on you, let me tell you what you should do: Shut the fuck up. Get your hair done. Get your nails done. Call your friends, assuming you're smart enough to have maintained friendships instead of disappearing into his world the moment he showed interest.
 
 Better yet, if you were intelligent enough to have a rotation of men instead of putting all your emotional eggs in one basket, you wouldn't even notice he's gone cold. You'd be too busy being pursued by men who actually value your time.
 
@@ -58,7 +58,7 @@ This is the cost of ignoring your evolutionary programming. This is what happens
 
 Your ancestors would be ashamed.
 
-Women often underestimate how much value they confer simply by standing next to a man. A beautiful, high-status woman is a multiplier; she inflates his perceived worth more than wealth or possessions ever could. The reason every camera turned toward Machine Gun Kelly was Megan Fox. The reason Pete Davidson trended wasn't Pete Davidson. Ordinary men understand this instinctively—why else do their dating profiles still feature old photos with an ex who out-ranked them? A woman on a man's arm functions as proof of concept: if she chose him, he must be desirable. That's why devaluing yourself—tolerating disrespect, neglect, or disloyalty—doesn't just hurt you; it subsidizes his market value. Every time you stay, you market him. Every time you walk, you de-list him.
+Women often underestimate how much value they confer simply by standing next to a man. A beautiful, high-status woman is a multiplier; she inflates his perceived worth more than wealth or possessions ever could. The reason every camera turned toward Machine Gun Kelly was Megan Fox. The reason Pete Davidson trended wasn't Pete Davidson. Ordinary men understand this instinctively, why else do their dating profiles still feature old photos with an ex who out-ranked them? A woman on a man's arm functions as proof of concept: if she chose him, he must be desirable. That's why devaluing yourself, tolerating disrespect, neglect, or disloyalty, doesn't just hurt you; it subsidizes his market value. Every time you stay, you market him. Every time you walk, you de-list him.
 
 The Physiology of Power
 Your body betrays you constantly. When you are nervous, your hands shake. When you are attracted to someone, your pupils dilate. When you are lying, your voice changes. When you are insecure, your posture shifts.
@@ -67,12 +67,12 @@ You are a walking advertisement for your internal state.
 
 We have learned to control these tells. We have trained our bodies to lie as effectively as our minds. We can maintain steady eye contact while fabricating stories. We can keep our voices level while delivering devastating truths. We can appear calm while calculating your destruction.
 
-This is not a superpower—this is a skill. And it is a skill you can learn.
+This is not a superpower, this is a skill. And it is a skill you can learn.
 
 Body Language Drills for the Aspiring Predator:
 The Unblinking Gaze: Practice holding eye contact with yourself in the mirror for increasingly long periods. Start with 30 seconds, then a minute, then five minutes, or however long you can go without burning your eyes. The goal is to become comfortable with sustained, unwavering eye contact, which most people find intensely intimidating. Then, practice on baristas, cashiers, and other low-stakes individuals. Your gaze should be relaxed but focused, a predator calmly observing its prey.
 
-The Posture of Command: Stand with your feet shoulder-width apart, your shoulders back and down, and your head held high. Imagine a string pulling you up from the crown of your head. This is the posture of a predator, not prey. Practice this posture in everyday situations—waiting in line, sitting at your desk, walking down the street. Occupy space. Do not shrink.
+The Posture of Command: Stand with your feet shoulder-width apart, your shoulders back and down, and your head held high. Imagine a string pulling you up from the crown of your head. This is the posture of a predator, not prey. Practice this posture in everyday situations, waiting in line, sitting at your desk, walking down the street. Occupy space. Do not shrink.
 
 The Vocal Cadence of Control: Record yourself speaking and listen to the pitch, pace, and tone of your voice. Do you speak quickly when you're nervous? Does your voice rise at the end of sentences, making statements sound like questions? Practice speaking slowly, deliberately, with a slight downward inflection at the end of sentences. This is the vocal pattern of authority.
 
@@ -87,9 +87,9 @@ The Four Pillars of Cold:
 
 2. Strategic Thinking: Every interaction is evaluated for its potential return on investment. You do not give your time, energy, or attention away for free. Everything has a price, and you know your worth.
 
-3. Controlled Vulnerability: You reveal only what serves your purpose. Your pain, your fears, your insecurities are not conversation starters—they are strategic weapons to be deployed only when they will create the desired effect.
+3. Controlled Vulnerability: You reveal only what serves your purpose. Your pain, your fears, your insecurities are not conversation starters, they are strategic weapons to be deployed only when they will create the desired effect.
 
-4. Calculated Detachment: You can walk away from anyone, at any time, without looking back. This is not cruelty—this is freedom. The moment someone stops adding value to your life, they become expendable.
+4. Calculated Detachment: You can walk away from anyone, at any time, without looking back. This is not cruelty, this is freedom. The moment someone stops adding value to your life, they become expendable.
 
 This is your new operating system. This is how you will approach every relationship, every interaction, every romantic encounter from this moment forward.
 

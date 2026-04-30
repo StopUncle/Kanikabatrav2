@@ -1,5 +1,5 @@
 /**
- * Mission 8-1 — "The Golden Child"
+ * Mission 8-1, "The Golden Child"
  *
  * Level 8, order 1. Narcissistic family dynamics. Your mother runs
  * the classic scapegoat-vs-golden-child split. Sunday dinner has
@@ -18,7 +18,7 @@ const scenes: Scene[] = [
     dialog: [
       {
         speakerId: null,
-        text: "Sunday, 6:03pm. Your mother's dining room. Ren is setting the table — Mom's recipe, Mom's china, Mom's approval in every gesture.",
+        text: "Sunday, 6:03pm. Your mother's dining room. Ren is setting the table. Mom's recipe, Mom's china, Mom's approval in every gesture.",
       },
       {
         speakerId: "mother",
@@ -54,7 +54,7 @@ const scenes: Scene[] = [
       },
       {
         id: "preempt",
-        text: '"Mom — before we start. Are we doing the comparison thing today or not?"',
+        text: '"Mom, before we start. Are we doing the comparison thing today or not?"',
         tactic: "Name the pattern before it runs. High risk, high clarity.",
         nextSceneId: "mother-deflects",
         isOptimal: true,
@@ -191,7 +191,7 @@ const scenes: Scene[] = [
     dialog: [
       {
         speakerId: "mother",
-        text: "\"Oh, that's nice. Ren — what was your new title again?\"",
+        text: "\"Oh, that's nice. Ren, what was your new title again?\"",
         emotion: "neutral",
       },
       {
@@ -335,7 +335,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "inner-voice",
-        text: "'Always' and 'attack' — both lies, both designed to recruit Ren to her side. The crying comes next.",
+        text: "'Always' and 'attack'. Both lies, both designed to recruit Ren to her side. The crying comes next.",
         emotion: "concerned",
       },
     ],
@@ -472,7 +472,7 @@ const scenes: Scene[] = [
       },
       {
         id: "honest-boundary",
-        text: "\"Work's fine — just not something I want to bring to the dinner table tonight.\"",
+        text: "\"Work's fine, just not something I want to bring to the dinner table tonight.\"",
         tactic: "Honest, declines the bait, frames it as a choice about the meal, not about her. Bulletproof.",
         nextSceneId: "ending-grey-rock-held",
         isOptimal: true,
@@ -492,7 +492,7 @@ const scenes: Scene[] = [
     outcomeType: "good",
     endingTitle: "The Engine Stalled",
     endingSummary:
-      "Triangulation needs two participants. Tonight, both children refused. She had no tools — so she talked about landscaping. No fight, no performance, no tears. You and Ren exchanged one look on the way out. That's the start of something you never had.",
+      "Triangulation needs two participants. Tonight, both children refused. She had no tools so she talked about landscaping. No fight, no performance, no tears. You and Ren exchanged one look on the way out. That's the start of something you never had.",
     dialog: [
       {
         speakerId: "inner-voice",
@@ -510,7 +510,7 @@ const scenes: Scene[] = [
     outcomeType: "good",
     endingTitle: "The Flag Planted",
     endingSummary:
-      "You named it. She denied it. Dinner resumed, technically peaceful. But she knows you see. The comparison game won't stop, but it'll become obvious to her when she runs it — and obvious behavior is contestable behavior. You planted a flag. The ground it's planted in is yours now.",
+      "You named it. She denied it. Dinner resumed, technically peaceful. But she knows you see. The comparison game won't stop, but it'll become obvious to her when she runs it and obvious behavior is contestable behavior. You planted a flag. The ground it's planted in is yours now.",
     dialog: [
       {
         speakerId: "inner-voice",
@@ -546,7 +546,7 @@ const scenes: Scene[] = [
     outcomeType: "good",
     endingTitle: "Both Exited",
     endingSummary:
-      "You walked out. Ren came with you. You had coffee at a diner for two hours — the first real conversation you've had as siblings without Mom's scripts running in the background. The dinner she created to maintain the family hierarchy ended empty, with her alone with her performance.",
+      "You walked out. Ren came with you. You had coffee at a diner for two hours, the first real conversation you've had as siblings without Mom's scripts running in the background. The dinner she created to maintain the family hierarchy ended empty, with her alone with her performance.",
     dialog: [
       {
         speakerId: "inner-voice",
@@ -622,7 +622,7 @@ const scenes: Scene[] = [
     failureBlogTitle: "Narcissist Playbook: How They Actually Operate",
     endingTitle: "Retrained",
     endingSummary:
-      "You named the pattern and then apologized for naming it. She just taught you — again — that observing her behavior is the crime, not performing it. Next Sunday she'll run the same script, and you'll stay quieter. By next year you'll be apologizing for being present in the room.",
+      "You named the pattern and then apologized for naming it. She just taught you, again, that observing her behavior is the crime, not performing it. Next Sunday she'll run the same script, and you'll stay quieter. By next year you'll be apologizing for being present in the room.",
     dialog: [
       {
         speakerId: "inner-voice",
@@ -682,7 +682,7 @@ const scenes: Scene[] = [
     failureBlogTitle: "Architecture of Control: How Emotional Dependency Is Built",
     endingTitle: "You Weaponized Ren",
     endingSummary:
-      "Ren held a boundary for themselves. You used it as a club against your mother. Ren pulled back — they don't want to be recruited into your war. Next Sunday they'll side with Mom just to not be your weapon. You isolated yourself by treating an ally as ammunition.",
+      "Ren held a boundary for themselves. You used it as a club against your mother. Ren pulled back, they don't want to be recruited into your war. Next Sunday they'll side with Mom just to not be your weapon. You isolated yourself by treating an ally as ammunition.",
     dialog: [
       {
         speakerId: "inner-voice",
@@ -698,7 +698,7 @@ export const mission81: Scenario = {
   title: "The Golden Child",
   tagline: "The hierarchy runs on your participation.",
   description:
-    "Sunday dinner. Your mother, your sibling Ren, the table you've sat at for twenty-nine years. Golden child. Scapegoat. A comparison rolled in the first two minutes. The machine only works if both children play their parts — tonight, one of you has to refuse.",
+    "Sunday dinner. Your mother, your sibling Ren, the table you've sat at for twenty-nine years. Golden child. Scapegoat. A comparison rolled in the first two minutes. The machine only works if both children play their parts, tonight, one of you has to refuse.",
   tier: "premium",
   level: 8,
   order: 1,

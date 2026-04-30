@@ -1,9 +1,9 @@
 /**
- * Mission 4-1 — "The Smear"
+ * Mission 4-1, "The Smear"
  *
  * Level 4, order 1. Teaches counter-narrative discipline.
  * A rumor is circulating. People have already heard it. The question
- * is not whether to respond — it's HOW and TO WHOM.
+ * is not whether to respond, it's HOW and TO WHOM.
  */
 
 import type { Scenario, Scene } from "../types";
@@ -19,7 +19,7 @@ const scenes: Scene[] = [
     dialog: [
       {
         speakerId: null,
-        text: "Wednesday evening. You are at your desk. Priya rings — not texts, rings. You have not received a voice call from Priya in two months. You pick up on the second ring.",
+        text: "Wednesday evening. You are at your desk. Priya rings, not texts, rings. You have not received a voice call from Priya in two months. You pick up on the second ring.",
       },
       {
         speakerId: "priya",
@@ -28,17 +28,17 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "priya",
-        text: "\"Avery has been saying — in rooms I have been in and in rooms I have not — that you took credit for the coffee-shop collab. Specifically that you pushed her out of it. She is not saying it angry. She is saying it sad, which is the worse version.\"",
+        text: "\"Avery has been saying, in rooms I have been in and in rooms I have not, that you took credit for the coffee-shop collab. Specifically that you pushed her out of it. She is not saying it angry. She is saying it sad, which is the worse version.\"",
         emotion: "concerned",
       },
       {
         speakerId: "inner-voice",
-        text: "Priya called instead of texting because she did not want this on a screen. That is a Priya discipline — messages that could be screenshotted stay off text. Note the practice. You will want to adopt it for your own life over the next decade.",
+        text: "Priya called instead of texting because she did not want this on a screen. That is a Priya discipline, messages that could be screenshotted stay off text. Note the practice. You will want to adopt it for your own life over the next decade.",
         emotion: "knowing",
       },
       {
         speakerId: "inner-voice",
-        text: "Avery is the covert-narcissist archetype — quiet, 'nice,' never raises her voice, never admits to grievance, delivers everything through the sad-victim frame. The collab story is a fabrication, but the fabrication is calibrated to be almost plausible, which is how covert smears work. Name the move. The move is called narrative seeding — plant a small version of a lie in multiple low-stakes rooms, let it grow in each, then appear in the room where it matters as the person who has been hurt by the lie you invented.",
+        text: "Avery is the covert-narcissist archetype, quiet, 'nice,' never raises her voice, never admits to grievance, delivers everything through the sad-victim frame. The collab story is a fabrication, but the fabrication is calibrated to be almost plausible, which is how covert smears work. Name the move. The move is called narrative seeding, plant a small version of a lie in multiple low-stakes rooms, let it grow in each, then appear in the room where it matters as the person who has been hurt by the lie you invented.",
         emotion: "knowing",
       },
       {
@@ -91,7 +91,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "priya",
-        text: '"Morgan already believes it. Dana is pretending to — she believes whatever gets her more information. The cohort people are asking each other. The coffee-shop person has not said anything yet, which is the one I would watch."',
+        text: '"Morgan already believes it. Dana is pretending to, she believes whatever gets her more information. The cohort people are asking each other. The coffee-shop person has not said anything yet, which is the one I would watch."',
       },
       {
         speakerId: "inner-voice",
@@ -100,7 +100,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "inner-voice",
-        text: "Rule: never spend social capital on the believers. They have already purchased their version of you. Rule: never spend it on the pretenders either — they are not running the rumour because they believe it, they are running it because it is trading well. Spend it all on the askers. They are the ones who have not made up their mind, and they are, rather conveniently, the only ones whose minds you can change.",
+        text: "Rule: never spend social capital on the believers. They have already purchased their version of you. Rule: never spend it on the pretenders either, they are not running the rumour because they believe it, they are running it because it is trading well. Spend it all on the askers. They are the ones who have not made up their mind, and they are, rather conveniently, the only ones whose minds you can change.",
         emotion: "knowing",
       },
     ],
@@ -162,7 +162,7 @@ const scenes: Scene[] = [
     dialog: [
       {
         speakerId: null,
-        text: "Over the next two days, you meet three cohort people separately for coffee. Not to 'clear your name' — to ask about their work.",
+        text: "Over the next two days, you meet three cohort people separately for coffee. Not to 'clear your name', to ask about their work.",
       },
       {
         speakerId: null,
@@ -373,7 +373,7 @@ const scenes: Scene[] = [
     failureBlogTitle: "Narcissist Playbook: How They Actually Operate",
     endingTitle: "Two Smears Now",
     endingSummary:
-      "You countered her smear with one about her. Observers now see 'two people trash-talking each other' — and split the difference. Your story is no more credible, and you've become part of the same mess you were trying to rise above.",
+      "You countered her smear with one about her. Observers now see 'two people trash-talking each other' and split the difference. Your story is no more credible, and you've become part of the same mess you were trying to rise above.",
     dialog: [
       {
         speakerId: "inner-voice",
@@ -409,7 +409,7 @@ export const mission41: Scenario = {
   title: "The Smear",
   tagline: "Don't answer a whisper with a megaphone.",
   description:
-    "Avery has been telling people you pushed her out of a collab. It's false and she knows it. The rumor has a week's head start. Who do you talk to first — and what exactly do you say?",
+    "Avery has been telling people you pushed her out of a collab. It's false and she knows it. The rumor has a week's head start. Who do you talk to first and what exactly do you say?",
   tier: "premium",
   level: 4,
   order: 1,

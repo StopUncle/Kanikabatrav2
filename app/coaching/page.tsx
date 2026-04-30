@@ -4,7 +4,7 @@ import JsonLd from "@/components/JsonLd";
 import { SITE_CONFIG } from "@/lib/constants";
 
 export const metadata: Metadata = {
-  title: "Coaching with Kanika Batra — I Tell You What I See",
+  title: "Coaching with Kanika Batra. I Tell You What I See",
   description:
     "1:1 coaching for men and women. Single sessions, intensive programmes, career strategy, or ongoing retainer. No softening, no filtering.",
   keywords:
@@ -13,7 +13,7 @@ export const metadata: Metadata = {
     canonical: `${SITE_CONFIG.url}/coaching`,
   },
   openGraph: {
-    title: "Coaching with Kanika Batra — I Tell You What I See",
+    title: "Coaching with Kanika Batra. I Tell You What I See",
     description:
       "1:1 coaching. No softening, no filtering. Limited spots each month.",
     type: "website",
@@ -37,7 +37,7 @@ const faqSchema = {
       name: "Is Kanika Batra's coaching therapy?",
       acceptedAnswer: {
         "@type": "Answer",
-        text: "No. Kanika is not a licensed therapist and does not treat mental health conditions. This is strategic coaching — she tells you what she sees in a situation and gives you a concrete next move.",
+        text: "No. Kanika is not a licensed therapist and does not treat mental health conditions. This is strategic coaching, she tells you what she sees in a situation and gives you a concrete next move.",
       },
     },
     {
@@ -45,7 +45,7 @@ const faqSchema = {
       name: "What if I don't know what to talk about in a coaching session?",
       acceptedAnswer: {
         "@type": "Answer",
-        text: "The situation that made you look at this page — that's what you talk about. A person, a pattern, a decision you can't make. Bring whatever's keeping you up at night.",
+        text: "The situation that made you look at this page, that's what you talk about. A person, a pattern, a decision you can't make. Bring whatever's keeping you up at night.",
       },
     },
     {
@@ -61,7 +61,7 @@ const faqSchema = {
       name: "What is the refund policy for coaching sessions?",
       acceptedAnswer: {
         "@type": "Answer",
-        text: "If you book and genuinely can't make it, the session can be rescheduled once. No refunds after the session happens — you're paying for time and attention, and you'll get both.",
+        text: "If you book and genuinely can't make it, the session can be rescheduled once. No refunds after the session happens, you're paying for time and attention, and you'll get both.",
       },
     },
     {

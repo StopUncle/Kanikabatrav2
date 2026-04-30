@@ -6,11 +6,11 @@ import { Mail, Check, Loader2, X } from "lucide-react";
 import type { DaughterType } from "@/lib/quiz-daughter-data";
 
 interface DaughterEmailCaptureProps {
-  /** The user's primary daughter type — used to tag the Subscriber for segmentation. */
+  /** The user's primary daughter type, used to tag the Subscriber for segmentation. */
   primaryType: DaughterType;
-  /** Optional secondary type — also tagged. */
+  /** Optional secondary type, also tagged. */
   secondaryType?: DaughterType;
-  /** Compact composite label e.g. "The Hypervigilant" — shown in the headline. */
+  /** Compact composite label e.g. "The Hypervigilant", shown in the headline. */
   primaryProfileName: string;
 }
 
@@ -25,14 +25,14 @@ type State =
 //
 // Design intent: this is NOT a paywall and NOT a friction wall. The user
 // has already received their full free result above this component. The
-// capture is a kind, optional offer — "want this emailed to you so you
+// capture is a kind, optional offer, "want this emailed to you so you
 // can come back to it?" Dismissable. Skippable. The result remains
 // fully visible above whether the user submits or not.
 //
 // Tags the Subscriber with `daughter-quiz` + the user's primary type
 // (e.g. `daughter-type:hypervigilant`) so future email sequences can
 // segment by profile and send tailored follow-ups. Reuses the existing
-// /api/newsletter endpoint — no new API route, no new schema.
+// /api/newsletter endpoint, no new API route, no new schema.
 export default function DaughterEmailCapture({
   primaryType,
   secondaryType,
@@ -62,7 +62,7 @@ export default function DaughterEmailCapture({
             </h3>
             <p className="text-text-gray text-sm leading-relaxed">
               {state.isNew
-                ? "I'll email a copy of this result and a short reading list tailored to your profile within the next few minutes. The Sunday emails after that go to people in this exact niche — no fluff, opt out anytime."
+                ? "I'll email a copy of this result and a short reading list tailored to your profile within the next few minutes. The Sunday emails after that go to people in this exact niche, no fluff, opt out anytime."
                 : "Your existing subscription has been tagged with your daughter-pattern profile, so future emails are calibrated to it. Nothing else changes."}
             </p>
           </div>
@@ -86,7 +86,7 @@ export default function DaughterEmailCapture({
     // Tags carry segmentation signal. `daughter-quiz` flags the source;
     // `daughter-type:<slug>` lets future Mailchimp / Resend campaigns
     // pull the Hypervigilant readers into one segment, the Fawn readers
-    // into another, etc. Secondary type is also tagged because a
+    // into another, etc. secondary type is also tagged because a
     // significant minority of users sit between two profiles.
     const tags = [
       "daughter-quiz",
@@ -125,7 +125,7 @@ export default function DaughterEmailCapture({
       setState({
         kind: "error",
         message:
-          "Couldn't connect. Check your internet and try again — your result is still safe above.",
+          "Couldn't connect. Check your internet and try again, your result is still safe above.",
       });
     }
   };
@@ -138,7 +138,7 @@ export default function DaughterEmailCapture({
         transition={{ duration: 0.5, delay: 0.55 }}
         className="mb-12 p-6 bg-gradient-to-br from-accent-gold/8 to-transparent border border-accent-gold/25 rounded-xl relative"
       >
-        {/* Dismiss — kept small and quiet. The capture is opt-in; the
+        {/* Dismiss, kept small and quiet. The capture is opt-in; the
             dismiss is a one-tap exit so users who don't want to share
             their email don't feel pressured. */}
         <button

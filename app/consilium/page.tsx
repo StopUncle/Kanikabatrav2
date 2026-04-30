@@ -11,7 +11,7 @@ import { catalogueStats } from "@/lib/simulator/stats";
 
 export const metadata = {
   title: "The Consilium | Kanika Batra",
-  description: `Home of the Dark Mirror Simulator — Duolingo for dark psychology. ${catalogueStats.scenarios} branching scenarios, ${catalogueStats.scenes} scenes, ${catalogueStats.tacticsTaught} manipulation tactics to learn to spot. Plus courses, voice notes, and a private community.`,
+  description: `Home of the Dark Mirror Simulator. Duolingo for dark psychology. ${catalogueStats.scenarios} branching scenarios, ${catalogueStats.scenes} scenes, ${catalogueStats.tacticsTaught} manipulation tactics to learn to spot. Plus courses, voice notes, and a private community.`,
 };
 
 export default async function InnerCircleLanding({
@@ -41,23 +41,23 @@ export default async function InnerCircleLanding({
     {
       heading: "Practice",
       items: [
-        `The Dark Mirror Simulator — ${catalogueStats.scenarios} branching scenarios across ${catalogueStats.tracks} tracks, ${catalogueStats.tacticsTaught} manipulation tactics to learn to spot`,
+        `The Dark Mirror Simulator, ${catalogueStats.scenarios} branching scenarios across ${catalogueStats.tracks} tracks, ${catalogueStats.tacticsTaught} manipulation tactics to learn to spot`,
         "New scenarios, courses, and content added regularly",
       ],
     },
     {
       heading: "Access",
       items: [
-        "Full course library — dark psychology, pattern recognition, career strategy",
-        "Voice notes from Kanika — raw insights you won't hear anywhere else",
-        "Member-exclusive pricing on the Sociopathic Dating Bible — $9.99 (normally $24.99)",
+        "Full course library, dark psychology, pattern recognition, career strategy",
+        "Voice notes from Kanika, raw insights you won't hear anywhere else",
+        "Member-exclusive pricing on the Sociopathic Dating Bible, $9.99 (normally $24.99)",
       ],
     },
     {
       heading: "People",
       items: [
-        "Community feed — daily insights, discussion prompts, and posts from Kanika",
-        "Forum and live chat — connect with members who see what you see",
+        "Community feed, daily insights, discussion prompts, and posts from Kanika",
+        "Forum and live chat, connect with members who see what you see",
       ],
     },
   ];
@@ -66,7 +66,7 @@ export default async function InnerCircleLanding({
     <>
       <BackgroundEffects />
       <Header />
-      {/* div, not main — the root layout already wraps children in a
+      {/* div, not main, the root layout already wraps children in a
           single <main>; a nested <main> here creates two "main content"
           landmarks which confuses assistive tech. */}
       <div className="min-h-screen pt-28 pb-16 relative z-10">
@@ -95,18 +95,18 @@ export default async function InnerCircleLanding({
             </div>
           )}
 
-          {/* Hero — 2-column on tablet+: animated seal on the left,
+          {/* Hero, 2-column on tablet+: animated seal on the left,
               eyebrow + H1 + pitch + CTA on the right. On mobile the
               two columns stack with the seal above the text. Mirrors
               BookShowcase's layout shape so the two pillar pages feel
               built from the same template. */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 lg:gap-16 items-center mb-20">
-            {/* LEFT — animated seal as the section anchor */}
+            {/* LEFT, animated seal as the section anchor */}
             <div className="flex justify-center order-1">
               <FloatingConsiliumSeal frameSize="w-64 h-64 sm:w-72 sm:h-72 md:w-80 md:h-80 lg:w-96 lg:h-96" sealSize="!w-36 !h-36 sm:!w-44 sm:!h-44 lg:!w-56 lg:!h-56" />
             </div>
 
-            {/* RIGHT — full pitch column */}
+            {/* RIGHT, full pitch column */}
             <div className="text-center md:text-left order-2">
               <p className="text-warm-gold/90 uppercase tracking-[0.3em] text-xs sm:text-sm mb-4">
                 Private Community · Membership
@@ -139,7 +139,7 @@ export default async function InnerCircleLanding({
                   href="/consilium/apply"
                   className="inline-flex items-center justify-center gap-2 py-4 px-10 rounded-full bg-warm-gold text-deep-black font-medium text-base tracking-wider uppercase transition-all hover:bg-warm-gold/90 hover:shadow-[0_8px_24px_-4px_rgba(212,175,55,0.45)]"
                 >
-                  Join the Community — $29/month
+                  Join the Community, $29/month
                   <ArrowRight size={18} />
                 </Link>
               </div>
@@ -150,21 +150,21 @@ export default async function InnerCircleLanding({
             </div>
           </div>
 
-          {/* Concrete feature blocks — replaces the 6-card icon grid
+          {/* Concrete feature blocks, replaces the 6-card icon grid
               (which read as AI-template) with the same checkmark-and-
               accent-bar pattern the BookShowcase uses. Real numbers,
               specific verbs, no decorative icons-in-circles. The
-              Sociopathic Dating Bible is sold separately — members get
+              Sociopathic Dating Bible is sold separately, members get
               it at the discounted $9.99, but the book is not bundled. */}
           <div className="max-w-3xl mx-auto space-y-3 mb-20">
             {[
               `${catalogueStats.scenarios} branching scenarios across ${catalogueStats.tracks} tracks. ${catalogueStats.scenes} scenes. ${catalogueStats.tacticsTaught} manipulation tactics. ${catalogueStats.redFlagsTaught} red flags catalogued.`,
-              "Ask Kanika — submit one question per day, top-voted get answered by voice or video in your feed",
+              "Ask Kanika, submit one question per day, top-voted get answered by voice or video in your feed",
               "60 daily psychology drops + 28 themed weekday discussion prompts in your community feed",
-              "Voice notes from Kanika — raw, unfiltered, dropped when something needs to be said",
-              "Forum, live chat, daily insights — connect with members navigating the same patterns",
+              "Voice notes from Kanika, raw, unfiltered, dropped when something needs to be said",
+              "Forum, live chat, daily insights, connect with members navigating the same patterns",
               "Every comment human-reviewed. Bad actors removed fast. Troll-free by design",
-              "Want the book? Members get the Sociopathic Dating Bible at $9.99 (normally $24.99) — separate purchase",
+              "Want the book? Members get the Sociopathic Dating Bible at $9.99 (normally $24.99), separate purchase",
             ].map((feature, index) => (
               <div
                 key={index}
@@ -179,7 +179,7 @@ export default async function InnerCircleLanding({
             ))}
           </div>
 
-          {/* Dedicated simulator section — the Consilium's strongest
+          {/* Dedicated simulator section, the Consilium's strongest
               differentiator. Shared with the homepage via the teaser
               component; "landing" variant gives a single Step-Inside
               CTA. The teaser handles its own section padding, so the
@@ -189,7 +189,7 @@ export default async function InnerCircleLanding({
             <ConsiliumSimulatorTeaser variant="landing" />
           </div>
 
-          {/* Testimonial — short, real, mirrors the BookShowcase's
+          {/* Testimonial, short, real, mirrors the BookShowcase's
               "Sarah K." pull-quote. Same line as the homepage so cross-
               page voice stays consistent. */}
           <div className="max-w-2xl mx-auto mb-20">
@@ -198,7 +198,7 @@ export default async function InnerCircleLanding({
                 &ldquo;Life changing.&rdquo;
               </p>
               <p className="text-warm-gold text-sm mt-3 uppercase tracking-[0.3em] font-light">
-                — Inner Circle member
+               . Inner Circle member
               </p>
             </div>
           </div>
@@ -206,7 +206,7 @@ export default async function InnerCircleLanding({
           {/* What's Inside.
               Restructured from a flat 7-bullet checklist into three
               themed chapters (Practice / Access / People) so the card
-              reads as a promise with shape — not another SaaS feature
+              reads as a promise with shape, not another SaaS feature
               table. Each chapter gets a small uppercase label and its
               own small space-y-2 stack of bullet rows; the gold
               checkmark is replaced by a subtle warm-gold left accent
@@ -214,7 +214,7 @@ export default async function InnerCircleLanding({
               it reads "seven bullets". Calmer, easier to scan. */}
           <div className="mb-20">
             {/* Section heading. Previously "EVERYTHING INCLUDED" eyebrow
-                + "WHAT'S INSIDE" H2 — two uppercase tracked lines doing
+                + "WHAT'S INSIDE" H2, two uppercase tracked lines doing
                 the same job. The H2 alone is enough; the three-chapter
                 labels inside (PRACTICE / ACCESS / PEOPLE) provide the
                 structural signposts. */}
@@ -259,7 +259,7 @@ export default async function InnerCircleLanding({
               {/* All three cells share the same box model (border + py-2)
                   so their prices share a baseline. Cells 1-2 get a
                   transparent border that reserves the same 1px of space
-                  the highlighted $29 cell uses — without this, the
+                  the highlighted $29 cell uses, without this, the
                   highlighted cell sits 9px lower than the other two
                   because its border+padding expands its box. */}
               <div className="grid grid-cols-3 gap-4 mb-8 max-w-md mx-auto">
@@ -299,12 +299,12 @@ export default async function InnerCircleLanding({
           {/* Closing section.
               Previously two orphaned grey body lines hanging after the
               $29 pricing card ("Want direct 1:1 access?" and "Have
-              questions?"). A weak ending — the page asked for the
+              questions?"). A weak ending, the page asked for the
               close three times then trailed off. Consolidated into one
               quiet closing card that offers the two alternate paths
               (coaching, contact) side-by-side so the page ends on a
               deliberate note rather than a whisper. Kept uncommercial
-              — no third CTA button; these are *alternatives* for
+             , no third CTA button; these are *alternatives* for
               visitors who don't want to join, not conversion paths. */}
           <div className="mb-4">
             <div className="max-w-2xl mx-auto text-center px-6 py-8 border-t border-warm-gold/10">

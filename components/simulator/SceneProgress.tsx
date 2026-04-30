@@ -7,7 +7,7 @@ import type { Scenario, SimulatorState } from "@/lib/simulator/types";
  * choices have been made in the current run, as dim gold dots. Hidden
  * when the scenario has zero choice points (unusual).
  *
- * Doesn't reveal the total scene count — we don't want the player to
+ * Doesn't reveal the total scene count, we don't want the player to
  * feel the scenario's "length." Just that they've advanced.
  */
 export default function SceneProgress({

@@ -372,7 +372,7 @@ function FingerprintLookup() {
           type="text"
           value={sid}
           onChange={(e) => setSid(e.target.value)}
-          placeholder="e.g. a1b2c3d4"
+          placeholder="e.g. A1b2c3d4"
           maxLength={16}
           className="flex-1 min-w-[180px] bg-white/[0.03] border border-white/10 rounded px-4 py-2.5 text-text-light text-sm font-mono tracking-wider focus:border-accent-gold/40 focus:outline-none transition-colors"
         />
@@ -391,7 +391,7 @@ function FingerprintLookup() {
       )}
       {noMatch && (
         <p className="mt-3 text-xs text-text-gray">
-          No member matches that SID. Check the characters — it&apos;s case-insensitive, 8 hex chars.
+          No member matches that SID. Check the characters, it&apos;s case-insensitive, 8 hex chars.
         </p>
       )}
       {match && (

@@ -20,7 +20,7 @@ function getJwtSecret(): string {
 interface ResetTokenPayload {
   userId: string;
   type: string;
-  v?: number; // tokenVersion at issue time — used to invalidate after reset
+  v?: number; // tokenVersion at issue time, used to invalidate after reset
   iat: number;
   exp: number;
 }

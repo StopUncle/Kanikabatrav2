@@ -1,11 +1,11 @@
 /**
- * GET /api/simulator/scenarios — catalog view for the scenario list page.
+ * GET /api/simulator/scenarios, catalog view for the scenario list page.
  *
  * Returns metadata only (no scene content) to keep the payload small.
  * Includes per-scenario completion status for the current user so the list
  * can render "new", "in progress", or "completed" chips.
  *
- * NOTE: this endpoint does NOT enforce Consilium membership — auth alone is
+ * NOTE: this endpoint does NOT enforce Consilium membership, auth alone is
  * enough to LIST. The /consilium/simulator page does the membership check
  * at layout level. If you add a non-member mode later, this is still safe.
  */

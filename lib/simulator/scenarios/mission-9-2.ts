@@ -1,8 +1,8 @@
 /**
- * Mission 9-2 — "The Counter-Campaign"
+ * Mission 9-2, "The Counter-Campaign"
  *
  * Level 9, order 2. VIP tier.
- * Aria escalates — a direct public attack after months of covert
+ * Aria escalates, a direct public attack after months of covert
  * work. The senior role is three weeks out. This is the endgame of
  * the long game. Every move is visible.
  *
@@ -21,7 +21,7 @@ import { ARIA, KAYA, INNER_VOICE } from "../characters";
 
 const scenes: Scene[] = [
   // ===================================================================
-  // ACT 1 — the panel, the pivot, the moment your phone goes still
+  // ACT 1, the panel, the pivot, the moment your phone goes still
   // ===================================================================
 
   {
@@ -36,11 +36,11 @@ const scenes: Scene[] = [
       },
       {
         speakerId: null,
-        text: "Aria is on stage in the third chair. The moderator just asked a generic question about leadership. Aria pauses three beats too long before answering — the kind of pause that means the answer was prepared and the question was the door.",
+        text: "Aria is on stage in the third chair. The moderator just asked a generic question about leadership. Aria pauses three beats too long before answering, the kind of pause that means the answer was prepared and the question was the door.",
       },
       {
         speakerId: "aria",
-        text: '"...and I\'ll just say — I\'ve seen what happens when leadership is claimed rather than earned. It looks like confident presentations and quiet damage."',
+        text: '"...and I\'ll just say. I\'ve seen what happens when leadership is claimed rather than earned. It looks like confident presentations and quiet damage."',
         emotion: "cold",
       },
       {
@@ -95,7 +95,7 @@ const scenes: Scene[] = [
   },
 
   // ===================================================================
-  // ACT 2A — STAND AND RESPOND (the trap path)
+  // ACT 2A. STAND AND RESPOND (the trap path)
   // ===================================================================
 
   {
@@ -115,7 +115,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: null,
-        text: "The line lands. Two scattered laughs from the back rows. Even the moderator's smile is tight — she's calculating whether to intervene or let it run, and she lets it run.",
+        text: "The line lands. Two scattered laughs from the back rows. Even the moderator's smile is tight, she's calculating whether to intervene or let it run, and she lets it run.",
       },
       {
         speakerId: null,
@@ -123,7 +123,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "inner-voice",
-        text: "She just got what she wanted. You're now in a public exchange on her chosen topic. The polite frame is the worst frame — it lets the implication travel freely under the cover of professionalism.",
+        text: "She just got what she wanted. You're now in a public exchange on her chosen topic. The polite frame is the worst frame, it lets the implication travel freely under the cover of professionalism.",
         emotion: "concerned",
       },
     ],
@@ -131,7 +131,7 @@ const scenes: Scene[] = [
   },
 
   // ===================================================================
-  // ACT 2B — STAY SEATED (optimal path)
+  // ACT 2B. STAY SEATED (optimal path)
   // ===================================================================
 
   {
@@ -141,7 +141,7 @@ const scenes: Scene[] = [
     dialog: [
       {
         speakerId: null,
-        text: "You don't move. You write something in your notebook — anything, your own to-do list, doesn't matter — so the body language reads 'taking notes' instead of 'frozen'.",
+        text: "You don't move. You write something in your notebook, anything, your own to-do list, doesn't matter so the body language reads 'taking notes' instead of 'frozen'.",
       },
       {
         speakerId: null,
@@ -163,7 +163,7 @@ const scenes: Scene[] = [
     dialog: [
       {
         speakerId: null,
-        text: "Coffee break. The hall empties into the foyer. Three people come up to you in five minutes — different people, same opening sentence: 'that was weird, right?' The audience clocked the pivot.",
+        text: "Coffee break. The hall empties into the foyer. Three people come up to you in five minutes. Different people, same opening sentence: 'that was weird, right?' The audience clocked the pivot.",
       },
       {
         speakerId: null,
@@ -176,7 +176,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "inner-voice",
-        text: "She's saying the test is the response, not the attack. The role is three weeks out. You have one major move and a handful of small ones available — pick which is the major.",
+        text: "She's saying the test is the response, not the attack. The role is three weeks out. You have one major move and a handful of small ones available, pick which is the major.",
         emotion: "knowing",
       },
     ],
@@ -223,7 +223,7 @@ const scenes: Scene[] = [
     dialog: [
       {
         speakerId: null,
-        text: "Tuesday. Twenty minutes with the committee chair. No ask, no complaint. A specific walk-through of two wins from the last six months — the names of the clients, the numbers, the one decision in each that wasn't obvious.",
+        text: "Tuesday. Twenty minutes with the committee chair. No ask, no complaint. A specific walk-through of two wins from the last six months, the names of the clients, the numbers, the one decision in each that wasn't obvious.",
       },
       {
         speakerId: null,
@@ -246,7 +246,7 @@ const scenes: Scene[] = [
       },
       {
         id: "acknowledge-elephant",
-        text: '"I know you probably heard the panel. I\'m not going to address it — I just wanted to show you the actual work."',
+        text: '"I know you probably heard the panel. I\'m not going to address it. I just wanted to show you the actual work."',
         tactic: "Addresses and dismisses in one breath. Clean.",
         nextSceneId: "ending-chair-convinced",
         isOptimal: true,
@@ -273,16 +273,16 @@ const scenes: Scene[] = [
       },
       {
         speakerId: null,
-        text: "Two of the three responses were unimpressed — one of them politely asked if she was talking about you and changed the subject when she wouldn't say. The third laughed awkwardly and left the conversation a minute later.",
+        text: "Two of the three responses were unimpressed, one of them politely asked if she was talking about you and changed the subject when she wouldn't say. The third laughed awkwardly and left the conversation a minute later.",
       },
       {
         speakerId: "inner-voice",
-        text: "Her post-game was weaker than her on-stage. The trap she set didn't feed her the reaction she needed. The audience filled in the gap with their own read — and it wasn't the read she wanted.",
+        text: "Her post-game was weaker than her on-stage. The trap she set didn't feed her the reaction she needed. The audience filled in the gap with their own read and it wasn't the read she wanted.",
         emotion: "knowing",
       },
       {
         speakerId: "inner-voice",
-        text: "Now you know what story is actually circulating. The hiring meeting can be calibrated against that — you're not preempting a smear, you're confirming a pattern the chair has probably already noticed.",
+        text: "Now you know what story is actually circulating. The hiring meeting can be calibrated against that, you're not preempting a smear, you're confirming a pattern the chair has probably already noticed.",
         emotion: "knowing",
       },
     ],
@@ -305,7 +305,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "inner-voice",
-        text: "Result: the committee has a fresh, specific, undeniable datapoint sitting in their inbox the morning they read your file. Aria's 'confident presentations and quiet damage' line now sounds exactly like bitterness — because the alternative explanation is sitting in front of them with a date stamp.",
+        text: "Result: the committee has a fresh, specific, undeniable datapoint sitting in their inbox the morning they read your file. Aria's 'confident presentations and quiet damage' line now sounds exactly like bitterness, because the alternative explanation is sitting in front of them with a date stamp.",
         emotion: "knowing",
       },
     ],
@@ -324,7 +324,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: null,
-        text: "By the next morning the post has 47 reactions and 12 comments. The comments are split — some agree, some are 'who is this about', two are people who used to be in your camp politely asking you to delete it.",
+        text: "By the next morning the post has 47 reactions and 12 comments. The comments are split, some agree, some are 'who is this about', two are people who used to be in your camp politely asking you to delete it.",
       },
       {
         speakerId: null,
@@ -332,7 +332,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "inner-voice",
-        text: "Descending to her level cost you the height. The advantage you spent six months building — being the one who hadn't engaged — was spent on a single post in nine minutes.",
+        text: "Descending to her level cost you the height. The advantage you spent six months building, being the one who hadn't engaged, was spent on a single post in nine minutes.",
         emotion: "sad",
       },
     ],
@@ -340,7 +340,7 @@ const scenes: Scene[] = [
   },
 
   // ===================================================================
-  // ACT 2C — WALK OUT
+  // ACT 2C. WALK OUT
   // ===================================================================
 
   {
@@ -358,7 +358,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "inner-voice",
-        text: "You wanted to read as composed absence. The room read it as 'they couldn't take it.' Your exit became the second act of her line — the visible damage, on schedule.",
+        text: "You wanted to read as composed absence. The room read it as 'they couldn't take it.' Your exit became the second act of her line, the visible damage, on schedule.",
         emotion: "sad",
       },
     ],
@@ -366,7 +366,7 @@ const scenes: Scene[] = [
   },
 
   // ===================================================================
-  // ACT 2D — TWEET REAL TIME
+  // ACT 2D. TWEET REAL TIME
   // ===================================================================
 
   {
@@ -425,7 +425,7 @@ const scenes: Scene[] = [
     outcomeType: "good",
     endingTitle: "The Work Closed It",
     endingSummary:
-      "You shipped the biggest project of the year the day before the committee met. The result was front-page for your industry. Aria's panel line is now a joke in two different group chats. The senior role is yours — not because you defeated her, but because you made her attacks obsolete.",
+      "You shipped the biggest project of the year the day before the committee met. The result was front-page for your industry. Aria's panel line is now a joke in two different group chats. The senior role is yours, not because you defeated her, but because you made her attacks obsolete.",
     dialog: [
       {
         speakerId: "inner-voice",
@@ -465,11 +465,11 @@ const scenes: Scene[] = [
     failureBlogTitle: "The Permanent Ghost Protocol",
     endingTitle: "Dramatic Exit",
     endingSummary:
-      "You walked out visibly. The room talked about it for days — but not the way you hoped. The story became 'they couldn't handle the panel.' Aria's 'confident presentations and quiet damage' now has an opening act.",
+      "You walked out visibly. The room talked about it for days but not the way you hoped. The story became 'they couldn't handle the panel.' Aria's 'confident presentations and quiet damage' now has an opening act.",
     dialog: [
       {
         speakerId: "inner-voice",
-        text: "Composed absence is one thing. Visible exit is a second story — hers.",
+        text: "Composed absence is one thing. Visible exit is a second story, hers.",
         emotion: "sad",
       },
     ],
@@ -505,7 +505,7 @@ const scenes: Scene[] = [
     failureBlogTitle: "Architecture of Control: How Emotional Dependency Is Built",
     endingTitle: "Equated",
     endingSummary:
-      "Your LinkedIn subtweet about 'classy opponents' landed as passive aggression. The community equated the two of you — 'both of them are petty now.' You lost the one advantage you had: being seen as the one who hadn't descended.",
+      "Your LinkedIn subtweet about 'classy opponents' landed as passive aggression. The community equated the two of you, 'both of them are petty now.' You lost the one advantage you had: being seen as the one who hadn't descended.",
     dialog: [
       {
         speakerId: "inner-voice",
@@ -525,7 +525,7 @@ const scenes: Scene[] = [
     failureBlogTitle: "The Permanent Ghost Protocol",
     endingTitle: "Meeting Wasted",
     endingSummary:
-      "You used your twenty minutes with the committee chair to defend against Aria's claims. The chair now thinks of you as the defensive one — reinforcing her core accusation that you have 'quiet damage' in the way you respond to pressure. You handed her the meeting.",
+      "You used your twenty minutes with the committee chair to defend against Aria's claims. The chair now thinks of you as the defensive one, reinforcing her core accusation that you have 'quiet damage' in the way you respond to pressure. You handed her the meeting.",
     dialog: [
       {
         speakerId: "inner-voice",
@@ -541,7 +541,7 @@ export const mission92: Scenario = {
   title: "The Counter-Campaign",
   tagline: "Three weeks. Public attack. Senior role at stake.",
   description:
-    "Industry panel, 200 people. Aria attacks from the stage — implications, not accusations. The senior role decision is three weeks out. Every move is now visible. This is the endgame of the long game.",
+    "Industry panel, 200 people. Aria attacks from the stage, implications, not accusations. The senior role decision is three weeks out. Every move is now visible. This is the endgame of the long game.",
   tier: "vip",
   level: 9,
   order: 2,

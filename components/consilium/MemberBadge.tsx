@@ -1,11 +1,11 @@
 "use client";
 
 /**
- * MemberBadge — the 12-tier tenure badge for Consilium members.
+ * MemberBadge, the 12-tier tenure badge for Consilium members.
  *
  * Members earn a new tier every month they stay active, capped at
  * tier 12 (Queen) after a full year. Tenure is calculated from the
- * CommunityMembership.activatedAt timestamp — see `tierFromMonths()`
+ * CommunityMembership.activatedAt timestamp, see `tierFromMonths()`
  * in `./badge-tiers` for the mapping.
  *
  * Design language: all badges share the same core structure (circular
@@ -76,7 +76,7 @@ export default function MemberBadge({
   const d = SIZE_MAP[size];
   const isQueen = tier === 12;
 
-  // Feature flags — drives progressive complexity
+  // Feature flags, drives progressive complexity
   const showCardinals = tier >= 3;
   const showLaurels = tier >= 5;
   const showGems = tier >= 7;
@@ -87,7 +87,7 @@ export default function MemberBadge({
   // Unique gradient ids per INSTANCE. SVG <defs> IDs are document-global
   // (fill="url(#id)" resolves across the whole page, not within a single
   // <svg>), so two MemberBadges with the same tier would collide and
-  // render as untinted / invisible in most browsers. useId() is SSR-
+  // render as untinted / invisible in most browsers. UseId() is SSR-
   // safe and gives each mounted instance its own stable id.
   const uid = useId().replace(/:/g, "");
   const gradId = `mb-metal-${uid}`;
@@ -100,7 +100,7 @@ export default function MemberBadge({
         width={d}
         height={d}
         viewBox="0 0 120 120"
-        aria-label={`${badge.name} badge — ${badge.monthLabel}`}
+        aria-label={`${badge.name} badge, ${badge.monthLabel}`}
       >
         <defs>
           <linearGradient id={gradId} x1="0" y1="0" x2="1" y2="1">
@@ -227,7 +227,7 @@ export default function MemberBadge({
   );
 }
 
-// Roman numerals get narrower as they get longer — shrink VIII/XII so
+// Roman numerals get narrower as they get longer, shrink VIII/XII so
 // they don't overflow the seal.
 function numeralSize(numeral: string): number {
   if (numeral.length >= 4) return 28; // VIII
@@ -281,7 +281,7 @@ function Gemstones({ fill }: { fill: string }) {
 }
 
 function CornerFlourishes({ fill }: { fill: string }) {
-  // Small decorative strokes at the 4 diagonals — read as scrollwork.
+  // Small decorative strokes at the 4 diagonals, read as scrollwork.
   return (
     <g fill="none" stroke={fill} strokeWidth="0.9" opacity="0.7" strokeLinecap="round">
       <path d="M 21 21 Q 28 22 28 28" />

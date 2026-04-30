@@ -17,7 +17,7 @@ import { X } from "lucide-react";
  *   3. Only injects the GA scripts after the user clicks Accept
  *   4. Persists the choice so the banner doesn't reappear
  *
- * The banner is client-only on purpose — it needs localStorage, and we
+ * The banner is client-only on purpose, it needs localStorage, and we
  * don't want to flash it to returning visitors who've already decided.
  */
 
@@ -33,7 +33,7 @@ function readConsent(): ConsentState {
     if (raw === "accepted" || raw === "rejected") return raw;
     return "undecided";
   } catch {
-    // localStorage can throw on private-mode Safari etc. — treat as undecided.
+    // localStorage can throw on private-mode Safari etc., treat as undecided.
     return "undecided";
   }
 }
@@ -42,7 +42,7 @@ function writeConsent(state: "accepted" | "rejected") {
   try {
     localStorage.setItem(STORAGE_KEY, state);
   } catch {
-    // Ignore — banner will reappear next visit in this edge case.
+    // Ignore, banner will reappear next visit in this edge case.
   }
 }
 
@@ -65,7 +65,7 @@ export default function CookieConsent() {
     setConsent("rejected");
   };
 
-  // Never render anything until mount — avoids SSR/hydration mismatch
+  // Never render anything until mount, avoids SSR/hydration mismatch
   // (the server has no way to know the consent state).
   if (!mounted) return null;
 

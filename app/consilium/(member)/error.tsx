@@ -7,7 +7,7 @@ import { AlertTriangle, RotateCcw } from "lucide-react";
 /**
  * Error boundary for every /consilium/(member)/* page. Without this,
  * a thrown error inside a server component renders the default
- * unstyled Next.js error page — embarrassing and off-brand.
+ * unstyled Next.js error page, embarrassing and off-brand.
  *
  * The user can either retry (re-runs the server component) or bail
  * back to the feed.
@@ -20,7 +20,7 @@ export default function MemberError({
   reset: () => void;
 }) {
   useEffect(() => {
-    // Log to the browser console at least — Sentry (when configured)
+    // Log to the browser console at least. Sentry (when configured)
     // auto-captures errors from error boundaries.
     console.error("[consilium/member] boundary caught:", error);
   }, [error]);
@@ -40,7 +40,7 @@ export default function MemberError({
           This page hit an error
         </h1>
         <p className="text-text-gray text-sm font-light leading-relaxed mb-6">
-          We logged it. Try the button below — most of the time it&apos;s a
+          We logged it. Try the button below. Most of the time it&apos;s a
           transient hiccup and one retry fixes it. If not, bail to the feed
           and the rest of the Consilium still works.&nbsp;
         </p>

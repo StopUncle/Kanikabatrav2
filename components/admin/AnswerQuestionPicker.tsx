@@ -12,7 +12,7 @@ type PickableQuestion = {
 };
 
 interface Props {
-  /** Currently selected questionId (controlled). null = "doesn't answer a question". */
+  /** Currently selected questionId (controlled). Null = "doesn't answer a question". */
   value: string | null;
   onChange: (questionId: string | null) => void;
   disabled?: boolean;
@@ -26,7 +26,7 @@ interface Props {
  * the soon-to-be-created FeedPost as the answer when the parent calls
  * PATCH /api/admin/questions/[id] post-publish.
  *
- * Optional — Kanika can publish a voice note that doesn't answer any
+ * Optional. Kanika can publish a voice note that doesn't answer any
  * specific question (general content). In that case `value` stays null
  * and no PATCH is fired.
  */

@@ -2,7 +2,7 @@ import Link from "next/link";
 import { Compass, ArrowRight } from "lucide-react";
 
 /**
- * 404 for /consilium/(member)/* — a deleted post, a mistyped URL, a
+ * 404 for /consilium/(member)/*, a deleted post, a mistyped URL, a
  * forum thread that was removed. Points the member back at the feed
  * rather than the default "Page not found" wall.
  */
@@ -22,7 +22,7 @@ export default function MemberNotFound() {
           This page doesn&apos;t exist
         </h1>
         <p className="text-text-gray text-sm font-light leading-relaxed mb-6">
-          Deleted, moved, or a bad link. Nothing broken — just nothing here.
+          Deleted, moved, or a bad link. Nothing broken, just nothing here.
         </p>
         <Link
           href="/consilium/feed"

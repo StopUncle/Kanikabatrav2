@@ -81,7 +81,7 @@ export async function POST(request: NextRequest) {
             /* non-critical */
           }
         } else if (productId === PAYHIP_PRODUCTS.QUIZ) {
-          // Quiz unlock — find the most recent unpaid quiz result for this email
+          // Quiz unlock, find the most recent unpaid quiz result for this email
           const quizResult = await prisma.quizResult.findFirst({
             where: { email, paid: false },
             orderBy: { createdAt: "desc" },

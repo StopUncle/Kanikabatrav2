@@ -45,7 +45,7 @@ const TIERS = [
 ] as const;
 
 const PLACEMENTS = [
-  { id: "HOOK", label: "Hook", blurb: "0–3s opener — loop opens itself" },
+  { id: "HOOK", label: "Hook", blurb: "0–3s opener, loop opens itself" },
   { id: "TAIL", label: "Tail", blurb: "55–60s rewatch trigger" },
   { id: "DEEPENING", label: "Deepening", blurb: "30–45s parasocial dimension" },
 ] as const;
@@ -276,7 +276,7 @@ export default function ConfessionsTab() {
           <textarea
             value={newText}
             onChange={(e) => setNewText(e.target.value)}
-            placeholder="The line, in its rawest form. End on the sharpest word — no apology, no softening."
+            placeholder="The line, in its rawest form. End on the sharpest word, no apology, no softening."
             rows={2}
             className="w-full bg-white/[0.03] border border-white/10 rounded-lg px-3 py-2.5 text-sm text-text-light placeholder-text-gray/40 focus:border-accent-gold/30 focus:outline-none resize-none"
           />
@@ -359,7 +359,7 @@ export default function ConfessionsTab() {
           <textarea
             value={newNotes}
             onChange={(e) => setNewNotes(e.target.value)}
-            placeholder="Optional notes — context, derivation, when not to use, etc."
+            placeholder="Optional notes, context, derivation, when not to use, etc."
             rows={2}
             className="w-full bg-white/[0.03] border border-white/10 rounded-lg px-3 py-2 text-xs text-text-gray placeholder-text-gray/40 focus:border-accent-gold/30 focus:outline-none resize-none"
           />

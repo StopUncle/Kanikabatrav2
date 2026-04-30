@@ -1,5 +1,5 @@
 /**
- * KanikaroseLogo — the primary brand mark for kanikarose.com.
+ * KanikaroseLogo, the primary brand mark for kanikarose.com.
  *
  * Design V1 (approved 2026-04-16):
  *   [dense star-field constellation]  |  KANIKAROSE
@@ -10,7 +10,7 @@
  *
  * - `size` scales the whole lockup: sm/md/lg/xl.
  * - `iconOnly` drops the divider + wordmark (for favicons, tight spaces).
- * - `animate` enables staggered star twinkle — for loading states.
+ * - `animate` enables staggered star twinkle, for loading states.
  *
  * The animation is pure CSS keyframes on individual SVG circles —
  * zero JS, GPU-accelerated via opacity/transform. Safe to render in
@@ -32,7 +32,7 @@ interface KanikaroseLogoProps {
   className?: string;
 }
 
-// Size table — icon diameter, wordmark font-size, divider height, gap.
+// Size table, icon diameter, wordmark font-size, divider height, gap.
 const SIZES = {
   sm: { icon: 28, wordmark: 12, divider: 22, gap: 8, wmLetterSpacing: "0.22em" },
   md: { icon: 40, wordmark: 16, divider: 30, gap: 12, wmLetterSpacing: "0.24em" },
@@ -41,7 +41,7 @@ const SIZES = {
 } as const;
 
 // The 12 stars of the dense field. [x, y, radius]. The two "bright anchors"
-// are the larger ones at index 1 and 7 — those are what the eye locks onto.
+// are the larger ones at index 1 and 7. Those are what the eye locks onto.
 const STARS: Array<[number, number, number]> = [
   [22, 18, 1.2],
   [44, 26, 2.5], // bright anchor
@@ -81,7 +81,7 @@ export default function KanikaroseLogo({
       style={{ gap: s.gap }}
       aria-label="Kanikarose"
     >
-      {/* Animation keyframes — inlined so the component is self-contained
+      {/* Animation keyframes, inlined so the component is self-contained
           and works in server components. Scoped via a unique class prefix. */}
       {animate && (
         <style>{`
@@ -112,7 +112,7 @@ export default function KanikaroseLogo({
           </linearGradient>
         </defs>
 
-        {/* Connecting lines — dim so the stars lead */}
+        {/* Connecting lines, dim so the stars lead */}
         <g
           stroke={`url(#kr-gold-${size})`}
           strokeWidth="0.7"
@@ -129,7 +129,7 @@ export default function KanikaroseLogo({
           ))}
         </g>
 
-        {/* Stars — twinkle with staggered delays when animated */}
+        {/* Stars, twinkle with staggered delays when animated */}
         <g fill={`url(#kr-gold-${size})`}>
           {STARS.map(([x, y, r], i) => (
             <circle
@@ -149,7 +149,7 @@ export default function KanikaroseLogo({
         </g>
       </svg>
 
-      {/* Divider + wordmark — suppressed in iconOnly mode */}
+      {/* Divider + wordmark, suppressed in iconOnly mode */}
       {!iconOnly && (
         <>
           <span

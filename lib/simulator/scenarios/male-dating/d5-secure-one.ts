@@ -1,5 +1,5 @@
 /**
- * Dating Line — Mission 5 "The Secure One" (ENDGAME)
+ * Dating Line. Mission 5 "The Secure One" (ENDGAME)
  *
  * Teaches: re-wiring attraction from chaos to health. The difference
  * between "boring" and "peaceful". Why trauma-bonded men misread
@@ -23,7 +23,7 @@ import { NOOR, COLE, LIV, INNER_VOICE_M } from "../../characters-male";
 
 const scenes: Scene[] = [
   // ---------------------------------------------------------------------
-  // PART 1 — the date that didn't feel like a date
+  // PART 1, the date that didn't feel like a date
   // ---------------------------------------------------------------------
   {
     id: "after-date-four",
@@ -36,7 +36,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: null,
-        text: "She was warm. She asked real questions and waited for real answers. She didn't check her phone once. She said — like it was the most normal sentence in the world — 'I had a good time. I'd like to see you again. Thursday?'",
+        text: "She was warm. She asked real questions and waited for real answers. She didn't check her phone once. She said, like it was the most normal sentence in the world, 'I had a good time. I'd like to see you again. Thursday?'",
       },
       {
         speakerId: null,
@@ -44,7 +44,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "inner-voice",
-        text: "And a part of you — the part you don't talk about — is saying: that's it?",
+        text: "And a part of you, the part you don't talk about, is saying: that's it?",
         emotion: "knowing",
       },
       {
@@ -57,7 +57,7 @@ const scenes: Scene[] = [
       {
         id: "sit-with-it",
         text: "Sit with the discomfort. Name what's happening. Don't do anything yet.",
-        tactic: "Attraction recalibration starts with noticing the misread — not acting on it.",
+        tactic: "Attraction recalibration starts with noticing the misread, not acting on it.",
         nextSceneId: "the-text-at-1147",
         isOptimal: true,
       },
@@ -70,14 +70,14 @@ const scenes: Scene[] = [
       {
         id: "text-cole-now",
         text: "Text Cole. 'Date was nice. Feels flat.'",
-        tactic: "Going to your wise friend early — before the chaos pull hits — is a legitimate move.",
+        tactic: "Going to your wise friend early, before the chaos pull hits, is a legitimate move.",
         nextSceneId: "cole-first-reply",
       },
     ],
   },
 
   // ---------------------------------------------------------------------
-  // PART 2 — the 11:47 text (the trauma-bonded wiring activates)
+  // PART 2, the 11:47 text (the trauma-bonded wiring activates)
   // ---------------------------------------------------------------------
   {
     id: "the-text-at-1147",
@@ -101,7 +101,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: null,
-        text: "Something goes warm in you. Not in your chest — lower. A heat Noor did not produce in three hours of good conversation.",
+        text: "Something goes warm in you. Not in your chest, lower. A heat Noor did not produce in three hours of good conversation.",
       },
       {
         speakerId: "inner-voice",
@@ -110,7 +110,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "inner-voice",
-        text: "That heat is not chemistry. That's intermittent reinforcement dependency. The same chemistry a slot machine builds in a gambler. Liv's texts hit harder BECAUSE they're unreliable — not despite it.",
+        text: "That heat is not chemistry. That's intermittent reinforcement dependency. The same chemistry a slot machine builds in a gambler. Liv's texts hit harder BECAUSE they're unreliable, not despite it.",
         emotion: "knowing",
       },
       {
@@ -156,7 +156,7 @@ const scenes: Scene[] = [
   },
 
   // ---------------------------------------------------------------------
-  // PART 3A — Cole intervention (optimal path)
+  // PART 3A. Cole intervention (optimal path)
   // ---------------------------------------------------------------------
   {
     id: "cole-intervention",
@@ -193,7 +193,7 @@ const scenes: Scene[] = [
       {
         id: "delete-and-commit",
         text: "Delete the text. Say it out loud: 'Noor is the test I'm trying to pass.'",
-        tactic: "Naming the wiring to yourself — out loud — breaks the trance. This is the work.",
+        tactic: "Naming the wiring to yourself, out loud, breaks the trance. This is the work.",
         nextSceneId: "the-weeks-compress",
         isOptimal: true,
       },
@@ -233,7 +233,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "cole",
-        text: '"If she\'s boring — her conversation, her mind, her values — run. If your body isn\'t doing fireworks with a regulated woman who listens — congratulations, your nervous system works exactly the way a traumatised man\'s nervous system works. That\'s the one you stay for."',
+        text: '"If she\'s boring, her conversation, her mind, her values, run. If your body isn\'t doing fireworks with a regulated woman who listens, congratulations, your nervous system works exactly the way a traumatised man\'s nervous system works. That\'s the one you stay for."',
         emotion: "serious",
       },
       {
@@ -257,7 +257,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "cole",
-        text: '"Deleting without replying is the hardest rep in the gym. You just did it. Don\'t spike the ball — the test isn\'t over, it\'s starting."',
+        text: '"Deleting without replying is the hardest rep in the gym. You just did it. Don\'t spike the ball, the test isn\'t over, it\'s starting."',
         emotion: "knowing",
       },
       {
@@ -270,7 +270,7 @@ const scenes: Scene[] = [
   },
 
   // ---------------------------------------------------------------------
-  // PART 4 — the weeks compress (date 6, 8, 10)
+  // PART 4, the weeks compress (date 6, 8, 10)
   // ---------------------------------------------------------------------
   {
     id: "the-weeks-compress",
@@ -284,7 +284,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: null,
-        text: "Date eight. You disagree about something small — a film. She says, calmly, 'I don't think that's what the film was about.' She doesn't sulk. She doesn't apologise for disagreeing. You have no script for this.",
+        text: "Date eight. You disagree about something small, a film. She says, calmly, 'I don't think that's what the film was about.' She doesn't sulk. She doesn't apologise for disagreeing. You have no script for this.",
       },
       {
         speakerId: null,
@@ -301,7 +301,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "inner-voice",
-        text: "This is what secure attachment looks like up close. No performance. No tests. No withdrawal-bait to hook you. And the entire time — feel it — your nervous system is scanning for the drop.",
+        text: "This is what secure attachment looks like up close. No performance. No tests. No withdrawal-bait to hook you. And the entire time, feel it, your nervous system is scanning for the drop.",
         emotion: "knowing",
       },
       {
@@ -313,7 +313,7 @@ const scenes: Scene[] = [
     choices: [
       {
         id: "let-it-in",
-        text: "Let it land. She listened. Don't pivot, don't deflect — just let yourself receive it.",
+        text: "Let it land. She listened. Don't pivot, don't deflect, just let yourself receive it.",
         tactic: "Receiving being seen by a secure woman is a skill. Most men deflect because the receiving itself feels unsafe.",
         nextSceneId: "the-promotion-scene",
         isOptimal: true,
@@ -327,14 +327,14 @@ const scenes: Scene[] = [
       {
         id: "trauma-dump",
         text: "Keep talking. Download the whole ex-story. Let her hold it.",
-        tactic: "Weaponised vulnerability. You're not sharing — you're outsourcing regulation to her. A secure woman notices.",
+        tactic: "Weaponised vulnerability. You're not sharing, you're outsourcing regulation to her. A secure woman notices.",
         nextSceneId: "the-promotion-scene",
       },
     ],
   },
 
   // ---------------------------------------------------------------------
-  // PART 5 — the crisis (the flare inside you)
+  // PART 5, the crisis (the flare inside you)
   // ---------------------------------------------------------------------
   {
     id: "the-promotion-scene",
@@ -348,16 +348,16 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "noor",
-        text: '"I took the promotion. It\'s a long day once a week for the next six months — Thursdays will be late. I wanted to tell you in person."',
+        text: '"I took the promotion. It\'s a long day once a week for the next six months. Thursdays will be late. I wanted to tell you in person."',
         emotion: "happy",
       },
       {
         speakerId: null,
-        text: "She's looking at you calmly. Waiting for your actual response — not managing a reaction she's pre-scripted.",
+        text: "She's looking at you calmly. Waiting for your actual response, not managing a reaction she's pre-scripted.",
       },
       {
         speakerId: null,
-        text: "And inside you — fast, almost subliminal — something flares. A tiny flash of heat behind your sternum. The voice in your head, moving too fast to catch: she's pulling back. This is where it starts.",
+        text: "And inside you, fast, almost subliminal, something flares. A tiny flash of heat behind your sternum. The voice in your head, moving too fast to catch: she's pulling back. This is where it starts.",
       },
       {
         speakerId: "inner-voice",
@@ -386,13 +386,13 @@ const scenes: Scene[] = [
       {
         id: "preemptive-withdrawal",
         text: "Go cold. 'Oh. Okay. Cool.' Check your phone. Be short for the rest of dinner.",
-        tactic: "Preemptive withdrawal — punish her for the abandonment she didn't commit. Classic anxious-avoidant move.",
+        tactic: "Preemptive withdrawal, punish her for the abandonment she didn't commit. Classic anxious-avoidant move.",
         nextSceneId: "noor-reassesses",
       },
       {
         id: "test-her",
         text: 'Test her. "So Thursdays are gone. Just like that, no conversation."',
-        tactic: "Picking a fight to force reassurance. She won't take the bait — but she'll log it.",
+        tactic: "Picking a fight to force reassurance. She won't take the bait but she'll log it.",
         nextSceneId: "noor-reassesses",
       },
       {
@@ -403,7 +403,7 @@ const scenes: Scene[] = [
       },
       {
         id: "talk-it-through",
-        text: 'Open it without making her manage it. "That\'s great news. I noticed something flared in me when you said it — not about you. Something I\'m working on. Tell me about the role."',
+        text: 'Open it without making her manage it. "That\'s great news. I noticed something flared in me when you said it, not about you. Something I\'m working on. Tell me about the role."',
         tactic: "Naming your own process without dumping it on her. Highest-skill move for a recovering man.",
         nextSceneId: "the-softening",
         isOptimal: true,
@@ -423,7 +423,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "inner-voice",
-        text: "This is attraction recalibration. You just did a rep. The flare will fire again next week and the week after. Each time you don't act on it, the circuit weakens. This is how a nervous system heals — in ten-second increments, not breakthroughs.",
+        text: "This is attraction recalibration. You just did a rep. The flare will fire again next week and the week after. Each time you don't act on it, the circuit weakens. This is how a nervous system heals, in ten-second increments, not breakthroughs.",
         emotion: "knowing",
       },
     ],
@@ -431,7 +431,7 @@ const scenes: Scene[] = [
   },
 
   // ---------------------------------------------------------------------
-  // PART 6 — the softening (one month later)
+  // PART 6, the softening (one month later)
   // ---------------------------------------------------------------------
   {
     id: "the-softening",
@@ -445,7 +445,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: null,
-        text: "You realise — not as a thought, as a physical observation — that you stopped scanning for the drop sometime in the last week.",
+        text: "You realise, not as a thought, as a physical observation, that you stopped scanning for the drop sometime in the last week.",
       },
       {
         speakerId: "noor",
@@ -458,7 +458,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "inner-voice",
-        text: "Your nervous system just finished a re-wire it has been trying to do for years. Not because of her — because you let her be regulated without punishing her for it. This is how men who were trained on chaos learn to live in peace.",
+        text: "Your nervous system just finished a re-wire it has been trying to do for years. Not because of her, because you let her be regulated without punishing her for it. This is how men who were trained on chaos learn to live in peace.",
         emotion: "knowing",
       },
     ],
@@ -510,7 +510,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "inner-voice",
-        text: "You have trained a secure woman to be your regulation. She is doing it, for now, because she loves you. But you are not a partner to her — you are a patient. And the person doing the parenting burns out.",
+        text: "You have trained a secure woman to be your regulation. She is doing it, for now, because she loves you. But you are not a partner to her, you are a patient. And the person doing the parenting burns out.",
         emotion: "serious",
       },
     ],
@@ -537,11 +537,11 @@ const scenes: Scene[] = [
       },
       {
         speakerId: null,
-        text: "By morning Noor is a ghost. By Thursday you cancel. By week two you are back inside the loop — the good days, the vicious days, the devaluation, the love-bomb, the silence, the eruption.",
+        text: "By morning Noor is a ghost. By Thursday you cancel. By week two you are back inside the loop, the good days, the vicious days, the devaluation, the love-bomb, the silence, the eruption.",
       },
       {
         speakerId: "inner-voice",
-        text: "You misread withdrawal as desire. You chose the slot machine over the woman. Six months from now, when she destroys you again, you will remember Noor — and the memory will be the price.",
+        text: "You misread withdrawal as desire. You chose the slot machine over the woman. Six months from now, when she destroys you again, you will remember Noor and the memory will be the price.",
         emotion: "sad",
       },
     ],
@@ -559,7 +559,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "inner-voice",
-        text: "This is why deletion is the rule — not 'self-control'. Self-control at 2am loses to a nervous system that has been training for this relapse for three months. You do not rely on willpower against your own wiring. You remove the wire.",
+        text: "This is why deletion is the rule, not 'self-control'. Self-control at 2am loses to a nervous system that has been training for this relapse for three months. You do not rely on willpower against your own wiring. You remove the wire.",
         emotion: "sad",
       },
     ],
@@ -597,7 +597,7 @@ const scenes: Scene[] = [
     dialog: [
       {
         speakerId: null,
-        text: "She doesn't take the bait. Doesn't escalate. Doesn't get small. She just watches you — once, steadily — the way a regulated adult watches a man revealing his wiring.",
+        text: "She doesn't take the bait. Doesn't escalate. Doesn't get small. She just watches you, once, steadily, the way a regulated adult watches a man revealing his wiring.",
       },
       {
         speakerId: "noor",
@@ -606,7 +606,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "inner-voice",
-        text: "You tested a secure woman. She did not fail the test — she logged it. She will not leave tonight. She will leave in two months, kindly, after watching you fail the test three more times.",
+        text: "You tested a secure woman. She did not fail the test, she logged it. She will not leave tonight. She will leave in two months, kindly, after watching you fail the test three more times.",
         emotion: "sad",
       },
     ],
@@ -625,7 +625,7 @@ const scenes: Scene[] = [
     outcomeType: "good",
     endingTitle: "The Scan Stopped",
     endingSummary:
-      "You chose Noor and then — harder — you stayed. You deleted the text. You named the flare. You did not make her manage your nervous system. You sat through the discomfort of peace until your body stopped misreading it as absence. A year from now you move in together. Three years from now she is the mother of your son. Twenty years from now, when your friends are on their second divorces, you will remember the night you stood in your kitchen with a glass of water and chose the woman who did not give you withdrawal. Cole tells you, plainly: 'Dude. That's a marriage.' You laugh for the first time in a year. The warm-start relationship compounds — quietly, without fireworks — into a life.",
+      "You chose Noor and then, harder, you stayed. You deleted the text. You named the flare. You did not make her manage your nervous system. You sat through the discomfort of peace until your body stopped misreading it as absence. A year from now you move in together. Three years from now she is the mother of your son. Twenty years from now, when your friends are on their second divorces, you will remember the night you stood in your kitchen with a glass of water and chose the woman who did not give you withdrawal. Cole tells you, plainly: 'Dude. That's a marriage.' You laugh for the first time in a year. The warm-start relationship compounds, quietly, without fireworks, into a life.",
     dialog: [
       {
         speakerId: "inner-voice",
@@ -643,13 +643,13 @@ const scenes: Scene[] = [
     outcomeType: "bad",
     endingTitle: "Back in the Loop",
     endingSummary:
-      "You answered the text. Three months later you are back where you swore you would never be — inside Liv's cycle, exhausted, unable to sleep, checking her location, defending her to your friends for the fourth time. Noor moved on without performance. You heard, through a mutual, that she is seeing someone who does not scan her for the drop. That sentence will find you in the middle of a bad night a year from now and it will be the worst sentence of your twenties. The chaos addiction won this round. The lesson was available. You declined it.",
+      "You answered the text. Three months later you are back where you swore you would never be, inside Liv's cycle, exhausted, unable to sleep, checking her location, defending her to your friends for the fourth time. Noor moved on without performance. You heard, through a mutual, that she is seeing someone who does not scan her for the drop. That sentence will find you in the middle of a bad night a year from now and it will be the worst sentence of your twenties. The chaos addiction won this round. The lesson was available. You declined it.",
     failureBlogSlug: "reading-attachment-style-from-texts",
     failureBlogTitle: "Reading Attachment Style from Texts",
     dialog: [
       {
         speakerId: "inner-voice",
-        text: "Intermittent reinforcement dependency is not a metaphor. It is a trained circuit. Circuits do not break by being ignored — they break by being starved. You fed it.",
+        text: "Intermittent reinforcement dependency is not a metaphor. It is a trained circuit. Circuits do not break by being ignored, they break by being starved. You fed it.",
         emotion: "sad",
       },
     ],
@@ -663,7 +663,7 @@ const scenes: Scene[] = [
     outcomeType: "bad",
     endingTitle: "No Spark",
     endingSummary:
-      "You told yourself, and then your friends, that there was 'no spark'. You meant it. You felt it. And what you actually felt was your nervous system failing to recognise a woman who was not performing for it. Three months later you are on an app again, swiping toward the next Liv, telling yourself you're 'looking for chemistry'. You will find it. It will cost you another two years. Somewhere in your thirties you will understand — possibly over a drink with Cole, possibly too late — that 'butterflies' were never romance. They were warning. And the quiet woman who said 'Thursday?' was the life you walked past.",
+      "You told yourself, and then your friends, that there was 'no spark'. You meant it. You felt it. And what you actually felt was your nervous system failing to recognise a woman who was not performing for it. Three months later you are on an app again, swiping toward the next Liv, telling yourself you're 'looking for chemistry'. You will find it. It will cost you another two years. Somewhere in your thirties you will understand, possibly over a drink with Cole, possibly too late, that 'butterflies' were never romance. They were warning. And the quiet woman who said 'Thursday?' was the life you walked past.",
     failureBlogSlug: "butterflies-are-warning-not-romance",
     failureBlogTitle: "Butterflies Are Warning Not Romance",
     dialog: [
@@ -683,7 +683,7 @@ const scenes: Scene[] = [
     outcomeType: "bad",
     endingTitle: "She Saw You Couldn't Stop Scanning",
     endingSummary:
-      "Two months later, on a Sunday afternoon, Noor sits across from you and says — calmly, without drama, without cruelty — that she does not think you are available yet. She does not weaponise it. She does not list grievances. She just tells you the truth: 'I can feel you waiting for me to become someone I'm not. I don't want to be the woman you finally trust after a year of auditions.' She wishes you well. She means it. You walk home and you understand, for the first time, that you lost her to a part of yourself that was not ready. The blog in the ending page is called Reading Attachment Style from Texts. She read yours. It was the tell.",
+      "Two months later, on a Sunday afternoon, Noor sits across from you and says, calmly, without drama, without cruelty, that she does not think you are available yet. She does not weaponise it. She does not list grievances. She just tells you the truth: 'I can feel you waiting for me to become someone I'm not. I don't want to be the woman you finally trust after a year of auditions.' She wishes you well. She means it. You walk home and you understand, for the first time, that you lost her to a part of yourself that was not ready. The blog in the ending page is called Reading Attachment Style from Texts. She read yours. It was the tell.",
     failureBlogSlug: "reading-attachment-style-from-texts",
     failureBlogTitle: "Reading Attachment Style from Texts",
     dialog: [
@@ -703,7 +703,7 @@ const scenes: Scene[] = [
     outcomeType: "bad",
     endingTitle: "You Trained Her to Parent You",
     endingSummary:
-      "She reassured you every time you asked, until one morning she didn't. Not dramatically — quietly. A softness went out of her voice that you only noticed in retrospect. The dynamic had flipped: you were the patient, she was the caretaker, and somewhere around month six the caretaker burned out. She ended it gently. You told your friends she 'pulled back' — which was true, and which was also the wrong frame. She did not pull back. She left a role you had written for her, a role she had never auditioned for. The chance to be her partner was real. You made her your therapist, and therapists do not marry their clients.",
+      "She reassured you every time you asked, until one morning she didn't. Not dramatically, quietly. A softness went out of her voice that you only noticed in retrospect. The dynamic had flipped: you were the patient, she was the caretaker, and somewhere around month six the caretaker burned out. She ended it gently. You told your friends she 'pulled back', which was true, and which was also the wrong frame. She did not pull back. She left a role you had written for her, a role she had never auditioned for. The chance to be her partner was real. You made her your therapist, and therapists do not marry their clients.",
     failureBlogSlug: "butterflies-are-warning-not-romance",
     failureBlogTitle: "Butterflies Are Warning Not Romance",
     dialog: [
@@ -723,7 +723,7 @@ const scenes: Scene[] = [
     outcomeType: "neutral",
     endingTitle: "A Half-Lit Life",
     endingSummary:
-      "You stayed with Noor. Outwardly — to friends, to family, in photographs — the relationship was healthy, stable, enviable. Inwardly, you never fully stopped scanning. You never let her fully in. You kept a small room in you where the chaos-version of love lived, and you visited it when she was asleep. Years passed. You had a home, a life, a good partner who deserved more than you were ever quite willing to give. The version of you that was fully there for her stayed theoretical. Not a disaster. Not a life either.",
+      "You stayed with Noor. Outwardly, to friends, to family, in photographs, the relationship was healthy, stable, enviable. Inwardly, you never fully stopped scanning. You never let her fully in. You kept a small room in you where the chaos-version of love lived, and you visited it when she was asleep. Years passed. You had a home, a life, a good partner who deserved more than you were ever quite willing to give. The version of you that was fully there for her stayed theoretical. Not a disaster. Not a life either.",
     dialog: [
       {
         speakerId: "inner-voice",
@@ -740,7 +740,7 @@ export const datingMission5: Scenario = {
   tagline:
     "She's calm, direct, no games. A quiet voice in you asks if she's boring. That voice is the thing deciding your next decade.",
   description:
-    "Date four with Noor went well. She was warm, direct, no phone games, no mixed signals. You walked home calm — and a part of you, the part trained on chaos, said 'that's it?'. Then at 11:47pm Liv texts. Your body answers in a way Noor didn't make it answer. This is the endgame of the Dating Line: the test of whether you can recognise a regulated partner, sit through the discomfort of peace without sabotaging it, and stay engaged with a woman who is not performing for your nervous system. The villain in this scenario is your own wiring. The prize is the next decade.",
+    "Date four with Noor went well. She was warm, direct, no phone games, no mixed signals. You walked home calm and a part of you, the part trained on chaos, said 'that's it?'. Then at 11:47pm Liv texts. Your body answers in a way Noor didn't make it answer. This is the endgame of the Dating Line: the test of whether you can recognise a regulated partner, sit through the discomfort of peace without sabotaging it, and stay engaged with a woman who is not performing for your nervous system. The villain in this scenario is your own wiring. The prize is the next decade.",
   tier: "vip",
   track: "male-dating",
   level: 5,
@@ -753,7 +753,7 @@ export const datingMission5: Scenario = {
   startSceneId: "after-date-four",
   tacticsLearned: [
     "Distinguishing 'peaceful' from 'boring' in your own body",
-    "Deleting without replying to a hoover text — the hardest rep",
+    "Deleting without replying to a hoover text, the hardest rep",
     "Naming a trauma-bonded flare internally instead of acting on it",
     "Sharing your process with a secure partner without making her manage it",
     "Receiving being seen without deflecting, joking, or trauma-dumping",

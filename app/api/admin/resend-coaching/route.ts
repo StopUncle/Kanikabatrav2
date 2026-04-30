@@ -122,11 +122,11 @@ export async function POST(request: NextRequest) {
         });
         results.push({ email, sent });
       } else {
-        // No questionnaire data — send coaching purchase notification with available info
+        // No questionnaire data, send coaching purchase notification with available info
         const html = `
           <div style="font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto;">
             <div style="background: linear-gradient(135deg, #1a0d11 0%, #0a1628 100%); padding: 30px; border-radius: 10px 10px 0 0;">
-              <h1 style="color: #d4af37; margin: 0; font-size: 24px;">Coaching Purchase — Questionnaire Not Yet Submitted</h1>
+              <h1 style="color: #d4af37; margin: 0; font-size: 24px;">Coaching Purchase. Questionnaire Not Yet Submitted</h1>
             </div>
             <div style="background: #050511; padding: 30px; border: 1px solid #d4af37; border-top: none;">
               <div style="background: #0a0a0a; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
@@ -140,7 +140,7 @@ export async function POST(request: NextRequest) {
               </div>
               <div style="background: #2d1b1b; padding: 20px; border-radius: 8px; border: 1px solid #8b0000;">
                 <h3 style="color: #ff6b6b; margin-top: 0;">Note</h3>
-                <p style="color: #ffccd5;">The pre-session questionnaire has not been submitted through the website form. The client may have experienced a technical issue — the purchase was initially miscategorized as a book purchase, preventing the questionnaire modal from appearing.</p>
+                <p style="color: #ffccd5;">The pre-session questionnaire has not been submitted through the website form. The client may have experienced a technical issue, the purchase was initially miscategorized as a book purchase, preventing the questionnaire modal from appearing.</p>
                 <p style="color: #ffccd5;">The client sent a contact form message saying: <em>"I have filled the questionnaire. Waiting for the call. Best, NM..."</em></p>
                 <p style="color: #ffccd5;"><strong>Recommended action:</strong> Reach out to the client at ${purchase.customerEmail} to schedule the session and optionally collect questionnaire responses directly.</p>
               </div>
@@ -153,7 +153,7 @@ export async function POST(request: NextRequest) {
 
         const sent = await sendEmail({
           to: email,
-          subject: `Coaching Purchase — ${purchase.customerName} ($${purchase.amount}) — Action Required`,
+          subject: `Coaching Purchase, ${purchase.customerName} ($${purchase.amount}). Action Required`,
           html,
           replyTo: purchase.customerEmail,
         });
@@ -175,7 +175,7 @@ export async function POST(request: NextRequest) {
         emailResults: results,
         message: allSent
           ? "All coaching emails resent."
-          : "Some or all email deliveries failed — check emailResults.",
+          : "Some or all email deliveries failed, check emailResults.",
       },
       { status: allSent ? 200 : 207 },
     );

@@ -24,7 +24,7 @@ interface FeedPostAuthor {
   id: string;
   name: string | null;
   role: string;
-  /** 1..12 — rank badge used in place of a photo avatar. */
+  /** 1..12, rank badge used in place of a photo avatar. */
   tier: number;
 }
 
@@ -54,8 +54,8 @@ interface FeedPostProps {
 
 /**
  * Pinned posts sort to the top of the feed and push everything else down.
- * They start COLLAPSED by default — a single header row with title + tap-
- * to-expand affordance — so the feed reclaims the space immediately. The
+ * They start COLLAPSED by default, a single header row with title + tap-
+ * to-expand affordance so the feed reclaims the space immediately. The
  * member can expand any pinned post with one tap; that choice persists
  * per-post in localStorage, keyed on post id + createdAt. Re-posting or
  * re-pinning produces a new key, which means a freshly-pinned post lands
@@ -74,7 +74,7 @@ export default function FeedPost({ post, isDetail = false, isNew = false }: Feed
   const [isToggling, setIsToggling] = useState(false);
 
   // Collapsed state for pinned posts only. Detail pages ignore the toggle
-  // entirely — if a member navigated into the post directly, they want
+  // entirely, if a member navigated into the post directly, they want
   // to see it.
   //
   // Hydration: SSR doesn't have access to localStorage so we render the
@@ -92,7 +92,7 @@ export default function FeedPost({ post, isDetail = false, isNew = false }: Feed
       const stored = localStorage.getItem(pinnedExpandKey(post));
       if (stored === "1") setIsCollapsed(false);
     } catch {
-      // localStorage unavailable (private mode, quota, etc.) — leave
+      // localStorage unavailable (private mode, quota, etc.), leave
       // collapsed and allow in-session expand only.
     }
   }, [canCollapse, post]);
@@ -144,7 +144,7 @@ export default function FeedPost({ post, isDetail = false, isNew = false }: Feed
   const displayContent = shouldTruncate ? post.content.slice(0, 500) : post.content;
   const timeAgo = formatDistanceToNow(new Date(post.createdAt), { addSuffix: true });
 
-  // Per-post viewer pulse — a soft "N viewing" indicator that's
+  // Per-post viewer pulse, a soft "N viewing" indicator that's
   // deterministic per post + half-hour bucket so refresh doesn't
   // jiggle, but shifts naturally as the day moves on. Scaled by
   // popularity (likes) and decayed by post age. Caps at 22 to stay
@@ -171,7 +171,7 @@ export default function FeedPost({ post, isDetail = false, isNew = false }: Feed
       className="bg-deep-black/50 backdrop-blur-sm border border-accent-gold/10 rounded-xl sm:rounded-2xl p-4 sm:p-6 hover:border-accent-gold/25 transition-all duration-300"
     >
       <div className="flex items-center gap-3 mb-3 sm:mb-4 flex-wrap">
-        {/* Rank badge IS the avatar — the member's tenure is their identity. */}
+        {/* Rank badge IS the avatar, the member's tenure is their identity. */}
         <div className="shrink-0">
           <MemberBadge tier={authorTier} size="xs" />
         </div>
@@ -280,7 +280,7 @@ export default function FeedPost({ post, isDetail = false, isNew = false }: Feed
       <div className="text-text-gray text-sm leading-relaxed mb-4 feed-markdown max-w-[65ch]">
         {/*
           react-markdown sanitizes by default (no dangerouslySetInnerHTML,
-          no raw HTML). remark-gfm adds lists, tables, strikethrough, and
+          no raw HTML). Remark-gfm adds lists, tables, strikethrough, and
           task lists. Component overrides give each element the right
           dark-luxury styling without re-inventing a parser.
         */}

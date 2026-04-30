@@ -14,7 +14,7 @@ import ConsiliumSeal from "@/components/ConsiliumSeal";
 import { ArrowRight, AlertTriangle, CheckCircle2, Gift } from "lucide-react";
 
 export const metadata = {
-  title: "Claim Your Free Month — The Consilium",
+  title: "Claim Your Free Month. The Consilium",
   robots: { index: false, follow: false },
 };
 
@@ -49,9 +49,9 @@ function verifyGiftToken(token: string): GiftPayload {
  *      fire welcome email with 7-day password-set link → redirect to feed.
  *
  *   B. Account already exists (returning customer path)
- *      We NEVER take over an existing account from a JWT — a gift token
+ *      We NEVER take over an existing account from a JWT, a gift token
  *      in an email is not a full authentication factor, and existing
- *      accounts may have history, purchases, admin role, etc. Instead:
+ *      accounts may have history, purchases, admin role, etc. instead:
  *      bounce to /login with the token preserved. Post-login the page
  *      re-runs, email matches, and we activate against the existing
  *      session cookies.
@@ -90,8 +90,8 @@ async function claimAction(formData: FormData): Promise<void> {
     );
   }
 
-  // Path A — brand new account for this email. Create + auto-sign-in.
-  // Path A.5 — already logged in as the right account. Activate only.
+  // Path A, brand new account for this email. Create + auto-sign-in.
+  // Path A.5, already logged in as the right account. Activate only.
   let user = existing;
   let isNewUser = false;
 
@@ -242,7 +242,7 @@ export default async function ClaimPage({
     if (onPaidPlan) return <AlreadyMember />;
   }
 
-  // Show the claim button for everyone else — including guest buyers.
+  // Show the claim button for everyone else, including guest buyers.
   return <ClaimButton token={token} name={payload.name} email={payload.email} />;
 }
 
@@ -328,7 +328,7 @@ function AlreadyMember() {
           You&apos;re already a member
         </h1>
         <p className="text-text-gray font-light leading-relaxed mb-8">
-          Your paid subscription already gives you full access — no need for
+          Your paid subscription already gives you full access, no need for
           the gift. Thanks for being here.
         </p>
         <Link

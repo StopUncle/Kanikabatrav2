@@ -20,7 +20,7 @@ type Props = {
   scenario: Scenario;
   initialState?: SimulatorState;
   /**
-   * Summary of the player's best previous completion — shown as a
+   * Summary of the player's best previous completion, shown as a
    * "Replaying · Your best: 85 XP · Mastery" banner at the top of
    * the game so replays feel like beating a record. Null on first
    * attempt.
@@ -60,7 +60,7 @@ export default function SimulatorPageClient({
     previousBest,
   );
 
-  // Throttle saves — only fire if state has actually changed on a key field.
+  // Throttle saves, only fire if state has actually changed on a key field.
   const lastSavedRef = useRef<string>("");
 
   const handleStateChange = useCallback(
@@ -82,7 +82,7 @@ export default function SimulatorPageClient({
           endedAt: state.endedAt ?? null,
         }),
       }).catch(() => {
-        // Silent — client is authoritative during the run
+        // Silent, client is authoritative during the run
       });
     },
     [],
@@ -93,7 +93,7 @@ export default function SimulatorPageClient({
     // this, a replay that reaches a *different* ending path will
     // briefly show the previous run's badge keys on the ending
     // screen until the /complete POST resolves and sets fresh ones
-    // — a misleading render window of 200ms–2s on slow connections.
+    //, a misleading render window of 200ms–2s on slow connections.
     setBadgesEarned([]);
     setUnlockedThisRun([]);
 
@@ -130,10 +130,10 @@ export default function SimulatorPageClient({
           newlyEarnedKeys: string[];
         };
         // Show ALL earned badges on the ending screen (visual reward), even
-        // if duplicates — so replays still feel rewarding. Uniqueness is
+        // if duplicates so replays still feel rewarding. Uniqueness is
         // enforced server-side via the SimulatorBadge unique constraint.
         setBadgesEarned(data.allEarnedKeys);
-        // Toast only on first-time unlocks — a replay that re-earns the
+        // Toast only on first-time unlocks, a replay that re-earns the
         // same key array gets no popup, which is what players want.
         setUnlockedThisRun(data.newlyEarnedKeys);
         // Refresh server components so the index page reflects new state

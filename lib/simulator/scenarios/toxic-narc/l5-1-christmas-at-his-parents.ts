@@ -1,16 +1,16 @@
 /**
- * tn-5-1 — "Christmas At His Parents"
+ * tn-5-1, "Christmas At His Parents"
  *
  * Toxic-Narc track, Level 5 (The Narc In-Law), order 1. Four years
  * of Christmases at your partner's mother's house. You have learned
- * to read her register. Your partner has largely not — she performs
+ * to read her register. Your partner has largely not, she performs
  * differently when he is in the room. The public passive-aggressive
  * comment, framed as 'just making conversation,' is her specific
  * move, and the scenario takes place around one of them: Christmas
  * Day dinner, seven people at the table, 3:47 p.m., just after the
  * first glass of champagne.
  *
- * The scenario's core technique is 'becoming boring' — producing a
+ * The scenario's core technique is 'becoming boring', producing a
  * response so unperformed that she has nothing to play with.
  * Neither warm nor cold, neither defensive nor explanatory. The
  * move is three words at most, delivered flat, and then a pivot
@@ -20,11 +20,11 @@
  *  - The 'become boring' response as a specific skill, distinct
  *    from coldness and distinct from warm appeasement
  *  - The refusal to triangulate through the partner at the table
- *    — do not turn to him for defence, do not ask him later in the
+ *   , do not turn to him for defence, do not ask him later in the
  *    kitchen to have the conversation with her, do not convert
  *    public bait into private operational work
- *  - The refusal to explain — every explanation is new material
- *  - The pivot-to-other-subject as the closing move — you do not
+ *  - The refusal to explain. Every explanation is new material
+ *  - The pivot-to-other-subject as the closing move, you do not
  *    sit in the silence her line produced; you change the subject
  *    cleanly, at the same table, to someone else
  *
@@ -36,7 +36,7 @@ import { INNER_VOICE, THE_PARTNER, MOTHER_IN_LAW } from "../../characters";
 
 const scenes: Scene[] = [
   // ===================================================================
-  // OPENING — THE DINNER TABLE
+  // OPENING. THE DINNER TABLE
   // ===================================================================
   {
     id: "christmas-dinner",
@@ -46,11 +46,11 @@ const scenes: Scene[] = [
     dialog: [
       {
         speakerId: null,
-        text: "Christmas Day, 3:47 p.m. His mother's dining room. The long walnut table, the good plates, seven people around it. You are seated between your partner and his cousin's husband. The first glass of champagne has been poured. A plate of smoked salmon is moving clockwise.",
+        text: "Christmas Day, 3:47 p.m. his mother's dining room. The long walnut table, the good plates, seven people around it. You are seated between your partner and his cousin's husband. The first glass of champagne has been poured. A plate of smoked salmon is moving clockwise.",
       },
       {
         speakerId: "mother-in-law",
-        text: '"Tell me, how is the — the content thing going? The online project? I was describing it to Patricia at church and I realised I do not fully understand what it is you — do."',
+        text: '"Tell me, how is the, the content thing going? The online project? I was describing it to Patricia at church and I realised I do not fully understand what it is you, do."',
         emotion: "concerned",
       },
       {
@@ -63,29 +63,29 @@ const scenes: Scene[] = [
       {
         id: "become-boring",
         text: '"It is going well, thank you."',
-        tactic: "The grey-rock Christmas response. Six words. No content for her to play with, no warmth for her to extract, no coldness to frame as rudeness. Pair with a pivot — but let the first line land on its own.",
+        tactic: "The grey-rock Christmas response. Six words. No content for her to play with, no warmth for her to extract, no coldness to frame as rudeness. Pair with a pivot but let the first line land on its own.",
         nextSceneId: "pivot-window",
         isOptimal: true,
         event: "restraint-shown",
       },
       {
         id: "defend-the-work",
-        text: 'Explain. "Actually it is quite specific — I write about interpersonal dynamics, particularly around —"',
+        text: 'Explain. "Actually it is quite specific. I write about interpersonal dynamics, particularly around —"',
         tactic: "Every word of the explanation is new material. She will pick the line that sounds most absurd out of context and cite it at Patricia-at-church in January. The explanation is the move she is fishing for.",
         nextSceneId: "defended-at-table",
         isOptimal: false,
       },
       {
         id: "match-her-register",
-        text: '"Oh you know — the content thing."',
+        text: '"Oh you know, the content thing."',
         tactic: "Matching the belittlement with self-deprecation lands as meta-cleverness, which inside this family register will be heard as sharpness. Cost: the cousin-in-law will laugh, his mother will file it, your partner will not notice. Not terrible, but more expensive than the clean six words.",
         nextSceneId: "register-matched",
         isOptimal: false,
       },
       {
         id: "turn-to-partner",
-        text: 'Turn to your partner. "Help me out — how would you describe what I do?"',
-        tactic: "The triangulation shape — passing the question to him at the table is the specific move that converts a public bait into a joint operation he did not ask for. The correction is: do not route through him at the table, ever. You have a private channel for later if you need it.",
+        text: 'Turn to your partner. "Help me out, how would you describe what I do?"',
+        tactic: "The triangulation shape, passing the question to him at the table is the specific move that converts a public bait into a joint operation he did not ask for. The correction is: do not route through him at the table, ever. You have a private channel for later if you need it.",
         nextSceneId: "triangulated-at-table",
         isOptimal: false,
         event: "tactic-named:triangulation",
@@ -94,7 +94,7 @@ const scenes: Scene[] = [
   },
 
   // ===================================================================
-  // PIVOT WINDOW — THE SECOND MOVE
+  // PIVOT WINDOW. THE SECOND MOVE
   // ===================================================================
   {
     id: "pivot-window",
@@ -104,7 +104,7 @@ const scenes: Scene[] = [
     dialog: [
       {
         speakerId: null,
-        text: "The six words sit at the table. She nods. She will not ask a follow-up immediately — the follow-up is the second move, and it depends on whether you left her an opening. You have ~four seconds before the silence becomes too long to pivot from naturally.",
+        text: "The six words sit at the table. She nods. She will not ask a follow-up immediately, the follow-up is the second move, and it depends on whether you left her an opening. You have ~four seconds before the silence becomes too long to pivot from naturally.",
       },
       {
         speakerId: "inner-voice",
@@ -115,7 +115,7 @@ const scenes: Scene[] = [
     choices: [
       {
         id: "pivot-to-cousin",
-        text: 'Turn to the cousin-in-law. "Lucas — you were in Porto last month, tell me about the food."',
+        text: 'Turn to the cousin-in-law. "Lucas, you were in Porto last month, tell me about the food."',
         tactic: "The clean pivot. A specific person, a specific prompt, a subject that moves. Within three seconds Lucas will be talking about tapas and the table will be somewhere else. The six words plus the pivot is the whole move.",
         nextSceneId: "pivot-clean",
         isOptimal: true,
@@ -123,7 +123,7 @@ const scenes: Scene[] = [
       },
       {
         id: "pivot-to-topic",
-        text: 'Pivot to a topic. "Has anyone watched the new thing about the — what was it called, the thing with Colin Firth?"',
+        text: 'Pivot to a topic. "Has anyone watched the new thing about the, what was it called, the thing with Colin Firth?"',
         tactic: "A topic pivot leaves her room to re-enter. She will come back with a follow-up about the content thing once the Colin Firth beat lands, and the pivot has not done its job. Prefer a pivot to a specific person.",
         nextSceneId: "pivot-soft",
         isOptimal: false,
@@ -131,7 +131,7 @@ const scenes: Scene[] = [
       {
         id: "sit-in-silence",
         text: "Sit in the silence. Let her pivot herself.",
-        tactic: "The sit-in-silence is legitimate but expensive — she controls the table, and the silence will be loaded with her next move. Prefer to drive the pivot.",
+        tactic: "The sit-in-silence is legitimate but expensive, she controls the table, and the silence will be loaded with her next move. Prefer to drive the pivot.",
         nextSceneId: "silence-held",
         isOptimal: false,
       },
@@ -139,7 +139,7 @@ const scenes: Scene[] = [
   },
 
   // ===================================================================
-  // PIVOT CLEAN — THE SECOND HALF
+  // PIVOT CLEAN. THE SECOND HALF
   // ===================================================================
   {
     id: "pivot-clean",
@@ -153,7 +153,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "inner-voice",
-        text: "She will try again — this is four years of Christmas — but the second attempt will be smaller because the first was neutralised cleanly. The move for the rest of the afternoon is the same move, repeated. Boring. Pivot. Boring. Pivot.",
+        text: "She will try again. This is four years of Christmas but the second attempt will be smaller because the first was neutralised cleanly. The move for the rest of the afternoon is the same move, repeated. Boring. Pivot. Boring. Pivot.",
         emotion: "knowing",
       },
     ],
@@ -176,16 +176,16 @@ const scenes: Scene[] = [
     dialog: [
       {
         speakerId: null,
-        text: "7:14 p.m. You and your partner are in the car, driving home. He is quiet for a few minutes. Then:",
+        text: "7:14 p.m. you and your partner are in the car, driving home. He is quiet for a few minutes. Then:",
       },
       {
         speakerId: "the-partner",
-        text: '"You did the thing with my mother today. The — the boring thing. I noticed."',
+        text: '"You did the thing with my mother today. The, the boring thing. I noticed."',
         emotion: "knowing",
       },
       {
         speakerId: "inner-voice",
-        text: "He noticed. The four-year learning curve is, quietly, shifting. He has named the move without being asked. Do not escalate this into a debrief of every line she delivered — just receive the observation.",
+        text: "He noticed. The four-year learning curve is, quietly, shifting. He has named the move without being asked. Do not escalate this into a debrief of every line she delivered, just receive the observation.",
         emotion: "knowing",
       },
     ],
@@ -199,7 +199,7 @@ const scenes: Scene[] = [
       },
       {
         id: "full-debrief",
-        text: 'Run the full debrief. "Yes — she did three specific moves, the worst one was —"',
+        text: 'Run the full debrief. "Yes, she did three specific moves, the worst one was —"',
         tactic: "The post-event operational debrief, uninvited, converts his first moment of independent noticing into a Christmas-management workstream he did not ask to open. He will help if asked; do not ask today.",
         nextSceneId: "ending-debriefed",
         isOptimal: false,
@@ -218,12 +218,12 @@ const scenes: Scene[] = [
     dialog: [
       {
         speakerId: "mother-in-law",
-        text: '"Interpersonal dynamics! Goodness. And people — pay for that?"',
+        text: '"Interpersonal dynamics! Goodness. And people, pay for that?"',
         emotion: "concerned",
       },
       {
         speakerId: "inner-voice",
-        text: "She has pulled a second line from the first. The explanation was the hook. Every sentence of response from here extends the exchange. The damage-control move is to stop producing content — even now.",
+        text: "She has pulled a second line from the first. The explanation was the hook. Every sentence of response from here extends the exchange. The damage-control move is to stop producing content, even now.",
         emotion: "knowing",
       },
     ],
@@ -286,7 +286,7 @@ const scenes: Scene[] = [
     dialog: [
       {
         speakerId: "the-partner",
-        text: '"Oh — um, she writes about — you know, about relationships and stuff, it is — it is quite — she is quite good at it."',
+        text: '"Oh, um, she writes about, you know, about relationships and stuff, it is, it is quite, she is quite good at it."',
         emotion: "confused",
       },
       {
@@ -296,14 +296,14 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "inner-voice",
-        text: "The triangulation landed. He stumbled (he is not a public speaker; he did not know the question was coming); she collected the moment for what it was — a small demonstration that he cannot cleanly describe your work under pressure. Both of you have been sized down at her table.",
+        text: "The triangulation landed. He stumbled (he is not a public speaker; he did not know the question was coming); she collected the moment for what it was, a small demonstration that he cannot cleanly describe your work under pressure. Both of you have been sized down at her table.",
         emotion: "serious",
       },
     ],
     choices: [
       {
         id: "recover-with-pivot",
-        text: "Pivot immediately. 'Lucas — Porto. Tell me about the food.' Move the table.",
+        text: "Pivot immediately. 'Lucas. Porto. Tell me about the food.' Move the table.",
         tactic: "Salvage. The triangulation cannot be un-done; the next move is to stop the damage by moving the subject off him.",
         nextSceneId: "pivot-clean",
         isOptimal: true,
@@ -319,7 +319,7 @@ const scenes: Scene[] = [
     dialog: [
       {
         speakerId: "mother-in-law",
-        text: '"Oh I saw that! Lovely. Now — back to the online thing — does it, does it pay the rent, or is it more of a —"',
+        text: '"Oh I saw that! Lovely. Now, back to the online thing, does it, does it pay the rent, or is it more of a —"',
         emotion: "neutral",
       },
       {
@@ -331,7 +331,7 @@ const scenes: Scene[] = [
     choices: [
       {
         id: "person-pivot-late",
-        text: '"It pays the rent. Lucas — Porto. Tell me about the food."',
+        text: '"It pays the rent. Lucas. Porto. Tell me about the food."',
         tactic: "Salvage. Six words on the money question, immediate pivot to a specific person. Close the door she re-opened.",
         nextSceneId: "pivot-clean",
         isOptimal: true,
@@ -356,14 +356,14 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "inner-voice",
-        text: "She reframed your quiet as a refusal. The other five people at the table now have the picture she has just painted — you did not want to explain. The silence produced a specific cost you did not pay for the six-word version.",
+        text: "She reframed your quiet as a refusal. The other five people at the table now have the picture she has just painted, you did not want to explain. The silence produced a specific cost you did not pay for the six-word version.",
         emotion: "serious",
       },
     ],
     choices: [
       {
         id: "take-the-frame-back",
-        text: '"Not at all — it is going well. Lucas — Porto?"',
+        text: '"Not at all, it is going well. Lucas. Porto?"',
         tactic: "Reject her frame in seven words. Pivot immediately. The silence cost you one reframe; do not extend the exchange by defending against the reframe in detail.",
         nextSceneId: "pivot-clean",
         isOptimal: true,
@@ -401,11 +401,11 @@ const scenes: Scene[] = [
     outcomeType: "neutral",
     endingTitle: "The Uninvited Debrief",
     endingLearnPrompt:
-      "Your partner named the move for the first time in four years. The uninvited debrief converted that small moment of independent noticing into a joint operational project he did not open. He will not do it again soon. The discipline for the next Christmas: let his noticing be his — do not build a shared operations desk out of it until he asks for one.",
+      "Your partner named the move for the first time in four years. The uninvited debrief converted that small moment of independent noticing into a joint operational project he did not open. He will not do it again soon. The discipline for the next Christmas: let his noticing be his, do not build a shared operations desk out of it until he asks for one.",
     dialog: [
       {
         speakerId: "inner-voice",
-        text: "Home. The debrief ran until 8:47 p.m. He was patient. He will not raise her name, unprompted, for a while.",
+        text: "Home. The debrief ran until 8:47 p.m. he was patient. He will not raise her name, unprompted, for a while.",
         emotion: "serious",
       },
     ],
@@ -420,7 +420,7 @@ const scenes: Scene[] = [
     outcomeType: "bad",
     endingTitle: "The Extraction",
     failureBlogSlug: "narcissist-playbook-how-they-actually-operate",
-    failureBlogTitle: "Narcissist Playbook — How They Actually Operate",
+    failureBlogTitle: "Narcissist Playbook. How They Actually Operate",
     endingLearnPrompt:
       "Every sentence of explanation was new material. By the time the main course arrived, she had three specific quotes she will cite at Patricia-at-church in January and at Easter in April. The extraction was not personal; it was operational. The correction for next Christmas is the clean six words: it is going well, thank you. Then the pivot to Lucas.",
     dialog: [
@@ -437,9 +437,9 @@ const scenes: Scene[] = [
 export const toxicNarc51: Scenario = {
   id: "tn-5-1",
   title: "Christmas At His Parents",
-  tagline: "Christmas Day, 3:47 p.m. Seven at the table. Your mother-in-law lands a sentence.",
+  tagline: "Christmas Day, 3:47 p.m. seven at the table. Your mother-in-law lands a sentence.",
   description:
-    "Four years of Christmases at his mother's house. Her specific move is the passive-aggressive line delivered across the dinner table, framed as 'just making conversation,' in a register so warm that the other five at the table will read it as hostess-speak. The scenario is one dinner, one line, and the technique of 'becoming boring' — the six-word response that gives her nothing to play with, paired with the pivot-to-a-person that closes the door she left open.",
+    "Four years of Christmases at his mother's house. Her specific move is the passive-aggressive line delivered across the dinner table, framed as 'just making conversation,' in a register so warm that the other five at the table will read it as hostess-speak. The scenario is one dinner, one line, and the technique of 'becoming boring', the six-word response that gives her nothing to play with, paired with the pivot-to-a-person that closes the door she left open.",
   tier: "premium",
   track: "toxic-narc",
   level: 5,
@@ -452,16 +452,16 @@ export const toxicNarc51: Scenario = {
   startSceneId: "christmas-dinner",
   prerequisites: ["tn-1-1"],
   tacticsLearned: [
-    "The six-word response at a family table — no content, no warmth, no coldness",
+    "The six-word response at a family table, no content, no warmth, no coldness",
     "The pivot-to-a-specific-person (not a topic) as the closing move",
     "The refusal to triangulate through your partner at the table",
-    "The refusal to explain — every explanation is new material",
+    "The refusal to explain. Every explanation is new material",
     "The one-line acknowledgement when your partner notices, rather than the uninvited debrief",
   ],
   redFlagsTaught: [
     "Covert narc in-law specialising in 'just making conversation' passive-aggression at public tables",
-    "The compound-explanation failure mode — every noun becomes a future citation",
-    "The silence-held trap — her reframing your quiet as refusal",
+    "The compound-explanation failure mode. Every noun becomes a future citation",
+    "The silence-held trap, her reframing your quiet as refusal",
     "The register-match (meta-cleverness) as the subtle secondary failure",
     "The post-event uninvited debrief converting your partner's noticing into a workstream",
   ],

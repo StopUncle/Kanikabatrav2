@@ -1,5 +1,5 @@
 /**
- * cbl-1-3 — "The Meeting Notes"
+ * cbl-1-3, "The Meeting Notes"
  *
  * Cluster-B Identification Lab, Level 1, order 3. Short-format
  * diagnostic drill. Target register: narcissistic (NPD). Specific
@@ -23,7 +23,7 @@ import { INNER_VOICE } from "../../characters";
 
 const scenes: Scene[] = [
   // ===================================================================
-  // OPENING — THE MEETING NOTES
+  // OPENING. THE MEETING NOTES
   // ===================================================================
   {
     id: "the-meeting-notes",
@@ -33,15 +33,15 @@ const scenes: Scene[] = [
     dialog: [
       {
         speakerId: null,
-        text: "Tuesday, 5:42 p.m. The Q3 review wrapped at 4:15. The leadership team thanked you specifically in the room — the strategy you wrote was the strategy presented and adopted. The director was explicit: 'this is your work, you should be proud of this.'",
+        text: "Tuesday, 5:42 p.m. the Q3 review wrapped at 4:15. The leadership team thanked you specifically in the room, the strategy you wrote was the strategy presented and adopted. The director was explicit: 'this is your work, you should be proud of this.'",
       },
       {
         speakerId: null,
-        text: "5:41 p.m. The meeting notes hit your inbox. Sent by a peer — Owen — who attended but did not contribute to the document. The notes summarise the meeting. The summary contains this sentence:",
+        text: "5:41 p.m. the meeting notes hit your inbox. Sent by a peer. Owen, who attended but did not contribute to the document. The notes summarise the meeting. The summary contains this sentence:",
       },
       {
         speakerId: null,
-        text: "'The team's strategic positioning was strongly endorsed, with particularly positive feedback on the framing — much of which Owen has been driving since the Q2 sync.'",
+        text: "'The team's strategic positioning was strongly endorsed, with particularly positive feedback on the framing, much of which Owen has been driving since the Q2 sync.'",
       },
       {
         speakerId: "inner-voice",
@@ -76,19 +76,19 @@ const scenes: Scene[] = [
       },
       {
         speakerId: null,
-        text: "1. 'The team's strategic positioning was strongly endorsed' — passive voice on the work itself. The author of the work is absorbed into 'the team.' Your name is not in the sentence.",
+        text: "1. 'The team's strategic positioning was strongly endorsed', passive voice on the work itself. The author of the work is absorbed into 'the team.' Your name is not in the sentence.",
       },
       {
         speakerId: null,
-        text: "2. 'particularly positive feedback on the framing' — the praise is real (the director did say it) but disconnected from the named contributor.",
+        text: "2. 'particularly positive feedback on the framing', the praise is real (the director did say it) but disconnected from the named contributor.",
       },
       {
         speakerId: null,
-        text: "3. 'much of which Owen has been driving since the Q2 sync' — active voice. Specific name. Specific timeline (deliberately vague — 'much of which,' 'since' implies continuity). The reader without context will conclude Owen has been the prime mover since June.",
+        text: "3. 'much of which Owen has been driving since the Q2 sync', active voice. Specific name. Specific timeline (deliberately vague, 'much of which,' 'since' implies continuity). The reader without context will conclude Owen has been the prime mover since June.",
       },
       {
         speakerId: "inner-voice",
-        text: "The notes are not a lie. Each sentence is technically defensible. The reframe is in the structure: passive when describing your contribution, active when describing his. This is the specific NPD-at-work move — the meeting notes as a credit-laundering instrument.",
+        text: "The notes are not a lie. Each sentence is technically defensible. The reframe is in the structure: passive when describing your contribution, active when describing his. This is the specific NPD-at-work move, the meeting notes as a credit-laundering instrument.",
         emotion: "knowing",
       },
     ],
@@ -121,7 +121,7 @@ const scenes: Scene[] = [
     choices: [
       {
         id: "narcissistic",
-        text: "Narcissistic. The reframe is structural and ego-fed — Owen needs the meeting notes to insert him into the credit chain because the credit going to you reflects badly on his standing. The asymmetry of voice (passive for yours, active for his) is the giveaway.",
+        text: "Narcissistic. The reframe is structural and ego-fed. Owen needs the meeting notes to insert him into the credit chain because the credit going to you reflects badly on his standing. The asymmetry of voice (passive for yours, active for his) is the giveaway.",
         tactic: "Correct. The clinical NPD-at-work tell is the specific need to be in the citation, not the outcome. Owen does not need the strategy to fail; he needs the credit to be ambiguous. The grammar of the meeting notes does both.",
         nextSceneId: "diagnosis-correct",
         isOptimal: true,
@@ -130,21 +130,21 @@ const scenes: Scene[] = [
       {
         id: "antisocial",
         text: "Antisocial. He's instrumentally extracting credit.",
-        tactic: "Close, but wrong. ASPD wouldn't bother with the citation — ASPD takes the outcome and moves on. The whole structure of the meeting notes is calibrated to make Owen visible in the credit chain, which is an ego-load move. Re-read: is the move about getting something done, or about being SEEN to be the one doing it?",
+        tactic: "Close, but wrong. ASPD wouldn't bother with the citation. ASPD takes the outcome and moves on. The whole structure of the meeting notes is calibrated to make Owen visible in the credit chain, which is an ego-load move. Re-read: is the move about getting something done, or about being SEEN to be the one doing it?",
         nextSceneId: "diagnosis-near-miss",
         isOptimal: false,
       },
       {
         id: "just-political",
-        text: "Not cluster B. He's just being political — credit-grabbing happens at every job.",
-        tactic: "Miss. Garden-variety credit-grabbing is direct: 'I led that.' What you have here is grammatically engineered ambiguity — passive for one party, active for another, vague timeline that implies continuity. The construction is too specific to be casual office politics.",
+        text: "Not cluster B. He's just being political, credit-grabbing happens at every job.",
+        tactic: "Miss. Garden-variety credit-grabbing is direct: 'I led that.' What you have here is grammatically engineered ambiguity, passive for one party, active for another, vague timeline that implies continuity. The construction is too specific to be casual office politics.",
         nextSceneId: "diagnosis-miss",
         isOptimal: false,
       },
       {
         id: "histrionic",
         text: "Histrionic. He needs the attention.",
-        tactic: "Miss. HPD attention-seeking is theatrical and immediate — interrupting in meetings, dramatic stories at lunch. This is the opposite register: cool, written, deniable. HPD wants the room; NPD wants the citation.",
+        tactic: "Miss. HPD attention-seeking is theatrical and immediate, interrupting in meetings, dramatic stories at lunch. This is the opposite register: cool, written, deniable. HPD wants the room; NPD wants the citation.",
         nextSceneId: "diagnosis-miss",
         isOptimal: false,
       },
@@ -167,7 +167,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "inner-voice",
-        text: "The prescription is the response — and it is not a confrontation. NPD-at-work feeds on confrontations because they generate visible drama; the structural counter is a quiet, written, dated, specific record that ends up in the same email chain.",
+        text: "The prescription is the response and it is not a confrontation. NPD-at-work feeds on confrontations because they generate visible drama; the structural counter is a quiet, written, dated, specific record that ends up in the same email chain.",
         emotion: "knowing",
       },
     ],
@@ -200,15 +200,15 @@ const scenes: Scene[] = [
     choices: [
       {
         id: "reply-all-with-correction",
-        text: "Reply-all to the meeting notes thread. 'Thanks Owen — small correction for the record: the strategy document was authored end-to-end by me; commit history and Q2 sync notes confirm. Happy to share both with anyone who wants them.' Send.",
-        tactic: "Correct. Reply-all puts the correction in the same surface as the reframe — same recipients, same thread, same searchability. 'Commit history and Q2 sync notes confirm' is the specific move: you are not asserting, you are pointing to dated written evidence. Closed sentence, no attack, no need for him to defend.",
+        text: "Reply-all to the meeting notes thread. 'Thanks Owen, small correction for the record: the strategy document was authored end-to-end by me; commit history and Q2 sync notes confirm. Happy to share both with anyone who wants them.' Send.",
+        tactic: "Correct. Reply-all puts the correction in the same surface as the reframe. Same recipients, same thread, same searchability. 'Commit history and Q2 sync notes confirm' is the specific move: you are not asserting, you are pointing to dated written evidence. Closed sentence, no attack, no need for him to defend.",
         nextSceneId: "ending-correct",
         isOptimal: true,
         event: "optimal-with-grace",
       },
       {
         id: "private-message",
-        text: "DM Owen privately. 'Hey — just saw the notes, I think there might be some confusion about authorship, can we chat?'",
+        text: "DM Owen privately. 'Hey, just saw the notes, I think there might be some confusion about authorship, can we chat?'",
         tactic: "The private channel is the move he wants you to take. The reframe is public; the correction is private; the public record stays as he wrote it. Twelve people now think Owen has been driving the framing since Q2; your private chat does not reach them.",
         nextSceneId: "ending-private-channel",
         isOptimal: false,
@@ -216,7 +216,7 @@ const scenes: Scene[] = [
       {
         id: "let-it-go",
         text: "Let it go. The director knows. Make the next strategy doc more obviously yours.",
-        tactic: "The let-it-go move is a third version of the private-channel one. The director does know — and the director is one of twelve recipients. The other eleven, who include people you will need backing from on the next round, have just been seeded with a different version of the credit chain. The cost compounds.",
+        tactic: "The let-it-go move is a third version of the private-channel one. The director does know and the director is one of twelve recipients. The other eleven, who include people you will need backing from on the next round, have just been seeded with a different version of the credit chain. The cost compounds.",
         nextSceneId: "ending-let-it-stand",
         isOptimal: false,
       },
@@ -234,7 +234,7 @@ const scenes: Scene[] = [
     dialog: [
       {
         speakerId: "inner-voice",
-        text: "Close. The diagnostic that splits NPD from ASPD here is the ego-load. ASPD would not have written the meeting notes at all — would have taken the outcome and moved on. The fact that someone wrote the notes specifically to insert his name into the credit chain is the NPD signature. Re-read.",
+        text: "Close. The diagnostic that splits NPD from ASPD here is the ego-load. ASPD would not have written the meeting notes at all, would have taken the outcome and moved on. The fact that someone wrote the notes specifically to insert his name into the credit chain is the NPD signature. Re-read.",
         emotion: "knowing",
       },
     ],
@@ -283,7 +283,7 @@ const scenes: Scene[] = [
     outcomeType: "good",
     endingTitle: "The Record Corrected",
     endingLearnPrompt:
-      "NPD-at-work's preferred surface is the written reframe — meeting notes, summary emails, project recaps. The structural counter is the same surface, used immediately, citing dated evidence rather than asserting feeling. Reply-all in eleven minutes; correction in two sentences; evidence offered, not attacked. Owen will not run this play on you again. He will run it on someone else; the someone-else's recovery move is, hopefully, the one you just modelled.",
+      "NPD-at-work's preferred surface is the written reframe, meeting notes, summary emails, project recaps. The structural counter is the same surface, used immediately, citing dated evidence rather than asserting feeling. Reply-all in eleven minutes; correction in two sentences; evidence offered, not attacked. Owen will not run this play on you again. He will run it on someone else; the someone-else's recovery move is, hopefully, the one you just modelled.",
     dialog: [
       {
         speakerId: "inner-voice",
@@ -321,7 +321,7 @@ const scenes: Scene[] = [
     outcomeType: "bad",
     endingTitle: "The Compounding Reframe",
     failureBlogSlug: "narcissist-playbook-how-they-actually-operate",
-    failureBlogTitle: "Narcissist Playbook — How They Actually Operate",
+    failureBlogTitle: "Narcissist Playbook. How They Actually Operate",
     endingLearnPrompt:
       "The let-it-go move is what NPD-at-work is calibrated to produce. The first reframe lands; you decline to correct; the second reframe arrives in a status update three weeks later, slightly more confident; by Q4 review the citation chain has rewritten itself in writing across six months of meeting notes. Each instance is small enough to feel un-confrontable. The aggregate is unrecoverable. Next time: same-day reply-all, evidence-cited, two sentences.",
     dialog: [
@@ -338,7 +338,7 @@ const scenes: Scene[] = [
 export const clusterBLab13: Scenario = {
   id: "cbl-1-3",
   title: "The Meeting Notes",
-  tagline: "5:42 p.m. The notes drop. Your name is in the passive voice. His is in the active.",
+  tagline: "5:42 p.m. the notes drop. Your name is in the passive voice. His is in the active.",
   description:
     "Short-format Cluster-B identification drill. Target register: NPD-at-work. The meeting notes from a strategy review you authored end-to-end have just been sent by a peer who didn't contribute. One sentence does three specific things: passive voice for your contribution, active voice for his, vague-continuity timeline inserting his name into a Q2 history he wasn't lead on. The drill teaches the grammatical-asymmetry diagnostic and the same-surface, evidence-cited reply-all as the structural counter.",
   tier: "premium",

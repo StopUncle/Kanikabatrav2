@@ -7,7 +7,7 @@ import AskPageClient from "./AskPageClient";
 export const metadata: Metadata = {
   title: "Ask Kanika - Get a Personal Answer | Kanika Batra",
   description:
-    "Submit your question and get a personal written or voice answer from Kanika Batra. Relationships, power dynamics, dark psychology — no sugarcoating.",
+    "Submit your question and get a personal written or voice answer from Kanika Batra. Relationships, power dynamics, dark psychology, no sugarcoating.",
 };
 
 export default function AskPage() {

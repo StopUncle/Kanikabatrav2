@@ -254,7 +254,7 @@ export default function QuizDashboardCard() {
     );
   }
 
-  // Locked state — show primary type tease + unlock CTA
+  // Locked state, show primary type tease + unlock CTA
   if (!data.unlocked) {
     const preview = data.preview;
     return (
@@ -295,7 +295,7 @@ export default function QuizDashboardCard() {
 
   return (
     <div className="py-2">
-      {/* Header — primary type with name + tagline */}
+      {/* Header, primary type with name + tagline */}
       <div className="text-center mb-5">
         <p className="text-accent-gold text-xs uppercase tracking-[0.2em] mb-1">
           Your Primary Type

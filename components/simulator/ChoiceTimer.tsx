@@ -5,7 +5,7 @@
  * scenes. Fills a slim 12-second progress bar from left to right.
  *
  * CRITICAL: this NEVER auto-picks. The bar manufactures embodied
- * pressure — a felt sense of "decide" — without changing outcomes.
+ * pressure, a felt sense of "decide", without changing outcomes.
  * Faster choices = more scenes per session = more dopamine cycles,
  * but the player is always the one who picks.
  *
@@ -17,7 +17,7 @@ import { useEffect, useState } from "react";
 import { Clock } from "lucide-react";
 
 type Props = {
-  /** Stable id (sceneId works) — when this changes the timer resets. */
+  /** Stable id (sceneId works), when this changes the timer resets. */
   resetKey: string;
   durationMs?: number;
 };

@@ -41,7 +41,7 @@ export default function RefundPage() {
 
               <h3 className="text-lg font-light text-text-light mt-4 mb-3">Sociopathic Dating Bible</h3>
               <p className="text-text-gray leading-relaxed mb-4">
-                We offer a <strong className="text-text-light">30-day money-back guarantee</strong> on the Sociopathic Dating Bible. If you&apos;re not satisfied with the book, contact us within 30 days of purchase for a full refund — no questions asked.
+                We offer a <strong className="text-text-light">30-day money-back guarantee</strong> on the Sociopathic Dating Bible. If you&apos;re not satisfied with the book, contact us within 30 days of purchase for a full refund, no questions asked.
               </p>
               <ul className="text-text-gray space-y-2 list-disc list-inside">
                 <li>Refund requests must be made within 30 days of the original purchase date</li>
@@ -80,7 +80,7 @@ export default function RefundPage() {
                 <li><strong className="text-text-light">Pause:</strong> You may pause your membership for up to 30 days instead of cancelling</li>
                 <li><strong className="text-text-light">Refunds:</strong> We do not offer partial-month refunds for subscription cancellations. If you cancel mid-cycle, you retain access until the end of the period you&apos;ve already paid for</li>
                 <li><strong className="text-text-light">First month:</strong> If you cancel within 7 days of your first subscription payment and have not accessed community content, we will issue a full refund</li>
-                <li><strong className="text-text-light">Free trial (book buyers):</strong> If you received a 30-day free trial via the book purchase email sequence, no payment is taken during the trial. At the end of the 30 days your access expires unless you subscribe — nothing is auto-charged</li>
+                <li><strong className="text-text-light">Free trial (book buyers):</strong> If you received a 30-day free trial via the book purchase email sequence, no payment is taken during the trial. At the end of the 30 days your access expires unless you subscribe, nothing is auto-charged</li>
                 <li><strong className="text-text-light">Payment failures:</strong> If we can&apos;t charge your card on renewal, your membership is paused and you&apos;ll be emailed to update your payment method. No grace period access after suspension</li>
               </ul>
             </section>

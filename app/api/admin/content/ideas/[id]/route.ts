@@ -44,10 +44,10 @@ const ALLOWED_STAGES = [
 const ALLOWED_VIDEO_FORMATS = ["LONG", "SHORT"];
 
 function pickEnum(val: unknown, allowed: string[]): string | null | undefined {
-  if (val === undefined) return undefined; // not in body — don't touch
+  if (val === undefined) return undefined; // not in body, don't touch
   if (val === null || val === "") return null;
   if (typeof val === "string" && allowed.includes(val)) return val;
-  return undefined; // invalid value — silently ignore
+  return undefined; // invalid value, silently ignore
 }
 
 export async function PATCH(
@@ -111,7 +111,7 @@ export async function PATCH(
   const fr = pickEnum(frame, ALLOWED_FRAMES);
   if (fr !== undefined) data.frame = fr;
 
-  // Stage must be a valid value if provided (no nulls — defaults to CONCEPT).
+  // Stage must be a valid value if provided (no nulls, defaults to CONCEPT).
   if (developmentStage !== undefined) {
     if (
       typeof developmentStage === "string" &&
@@ -132,7 +132,7 @@ export async function PATCH(
 
   // Confession link. When transitioning to a new non-null id, bump that
   // confession's usedCount + lastUsedAt so the picker can de-prioritize it.
-  // We don't decrement when unlinking — usedCount tracks total link events.
+  // We don't decrement when unlinking, usedCount tracks total link events.
   let bumpConfessionId: string | null = null;
   if (confessionId !== undefined) {
     if (confessionId === null || confessionId === "") {
@@ -162,7 +162,7 @@ export async function PATCH(
         lastUsedAt: new Date(),
       },
     }).catch((err) => {
-      // Non-fatal — the FK might not resolve if the confession was deleted
+      // Non-fatal, the FK might not resolve if the confession was deleted
       // mid-flight. Log but don't fail the idea update.
       console.error("Failed to bump confession usedCount:", err);
     });

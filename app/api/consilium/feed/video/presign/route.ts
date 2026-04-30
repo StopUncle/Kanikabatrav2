@@ -15,7 +15,7 @@ import crypto from "crypto";
  *      (A 169 MB file previously returned 502 before hitting Next.js.)
  *   2. The Node process doesn't have to buffer the file into memory,
  *      which would OOM on smaller Railway instances.
- *   3. maxDuration / timeouts are no longer a factor — R2 handles the
+ *   3. MaxDuration / timeouts are no longer a factor. R2 handles the
  *      long-running upload.
  *
  * Flow:
@@ -28,7 +28,7 @@ import crypto from "crypto";
  *   5. Server HEAD-checks the key exists in R2 and returns the
  *      canonical public URL. The UI stores this on the video post.
  *
- * R2 CORS config is required — see R2-CORS-SETUP.md at project root.
+ * R2 CORS config is required, see R2-CORS-SETUP.md at project root.
  */
 
 export const runtime = "nodejs";
@@ -100,7 +100,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // The server only sees the browser's declared MIME here — full
+    // The server only sees the browser's declared MIME here, full
     // byte-sniffing happens server-side after upload, in the verify
     // route, by HEAD-ing the object and checking size. For the
     // presigned URL we sign the best-guess content type so R2 stores

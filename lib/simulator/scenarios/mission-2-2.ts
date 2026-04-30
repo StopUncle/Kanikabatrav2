@@ -1,8 +1,8 @@
 /**
- * Mission 2-2 — "The Proxy"
+ * Mission 2-2, "The Proxy"
  *
  * Level 2, order 2. Teaches triangulation via a narcissist's proxy.
- * Dana is back — this time on a targeted approach, with a specific
+ * Dana is back. This time on a targeted approach, with a specific
  * information goal. She's doing a job for Maris.
  */
 
@@ -22,7 +22,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: null,
-        text: "Dana materialises in the chair across from you. She did not walk over so much as appear — you looked up and she was there, a cable-knit sweater and an arrangement of her face that a person would only practise in a mirror.",
+        text: "Dana materialises in the chair across from you. She did not walk over so much as appear, you looked up and she was there, a cable-knit sweater and an arrangement of her face that a person would only practise in a mirror.",
       },
       {
         speakerId: "dana",
@@ -31,7 +31,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "inner-voice",
-        text: "'Are you okay' is not a greeting, and Dana is not concerned. It is a lead question — it presupposes that you might not be okay, which then gives her permission to bring up the reason you might not be. She is laying the premise for the ask she has not made yet.",
+        text: "'Are you okay' is not a greeting, and Dana is not concerned. It is a lead question, it presupposes that you might not be okay, which then gives her permission to bring up the reason you might not be. She is laying the premise for the ask she has not made yet.",
         emotion: "knowing",
       },
       {
@@ -44,7 +44,7 @@ const scenes: Scene[] = [
       {
         id: "reassure-her",
         text: "\"Yeah, I'm fine, why?\"",
-        tactic: "She just got you to ask. Now she'll answer — with bait.",
+        tactic: "She just got you to ask. Now she'll answer, with bait.",
         nextSceneId: "dana-drops-bait",
       },
       {
@@ -89,12 +89,12 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "inner-voice",
-        text: "Name the move. This is triangulation — the use of a third party to deliver something the second party would not or could not say directly. Triangulation is the preferred delivery system of the covert narcissist because the source-of-record becomes the messenger rather than the messenger's sender, which gives the sender plausible deniability about every word that was supposedly said.",
+        text: "Name the move. This is triangulation, the use of a third party to deliver something the second party would not or could not say directly. Triangulation is the preferred delivery system of the covert narcissist because the source-of-record becomes the messenger rather than the messenger's sender, which gives the sender plausible deniability about every word that was supposedly said.",
         emotion: "knowing",
       },
       {
         speakerId: "inner-voice",
-        text: "Dana opened with 'don't freak out' to pre-frame any calm response of yours as 'you are already freaking out' — the sentence is a trap either way. She then signalled 'interesting things' without naming any, which is the bait. And the close, 'hear it from a friend,' presupposes you are friends, which you are not.",
+        text: "Dana opened with 'don't freak out' to pre-frame any calm response of yours as 'you are already freaking out', the sentence is a trap either way. She then signalled 'interesting things' without naming any, which is the bait. And the close, 'hear it from a friend,' presupposes you are friends, which you are not.",
         emotion: "knowing",
       },
       {
@@ -114,7 +114,7 @@ const scenes: Scene[] = [
       {
         id: "skeptical",
         text: "\"Cool. Thanks for the PSA.\" Go back to reading.",
-        tactic: "Refuse the hook. She didn't come here to be dismissed — she'll escalate or leave.",
+        tactic: "Refuse the hook. She didn't come here to be dismissed, she'll escalate or leave.",
         nextSceneId: "dana-escalates",
         isOptimal: true,
       },
@@ -185,7 +185,7 @@ const scenes: Scene[] = [
     dialog: [
       {
         speakerId: "dana",
-        text: '"Oh! I\'m fine. I just — I mean I was talking to someone, and your name came up, and..."',
+        text: '"Oh! I\'m fine. I just. I mean I was talking to someone, and your name came up, and..."',
         emotion: "concerned",
       },
       {
@@ -446,7 +446,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "priya",
-        text: '"Bonus: Dana reports back with \'nothing\' — and Maris starts wondering if Dana is actually useful."',
+        text: '"Bonus: Dana reports back with \'nothing\' and Maris starts wondering if Dana is actually useful."',
         emotion: "smirking",
       },
     ],
@@ -464,7 +464,7 @@ const scenes: Scene[] = [
     outcomeType: "good",
     endingTitle: "The Proxy Was Wasted",
     endingSummary:
-      "Dana arrived with a mission. She leaves without a single usable sentence. Maris now has two problems: you didn't crack, and her proxy came back empty. Proxies that return empty get replaced — you may have just broken Maris's delivery system.",
+      "Dana arrived with a mission. She leaves without a single usable sentence. Maris now has two problems: you didn't crack, and her proxy came back empty. Proxies that return empty get replaced, you may have just broken Maris's delivery system.",
     dialog: [
       {
         speakerId: "inner-voice",
@@ -481,7 +481,7 @@ const scenes: Scene[] = [
     outcomeType: "good",
     endingTitle: "Channel Closed",
     endingSummary:
-      "You made it explicit — if Maris wants something, she can come ask herself. Dana has no legitimate reason to run messages anymore. The triangulation attempt is over. Maris's next move has to be direct, which means she'll have to commit to it.",
+      "You made it explicit, if Maris wants something, she can come ask herself. Dana has no legitimate reason to run messages anymore. The triangulation attempt is over. Maris's next move has to be direct, which means she'll have to commit to it.",
     dialog: [
       {
         speakerId: "inner-voice",
@@ -498,7 +498,7 @@ const scenes: Scene[] = [
     outcomeType: "good",
     endingTitle: "Source Exposed",
     endingSummary:
-      "You tested the quote. Dana had to admit it was paraphrased. What started as 'Maris said' ended as 'I got the vibe.' You didn't defend anything — and the attack shrank to nothing.",
+      "You tested the quote. Dana had to admit it was paraphrased. What started as 'Maris said' ended as 'I got the vibe.' You didn't defend anything and the attack shrank to nothing.",
     dialog: [
       {
         speakerId: "inner-voice",
@@ -532,7 +532,7 @@ const scenes: Scene[] = [
     outcomeType: "good",
     endingTitle: "Turned It Into a Shrug",
     endingSummary:
-      "She handed you an insult and you agreed with it, cheerfully. Whatever Dana brings back to Maris now sounds like 'they laughed.' That's not ammunition — that's the opposite.",
+      "She handed you an insult and you agreed with it, cheerfully. Whatever Dana brings back to Maris now sounds like 'they laughed.' That's not ammunition, that's the opposite.",
     dialog: [
       {
         speakerId: "inner-voice",
@@ -572,7 +572,7 @@ const scenes: Scene[] = [
     failureBlogTitle: "Predator's Gaze: How Sociopaths Detect Weakness",
     endingTitle: "Network Mapped",
     endingSummary:
-      "You told Dana about your alliances — 'not really talking to anyone' is still a data point. Maris now knows who you AREN'T connected to, which tells her who's safe to weaponize against you. You handed over the map.",
+      "You told Dana about your alliances, 'not really talking to anyone' is still a data point. Maris now knows who you AREN'T connected to, which tells her who's safe to weaponize against you. You handed over the map.",
     dialog: [
       {
         speakerId: "inner-voice",
@@ -592,7 +592,7 @@ const scenes: Scene[] = [
     failureBlogTitle: "Mask Collection: The Four Personas Sociopaths Wear",
     endingTitle: "You Named Priya",
     endingSummary:
-      "You told Dana — so you told Maris — that you and Priya have been close. Priya is Maris's old target. She just became Maris's current one again, and you're the reason. The person who's been protecting you through every level is about to find out you put her name in a proxy's mouth.",
+      "You told Dana so you told Maris, that you and Priya have been close. Priya is Maris's old target. She just became Maris's current one again, and you're the reason. The person who's been protecting you through every level is about to find out you put her name in a proxy's mouth.",
     dialog: [
       {
         speakerId: "inner-voice",
@@ -608,7 +608,7 @@ export const mission22: Scenario = {
   title: "The Proxy",
   tagline: "Dana isn't visiting. She's on assignment.",
   description:
-    "Dana finds you in the common room with a 'you should hear this from a friend.' She's running reconnaissance for Maris. The only way through is to make her come back empty — and to see the triangulation while it's happening.",
+    "Dana finds you in the common room with a 'you should hear this from a friend.' She's running reconnaissance for Maris. The only way through is to make her come back empty and to see the triangulation while it's happening.",
   tier: "free",
   level: 2,
   order: 2,

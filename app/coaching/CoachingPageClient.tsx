@@ -13,22 +13,22 @@ const COACHING_FAQ = [
   {
     question: "Is this therapy?",
     answer:
-      "No. I'm not a licensed therapist and I don't treat mental health conditions. This is strategic coaching — I tell you what I see in a situation, and I give you a move. If you need clinical support, I'll tell you that directly.",
+      "No. I'm not a licensed therapist and I don't treat mental health conditions. This is strategic coaching. I tell you what I see in a situation, and I give you a move. If you need clinical support, I'll tell you that directly.",
   },
   {
     question: "What if I don't know what to talk about?",
     answer:
-      "You do. The situation that made you look at this page — that's what we talk about. A person, a pattern, a decision you can't make. Bring whatever's keeping you up at night.",
+      "You do. The situation that made you look at this page, that's what we talk about. A person, a pattern, a decision you can't make. Bring whatever's keeping you up at night.",
   },
   {
     question: "How do I prepare for a session?",
     answer:
-      "Think about the one situation you most want clarity on. The more specific you are, the more useful I can be. Screenshots, context, backstory — bring it all.",
+      "Think about the one situation you most want clarity on. The more specific you are, the more useful I can be. Screenshots, context, backstory, bring it all.",
   },
   {
     question: "What's your refund policy?",
     answer:
-      "If you book and genuinely can't make it, I'll reschedule once. No refunds after the session happens — you're paying for my time and attention, and you'll get both.",
+      "If you book and genuinely can't make it, I'll reschedule once. No refunds after the session happens, you're paying for my time and attention, and you'll get both.",
   },
   {
     question: "Can I upgrade to a longer programme after a single session?",
@@ -43,7 +43,7 @@ const COACHING_FAQ = [
   {
     question: "Is everything confidential?",
     answer:
-      "Completely. What you tell me stays between us. I don't share details, names, or situations — not on social media, not with anyone.",
+      "Completely. What you tell me stays between us. I don't share details, names, or situations, not on social media, not with anyone.",
   },
 ];
 
@@ -107,7 +107,7 @@ export default function CoachingPage() {
                 "You know something is off but you can't name it",
                 "You want to walk into any room and read everyone in it",
                 "You're done being the person who gets blindsided",
-                "You want to think differently — not just feel better",
+                "You want to think differently, not just feel better",
               ].map((line, i) => (
                 <m.p
                   key={i}
@@ -133,7 +133,7 @@ export default function CoachingPage() {
           >
             <div className="space-y-3 text-text-gray/50 text-sm">
               <p>
-                I work with men and women. This is not therapy — I&apos;m not a
+                I work with men and women. This is not therapy. I&apos;m not a
                 licensed therapist and I don&apos;t treat mental health conditions.
               </p>
               <p>
@@ -288,7 +288,7 @@ export default function CoachingPage() {
                           </label>
 
                           {agreedToTerms[pkg.id] && (
-                            // No successUrl override — the default from
+                            // No successUrl override, the default from
                             // /api/stripe/checkout sends buyers to
                             // /success?session_id={CHECKOUT_SESSION_ID}&product=…,
                             // which polls /api/stripe/session for real
@@ -379,7 +379,7 @@ export default function CoachingPage() {
                   step: "02",
                   title: "I tell you what I see.",
                   description:
-                    "No softening. No managing your feelings. I show you what's actually happening — the pattern, the dynamic, the thing you keep missing.",
+                    "No softening. No managing your feelings. I show you what's actually happening, the pattern, the dynamic, the thing you keep missing.",
                 },
                 {
                   step: "03",
@@ -466,7 +466,7 @@ export default function CoachingPage() {
               href="/consilium"
               className="text-accent-gold hover:text-accent-gold/80 text-sm transition-colors"
             >
-              Start with The Consilium — $29/mo →
+              Start with The Consilium, $29/mo →
             </Link>
           </div>
 
@@ -508,7 +508,7 @@ export default function CoachingPage() {
                   }}
                   className="px-6 py-3 rounded-lg border border-accent-gold/20 text-text-light text-sm hover:bg-accent-gold/5 transition-colors"
                 >
-                  {pkg.name} — ${pkg.price.toLocaleString()}
+                  {pkg.name}, ${pkg.price.toLocaleString()}
                   {pkg.price !== pkg.bundlePrice ? "+" : ""}
                 </a>
               ))}

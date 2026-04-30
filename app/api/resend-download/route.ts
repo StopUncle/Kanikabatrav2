@@ -90,7 +90,7 @@ export async function POST(request: NextRequest) {
     const expiresAt = new Date();
     expiresAt.setDate(expiresAt.getDate() + 30);
 
-    // Send email FIRST — only update DB if email succeeds
+    // Send email FIRST, only update DB if email succeeds
     const sent = await sendBookDelivery(
       targetEmail,
       purchase.customerName,
@@ -109,7 +109,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Email confirmed sent — now persist the new token
+    // Email confirmed sent, now persist the new token
     await prisma.purchase.update({
       where: { id: purchase.id },
       data: {

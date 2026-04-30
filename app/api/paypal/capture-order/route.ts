@@ -40,7 +40,7 @@ async function handleCompletedOrder(
   alreadyExisted: boolean;
   emailSent: boolean;
 }> {
-  // Always check for existing purchase FIRST — prevents duplicates
+  // Always check for existing purchase FIRST, prevents duplicates
   const existingPurchase = await prisma.purchase.findFirst({
     where: { paypalOrderId: orderId },
     select: {
@@ -301,7 +301,7 @@ export async function POST(request: NextRequest) {
       pollAttempts < maxPollAttempts
     ) {
       console.log(
-        `Waiting for order... Attempt ${pollAttempts + 1}/${maxPollAttempts}, Status: ${orderDetails.status}`,
+        `Waiting for order... attempt ${pollAttempts + 1}/${maxPollAttempts}, Status: ${orderDetails.status}`,
       );
       await new Promise((resolve) => setTimeout(resolve, 2000));
       try {
@@ -355,7 +355,7 @@ export async function POST(request: NextRequest) {
     } catch (error) {
       console.error("PayPal capture API error:", error);
 
-      // Capture failed — check if it was already captured (race condition)
+      // Capture failed, check if it was already captured (race condition)
       try {
         const recheckOrder = await paypalService.getOrderDetails(body.orderId);
         if (recheckOrder.status === "COMPLETED") {

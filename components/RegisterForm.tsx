@@ -26,7 +26,7 @@ export default function RegisterForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   // Accept both ?returnTo and ?redirect so every entry point lands back
-  // in the same place post-register. See LoginForm for why — server-auth
+  // in the same place post-register. See LoginForm for why, server-auth
   // ships users here via ?redirect=…, other pages use ?returnTo=….
   const returnTo =
     searchParams.get("returnTo") || searchParams.get("redirect");
@@ -69,7 +69,7 @@ export default function RegisterForm() {
         throw new Error(result.error || "Registration failed");
       }
 
-      // Registration successful — redirect to returnTo or dashboard
+      // Registration successful, redirect to returnTo or dashboard
       router.push(returnTo || "/dashboard");
       router.refresh();
     } catch (err) {

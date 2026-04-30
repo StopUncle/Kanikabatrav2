@@ -14,7 +14,7 @@ import { logger } from "@/lib/logger";
  * misconfig, CORS refusal that the XHR reports as success, etc.) would
  * produce a video post pointing at a 404.
  *
- * Only the key returned by the presign route is trusted — everything
+ * Only the key returned by the presign route is trusted, everything
  * else (public URL, size, timing) is derived server-side.
  */
 
@@ -84,7 +84,7 @@ export async function POST(request: NextRequest) {
         error?.$metadata?.httpStatusCode === 404
       ) {
         return NextResponse.json(
-          { error: "Object not found in storage — upload may have been interrupted." },
+          { error: "Object not found in storage, upload may have been interrupted." },
           { status: 404 },
         );
       }

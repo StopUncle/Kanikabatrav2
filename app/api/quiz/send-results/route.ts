@@ -114,7 +114,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Email transport failed. Returning 200 with success:false meant client
-    // code calling `response.ok` would treat it as success — user told to
+    // code calling `response.ok` would treat it as success, user told to
     // check inbox, no email actually sent. Return 502 so the UI can retry
     // or surface a real error to the user.
     return NextResponse.json(

@@ -67,41 +67,41 @@ export default function Home() {
       <Header />
 
       {/*
-        Homepage flow — Book sits immediately after Hero as the first
+        Homepage flow. Book sits immediately after Hero as the first
         tangible offer (concrete, single-price, skimmable), then the
         Consilium teaser follows as the interactive flagship. This order
         matches how cold traffic actually converts: the book is the easy
         yes; the Consilium is the deeper commitment the demo earns.
 
-        1. Hero              — two primary CTAs, set the stakes
-        2. Book showcase     — PRIMARY #1. Concrete field guide.
-        3. Consilium teaser  — PRIMARY #2. Live SimulatorPreview with a
+        1. Hero             , two primary CTAs, set the stakes
+        2. Book showcase    . PRIMARY #1. Concrete field guide.
+        3. Consilium teaser . PRIMARY #2. Live SimulatorPreview with a
                                "Try it free" dual CTA hitting /try.
         4. Testimonial
-        5. Coaching          — premium tier
+        5. Coaching         , premium tier
         6. SocialHub
-        7. Blog              — conditional
-        8. Final CTA         — blended Book + Consilium, coaching tertiary
+        7. Blog             , conditional
+        8. Final CTA        , blended Book + Consilium, coaching tertiary
         9. Newsletter
 
         Removed: AskKanika (Q&A), standalone Quiz CTA section, standalone
         stats section (redundant with SocialHub). The quiz still exists
-        as a product — just not a homepage tile.
+        as a product, just not a homepage tile.
       */}
       <main className="relative z-10 pt-20">
         <Hero />
 
-        {/* PRIMARY #1 — Book (the tangible field guide) */}
+        {/* PRIMARY #1. Book (the tangible field guide) */}
         <BookShowcase />
 
-        {/* PRIMARY #2 — Consilium overview. Plain-English pitch of what
+        {/* PRIMARY #2. Consilium overview. Plain-English pitch of what
             the membership IS so cold traffic can answer "what does
             $29/mo get me?" in one glance. Lives ABOVE the simulator
             teaser so visitors understand the product before being
             asked to feel one feature of it. */}
         <ConsiliumOverview />
 
-        {/* PRIMARY #2 (continued) — Live simulator demo. Now framed as
+        {/* PRIMARY #2 (continued). Live simulator demo. Now framed as
             the flagship feature inside the Consilium, not a separate
             offer. Eyebrow updated accordingly. */}
         <ConsiliumSimulatorTeaser variant="homepage" />
@@ -148,11 +148,11 @@ export default function Home() {
           </section>
         )}
 
-        {/* Final CTA — blended.
+        {/* Final CTA, blended.
             Book + Consilium get equal visual weight as two primary cards.
             Coaching sits beneath as a small tertiary link. The previous
             version buried Consilium entirely and forced a binary pick
-            between Book and Coaching — this blends them the way the
+            between Book and Coaching. This blends them the way the
             funnel actually works: book is the field guide, Consilium
             is the practice ground, coaching is the personal upgrade. */}
         <section className="py-28 px-4">
@@ -247,7 +247,7 @@ export default function Home() {
         <section className="py-20 px-4 border-t border-accent-gold/10">
           <div className="max-w-3xl mx-auto text-center">
             <h3 className="text-2xl font-light mb-4 gradient-text-gold">
-              Psychology of Power — Weekly
+              Psychology of Power. Weekly
             </h3>
             <p className="text-text-gray mb-8">
               Strategic psychology, power dynamics, and the insights they

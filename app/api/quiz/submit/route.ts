@@ -36,7 +36,7 @@ export async function POST(request: NextRequest) {
     const types = getPersonalityTypes(scores);
 
     // Anonymous quiz takes are the cleanest pre-funnel attribution
-    // signal — most quiz takers aren't registered yet, so this row
+    // signal. Most quiz takers aren't registered yet, so this row
     // captures source for visitors who would otherwise be invisible
     // until they convert.
     const attrRecord = buildAttributionRecord(attribution, request);

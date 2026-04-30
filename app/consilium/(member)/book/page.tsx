@@ -3,9 +3,9 @@ import { prisma } from "@/lib/prisma";
 import MemberBookClient from "./MemberBookClient";
 
 export const metadata = {
-  title: "The Book — The Consilium | Kanika Batra",
+  title: "The Book. The Consilium | Kanika Batra",
   description:
-    "The Sociopathic Dating Bible at the Consilium member price — $9.99, with the addendum chapters.",
+    "The Sociopathic Dating Bible at the Consilium member price, $9.99, with the addendum chapters.",
 };
 
 /**
@@ -32,7 +32,7 @@ export default async function MemberBookPage() {
   });
 
   if (!user?.email) {
-    // Shouldn't happen — requireServerAuth would have redirected. Narrow for TS.
+    // Shouldn't happen, requireServerAuth would have redirected. Narrow for TS.
     return null;
   }
 
@@ -42,7 +42,7 @@ export default async function MemberBookPage() {
   //   2. Members who bought standalone BOOK before joining
   //   3. Members who buy via this page at $9.99 today
   //
-  // Case-insensitive email match — Purchase rows store the email as it
+  // Case-insensitive email match. Purchase rows store the email as it
   // was entered at Stripe checkout (often mixed case like
   // "Kanika@Kanikarose.com") while User rows normalise to lowercase on
   // register. Without `mode: "insensitive"` a gift-claim user whose

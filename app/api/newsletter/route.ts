@@ -59,10 +59,10 @@ export async function POST(request: NextRequest) {
       },
     });
 
-    // Send welcome email (fire and forget — don't block the response)
+    // Send welcome email (fire and forget, don't block the response)
     sendEmail({
       to: email.toLowerCase(),
-      subject: "Welcome to The Psychology of Power — Kanika Batra",
+      subject: "Welcome to The Psychology of Power. Kanika Batra",
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
           <div style="background: linear-gradient(135deg, #1a0d11 0%, #0a1628 100%); padding: 30px; border-radius: 10px 10px 0 0;">
@@ -76,13 +76,13 @@ export async function POST(request: NextRequest) {
               Thanks for subscribing. You're now on the inside.
             </p>
             <p style="color: #94a3b8; line-height: 1.6;">
-              I'll be sharing insights on power dynamics, strategic psychology, and the patterns most people miss — directly to your inbox.
+              I'll be sharing insights on power dynamics, strategic psychology, and the patterns most people miss, directly to your inbox.
             </p>
             <p style="color: #94a3b8; line-height: 1.6;">
               No fluff. No filler. Just the stuff that actually moves the needle.
             </p>
             <p style="color: #d4af37; font-style: italic; margin-top: 30px;">
-              — Kanika Batra<br>
+             . Kanika Batra<br>
               <span style="color: #666; font-size: 12px;">The Psychology of Power</span>
             </p>
           </div>

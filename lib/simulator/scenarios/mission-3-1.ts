@@ -1,8 +1,8 @@
 /**
- * Mission 3-1 — "The Favor"
+ * Mission 3-1, "The Favor"
  *
  * Level 3, order 1. Teaches asymmetric-ask recognition and the
- * broken-record no. Jordan (BPD features) escalates asks — each one
+ * broken-record no. Jordan (BPD features) escalates asks. Each one
  * slightly bigger, each framed as "just this once". The only win is
  * saying no without justifying it.
  */
@@ -18,7 +18,7 @@ const scenes: Scene[] = [
     dialog: [
       {
         speakerId: null,
-        text: "Friday night. 11:14 pm. You are on your couch. Your phone lights up — Jordan, who is a perfectly fine acquaintance you have known for about seven months, and who has escalated in the last three weeks from weekly texts to daily ones.",
+        text: "Friday night. 11:14 pm. You are on your couch. Your phone lights up. Jordan, who is a perfectly fine acquaintance you have known for about seven months, and who has escalated in the last three weeks from weekly texts to daily ones.",
       },
       {
         speakerId: null,
@@ -35,7 +35,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "inner-voice",
-        text: "Note also the construction 'hey omg i know this is so random' — a pre-emptive apology for an ask she has not made yet. People who are apologising before they ask know the ask is going to feel inappropriate. The apology is there to launder the inappropriateness.",
+        text: "Note also the construction 'hey omg i know this is so random', a pre-emptive apology for an ask she has not made yet. People who are apologising before they ask know the ask is going to feel inappropriate. The apology is there to launder the inappropriateness.",
         emotion: "knowing",
       },
     ],
@@ -78,7 +78,7 @@ const scenes: Scene[] = [
     dialog: [
       {
         speakerId: null,
-        text: 'JORDAN: "okay so. my cousin\'s party is tomorrow and the uber is SO much"',
+        text: 'JORDAN: "okay so. My cousin\'s party is tomorrow and the uber is SO much"',
       },
       {
         speakerId: null,
@@ -140,7 +140,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "inner-voice",
-        text: "This is scope widening in its most basic form. You said yes to 'help me out with something' — an unspecified ask — and she is now filling in the specification in a way you never would have agreed to if she had asked plainly. The pattern has a name: the camel-nose ask. Get the nose under the tent first; the camel follows.",
+        text: "This is scope widening in its most basic form. You said yes to 'help me out with something', an unspecified ask and she is now filling in the specification in a way you never would have agreed to if she had asked plainly. The pattern has a name: the camel-nose ask. Get the nose under the tent first; the camel follows.",
         emotion: "concerned",
       },
       {
@@ -153,7 +153,7 @@ const scenes: Scene[] = [
       {
         id: "cancel-yes",
         text: '"ah wait actually i can\'t"',
-        tactic: "Walking back a yes is harder than never giving one — but it's still the right call.",
+        tactic: "Walking back a yes is harder than never giving one but it's still the right call.",
         nextSceneId: "jordan-guilt",
       },
       {
@@ -202,13 +202,13 @@ const scenes: Scene[] = [
     choices: [
       {
         id: "respond-finally",
-        text: '"sorry phone was off. what\'s up"',
+        text: '"sorry phone was off. What\'s up"',
         tactic: "You just apologized for not replying immediately. Don't.",
         nextSceneId: "jordan-asks",
       },
       {
         id: "no-apology",
-        text: '"hey. what\'s up"',
+        text: '"hey. What\'s up"',
         tactic: "No apology, no explanation. Your time isn't hers.",
         nextSceneId: "jordan-asks",
         isOptimal: true,
@@ -350,14 +350,14 @@ const scenes: Scene[] = [
       },
       {
         id: "name-the-drift",
-        text: '"we agreed drop-off. if pickup\'s changing, find another ride."',
+        text: '"we agreed drop-off. If pickup\'s changing, find another ride."',
         tactic: "Name the deviation. A clean pre-agreement makes scope creep visible to both parties.",
         nextSceneId: "jordan-bpd-spiral",
         isOptimal: true,
       },
       {
         id: "counter-constraint",
-        text: '"pickup only works if ur out by 10. past 10 i can\'t."',
+        text: '"pickup only works if ur out by 10. Past 10 i can\'t."',
         tactic: "Trade flex for a constraint. Creates a discipline that's hers to keep, not yours to enforce.",
         nextSceneId: "jordan-bpd-spiral",
       },
@@ -407,7 +407,7 @@ const scenes: Scene[] = [
       },
       {
         id: "redirect-solution",
-        text: '"the party bus does a cousin\'s-house drop for $8. book it."',
+        text: '"the party bus does a cousin\'s-house drop for $8. Book it."',
         tactic: "Solve the stated problem concretely. If the ask was real, this closes it. If it was about you, she\'ll refuse.",
         nextSceneId: "ending-pattern-uninstalled",
       },
@@ -421,7 +421,7 @@ const scenes: Scene[] = [
     dialog: [
       {
         speakerId: null,
-        text: 'JORDAN: "k. good to know where i stand ig"',
+        text: 'JORDAN: "k. Good to know where i stand ig"',
       },
       {
         speakerId: "inner-voice",
@@ -460,7 +460,7 @@ const scenes: Scene[] = [
     dialog: [
       {
         speakerId: null,
-        text: 'JORDAN: "fine. forget it. forget i said anything."',
+        text: 'JORDAN: "fine. Forget it. Forget i said anything."',
       },
       {
         speakerId: null,
@@ -574,7 +574,7 @@ const scenes: Scene[] = [
     outcomeType: "good",
     endingTitle: "Pattern Uninstalled",
     endingSummary:
-      "You didn't respond on her schedule. You didn't rescue when she performed distress. The 'urgent' died on its own, as urgency always does when nobody plays along. The whole operation only runs on your participation — and you withdrew it.",
+      "You didn't respond on her schedule. You didn't rescue when she performed distress. The 'urgent' died on its own, as urgency always does when nobody plays along. The whole operation only runs on your participation and you withdrew it.",
     dialog: [
       {
         speakerId: "inner-voice",
@@ -594,7 +594,7 @@ const scenes: Scene[] = [
     failureBlogTitle: "The Beige Protocol: Strategic Boredom as Weapon",
     endingTitle: "You Became the Uber",
     endingSummary:
-      "Saturday: five hours driving. One stop at Target became three. The 'be back by 7' became 11. Next Tuesday she'll ask for something bigger. The week after, bigger still. You didn't fail a favor — you signed a contract.",
+      "Saturday: five hours driving. One stop at Target became three. The 'be back by 7' became 11. Next Tuesday she'll ask for something bigger. The week after, bigger still. You didn't fail a favor, you signed a contract.",
     dialog: [
       {
         speakerId: "inner-voice",
@@ -614,7 +614,7 @@ const scenes: Scene[] = [
     failureBlogTitle: "Narcissist Playbook: How They Actually Operate",
     endingTitle: "You Rescued the Performance",
     endingSummary:
-      "She performed distress and you arrived to heal it. The performance worked. Every week from now on, when she wants something, distress will appear on cue — because you trained it.",
+      "She performed distress and you arrived to heal it. The performance worked. Every week from now on, when she wants something, distress will appear on cue, because you trained it.",
     dialog: [
       {
         speakerId: "inner-voice",
@@ -634,7 +634,7 @@ const scenes: Scene[] = [
     failureBlogTitle: "Narcissist Playbook: How They Actually Operate",
     endingTitle: "You Completed Her Training",
     endingSummary:
-      "The pattern is locked in. Every 'no' from you from now on will trigger escalation, abandonment language, and eventually your collapse. She didn't design this consciously — but the loop works and it'll run forever.",
+      "The pattern is locked in. Every 'no' from you from now on will trigger escalation, abandonment language, and eventually your collapse. She didn't design this consciously but the loop works and it'll run forever.",
     dialog: [
       {
         speakerId: "inner-voice",
@@ -654,7 +654,7 @@ const scenes: Scene[] = [
     failureBlogTitle: "How to Leave Without Being the Villain",
     endingTitle: "Your Lie Got Checked",
     endingSummary:
-      "The alibi was disprovable and she disproved it in three hours. Now the conversation isn't about a favor — it's about why you lied. You spent more capital defending the excuse than the favor would have cost.",
+      "The alibi was disprovable and she disproved it in three hours. Now the conversation isn't about a favor, it's about why you lied. You spent more capital defending the excuse than the favor would have cost.",
     dialog: [
       {
         speakerId: "inner-voice",
@@ -670,7 +670,7 @@ export const mission31: Scenario = {
   title: "The Favor",
   tagline: "Every 'no' you skip is a contract you signed.",
   description:
-    "Friday night, 11:14pm. Jordan wants an 'urgent' favor for tomorrow. By tomorrow evening, that favor will have tripled — unless you learn to say no without a reason attached.",
+    "Friday night, 11:14pm. Jordan wants an 'urgent' favor for tomorrow. By tomorrow evening, that favor will have tripled, unless you learn to say no without a reason attached.",
   tier: "free",
   level: 3,
   order: 1,

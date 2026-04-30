@@ -143,7 +143,7 @@ export default function ConsiliumQuizLanding() {
           </div>
         </m.div>
 
-        {/* How it works — Consilium version (no paywall step) */}
+        {/* How it works. Consilium version (no paywall step) */}
         <m.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
@@ -160,7 +160,7 @@ export default function ConsiliumQuizLanding() {
                 step: "01",
                 title: "Answer 20 Scenarios",
                 description:
-                  "Real dating and social situations. No boring agree/disagree — just truth.",
+                  "Real dating and social situations. No boring agree/disagree, just truth.",
               },
               {
                 step: "02",

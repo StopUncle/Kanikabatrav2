@@ -1,7 +1,7 @@
 "use client";
 
 /**
- * Simulator Demo — visual prototype for the Dark Mirror game port.
+ * Simulator Demo, visual prototype for the Dark Mirror game port.
  *
  * This is a PREVIEW ROUTE, not production. It exists so Kanika can see the
  * visual direction before we commit to porting 26 scenarios. Delete or gate
@@ -20,7 +20,7 @@
  *   - Prisma persistence (no save/resume)
  *   - Auth gating (public route during preview)
  *   - Real scenario porting (these 3 scenes are handwritten placeholders)
- *   - Silhouette variety (one stylized female figure — Maris stand-in)
+ *   - Silhouette variety (one stylized female figure. Maris stand-in)
  */
 
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -28,7 +28,7 @@ import { m, AnimatePresence } from "framer-motion";
 import { ArrowRight, RotateCcw, SkipForward, Sparkles } from "lucide-react";
 
 // ---------------------------------------------------------------------------
-// Scene data (inline for the prototype — production version reads from DB/files)
+// Scene data (inline for the prototype, production version reads from DB/files)
 // ---------------------------------------------------------------------------
 
 type Emotion = "seductive" | "cold" | "neutral" | "curious";
@@ -39,7 +39,7 @@ type DialogLine = { speaker: string | null; text: string };
 type Choice = {
   id: string;
   label: string;
-  tactic: string; // shown on hover — "what you're learning"
+  tactic: string; // shown on hover, "what you're learning"
   nextSceneId: string;
 };
 
@@ -79,7 +79,7 @@ const SCENES: Record<string, Scene> = {
       },
       {
         speaker: null,
-        text: "You have a choice. Walk up now and take your shot — or stay back and watch her for a minute.",
+        text: "You have a choice. Walk up now and take your shot or stay back and watch her for a minute.",
       },
     ],
     choices: [
@@ -92,7 +92,7 @@ const SCENES: Record<string, Scene> = {
       {
         id: "approach",
         label: "Walk straight over and introduce yourself",
-        tactic: "Confidence play — but you just made yourself a target",
+        tactic: "Confidence play but you just made yourself a target",
         nextSceneId: "path-approach",
       },
     ],
@@ -107,7 +107,7 @@ const SCENES: Record<string, Scene> = {
       {
         speaker: null,
         text:
-          "You lean against the wall and watch. Five minutes. Ten. The same tilt of the head. The same laugh — perfectly timed.",
+          "You lean against the wall and watch. Five minutes. Ten. The same tilt of the head. The same laugh, perfectly timed.",
       },
       {
         speaker: null,
@@ -124,7 +124,7 @@ const SCENES: Record<string, Scene> = {
       {
         id: "walk-away",
         label: "Walk away. Let her wonder who you were.",
-        tactic: "Non-pursuit — control through absence",
+        tactic: "Non-pursuit, control through absence",
         nextSceneId: "ending-observe",
       },
     ],
@@ -136,12 +136,12 @@ const SCENES: Record<string, Scene> = {
     backgroundMood: "danger",
     characterEmotion: "seductive",
     lines: [
-      { speaker: "Maris", text: "Oh — you're brave." },
+      { speaker: "Maris", text: "Oh, you're brave." },
       { speaker: "You", text: "Thought you looked bored." },
       {
         speaker: "Maris",
         text:
-          "I was. Now I'm curious. Careful, though — you just walked onto my stage.",
+          "I was. Now I'm curious. Careful, though, you just walked onto my stage.",
       },
       {
         speaker: null,
@@ -152,8 +152,8 @@ const SCENES: Record<string, Scene> = {
     choices: [
       {
         id: "stay",
-        label: "Stay — you can play this",
-        tactic: "Doubling down — she's already deciding your role",
+        label: "Stay, you can play this",
+        tactic: "Doubling down, she's already deciding your role",
         nextSceneId: "ending-approach",
       },
     ],
@@ -165,7 +165,7 @@ const SCENES: Record<string, Scene> = {
     outcome: "good",
     title: "Pattern Recognition",
     summary:
-      "You saw the script before she read it to you. That's the whole game — not beating her at it, but recognizing it exists.",
+      "You saw the script before she read it to you. That's the whole game, not beating her at it, but recognizing it exists.",
     tacticMastered: "Observation before engagement",
   },
 
@@ -181,7 +181,7 @@ const SCENES: Record<string, Scene> = {
 };
 
 // ---------------------------------------------------------------------------
-// Typewriter hook — reveals text char-by-char; skip() completes instantly
+// Typewriter hook, reveals text char-by-char; skip() completes instantly
 // ---------------------------------------------------------------------------
 
 function useTypewriter(text: string, speedMs = 22) {
@@ -218,7 +218,7 @@ function useTypewriter(text: string, speedMs = 22) {
 }
 
 // ---------------------------------------------------------------------------
-// Background — mood-driven gradient + slow-drifting ambient particles
+// Background, mood-driven gradient + slow-drifting ambient particles
 // ---------------------------------------------------------------------------
 
 function MoodBackground({ mood }: { mood: "party" | "danger" | "neutral" }) {
@@ -276,7 +276,7 @@ function MoodBackground({ mood }: { mood: "party" | "danger" | "neutral" }) {
 }
 
 // ---------------------------------------------------------------------------
-// Letterbox — cinematic top/bottom bars that slide in on mount
+// Letterbox, cinematic top/bottom bars that slide in on mount
 // ---------------------------------------------------------------------------
 
 function Letterbox() {
@@ -299,7 +299,7 @@ function Letterbox() {
 }
 
 // ---------------------------------------------------------------------------
-// Character silhouette — one stylized female figure, rim-lit by emotion
+// Character silhouette, one stylized female figure, rim-lit by emotion
 // ---------------------------------------------------------------------------
 
 function CharacterSilhouette({ emotion }: { emotion: Emotion | null }) {
@@ -327,7 +327,7 @@ function CharacterSilhouette({ emotion }: { emotion: Emotion | null }) {
         className="absolute inset-0 rounded-full blur-3xl opacity-60"
         style={{ background: rimColor }}
       />
-      {/* Silhouette SVG — stylized, anonymous, unnervingly still */}
+      {/* Silhouette SVG, stylized, anonymous, unnervingly still */}
       <svg
         viewBox="0 0 200 280"
         className="relative w-full h-full drop-shadow-[0_0_30px_rgba(0,0,0,0.9)]"
@@ -364,7 +364,7 @@ function CharacterSilhouette({ emotion }: { emotion: Emotion | null }) {
 }
 
 // ---------------------------------------------------------------------------
-// Dialog box — typewriter reveal + speaker name + skip affordance
+// Dialog box, typewriter reveal + speaker name + skip affordance
 // ---------------------------------------------------------------------------
 
 function DialogBox({
@@ -434,7 +434,7 @@ function DialogBox({
 }
 
 // ---------------------------------------------------------------------------
-// Choice cards — tarot-style, hover reveals the tactic you're learning
+// Choice cards, tarot-style, hover reveals the tactic you're learning
 // ---------------------------------------------------------------------------
 
 function ChoiceCards({
@@ -482,7 +482,7 @@ function ChoiceCards({
 }
 
 // ---------------------------------------------------------------------------
-// Ending screen — scroll-driven reveal of outcome + tactic mastered
+// Ending screen, scroll-driven reveal of outcome + tactic mastered
 // ---------------------------------------------------------------------------
 
 function EndingScreen({
@@ -583,7 +583,7 @@ function EndingScreen({
 }
 
 // ---------------------------------------------------------------------------
-// Page — orchestrates scene state + renders the active view
+// Page, orchestrates scene state + renders the active view
 // ---------------------------------------------------------------------------
 
 export default function SimulatorDemoPage() {
@@ -597,7 +597,7 @@ export default function SimulatorDemoPage() {
       setLineIndex((i) => i + 1);
       return;
     }
-    // Last line — if no choices and auto-advance nextSceneId is set, go there
+    // Last line, if no choices and auto-advance nextSceneId is set, go there
     if (!scene.choices && scene.nextSceneId) {
       setSceneId(scene.nextSceneId);
       setLineIndex(0);
@@ -615,7 +615,7 @@ export default function SimulatorDemoPage() {
     setLineIndex(0);
   }
 
-  // Ending screen — totally separate render path
+  // Ending screen, totally separate render path
   if (scene.type === "ending") {
     return (
       <div className="fixed inset-0 z-[60] bg-deep-black overflow-hidden">
@@ -638,7 +638,7 @@ export default function SimulatorDemoPage() {
       <MoodBackground mood={scene.backgroundMood} />
       <Letterbox />
 
-      {/* Chapter / scene label — top of the screen, just under letterbox */}
+      {/* Chapter / scene label, top of the screen, just under letterbox */}
       <div className="relative z-30 pt-20 sm:pt-24 text-center">
         <p className="text-accent-gold/60 text-[10px] uppercase tracking-[0.5em]">
           University · Level 1 · Demo

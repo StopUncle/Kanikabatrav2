@@ -13,10 +13,10 @@ export async function generateMetadata({ params }: PageProps) {
   const { slug } = await params;
   const post = getPostBySlug(slug);
   if (!post) {
-    return { title: "Preview — The Consilium" };
+    return { title: "Preview. The Consilium" };
   }
   return {
-    title: `${post.frontmatter.title} — Preview | The Consilium`,
+    title: `${post.frontmatter.title}. Preview | The Consilium`,
     description: post.frontmatter.excerpt,
     // Don't let the public blog and the preview both become canonical.
     // Previews are behind auth, so we tell crawlers not to index them.
@@ -35,7 +35,7 @@ export default async function PreviewDetailPage({ params }: PageProps) {
   const now = new Date();
 
   // If the post has already gone public, send the member to the real
-  // blog page — no reason to keep showing it as a preview.
+  // blog page, no reason to keep showing it as a preview.
   if (publishDate <= now) {
     redirect(`/blog/${slug}`);
   }
@@ -63,7 +63,7 @@ export default async function PreviewDetailPage({ params }: PageProps) {
         Back to previews
       </Link>
 
-      {/* Preview banner — non-hideable cue that this content isn't
+      {/* Preview banner, non-hideable cue that this content isn't
           public yet. Reinforces the member benefit on every page view. */}
       <div className="mb-6 rounded-2xl border border-warm-gold/30 bg-warm-gold/5 px-5 py-4">
         <div className="flex items-center gap-2 mb-1.5">
@@ -79,7 +79,7 @@ export default async function PreviewDetailPage({ params }: PageProps) {
             <>
               {" "}
               <span className="text-text-gray">
-                — {daysOut} {daysOut === 1 ? "day" : "days"} from now.
+               , {daysOut} {daysOut === 1 ? "day" : "days"} from now.
               </span>
             </>
           )}
@@ -111,7 +111,7 @@ export default async function PreviewDetailPage({ params }: PageProps) {
       {/* Body */}
       <PostContent source={post.content} />
 
-      {/* Footer — back to the list */}
+      {/* Footer, back to the list */}
       <div className="mt-12 pt-6 border-t border-warm-gold/10 flex items-center justify-between">
         <Link
           href="/consilium/previews"

@@ -39,8 +39,8 @@ export async function POST(request: NextRequest) {
 
   // Atomic claim: push scheduledAt 30 min into the future for the rows
   // we're about to process. If a concurrent cron run lands while we're
-  // mid-batch (e.g. Anthropic flaking and our 50 calls take >5min),
-  // it'll see our claimed rows as not-due-yet and skip them — preventing
+  // mid-batch (e.g. anthropic flaking and our 50 calls take >5min),
+  // it'll see our claimed rows as not-due-yet and skip them, preventing
   // duplicate FeedComment inserts. SKIP LOCKED so simultaneous claimers
   // don't block each other. Failure path (markFailed) reschedules the
   // row to its own retry slot, overriding the +30min push.
@@ -100,7 +100,7 @@ export async function POST(request: NextRequest) {
       logger.error("[cron bot-actions] action failed", err as Error, {
         actionId: action.id,
       });
-      // markFailed itself can fail (DB blip, optimistic lock) — don't let
+      // markFailed itself can fail (DB blip, optimistic lock), don't let
       // that abort the rest of the batch.
       try {
         await markFailed(action.id, (err as Error).message);

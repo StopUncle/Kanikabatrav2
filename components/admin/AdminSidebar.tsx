@@ -209,7 +209,7 @@ export default function AdminSidebar() {
         {navContent}
       </aside>
 
-      {/* Desktop sidebar — always visible */}
+      {/* Desktop sidebar, always visible */}
       <aside className="hidden lg:flex w-64 min-h-screen bg-[#050511] border-r border-accent-gold/10 flex-col shrink-0">
         <div className="px-6 py-6 border-b border-accent-gold/10">
           <h1 className="text-lg font-light uppercase tracking-[0.2em] text-accent-gold">
@@ -219,7 +219,7 @@ export default function AdminSidebar() {
         {/* Top-of-sidebar Consilium shortcut. The original "Preview
             Consilium" link still lives at the bottom of the nav for
             consistency, but most admin sessions need a one-tap jump
-            into the member view — surfacing it here means it's the
+            into the member view, surfacing it here means it's the
             first thing visible after the panel title, no scroll
             needed even on a 13" laptop. */}
         <div className="px-4 pt-4">

@@ -24,7 +24,7 @@ export default function ChoiceCards({ choices, onPick }: Props) {
   }
 
   // Choice-count → column layout. 4 choices deliberately break to a
-  // 2×2 grid rather than 3-cols-plus-orphan — 118 scenes catalogue-wide
+  // 2×2 grid rather than 3-cols-plus-orphan, 118 scenes catalogue-wide
   // have 4 choices and were silently rendering 3+1 on desktop. 1/2
   // choices get 2 columns (wider cards at low counts read better than
   // stretched single columns); 3 → 3 cols; 5+ → 3 cols (accepts

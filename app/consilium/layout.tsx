@@ -16,7 +16,7 @@ export default async function InnerCircleLayout({
   let trialBanner: { daysLeft: number } | null = null;
 
   // Ban-aware resolver returns null for banned / tokenVersion-revoked
-  // users, which is exactly what we want — they shouldn't see the trial
+  // users, which is exactly what we want, they shouldn't see the trial
   // countdown banner anyway since they don't have an active membership.
   const userId = await resolveActiveUserId();
   if (userId) {

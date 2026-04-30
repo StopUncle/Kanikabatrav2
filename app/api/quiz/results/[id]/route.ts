@@ -27,7 +27,7 @@ export async function GET(_request: NextRequest, { params }: RouteParams) {
 
     // Quiz results are personal data. A logged-in user can only read their
     // own row; anonymous viewers get nothing. (We used to let anonymous
-    // viewers see results with the email redacted — that's been removed
+    // viewers see results with the email redacted, that's been removed
     // because owners want their results strictly private, and the post-
     // submit landing flow can rely on sessionStorage + /api/quiz/save
     // instead of a public result-by-id endpoint.)
@@ -80,7 +80,7 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
     const { id } = await params;
 
     // Mutations require auth + ownership. Previously this endpoint had ZERO
-    // auth — anyone with a result ID could change the email or shared flag.
+    // auth, anyone with a result ID could change the email or shared flag.
     const viewerUserId = await getViewerUserId();
     if (!viewerUserId) {
       return NextResponse.json(

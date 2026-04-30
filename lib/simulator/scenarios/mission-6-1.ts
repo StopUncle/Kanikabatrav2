@@ -1,9 +1,9 @@
 /**
- * Mission 6-1 — "The Credit Thief"
+ * Mission 6-1, "The Credit Thief"
  *
  * Level 6, order 1. Workplace political scenario: your director
  * presents your work as a team effort (coded: his), in front of
- * the CEO. You have ten seconds to decide how to respond — and
+ * the CEO. You have ten seconds to decide how to respond, and
  * then several days of micro-political consequences to navigate.
  *
  * v2 (2026-04-19): expanded the middle. Each Act-1 choice now
@@ -21,7 +21,7 @@ import { MARCUS, SAGE, KAYA, INNER_VOICE } from "../characters";
 
 const scenes: Scene[] = [
   // ===================================================================
-  // ACT 1 — the meeting opens
+  // ACT 1, the meeting opens
   // ===================================================================
   {
     id: "meeting-opens",
@@ -31,7 +31,7 @@ const scenes: Scene[] = [
     dialog: [
       {
         speakerId: null,
-        text: "Quarterly review. Twelve people around the table. The CEO at the head. Marcus opens the slide deck — your slide deck.",
+        text: "Quarterly review. Twelve people around the table. The CEO at the head. Marcus opens the slide deck, your slide deck.",
       },
       {
         speakerId: "marcus",
@@ -56,7 +56,7 @@ const scenes: Scene[] = [
     choices: [
       {
         id: "interrupt-immediately",
-        text: '"Quick note — I actually built that model. Happy to walk through it."',
+        text: '"Quick note. I actually built that model. Happy to walk through it."',
         tactic: "Correct attribution before the frame sets. Risky but direct.",
         nextSceneId: "marcus-reacts",
         isOptimal: true,
@@ -85,7 +85,7 @@ const scenes: Scene[] = [
   },
 
   // ===================================================================
-  // ACT 2A — INTERRUPT BRANCH
+  // ACT 2A. INTERRUPT BRANCH
   // ===================================================================
 
   {
@@ -96,12 +96,12 @@ const scenes: Scene[] = [
     dialog: [
       {
         speakerId: "marcus",
-        text: '"Sure — team effort obviously, but yeah, go ahead."',
+        text: '"Sure, team effort obviously, but yeah, go ahead."',
         emotion: "smirking",
       },
       {
         speakerId: null,
-        text: "His smile holds. His eyes don't. Across the table, Kaya tilts her head a quarter-degree — she heard the reframe.",
+        text: "His smile holds. His eyes don't. Across the table, Kaya tilts her head a quarter-degree, she heard the reframe.",
       },
       {
         speakerId: "inner-voice",
@@ -113,13 +113,13 @@ const scenes: Scene[] = [
       {
         id: "accept-team-frame",
         text: "\"Thanks.\" Present the model as a team product.",
-        tactic: "You accepted the re-frame. Future reviews attribute this to 'the team' — meaning Marcus.",
+        tactic: "You accepted the re-frame. Future reviews attribute this to 'the team', meaning Marcus.",
         nextSceneId: "marcus-controls-narrative",
         isOptimal: false,
       },
       {
         id: "correct-gently",
-        text: "\"To clarify — I led the model. Sage ran the data validation.\"",
+        text: "\"To clarify. I led the model. Sage ran the data validation.\"",
         tactic: "Name who did what. Gives Sage credit too; cuts Marcus out entirely.",
         nextSceneId: "model-presented",
         isOptimal: true,
@@ -146,7 +146,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "marcus",
-        text: '"Right — and just to add to that, the team and I went back and forth a lot on the assumptions."',
+        text: '"Right and just to add to that, the team and I went back and forth a lot on the assumptions."',
         emotion: "smirking",
       },
       {
@@ -155,7 +155,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "inner-voice",
-        text: "You corrected the attribution and then immediately accepted his counter-frame. The interrupt was meaningless. Worse — it made you look territorial AND replaceable.",
+        text: "You corrected the attribution and then immediately accepted his counter-frame. The interrupt was meaningless. Worse, it made you look territorial AND replaceable.",
         emotion: "sad",
       },
     ],
@@ -171,11 +171,11 @@ const scenes: Scene[] = [
     dialog: [
       {
         speakerId: null,
-        text: "You walk the room through the model. Kaya nods at specific points — she knows exactly which parts you designed.",
+        text: "You walk the room through the model. Kaya nods at specific points, she knows exactly which parts you designed.",
       },
       {
         speakerId: "kaya",
-        text: '"Clean work. The assumptions on the curve are aggressive — defensible?"',
+        text: '"Clean work. The assumptions on the curve are aggressive, defensible?"',
         emotion: "knowing",
       },
       {
@@ -207,7 +207,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "inner-voice",
-        text: "Kaya just made the credit official. The fastest way to beat a credit thief isn't to fight him — it's to make a senior person validate the truth in the same room.",
+        text: "Kaya just made the credit official. The fastest way to beat a credit thief isn't to fight him, it's to make a senior person validate the truth in the same room.",
         emotion: "knowing",
       },
     ],
@@ -245,11 +245,11 @@ const scenes: Scene[] = [
       },
       {
         speakerId: null,
-        text: "Friday afternoon, your calendar pings: 'Performance check-in — Marcus + you, Monday 10am.' He didn't pick the worst time slot. He picked the one that costs you the most weekend.",
+        text: "Friday afternoon, your calendar pings: 'Performance check-in. Marcus + you, Monday 10am.' He didn't pick the worst time slot. He picked the one that costs you the most weekend.",
       },
       {
         speakerId: "inner-voice",
-        text: "Being right is free. Being right in a way that humiliates a man who controls your salary band has a price tag — and he just sent you the invoice.",
+        text: "Being right is free. Being right in a way that humiliates a man who controls your salary band has a price tag and he just sent you the invoice.",
         emotion: "concerned",
       },
     ],
@@ -257,7 +257,7 @@ const scenes: Scene[] = [
   },
 
   // ===================================================================
-  // ACT 2B — SILENT-FOR-NOW BRANCH
+  // ACT 2B. SILENT-FOR-NOW BRANCH
   // ===================================================================
 
   {
@@ -268,7 +268,7 @@ const scenes: Scene[] = [
     dialog: [
       {
         speakerId: null,
-        text: "You stay quiet. Marcus presents slide three, slide four, slide five — surface-level, no real depth on the methodology.",
+        text: "You stay quiet. Marcus presents slide three, slide four, slide five, surface-level, no real depth on the methodology.",
       },
       {
         speakerId: "marcus",
@@ -299,7 +299,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "marcus",
-        text: '"Yeah, that\'s — uh —"',
+        text: '"Yeah, that\'s, uh —"',
         emotion: "confused",
       },
       {
@@ -308,7 +308,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "inner-voice",
-        text: "He doesn't know. This is the ambush moment. The room is watching the silence stretch — every second past three confirms he didn't build it.",
+        text: "He doesn't know. This is the ambush moment. The room is watching the silence stretch. Every second past three confirms he didn't build it.",
         emotion: "knowing",
       },
     ],
@@ -322,7 +322,7 @@ const scenes: Scene[] = [
       },
       {
         id: "rescue-with-flag",
-        text: "\"Happy to — I modeled that piece specifically.\"",
+        text: "\"Happy to. I modeled that piece specifically.\"",
         tactic: "Answer + subtly plant ownership flag. Best of both.",
         nextSceneId: "cfo-probes-knows",
         isOptimal: true,
@@ -370,7 +370,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "inner-voice",
-        text: "That single sentence reset the org chart in everyone's head. You are now the person who owns this model — directly to the CEO.",
+        text: "That single sentence reset the org chart in everyone's head. You are now the person who owns this model, directly to the CEO.",
         emotion: "knowing",
       },
     ],
@@ -406,7 +406,7 @@ const scenes: Scene[] = [
     dialog: [
       {
         speakerId: null,
-        text: "Slide 14, slide 15 — the CFO addresses you directly each time. Marcus has stopped clicking the slides. Sage took over silently.",
+        text: "Slide 14, slide 15, the CFO addresses you directly each time. Marcus has stopped clicking the slides. Sage took over silently.",
       },
       {
         speakerId: null,
@@ -441,7 +441,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "inner-voice",
-        text: "You won the small game. Marcus looks bad. So does the team. So do you. The CEO doesn't reward a winner of a fight he didn't want to see — he punishes both fighters equally.",
+        text: "You won the small game. Marcus looks bad. So does the team. So do you. The CEO doesn't reward a winner of a fight he didn't want to see, he punishes both fighters equally.",
         emotion: "sad",
       },
     ],
@@ -449,7 +449,7 @@ const scenes: Scene[] = [
   },
 
   // ===================================================================
-  // ACT 2C — RAISE-YOUR-HAND BRANCH
+  // ACT 2C. RAISE-YOUR-HAND BRANCH
   // ===================================================================
 
   {
@@ -522,7 +522,7 @@ const scenes: Scene[] = [
       {
         id: "walk-in-silence",
         text: "Fall into step beside her. Don't speak. Let her open.",
-        tactic: "Silence forces Kaya to set the agenda. She chose to pull you aside — let her say why first.",
+        tactic: "Silence forces Kaya to set the agenda. She chose to pull you aside, let her say why first.",
         nextSceneId: "kaya-private-meeting",
         isOptimal: true,
       },
@@ -553,7 +553,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "inner-voice",
-        text: "Documentation is slow but cheap. Public correction is fast but expensive. There is no version of this where it costs nothing — that ship sailed when you raised your hand instead of speaking first.",
+        text: "Documentation is slow but cheap. Public correction is fast but expensive. There is no version of this where it costs nothing, that ship sailed when you raised your hand instead of speaking first.",
         emotion: "knowing",
       },
     ],
@@ -580,7 +580,7 @@ const scenes: Scene[] = [
       },
       {
         id: "hybrid-soft-loud",
-        text: '"Paper trail tonight — and if he does it again in the next month, public."',
+        text: '"Paper trail tonight and if he does it again in the next month, public."',
         tactic: "Two-phase plan: document now, escalate on pattern. Kaya respects playing the long game with a trigger.",
         nextSceneId: "next-day-paper-trail",
         isOptimal: true,
@@ -620,7 +620,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: null,
-        text: "By Wednesday's all-hands, the CEO opens with: 'Wanted to clarify — the pricing model that drove last quarter's wins was led by you, with Sage's data work. Just for the record.'",
+        text: "By Wednesday's all-hands, the CEO opens with: 'Wanted to clarify, the pricing model that drove last quarter's wins was led by you, with Sage's data work. Just for the record.'",
       },
       {
         speakerId: null,
@@ -645,7 +645,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: null,
-        text: "Sunday evening, Marcus DMs you: 'Hey — wanted to flag the CEO loved the model. Big win for the team. Let's chat Monday about Q4 priorities.'",
+        text: "Sunday evening, Marcus DMs you: 'Hey, wanted to flag the CEO loved the model. Big win for the team. Let's chat Monday about Q4 priorities.'",
       },
       {
         speakerId: null,
@@ -661,7 +661,7 @@ const scenes: Scene[] = [
   },
 
   // ===================================================================
-  // ACT 2D — SAY-NOTHING BRANCH
+  // ACT 2D. SAY-NOTHING BRANCH
   // ===================================================================
 
   {
@@ -701,12 +701,12 @@ const scenes: Scene[] = [
       {
         id: "work-the-hallway",
         text: "Walk into the same hallway Marcus is in. Talk to the same executives.",
-        tactic: "Symmetric move, same channel. You're not countering the story — you're crowding its oxygen.",
+        tactic: "Symmetric move, same channel. You're not countering the story, you're crowding its oxygen.",
         nextSceneId: "kaya-pity-coach",
       },
       {
         id: "short-note-cfo",
-        text: "Send a two-line note to the CFO: 'Happy to walk you through the model directly — I built it.'",
+        text: "Send a two-line note to the CFO: 'Happy to walk you through the model directly. I built it.'",
         tactic: "Specific, unemotional, one exec. If she responds, Marcus\'s hallway tour lost a seat.",
         nextSceneId: "kaya-pity-coach",
         isOptimal: true,
@@ -731,7 +731,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "inner-voice",
-        text: "She's offering you a future. She's also confirming the present is gone. The model is Marcus's now in every executive's head — they can't unhear what they heard.",
+        text: "She's offering you a future. She's also confirming the present is gone. The model is Marcus's now in every executive's head, they can't unhear what they heard.",
         emotion: "sad",
       },
     ],
@@ -744,7 +744,7 @@ const scenes: Scene[] = [
     dialog: [
       {
         speakerId: null,
-        text: "Tuesday morning. The all-hands recap goes out. The pricing model is referenced as 'Marcus's pricing initiative' — neutral phrasing, no malice, perfectly accurate to what the room heard.",
+        text: "Tuesday morning. The all-hands recap goes out. The pricing model is referenced as 'Marcus's pricing initiative', neutral phrasing, no malice, perfectly accurate to what the room heard.",
       },
       {
         speakerId: null,
@@ -752,7 +752,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "inner-voice",
-        text: "You waited. The credit didn't wait. It went to whoever was willing to claim it in the room — and that wasn't you.",
+        text: "You waited. The credit didn't wait. It went to whoever was willing to claim it in the room and that wasn't you.",
         emotion: "sad",
       },
     ],
@@ -771,7 +771,7 @@ const scenes: Scene[] = [
     outcomeType: "good",
     endingTitle: "Credit Reclaimed",
     endingSummary:
-      "You corrected the frame in the first ten seconds, named Sage's contribution, defended the model in front of the CEO. Kaya made it easy by asking a question she knew the answer to. Marcus walks out of the room less powerful than he walked in. You didn't fight him — you made him irrelevant.",
+      "You corrected the frame in the first ten seconds, named Sage's contribution, defended the model in front of the CEO. Kaya made it easy by asking a question she knew the answer to. Marcus walks out of the room less powerful than he walked in. You didn't fight him, you made him irrelevant.",
     dialog: [
       {
         speakerId: "inner-voice",
@@ -789,7 +789,7 @@ const scenes: Scene[] = [
     outcomeType: "good",
     endingTitle: "The Ambush Paid",
     endingSummary:
-      "You let him open. He stalled. You stepped in at the exact moment his bluff collapsed and the CFO needed an answer. By the end of the presentation, the CEO was asking you questions directly — and asked for the model on his weekend reading list, in front of the room. Marcus can't reframe this. The room saw who knew the answers.",
+      "You let him open. He stalled. You stepped in at the exact moment his bluff collapsed and the CFO needed an answer. By the end of the presentation, the CEO was asking you questions directly and asked for the model on his weekend reading list, in front of the room. Marcus can't reframe this. The room saw who knew the answers.",
     dialog: [
       {
         speakerId: "inner-voice",
@@ -847,7 +847,7 @@ const scenes: Scene[] = [
     failureBlogTitle: "Architecture of Control: How Emotional Dependency Is Built",
     endingTitle: "'The Team' Took the Win",
     endingSummary:
-      "You presented the model — but accepted 'team effort' as the frame. On the quarterly write-up, 'the team' is shorthand for 'Marcus's group'. On LinkedIn, Marcus mentions 'leading the pricing redesign.' By next quarter he's been promoted for it.",
+      "You presented the model but accepted 'team effort' as the frame. On the quarterly write-up, 'the team' is shorthand for 'Marcus's group'. On LinkedIn, Marcus mentions 'leading the pricing redesign.' By next quarter he's been promoted for it.",
     dialog: [
       {
         speakerId: "inner-voice",
@@ -867,7 +867,7 @@ const scenes: Scene[] = [
     failureBlogTitle: "Architecture of Control: How Emotional Dependency Is Built",
     endingTitle: "You Won By Disloyalty",
     endingSummary:
-      "You let Marcus fumble. The CEO noticed — and saw the whole team look dysfunctional, including you. The CEO's takeaway: 'That group doesn't run cohesively.' Your director will remember your silence as sabotage, even if nobody else does.",
+      "You let Marcus fumble. The CEO noticed and saw the whole team look dysfunctional, including you. The CEO's takeaway: 'That group doesn't run cohesively.' Your director will remember your silence as sabotage, even if nobody else does.",
     dialog: [
       {
         speakerId: "inner-voice",
@@ -883,7 +883,7 @@ export const mission61: Scenario = {
   title: "The Credit Thief",
   tagline: "He's about to present your work as his.",
   description:
-    "Quarterly review. The CEO is watching. Marcus opens the deck you built and says 'the team pulled this together.' You have ten seconds to decide whether to correct him now, ambush him on a technical question, or lose the work permanently — and then several days of micro-political consequences to navigate.",
+    "Quarterly review. The CEO is watching. Marcus opens the deck you built and says 'the team pulled this together.' You have ten seconds to decide whether to correct him now, ambush him on a technical question, or lose the work permanently and then several days of micro-political consequences to navigate.",
   tier: "premium",
   level: 6,
   order: 1,
@@ -895,7 +895,7 @@ export const mission61: Scenario = {
   startSceneId: "meeting-opens",
   tacticsLearned: [
     "Early attribution before the frame sets",
-    "Technical ambush — let them open, then step in",
+    "Technical ambush, let them open, then step in",
     "Naming collaborators to neutralize 'team effort' re-frames",
     "Using senior allies (Kaya) as setup artists and witnesses",
     "Documentation as a slow-recovery instrument",

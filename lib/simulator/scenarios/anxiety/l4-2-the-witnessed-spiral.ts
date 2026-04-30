@@ -219,7 +219,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: null,
-        text: "She has been carrying her own day. The deadline she missed at 4 p.m. is still vibrating in her chest. The call with her mother, fifty-four minutes of her mother circling the same complaint about her aunt, is still in her shoulders. She has not eaten since lunch. Her own anxiety, the version she does not name as anxiety, is at a 4 tonight.",
+        text: "She has been carrying her own day. The deadline she missed at 4 p.m. Is still vibrating in her chest. The call with her mother, fifty-four minutes of her mother circling the same complaint about her aunt, is still in her shoulders. She has not eaten since lunch. Her own anxiety, the version she does not name as anxiety, is at a 4 tonight.",
       },
       {
         speakerId: null,

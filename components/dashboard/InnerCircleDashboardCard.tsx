@@ -59,7 +59,7 @@ export default function InnerCircleDashboardCard({ membership }: Props) {
     }
   };
 
-  // Not a member — show the explore CTA
+  // Not a member, show the explore CTA
   if (!membership) {
     return (
       <div className="text-center py-8">
@@ -110,7 +110,7 @@ export default function InnerCircleDashboardCard({ membership }: Props) {
     );
   }
 
-  // Active — show status + manage subscription
+  // Active, show status + manage subscription
   if (membership.status === "ACTIVE") {
     const expiresAt = membership.expiresAt ? new Date(membership.expiresAt) : null;
     const daysUntilExpiry = expiresAt
@@ -168,7 +168,7 @@ export default function InnerCircleDashboardCard({ membership }: Props) {
     );
   }
 
-  // Suspended — show reason + contact guidance
+  // Suspended, show reason + contact guidance
   if (membership.status === "SUSPENDED") {
     return (
       <div className="py-4">
@@ -233,7 +233,7 @@ export default function InnerCircleDashboardCard({ membership }: Props) {
     );
   }
 
-  // EXPIRED or unknown — fallback
+  // EXPIRED or unknown, fallback
   return (
     <div className="text-center py-6">
       <p className="text-text-gray mb-4">Your membership has expired.</p>

@@ -12,7 +12,7 @@ import { Lock, CheckCircle2, Clock, Crown } from "lucide-react";
 import Link from "next/link";
 
 export const metadata = {
-  title: "Badges — The Consilium | Kanika Batra",
+  title: "Badges. The Consilium | Kanika Batra",
   description:
     "The twelve tenure ranks of the Consilium. One new rank for every month you stay.",
 };
@@ -62,7 +62,7 @@ export default async function ConsiliumBadgesPage() {
         <div className="w-16 h-px bg-warm-gold/50 mx-auto mb-6" />
         <p className="text-text-gray max-w-2xl mx-auto font-light leading-relaxed">
           Every month you stay in the Consilium, your seal climbs a rank. A
-          full year earns the Queen — and there is no rank beyond her. Time in
+          full year earns the Queen and there is no rank beyond her. Time in
           the council is the only currency. No shortcuts, no purchase, no
           referral.
         </p>
@@ -120,7 +120,7 @@ export default async function ConsiliumBadgesPage() {
           </h2>
           <p className="text-text-gray text-sm max-w-xl mx-auto">
             Each badge below unlocks automatically the day you hit its month.
-            You don&apos;t earn it — you outlast for it.
+            You don&apos;t earn it, you outlast for it.
           </p>
         </div>
 

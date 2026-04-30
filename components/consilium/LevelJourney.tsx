@@ -42,7 +42,7 @@ export type ScenarioStatus =
 export interface ScenarioNode {
   scenario: Scenario;
   status: ScenarioStatus;
-  /** Set when status is "in-progress" — the next scene to resume. */
+  /** Set when status is "in-progress", the next scene to resume. */
   resumeSceneId?: string;
   /** XP earned on this scenario so far (running total for in-progress,
    *  final total for completed). */
@@ -55,7 +55,7 @@ export interface ScenarioNode {
   endingsFound: number;
   /** Total endings in this scenario (count of scenes with isEnding=true). */
   endingsTotal: number;
-  /** Names of scenarios that gate this one — shown when locked. */
+  /** Names of scenarios that gate this one, shown when locked. */
   prerequisiteTitles: string[];
 }
 
@@ -66,13 +66,13 @@ export interface LevelGroup {
   scenarios: ScenarioNode[];
   /** True when all scenarios in this level's prereq chain are complete. */
   isUnlocked: boolean;
-  /** True for L5 (Mastery) + L10 (Endgame) — render with boss treatment. */
+  /** True for L5 (Mastery) + L10 (Endgame), render with boss treatment. */
   isBoss: boolean;
 }
 
 interface LevelJourneyProps {
   levels: LevelGroup[];
-  /** The single scenario the player should hit next — used for the
+  /** The single scenario the player should hit next, used for the
    *  hero "Play Next" card at the top. Null if everything's done or
    *  nothing is yet available. */
   nextUp: ScenarioNode | null;
@@ -85,7 +85,7 @@ interface LevelJourneyProps {
 
 /**
  * The 3-star rating shown on each completed scenario card. Always
- * renders 3 slots so the empty ones serve as goalposts — the player
+ * renders 3 slots so the empty ones serve as goalposts, the player
  * sees what they're missing at a glance and replays to fill them.
  *
  * Compact (10px stars) so it fits on the card header next to the
@@ -231,7 +231,7 @@ function ScenarioCard({
                 +{node.xpEarned} XP
               </span>
             )}
-            {/* Endings counter — only shows once the player has reached
+            {/* Endings counter, only shows once the player has reached
                 at least one. Hides on scenarios with a single ending so
                 we don't render a tautology like "1 / 1 endings". */}
             {node.endingsFound > 0 && node.endingsTotal > 1 && (

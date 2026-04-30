@@ -22,7 +22,7 @@ export async function GET(request: NextRequest) {
   const where: Record<string, unknown> = {};
   if (status === "open") where.resolvedAt = null;
   if (status === "resolved") where.resolvedAt = { not: null };
-  // "all" — no filter
+  // "all", no filter
 
   const reports = await prisma.commentReport.findMany({
     where,

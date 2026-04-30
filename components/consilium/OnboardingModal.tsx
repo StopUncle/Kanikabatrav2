@@ -23,9 +23,9 @@ import { catalogueStats } from "@/lib/simulator/stats";
  *      removed, we capture them here on first feed visit. Members who
  *      already have both filled in (legacy applicants, gift recipients
  *      who set them) skip phase 1 entirely.
- *   2. Welcome tour — the chambers and the house rules.
+ *   2. Welcome tour, the chambers and the house rules.
  *
- * The modal can't be dismissed in phase 1 — gender drives the content
+ * The modal can't be dismissed in phase 1, gender drives the content
  * filter and displayName is the only name other members ever see, so
  * neither can be blank. Once both are submitted, the same dismiss
  * action stamps onboardingSeenAt and the modal never reappears.
@@ -61,7 +61,7 @@ export default function OnboardingModal({
       return;
     }
     if (needsGender && !gender) {
-      setError("Pick one — drives which content the feed shows you.");
+      setError("Pick one, drives which content the feed shows you.");
       return;
     }
     setBusy(true);
@@ -95,14 +95,14 @@ export default function OnboardingModal({
     try {
       await fetch("/api/user/onboarding", { method: "POST" });
     } catch {
-      // Modal already closed locally — non-critical.
+      // Modal already closed locally, non-critical.
     }
   };
 
   if (!visible) return null;
 
   // Overlay click closes the modal ONLY in tour phase. In profile
-  // phase the user has to fill the fields first — accidental click-out
+  // phase the user has to fill the fields first, accidental click-out
   // would land them in the feed without a name or gender, which then
   // gates content + makes them anonymous to other members.
   const handleOverlayClick = () => {
@@ -217,7 +217,7 @@ export default function OnboardingModal({
         ) : (
           <>
             <p className="text-text-gray text-sm leading-relaxed mb-6 text-center">
-              You&apos;re in. Here&apos;s what this space offers — take a
+              You&apos;re in. Here&apos;s what this space offers, take a
               minute to explore each before diving in.
             </p>
 
@@ -225,17 +225,17 @@ export default function OnboardingModal({
               <OnboardingItem
                 icon={Scroll}
                 title="The Feed"
-                body="Posts, discussions, and announcements from Kanika. The pinned post at the top has the house rules — read it."
+                body="Posts, discussions, and announcements from Kanika. The pinned post at the top has the house rules, read it."
               />
               <OnboardingItem
                 icon={Gamepad2}
                 title="The Dark Mirror Simulator"
-                body={`Interactive scenarios that teach manipulation + defence through play. ${catalogueStats.scenarios} scenarios across ${catalogueStats.tracks} tracks — narcissist family, anxiety self-regulation, Cluster-B drills, and more. Pick the track that fits the week you're having.`}
+                body={`Interactive scenarios that teach manipulation + defence through play. ${catalogueStats.scenarios} scenarios across ${catalogueStats.tracks} tracks, narcissist family, anxiety self-regulation, Cluster-B drills, and more. Pick the track that fits the week you're having.`}
               />
               <OnboardingItem
                 icon={AudioLines}
                 title="Voice Notes"
-                body="Raw audio from Kanika — nothing she posts publicly. New drops appear without notice."
+                body="Raw audio from Kanika, nothing she posts publicly. New drops appear without notice."
               />
               <OnboardingItem
                 icon={Library}
@@ -253,7 +253,7 @@ export default function OnboardingModal({
               onClick={dismiss}
               className="w-full inline-flex items-center justify-center gap-2 py-3 bg-accent-gold text-deep-black rounded-full font-medium hover:bg-accent-gold/90 transition-all"
             >
-              Got it — let me in
+              Got it, let me in
               <ArrowRight size={16} />
             </button>
           </>

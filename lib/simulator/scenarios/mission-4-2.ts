@@ -1,5 +1,5 @@
 /**
- * Mission 4-2 — "DARVO"
+ * Mission 4-2, "DARVO"
  *
  * Level 4, order 2. Teaches recognition and exit from the
  * Deny-Attack-Reverse-Victim-Offender sequence. Public setting,
@@ -20,7 +20,7 @@ import { AVERY, PRIYA, INNER_VOICE } from "../characters";
 
 const scenes: Scene[] = [
   // ===================================================================
-  // ACT 1 — the room before the ambush
+  // ACT 1, the room before the ambush
   // ===================================================================
 
   {
@@ -35,11 +35,11 @@ const scenes: Scene[] = [
       },
       {
         speakerId: null,
-        text: "You see Avery before she sees you — a quick glance toward the bar, then a tighter walk in your direction. She's been waiting for the right room. This is it.",
+        text: "You see Avery before she sees you, a quick glance toward the bar, then a tighter walk in your direction. She's been waiting for the right room. This is it.",
       },
       {
         speakerId: "avery",
-        text: '"Can we talk? Actually — no. I need to say this out loud so people know."',
+        text: '"Can we talk? Actually, no. I need to say this out loud so people know."',
         emotion: "angry",
       },
       {
@@ -48,7 +48,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "inner-voice",
-        text: "Staged confrontation. Her audience is the rest of the room, not you. The phrase 'so people know' is not a slip of the tongue — it is the entire operating system of the move. A confrontation that required the room would not have announced that it required the room.",
+        text: "Staged confrontation. Her audience is the rest of the room, not you. The phrase 'so people know' is not a slip of the tongue, it is the entire operating system of the move. A confrontation that required the room would not have announced that it required the room.",
         emotion: "concerned",
       },
       {
@@ -119,7 +119,7 @@ const scenes: Scene[] = [
       },
       {
         id: "call-audience",
-        text: '"Everyone hearing this — she chose this room on purpose. Ask yourselves why."',
+        text: '"Everyone hearing this, she chose this room on purpose. Ask yourselves why."',
         tactic: "Name the tactic to the audience. Risky but decisive.",
         nextSceneId: "audience-pivots",
         isOptimal: true,
@@ -128,7 +128,7 @@ const scenes: Scene[] = [
   },
 
   // ===================================================================
-  // ACT 2A — DEFEND IMMEDIATELY
+  // ACT 2A. DEFEND IMMEDIATELY
   // ===================================================================
 
   {
@@ -144,7 +144,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: null,
-        text: "Heads are turning. Phones are half-up. A pocket of people near the wall has gone completely quiet — they're watching now, not pretending not to.",
+        text: "Heads are turning. Phones are half-up. A pocket of people near the wall has gone completely quiet, they're watching now, not pretending not to.",
       },
       {
         speakerId: "inner-voice",
@@ -179,7 +179,7 @@ const scenes: Scene[] = [
   },
 
   // ===================================================================
-  // ACT 2B — MATCH VOLUME
+  // ACT 2B. MATCH VOLUME
   // ===================================================================
 
   {
@@ -190,7 +190,7 @@ const scenes: Scene[] = [
     dialog: [
       {
         speakerId: null,
-        text: "Your voice carries further than you intended. The ambient conversation drops. The pocket of half-watchers is now fully watching — and they're watching both of you.",
+        text: "Your voice carries further than you intended. The ambient conversation drops. The pocket of half-watchers is now fully watching and they're watching both of you.",
       },
       {
         speakerId: null,
@@ -203,7 +203,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "inner-voice",
-        text: "She's about to play 'I can't believe you'd attack me publicly.' Watch — she's setting up the second verse.",
+        text: "She's about to play 'I can't believe you'd attack me publicly.' Watch, she's setting up the second verse.",
         emotion: "knowing",
       },
     ],
@@ -211,7 +211,7 @@ const scenes: Scene[] = [
   },
 
   // ===================================================================
-  // ACT 2C — QUIET REFUSE
+  // ACT 2C. QUIET REFUSE
   // ===================================================================
 
   {
@@ -244,7 +244,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "inner-voice",
-        text: "Priya stepped in. The window just opened. Don't make it worse — every option you take now is read against the composure you've already shown.",
+        text: "Priya stepped in. The window just opened. Don't make it worse. Every option you take now is read against the composure you've already shown.",
         emotion: "knowing",
       },
     ],
@@ -265,7 +265,7 @@ const scenes: Scene[] = [
       },
       {
         id: "single-landmine",
-        text: '"Avery — the email thread exists. Walk carefully." Exit.',
+        text: '"Avery, the email thread exists. Walk carefully." Exit.',
         tactic:
           "Implied receipt + exit. She knows you have documentation. Audience notices.",
         nextSceneId: "landmine-detonates",
@@ -285,7 +285,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: null,
-        text: "What you don't see — what Priya texts you about an hour later — is the half-second after your line landed: Avery's face flicked through three expressions before she settled on outrage. The pocket of watchers saw it.",
+        text: "What you don't see, what Priya texts you about an hour later, is the half-second after your line landed: Avery's face flicked through three expressions before she settled on outrage. The pocket of watchers saw it.",
       },
       {
         speakerId: "inner-voice",
@@ -297,7 +297,7 @@ const scenes: Scene[] = [
   },
 
   // ===================================================================
-  // ACT 2D — CALL AUDIENCE
+  // ACT 2D. CALL AUDIENCE
   // ===================================================================
 
   {
@@ -317,11 +317,11 @@ const scenes: Scene[] = [
       },
       {
         speakerId: null,
-        text: "She said it too quickly. The escalation word landed without setup. The pocket of watchers shifts again — you can almost hear the read happening.",
+        text: "She said it too quickly. The escalation word landed without setup. The pocket of watchers shifts again, you can almost hear the read happening.",
       },
       {
         speakerId: "inner-voice",
-        text: "She's losing the room, so she's reaching for escalation words. The room knows what those mean now. Exit before she recovers — the next ten seconds are pure profit if you say nothing.",
+        text: "She's losing the room, so she's reaching for escalation words. The room knows what those mean now. Exit before she recovers, the next ten seconds are pure profit if you say nothing.",
         emotion: "knowing",
       },
     ],
@@ -343,14 +343,14 @@ const scenes: Scene[] = [
       },
       {
         id: "address-audience-gently",
-        text: '"Sorry, everyone — I\'m going to step out. Enjoy your night." Leave.',
+        text: '"Sorry, everyone. I\'m going to step out. Enjoy your night." Leave.',
         tactic: "Address the room, not her. Exits the scene while honouring the witnesses. Reads as composure.",
         nextSceneId: "ending-audience-pivoted",
         isOptimal: true,
       },
       {
         id: "quiet-offer",
-        text: '"Avery — I\'m down to talk, but not here. DM me tomorrow." Leave.',
+        text: '"Avery. I\'m down to talk, but not here. DM me tomorrow." Leave.',
         tactic: "Redirect the real conversation offstage without admitting anything. Takes the air out of the spectacle.",
         nextSceneId: "ending-audience-pivoted",
       },
@@ -364,7 +364,7 @@ const scenes: Scene[] = [
     dialog: [
       {
         speakerId: null,
-        text: "Two people laugh. One winces. Avery's face hardens — she just got handed a pivot back.",
+        text: "Two people laugh. One winces. Avery's face hardens, she just got handed a pivot back.",
       },
       {
         speakerId: "avery",
@@ -450,7 +450,7 @@ const scenes: Scene[] = [
     outcomeType: "good",
     endingTitle: "The Room Turned",
     endingSummary:
-      "You named the staging, got out during the pivot, said nothing more. The audience leaves talking about the staging, not the content. Avery's script is now the thing people remember — not the accusation.",
+      "You named the staging, got out during the pivot, said nothing more. The audience leaves talking about the staging, not the content. Avery's script is now the thing people remember, not the accusation.",
     dialog: [
       {
         speakerId: "inner-voice",
@@ -540,9 +540,9 @@ const scenes: Scene[] = [
 export const mission42: Scenario = {
   id: "mission-4-2",
   title: "DARVO",
-  tagline: "Deny, Attack, Reverse Victim and Offender — live audience.",
+  tagline: "Deny, Attack, Reverse Victim and Offender, live audience.",
   description:
-    "Avery confronts you in a crowded room, on her chosen ground. She's running the sequence on purpose. The audience is her weapon; your instinct to defend is her goal. The only win is to refuse the stage she built — and the win window is narrow.",
+    "Avery confronts you in a crowded room, on her chosen ground. She's running the sequence on purpose. The audience is her weapon; your instinct to defend is her goal. The only win is to refuse the stage she built and the win window is narrow.",
   tier: "premium",
   level: 4,
   order: 2,

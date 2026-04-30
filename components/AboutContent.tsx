@@ -57,7 +57,7 @@ export default function AboutContent() {
           </div>
         </m.div>
 
-        {/* As Seen On — Press Ticker */}
+        {/* As Seen On. Press Ticker */}
         <m.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -122,7 +122,7 @@ export default function AboutContent() {
                   own story became the story. Today I write books, coach
                   high-stakes clients, and publish the strategic truths about
                   power, attraction, and dominance that mainstream psychology
-                  refuses to touch — to an audience that now spans Sydney,
+                  refuses to touch, to an audience that now spans Sydney,
                   London, New York, and everywhere in between.
                 </p>
                 <p className="text-white font-medium">
@@ -229,7 +229,7 @@ export default function AboutContent() {
               I don&apos;t teach you to be nice. I teach you to be strategic. In
               a world where emotional manipulation is disguised as love, where
               vulnerability is weaponized against you, and where &apos;being
-              yourself&apos; leads to being exploited—you need a different
+              yourself&apos; leads to being exploited, you need a different
               approach.
             </p>
             <p>
@@ -344,7 +344,7 @@ export default function AboutContent() {
                 question:
                   "What qualifications does Kanika have to discuss psychology?",
                 answer:
-                  "My qualifications are experiential rather than academic. I provide first-person insights into how Cluster B personalities think and operate—something no textbook can teach. I always emphasize that my content is educational entertainment, not clinical advice, and I encourage anyone struggling with mental health to seek professional help.",
+                  "My qualifications are experiential rather than academic. I provide first-person insights into how Cluster B personalities think and operate, something no textbook can teach. I always emphasize that my content is educational entertainment, not clinical advice, and I encourage anyone struggling with mental health to seek professional help.",
               },
               {
                 question:

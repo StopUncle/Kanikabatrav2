@@ -1,10 +1,10 @@
 /**
- * pc-4-1 — "The Marriage Question"
+ * pc-4-1, "The Marriage Question"
  *
  * PC-Child track, Level 4, order 1. Finn is eighteen. Lily is
  * sixteen. The household log is open on the table between you. It
  * is 6:47 a.m. on a Sunday. You have both been awake since 5:30.
- * Something happened last night — the scenario does not make the
+ * Something happened last night, the scenario does not make the
  * reader live through the specific incident; what matters is that
  * your partner is about to say the sentence neither of you has let
  * yourselves say in thirteen years of shared parenting.
@@ -21,13 +21,13 @@
  * honesty. The obsidian ending is a quiet one.
  *
  * Teaches:
- *  - Receiving the sentence without defending — the partner is not
+ *  - Receiving the sentence without defending, the partner is not
  *    accusing you, the partner is naming a cost
  *  - Naming the specific cost back (not a generic "this has been
- *    hard on both of us") — the specifics are the repair
- *  - The structural commitment — one concrete thing you will do
+ *    hard on both of us"), the specifics are the repair
+ *  - The structural commitment, one concrete thing you will do
  *    differently, not a promise to be a better partner in general
- *  - The refusal to deflect to the child — the child is the
+ *  - The refusal to deflect to the child, the child is the
  *    environment, not the subject; the subject is the two of you
  *
  * Voice: reference/KANIKA-VOICE.md and reference/TRACK-pc-child.md.
@@ -47,7 +47,7 @@ const scenes: Scene[] = [
     dialog: [
       {
         speakerId: null,
-        text: "Content note. This is the heaviest scenario in the pc-child track. It takes place between you and your co-parent, eighteen years into a shared parenting project. The child is off-screen — the scenario is not about him. The scenario is about a sentence your partner is about to say and whether the marriage on the other side of it is still the same marriage.",
+        text: "Content note. This is the heaviest scenario in the pc-child track. It takes place between you and your co-parent, eighteen years into a shared parenting project. The child is off-screen, the scenario is not about him. The scenario is about a sentence your partner is about to say and whether the marriage on the other side of it is still the same marriage.",
       },
       {
         speakerId: null,
@@ -62,7 +62,7 @@ const scenes: Scene[] = [
       {
         id: "continue",
         text: "Continue.",
-        tactic: "Sunday, 6:47 a.m. The kitchen. The log on the table.",
+        tactic: "Sunday, 6:47 a.m. the kitchen. The log on the table.",
         nextSceneId: "sunday-morning",
       },
       {
@@ -82,7 +82,7 @@ const scenes: Scene[] = [
     outcomeType: "neutral",
     endingTitle: "Not Tonight",
     endingLearnPrompt:
-      "The opt-out is a complete move. The scenario will be available when the conditions are right. A marriage-register scenario is not something to run through exhausted — you are the co-parent in it, and you need your own bandwidth.",
+      "The opt-out is a complete move. The scenario will be available when the conditions are right. A marriage-register scenario is not something to run through exhausted, you are the co-parent in it, and you need your own bandwidth.",
     dialog: [
       {
         speakerId: "inner-voice",
@@ -104,7 +104,7 @@ const scenes: Scene[] = [
     dialog: [
       {
         speakerId: null,
-        text: "6:47 a.m. Sunday. The kitchen. You are sitting across from each other at the round table. Two mugs of coffee. The household log is open between you — thirteen years of dated entries, the document Ren would have said, if Ren lived in this house, was the operational infrastructure.",
+        text: "6:47 a.m. Sunday. The kitchen. You are sitting across from each other at the round table. Two mugs of coffee. The household log is open between you, thirteen years of dated entries, the document Ren would have said, if Ren lived in this house, was the operational infrastructure.",
       },
       {
         speakerId: null,
@@ -125,7 +125,7 @@ const scenes: Scene[] = [
       {
         id: "wait-in-silence",
         text: "Say nothing. Hold eye contact. Let the sentence come.",
-        tactic: "The correct opening. Filling the silence before the sentence lands is a small refusal of the conversation — and the partner has earned, across thirteen years, the right to say it cleanly.",
+        tactic: "The correct opening. Filling the silence before the sentence lands is a small refusal of the conversation and the partner has earned, across thirteen years, the right to say it cleanly.",
         nextSceneId: "the-sentence",
         isOptimal: true,
       },
@@ -157,7 +157,7 @@ const scenes: Scene[] = [
     dialog: [
       {
         speakerId: "the-partner",
-        text: '"I do not know if we have been in the same marriage for the last five years. I think — I think we have been in the same operation. I think the operation is the thing that has survived, and the marriage has been the thing that, quietly, has not."',
+        text: '"I do not know if we have been in the same marriage for the last five years. I think. I think we have been in the same operation. I think the operation is the thing that has survived, and the marriage has been the thing that, quietly, has not."',
         emotion: "serious",
       },
       {
@@ -175,21 +175,21 @@ const scenes: Scene[] = [
       {
         id: "receive-cleanly",
         text: 'Receive it. "I hear you. I have felt the same thing and did not know how to name it. Thank you for saying it."',
-        tactic: "The clean receive. Thanking the partner for the naming is not performative — the naming itself is a gift inside a thirteen-year operation. Do not defend; do not deflect; acknowledge the thing that has been said.",
+        tactic: "The clean receive. Thanking the partner for the naming is not performative, the naming itself is a gift inside a thirteen-year operation. Do not defend; do not deflect; acknowledge the thing that has been said.",
         nextSceneId: "received-cleanly",
         isOptimal: true,
       },
       {
         id: "name-specific-cost",
         text: '"You are right. I think we last had a conversation that was about us, not about Finn, on our anniversary last June. I have missed that. I have missed you."',
-        tactic: "Name the specific — not the generic 'we have been distant' but a datable specific. The specifics are the repair. The partner is not asking for reassurance; they are asking to be specifically seen.",
+        tactic: "Name the specific, not the generic 'we have been distant' but a datable specific. The specifics are the repair. The partner is not asking for reassurance; they are asking to be specifically seen.",
         nextSceneId: "named-specific",
         isOptimal: true,
       },
       {
         id: "defend-the-operation",
-        text: '"I don\'t agree — I think we have held the marriage. I think the operation is the marriage. The parenting is not something separate we did."',
-        tactic: "Defending is a refusal of the naming. The partner may or may not be right in the abstract — but in the moment of naming, defence is a door closing.",
+        text: '"I don\'t agree. I think we have held the marriage. I think the operation is the marriage. The parenting is not something separate we did."',
+        tactic: "Defending is a refusal of the naming. The partner may or may not be right in the abstract but in the moment of naming, defence is a door closing.",
         nextSceneId: "defended",
         isOptimal: false,
       },
@@ -218,20 +218,20 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "the-partner",
-        text: '"Thank you. I did not know which version of this conversation we were going to have. I am — I am glad it is this one."',
+        text: '"Thank you. I did not know which version of this conversation we were going to have. I am. I am glad it is this one."',
         emotion: "knowing",
       },
       {
         speakerId: "inner-voice",
-        text: "The conversation has landed in the register it needed to land in. The remaining work is structural — not a promise to be a better partner in general, which is vapour, but one specific thing you will do differently.",
+        text: "The conversation has landed in the register it needed to land in. The remaining work is structural, not a promise to be a better partner in general, which is vapour, but one specific thing you will do differently.",
         emotion: "knowing",
       },
     ],
     choices: [
       {
         id: "structural-sunday-hour",
-        text: '"I want to propose something specific. One hour, every Sunday, that is about us — not about Finn, not about the log, not about the week ahead. Just us. Not every Sunday forever. Just — until we notice we are not needing the hour anymore."',
-        tactic: "The structural commitment. Dated, bounded, specific, testable. The hour itself is almost incidental — what matters is that a specific new shape has been proposed for the week.",
+        text: '"I want to propose something specific. One hour, every Sunday, that is about us, not about Finn, not about the log, not about the week ahead. Just us. Not every Sunday forever. Just, until we notice we are not needing the hour anymore."',
+        tactic: "The structural commitment. Dated, bounded, specific, testable. The hour itself is almost incidental, what matters is that a specific new shape has been proposed for the week.",
         nextSceneId: "structural-proposed",
         isOptimal: true,
       },
@@ -245,7 +245,7 @@ const scenes: Scene[] = [
       {
         id: "offer-respite",
         text: '"I want you to take Tuesday to Thursday next week to yourself. No Finn-talk, no log-work, no messages from me unless Finn is in the hospital. I will hold everything for three days. You have not had three days in eight years."',
-        tactic: "The respite offer — specific, costly to you, generous to the partner. This is the version of the commitment that acknowledges that the cost has not been symmetric.",
+        tactic: "The respite offer, specific, costly to you, generous to the partner. This is the version of the commitment that acknowledges that the cost has not been symmetric.",
         nextSceneId: "respite-offered",
         isOptimal: true,
       },
@@ -263,7 +263,7 @@ const scenes: Scene[] = [
     dialog: [
       {
         speakerId: "the-partner",
-        text: '"Yes. Yes. Let us do that. Not Sunday mornings — we are too tired on Sunday mornings. Saturday afternoons. Three to four. We will find one thing we used to do, before, and we will do one of those things."',
+        text: '"Yes. Yes. Let us do that. Not Sunday mornings, we are too tired on Sunday mornings. Saturday afternoons. Three to four. We will find one thing we used to do, before, and we will do one of those things."',
         emotion: "knowing",
       },
       {
@@ -280,13 +280,13 @@ const scenes: Scene[] = [
       {
         id: "yes-please",
         text: '"Yes. Please."',
-        tactic: "Accept the gift the partner is about to give. The offer is the obsidian path of this scenario — a specific, seen thing, named in daylight, across thirteen years of operation.",
+        tactic: "Accept the gift the partner is about to give. The offer is the obsidian path of this scenario, a specific, seen thing, named in daylight, across thirteen years of operation.",
         nextSceneId: "the-thing-seen",
         isOptimal: true,
       },
       {
         id: "deflect-the-gift",
-        text: '"You don\'t have to — honestly I know you notice. It is okay."',
+        text: '"You don\'t have to, honestly I know you notice. It is okay."',
         tactic: "Deflecting the named-seeing is a specific kind of refusal. The partner is offering a sentence you have been waiting thirteen years for and does not know that. Let them give it.",
         nextSceneId: "gift-deflected",
         isOptimal: false,
@@ -295,7 +295,7 @@ const scenes: Scene[] = [
   },
 
   // ===================================================================
-  // THE-THING-SEEN — OBSIDIAN PATH
+  // THE-THING-SEEN. OBSIDIAN PATH
   // ===================================================================
   {
     id: "the-thing-seen",
@@ -322,7 +322,7 @@ const scenes: Scene[] = [
     choices: [
       {
         id: "name-one-back",
-        text: 'Name one back. "The month after Finn set the shed fire, you took three weeks off work without telling me why. I knew. I knew and I did not make you name it. I thought — if you needed it to be your own thing, it would be your own thing."',
+        text: 'Name one back. "The month after Finn set the shed fire, you took three weeks off work without telling me why. I knew. I knew and I did not make you name it. I thought, if you needed it to be your own thing, it would be your own thing."',
         tactic: "The symmetric naming. The obsidian move. Both of you have been carrying a specific unnamed act across the decade, and the scenario makes them named across the kitchen table.",
         nextSceneId: "ending-fifteen-year-thank-you",
         isOptimal: true,
@@ -330,7 +330,7 @@ const scenes: Scene[] = [
       {
         id: "accept-without-matching",
         text: 'Say: "Thank you. That is a lot to hear." Leave it there.',
-        tactic: "A clean accept without the matching naming. Correct, warm, but the scenario does not land on the obsidian path — it lands on the high silver. The gift has been received but not returned.",
+        tactic: "A clean accept without the matching naming. Correct, warm, but the scenario does not land on the obsidian path, it lands on the high silver. The gift has been received but not returned.",
         nextSceneId: "ending-the-marriage-named",
         isOptimal: false,
       },
@@ -348,7 +348,7 @@ const scenes: Scene[] = [
     dialog: [
       {
         speakerId: "the-partner",
-        text: '"I — I cannot accept that. Not because I do not need it. Because I would come back and feel guilty for the three days. And because the cost has not been asymmetric; you have been carrying it, in your own way, that I have not seen either."',
+        text: '"I. I cannot accept that. Not because I do not need it. Because I would come back and feel guilty for the three days. And because the cost has not been asymmetric; you have been carrying it, in your own way, that I have not seen either."',
         emotion: "knowing",
       },
       {
@@ -358,7 +358,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "inner-voice",
-        text: "The partner corrected your proposal. The correction was generous — they named that the cost has not been as one-sided as you had assumed. This is itself a datum about the marriage that the decade of operation had obscured.",
+        text: "The partner corrected your proposal. The correction was generous, they named that the cost has not been as one-sided as you had assumed. This is itself a datum about the marriage that the decade of operation had obscured.",
         emotion: "knowing",
       },
     ],
@@ -374,7 +374,7 @@ const scenes: Scene[] = [
   },
 
   // ===================================================================
-  // FAILURE BRANCHES — SHORTER
+  // FAILURE BRANCHES. SHORTER
   // ===================================================================
   {
     id: "sentence-pre-empted",
@@ -384,7 +384,7 @@ const scenes: Scene[] = [
     dialog: [
       {
         speakerId: "the-partner",
-        text: '"... Okay. I — forget the way I was going to say it. I just — I think we have been more the operation than the marriage for a long time. I do not know what to do with that."',
+        text: '"... okay. I, forget the way I was going to say it. I just. I think we have been more the operation than the marriage for a long time. I do not know what to do with that."',
         emotion: "serious",
       },
       {
@@ -416,7 +416,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "the-partner",
-        text: '"Do not — do not soften it for me. Let me say it. Give me the hand back in a minute."',
+        text: '"Do not, do not soften it for me. Let me say it. Give me the hand back in a minute."',
         emotion: "knowing",
       },
       {
@@ -471,7 +471,7 @@ const scenes: Scene[] = [
     dialog: [
       {
         speakerId: "the-partner",
-        text: '"... Okay. Okay. I — I am not going to fight this with you at 6:47 a.m. on a Sunday. I am not going to argue about whether the operation is the marriage. I will try this conversation again some other time."',
+        text: '"... okay. Okay. I. I am not going to fight this with you at 6:47 a.m. on a Sunday. I am not going to argue about whether the operation is the marriage. I will try this conversation again some other time."',
         emotion: "sad",
       },
       {
@@ -506,7 +506,7 @@ const scenes: Scene[] = [
     dialog: [
       {
         speakerId: "the-partner",
-        text: '"... Okay. I will try. But I want you to just receive it this time. Do not argue the terms."',
+        text: '"... okay. I will try. But I want you to just receive it this time. Do not argue the terms."',
         emotion: "serious",
       },
       {
@@ -534,7 +534,7 @@ const scenes: Scene[] = [
     dialog: [
       {
         speakerId: "the-partner",
-        text: '"... No. This is not about last night. This is about us. I am trying to have a conversation about us, and you have made the third sentence of it about him."',
+        text: '"... no. This is not about last night. This is about us. I am trying to have a conversation about us, and you have made the third sentence of it about him."',
         emotion: "sad",
       },
       {
@@ -546,7 +546,7 @@ const scenes: Scene[] = [
     choices: [
       {
         id: "apologise-redirect",
-        text: '"You are right. I am sorry. Start again — this is about us."',
+        text: '"You are right. I am sorry. Start again. This is about us."',
         tactic: "The specific apology + redirect. The partner has asked a specific thing; ask them to restart, on the shape they wanted.",
         nextSceneId: "late-reopening",
         isOptimal: true,
@@ -562,12 +562,12 @@ const scenes: Scene[] = [
     dialog: [
       {
         speakerId: "the-partner",
-        text: '"... Alright. Maybe another time."',
+        text: '"... alright. Maybe another time."',
         emotion: "sad",
       },
       {
         speakerId: "inner-voice",
-        text: "The partner retracted the offer. The gift will not be re-offered tonight. This is a smaller version of the defence-move — a reflex deflection of the specific-seeing.",
+        text: "The partner retracted the offer. The gift will not be re-offered tonight. This is a smaller version of the defence-move, a reflex deflection of the specific-seeing.",
         emotion: "knowing",
       },
     ],
@@ -590,7 +590,7 @@ const scenes: Scene[] = [
     dialog: [
       {
         speakerId: "the-partner",
-        text: '"... Okay. I would prefer something specific. A vow to be more present is — you have made that vow to me before. What will be different this time?"',
+        text: '"... okay. I would prefer something specific. A vow to be more present is, you have made that vow to me before. What will be different this time?"',
         emotion: "serious",
       },
       {
@@ -602,7 +602,7 @@ const scenes: Scene[] = [
     choices: [
       {
         id: "propose-sunday-hour",
-        text: "Propose the specific — Saturday afternoons, three to four, just the two of us.",
+        text: "Propose the specific. Saturday afternoons, three to four, just the two of us.",
         tactic: "The structural specific. A time, a shape, a bound.",
         nextSceneId: "structural-proposed",
         isOptimal: true,
@@ -621,15 +621,15 @@ const scenes: Scene[] = [
     outcomeType: "good",
     endingTitle: "The Fifteen-Year Thank You",
     endingLearnPrompt:
-      "Both of you, across thirteen years of operation, were carrying specific unnamed acts of the other. The obsidian move is the symmetric naming in daylight. The marriage was not actually less intact than you feared — it was carrying two specific thank-yous that neither of you had said. The conversation at 6:47 a.m. said them.",
+      "Both of you, across thirteen years of operation, were carrying specific unnamed acts of the other. The obsidian move is the symmetric naming in daylight. The marriage was not actually less intact than you feared, it was carrying two specific thank-yous that neither of you had said. The conversation at 6:47 a.m. said them.",
     dialog: [
       {
         speakerId: null,
-        text: "The coffee is cold. Neither of you has moved. The kitchen is quiet in a way that is, specifically, different from the way it was quiet at 6:47 — not the quiet of two exhausted people, but the quiet of two people who have just said a sentence each across the table.",
+        text: "The coffee is cold. Neither of you has moved. The kitchen is quiet in a way that is, specifically, different from the way it was quiet at 6:47, not the quiet of two exhausted people, but the quiet of two people who have just said a sentence each across the table.",
       },
       {
         speakerId: "inner-voice",
-        text: "The marriage held. The operation held the marriage. The specific seeing, named aloud, will be — across the next decade — the thing either of you will remember. Not the child. Not the log. The sentence about the couch. The sentence about the three weeks off.",
+        text: "The marriage held. The operation held the marriage. The specific seeing, named aloud, will be. Across the next decade, the thing either of you will remember. Not the child. Not the log. The sentence about the couch. The sentence about the three weeks off.",
         emotion: "knowing",
       },
       {
@@ -648,11 +648,11 @@ const scenes: Scene[] = [
     outcomeType: "good",
     endingTitle: "The Marriage Named",
     endingLearnPrompt:
-      "The sentence was said, received, and met with a specific structural commitment. Saturday three to four. An hour, every week, for both of you. The marriage has been named — not saved, because it was not dying, but named, which was the specific thing that had been missing. The obsidian path of the symmetric naming is still available; it will take another conversation.",
+      "The sentence was said, received, and met with a specific structural commitment. Saturday three to four. An hour, every week, for both of you. The marriage has been named, not saved, because it was not dying, but named, which was the specific thing that had been missing. The obsidian path of the symmetric naming is still available; it will take another conversation.",
     dialog: [
       {
         speakerId: "inner-voice",
-        text: "The conversation held. The commitment is structural. The marriage is in a different register than it was at 6:47 a.m. — quieter, more seen, more specific.",
+        text: "The conversation held. The commitment is structural. The marriage is in a different register than it was at 6:47 a.m., quieter, more seen, more specific.",
         emotion: "knowing",
       },
     ],
@@ -669,7 +669,7 @@ const scenes: Scene[] = [
     failureBlogSlug: "architecture-of-control-how-emotional-dependency-is-built",
     failureBlogTitle: "The Architecture of Silence In Long Marriages",
     endingLearnPrompt:
-      "The defence closed the door. The partner will not try the conversation again for months, possibly longer. The scenario does not declare the marriage over — it names the specific cost: a window of repair that existed at 6:47 a.m. and closed by 7:02. The window will, almost certainly, reopen. The cost of the close is that the next one is harder.",
+      "The defence closed the door. The partner will not try the conversation again for months, possibly longer. The scenario does not declare the marriage over, it names the specific cost: a window of repair that existed at 6:47 a.m. and closed by 7:02. The window will, almost certainly, reopen. The cost of the close is that the next one is harder.",
     dialog: [
       {
         speakerId: "inner-voice",
@@ -686,7 +686,7 @@ export const pcChild41: Scenario = {
   title: "The Marriage Question",
   tagline: "6:47 a.m. Sunday. The household log is open on the table. Your partner has been writing a sentence in their head since Thursday.",
   description:
-    "Finn is eighteen. Lily is sixteen. The marriage has, across thirteen years of shared parenting, become the thing the operation is made of — or it has become something less than that, quietly. The scenario is not about the child. The scenario is the conversation across the kitchen table about what the marriage has become, and whether the specific naming of it can repair the shape of the next decade.",
+    "Finn is eighteen. Lily is sixteen. The marriage has, across thirteen years of shared parenting, become the thing the operation is made of or it has become something less than that, quietly. The scenario is not about the child. The scenario is the conversation across the kitchen table about what the marriage has become, and whether the specific naming of it can repair the shape of the next decade.",
   tier: "vip",
   track: "pc-child",
   level: 4,
@@ -700,7 +700,7 @@ export const pcChild41: Scenario = {
   prerequisites: ["pc-3-1"],
   tacticsLearned: [
     "Receive the sentence without pre-empting, defending, or deflecting",
-    "Name the specific cost back — dated, concrete, not generic",
+    "Name the specific cost back, dated, concrete, not generic",
     "Propose a structural commitment (a time, a shape, a bound), not a vague vow",
     "Refuse to deflect to the child mid-marriage-conversation; the child is the environment, not the subject",
     "Accept the correction when the partner rebalances your proposal",
@@ -708,7 +708,7 @@ export const pcChild41: Scenario = {
   redFlagsTaught: [
     "The operation-as-marriage substitution: when the shared project has replaced the alliance",
     "The physical softening move (reaching across the table) as a subtle refusal of the words",
-    "The vague vow as vapour — a promise to 'be more present' is the genre the scenario refuses",
+    "The vague vow as vapour, a promise to 'be more present' is the genre the scenario refuses",
     "Deflection to the child as the easiest and most damaging move in a marriage-register conversation",
   ],
   characters: [INNER_VOICE, THE_PARTNER],

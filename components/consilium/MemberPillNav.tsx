@@ -16,7 +16,7 @@ import AskKanikaPill from "./AskKanikaPill";
 
 /**
  * Member-area secondary nav. Sits at the top of <main> in the
- * consilium/(member) layout — the equivalent of "below the header"
+ * consilium/(member) layout, the equivalent of "below the header"
  * for a space that doesn't have the marketing Header rendered.
  *
  * Surfaces the highest-engagement destinations as a horizontally-
@@ -38,12 +38,12 @@ type PillItem = {
   href: string;
   label: string;
   icon: LucideIcon;
-  /** When provided, used as a prefix match for the active state — useful
+  /** When provided, used as a prefix match for the active state, useful
    *  for nested routes like simulator/[scenarioId] still highlighting
    *  the Simulator pill. */
   matchPrefix?: string;
   /** Optional key the parent uses to attach a live count badge to this
-   *  pill. Currently only "feed" is wired (online count) — kept generic
+   *  pill. Currently only "feed" is wired (online count), kept generic
    *  so we can light up Forum/Chat with "N unread" later without
    *  another API surface. */
   countKey?: "feed";
@@ -67,14 +67,14 @@ interface Props {
   /** Members active in the last 5 minutes. Surfaced as a pulsing dot +
    *  count next to the Feed pill so members see "people are here right
    *  now" at-a-glance. Critical against the 4% lifetime-comment-rate
-   *  problem — empty rooms read as a dead product. */
+   *  problem, empty rooms read as a dead product. */
   readonly onlineCount?: number;
 }
 
 export default function MemberPillNav({ onlineCount }: Props) {
   const pathname = usePathname();
 
-  // Determine the active pill. Leaderboard is a special case — it's nested
+  // Determine the active pill. Leaderboard is a special case, it's nested
   // under /consilium/simulator/leaderboard, but should NOT light up the
   // Simulator pill. So we check leaderboard FIRST (exact) before the
   // simulator prefix match wins.
@@ -96,19 +96,19 @@ export default function MemberPillNav({ onlineCount }: Props) {
       // Visually docks directly under the InnerCircleSidebar mobile bar
       // (which uses bg-deep-black/95 + border-b border-accent-gold/10).
       // We match its background opacity so the two strips read as one
-      // continuous panel — no seam, no double-border. Border-b stays
+      // continuous panel, no seam, no double-border. Border-b stays
       // because nothing sits below this on the page edge.
       className="sticky top-14 lg:top-0 z-30 bg-deep-black/95 backdrop-blur-md border-b border-accent-gold/10"
     >
       {/* Edge-fade scroll container.
-          The relative wrapper hosts two pseudo-fades — left + right —
+          The relative wrapper hosts two pseudo-fades, left + right —
           that mask the scroll-out edges so cut-off pills read as
           "swipe for more" instead of broken layout. Fades are pure
           CSS gradients matching the nav background, no JS, no
           repaint. They sit above the scroll content (z-10) but below
           the pills via pointer-events-none so swipes pass through. */}
       <div className="relative">
-        {/* Left fade — appears once content has scrolled past the
+        {/* Left fade, appears once content has scrolled past the
             first pill. Cheap heuristic: always render, opacity is
             negligible at scrollLeft 0 because the first pill is
             butted against the edge. */}
@@ -116,7 +116,7 @@ export default function MemberPillNav({ onlineCount }: Props) {
           aria-hidden
           className="pointer-events-none absolute left-0 top-0 bottom-0 z-10 w-6 bg-gradient-to-r from-deep-black to-transparent lg:hidden"
         />
-        {/* Right fade — masks the cut-off final pill so 'LEADERBO'
+        {/* Right fade, masks the cut-off final pill so 'LEADERBO'
             doesn't look like a layout bug. */}
         <div
           aria-hidden
@@ -126,7 +126,7 @@ export default function MemberPillNav({ onlineCount }: Props) {
         <div
           className="flex items-center gap-2.5 sm:gap-3 overflow-x-auto snap-x snap-proximity scroll-px-4 sm:scroll-px-6 px-4 sm:px-6 lg:px-8 py-2.5 lg:py-3 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden lg:justify-center"
         >
-          {/* Ask Kanika sits FIRST in the pill row — it's the highest-
+          {/* Ask Kanika sits FIRST in the pill row, it's the highest-
               return interaction we can put on the feed (daily engagement
               loop) and we want it visible before the swipe happens on
               mobile, even at 360px. */}

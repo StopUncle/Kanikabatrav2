@@ -27,43 +27,43 @@ const FAQ_ITEMS = [
   {
     question: "What is the Dark Mirror Assessment and what does it measure?",
     answer:
-      "The Dark Mirror is a 20-scenario psychological assessment that scores you across six personality patterns: Psychopathic, Sociopathic, Narcissistic, Borderline, Histrionic, and Neurotypical. Unlike standard Big Five tests, it's grounded in the Cluster B framework that clinicians actually use to think about pathological personality — and it uses real dating, social, and power scenarios instead of generic agree/disagree statements.",
+      "The Dark Mirror is a 20-scenario psychological assessment that scores you across six personality patterns: Psychopathic, Sociopathic, Narcissistic, Borderline, Histrionic, and Neurotypical. Unlike standard Big Five tests, it's grounded in the Cluster B framework that clinicians actually use to think about pathological personality and it uses real dating, social, and power scenarios instead of generic agree/disagree statements.",
   },
   {
     question: "How is this different from a Dark Triad personality test?",
     answer:
-      "The Dark Triad measures three traits — narcissism, Machiavellianism, and psychopathy. The Dark Mirror covers six patterns and adds the two Cluster B types the Dark Triad omits (Borderline and Histrionic), plus a Neurotypical baseline so you can see your distance from the median. It's also written for women specifically — most Dark Triad tests are normed on mixed undergraduate samples.",
+      "The Dark Triad measures three traits, narcissism, Machiavellianism, and psychopathy. The Dark Mirror covers six patterns and adds the two Cluster B types the Dark Triad omits (Borderline and Histrionic), plus a Neurotypical baseline so you can see your distance from the median. It's also written for women specifically. Most Dark Triad tests are normed on mixed undergraduate samples.",
   },
   {
     question: "Can a quiz tell me if I'm a sociopath, narcissist, or borderline?",
     answer:
-      "No quiz can clinically diagnose a personality disorder — only a licensed psychologist can. What this assessment can do is show you which traits are dominant in your personality structure, how those traits shape your behaviour in relationships, and whether the pattern is mild, moderate, or near-clinical. For most people, the answer is closer to 'you have elevated traits in this register' than 'you have the disorder.'",
+      "No quiz can clinically diagnose a personality disorder, only a licensed psychologist can. What this assessment can do is show you which traits are dominant in your personality structure, how those traits shape your behaviour in relationships, and whether the pattern is mild, moderate, or near-clinical. For most people, the answer is closer to 'you have elevated traits in this register' than 'you have the disorder.'",
   },
   {
     question: "How accurate is the Dark Mirror Assessment?",
     answer:
-      "The scenarios are calibrated against the diagnostic criteria for Antisocial, Narcissistic, Borderline, and Histrionic Personality Disorders in the DSM-5, and against the Dark Triad psychometric literature. The assessment doesn't replace a clinician — it's an educational tool — but it's substantially more rigorous than the BuzzFeed-tier quizzes that dominate the search results. The author is clinically diagnosed with ASPD and writes from the inside.",
+      "The scenarios are calibrated against the diagnostic criteria for Antisocial, Narcissistic, Borderline, and Histrionic Personality Disorders in the DSM-5, and against the Dark Triad psychometric literature. The assessment doesn't replace a clinician, it's an educational tool but it's substantially more rigorous than the BuzzFeed-tier quizzes that dominate the search results. The author is clinically diagnosed with ASPD and writes from the inside.",
   },
   {
     question:
       "Should I take this if I think I'm dating someone with Cluster B traits?",
     answer:
-      "Yes — but take it for yourself, not for your partner. The most common pattern in people who suspect their partner has a personality disorder is anxious-attached prey behaviour on their own side. Knowing your own profile is what lets you see the dynamic clearly. If you want a target-focused assessment, the recovery and dating posts (linked below) and the Sociopathic Dating Bible cover the partner-detection side.",
+      "Yes but take it for yourself, not for your partner. The most common pattern in people who suspect their partner has a personality disorder is anxious-attached prey behaviour on their own side. Knowing your own profile is what lets you see the dynamic clearly. If you want a target-focused assessment, the recovery and dating posts (linked below) and the Sociopathic Dating Bible cover the partner-detection side.",
   },
   {
     question: "Is the Dark Mirror free? How long does it take?",
-    answer: `The 20-scenario assessment is free — about 5 to 7 minutes. Your primary type and a radar-chart preview are returned for free. The full report — clinical-style diagnosis with functioning level (mild / moderate / severe), full per-axis interpretation, and behavioural patterns to watch — unlocks for $${QUIZ_INFO.price} and arrives in your inbox.`,
+    answer: `The 20-scenario assessment is free, about 5 to 7 minutes. Your primary type and a radar-chart preview are returned for free. The full report, clinical-style diagnosis with functioning level (mild / moderate / severe), full per-axis interpretation, and behavioural patterns to watch, unlocks for $${QUIZ_INFO.price} and arrives in your inbox.`,
   },
   {
     question:
       "Am I a narcissist or an empath? Can this quiz help me figure that out?",
     answer:
-      "The narcissist-vs-empath framing is mostly a social-media construct, not a clinical one — most people sit somewhere on a spectrum, not at either pole. The Dark Mirror will surface which traits are dominant in your psychology and whether the pattern is more grandiose (NPD-leaning), more impulsive (BPD-leaning), more cold (ASPD-leaning), or more attention-driven (HPD-leaning). It will tell you the truth more usefully than the binary will.",
+      "The narcissist-vs-empath framing is mostly a social-media construct, not a clinical one. Most people sit somewhere on a spectrum, not at either pole. The Dark Mirror will surface which traits are dominant in your psychology and whether the pattern is more grandiose (NPD-leaning), more impulsive (BPD-leaning), more cold (ASPD-leaning), or more attention-driven (HPD-leaning). It will tell you the truth more usefully than the binary will.",
   },
   {
     question: "What do I get if I unlock the full report?",
     answer:
-      "A multi-page personalised PDF emailed to you within minutes: your scores on all six axes, your dominant type with functioning-level diagnosis (mild / moderate / severe / clinical), behaviours that map to your profile in dating and friendships, the specific patterns you're likely to repeat, and a short reading list — including which chapters of the Sociopathic Dating Bible address your profile most directly.",
+      "A multi-page personalised PDF emailed to you within minutes: your scores on all six axes, your dominant type with functioning-level diagnosis (mild / moderate / severe / clinical), behaviours that map to your profile in dating and friendships, the specific patterns you're likely to repeat, and a short reading list, including which chapters of the Sociopathic Dating Bible address your profile most directly.",
   },
 ];
 
@@ -91,19 +91,19 @@ const RELATED_LINKS: Array<{
     href: "/blog/cluster-b-personality-disorders-overview",
     title: "Cluster B Personality Disorders: An Overview",
     description:
-      "ASPD, NPD, BPD, HPD — what each one looks like at the dinner table, and how the Dark Mirror's six axes map to them.",
+      "ASPD, NPD, BPD, HPD, what each one looks like at the dinner table, and how the Dark Mirror's six axes map to them.",
     type: "Foundation",
   },
   {
     href: "/guide/aspd-sociopathy-complete-guide",
-    title: "ASPD & Sociopathy — Complete Guide",
+    title: "ASPD & Sociopathy. Complete Guide",
     description:
       "The pillar guide on Antisocial Personality Disorder, written by someone clinically diagnosed with it. Read this if your Sociopathic or Psychopathic axis scored high.",
     type: "Pillar",
   },
   {
     href: "/blog/dark-psychology-beginners-guide",
-    title: "Dark Psychology — A Beginner's Guide",
+    title: "Dark Psychology. A Beginner's Guide",
     description:
       "What dark psychology actually is (and isn't), why your assessment results matter, and where to start if any axis surprised you.",
     type: "Foundation",
@@ -112,26 +112,26 @@ const RELATED_LINKS: Array<{
     href: "/blog/signs-dating-a-sociopath",
     title: "Signs You're Dating a Sociopath",
     description:
-      "If you took this assessment because someone in your life feels off — start here. Read your Sociopathic axis, then read the partner-detection signs.",
+      "If you took this assessment because someone in your life feels off, start here. Read your Sociopathic axis, then read the partner-detection signs.",
     type: "Recovery",
   },
   {
     href: "/blog/sociopath-vs-psychopath-differences",
     title: "Sociopath vs Psychopath: Real Differences",
     description:
-      "The two highest-Cluster-B axes on the assessment confused for each other constantly. Here's what actually separates them — and why your scores might split.",
+      "The two highest-Cluster-B axes on the assessment confused for each other constantly. Here's what actually separates them and why your scores might split.",
     type: "Foundation",
   },
   {
     href: "/blog/narcissist-playbook-how-they-actually-operate",
     title: "The Narcissist Playbook",
     description:
-      "If your Narcissistic axis scored high — or you took this thinking about someone else who lives there — this is the operating manual.",
+      "If your Narcissistic axis scored high or you took this thinking about someone else who lives there. This is the operating manual.",
     type: "Recovery",
   },
   {
     href: "/blog/dark-feminine-energy-guide",
-    title: "Dark Feminine Energy — A Real Guide",
+    title: "Dark Feminine Energy. A Real Guide",
     description:
       "The aesthetic everyone is talking about, written by someone with an actual clinical framework underneath. The bridge between the test and the lifestyle.",
     type: "Lifestyle",
@@ -296,13 +296,13 @@ export default function QuizLanding() {
                   step: "01",
                   title: "Answer 20 Scenarios",
                   description:
-                    "Real dating and social situations with a functioning assessment. No boring agree/disagree—just truth.",
+                    "Real dating and social situations with a functioning assessment. No boring agree/disagree, just truth.",
                 },
                 {
                   step: "02",
                   title: "Get Your Profile",
                   description:
-                    "See your primary type and preview your radar chart—for free.",
+                    "See your primary type and preview your radar chart, for free.",
                 },
                 {
                   step: "03",
@@ -342,14 +342,14 @@ export default function QuizLanding() {
               </h2>
               <p className="text-text-gray text-center max-w-2xl mx-auto">
                 Most quizzes ask generic questions and give vague results. The
-                Dark Mirror Assessment puts you in real scenarios—dating
-                situations, power dynamics, moments of betrayal—and reveals how
+                Dark Mirror Assessment puts you in real scenarios, dating
+                situations, power dynamics, moments of betrayal and reveals how
                 your psychology actually operates when it matters.
               </p>
             </div>
           </m.div>
 
-          {/* FAQ section — emits FAQPage JSON-LD via FAQSection. Targets the
+          {/* FAQ section, emits FAQPage JSON-LD via FAQSection. Targets the
               long-tail buyer queries that share a SERP with this page:
               "am I a sociopath quiz" / "dark triad vs cluster B" /
               "is the dark mirror accurate" / "am I a narcissist or empath." */}
@@ -366,7 +366,7 @@ export default function QuizLanding() {
             />
           </m.div>
 
-          {/* Related concept bridge — internal links into the existing 40+
+          {/* Related concept bridge, internal links into the existing 40+
               blog posts and the ASPD pillar. Two SEO purposes: (1) spread
               link equity from the quiz page (high traffic) into the deeper
               catalogue (high relevance), and (2) give readers a logical
@@ -384,7 +384,7 @@ export default function QuizLanding() {
             </h2>
             <p className="text-text-gray text-center max-w-2xl mx-auto mb-10 text-sm">
               The Dark Mirror is one entry point. These are the deeper reads on
-              each personality type — the same framework, applied to dating,
+              each personality type, the same framework, applied to dating,
               recovery, and the patterns the test surfaces.
             </p>
             <div className="grid md:grid-cols-2 gap-4">

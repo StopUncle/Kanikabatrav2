@@ -17,9 +17,9 @@ const BASE_URL = SITE_CONFIG.url;
 // is the head term and we want positional advantage in the comparative SERP.
 export const metadata: Metadata = {
   title:
-    "Dark Mirror Assessment — Cluster B Personality Test (Free) | Kanika Batra",
+    "Dark Mirror Assessment. Cluster B Personality Test (Free) | Kanika Batra",
   description:
-    "A 6-axis personality assessment for women. Discover whether your dominant traits are Psychopathic, Sociopathic, Narcissistic, Borderline, or Histrionic — written by a clinically diagnosed sociopath. Free to take, 5 minutes, 20 scenarios.",
+    "A 6-axis personality assessment for women. Discover whether your dominant traits are Psychopathic, Sociopathic, Narcissistic, Borderline, or Histrionic, written by a clinically diagnosed sociopath. Free to take, 5 minutes, 20 scenarios.",
   keywords:
     "dark mirror assessment, dark psychology quiz, cluster B personality test, am I a sociopath quiz, am I a narcissist quiz, dark triad test for women, borderline personality test, histrionic personality quiz, psychopath test online",
   alternates: {
@@ -27,9 +27,9 @@ export const metadata: Metadata = {
   },
   openGraph: {
     title:
-      "The Dark Mirror Assessment — See What's Really Looking Back",
+      "The Dark Mirror Assessment. See What's Really Looking Back",
     description:
-      "A psychological assessment for women revealing your dominant patterns across six personality types — Psychopathic, Sociopathic, Narcissistic, Borderline, Histrionic, Neurotypical. 20 scenarios. Brutal truth.",
+      "A psychological assessment for women revealing your dominant patterns across six personality types. Psychopathic, Sociopathic, Narcissistic, Borderline, Histrionic, Neurotypical. 20 scenarios. Brutal truth.",
     type: "website",
     url: `${BASE_URL}/quiz`,
     siteName: SITE_CONFIG.name,
@@ -44,7 +44,7 @@ export const metadata: Metadata = {
   },
 };
 
-// Schema.org Quiz type — the actual schema for an online assessment. Google
+// Schema.org Quiz type, the actual schema for an online assessment. Google
 // has rich-result support for educational Quiz markup; even where it doesn't
 // surface a rich card it strengthens topical relevance for "personality
 // quiz" / "online assessment" queries. Pairs with the FAQPage schema
@@ -91,7 +91,7 @@ function generateQuizSchema() {
       price: QUIZ_INFO.price,
       priceCurrency: "USD",
       availability: "https://schema.org/InStock",
-      description: "Unlock the full Dark Mirror report — clinical-style diagnosis with functioning level and detailed analysis delivered to your email.",
+      description: "Unlock the full Dark Mirror report, clinical-style diagnosis with functioning level and detailed analysis delivered to your email.",
     },
   };
 }

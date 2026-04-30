@@ -3,7 +3,7 @@ import { Loader2 } from "lucide-react";
 /**
  * Loading fallback for every /consilium/(member)/* page during SSR /
  * suspense. Without this, Next.js falls back to a blank screen for the
- * brief moment between route push and content paint — cheap-looking.
+ * brief moment between route push and content paint, cheap-looking.
  *
  * Kept minimal on purpose: a spinner on-brand colour, centred, with
  * enough vertical space that it doesn't jump when the real content

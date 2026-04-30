@@ -1,9 +1,9 @@
 /**
- * Mission 10-1 — "The Gatekeeper"
+ * Mission 10-1, "The Gatekeeper"
  *
  * Level 10, order 1. VIP tier.
  * You won the senior role. You're now the gatekeeper. Someone brings
- * you a request that would have saved you three years ago — and
+ * you a request that would have saved you three years ago, and
  * there's a reason to say no. Who do you let through the door that
  * once wasn't opened for you?
  *
@@ -22,7 +22,7 @@ import { DEVON, PRIYA, INNER_VOICE } from "../characters";
 
 const scenes: Scene[] = [
   // ===================================================================
-  // ACT 1 — the office, the weight of the new role, the ask
+  // ACT 1, the office, the weight of the new role, the ask
   // ===================================================================
 
   {
@@ -37,7 +37,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: null,
-        text: "11:14am. Devon walks in — 24, nervous, holding a folder they printed because they think that's what you do. They sit before you say sit.",
+        text: "11:14am. Devon walks in, 24, nervous, holding a folder they printed because they think that's what you do. They sit before you say sit.",
       },
       {
         speakerId: "devon",
@@ -94,7 +94,7 @@ const scenes: Scene[] = [
   },
 
   // ===================================================================
-  // ACT 2A — OPEN DOOR FULLY
+  // ACT 2A. OPEN DOOR FULLY
   // ===================================================================
 
   {
@@ -142,7 +142,7 @@ const scenes: Scene[] = [
     dialog: [
       {
         speakerId: null,
-        text: "Hallway after. A senior committee member catches your elbow — friendly grip, the kind that's about to deliver something not friendly.",
+        text: "Hallway after. A senior committee member catches your elbow, friendly grip, the kind that's about to deliver something not friendly.",
       },
       {
         speakerId: null,
@@ -162,7 +162,7 @@ const scenes: Scene[] = [
   },
 
   // ===================================================================
-  // ACT 2B — CONDITIONAL OPEN (the long path)
+  // ACT 2B. CONDITIONAL OPEN (the long path)
   // ===================================================================
 
   {
@@ -177,11 +177,11 @@ const scenes: Scene[] = [
       },
       {
         speakerId: null,
-        text: "Some of it is clever. Some is confused — the kind of confusion that comes from working too long without anyone to push back. One section in the middle is genuinely surprising. You read it twice.",
+        text: "Some of it is clever. Some is confused, the kind of confusion that comes from working too long without anyone to push back. One section in the middle is genuinely surprising. You read it twice.",
       },
       {
         speakerId: "inner-voice",
-        text: "Three years ago, yours would have looked about the same. The committee would have rejected it. Someone would have been right to send you home. Also — someone could have told you what to fix, and didn't.",
+        text: "Three years ago, yours would have looked about the same. The committee would have rejected it. Someone would have been right to send you home. Also, someone could have told you what to fix, and didn't.",
         emotion: "knowing",
       },
       {
@@ -242,7 +242,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: null,
-        text: "They don't argue. They don't overreact. They ask you one clarifying question — about the third fix, the hardest one — and leave.",
+        text: "They don't argue. They don't overreact. They ask you one clarifying question, about the third fix, the hardest one and leave.",
       },
       {
         speakerId: "inner-voice",
@@ -261,7 +261,7 @@ const scenes: Scene[] = [
     dialog: [
       {
         speakerId: null,
-        text: "Wednesday morning. Email from Devon: 'Hi — wanted to ask if you could share what specifically you'd want to see different. Happy to revise.'",
+        text: "Wednesday morning. Email from Devon: 'Hi, wanted to ask if you could share what specifically you'd want to see different. Happy to revise.'",
       },
       {
         speakerId: null,
@@ -301,7 +301,7 @@ const scenes: Scene[] = [
   },
 
   // ===================================================================
-  // ACT 2C — TEACH FIRST (mentor path)
+  // ACT 2C. TEACH FIRST (mentor path)
   // ===================================================================
 
   {
@@ -312,7 +312,7 @@ const scenes: Scene[] = [
     dialog: [
       {
         speakerId: "devon",
-        text: '"Okay. Can we — can I write notes while you talk?"',
+        text: '"Okay. Can we, can I write notes while you talk?"',
         emotion: "hopeful",
       },
       {
@@ -347,7 +347,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: null,
-        text: "You think about Kaya and the equivalent forty-five minutes she gave you in 2019. You wonder if she felt this same uncertainty about whether you'd come back. You decide it doesn't matter — the uncertainty is the cost of the move.",
+        text: "You think about Kaya and the equivalent forty-five minutes she gave you in 2019. You wonder if she felt this same uncertainty about whether you'd come back. You decide it doesn't matter, the uncertainty is the cost of the move.",
       },
     ],
     nextSceneId: "six-weeks-later",
@@ -366,11 +366,11 @@ const scenes: Scene[] = [
       },
       {
         speakerId: null,
-        text: "You open it before your second coffee. It's different. Three of your four fixes are in. The fourth they disagreed with — in writing, with a paragraph of reasoning.",
+        text: "You open it before your second coffee. It's different. Three of your four fixes are in. The fourth they disagreed with, in writing, with a paragraph of reasoning.",
       },
       {
         speakerId: "inner-voice",
-        text: "They pushed back on one of your notes with justification. That's the signal. They're not copying you — they're thinking.",
+        text: "They pushed back on one of your notes with justification. That's the signal. They're not copying you, they're thinking.",
         emotion: "knowing",
       },
     ],
@@ -378,7 +378,7 @@ const scenes: Scene[] = [
   },
 
   // ===================================================================
-  // ACT 2D — FLAT NO (the resented sentence)
+  // ACT 2D. FLAT NO (the resented sentence)
   // ===================================================================
 
   {
@@ -393,7 +393,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: null,
-        text: "Devon's expression doesn't change for a full second. Then it does — small, controlled. They thank you for your time. They stand, pick up the folder, and leave.",
+        text: "Devon's expression doesn't change for a full second. Then it does, small, controlled. They thank you for your time. They stand, pick up the folder, and leave.",
       },
       {
         speakerId: null,
@@ -406,7 +406,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "inner-voice",
-        text: "You didn't open the door. You also didn't hold it shut on craft — you held it shut on a person, the same way it was held shut on you. Devon will remember the no, not the reason.",
+        text: "You didn't open the door. You also didn't hold it shut on craft, you held it shut on a person, the same way it was held shut on you. Devon will remember the no, not the reason.",
         emotion: "sad",
       },
     ],
@@ -425,7 +425,7 @@ const scenes: Scene[] = [
     outcomeType: "good",
     endingTitle: "The Voice You Needed",
     endingSummary:
-      "You were the 45-minute mentor instead of the flat no. Devon came back in six weeks with better work, pushed back on one of your notes with a good reason, and earned the intro. The grant committee meets them next month. Whatever happens there, you didn't gatekeep for its own sake — and you didn't spend your credibility cheaply.",
+      "You were the 45-minute mentor instead of the flat no. Devon came back in six weeks with better work, pushed back on one of your notes with a good reason, and earned the intro. The grant committee meets them next month. Whatever happens there, you didn't gatekeep for its own sake and you didn't spend your credibility cheaply.",
     dialog: [
       {
         speakerId: "inner-voice",
@@ -443,7 +443,7 @@ const scenes: Scene[] = [
     outcomeType: "good",
     endingTitle: "Protégé Built",
     endingSummary:
-      "Three weeks of co-development. You invested Kaya-level time. In two years, Devon will be sending you their first hire for you to evaluate — the chain continues. You didn't just let them through the door. You helped them build the kind of work that makes the door obvious.",
+      "Three weeks of co-development. You invested Kaya-level time. In two years, Devon will be sending you their first hire for you to evaluate, the chain continues. You didn't just let them through the door. You helped them build the kind of work that makes the door obvious.",
     dialog: [
       {
         speakerId: "inner-voice",
@@ -463,7 +463,7 @@ const scenes: Scene[] = [
     failureBlogTitle: "The Empress Endgame: From Victim to Sovereign",
     endingTitle: "You Became the Door",
     endingSummary:
-      '"Not yet. Earn the rounds first." The exact sentence that was said to you, which you resented, which delayed you by two years. You just said it. Devon leaves. In three years they\'ll be the ones with your role, and they\'ll remember the "no" — not the reason for it.',
+      '"Not yet. Earn the rounds first." The exact sentence that was said to you, which you resented, which delayed you by two years. You just said it. Devon leaves. In three years they\'ll be the ones with your role, and they\'ll remember the "no", not the reason for it.',
     dialog: [
       {
         speakerId: "inner-voice",
@@ -481,7 +481,7 @@ const scenes: Scene[] = [
     outcomeType: "neutral",
     endingTitle: "Polite No",
     endingSummary:
-      '"It\'s interesting but not ready." No specifics. Devon leaves with nothing actionable, just a smaller, prettier version of the rejection. You didn\'t use your access to help; you didn\'t abuse it either. Neutral, but wasted — and the unanswered follow-up email made it worse.',
+      '"It\'s interesting but not ready." No specifics. Devon leaves with nothing actionable, just a smaller, prettier version of the rejection. You didn\'t use your access to help; you didn\'t abuse it either. Neutral, but wasted and the unanswered follow-up email made it worse.',
     dialog: [
       {
         speakerId: "inner-voice",
@@ -517,7 +517,7 @@ export const mission101: Scenario = {
   title: "The Gatekeeper",
   tagline: "You're the door now.",
   description:
-    "Three months into the senior role. Devon wants the intro you needed three years ago. You can be the mentor you wish you'd had — or the flat 'no' you resented. The complication: your credibility with the committee is finite, and Devon's work isn't there yet.",
+    "Three months into the senior role. Devon wants the intro you needed three years ago. You can be the mentor you wish you'd had or the flat 'no' you resented. The complication: your credibility with the committee is finite, and Devon's work isn't there yet.",
   tier: "vip",
   level: 10,
   order: 1,

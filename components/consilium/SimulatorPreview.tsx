@@ -7,7 +7,7 @@ import CharacterSilhouette from "@/components/simulator/CharacterSilhouette";
 import type { Character, EmotionType } from "@/lib/simulator/types";
 
 /**
- * SimulatorPreview — autoplaying faux scene-runner for the landing page.
+ * SimulatorPreview, autoplaying faux scene-runner for the landing page.
  *
  * Plays three short scenes lifted from real Consilium scenarios on a
  * loop. The point is sales: the viewer sees the actual product running
@@ -16,23 +16,23 @@ import type { Character, EmotionType } from "@/lib/simulator/types";
  *
  * Visual rebuild (April 2026):
  *   - Killed the floating Venetian half-mask. It read as a "weird floating
- *     thing" — abstract art with no relationship to what's actually on
+ *     thing", abstract art with no relationship to what's actually on
  *     screen during real play. Replaced with the real game's
  *     CharacterSilhouette component, the same hand-rolled SVG body+head
  *     used inside scenarios. Now the preview looks like a still frame
  *     from the real game, not a marketing mock-up.
- *   - Each scene gets a Character object (inline — these are preview-only
+ *   - Each scene gets a Character object (inline. These are preview-only
  *     casting; the real registry lives in lib/simulator/characters.ts) so
  *     the silhouette pulls the right hair shape, body lean, and rim-light
  *     hue from the emotion.
  *
  * Why three scenes:
- *   1. Romance — 10pm DM (Maris, seductive) — mystery, intrigue
- *   2. Workplace — credit theft (Marcus, smirking) — every pro recognises
- *   3. Friendship — gala fishing trip (Alex, curious) — info-discipline
+ *   1. Romance, 10pm DM (Maris, seductive), mystery, intrigue
+ *   2. Workplace, credit theft (Marcus, smirking). Every pro recognises
+ *   3. Friendship, gala fishing trip (Alex, curious), info-discipline
  *
  * Each scene's optimal choice is what gets "picked" so the viewer sees
- * the gold flash, the tactic reveal, the XP +10 — the dopamine the
+ * the gold flash, the tactic reveal, the XP +10, the dopamine the
  * real product delivers.
  */
 
@@ -46,9 +46,9 @@ interface PreviewScene {
   context: string;
   /** The actual game-engine character used to render the silhouette. */
   character: Character;
-  /** Emotion override — drives the rim-light hue and body lean. */
+  /** Emotion override, drives the rim-light hue and body lean. */
   emotion: EmotionType;
-  /** Mood key — drives the backdrop gradient. */
+  /** Mood key, drives the backdrop gradient. */
   mood: "mysterious" | "tense" | "danger";
   speakerLine: string;
   innerVoiceLine: string;
@@ -69,7 +69,7 @@ const SCENES: PreviewScene[] = [
     },
     emotion: "seductive",
     mood: "mysterious",
-    speakerLine: "hey. i know this is weird. you up?",
+    speakerLine: "hey. I know this is weird. You up?",
     innerVoiceLine:
       "10pm. 'I know this is weird.' Two firsts in one text.",
     choices: [
@@ -104,7 +104,7 @@ const SCENES: PreviewScene[] = [
       "'The team' = him. The frame sets in four seconds.",
     choices: [
       {
-        text: "Quick note — I built that model. Happy to walk through it.",
+        text: "Quick note. I built that model. Happy to walk through it.",
         isOptimal: true,
         tactic: "Correct attribution before the frame sets.",
       },
@@ -147,7 +147,7 @@ const SCENES: PreviewScene[] = [
   },
 ];
 
-// Mood backdrops — same palette the real MoodBackground component uses
+// Mood backdrops. Same palette the real MoodBackground component uses
 // in-scene so the preview matches the live game's lighting model.
 const MOOD_GRADIENTS: Record<PreviewScene["mood"], string> = {
   mysterious:
@@ -215,7 +215,7 @@ export default function SimulatorPreview() {
   const [beatIndex, setBeatIndex] = useState(0);
   const [inView, setInView] = useState(true);
 
-  // Pause when offscreen — saves CPU when the visitor scrolls past.
+  // Pause when offscreen, saves CPU when the visitor scrolls past.
   useEffect(() => {
     const node = containerRef.current;
     if (!node) return;
@@ -276,7 +276,7 @@ export default function SimulatorPreview() {
     [scene],
   );
 
-  // Subtle drifting "particles" — eight gold dots seeded from sceneIndex.
+  // Subtle drifting "particles", eight gold dots seeded from sceneIndex.
   const particles = useMemo(() => {
     return Array.from({ length: 8 }).map((_, i) => ({
       left: ((sceneIndex * 41 + i * 37) % 100) + 0.5,
@@ -359,13 +359,13 @@ export default function SimulatorPreview() {
           </AnimatePresence>
         </div>
 
-        {/* Central character — the same SVG silhouette used inside the
+        {/* Central character, the same SVG silhouette used inside the
             real game. Engine native size is ~256×384 which is too tall
             for a landing-page canvas, so the m.div is scaled to ~55%
             (mobile) / 65% (desktop) with origin bottom-center. That
             anchors the bottom of the body to the dialog area while
             shrinking the head down into the upper portion of the frame
-            — matching the shot composition the real game uses. */}
+           , matching the shot composition the real game uses. */}
         <div className="absolute inset-x-0 top-10 sm:top-12 bottom-[210px] sm:bottom-[185px] z-10 flex items-end justify-center pointer-events-none">
           <AnimatePresence mode="wait">
             <m.div
@@ -385,7 +385,7 @@ export default function SimulatorPreview() {
           </AnimatePresence>
         </div>
 
-        {/* XP floater — only during reward beat */}
+        {/* XP floater, only during reward beat */}
         <AnimatePresence>
           {isRewarding && (
             <m.div
@@ -410,7 +410,7 @@ export default function SimulatorPreview() {
           )}
         </AnimatePresence>
 
-        {/* Dialog + choices stack — anchored bottom */}
+        {/* Dialog + choices stack, anchored bottom */}
         <div className="absolute inset-x-0 bottom-7 sm:bottom-8 z-20 px-4 sm:px-6 pb-3">
           <AnimatePresence mode="wait">
             {showSpeakerLine && (

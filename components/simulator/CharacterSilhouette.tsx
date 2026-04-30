@@ -4,12 +4,12 @@ import { m } from "framer-motion";
 import type { Character, EmotionType } from "@/lib/simulator/types";
 
 /**
- * Bridge silhouette — hand-rolled SVG.
+ * Bridge silhouette, hand-rolled SVG.
  *
  * Goals vs. the earlier abstract blob:
  *   - Visible HEAD with hair shape (flowing / short / cap / styled per silhouetteType)
  *   - Visible SHOULDERS + COLLARBONE line
- *   - Hint of face geometry — a single jawline and a cheek highlight — so the
+ *   - Hint of face geometry, a single jawline and a cheek highlight so the
  *     figure reads as a person, not a vase.
  *   - Idle breathing animation (torso scales 1 ↔ 1.02 over 4s)
  *   - Emotion drives the rim-light hue, body lean, and slight facial tension
@@ -28,7 +28,7 @@ type Props = {
    */
   intensity?: number;
   /**
-   * Casting role — drives size and visual prominence.
+   * Casting role, drives size and visual prominence.
    *   - "solo"      : single-character scene, centered, full size (default)
    *   - "speaker"   : active talker in a group, full size, rim-lit
    *   - "supporting": in-scene but not currently speaking, 50% size, dimmed,
@@ -66,7 +66,7 @@ function rimColorFor(emotion?: EmotionType): string {
 
 function hairPathFor(silhouetteType?: string): string {
   // Each hair path is a shape drawn on top of the head ellipse. Dark, no
-  // texture — silhouette aesthetic throughout.
+  // texture, silhouette aesthetic throughout.
   switch (silhouetteType) {
     case "female-elegant":
     case "hair-styled":
@@ -108,13 +108,13 @@ export default function CharacterSilhouette({
   const hairPath = hairPathFor(character.silhouetteType);
   // Non-speakers render dimmed so the eye lands on whoever is talking.
   const containerOpacity = Math.max(0.35, Math.min(1, intensity));
-  // Size class per role — supporting cast renders at 55% of speaker size
+  // Size class per role, supporting cast renders at 55% of speaker size
   const sizeClass =
     role === "supporting"
       ? "w-28 h-40 sm:w-36 sm:h-52"
       : "w-52 h-72 sm:w-64 sm:h-96";
 
-  // Subtle body lean driven by emotion — aggressive emotions lean forward,
+  // Subtle body lean driven by emotion, aggressive emotions lean forward,
   // withdrawn ones lean back.
   const lean =
     activeEmotion === "seductive" || activeEmotion === "smirking"
@@ -165,13 +165,13 @@ export default function CharacterSilhouette({
       className={`relative ${sizeClass}`}
       style={{ transformOrigin: "center bottom" }}
     >
-      {/* Rim glow behind character — picks up emotion color */}
+      {/* Rim glow behind character, picks up emotion color */}
       <div
         className="absolute inset-0 rounded-full blur-3xl opacity-60"
         style={{ background: rim }}
       />
 
-      {/* Breathing wrap — gentle scale to simulate idle life */}
+      {/* Breathing wrap, gentle scale to simulate idle life */}
       <m.svg
         viewBox="0 0 200 320"
         className="relative w-full h-full drop-shadow-[0_0_30px_rgba(0,0,0,0.9)]"
@@ -195,7 +195,7 @@ export default function CharacterSilhouette({
             <stop offset="0%" stopColor={rim} stopOpacity="0.95" />
             <stop offset="100%" stopColor={rim} stopOpacity="0" />
           </linearGradient>
-          {/* Soft cheek highlight — barely there, just enough to imply a face */}
+          {/* Soft cheek highlight, barely there, just enough to imply a face */}
           <radialGradient id="cheek" cx="0.5" cy="0.5" r="0.5">
             <stop offset="0%" stopColor={rim} stopOpacity="0.35" />
             <stop offset="100%" stopColor={rim} stopOpacity="0" />
@@ -208,10 +208,10 @@ export default function CharacterSilhouette({
           fill="url(#bodyGrad)"
         />
 
-        {/* Head — slightly ovoid */}
+        {/* Head, slightly ovoid */}
         <ellipse cx="100" cy="95" rx="30" ry="38" fill="url(#bodyGrad)" />
 
-        {/* Jawline rim — a single edge-light pass */}
+        {/* Jawline rim, a single edge-light pass */}
         <path
           d="M77 100 Q78 118 95 130 Q100 132 105 130 Q122 118 123 100"
           fill="none"
@@ -220,13 +220,13 @@ export default function CharacterSilhouette({
           strokeOpacity="0.65"
         />
 
-        {/* Cheek implied-highlight — shows the presence of a face */}
+        {/* Cheek implied-highlight, shows the presence of a face */}
         <ellipse cx="112" cy="104" rx="7" ry="4" fill="url(#cheek)" />
 
-        {/* Hair — on top of head */}
+        {/* Hair, on top of head */}
         <path d={hairPath} fill="url(#bodyGrad)" />
 
-        {/* Rim light — left edge on body */}
+        {/* Rim light, left edge on body */}
         <path
           d="M46 225 L44 270 Q44 295 50 320"
           fill="none"
@@ -235,7 +235,7 @@ export default function CharacterSilhouette({
           strokeOpacity="0.9"
         />
 
-        {/* Rim light — right edge on head + neck (picks up primary light source) */}
+        {/* Rim light, right edge on head + neck (picks up primary light source) */}
         <path
           d="M128 78 Q132 95 128 118 Q120 132 115 140"
           fill="none"

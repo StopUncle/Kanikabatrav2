@@ -318,7 +318,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "inner-voice",
-        text: "This is the part of the cycle that is not photographed. The morning. The shame. The 'what do I say to clean this up.' The skill in the morning is to not over-correct. Big apologies put a load on her she will then have to manage. Small honest acknowledgments let the moment rest. The version of yourself that lives at 11:14 p.m. is real. The version that wakes up at 8:47 a.m. is also real. The repair is in admitting both, briefly, then continuing the day.",
+        text: "This is the part of the cycle that is not photographed. The morning. The shame. The 'what do I say to clean this up.' The skill in the morning is to not over-correct. Big apologies put a load on her she will then have to manage. Small honest acknowledgments let the moment rest. The version of yourself that lives at 11:14 p.m. Is real. The version that wakes up at 8:47 a.m. Is also real. The repair is in admitting both, briefly, then continuing the day.",
         emotion: "knowing",
       },
     ],

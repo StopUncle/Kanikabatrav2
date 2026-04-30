@@ -61,13 +61,13 @@ async function marketingPreflight(
 
 /**
  * Accepts either:
- *  - `x-cron-secret: <CRON_SECRET>` header — for scheduled cron callers.
+ *  - `x-cron-secret: <CRON_SECRET>` header, for scheduled cron callers.
  *    Must match CRON_SECRET specifically; we deliberately do NOT fall back
  *    to ADMIN_SECRET because that secret has broader semantics (it's the
  *    legacy admin-panel guard) and a leak there would also blast real
  *    transactional emails to every queued recipient. Cron and admin
  *    secrets must be distinct.
- *  - `admin_session` httpOnly cookie — for manual admin-panel triggering.
+ *  - `admin_session` httpOnly cookie, for manual admin-panel triggering.
  *
  * Uses constant-time comparison to avoid timing oracle on the cron secret.
  *

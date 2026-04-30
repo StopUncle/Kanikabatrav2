@@ -41,7 +41,7 @@ type Props = {
   state: SimulatorState;
   /** Badge keys earned by this run (deduped against prior badges server-side). */
   badgesEarned?: string[];
-  /** Hook for "next scenario" — pass null to hide the next CTA. */
+  /** Hook for "next scenario", pass null to hide the next CTA. */
   nextScenarioHref?: string | null;
   /**
    * Custom CTA block rendered in place of the "Next Scenario" button.
@@ -53,7 +53,7 @@ type Props = {
    * When true, suppress the "Understand what happened" failure-blog
    * CTA on losing endings. The public /try demo sets this because a
    * cold visitor on a free demo should see one thing at the loss
-   * screen — the conversion CTA — not a tangent to a blog post.
+   * screen, the conversion CTA, not a tangent to a blog post.
    */
   hideFailureBlog?: boolean;
   /**
@@ -106,7 +106,7 @@ export default function EndingScreen({
   // Stars are the new verdict. ★/★★/★★★ replaces the old text pill
   // because pass/fail alone leaves no replay incentive once a player
   // has technically completed a scenario. Stars give them something
-  // to chase: "I 2-starred this — let me 3-star it."
+  // to chase: "I 2-starred this, let me 3-star it."
   //
   // Earned 0  → loss with no completion (rare; we usually still show 1)
   // Earned 1  → reached an ending, even a losing one
@@ -131,7 +131,7 @@ export default function EndingScreen({
       <div className="max-w-2xl w-full text-center">
         {/* The 3-star verdict display.
             Three slots ALWAYS render so the player sees what's possible
-            even on a loss — empty slots are the goalposts for the next
+            even on a loss, empty slots are the goalposts for the next
             replay. Stars fill in sequence with a stagger so it lands
             like a Clash-style reveal: ★ … ★★ … ★★★ rather than all at once. */}
         <m.div
@@ -179,7 +179,7 @@ export default function EndingScreen({
           </div>
         </m.div>
 
-        {/* Mastery readout — "X / Y optimal · Z%". Gives the player a
+        {/* Mastery readout, "X / Y optimal · Z%". Gives the player a
             concrete number to chase on replay. The third star is keyed
             off this percent vs the 80% threshold, so showing it here
             makes the gap explicit ("I got 73%, need 80%"). */}
@@ -232,7 +232,7 @@ export default function EndingScreen({
           </m.p>
         )}
 
-        {/* XP earned — count-up animation */}
+        {/* XP earned, count-up animation */}
         <XpCounter target={state.xpEarned} />
 
         {/* Previous-best comparison. Only on replays. Calls out a new
@@ -271,13 +271,13 @@ export default function EndingScreen({
             The pedagogy: when a player loses to a manipulation tactic, hand
             them the blog post that teaches the pattern. Links to the member
             preview route (`/consilium/previews/<slug>`) rather than the
-            public `/blog/<slug>` — many referenced posts are future-dated
+            public `/blog/<slug>`, many referenced posts are future-dated
             in their MDX frontmatter and the public route 404s on them.
             The preview route uses `getPostBySlug` (not `getPublicPostBySlug`)
             so members can read them immediately, and redirects to `/blog/`
             once a post has gone public. Opens in a new tab so players
             don't lose the ending screen state. Suppressed on the public
-            /try demo (hideFailureBlog=true) — cold visitors on a free
+            /try demo (hideFailureBlog=true), cold visitors on a free
             demo should see one thing on the loss screen: the conversion
             CTA. */}
         {scene.failureBlogSlug &&
@@ -391,7 +391,7 @@ export default function EndingScreen({
  *   - Hover the button to pause the countdown (gives them reading time)
  *   - Click "Stay on this screen" to cancel auto-advance entirely
  *
- * Doesn't fire on losing outcomes — auto-advancing into another scenario
+ * Doesn't fire on losing outcomes, auto-advancing into another scenario
  * after a loss is punishment, not retention. Players need a beat.
  */
 function NextScenarioButton({
@@ -422,7 +422,7 @@ function NextScenarioButton({
         onMouseLeave={() => setPaused(false)}
         className="relative inline-flex items-center justify-center gap-2 px-8 py-3 bg-accent-gold text-deep-black font-medium tracking-wider uppercase text-sm rounded-full hover:bg-accent-gold/90 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-gold focus-visible:ring-offset-2 focus-visible:ring-offset-deep-black overflow-hidden"
       >
-        {/* Progress fill — sweeps left-to-right behind the label.
+        {/* Progress fill, sweeps left-to-right behind the label.
             Pure CSS animation so pause is a one-line attribute change. */}
         {showAutoUI && (
           <span

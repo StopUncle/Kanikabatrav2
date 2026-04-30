@@ -1,10 +1,10 @@
 /**
- * cbl-1-2 — "The Mentor's Lunch"
+ * cbl-1-2, "The Mentor's Lunch"
  *
  * Cluster-B Identification Lab, Level 1, order 2. Short-format
  * diagnostic drill. Target register: antisocial / psychopathy
  * (ASPD). The scenario presents one ninety-minute lunch with a
- * well-placed senior mentor who has — across six months — been
+ * well-placed senior mentor who has. Across six months, been
  * warm, attentive, and generous with introductions. The drill
  * teaches the specific ASPD tell: the one ask, delivered late
  * in the lunch, that is instrumental, cost-asymmetric, and
@@ -28,7 +28,7 @@ import { INNER_VOICE } from "../../characters";
 
 const scenes: Scene[] = [
   // ===================================================================
-  // OPENING — THE LUNCH
+  // OPENING. THE LUNCH
   // ===================================================================
   {
     id: "the-lunch",
@@ -38,7 +38,7 @@ const scenes: Scene[] = [
     dialog: [
       {
         speakerId: null,
-        text: "Thursday, 1:14 p.m. A restaurant in the city — his choice, his booking, his account. He is in his late fifties; you are in your early thirties. Six months ago he appeared at an industry event, introduced himself, and said three specific things about your work that showed he had read it. Since then: two other lunches, three warm introductions to people above him in his field (all of whom followed up), one genuinely useful book recommendation.",
+        text: "Thursday, 1:14 p.m. a restaurant in the city, his choice, his booking, his account. He is in his late fifties; you are in your early thirties. Six months ago he appeared at an industry event, introduced himself, and said three specific things about your work that showed he had read it. Since then: two other lunches, three warm introductions to people above him in his field (all of whom followed up), one genuinely useful book recommendation.",
       },
       {
         speakerId: null,
@@ -46,7 +46,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: null,
-        text: "'Small thing — you know the piece you did in March about the institutional frame of dependency? I am writing something adjacent, and I would love to just — borrow the central two paragraphs, with credit, obviously, as a jumping-off point for a chapter. Would that be alright?'",
+        text: "'Small thing, you know the piece you did in March about the institutional frame of dependency? I am writing something adjacent, and I would love to just, borrow the central two paragraphs, with credit, obviously, as a jumping-off point for a chapter. Would that be alright?'",
       },
       {
         speakerId: "inner-voice",
@@ -58,7 +58,7 @@ const scenes: Scene[] = [
       {
         id: "to-audit",
         text: "Audit the ask. What is actually being asked, and what is the cost ratio?",
-        tactic: "Drill format — the teaching is in the specific audit, not the instinct.",
+        tactic: "Drill format, the teaching is in the specific audit, not the instinct.",
         nextSceneId: "the-audit",
         isOptimal: true,
       },
@@ -81,19 +81,19 @@ const scenes: Scene[] = [
       },
       {
         speakerId: null,
-        text: "1. 'The central two paragraphs' — not one-line quotes, not the framing. The load-bearing paragraphs. The specific work that makes the piece the piece.",
+        text: "1. 'The central two paragraphs', not one-line quotes, not the framing. The load-bearing paragraphs. The specific work that makes the piece the piece.",
       },
       {
         speakerId: null,
-        text: "2. 'Borrow' — softening vocabulary for 'reproduce in his book,' which is a book from a bigger publisher than yours. His use will reach more readers than your original did.",
+        text: "2. 'Borrow', softening vocabulary for 'reproduce in his book,' which is a book from a bigger publisher than yours. His use will reach more readers than your original did.",
       },
       {
         speakerId: null,
-        text: "3. 'With credit, obviously' — the 'obviously' is doing a lot of work. Credit in an adjacent book is flattering in the six months afterwards; in the ten-year citation record, the paragraphs will be associated with his book, not yours.",
+        text: "3. 'With credit, obviously', the 'obviously' is doing a lot of work. Credit in an adjacent book is flattering in the six months afterwards; in the ten-year citation record, the paragraphs will be associated with his book, not yours.",
       },
       {
         speakerId: null,
-        text: "4. 'Jumping-off point for a chapter' — meaning the chapter's core framing rests on your paragraphs. The chapter is, structurally, yours.",
+        text: "4. 'Jumping-off point for a chapter', meaning the chapter's core framing rests on your paragraphs. The chapter is, structurally, yours.",
       },
       {
         speakerId: null,
@@ -135,7 +135,7 @@ const scenes: Scene[] = [
       {
         id: "antisocial",
         text: "Antisocial / psychopathy. The warmth was not the point; the warmth was the infrastructure. The ask is instrumental, cost-asymmetric, and timed to the social-pressure maximum. This is not a friend who made a request; this is an operator who invested six months in the request.",
-        tactic: "Correct. The clinical tell is the charm-to-extraction ratio: high charm, frictionless access, followed by one specific instrumental ask that benefits him at minimal cost. The absence of anger, the absence of hurt, the absence of anything personal — the ask is not emotional; it is operational.",
+        tactic: "Correct. The clinical tell is the charm-to-extraction ratio: high charm, frictionless access, followed by one specific instrumental ask that benefits him at minimal cost. The absence of anger, the absence of hurt, the absence of anything personal, the ask is not emotional; it is operational.",
         nextSceneId: "diagnosis-correct",
         isOptimal: true,
         event: "tactic-named:antisocial",
@@ -143,7 +143,7 @@ const scenes: Scene[] = [
       {
         id: "narcissistic",
         text: "Narcissistic. He is using you to make his book better.",
-        tactic: "Close, but wrong. NPD would show in the register of the ask — it would be about him, about his importance, about needing the paragraphs to complete his work. This ask is frictionless and warm; it is not ego-forward. The lack of ego in the request is itself the tell for ASPD, not NPD.",
+        tactic: "Close, but wrong. NPD would show in the register of the ask, it would be about him, about his importance, about needing the paragraphs to complete his work. This ask is frictionless and warm; it is not ego-forward. The lack of ego in the request is itself the tell for ASPD, not NPD.",
         nextSceneId: "diagnosis-near-miss",
         isOptimal: false,
       },
@@ -157,7 +157,7 @@ const scenes: Scene[] = [
       {
         id: "borderline",
         text: "Borderline. The warmth is real; he is emotionally enmeshed.",
-        tactic: "Miss. BPD would show in the register — dysregulation, intensity-disproportion, attachment-seeking. This register is calm. The calm is the tell; BPD is never calm about what it wants.",
+        tactic: "Miss. BPD would show in the register, dysregulation, intensity-disproportion, attachment-seeking. This register is calm. The calm is the tell; BPD is never calm about what it wants.",
         nextSceneId: "diagnosis-miss",
         isOptimal: false,
       },
@@ -180,7 +180,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "inner-voice",
-        text: "The prescription is not whether to refuse — it is how to refuse without ending the relationship, because his response to your refusal will be the confirmation of the diagnosis.",
+        text: "The prescription is not whether to refuse, it is how to refuse without ending the relationship, because his response to your refusal will be the confirmation of the diagnosis.",
         emotion: "knowing",
       },
     ],
@@ -213,7 +213,7 @@ const scenes: Scene[] = [
     choices: [
       {
         id: "refuse-counter",
-        text: "'I would rather not do the two paragraphs — the framing is the piece's spine and I want to reuse it myself next year. Happy for you to cite in the normal way, or I can send a short original quote for your chapter.' — refuse the ask, offer a smaller substitute, watch the next minute.",
+        text: "'I would rather not do the two paragraphs, the framing is the piece's spine and I want to reuse it myself next year. Happy for you to cite in the normal way, or I can send a short original quote for your chapter.', refuse the ask, offer a smaller substitute, watch the next minute.",
         tactic: "Correct. The counter-offer is the diagnostic test: a genuine admirer accepts the normal-citation version and moves on warmly; an operator either re-negotiates immediately, becomes subtly cooler across the next 90 seconds, or pivots to a different ask. Whichever he does is data.",
         nextSceneId: "ending-correct",
         isOptimal: true,
@@ -221,7 +221,7 @@ const scenes: Scene[] = [
       },
       {
         id: "soft-yes",
-        text: "'Of course — take whatever you need.'",
+        text: "'Of course, take whatever you need.'",
         tactic: "The soft-yes is the anxious-appeasement response to a calibrated pressure request. It trades the paragraphs for the continuation of the warmth; the warmth will continue, and the next ask will arrive in about four months.",
         nextSceneId: "ending-soft-yes",
         isOptimal: false,
@@ -229,7 +229,7 @@ const scenes: Scene[] = [
       {
         id: "flat-no",
         text: "'No.'",
-        tactic: "A flat no is technically correct but ends the relationship instantly — which, if the diagnosis is ASPD and you cannot afford the professional cost, may not be the right move. The counter-offer gives you both a test and a face-saving off-ramp.",
+        tactic: "A flat no is technically correct but ends the relationship instantly, which, if the diagnosis is ASPD and you cannot afford the professional cost, may not be the right move. The counter-offer gives you both a test and a face-saving off-ramp.",
         nextSceneId: "ending-flat-no",
         isOptimal: false,
       },
@@ -315,7 +315,7 @@ const scenes: Scene[] = [
     outcomeType: "bad",
     endingTitle: "The Soft Yes",
     failureBlogSlug: "architecture-of-control-how-emotional-dependency-is-built",
-    failureBlogTitle: "Architecture of Control — How Emotional Dependency Is Built",
+    failureBlogTitle: "Architecture of Control. How Emotional Dependency Is Built",
     endingLearnPrompt:
       "The soft yes to a calibrated pressure request trades your work for the continuation of a warmth you have (correctly) enjoyed. The warmth will continue. The next ask will arrive in approximately four months and will be slightly larger. The six-month infrastructure is now confirmed as working.",
     dialog: [
@@ -336,7 +336,7 @@ const scenes: Scene[] = [
     outcomeType: "neutral",
     endingTitle: "The Flat No",
     endingLearnPrompt:
-      "The flat no is substantively correct but operationally expensive — it ends the relationship in one sentence, and the professional value of the six months of warmth (real introductions, real recommendations) evaporates without a diagnostic return. The counter-offer does the same refusal at lower cost and produces the same confirmation.",
+      "The flat no is substantively correct but operationally expensive, it ends the relationship in one sentence, and the professional value of the six months of warmth (real introductions, real recommendations) evaporates without a diagnostic return. The counter-offer does the same refusal at lower cost and produces the same confirmation.",
     dialog: [
       {
         speakerId: "inner-voice",
@@ -353,7 +353,7 @@ export const clusterBLab12: Scenario = {
   title: "The Mentor's Lunch",
   tagline: "Six months of warmth. Ninety minutes of lunch. One ask at minute seventy-two.",
   description:
-    "Short-format Cluster-B identification drill. A senior mentor has spent six months being warm, useful, and generous with introductions. Today's lunch is going well. At minute seventy-two he asks for the load-bearing two paragraphs of your best piece as 'a jumping-off point' for his chapter. The scenario teaches the ASPD diagnostic — warmth as infrastructure, cost-asymmetric ask at maximum social pressure, the absence of ego-load — and the prescription counter-offer that produces a diagnostic test of the diagnosis itself.",
+    "Short-format Cluster-B identification drill. A senior mentor has spent six months being warm, useful, and generous with introductions. Today's lunch is going well. At minute seventy-two he asks for the load-bearing two paragraphs of your best piece as 'a jumping-off point' for his chapter. The scenario teaches the ASPD diagnostic, warmth as infrastructure, cost-asymmetric ask at maximum social pressure, the absence of ego-load and the prescription counter-offer that produces a diagnostic test of the diagnosis itself.",
   tier: "premium",
   track: "cluster-b-lab",
   level: 1,
@@ -368,13 +368,13 @@ export const clusterBLab12: Scenario = {
   tacticsLearned: [
     "The six-month-infrastructure diagnostic for ASPD (warmth as instrument, not content)",
     "The cost-asymmetry audit: his cost vs. your cost",
-    "The counter-offer as a diagnostic test — his next ninety seconds are data",
+    "The counter-offer as a diagnostic test, his next ninety seconds are data",
     "The absence of ego-load as the tell that splits ASPD from NPD",
   ],
   redFlagsTaught: [
     "Load-bearing work requested as a 'jumping-off point' framing",
     "The 'with credit, obviously' as softening vocabulary for a larger extraction",
-    "Timing the ask at minute 72 of a 90-minute lunch — maximum social pressure",
+    "Timing the ask at minute 72 of a 90-minute lunch, maximum social pressure",
     "The soft-yes loop that calibrates the next larger ask at four months",
   ],
   characters: [INNER_VOICE],

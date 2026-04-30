@@ -37,19 +37,19 @@ import ChoicePopularityReveal from "./ChoicePopularityReveal";
 
 type Props = {
   scenario: Scenario;
-  /** Optional initial state — used to resume from server-persisted progress. */
+  /** Optional initial state, used to resume from server-persisted progress. */
   initialState?: SimulatorState;
   /**
    * Called every time state changes meaningfully (scene transition, choice,
    * ending). Implementations POST to /api/simulator/progress for persistence.
-   * Failures are non-fatal — the game keeps working client-side.
+   * Failures are non-fatal, the game keeps working client-side.
    */
   onStateChange?: (state: SimulatorState) => void;
   /** Called once when the scenario reaches an ending scene. Server records badges. */
   onComplete?: (state: SimulatorState) => void;
   /** Link to the next scenario in the flow, if any. */
   nextScenarioHref?: string | null;
-  /** Badge keys awarded by this completion — shown on the ending screen. */
+  /** Badge keys awarded by this completion, shown on the ending screen. */
   badgesEarned?: string[];
   /**
    * Where the exit button (top-right X) navigates. Defaults to the member
@@ -71,7 +71,7 @@ type Props = {
    */
   hideFailureBlog?: boolean;
   /**
-   * Previous-best summary — shown as a small "Replaying · best: N XP
+   * Previous-best summary, shown as a small "Replaying · best: N XP
    * · Mastery" banner under the letterbox during dialog, and in the
    * ending-summary when this run concludes. Null on first attempt.
    */
@@ -99,7 +99,7 @@ export default function SimulatorRunner({
   );
   const [lineIndex, setLineIndex] = useState(0);
 
-  // Pre-game intro overlay — shown on a fresh run (never on a
+  // Pre-game intro overlay, shown on a fresh run (never on a
   // mid-run resume, since the player is already deep in). Mid-run
   // resume is identified by either initialState being set AND not
   // pointing at the start scene.
@@ -109,7 +109,7 @@ export default function SimulatorRunner({
       initialState.choicesMade.length > 0);
   const [showIntro, setShowIntro] = useState(!hadResume);
 
-  // Portal target — document.body. Escapes the parent layout's stacking
+  // Portal target, document.body. Escapes the parent layout's stacking
   // context (the consilium member layout wraps content in `relative z-10`,
   // which caps our `z-[60]` against the Header at `z-50` and causes the
   // header to overlap the game). Portal is null until mount so SSR doesn't
@@ -119,7 +119,7 @@ export default function SimulatorRunner({
     setPortalReady(true);
   }, []);
 
-  // Lock the body scroll while the game is mounted — prevents mobile Safari
+  // Lock the body scroll while the game is mounted, prevents mobile Safari
   // from bouncing the underlying page behind the portal.
   useEffect(() => {
     const previousOverflow = document.body.style.overflow;
@@ -155,12 +155,12 @@ export default function SimulatorRunner({
   // have to keep the Continue button focused across scene remounts
   // (focus is lost when AnimatePresence unmounts a DialogBox per
   // line, so relying on button focus was a trap).
-  // Skipped during choices — there the player is choosing, not
+  // Skipped during choices, there the player is choosing, not
   // advancing; arrow keys / Tab + Enter on the choice cards is the
   // right path and that works natively via the <button>s.
   // Also skipped while the intro is showing so the Begin button
   // owns the keypress.
-  // Ref to the latest dispatchTap. dispatchTap itself is declared further
+  // Ref to the latest dispatchTap. DispatchTap itself is declared further
   // down (after derived `scene`/`lineIndex` are computed), but the keyboard
   // listener below needs to call it. The ref pattern avoids the temporal-
   // dead-zone error and lets us keep the listener bound exactly once.
@@ -171,7 +171,7 @@ export default function SimulatorRunner({
     function onKey(e: KeyboardEvent) {
       if (e.key !== " " && e.key !== "Enter") return;
       // Don't intercept when focus is inside a form / link / other
-      // interactive target — those get the key natively.
+      // interactive target. Those get the key natively.
       const target = e.target as HTMLElement | null;
       if (target?.closest("button, a, input, textarea, select")) return;
       // Don't compete with the choices phase or the intro overlay.
@@ -192,7 +192,7 @@ export default function SimulatorRunner({
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, [scenario, state, lineIndex, showIntro]);
-  // Dopamine state — XP floater + optimal-streak tracking
+  // Dopamine state. XP floater + optimal-streak tracking
   const [xpFloat, setXpFloat] = useState<{
     id: number;
     xp: number;
@@ -205,7 +205,7 @@ export default function SimulatorRunner({
   // Choice-popularity reveal state. We fetch the per-(sceneId,choiceId)
   // pick rates once at scenario start, then look up the rate for whatever
   // choice the player just made and flash the % briefly.
-  // `rates` is { [sceneId]: { [choiceId]: 0..1 } } — see /api/simulator/choice-popularity.
+  // `rates` is { [sceneId]: { [choiceId]: 0..1 } }, see /api/simulator/choice-popularity.
   const [popularityRates, setPopularityRates] = useState<Record<
     string,
     Record<string, number>
@@ -226,7 +226,7 @@ export default function SimulatorRunner({
         setPopularityRates(data.rates ?? {});
       })
       .catch(() => {
-        // Non-fatal — the reveal just won't show. Game keeps working.
+        // Non-fatal, the reveal just won't show. Game keeps working.
       });
     return () => {
       cancelled = true;
@@ -249,7 +249,7 @@ export default function SimulatorRunner({
   const scene = currentScene(scenario, state);
   const totalLines = scene?.dialog?.length ?? 0;
   // currentLine is undefined when lineIndex has been bumped PAST the
-  // final dialog line — that's the signal that the player has read
+  // final dialog line, that's the signal that the player has read
   // all the dialog and we're now showing choices (or auto-advancing).
   const currentLine: DialogLine | undefined = scene?.dialog?.[lineIndex];
   // The line that was on-screen immediately before the choices appeared.
@@ -261,7 +261,7 @@ export default function SimulatorRunner({
   const isLastLine = lineIndex === totalLines - 1;
   // Only show choices once the player has clicked PAST the last dialog
   // line. The previous logic flipped showChoices the moment we landed
-  // ON the last line, which silently skipped that line — players never
+  // ON the last line, which silently skipped that line, players never
   // saw the final inner-voice tactical beat that frames the choice.
   const showChoices =
     !!scene &&
@@ -281,10 +281,10 @@ export default function SimulatorRunner({
       ? characterById[currentLine.speakerId]
       : undefined;
 
-  // The "cast" — characters visibly present in the current scene. If the
+  // The "cast", characters visibly present in the current scene. If the
   // scene declares `presentCharacterIds`, we render that list side-by-side.
   // Otherwise we fall back to just the active speaker (legacy behavior).
-  // inner-voice is filtered out — it's narration, not a visible character.
+  // inner-voice is filtered out, it's narration, not a visible character.
   const castCharacters = (() => {
     if (!scene) return [];
     const ids =
@@ -300,7 +300,7 @@ export default function SimulatorRunner({
       .slice(0, 3);
   })();
 
-  // Persistence hook — fire on state transitions (but not lineIndex changes).
+  // Persistence hook, fire on state transitions (but not lineIndex changes).
   useEffect(() => {
     onStateChange?.(state);
   }, [state, onStateChange]);
@@ -317,7 +317,7 @@ export default function SimulatorRunner({
     if (!scene) return;
     const lines = scene.dialog?.length ?? 0;
 
-    // Still inside the dialog — step to the next line.
+    // Still inside the dialog, step to the next line.
     if (lineIndex < lines - 1) {
       setLineIndex((i) => i + 1);
       return;
@@ -339,7 +339,7 @@ export default function SimulatorRunner({
     }
 
     // lineIndex is past the dialog. If choices are showing, the click
-    // came from somewhere stale — ignore. Otherwise auto-advance.
+    // came from somewhere stale, ignore. Otherwise auto-advance.
     if (scene.choices && scene.choices.length > 0) return;
     setState((prev) => autoAdvance(scenario, prev));
     setLineIndex(0);
@@ -358,7 +358,7 @@ export default function SimulatorRunner({
       const baseXp = tone === "optimal" ? 10 : tone === "bad" ? 0 : 3;
 
       // Streak tracking: increment on optimal, reset otherwise.
-      // Streak bonuses — a small reward for reading the scenario as it
+      // Streak bonuses, a small reward for reading the scenario as it
       // was meant to be read. Reinforces the teaching loop: three
       // optimal choices in a row = +5 XP, five = +10, seven = +15.
       // Non-optimal choice resets the streak (but doesn't punish XP
@@ -374,7 +374,7 @@ export default function SimulatorRunner({
               : 0;
       const totalXp = baseXp + streakBonus;
 
-      // Skip the "+0 XP" floater — it reads as a bug (a reward with
+      // Skip the "+0 XP" floater, it reads as a bug (a reward with
       // no reward). The choice card already flashes red to signal a
       // bad choice; that's enough visual feedback without a
       // misleading "+0" pop. Optimal + neutral still show.
@@ -388,7 +388,7 @@ export default function SimulatorRunner({
       }
       setStreak(nextStreak);
 
-      // Choice popularity reveal — look up the rate for the choice we just
+      // Choice popularity reveal, look up the rate for the choice we just
       // picked on the scene we're leaving. Suppressed on scenes with too
       // few aggregated picks (the API returns no entry, falling through
       // to null which the reveal component renders as nothing).
@@ -421,7 +421,7 @@ export default function SimulatorRunner({
     setShowIntro(true);
   }, [scenario]);
 
-  // Exit button — small icon, top-right, above the letterbox. Shown on all
+  // Exit button, small icon, top-right, above the letterbox. Shown on all
   // breakpoints but sized/positioned so it doesn't compete with content.
   // `href` returns to the scenario index. On mobile it's the primary way
   // out of the full-screen game (the site Header is now hidden behind the
@@ -460,16 +460,16 @@ export default function SimulatorRunner({
   // button or link, and not while choices are showing) should
   // advance the dialog the same way the Continue/Skip button does.
   // We dispatch a custom "simulator:tap" event and DialogBox listens
-  // — keeps the typewriter skip-vs-advance logic in one place and
+  //, keeps the typewriter skip-vs-advance logic in one place and
   // avoids lifting the typewriter hook up.
   //
   // Triple-defence against the 2026-04-25 stuck-on-scene-1 incident:
   //
-  //   1. `lastDispatchAtRef` — wall-clock timestamp guard. iOS Safari
+  //   1. `lastDispatchAtRef`, wall-clock timestamp guard. IOS Safari
   //      can synthesise a `click` ~50–300ms after a `touchend`, so a
   //      single tap fires the handler twice. The timestamp guard
   //      drops any second event within 75ms of the first.
-  //   2. `tapLockRef` — 500ms boolean lock that covers the
+  //   2. `tapLockRef`, 500ms boolean lock that covers the
   //      AnimatePresence exit (350ms) plus scheduling slack, so
   //      a rapid second tap can't reach a stale DialogBox listener.
   //   3. We bind via `onPointerUp` (not `onClick`) on the game div —
@@ -486,12 +486,12 @@ export default function SimulatorRunner({
       if (showChoices || showIntro) return;
       const now =
         typeof performance !== "undefined" ? performance.now() : Date.now();
-      // Timestamp dedupe — kills iOS double-fire (touchend + synthetic click).
+      // Timestamp dedupe, kills iOS double-fire (touchend + synthetic click).
       if (now - lastDispatchAtRef.current < 75) return;
       if (tapLockRef.current) return;
       lastDispatchAtRef.current = now;
       tapLockRef.current = true;
-      // Telemetry breadcrumb — captured by Sentry on any later error and
+      // Telemetry breadcrumb, captured by Sentry on any later error and
       // visible in the dashboard regardless. Lets us reconstruct exactly
       // what scene + lineIndex the player was on when a loop is reported.
       try {
@@ -508,7 +508,7 @@ export default function SimulatorRunner({
           },
         });
       } catch {
-        // Sentry not initialized in dev — non-fatal.
+        // Sentry not initialized in dev, non-fatal.
       }
       tapCountRef.current += 1;
       window.dispatchEvent(new CustomEvent("simulator:tap"));
@@ -556,7 +556,7 @@ export default function SimulatorRunner({
     stuckCheckTimerRef.current = setInterval(() => {
       const elapsed = Date.now() - sceneEnteredAtRef.current;
       // Trigger: been on this scene >60s, tapped >5 times, no progress.
-      // The "no progress" check is on choicesMade for THIS scene — players
+      // The "no progress" check is on choicesMade for THIS scene, players
       // who've made earlier choices and are mid-scenario re-reading dialog
       // are not stuck.
       const sceneChoicesMade = state.choicesMade.filter(
@@ -569,7 +569,7 @@ export default function SimulatorRunner({
     return () => {
       if (stuckCheckTimerRef.current) clearInterval(stuckCheckTimerRef.current);
     };
-    // We deliberately do NOT include state.choicesMade in deps — the
+    // We deliberately do NOT include state.choicesMade in deps, the
     // detector watches it by closure on each interval tick. Re-running
     // the effect on every choice would reset the timer mid-scene.
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -581,7 +581,7 @@ export default function SimulatorRunner({
   const skipDialogToChoices = useCallback(() => {
     if (!scene || scene.isEnding) return;
     if (!scene.choices || scene.choices.length === 0) {
-      // No-choice scene — fall back to autoAdvance.
+      // No-choice scene, fall back to autoAdvance.
       setState((prev) => autoAdvance(scenario, prev));
       setLineIndex(0);
       return;
@@ -606,7 +606,7 @@ export default function SimulatorRunner({
   }, [scene, scenario]);
 
   if (!scene) {
-    // Unknown scene id — bad data or tampered state. Fail gracefully.
+    // Unknown scene id, bad data or tampered state. Fail gracefully.
     const missing = (
       <div className="fixed inset-0 z-[60] bg-deep-black flex items-center justify-center text-text-gray">
         {exitButton}
@@ -617,7 +617,7 @@ export default function SimulatorRunner({
     return createPortal(missing, document.body);
   }
 
-  // Ending scene — dedicated cinematic layout
+  // Ending scene, dedicated cinematic layout
   if (scene.isEnding) {
     const ending = (
       <div className="fixed inset-0 z-[60] bg-deep-black overflow-y-auto">
@@ -658,7 +658,7 @@ export default function SimulatorRunner({
   // escapes the consilium layout's z-10 stacking context and properly
   // covers the site Header on every breakpoint (mobile in particular).
   // (Tap-anywhere-to-advance hook + handler are hoisted above the
-  // early returns up top — see `tapLockRef` / `handleBackgroundTap`.)
+  // early returns up top, see `tapLockRef` / `handleBackgroundTap`.)
 
   // Whether the dialog phase is active for this non-ending scene.
   // Used to gate the always-visible emergency skip-to-choices button —
@@ -677,9 +677,9 @@ export default function SimulatorRunner({
       // suggest the background is clickable when the actual action is
       // to pick a choice.
       //
-      // Bound on `onPointerUp` (not `onClick`). iOS Safari emits a
+      // Bound on `onPointerUp` (not `onClick`). IOS Safari emits a
       // synthesised `click` after `touchend` when the parent has
-      // `cursor: pointer` set — that synthetic click was the prime
+      // `cursor: pointer` set, that synthetic click was the prime
       // suspect for the 2026-04-25 stuck-on-scene-1 incident. Pointer
       // events fire once per touch on every modern engine and don't
       // get the synthesised follow-up.
@@ -715,7 +715,7 @@ export default function SimulatorRunner({
 
       {/* Emergency skip-to-choices affordance.
           Always rendered during the dialog phase of any choice-bearing
-          scene. The reliable escape hatch — even if every tap-handler
+          scene. The reliable escape hatch, even if every tap-handler
           is broken, this button advances state directly via setLineIndex.
           Quiet styling so it doesn't compete with the typewriter, but
           always reachable. Top-left, opposite the exit button. */}
@@ -735,7 +735,7 @@ export default function SimulatorRunner({
           Shown automatically when a player has been on the same scene
           for >60s, tapped >5 times, and made zero choices on this scene.
           Offers the same skipDialogToChoices escape but with framing
-          that makes the user feel acknowledged — "we noticed, here's
+          that makes the user feel acknowledged, "we noticed, here's
           the way out" beats a silent UI failure every time. */}
       {showStuckRecovery && (
         <div className="fixed inset-0 z-[80] flex items-center justify-center p-4 bg-deep-black/80 backdrop-blur-sm">
@@ -776,7 +776,7 @@ export default function SimulatorRunner({
 
       <SceneShake sceneId={scene.id} shake={scene.shakeOnEntry}>
 
-      {/* Scenario label — absolute top, just under letterbox */}
+      {/* Scenario label, absolute top, just under letterbox */}
       <div className="absolute top-[76px] sm:top-[88px] left-0 right-0 z-30 text-center px-4">
         <p className="text-accent-gold/60 text-[10px] uppercase tracking-[0.5em]">
           {scenario.title}
@@ -811,18 +811,18 @@ export default function SimulatorRunner({
         )}
       </div>
 
-      {/* Cast staging — absolute, centered between top label and dialog zone.
+      {/* Cast staging, absolute, centered between top label and dialog zone.
           - Solo scene (1 char): center, full size.
           - Group scene (2-3 chars): speaker center/forward, supporting
             cast left + right at 55% size and lower z-index. When the
-            active speaker changes, the LAYOUT stays stable — we just
+            active speaker changes, the LAYOUT stays stable, we just
             re-rim-light who's talking. No character swap, no fade out,
             no scene cut. Film-grade continuity.
           Supporting cast uses `key={c.id}` only (not emotion-keyed) so
           they don't remount when speakers change. */}
       <div className="absolute inset-x-0 top-24 sm:top-28 bottom-[360px] sm:bottom-[320px] z-10 flex items-center justify-center px-4">
         {castCharacters.length === 1 ? (
-          // Solo — just center it
+          // Solo, just center it
           (() => {
             const c = castCharacters[0];
             const isSpeaker = activeCharacter?.id === c.id;
@@ -837,9 +837,9 @@ export default function SimulatorRunner({
             );
           })()
         ) : (
-          // Group — speaker center, supporting cast at sides
+          // Group, speaker center, supporting cast at sides
           <div className="relative w-full max-w-3xl h-full flex items-center justify-center">
-            {/* Supporting cast — positioned left/right, behind speaker */}
+            {/* Supporting cast, positioned left/right, behind speaker */}
             {castCharacters
               .filter((c) => c.id !== activeCharacter?.id)
               .map((c, i, arr) => {
@@ -864,7 +864,7 @@ export default function SimulatorRunner({
                   </div>
                 );
               })}
-            {/* Active speaker — centered, forward */}
+            {/* Active speaker, centered, forward */}
             {activeCharacter && (
               <div className="relative z-10">
                 <CharacterSilhouette
@@ -880,7 +880,7 @@ export default function SimulatorRunner({
         )}
       </div>
 
-      {/* Dialog + choices — absolute bottom.
+      {/* Dialog + choices, absolute bottom.
           When choices are shown, the last dialog line is echoed above them
           so the player can see what they're replying to. The echo is
           compact (no typewriter, no advance button, muted styling) to
@@ -889,7 +889,7 @@ export default function SimulatorRunner({
           Anchored to the bottom via `justify-end` rather than centred:
           on mobile, 4-choice scenes with long tactic text overflow any
           fixed min-height. Centring then split the overflow above and
-          below — pushing the echo up off-screen and the choice stack
+          below, pushing the echo up off-screen and the choice stack
           down behind the bottom letterbox. Justify-end keeps the
           choice cards pinned where the player expects them and lets
           the echo sit directly above, never covered.
@@ -901,8 +901,8 @@ export default function SimulatorRunner({
           clipping silently.
 
           z-[35] sits above the scenario-title banner (z-30) so tall
-          choice stacks — diagnostic scenes with long tactic text, and
-          any scene with 4+ cards — paint cleanly over the title without
+          choice stacks, diagnostic scenes with long tactic text, and
+          any scene with 4+ cards, paint cleanly over the title without
           the text bleeding through the cards' backdrop-blur. Still
           below the letterbox (z-40) so the top/bottom frame reads as
           the outermost layer. */}
@@ -950,7 +950,7 @@ export default function SimulatorRunner({
               to find an already-revealed first line. */}
           {showIntro ? null : showChoices && scene.choices ? (
             <div className="w-full" key={`choices-wrap-${scene.id}`}>
-              {/* Soft choice timer — only on `mood: danger` scenes. Fills
+              {/* Soft choice timer, only on `mood: danger` scenes. Fills
                   a slim 12s bar above the cards; never auto-picks. The
                   timer is a felt-pressure tool, not a mechanic. */}
               {scene.mood === "danger" && (
@@ -974,7 +974,7 @@ export default function SimulatorRunner({
               }
               isLastLine={!!isLastLine}
               onAdvance={advanceLine}
-              // Skip-scene shortcut — only offered on replays. Jumps
+              // Skip-scene shortcut, only offered on replays. Jumps
               // past every remaining dialog line in the current scene
               // straight to the choices (or triggers an auto-advance
               // for non-choice scenes). Saves the player from re-

@@ -1,9 +1,9 @@
 /**
- * Mission 5-2 — "The Throne"
+ * Mission 5-2, "The Throne"
  *
  * Level 5, order 2. Endgame. A younger player (Lennox) tries the Maris
  * playbook on you. The test is whether you can recognize yourself in
- * the target seat — and respond as the senior player you've become.
+ * the target seat and respond as the senior player you've become.
  * Mercy or takedown, but never unconscious.
  */
 
@@ -19,7 +19,7 @@ const scenes: Scene[] = [
     dialog: [
       {
         speakerId: null,
-        text: "The same rooftop bar, a year later. You are at the booth you always take now — the one with the view of the door, though you do not consciously sit where you can see the door. It has become habitual. A new face has been watching you for twenty minutes. Early twenties, a good dress that she bought for tonight, a cocktail she has barely drunk. She is about to cross the room and she knows it.",
+        text: "The same rooftop bar, a year later. You are at the booth you always take now, the one with the view of the door, though you do not consciously sit where you can see the door. It has become habitual. A new face has been watching you for twenty minutes. Early twenties, a good dress that she bought for tonight, a cocktail she has barely drunk. She is about to cross the room and she knows it.",
       },
       {
         speakerId: "lennox",
@@ -27,12 +27,12 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "inner-voice",
-        text: "Read the architecture of that opening. One — 'we have not met' establishes distance she will then pretend to bridge. Two — 'I have heard a lot' is the prize-framing move, the same one Maris ran on you at this bar twelve months ago, identical to the syllable. Three — 'I do not usually do this' is the fake-reluctance close, a planted receipt she can point to later: I told you I do not normally do this.",
+        text: "Read the architecture of that opening. One, 'we have not met' establishes distance she will then pretend to bridge. Two, 'I have heard a lot' is the prize-framing move, the same one Maris ran on you at this bar twelve months ago, identical to the syllable. Three, 'I do not usually do this' is the fake-reluctance close, a planted receipt she can point to later: I told you I do not normally do this.",
         emotion: "knowing",
       },
       {
         speakerId: "inner-voice",
-        text: "This is the Maris opening bid. It is so similar to the opening you received a year ago that it is almost a compliment to her — Lennox has certainly studied someone, and the shape of what she studied is recognisable. You are now sitting in the Maris seat. The person approaching you is doing to you what Maris did to you, and she has no idea you know the playbook by name.",
+        text: "This is the Maris opening bid. It is so similar to the opening you received a year ago that it is almost a compliment to her. Lennox has certainly studied someone, and the shape of what she studied is recognisable. You are now sitting in the Maris seat. The person approaching you is doing to you what Maris did to you, and she has no idea you know the playbook by name.",
         emotion: "knowing",
       },
       {
@@ -51,7 +51,7 @@ const scenes: Scene[] = [
       },
       {
         id: "mirror-her",
-        text: '"Oh, hi — sure, sit down."',
+        text: '"Oh, hi, sure, sit down."',
         tactic: "You just gave away the frame she was asking for.",
         nextSceneId: "lennox-runs-play",
         isOptimal: false,
@@ -89,7 +89,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "inner-voice",
-        text: "'Share notes' translates to 'mine yours.' It is the same ask Maris ran on you at this same bar, cleaner. Lennox has studied. The softeners — 'rather,' 'as one might put it' — are a tell that she has read old-money interviews and picked up the register. The register is correct; the delivery is slightly too deliberate, the way a person with a new accent over-pronounces the vowels.",
+        text: "'Share notes' translates to 'mine yours.' It is the same ask Maris ran on you at this same bar, cleaner. Lennox has studied. The softeners, 'rather,' 'as one might put it', are a tell that she has read old-money interviews and picked up the register. The register is correct; the delivery is slightly too deliberate, the way a person with a new accent over-pronounces the vowels.",
         emotion: "knowing",
       },
       {
@@ -137,12 +137,12 @@ const scenes: Scene[] = [
     dialog: [
       {
         speakerId: "lennox",
-        text: '"Thank you. Genuinely. So I\'ve been watching your work and — you have to tell me, how did you actually pull off the coffee-shop thing?"',
+        text: '"Thank you. Genuinely. So I\'ve been watching your work and, you have to tell me, how did you actually pull off the coffee-shop thing?"',
         emotion: "curious",
       },
       {
         speakerId: "inner-voice",
-        text: "She wants specifics on your past win. Because if she has specifics, she can replicate — or counter.",
+        text: "She wants specifics on your past win. Because if she has specifics, she can replicate or counter.",
         emotion: "concerned",
       },
     ],
@@ -184,7 +184,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "inner-voice",
-        text: "Honesty. Rare and strategic — she's betting that directness earns credibility. It's not unreasonable.",
+        text: "Honesty. Rare and strategic, she's betting that directness earns credibility. It's not unreasonable.",
         emotion: "knowing",
       },
     ],
@@ -353,7 +353,7 @@ const scenes: Scene[] = [
     outcomeType: "good",
     endingTitle: "Redirected to the Empty Well",
     endingSummary:
-      "You sent her to Maris. Beautiful, because the person she's trying to model has less to teach than the bar makes it look. Lennox will figure out the emptiness on her own — and in figuring it out, she'll respect that you didn't waste her time pretending otherwise.",
+      "You sent her to Maris. Beautiful, because the person she's trying to model has less to teach than the bar makes it look. Lennox will figure out the emptiness on her own and in figuring it out, she'll respect that you didn't waste her time pretending otherwise.",
     dialog: [
       {
         speakerId: "inner-voice",
@@ -371,7 +371,7 @@ const scenes: Scene[] = [
     outcomeType: "good",
     endingTitle: "Coalition",
     endingSummary:
-      "You offered her something copying couldn't: real training, in your orbit, at your pace. She accepted. In six months she's your #2. In two years she's the person Maris's kids try to model. You didn't kill the threat — you inherited it.",
+      "You offered her something copying couldn't: real training, in your orbit, at your pace. She accepted. In six months she's your #2. In two years she's the person Maris's kids try to model. You didn't kill the threat, you inherited it.",
     dialog: [
       {
         speakerId: "inner-voice",
@@ -389,7 +389,7 @@ const scenes: Scene[] = [
     outcomeType: "good",
     endingTitle: "Preemptive Deterrent",
     endingSummary:
-      "You drew a line in public. She'll back off. Effective. But you also signaled that you're willing to burn capital on preemptive strikes — some observers will remember that as ruthless. The cost/benefit tilted your way. Just know you spent something.",
+      "You drew a line in public. She'll back off. Effective. But you also signaled that you're willing to burn capital on preemptive strikes, some observers will remember that as ruthless. The cost/benefit tilted your way. Just know you spent something.",
     dialog: [
       {
         speakerId: "inner-voice",
@@ -407,7 +407,7 @@ const scenes: Scene[] = [
     outcomeType: "neutral",
     endingTitle: "You Walked",
     endingSummary:
-      "Didn't engage. Fine, clean, but blind — you don't know what she'll do now. Maybe nothing. Maybe she learns from watching you refuse her, and the next attempt is sharper. Either way, you bought nothing and owed nothing.",
+      "Didn't engage. Fine, clean, but blind, you don't know what she'll do now. Maybe nothing. Maybe she learns from watching you refuse her, and the next attempt is sharper. Either way, you bought nothing and owed nothing.",
     dialog: [
       {
         speakerId: "inner-voice",
@@ -443,7 +443,7 @@ export const mission52: Scenario = {
   title: "The Throne",
   tagline: "Someone is doing to you what you did to her.",
   description:
-    "Same rooftop bar, six months later. A new face. She's studied you the way you once studied Maris. The scripts you've learned are now being aimed at you. This is the final exam: do you recognize yourself in the target seat fast enough to choose what happens next — consciously?",
+    "Same rooftop bar, six months later. A new face. She's studied you the way you once studied Maris. The scripts you've learned are now being aimed at you. This is the final exam: do you recognize yourself in the target seat fast enough to choose what happens next, consciously?",
   tier: "premium",
   level: 5,
   order: 2,

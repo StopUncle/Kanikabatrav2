@@ -78,7 +78,7 @@ export default function CommentsPage() {
     try {
       // Fire sequentially rather than in parallel so we don't hammer the
       // API with a burst if there are many pending. Fast enough in
-      // practice — each call is a simple DB update.
+      // practice. Each call is a simple DB update.
       for (const c of pending) {
         await fetch(`/api/admin/comments/${c.id}`, {
           method: "POST",

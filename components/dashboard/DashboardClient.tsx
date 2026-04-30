@@ -336,7 +336,7 @@ export default function DashboardClient({ user }: DashboardClientProps) {
 
           {/* Above-the-fold Consilium shortcut.
               Sits between the welcome line and the stats row so it's
-              visible the moment the dashboard mounts — no scroll
+              visible the moment the dashboard mounts, no scroll
               required. State-aware: active members jump straight to
               the feed; everyone else hits the landing/apply funnel. */}
           <Link
@@ -506,7 +506,7 @@ export default function DashboardClient({ user }: DashboardClientProps) {
                 )}
               </DashboardCard>
 
-              {/* The Consilium section — state-aware */}
+              {/* The Consilium section, state-aware */}
               <DashboardCard
                 title="The Consilium"
                 subtitle={

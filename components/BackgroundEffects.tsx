@@ -40,7 +40,7 @@ export default function BackgroundEffects() {
         <div className="absolute inset-0 bg-gradient-to-b from-deep-black via-deep-burgundy to-deep-navy" />
       </div>
 
-      {/* Aurora effect — hidden on mobile to protect LCP. blur-3xl + animation
+      {/* Aurora effect, hidden on mobile to protect LCP. Blur-3xl + animation
           is expensive and invisible enough on small screens that cutting it
           is worth the perf win. Desktop keeps the full effect. */}
       <div className="fixed inset-0 z-0 opacity-40 hidden md:block">
@@ -52,7 +52,7 @@ export default function BackgroundEffects() {
         </div>
       </div>
 
-      {/* Floating orbs — hidden on mobile (same reason as aurora). */}
+      {/* Floating orbs, hidden on mobile (same reason as aurora). */}
       <div className="fixed inset-0 z-0 overflow-hidden hidden md:block">
         <div
           className={`absolute -top-32 -left-32 w-64 h-64 bg-accent-burgundy/20 rounded-full blur-3xl ${prefersReducedMotion ? "" : "animate-float-element"}`}
@@ -65,7 +65,7 @@ export default function BackgroundEffects() {
         />
       </div>
 
-      {/* Particle field — desktop only (useEffect already skips mobile). */}
+      {/* Particle field, desktop only (useEffect already skips mobile). */}
       <div
         ref={particlesRef}
         className="fixed inset-0 z-0 overflow-hidden pointer-events-none hidden md:block"

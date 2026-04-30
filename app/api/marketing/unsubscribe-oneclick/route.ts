@@ -14,7 +14,7 @@ import { logger } from "@/lib/logger";
  * Clicking that button POSTs `List-Unsubscribe=One-Click` to one of
  * the URLs in List-Unsubscribe. We accept the POST, verify the
  * signed token, flip the corresponding pref to false, and return
- * 200. No login required — the signed token is the auth.
+ * 200. No login required, the signed token is the auth.
  *
  * GET is also supported (redirects to the existing /unsubscribe
  * page for users who type the URL or click a stale link).
@@ -30,7 +30,7 @@ async function handle(token: string | null): Promise<{ ok: boolean }> {
       where: { id: payload.userId },
       select: { emailPreferences: true },
     });
-    // Token signed for a deleted user — return success so the
+    // Token signed for a deleted user, return success so the
     // unsubscribe intent is satisfied (nothing to opt out of).
     if (!user) return { ok: true };
 
@@ -69,7 +69,7 @@ export async function POST(req: NextRequest) {
 }
 
 export async function GET(req: NextRequest) {
-  // Defensive — if a user clicks the URL directly, send them to
+  // Defensive, if a user clicks the URL directly, send them to
   // the rendered unsubscribe page that has the confirmation +
   // re-subscribe option.
   const url = new URL(req.url);

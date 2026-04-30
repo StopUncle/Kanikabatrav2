@@ -36,7 +36,7 @@ export default async function ClassroomPage() {
   });
 
   const courseData = courses
-    // Hide courses that have no lessons yet — otherwise members see a
+    // Hide courses that have no lessons yet, otherwise members see a
     // card that says "0 lessons" with 0% progress, which looks broken.
     // Admin panel can still manage these via /admin/courses.
     .filter((course) =>

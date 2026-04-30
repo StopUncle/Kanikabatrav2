@@ -4,7 +4,7 @@ import { getUpcomingPosts } from "@/lib/mdx";
 import { Clock, ArrowRight } from "lucide-react";
 
 export const metadata = {
-  title: "Previews — The Consilium | Kanika Batra",
+  title: "Previews. The Consilium | Kanika Batra",
   description:
     "Read upcoming posts inside the Consilium before the public sees them.",
 };
@@ -26,7 +26,7 @@ export default async function PreviewsPage() {
         <div className="w-12 h-px bg-warm-gold/50 mb-4" />
         <p className="text-text-gray font-light leading-relaxed max-w-xl">
           Finished posts on their way to the public blog. You read them
-          first — days or weeks before anyone else. Same words, earlier
+          first, days or weeks before anyone else. Same words, earlier
           seat.
         </p>
       </header>

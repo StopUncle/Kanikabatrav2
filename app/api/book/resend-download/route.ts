@@ -15,7 +15,7 @@ import { sendBookDelivery } from "@/lib/email";
  * the standard sendBookDelivery email to their address.
  *
  * Rotation (rather than reuse) protects against a leaked old token still
- * being useful after the member requested a reset — useful if they ever
+ * being useful after the member requested a reset, useful if they ever
  * suspected the email was forwarded or accessed from a shared inbox.
  */
 export async function POST() {
@@ -43,7 +43,7 @@ export async function POST() {
   // Pick the most recent non-refunded BOOK purchase for this email.
   // Covers both the old bundled purchases (paypalOrderId: IC-BOOK-…) and
   // any standalone BOOK purchases, including the new $9.99 member ones.
-  // Case-insensitive — Purchase rows carry the email as entered at
+  // Case-insensitive. Purchase rows carry the email as entered at
   // checkout, often mixed-case. User.email is lowercased at register.
   const existing = await prisma.purchase.findFirst({
     where: {
@@ -84,7 +84,7 @@ export async function POST() {
 
   if (!emailSent) {
     return NextResponse.json(
-      { error: "Download links were refreshed but the email failed to send — contact Kanika@kanikarose.com" },
+      { error: "Download links were refreshed but the email failed to send, contact Kanika@kanikarose.com" },
       { status: 502 },
     );
   }

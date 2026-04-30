@@ -1,5 +1,5 @@
 /**
- * Mission 8-2 — "No Contact"
+ * Mission 8-2, "No Contact"
  *
  * Level 8, order 2. The hardest scenario in the game. Setting no-contact
  * with a narcissistic parent knowing the smear campaign will follow.
@@ -76,7 +76,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "priya",
-        text: '"Too much reason. Cut \'taking space.\' Just \'I\'m not going to be in contact.\' And cut \'please\' — she\'ll mine that for politeness-as-weakness."',
+        text: '"Too much reason. Cut \'taking space.\' Just \'I\'m not going to be in contact.\' And cut \'please\', she\'ll mine that for politeness-as-weakness."',
         emotion: "knowing",
       },
     ],
@@ -90,7 +90,7 @@ const scenes: Scene[] = [
       },
       {
         id: "resist",
-        text: "\"I need to say 'please' — she's my mother.\"",
+        text: "\"I need to say 'please', she's my mother.\"",
         tactic: "Politeness she'll weaponize, affection she hasn't earned. Still an option.",
         nextSceneId: "send-with-please",
       },
@@ -120,7 +120,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: null,
-        text: "The message arrives — 400 words. You read the first two. Your thumb hovers over the block button.",
+        text: "The message arrives, 400 words. You read the first two. Your thumb hovers over the block button.",
       },
       {
         speakerId: "inner-voice",
@@ -389,7 +389,7 @@ const scenes: Scene[] = [
     outcomeType: "good",
     endingTitle: "Said It Once, Left",
     endingSummary:
-      "One sentence, one exit. She'll tell the story as 'they came into MY house and said terrible things then STORMED OUT.' The story is untrue but sticky. Some relatives will believe it. The ones worth keeping will call to ask, and you'll be able to explain once — because you only gave them one sentence to mishear.",
+      "One sentence, one exit. She'll tell the story as 'they came into MY house and said terrible things then STORMED OUT.' The story is untrue but sticky. Some relatives will believe it. The ones worth keeping will call to ask, and you'll be able to explain once, because you only gave them one sentence to mishear.",
     dialog: [
       {
         speakerId: "inner-voice",
@@ -407,7 +407,7 @@ const scenes: Scene[] = [
     outcomeType: "neutral",
     endingTitle: "Belated Narrative",
     endingSummary:
-      "You disappeared, the smear ran for three weeks unchallenged, and now you're feeding Ren the real story to counter. They'll help, but you're on defense. The no-contact holds — the narrative management will be ongoing for six to twelve months.",
+      "You disappeared, the smear ran for three weeks unchallenged, and now you're feeding Ren the real story to counter. They'll help, but you're on defense. The no-contact holds, the narrative management will be ongoing for six to twelve months.",
     dialog: [
       {
         speakerId: "inner-voice",
@@ -427,7 +427,7 @@ const scenes: Scene[] = [
     failureBlogTitle: "Narcissist Playbook: How They Actually Operate",
     endingTitle: "Your Own Words, Weaponized",
     endingSummary:
-      "You wrote the long letter. Itemized every wound. Meant to be read and absorbed. Instead, it's being selectively quoted to every aunt, cousin, and family friend. 'Look what they said about me — their own mother.' Your carefully written grievances have become a marketing kit for her narrative.",
+      "You wrote the long letter. Itemized every wound. Meant to be read and absorbed. Instead, it's being selectively quoted to every aunt, cousin, and family friend. 'Look what they said about me, their own mother.' Your carefully written grievances have become a marketing kit for her narrative.",
     dialog: [
       {
         speakerId: "inner-voice",
@@ -467,7 +467,7 @@ const scenes: Scene[] = [
     failureBlogTitle: "Family Colonisation: Why Winning His Mother Matters More",
     endingTitle: "You Fueled the Smear",
     endingSummary:
-      "'You have no idea what you've done to me.' — screenshotted, shared to the whole family group chat. The smear now has a villain quote. You're the aggressor in every retelling, because she has evidence. The rage was valid; the delivery fueled her campaign for a year.",
+      "'You have no idea what you've done to me.', screenshotted, shared to the whole family group chat. The smear now has a villain quote. You're the aggressor in every retelling, because she has evidence. The rage was valid; the delivery fueled her campaign for a year.",
     dialog: [
       {
         speakerId: "inner-voice",
@@ -487,7 +487,7 @@ const scenes: Scene[] = [
     failureBlogTitle: "Architecture of Control: How Emotional Dependency Is Built",
     endingTitle: "The Boundary Rescinded Itself",
     endingSummary:
-      "You stayed to comfort her. By 5pm you were helping with dinner. The boundary didn't just fail — it now exists as a story she tells: 'they tried to cut me off, and then apologized and came home.' You'll be cited with that story for years.",
+      "You stayed to comfort her. By 5pm you were helping with dinner. The boundary didn't just fail, it now exists as a story she tells: 'they tried to cut me off, and then apologized and came home.' You'll be cited with that story for years.",
     dialog: [
       {
         speakerId: "inner-voice",
@@ -523,7 +523,7 @@ export const mission82: Scenario = {
   title: "No Contact",
   tagline: "How you cut determines what the story becomes.",
   description:
-    "Six months of building toward this decision. Today you're cutting. The smear will follow — the only variable is how much material you hand her on the way out. The cleanest exit is the one she can't quote.",
+    "Six months of building toward this decision. Today you're cutting. The smear will follow, the only variable is how much material you hand her on the way out. The cleanest exit is the one she can't quote.",
   tier: "premium",
   level: 8,
   order: 2,

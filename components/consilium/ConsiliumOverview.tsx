@@ -12,7 +12,7 @@ import FloatingConsiliumSeal from "@/components/consilium/FloatingConsiliumSeal"
  * matching guarantee.
  *
  * Visual structure mirrors BookShowcase exactly:
- *   - LEFT column: a large floating animated brand object — for the
+ *   - LEFT column: a large floating animated brand object, for the
  *     book that's the 3D levitating cover. For the Consilium it's the
  *     ConsiliumSeal medallion, scaled up, with a slow rotation, a
  *     pulsing halo, and four cardinal-point orbiting particles. Same
@@ -26,7 +26,7 @@ import FloatingConsiliumSeal from "@/components/consilium/FloatingConsiliumSeal"
  */
 export default function ConsiliumOverview() {
   // What's inside, with concrete numbers and dollar anchors. Book is
-  // not bundled — that's a separate purchase. Member-only pricing on
+  // not bundled, that's a separate purchase. Member-only pricing on
   // it is listed last as the discount benefit, not as inclusion.
   const inside = [
     {
@@ -38,19 +38,19 @@ export default function ConsiliumOverview() {
     {
       title: "Ask Kanika",
       detail:
-        "Submit one question per day. Top-voted get answered by Kanika — by voice or video, in your feed",
+        "Submit one question per day. Top-voted get answered by Kanika, by voice or video, in your feed",
       value: "Members only",
     },
     {
       title: "Daily Psychology Drops",
       detail:
-        "60-card rotating bank — fresh insight every morning. New tactics, power dynamics, real patterns",
+        "60-card rotating bank, fresh insight every morning. New tactics, power dynamics, real patterns",
       value: "$19/mo elsewhere",
     },
     {
       title: "Voice Notes from Kanika",
       detail:
-        "Raw, unfiltered audio dropped when something needs to be said. Not on a schedule — when it matters",
+        "Raw, unfiltered audio dropped when something needs to be said. Not on a schedule, when it matters",
       value: "Members only",
     },
     {
@@ -73,14 +73,14 @@ export default function ConsiliumOverview() {
       className="py-16 sm:py-24 lg:py-32 px-4 sm:px-6 lg:px-8 overflow-hidden relative"
     >
       <div className="max-w-7xl mx-auto">
-        {/* Section break header — explicitly separates this pillar from
+        {/* Section break header, explicitly separates this pillar from
             BookShowcase above so the floating-seal-on-left layout doesn't
             read as a continuation of the floating-book-on-left layout
             on desktop. Centered, gold-bracketed, with a thin gradient
             divider above and below. Stays understated on mobile where
             the sections naturally separate by stacking. */}
         <div className="text-center mb-12 sm:mb-16 lg:mb-20">
-          {/* Top divider — short gold gradient line */}
+          {/* Top divider, short gold gradient line */}
           <div className="flex items-center justify-center gap-4 mb-6">
             <span className="h-px w-16 sm:w-24 bg-gradient-to-r from-transparent to-warm-gold/50" />
             <span className="text-warm-gold/70 text-[10px] sm:text-xs uppercase tracking-[0.4em] font-light whitespace-nowrap">
@@ -122,7 +122,7 @@ export default function ConsiliumOverview() {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 sm:gap-12 lg:gap-16 items-center">
-          {/* LEFT — the section's brand object. Mirrors the floating
+          {/* LEFT, the section's brand object. Mirrors the floating
               book on BookShowcase: large, animated, gives the section a
               clear visual anchor a visitor can recognise from a thumb-
               flick scroll. */}
@@ -136,7 +136,7 @@ export default function ConsiliumOverview() {
             <FloatingConsiliumSeal label="Private Membership" />
           </m.div>
 
-          {/* RIGHT — full pitch column. Single column containing every
+          {/* RIGHT, full pitch column. Single column containing every
               pitch beat (credential → headline → body → features →
               testimonial → value stack → CTA → guarantee), mirroring
               BookShowcase's right column. */}
@@ -171,7 +171,7 @@ export default function ConsiliumOverview() {
               <p className="text-text-gray text-base sm:text-lg leading-relaxed">
                 The book teaches you the patterns. The Consilium is where
                 you <strong className="text-text-light">practice them</strong>{" "}
-                — every day, with members navigating the same situations
+               . Every day, with members navigating the same situations
                 you are. Private. Moderated. Built for women done being
                 the ones who get played.
               </p>
@@ -180,10 +180,10 @@ export default function ConsiliumOverview() {
             {/* Feature blocks */}
             <div className="space-y-3">
               {[
-                "342 branching scenes inside the Dark Mirror Simulator — every choice has a consequence",
-                "Ask Kanika — one question a day, answered by voice or video in your feed",
+                "342 branching scenes inside the Dark Mirror Simulator. Every choice has a consequence",
+                "Ask Kanika, one question a day, answered by voice or video in your feed",
                 "60 daily psychology drops + 28 themed discussion prompts",
-                "Voice notes from Kanika — raw insights you won't hear anywhere else",
+                "Voice notes from Kanika, raw insights you won't hear anywhere else",
               ].map((feature, index) => (
                 <m.div
                   key={index}
@@ -208,11 +208,11 @@ export default function ConsiliumOverview() {
                 &ldquo;Life changing.&rdquo;
               </p>
               <p className="text-warm-gold text-sm mt-2">
-                — Inner Circle member
+               . Inner Circle member
               </p>
             </div>
 
-            {/* Offer card — value stack with anchor pricing */}
+            {/* Offer card, value stack with anchor pricing */}
             <div className="bg-gradient-to-r from-deep-burgundy/30 via-deep-black/70 to-deep-navy/40 p-4 sm:p-6 lg:p-8 rounded-lg border border-warm-gold/30">
               <p className="text-warm-gold uppercase tracking-[0.2em] text-xs mb-4">
                 What&apos;s Inside the Membership
@@ -269,7 +269,7 @@ export default function ConsiliumOverview() {
                   href="/consilium"
                   className="w-full inline-flex items-center justify-center gap-2 py-3 sm:py-4 px-6 rounded-full bg-warm-gold text-deep-black text-sm sm:text-base font-semibold tracking-wide transition-all hover:bg-warm-gold/90 hover:shadow-[0_12px_40px_-12px_rgba(212,175,55,0.55)]"
                 >
-                  Join the Community — $29/mo
+                  Join the Community, $29/mo
                   <ArrowRight size={16} />
                 </Link>
 

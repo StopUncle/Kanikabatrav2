@@ -21,12 +21,12 @@ export default function Testimonial() {
 
         <blockquote className="relative">
           <p className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-light text-text-light italic leading-relaxed mb-6 sm:mb-8 px-4">
-            She doesn&apos;t teach you to play nice—she teaches you to play
+            She doesn&apos;t teach you to play nice, she teaches you to play
             smart. This book fundamentally changed how I navigate power dynamics
             in every aspect of my life.
           </p>
           <footer className="text-accent-gold tracking-[0.2em] sm:tracking-[0.3em] uppercase text-xs sm:text-sm">
-            — Verified Reader
+           . Verified Reader
           </footer>
         </blockquote>
       </m.div>

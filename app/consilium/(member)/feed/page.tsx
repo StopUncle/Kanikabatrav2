@@ -10,8 +10,8 @@ import { MessageCircle, Mail } from "lucide-react";
 import { tierForMember } from "@/components/consilium/badge-tiers";
 
 export const metadata = {
-  title: "Feed — The Consilium | Kanika Batra",
-  description: "The council feed — insights, discussions, and voice notes from Kanika.",
+  title: "Feed. The Consilium | Kanika Batra",
+  description: "The council feed, insights, discussions, and voice notes from Kanika.",
 };
 
 export default async function FeedPage({
@@ -165,7 +165,7 @@ export default async function FeedPage({
           // magic-claim flow (?claimed=1). Tells fresh gift-members to
           // check their inbox for the password-set link so they don't
           // get locked out from a different device later. Non-dismissible
-          // on purpose — it goes away the moment they navigate to any
+          // on purpose, it goes away the moment they navigate to any
           // other member page or reload /consilium/feed without the
           // query param.
           <div className="mb-6 rounded-xl border border-warm-gold/40 bg-warm-gold/[0.05] p-4 sm:p-5">

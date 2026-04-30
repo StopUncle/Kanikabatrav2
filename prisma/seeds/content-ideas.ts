@@ -12,7 +12,7 @@ function parseShortFormIdeas(content: string) {
     category: string;
   }> = [];
 
-  // Match patterns like: **1.** **"Title"** — Hook: description
+  // Match patterns like: **1.** **"Title"**. Hook: description
   // Or: **65.** **React to: "Title"**\nURL: ...\nAngle: ...
   const lines = content.split("\n");
 
@@ -52,7 +52,7 @@ function parseShortFormIdeas(content: string) {
       continue;
     }
 
-    // Match numbered ideas: **1.** **"Title"** — Hook text
+    // Match numbered ideas: **1.** **"Title"**. Hook text
     const ideaMatch = line.match(
       /^\*\*(\d+)\.\*\*\s+\*\*(?:React to:?\s*)?[""]?([^"*]+?)[""]?\*\*\s*(?:—|–)\s*(.*)/,
     );

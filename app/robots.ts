@@ -22,7 +22,7 @@ export default function robots(): MetadataRoute.Robots {
           "/cancel",
           "/coaching/success",
           "/coaching/cancel",
-          // Member-gated Consilium surfaces — no public value indexing these
+          // Member-gated Consilium surfaces, no public value indexing these
           "/consilium/feed",
           "/consilium/voice-notes",
           "/consilium/classroom",
@@ -34,7 +34,7 @@ export default function robots(): MetadataRoute.Robots {
           "/consilium/book",
           "/consilium/quiz",
           "/consilium/badges",
-          // Magic-claim landing — the URL contains a JWT in the query
+          // Magic-claim landing, the URL contains a JWT in the query
           // string; indexing even the bare path would archive inbound
           // referrers/backlinks and risk replays.
           "/consilium/claim",
@@ -42,7 +42,7 @@ export default function robots(): MetadataRoute.Robots {
           // Quiz result pages are personal and occasionally contain email
           // in the URL query; no search-engine value indexing them.
           "/quiz/results",
-          // Internal prototype route — not for public traffic
+          // Internal prototype route, not for public traffic
           "/simulator-demo",
         ],
       },

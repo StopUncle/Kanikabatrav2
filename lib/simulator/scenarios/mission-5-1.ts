@@ -1,5 +1,5 @@
 /**
- * Mission 5-1 — "The Power Shift"
+ * Mission 5-1, "The Power Shift"
  *
  * Level 5, order 1. The first advanced scenario.
  * A gravitational inversion: people who used to ignore you now send
@@ -18,7 +18,7 @@ const scenes: Scene[] = [
     dialog: [
       {
         speakerId: null,
-        text: "Six months since the gala. You are at your kitchen counter, which is yours now — not the cramped dorm, the apartment you moved into in March when the project began to actually pay. Your phone pings. The contact is not saved. It takes a beat to place the number.",
+        text: "Six months since the gala. You are at your kitchen counter, which is yours now, not the cramped dorm, the apartment you moved into in March when the project began to actually pay. Your phone pings. The contact is not saved. It takes a beat to place the number.",
       },
       {
         speakerId: null,
@@ -31,7 +31,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "inner-voice",
-        text: "Note the construction of her message. Not 'congratulations,' not 'it has been a while' — 'I have been watching.' She is framing herself as an observer whose attention is a prize. The prize framing only works if you play along. It is the oldest power gambit in the playbook — I see you, which is meant to read as I choose you, which is meant to obligate you to respond like someone who has just been chosen.",
+        text: "Note the construction of her message. Not 'congratulations,' not 'it has been a while', 'I have been watching.' She is framing herself as an observer whose attention is a prize. The prize framing only works if you play along. It is the oldest power gambit in the playbook. I see you, which is meant to read as I choose you, which is meant to obligate you to respond like someone who has just been chosen.",
         emotion: "knowing",
       },
       {
@@ -65,7 +65,7 @@ const scenes: Scene[] = [
       {
         id: "decline",
         text: '"Busy for the foreseeable future."',
-        tactic: "Hard reject is a move — but may close a door you want open for leverage.",
+        tactic: "Hard reject is a move but may close a door you want open for leverage.",
         nextSceneId: "maris-circles-back",
       },
     ],
@@ -86,7 +86,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "inner-voice",
-        text: "Three concessions in one text. One — she followed up, which she would not have needed to do six months ago because six months ago you would have replied immediately. Two — she is offering to pay, which is her version of a white flag on the status register. Three — she is letting you pick the venue, which is the largest concession of the three because venue control is the first thing Maris negotiates in any meeting in her entire adult life.",
+        text: "Three concessions in one text. One, she followed up, which she would not have needed to do six months ago because six months ago you would have replied immediately. Two, she is offering to pay, which is her version of a white flag on the status register. Three, she is letting you pick the venue, which is the largest concession of the three because venue control is the first thing Maris negotiates in any meeting in her entire adult life.",
         emotion: "knowing",
       },
       {
@@ -127,7 +127,7 @@ const scenes: Scene[] = [
     dialog: [
       {
         speakerId: null,
-        text: "MARIS: \"Dinner Thursday. Bavette — 7:30.\"",
+        text: "MARIS: \"Dinner Thursday. Bavette, 7:30.\"",
       },
       {
         speakerId: "inner-voice",
@@ -178,7 +178,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "inner-voice",
-        text: "You got what you asked for — terms on her schedule, her venue, her clock.",
+        text: "You got what you asked for, terms on her schedule, her venue, her clock.",
         emotion: "concerned",
       },
     ],
@@ -280,7 +280,7 @@ const scenes: Scene[] = [
       {
         id: "big-yes",
         text: "\"Yes. Let's do it.\"",
-        tactic: "You agreed to a vague deal. She'll define the terms later — in her favor.",
+        tactic: "You agreed to a vague deal. She'll define the terms later, in her favor.",
         nextSceneId: "ending-absorbed",
         isOptimal: false,
       },
@@ -339,7 +339,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "inner-voice",
-        text: "Love-bombing Level 2, for adults. Same mechanic, different target — what you built instead of what you are.",
+        text: "Love-bombing Level 2, for adults. Same mechanic, different target, what you built instead of what you are.",
         emotion: "concerned",
       },
     ],
@@ -447,7 +447,7 @@ const scenes: Scene[] = [
     outcomeType: "good",
     endingTitle: "You Took the Intro",
     endingSummary:
-      "One specific card, one specific meeting, nothing else conceded. You'll meet Kaya Brooks. If the meeting yields something, great — you took the upside without owing Maris architecture. You used her leverage without accepting her frame.",
+      "One specific card, one specific meeting, nothing else conceded. You'll meet Kaya Brooks. If the meeting yields something, great, you took the upside without owing Maris architecture. You used her leverage without accepting her frame.",
     dialog: [
       {
         speakerId: "inner-voice",
@@ -465,7 +465,7 @@ const scenes: Scene[] = [
     outcomeType: "good",
     endingTitle: "Terms Conditioned",
     endingSummary:
-      "You accepted leverage with conditions attached — nothing pre-consented is the deal. Maris now has to introduce without expectations, which limits how much she can shape the introduction. The relationship is commercial, not personal, and commercial is clean.",
+      "You accepted leverage with conditions attached, nothing pre-consented is the deal. Maris now has to introduce without expectations, which limits how much she can shape the introduction. The relationship is commercial, not personal, and commercial is clean.",
     dialog: [
       {
         speakerId: "inner-voice",
@@ -483,7 +483,7 @@ const scenes: Scene[] = [
     outcomeType: "good",
     endingTitle: "You Left First",
     endingSummary:
-      "Dinner ended with 'I'll think about it.' You stood up. Paid half. Walked out. For six months she chose when you existed — tonight you chose when the conversation ended. She'll message again.",
+      "Dinner ended with 'I'll think about it.' You stood up. Paid half. Walked out. For six months she chose when you existed, tonight you chose when the conversation ended. She'll message again.",
     dialog: [
       {
         speakerId: "inner-voice",
@@ -505,7 +505,7 @@ const scenes: Scene[] = [
     dialog: [
       {
         speakerId: "inner-voice",
-        text: "The only way to be chased is to be chaseable — which means leaving first.",
+        text: "The only way to be chased is to be chaseable, which means leaving first.",
         emotion: "knowing",
       },
     ],
@@ -537,7 +537,7 @@ const scenes: Scene[] = [
     outcomeType: "neutral",
     endingTitle: "Pride Chose",
     endingSummary:
-      "She showed you a real card — a real intro, real value — and you walked. Sometimes that's correct. Sometimes it's pride wearing principle's clothes. Which one this was, only your next six months will answer.",
+      "She showed you a real card, a real intro, real value and you walked. Sometimes that's correct. Sometimes it's pride wearing principle's clothes. Which one this was, only your next six months will answer.",
     dialog: [
       {
         speakerId: "inner-voice",
@@ -558,11 +558,11 @@ const scenes: Scene[] = [
     failureBlogTitle: "The Empress Endgame: From Victim to Sovereign",
     endingTitle: "Absorbed",
     endingSummary:
-      "You said a big yes to a vague offer. She'll define the terms over the next three months — slowly, in her favor. Within a year, your project is tangled with her network, and extracting will cost more than the whole project was worth. The invitation was annexation.",
+      "You said a big yes to a vague offer. She'll define the terms over the next three months, slowly, in her favor. Within a year, your project is tangled with her network, and extracting will cost more than the whole project was worth. The invitation was annexation.",
     dialog: [
       {
         speakerId: "inner-voice",
-        text: "Vague deals are written by the more ruthless party — after the handshake.",
+        text: "Vague deals are written by the more ruthless party, after the handshake.",
         emotion: "sad",
       },
     ],

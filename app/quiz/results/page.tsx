@@ -93,7 +93,7 @@ export default function QuizResultsPage() {
         return;
       }
 
-      // Authenticated — save quiz if sessionStorage has data
+      // Authenticated, save quiz if sessionStorage has data
       if (stored) {
         try {
           await fetch("/api/quiz/save", {
@@ -106,7 +106,7 @@ export default function QuizResultsPage() {
               diagnosis: stored.diagnosis,
               answers: stored.answers,
               completedAt: stored.completedAt,
-              // First-touch attribution — only stamped on CREATE
+              // First-touch attribution, only stamped on CREATE
               // server-side, so a returning user's existing source is
               // preserved.
               attribution: getAttributionForSubmit(),
@@ -114,7 +114,7 @@ export default function QuizResultsPage() {
           });
           sessionStorage.removeItem("quizResults");
         } catch {
-          // Save failed silently — results page will still work from DB
+          // Save failed silently, results page will still work from DB
         }
       }
 
@@ -177,7 +177,7 @@ export default function QuizResultsPage() {
     );
   }
 
-  // No results — never took the quiz
+  // No results, never took the quiz
   if (pageState === "no-results") {
     return (
       <>
@@ -211,7 +211,7 @@ export default function QuizResultsPage() {
     );
   }
 
-  // Unauthenticated — show auth gate
+  // Unauthenticated, show auth gate
   if (pageState === "unauthenticated") {
     return (
       <>
@@ -309,7 +309,7 @@ export default function QuizResultsPage() {
     );
   }
 
-  // Locked — authenticated but not unlocked (no book purchase / no payment)
+  // Locked, authenticated but not unlocked (no book purchase / no payment)
   if (pageState === "locked" && primaryProfile) {
     const secondaryType =
       apiData?.preview?.secondaryType as PersonalityType | undefined;
@@ -556,8 +556,8 @@ export default function QuizResultsPage() {
                     Based on your results
                   </p>
                   <p className="text-white font-light text-lg mb-4">
-                    Your pattern suggests you may be attracting — or attracted to
-                    — high-risk personality types. A session could help you see
+                    Your pattern suggests you may be attracting or attracted to
+                   , high-risk personality types. A session could help you see
                     what you keep missing.
                   </p>
                   <Link
@@ -595,7 +595,7 @@ export default function QuizResultsPage() {
                     Your ${QUIZ_INFO.price.toFixed(2)} is credited toward The Consilium
                   </p>
                   <p className="text-text-gray text-xs mb-4 max-w-md mx-auto leading-relaxed">
-                    Inside: the Dark Mirror Simulator, the classroom, voice notes, and a moderated community. Use this code at checkout — it comes off your first month.
+                    Inside: the Dark Mirror Simulator, the classroom, voice notes, and a moderated community. Use this code at checkout, it comes off your first month.
                   </p>
                   <div className="inline-block bg-deep-black/60 border border-dashed border-accent-gold/50 rounded-lg px-5 py-3 mb-3">
                     <p className="text-text-gray/70 text-[10px] uppercase tracking-[0.2em] mb-1">
@@ -626,13 +626,13 @@ export default function QuizResultsPage() {
                     Want to practise spotting these patterns in the wild?
                   </p>
                   <p className="text-text-gray/70 text-xs mb-3 max-w-md mx-auto leading-relaxed">
-                    The Dark Mirror Simulator inside The Consilium — branching scenarios on the same axes you just scored on, in real-world artefacts. Plus courses, voice notes, and a moderated community.
+                    The Dark Mirror Simulator inside The Consilium, branching scenarios on the same axes you just scored on, in real-world artefacts. Plus courses, voice notes, and a moderated community.
                   </p>
                   <Link
                     href="/consilium"
                     className="inline-block px-6 py-2 text-sm font-medium text-accent-gold border border-accent-gold/20 rounded-full hover:bg-accent-gold/10 transition-all"
                   >
-                    Explore The Consilium — $29/mo
+                    Explore The Consilium, $29/mo
                   </Link>
                 </div>
               )}
@@ -658,7 +658,7 @@ export default function QuizResultsPage() {
     );
   }
 
-  // Unlocked — full results
+  // Unlocked, full results
   if (pageState === "unlocked" && fullResults && primaryProfile) {
     const secondaryProfile =
       PERSONALITY_PROFILES[fullResults.secondaryType];
@@ -791,8 +791,8 @@ export default function QuizResultsPage() {
                     Based on your results
                   </p>
                   <p className="text-white font-light text-lg mb-4">
-                    Your pattern suggests you may be attracting — or attracted to
-                    — high-risk personality types. A session could help you see
+                    Your pattern suggests you may be attracting or attracted to
+                   , high-risk personality types. A session could help you see
                     what you keep missing.
                   </p>
                   <Link
@@ -830,7 +830,7 @@ export default function QuizResultsPage() {
                     Your ${QUIZ_INFO.price.toFixed(2)} is credited toward The Consilium
                   </p>
                   <p className="text-text-gray text-xs mb-4 max-w-md mx-auto leading-relaxed">
-                    Inside: the Dark Mirror Simulator, the classroom, voice notes, and a moderated community. Use this code at checkout — it comes off your first month.
+                    Inside: the Dark Mirror Simulator, the classroom, voice notes, and a moderated community. Use this code at checkout, it comes off your first month.
                   </p>
                   <div className="inline-block bg-deep-black/60 border border-dashed border-accent-gold/50 rounded-lg px-5 py-3 mb-3">
                     <p className="text-text-gray/70 text-[10px] uppercase tracking-[0.2em] mb-1">
@@ -861,13 +861,13 @@ export default function QuizResultsPage() {
                     Want to practise spotting these patterns in the wild?
                   </p>
                   <p className="text-text-gray/70 text-xs mb-3 max-w-md mx-auto leading-relaxed">
-                    The Dark Mirror Simulator inside The Consilium — branching scenarios on the same axes you just scored on, in real-world artefacts. Plus courses, voice notes, and a moderated community.
+                    The Dark Mirror Simulator inside The Consilium, branching scenarios on the same axes you just scored on, in real-world artefacts. Plus courses, voice notes, and a moderated community.
                   </p>
                   <Link
                     href="/consilium"
                     className="inline-block px-6 py-2 text-sm font-medium text-accent-gold border border-accent-gold/20 rounded-full hover:bg-accent-gold/10 transition-all"
                   >
-                    Explore The Consilium — $29/mo
+                    Explore The Consilium, $29/mo
                   </Link>
                 </div>
               )}

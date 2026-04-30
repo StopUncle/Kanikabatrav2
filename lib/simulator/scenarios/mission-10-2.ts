@@ -1,7 +1,7 @@
 /**
- * Mission 10-2 — "The Inheritance"
+ * Mission 10-2, "The Inheritance"
  *
- * Level 10, order 2 — the final scenario in the female track.
+ * Level 10, order 2, the final scenario in the female track.
  * Two years after The Gatekeeper. Maris is retired (or gone), Aria
  * left for another company, Devon is moving fast. A new opening is
  * coming at the highest tier in the industry. Who do you name?
@@ -22,7 +22,7 @@ import { DEVON, PRIYA, LENNOX, KAYA, INNER_VOICE } from "../characters";
 
 const scenes: Scene[] = [
   // ===================================================================
-  // ACT 1 — dinner with Kaya, the eight-year arc closing
+  // ACT 1, dinner with Kaya, the eight-year arc closing
   // ===================================================================
 
   {
@@ -51,7 +51,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "inner-voice",
-        text: "She's not asking for a name. She's asking what kind of person you've become. The answer reveals whose careers you can accelerate — which is half of what this role is.",
+        text: "She's not asking for a name. She's asking what kind of person you've become. The answer reveals whose careers you can accelerate, which is half of what this role is.",
         emotion: "knowing",
       },
       {
@@ -63,21 +63,21 @@ const scenes: Scene[] = [
     choices: [
       {
         id: "devon",
-        text: "Devon — the protégé you invested in directly. Proven, loyal.",
+        text: "Devon, the protégé you invested in directly. Proven, loyal.",
         tactic:
           "Loyalty-weighted pick. Devon is good. 'Loyal' will read as 'nepotism' to people not in your orbit.",
         nextSceneId: "devon-evaluation",
       },
       {
         id: "lennox",
-        text: "Lennox — the rival-turned-ally. Stronger record publicly, more independent.",
+        text: "Lennox, the rival-turned-ally. Stronger record publicly, more independent.",
         tactic: "Strategic pick. Lennox's reputation is now independent of yours.",
         nextSceneId: "lennox-evaluation",
         isOptimal: true,
       },
       {
         id: "outside-candidate",
-        text: "An outside candidate — someone you respect who you haven't mentored.",
+        text: "An outside candidate, someone you respect who you haven't mentored.",
         tactic:
           "Broadens your network. Shows you can spot talent you didn't create.",
         nextSceneId: "outside-evaluation",
@@ -94,7 +94,7 @@ const scenes: Scene[] = [
   },
 
   // ===================================================================
-  // ACT 2A — DEVON
+  // ACT 2A. DEVON
   // ===================================================================
 
   {
@@ -105,7 +105,7 @@ const scenes: Scene[] = [
     dialog: [
       {
         speakerId: null,
-        text: "You name Devon. Kaya nods once — neutral, not approving. She lets the silence go five seconds longer than it needs to.",
+        text: "You name Devon. Kaya nods once, neutral, not approving. She lets the silence go five seconds longer than it needs to.",
       },
       {
         speakerId: "inner-voice",
@@ -119,12 +119,12 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "kaya",
-        text: '"And — important — if I take this back to the board, my name goes on the recommendation under yours. So before you commit, ask yourself if you\'re willing to put my last six months of credibility next to that pick."',
+        text: '"And, important, if I take this back to the board, my name goes on the recommendation under yours. So before you commit, ask yourself if you\'re willing to put my last six months of credibility next to that pick."',
         emotion: "serious",
       },
       {
         speakerId: "inner-voice",
-        text: "Honest answer: probably no. Saying yes spends your credibility AND hers on loyalty instead of accuracy. She just gave you an exit. Take it or commit fully — there's no third version.",
+        text: "Honest answer: probably no. Saying yes spends your credibility AND hers on loyalty instead of accuracy. She just gave you an exit. Take it or commit fully, there's no third version.",
         emotion: "knowing",
       },
     ],
@@ -132,7 +132,7 @@ const scenes: Scene[] = [
       {
         id: "revise-devon",
         text: '"You\'re right. Not ready. Let me pick again."',
-        tactic: "Catch your own bias. Kaya just gave you an exit — take it.",
+        tactic: "Catch your own bias. Kaya just gave you an exit, take it.",
         nextSceneId: "the-nomination",
         isOptimal: true,
       },
@@ -145,7 +145,7 @@ const scenes: Scene[] = [
       },
       {
         id: "devon-plus-timing",
-        text: '"Devon — in eighteen months. If the board can wait, I\'d wait."',
+        text: '"Devon, in eighteen months. If the board can wait, I\'d wait."',
         tactic: "Right person, wrong clock. Nominating with a timeline is a different answer than nominating for now.",
         nextSceneId: "the-nomination",
         isOptimal: true,
@@ -180,7 +180,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "inner-voice",
-        text: "She didn't fight you because she didn't need to. The fight is in the next time she's asked about your judgment — and what she'll say about this dinner.",
+        text: "She didn't fight you because she didn't need to. The fight is in the next time she's asked about your judgment and what she'll say about this dinner.",
         emotion: "sad",
       },
     ],
@@ -188,7 +188,7 @@ const scenes: Scene[] = [
   },
 
   // ===================================================================
-  // ACT 2B — LENNOX (the optimal path)
+  // ACT 2B. LENNOX (the optimal path)
   // ===================================================================
 
   {
@@ -199,7 +199,7 @@ const scenes: Scene[] = [
     dialog: [
       {
         speakerId: null,
-        text: "You name Lennox. Kaya's mouth moves — almost a smile, suppressed.",
+        text: "You name Lennox. Kaya's mouth moves. Almost a smile, suppressed.",
       },
       {
         speakerId: "kaya",
@@ -208,7 +208,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "kaya",
-        text: '"She\'s strong. She has her own following now. Her quarterly numbers beat yours twice in the last eighteen months. And — she\'s going to outperform you publicly within five years. You\'re nominating her knowing all of that?"',
+        text: '"She\'s strong. She has her own following now. Her quarterly numbers beat yours twice in the last eighteen months. And, she\'s going to outperform you publicly within five years. You\'re nominating her knowing all of that?"',
         emotion: "serious",
       },
       {
@@ -235,7 +235,7 @@ const scenes: Scene[] = [
         id: "hesitate",
         text: '"Let me think about it."',
         tactic:
-          "You're hesitating because of the eclipse prospect. That hesitation IS the answer — and revealing it to Kaya marks you as smaller than the seat.",
+          "You're hesitating because of the eclipse prospect. That hesitation IS the answer and revealing it to Kaya marks you as smaller than the seat.",
         nextSceneId: "kaya-saw-it",
       },
       {
@@ -265,7 +265,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: null,
-        text: "Two words. The pause before them was the whole sentence. She raises her glass — not a toast, just a small lift, the kind people do when something has been settled without needing language.",
+        text: "Two words. The pause before them was the whole sentence. She raises her glass, not a toast, just a small lift, the kind people do when something has been settled without needing language.",
       },
       {
         speakerId: "inner-voice",
@@ -299,7 +299,7 @@ const scenes: Scene[] = [
   },
 
   // ===================================================================
-  // ACT 2C — OUTSIDE CANDIDATE
+  // ACT 2C. OUTSIDE CANDIDATE
   // ===================================================================
 
   {
@@ -333,7 +333,7 @@ const scenes: Scene[] = [
       },
       {
         id: "fumble",
-        text: '"I — let me come back with a name next week."',
+        text: '"I, let me come back with a name next week."',
         tactic:
           "You said the option before thinking it through. Weakens the rest of your input.",
         nextSceneId: "kaya-notes-fumble",
@@ -347,8 +347,8 @@ const scenes: Scene[] = [
       },
       {
         id: "ask-her-shortlist",
-        text: '"Before I say — who\'s on YOUR shortlist? I\'d like to calibrate."',
-        tactic: "Request her read first. Risky — reads as deferential — but Kaya respects peers who want to compare models.",
+        text: '"Before I say, who\'s on YOUR shortlist? I\'d like to calibrate."',
+        tactic: "Request her read first. Risky, reads as deferential but Kaya respects peers who want to compare models.",
         nextSceneId: "kaya-engages-name",
       },
     ],
@@ -370,7 +370,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: null,
-        text: "She actually pulls out a notebook. Hers, leather-bound, half-full. She writes the name down. The dinner shifts — you're no longer the protégé being tested; you're the colleague she's drafting alongside.",
+        text: "She actually pulls out a notebook. Hers, leather-bound, half-full. She writes the name down. The dinner shifts, you're no longer the protégé being tested; you're the colleague she's drafting alongside.",
       },
       {
         speakerId: "inner-voice",
@@ -405,7 +405,7 @@ const scenes: Scene[] = [
   },
 
   // ===================================================================
-  // ACT 2D — DECLINE
+  // ACT 2D. DECLINE
   // ===================================================================
 
   {
@@ -429,7 +429,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "inner-voice",
-        text: "You were asked for judgment, not consent. Refusing to use your influence is still using it — as neglect. Kaya just learned what kind of senior you're going to be. She'll spend the next six months adjusting around the answer.",
+        text: "You were asked for judgment, not consent. Refusing to use your influence is still using it, as neglect. Kaya just learned what kind of senior you're going to be. She'll spend the next six months adjusting around the answer.",
         emotion: "sad",
       },
     ],
@@ -449,7 +449,7 @@ const scenes: Scene[] = [
     outcomeType: "good",
     endingTitle: "The Legacy Move",
     endingSummary:
-      "You named Lennox — knowing she'd outperform you within five years. Kaya looked at you for a long moment and nodded. Eight years ago you were the rival at a rooftop bar; today you're the person who elevated your own replacement. Everything compounds: Devon becomes what you were, Lennox becomes what Kaya was, and you become the person whose judgment the industry trusts — because you never optimized for relative ranking. That's the true endgame. You didn't beat the game. You inherited Kaya's seat at it.",
+      "You named Lennox, knowing she'd outperform you within five years. Kaya looked at you for a long moment and nodded. Eight years ago you were the rival at a rooftop bar; today you're the person who elevated your own replacement. Everything compounds: Devon becomes what you were, Lennox becomes what Kaya was, and you become the person whose judgment the industry trusts, because you never optimized for relative ranking. That's the true endgame. You didn't beat the game. You inherited Kaya's seat at it.",
     dialog: [
       {
         speakerId: "inner-voice",
@@ -467,7 +467,7 @@ const scenes: Scene[] = [
     outcomeType: "good",
     endingTitle: "Broad Judgment",
     endingSummary:
-      "You named someone you didn't create. Specific reasons, independent evaluation. Kaya respects it — it proves your judgment doesn't only work on people who owe you. In the meeting, that breadth becomes the thing that lands you the role you'd been tracking toward. You didn't win by being loyal. You won by being trusted.",
+      "You named someone you didn't create. Specific reasons, independent evaluation. Kaya respects it, it proves your judgment doesn't only work on people who owe you. In the meeting, that breadth becomes the thing that lands you the role you'd been tracking toward. You didn't win by being loyal. You won by being trusted.",
     dialog: [
       {
         speakerId: "inner-voice",
@@ -487,7 +487,7 @@ const scenes: Scene[] = [
     failureBlogTitle: "The Empress Endgame: From Victim to Sovereign",
     endingTitle: "Loyalty Over Judgment",
     endingSummary:
-      "You nominated Devon. Kaya marked it. Three months later, the board interviewed Devon and passed. The story in the quiet rooms: 'they nominated their own protégé — didn't see the weakness.' Your next nomination will carry the discount. The decade you spent building judgment was spent fast on one loyalty pick.",
+      "You nominated Devon. Kaya marked it. Three months later, the board interviewed Devon and passed. The story in the quiet rooms: 'they nominated their own protégé, didn't see the weakness.' Your next nomination will carry the discount. The decade you spent building judgment was spent fast on one loyalty pick.",
     dialog: [
       {
         speakerId: "inner-voice",
@@ -525,7 +525,7 @@ const scenes: Scene[] = [
     outcomeType: "neutral",
     endingTitle: "Unprepared",
     endingSummary:
-      "You proposed looking outside without a specific name ready. Kaya's follow-up revealed the proposal was directional, not considered. You get a week to come back with one — but the first impression was that you were performing breadth rather than having done the work.",
+      "You proposed looking outside without a specific name ready. Kaya's follow-up revealed the proposal was directional, not considered. You get a week to come back with one but the first impression was that you were performing breadth rather than having done the work.",
     dialog: [
       {
         speakerId: "inner-voice",
@@ -549,7 +549,7 @@ const scenes: Scene[] = [
     dialog: [
       {
         speakerId: "inner-voice",
-        text: "Refusing to use your influence is still using it — as neglect.",
+        text: "Refusing to use your influence is still using it, as neglect.",
         emotion: "sad",
       },
     ],
@@ -561,7 +561,7 @@ export const mission102: Scenario = {
   title: "The Inheritance",
   tagline: "Name a successor. Mean it.",
   description:
-    "Two years later. Kaya is retiring. Her role — the one above yours — needs a name. She's asking you to propose one over dinner. The name you give reveals who you've become. The game that started at a gala eight years ago ends in a single sentence tonight.",
+    "Two years later. Kaya is retiring. Her role, the one above yours, needs a name. She's asking you to propose one over dinner. The name you give reveals who you've become. The game that started at a gala eight years ago ends in a single sentence tonight.",
   tier: "vip",
   level: 10,
   order: 2,

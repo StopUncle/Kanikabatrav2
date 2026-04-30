@@ -4,7 +4,7 @@ import QuestionsClient from "./QuestionsClient";
 export const dynamic = "force-dynamic";
 
 export default async function QuestionsAdminPage() {
-  // Initial PENDING list — server-rendered so the page lights up
+  // Initial PENDING list, server-rendered so the page lights up
   // immediately. The client component refetches on tab switches.
   const initial = await prisma.memberQuestion.findMany({
     where: { status: "PENDING" },

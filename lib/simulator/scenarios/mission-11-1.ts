@@ -1,20 +1,20 @@
 /**
- * Mission 11-1 — "The Letter"
+ * Mission 11-1, "The Letter"
  *
- * Level 11, order 1. Act 2 opener — "The Weight".
+ * Level 11, order 1. Act 2 opener, "The Weight".
  * Five years after the no-contact decision at L8-2. A letter arrives by
  * physical mail in the protagonist's mother's handwriting. The scenario
- * is the gut decision about what to do with it — open, refuse, return to
+ * is the gut decision about what to do with it, open, refuse, return to
  * sender, delegate to Ren, throw it away. No dialog with the mother; she
  * is not on-screen. The scenario is the interior of a decision.
  *
  * Canon hand-off: closes on a specific artefact sitting on the kitchen
- * counter (cream envelope — deliberate echo of the L1-2 card and L3
+ * counter (cream envelope, deliberate echo of the L1-2 card and L3
  * envelope) and an invitation Ren passes along. L11-2 opens on the
  * dinner that invitation leads to, or on the decision not to go.
  *
  * Voice: reference/KANIKA-VOICE.md. Priya register unchanged from v1.
- * Inner voice carries the weight — she's the narrator of this film
+ * Inner voice carries the weight, she's the narrator of this film
  * more than at any prior point.
  */
 
@@ -28,7 +28,7 @@ import {
 
 const scenes: Scene[] = [
   // ===================================================================
-  // ACT 1 — the arrival
+  // ACT 1, the arrival
   // ===================================================================
   {
     id: "the-arrival",
@@ -49,7 +49,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "inner-voice",
-        text: "Your body knew before your eyes did. Your hand was already at the edge of the counter before your mind caught up with the handwriting. That is what five years of discipline looks like — the body recognises the threat a half-second before it can be articulated. Note that. You have become someone who reads a room through skin.",
+        text: "Your body knew before your eyes did. Your hand was already at the edge of the counter before your mind caught up with the handwriting. That is what five years of discipline looks like, the body recognises the threat a half-second before it can be articulated. Note that. You have become someone who reads a room through skin.",
         emotion: "knowing",
       },
       {
@@ -74,7 +74,7 @@ const scenes: Scene[] = [
       {
         id: "bin-it",
         text: "Put it in the recycling. Walk away. Make dinner.",
-        tactic: "Clean refusal. Requires real discipline — most people bin an envelope and fish it out at 2 am.",
+        tactic: "Clean refusal. Requires real discipline. Most people bin an envelope and fish it out at 2 am.",
         nextSceneId: "binned-midnight",
       },
       {
@@ -88,7 +88,7 @@ const scenes: Scene[] = [
   },
 
   // ===================================================================
-  // ACT 2A — the counter pause (optimal path)
+  // ACT 2A, the counter pause (optimal path)
   // ===================================================================
   {
     id: "counter-pause",
@@ -97,7 +97,7 @@ const scenes: Scene[] = [
     dialog: [
       {
         speakerId: null,
-        text: "You set the envelope on the counter, face-up. You do not put it down next to the kettle — that is where your life's objects live, and she does not get that real estate.",
+        text: "You set the envelope on the counter, face-up. You do not put it down next to the kettle, that is where your life's objects live, and she does not get that real estate.",
       },
       {
         speakerId: null,
@@ -142,14 +142,14 @@ const scenes: Scene[] = [
       {
         id: "open-alone",
         text: "Open it alone. Don't involve anyone else.",
-        tactic: "Solo reading is brave but thin — if it lands hard, you have no one in the room to check your read.",
+        tactic: "Solo reading is brave but thin, if it lands hard, you have no one in the room to check your read.",
         nextSceneId: "opened-alone",
       },
     ],
   },
 
   // ===================================================================
-  // ACT 2B — Priya thread (optimal path)
+  // ACT 2B. Priya thread (optimal path)
   // ===================================================================
   {
     id: "priya-replies",
@@ -168,17 +168,17 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "priya",
-        text: '"One — you are not alone right now. I am here. The envelope is not alone with you."',
+        text: '"One, you are not alone right now. I am here. The envelope is not alone with you."',
         emotion: "serious",
       },
       {
         speakerId: "priya",
-        text: '"Two — you do not have to open it tonight. It is not a subpoena. The envelope does not expire."',
+        text: '"Two, you do not have to open it tonight. It is not a subpoena. The envelope does not expire."',
         emotion: "serious",
       },
       {
         speakerId: "priya",
-        text: '"Three — if you open it, do it on speaker with me. If you do not, put it somewhere that is not your kitchen. Those are the only two plans. Either is fine."',
+        text: '"Three, if you open it, do it on speaker with me. If you do not, put it somewhere that is not your kitchen. Those are the only two plans. Either is fine."',
         emotion: "serious",
       },
       {
@@ -198,13 +198,13 @@ const scenes: Scene[] = [
       {
         id: "hold-the-line",
         text: '"Not tonight. Putting it in the drawer. Thanks."',
-        tactic: "Delay with an ally's blessing is different from delay in isolation. You are not avoiding — you are triaging.",
+        tactic: "Delay with an ally's blessing is different from delay in isolation. You are not avoiding, you are triaging.",
         nextSceneId: "drawer-the-letter",
         isOptimal: true,
       },
       {
         id: "send-to-ren",
-        text: '"Actually — I\'m going to ask Ren to read it first and tell me if I need to."',
+        text: '"Actually. I\'m going to ask Ren to read it first and tell me if I need to."',
         tactic: "Delegate the reading. Ren is the only other person in the world with standing to filter this for you.",
         nextSceneId: "ren-reads-it-first",
         isOptimal: true,
@@ -213,7 +213,7 @@ const scenes: Scene[] = [
   },
 
   // ===================================================================
-  // ACT 3A — reading with Priya (canonical path)
+  // ACT 3A, reading with Priya (canonical path)
   // ===================================================================
   {
     id: "read-with-priya",
@@ -245,7 +245,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "inner-voice",
-        text: "Four moves in one page. The illness establishes urgency. 'Ren would not want to tell you' pre-blames Ren for the surprise. 'Dinner at the old house on the twenty-second' sets a specific appointment. 'I will not write again' is the close — either you show up or you are the one who refused. She engineered the letter so that you are the actor, not her.",
+        text: "Four moves in one page. The illness establishes urgency. 'Ren would not want to tell you' pre-blames Ren for the surprise. 'Dinner at the old house on the twenty-second' sets a specific appointment. 'I will not write again' is the close. Either you show up or you are the one who refused. She engineered the letter so that you are the actor, not her.",
         emotion: "concerned",
       },
     ],
@@ -269,7 +269,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "priya",
-        text: '"That is deliberately vague. \'Been ill for about a year.\' Not a diagnosis, not a treatment, not a doctor\'s name. If it were a terminal thing, she would say so — there is a playbook for that, and it is much more specific than this. If it were a chronic manageable thing, she would not be writing a letter. This sentence is engineered to produce urgency without accepting the cost of being examined."',
+        text: '"That is deliberately vague. \'Been ill for about a year.\' Not a diagnosis, not a treatment, not a doctor\'s name. If it were a terminal thing, she would say so, there is a playbook for that, and it is much more specific than this. If it were a chronic manageable thing, she would not be writing a letter. This sentence is engineered to produce urgency without accepting the cost of being examined."',
         emotion: "serious",
       },
       {
@@ -314,7 +314,7 @@ const scenes: Scene[] = [
   },
 
   // ===================================================================
-  // ACT 3B — Ren channel
+  // ACT 3B. Ren channel
   // ===================================================================
   {
     id: "ren-confirms",
@@ -333,7 +333,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "sibling",
-        text: '"The illness — it is real. Heart. Not critical. She has three follow-ups, she is taking the medication, she is fine for now. She is not dying. I am telling you this because she did not and I am not going to let that word hang over you for a week."',
+        text: '"The illness, it is real. Heart. Not critical. She has three follow-ups, she is taking the medication, she is fine for now. She is not dying. I am telling you this because she did not and I am not going to let that word hang over you for a week."',
         emotion: "serious",
       },
       {
@@ -422,7 +422,7 @@ const scenes: Scene[] = [
   },
 
   // ===================================================================
-  // ACT 3C — Priya's direct answer
+  // ACT 3C. Priya's direct answer
   // ===================================================================
   {
     id: "priya-direct-answer",
@@ -455,7 +455,7 @@ const scenes: Scene[] = [
   },
 
   // ===================================================================
-  // ACT 3D — the decision (convergence point)
+  // ACT 3D, the decision (convergence point)
   // ===================================================================
   {
     id: "the-decision",
@@ -476,7 +476,7 @@ const scenes: Scene[] = [
       {
         id: "go-to-dinner",
         text: "Go. The twenty-second. With Ren as witness. One evening, with an exit plan.",
-        tactic: "The measured re-entry. Not reconciliation — reconnaissance, with an ally in the room and a curfew in your pocket.",
+        tactic: "The measured re-entry. Not reconciliation, reconnaissance, with an ally in the room and a curfew in your pocket.",
         nextSceneId: "ending-going",
         isOptimal: true,
       },
@@ -547,7 +547,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "inner-voice",
-        text: "Binning and fishing is the most common version of this scene. It is not a failure. It is data. Your body has told you something about how much this envelope weighs. Next time, either be the person who actually bins it without fishing it back — or be the person who doesn't bin it in the first place. The middle is the expensive version.",
+        text: "Binning and fishing is the most common version of this scene. It is not a failure. It is data. Your body has told you something about how much this envelope weighs. Next time, either be the person who actually bins it without fishing it back or be the person who doesn't bin it in the first place. The middle is the expensive version.",
         emotion: "knowing",
       },
     ],
@@ -561,7 +561,7 @@ const scenes: Scene[] = [
     dialog: [
       {
         speakerId: null,
-        text: "You put the envelope in the drawer under the microwave — the one with old takeout menus and a phone charger you don't use. It goes under the menus, not on top of them.",
+        text: "You put the envelope in the drawer under the microwave, the one with old takeout menus and a phone charger you don't use. It goes under the menus, not on top of them.",
       },
       {
         speakerId: "inner-voice",
@@ -602,7 +602,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "inner-voice",
-        text: "Ren has taken the hit so you did not have to. This is an enormous thing they did. You will want to acknowledge it not tonight — tonight would be a performance — but next month, in a way that lands.",
+        text: "Ren has taken the hit so you did not have to. This is an enormous thing they did. You will want to acknowledge it not tonight, tonight would be a performance but next month, in a way that lands.",
         emotion: "knowing",
       },
     ],
@@ -695,7 +695,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "inner-voice",
-        text: "Decisions made while adrenalized are not worse than other decisions — they are just less stress-tested. You will find out in the next eleven days whether this one holds. If it does, fine. If it starts to wobble, you are allowed to re-decide. A text the day of is not a contract.",
+        text: "Decisions made while adrenalized are not worse than other decisions, they are just less stress-tested. You will find out in the next eleven days whether this one holds. If it does, fine. If it starts to wobble, you are allowed to re-decide. A text the day of is not a contract.",
         emotion: "neutral",
       },
     ],
@@ -738,7 +738,7 @@ const scenes: Scene[] = [
     outcomeType: "neutral",
     endingTitle: "The Solo Return",
     endingSummary:
-      "You decided to go alone. No Ren. No witness in the room. Your reasoning — you wanted to see her without refraction — is honest. The cost is that afterward, you will not have anyone to check your read against. Plan the check-in for the drive home: call Priya before you leave the parking space. Whatever happened inside the house needs to be spoken aloud to someone who was not in it, within twenty minutes of leaving. Otherwise the scene rewrites itself inside you.",
+      "You decided to go alone. No Ren. No witness in the room. Your reasoning, you wanted to see her without refraction, is honest. The cost is that afterward, you will not have anyone to check your read against. Plan the check-in for the drive home: call Priya before you leave the parking space. Whatever happened inside the house needs to be spoken aloud to someone who was not in it, within twenty minutes of leaving. Otherwise the scene rewrites itself inside you.",
     dialog: [
       {
         speakerId: "inner-voice",
@@ -756,7 +756,7 @@ const scenes: Scene[] = [
     outcomeType: "neutral",
     endingTitle: "Decided Tonight",
     endingSummary:
-      "You made the decision in the kitchen, at 7 pm, Tuesday, with the letter still open. The decision may still be correct. The method was not optimal. In the next eleven days, re-test it at least once while rested, with Priya, with a specific curfew named out loud. If after that second test it holds, you are fine. If it wobbles, the door back out is open — a message to Ren saying 'something changed, I'm not coming' is a legitimate move up to the morning of.",
+      "You made the decision in the kitchen, at 7 pm, Tuesday, with the letter still open. The decision may still be correct. The method was not optimal. In the next eleven days, re-test it at least once while rested, with Priya, with a specific curfew named out loud. If after that second test it holds, you are fine. If it wobbles, the door back out is open, a message to Ren saying 'something changed, I'm not coming' is a legitimate move up to the morning of.",
     dialog: [
       {
         speakerId: "inner-voice",
@@ -774,14 +774,14 @@ const scenes: Scene[] = [
     outcomeType: "good",
     endingTitle: "The Single Reply",
     endingSummary:
-      "You wrote one page. You wished her well. You declined. You did not explain. You did not leave the door open for a sequel. You mailed it the next morning. You told Ren what you wrote — not what she asked, what you wrote — so Ren has a copy of your exact words and the mother can't mis-paraphrase them. The envelope on the counter stays there for one more day while the reply is in transit; then you put both in a drawer and close it. This is the cleanest refusal available.",
+      "You wrote one page. You wished her well. You declined. You did not explain. You did not leave the door open for a sequel. You mailed it the next morning. You told Ren what you wrote, not what she asked, what you wrote so Ren has a copy of your exact words and the mother can't mis-paraphrase them. The envelope on the counter stays there for one more day while the reply is in transit; then you put both in a drawer and close it. This is the cleanest refusal available.",
     endingLearnReference: "how-to-leave-without-being-villain",
     endingLearnPrompt:
       "One reply, specific, warm, closed. Don't let a second letter reopen what the first was supposed to end.",
     dialog: [
       {
         speakerId: "inner-voice",
-        text: "A single reply is not re-engagement if it does not invite a sequel. You have done the adult version of closing a chapter you had already closed — and now the closure is documented in your handwriting, not just your silence.",
+        text: "A single reply is not re-engagement if it does not invite a sequel. You have done the adult version of closing a chapter you had already closed and now the closure is documented in your handwriting, not just your silence.",
         emotion: "knowing",
       },
     ],
@@ -795,7 +795,7 @@ const scenes: Scene[] = [
     outcomeType: "neutral",
     endingTitle: "The Absolute Refusal",
     endingSummary:
-      "You burned the letter in the sink. You told Ren you were not going. You did not elaborate. The refusal is valid. It is only a bad version of this ending if you used the fire to skip a conversation with yourself about the grief underneath the anger — the fire can serve either function, and only you know which one it served tonight. If it was closure, you sleep well. If it was avoidance, the envelope will show up again in a different form in a different year, and you will recognise it then.",
+      "You burned the letter in the sink. You told Ren you were not going. You did not elaborate. The refusal is valid. It is only a bad version of this ending if you used the fire to skip a conversation with yourself about the grief underneath the anger, the fire can serve either function, and only you know which one it served tonight. If it was closure, you sleep well. If it was avoidance, the envelope will show up again in a different form in a different year, and you will recognise it then.",
     dialog: [
       {
         speakerId: "inner-voice",
@@ -831,7 +831,7 @@ const scenes: Scene[] = [
     outcomeType: "neutral",
     endingTitle: "Deferred",
     endingSummary:
-      "You did not decide tonight. You told Ren you would let them know. The dinner is eleven days away; you have time. The cost of deferral is lower than the cost of deciding wrong — but only if you actually use the deferred time to think, not to avoid. Put a specific day on your calendar (day 5, 7 pm, with Priya) as the deciding conversation. The decision without a calendar slot is the decision you are still making at 11 pm on the twenty-first.",
+      "You did not decide tonight. You told Ren you would let them know. The dinner is eleven days away; you have time. The cost of deferral is lower than the cost of deciding wrong but only if you actually use the deferred time to think, not to avoid. Put a specific day on your calendar (day 5, 7 pm, with Priya) as the deciding conversation. The decision without a calendar slot is the decision you are still making at 11 pm on the twenty-first.",
     dialog: [
       {
         speakerId: "inner-voice",
@@ -868,7 +868,7 @@ export const mission111: Scenario = {
   redFlagsTaught: [
     "Vague illness + specific date = manufactured urgency",
     "Pre-blaming a family intermediary before the conversation even happens",
-    "Refusing to leave a return address — forces the receiver to engage to respond",
+    "Refusing to leave a return address, forces the receiver to engage to respond",
     "\"I will not write again\" as a close (makes you the actor if you don't show up)",
   ],
   reward: {

@@ -36,7 +36,7 @@ export async function POST(request: NextRequest) {
     const unusedCount = await prisma.dailyInsight.count({ where: { isUsed: false } });
     if (unusedCount === 0) {
       await prisma.dailyInsight.updateMany({ data: { isUsed: false, postedAt: null } });
-      logger.info("[cron daily-insight] all insights used — reset pool for new cycle");
+      logger.info("[cron daily-insight] all insights used, reset pool for new cycle");
     }
 
     let insight = await prisma.dailyInsight.findFirst({
@@ -51,23 +51,23 @@ export async function POST(request: NextRequest) {
     }
 
     if (!insight) {
-      // Empty queue — alert the admin so the feed doesn't go silent.
+      // Empty queue, alert the admin so the feed doesn't go silent.
       // Cap the alert frequency by checking a "last alerted" marker, but
       // for simplicity, log every time and let the admin set a Sentry
       // alert on this string.
-      logger.error("[cron daily-insight] queue empty — feed will go silent");
+      logger.error("[cron daily-insight] queue empty, feed will go silent");
       try {
         const adminEmail = process.env.ADMIN_EMAIL || "Kanika@kanikarose.com";
         await sendEmail({
           to: adminEmail,
-          subject: "Heads up — your daily insight library is running low",
+          subject: "Heads up, your daily insight library is running low",
           html: `
             <p style="font-family: Georgia, serif; font-size: 16px; color: #f5f0ed;">Hey Kanika,</p>
             <p style="font-family: Georgia, serif; font-size: 15px; color: #94a3b8; line-height: 1.6;">
               The automatic daily insights posting to the Consilium feed have run out. The feed won't post a new insight today until more are added.
             </p>
             <p style="font-family: Georgia, serif; font-size: 15px; color: #94a3b8; line-height: 1.6;">
-              Ask your developer to top up the insights library — no action is needed from you, just a heads up.
+              Ask your developer to top up the insights library, no action is needed from you, just a heads up.
             </p>
             <p style="font-family: Georgia, serif; font-size: 13px; color: #94a3b8; margin-top: 24px; font-style: italic;">
               You're getting this because the system sends a one-time alert when the automated content queue is empty. Once refilled, you won't hear about it again.

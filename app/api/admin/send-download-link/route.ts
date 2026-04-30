@@ -312,7 +312,7 @@ export async function POST(request: NextRequest) {
     });
 
     const subject = isUpdate
-      ? `Updated Book Ready — Sociopathic Dating Bible (Now With Addendum)${isPremium ? " — Premium Edition" : ""}`
+      ? `Updated Book Ready. Sociopathic Dating Bible (Now With Addendum)${isPremium ? ". Premium Edition" : ""}`
       : `Download Your Book - Sociopathic Dating Bible${isPremium ? " (Premium Edition)" : ""}`;
 
     await transporter.sendMail({

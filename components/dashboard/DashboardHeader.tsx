@@ -23,7 +23,7 @@ const DashboardHeader = ({ userEmail }: DashboardHeaderProps) => {
 
   // Consilium is intentionally pulled OUT of the standard nav array and
   // rendered as a distinct gold pill on the right (next to the profile
-  // chip) so it's the most visually distinct link in the chrome — every
+  // chip) so it's the most visually distinct link in the chrome, every
   // dashboard view has a one-tap shortcut to the member space without
   // needing the user to remember it lives among the secondary links.
   const navLinks = [
@@ -69,7 +69,7 @@ const DashboardHeader = ({ userEmail }: DashboardHeaderProps) => {
               </Link>
             ))}
 
-            {/* The Consilium — distinct gold pill, sits between the
+            {/* The Consilium, distinct gold pill, sits between the
                 standard nav and the profile chip so it's the most
                 visually charged link in the chrome. */}
             <Link

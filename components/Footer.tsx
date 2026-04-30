@@ -59,7 +59,7 @@ const Footer = () => {
           {/* Brand Section.
               `fullName` swaps the "KR" monogram for the full "KANIKAROSE"
               wordmark so the footer brand doesn't visually duplicate the
-              fixed-header "KR" at the top of the page — when you scroll
+              fixed-header "KR" at the top of the page, when you scroll
               to the footer the two used to stack like an accidental
               double-render. Full wordmark reads as a signature, not a
               nav echo. */}

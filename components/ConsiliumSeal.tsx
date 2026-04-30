@@ -1,14 +1,14 @@
 "use client";
 
 /**
- * ConsiliumSeal — the mark for "The Consilium"
+ * ConsiliumSeal, the mark for "The Consilium"
  *
  * A Roman medallion: concentric gold rings, four cardinal points,
  * and a serif "C" monogram at centre. Uses the site's existing
  * `font-serif` family (see tailwind.config) so the "C" matches the
  * classical typography without loading an extra webfont.
  *
- * The seal is its own gold circle — no need to wrap it in another one.
+ * The seal is its own gold circle, no need to wrap it in another one.
  */
 interface ConsiliumSealProps {
   size?: "sm" | "md" | "lg" | "xl";
@@ -93,7 +93,7 @@ export default function ConsiliumSeal({
           opacity="0.35"
         />
 
-        {/* Four cardinal points (N / E / S / W) — senate compass */}
+        {/* Four cardinal points (N / E / S / W), senate compass */}
         <circle cx="50" cy="3.5" r="1.4" fill="url(#cs-gold)" />
         <circle cx="96.5" cy="50" r="1.4" fill="url(#cs-gold)" />
         <circle cx="50" cy="96.5" r="1.4" fill="url(#cs-gold)" />

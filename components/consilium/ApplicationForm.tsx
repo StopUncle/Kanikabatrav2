@@ -26,7 +26,7 @@ const schema = z.object({
     errorMap: () => ({ message: "Please select your gender" }),
   }),
   // Stored as ISO date (YYYY-MM-DD) inside applicationData. The Consilium
-  // is an adults-only community — we enforce 18+ here on the client and
+  // is an adults-only community, we enforce 18+ here on the client and
   // re-check on the server.
   dateOfBirth: z
     .string()
@@ -36,7 +36,7 @@ const schema = z.object({
       return age >= 18 && age <= 100;
     }, "You must be 18 or older to join The Consilium"),
   // Pseudonym the member uses inside the community. Real names are never
-  // shown to other members — only this. 2-30 chars keeps it usable as a
+  // shown to other members, only this. 2-30 chars keeps it usable as a
   // display handle while avoiding empty/abusive names.
   displayName: z
     .string()
@@ -48,7 +48,7 @@ const schema = z.object({
   whatHope: z.string().min(20, "Tell us a bit more (at least 20 characters)").max(1000),
   howFound: z.string().min(1, "Required").max(500),
   // Explicit attestation that everything submitted is true. Captured on
-  // the application for audit purposes — giving false info is grounds for
+  // the application for audit purposes, giving false info is grounds for
   // removal. Must be ticked to submit.
   confirmTruthful: z.literal(true, {
     errorMap: () => ({
@@ -135,7 +135,7 @@ export default function ApplicationForm({
     );
   }
 
-  // Rejected applicant. No CTA — they need to wait and submit a fresh
+  // Rejected applicant. No CTA, they need to wait and submit a fresh
   // application later if their circumstances change. Showing the form
   // again immediately would feel like the rejection didn't land.
   if (existingStatus === "CANCELLED" && wasRejected) {
@@ -185,7 +185,7 @@ export default function ApplicationForm({
   }
 
   // Approved-but-never-paid window lapsed. They have to reapply through
-  // the form (which Kanika re-reviews) — we can't let them buy past the
+  // the form (which Kanika re-reviews), we can't let them buy past the
   // expired approval since the original review may be stale.
   if (existingStatus === "EXPIRED" && !wasFormerlyPaid) {
     return (
@@ -196,13 +196,13 @@ export default function ApplicationForm({
         </h2>
         <p className="text-text-gray font-light max-w-md mx-auto leading-relaxed">
           Your application was approved but the activation window passed
-          without payment. Submit a fresh application below — we review
+          without payment. Submit a fresh application below, we review
           each one personally.
         </p>
       </div>
     );
     // Note: we deliberately don't fall through to the form here. A new
-    // entry below this card would be confusing — the user has to scroll
+    // entry below this card would be confusing, the user has to scroll
     // to find it. If a UX iteration wants both the explanation AND the
     // form on one page, render them together; right now the cleanest
     // path is to show this card only and let the user click "Apply"
@@ -336,7 +336,7 @@ export default function ApplicationForm({
         )}
         <p className="mt-2 text-xs text-text-gray/60">
           The Consilium is for adults only. You must be 18 or older to join.
-          Your date of birth is kept private — only the admin reviewing your
+          Your date of birth is kept private, only the admin reviewing your
           application can see it.
         </p>
       </div>
@@ -356,7 +356,7 @@ export default function ApplicationForm({
           <p className="mt-2 text-sm text-red-400">{errors.displayName.message}</p>
         )}
         <p className="mt-2 text-xs text-text-gray/60">
-          This is what other members see on your posts, comments, and chat messages. Pick something anonymous — your real name is never shown to other members.
+          This is what other members see on your posts, comments, and chat messages. Pick something anonymous, your real name is never shown to other members.
         </p>
       </div>
 

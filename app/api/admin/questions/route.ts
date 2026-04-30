@@ -16,12 +16,12 @@ const VALID_STATUSES: QuestionStatus[] = [
  *
  * Admin queue listing. Returns full question content, vote count, asker
  * `userId` (always present so reveal works) but NOT asker name in the
- * default payload — Kanika clicks "Show identity" to fetch the name
+ * default payload. Kanika clicks "Show identity" to fetch the name
  * via the /reveal endpoint, which separates the moderation action from
  * casual queue browsing.
  *
  * Sorted by upvoteCount desc by default (top voted first), then by
- * recency. Caps at 100 — the admin UI has its own pagination.
+ * recency. Caps at 100, the admin UI has its own pagination.
  */
 export async function GET(req: NextRequest) {
   const u = await requireAdminSession();

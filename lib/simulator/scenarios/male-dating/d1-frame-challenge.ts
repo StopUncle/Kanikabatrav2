@@ -1,8 +1,8 @@
 /**
- * Dating Line — Mission 1 "Frame Under Challenge"
+ * Dating Line. Mission 1 "Frame Under Challenge"
  *
  * Teaches: the calm reframe. Silence as weapon. Public negging as a
- * frame test — not a personal attack, not a joke. Handling an
+ * frame test, not a personal attack, not a joke. Handling an
  * alpha-tester in front of a group without matching aggression,
  * deflecting nervously, or freezing.
  *
@@ -10,7 +10,7 @@
  * A higher-status man cuts you in front of the people whose opinion
  * of you is being written in real time. The insult isn't the damage.
  * Your reaction is. Handle it wrong and the room brands you reactive,
- * soft, or political — and that brand hardens inside ninety seconds
+ * soft, or political and that brand hardens inside ninety seconds
  * and lasts years. Handle it right and you bank permanent status in
  * rooms you didn't know were scoring you.
  *
@@ -23,7 +23,7 @@ import { CHASE, COLE, LIV, INNER_VOICE_M } from "../../characters-male";
 
 const scenes: Scene[] = [
   // ---------------------------------------------------------------------
-  // PART 1 — the rooftop
+  // PART 1, the rooftop
   // ---------------------------------------------------------------------
   {
     id: "the-cut",
@@ -34,7 +34,7 @@ const scenes: Scene[] = [
     dialog: [
       {
         speakerId: null,
-        text: "Rooftop bar. Friday, 9:47pm. Six people in a loose half-circle. You've been talking to Liv for twenty minutes — the conversation is going well, she's leaned in twice, her drink is almost gone and she hasn't looked for another.",
+        text: "Rooftop bar. Friday, 9:47pm. Six people in a loose half-circle. You've been talking to Liv for twenty minutes, the conversation is going well, she's leaned in twice, her drink is almost gone and she hasn't looked for another.",
       },
       {
         speakerId: null,
@@ -47,11 +47,11 @@ const scenes: Scene[] = [
       },
       {
         speakerId: null,
-        text: "Laughter. Not loud. The worst kind — the small, reflexive laugh of people who don't know if it was a joke and are covering either way. Everyone turns. Liv's smile flickers. Cole's jaw tightens. The other woman glances at you, then at Chase, then back at you.",
+        text: "Laughter. Not loud. The worst kind, the small, reflexive laugh of people who don't know if it was a joke and are covering either way. Everyone turns. Liv's smile flickers. Cole's jaw tightens. The other woman glances at you, then at Chase, then back at you.",
       },
       {
         speakerId: "inner-voice",
-        text: "Frame test. He's not joking. This is alpha-testing — public negging as status protection. He saw you had the room and he came to take it. You have three seconds. Every person here is reading you right now, and whatever you do in the next three seconds is what they'll remember about you for a year.",
+        text: "Frame test. He's not joking. This is alpha-testing, public negging as status protection. He saw you had the room and he came to take it. You have three seconds. Every person here is reading you right now, and whatever you do in the next three seconds is what they'll remember about you for a year.",
         emotion: "serious",
       },
     ],
@@ -66,12 +66,12 @@ const scenes: Scene[] = [
       {
         id: "match-aggression",
         text: "\"At least I can afford the drinks I buy, Chase.\" Same volume as him. Eye contact.",
-        tactic: "Matching aggression. You just entered a contest on his terms — he's been running this move his whole life.",
+        tactic: "Matching aggression. You just entered a contest on his terms, he's been running this move his whole life.",
         nextSceneId: "the-contest",
       },
       {
         id: "nervous-denial",
-        text: "\"No — no, I got the first round, actually, it's fine — \"",
+        text: "\"No, no, I got the first round, actually, it's fine, \"",
         tactic: "Nervous denial. You just confirmed the remark landed. Now the room knows it worked.",
         nextSceneId: "the-denial",
       },
@@ -89,15 +89,15 @@ const scenes: Scene[] = [
       },
       {
         id: "pull-aside",
-        text: "\"Hey — can I talk to you for a sec?\" Gesture toward the corner.",
-        tactic: "Pulling him aside treats his move as worth a sidebar — legitimises it, and removes you from the audience he insulted you in front of.",
+        text: "\"Hey, can I talk to you for a sec?\" Gesture toward the corner.",
+        tactic: "Pulling him aside treats his move as worth a sidebar, legitimises it, and removes you from the audience he insulted you in front of.",
         nextSceneId: "the-sidebar",
       },
     ],
   },
 
   // ---------------------------------------------------------------------
-  // PART 2A — optimal: the pivot
+  // PART 2A, optimal: the pivot
   // ---------------------------------------------------------------------
   {
     id: "the-pivot",
@@ -107,11 +107,11 @@ const scenes: Scene[] = [
     dialog: [
       {
         speakerId: null,
-        text: "Three words. No heat. You don't break eye contact first — but you don't hold it long enough to make it a duel either. Then you turn, fully, back to Liv.",
+        text: "Three words. No heat. You don't break eye contact first but you don't hold it long enough to make it a duel either. Then you turn, fully, back to Liv.",
       },
       {
         speakerId: null,
-        text: "\"You were saying — about Lisbon.\"",
+        text: "\"You were saying, about Lisbon.\"",
       },
       {
         speakerId: null,
@@ -124,7 +124,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "liv",
-        text: "\"Right — so the cab driver in Alfama — \"",
+        text: "\"Right so the cab driver in Alfama, \"",
         emotion: "curious",
       },
       {
@@ -133,14 +133,14 @@ const scenes: Scene[] = [
       },
       {
         speakerId: null,
-        text: "Chase is still standing there. The laugh didn't come. He has a choice now — escalate and look like he's chasing, or retreat and look like he backed off. Neither is clean. He makes a small noise, lifts his glass in a half-toast nobody returns, and drifts toward the bar.",
+        text: "Chase is still standing there. The laugh didn't come. He has a choice now, escalate and look like he's chasing, or retreat and look like he backed off. Neither is clean. He makes a small noise, lifts his glass in a half-toast nobody returns, and drifts toward the bar.",
       },
     ],
     choices: [
       {
         id: "stay-with-liv",
         text: "Stay exactly where you are. Keep the conversation on Liv. Don't acknowledge the retreat.",
-        tactic: "Don't narrate the victory. The room already saw it — narrating weakens it.",
+        tactic: "Don't narrate the victory. The room already saw it, narrating weakens it.",
         nextSceneId: "the-room-re-orients",
         isOptimal: true,
       },
@@ -160,7 +160,7 @@ const scenes: Scene[] = [
   },
 
   // ---------------------------------------------------------------------
-  // PART 3A — optimal continues: the room re-orients
+  // PART 3A, optimal continues: the room re-orients
   // ---------------------------------------------------------------------
   {
     id: "the-room-re-orients",
@@ -178,12 +178,12 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "liv",
-        text: "\"So — what actually happened with you two? You guys hate each other or something?\"",
+        text: "\"So, what actually happened with you two? You guys hate each other or something?\"",
         emotion: "curious",
       },
       {
         speakerId: "inner-voice",
-        text: "Trap and opportunity. You could land the final blow on Chase here — detail his behaviour, explain the history, make the case. The room would enjoy it. It would also cost you everything you just built. Men who dominate without needing to narrate the domination are the rarest kind. She's testing whether you're that kind.",
+        text: "Trap and opportunity. You could land the final blow on Chase here, detail his behaviour, explain the history, make the case. The room would enjoy it. It would also cost you everything you just built. Men who dominate without needing to narrate the domination are the rarest kind. She's testing whether you're that kind.",
         emotion: "knowing",
       },
     ],
@@ -198,7 +198,7 @@ const scenes: Scene[] = [
       {
         id: "full-story",
         text: "Tell her the full history with Chase. Why he's like this. The last time it happened.",
-        tactic: "You just turned your composure into a grievance-recount. She'll feel the shift — solid man became explaining man.",
+        tactic: "You just turned your composure into a grievance-recount. She'll feel the shift, solid man became explaining man.",
         nextSceneId: "ending-diluted",
       },
       {
@@ -211,7 +211,7 @@ const scenes: Scene[] = [
   },
 
   // ---------------------------------------------------------------------
-  // PART 2B — bad: matching aggression
+  // PART 2B, bad: matching aggression
   // ---------------------------------------------------------------------
   {
     id: "the-contest",
@@ -226,12 +226,12 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "chase",
-        text: "\"Oh — oh — okay, tough guy. Easy. We're just having fun. Liv, is he always like this?\"",
+        text: "\"Oh, oh, okay, tough guy. Easy. We're just having fun. Liv, is he always like this?\"",
         emotion: "smirking",
       },
       {
         speakerId: "inner-voice",
-        text: "He just reframed you as hostile and him as the relaxed one. Watch — this is the move. He escalated, you matched, now he softens and you look like the problem. Alpha-testers have been running this exchange since middle school.",
+        text: "He just reframed you as hostile and him as the relaxed one. Watch. This is the move. He escalated, you matched, now he softens and you look like the problem. Alpha-testers have been running this exchange since middle school.",
         emotion: "sad",
       },
       {
@@ -243,12 +243,12 @@ const scenes: Scene[] = [
       {
         id: "double-down",
         text: "\"No, we're not 'just having fun.' You walked up and threw a shot.\"",
-        tactic: "Doubling down in public. Correct, but the room doesn't score correct — it scores composed.",
+        tactic: "Doubling down in public. Correct, but the room doesn't score correct, it scores composed.",
         nextSceneId: "ending-volatile",
       },
       {
         id: "try-to-recover",
-        text: "\"Yeah — look, sorry, that came out wrong. Let's start over.\"",
+        text: "\"Yeah, look, sorry, that came out wrong. Let's start over.\"",
         tactic: "Apologising after matching aggression reads as both reactive and insecure. The worst two-step.",
         nextSceneId: "ending-volatile",
       },
@@ -262,7 +262,7 @@ const scenes: Scene[] = [
   },
 
   // ---------------------------------------------------------------------
-  // PART 2C — bad: nervous denial
+  // PART 2C, bad: nervous denial
   // ---------------------------------------------------------------------
   {
     id: "the-denial",
@@ -276,12 +276,12 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "chase",
-        text: "\"Whoa whoa whoa — buddy. Relax. I'm kidding. Jesus.\"",
+        text: "\"Whoa whoa whoa, buddy. Relax. I'm kidding. Jesus.\"",
         emotion: "smirking",
       },
       {
         speakerId: "inner-voice",
-        text: "He just did the second half of the move. Accuse you of overreacting to something he deliberately said to provoke a reaction. This is peer-coordinated humiliation — he said it, they laughed, now he gets to reframe you as the one who can't take a joke. Defending yourself against the first cut opened the door for the second.",
+        text: "He just did the second half of the move. Accuse you of overreacting to something he deliberately said to provoke a reaction. This is peer-coordinated humiliation, he said it, they laughed, now he gets to reframe you as the one who can't take a joke. Defending yourself against the first cut opened the door for the second.",
         emotion: "sad",
       },
       {
@@ -293,7 +293,7 @@ const scenes: Scene[] = [
   },
 
   // ---------------------------------------------------------------------
-  // PART 2D — bad: awkward laugh
+  // PART 2D, bad: awkward laugh
   // ---------------------------------------------------------------------
   {
     id: "the-laugh",
@@ -307,7 +307,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "chase",
-        text: "\"See — I like this guy. He knows.\"",
+        text: "\"See. I like this guy. He knows.\"",
         emotion: "smirking",
       },
       {
@@ -333,7 +333,7 @@ const scenes: Scene[] = [
   },
 
   // ---------------------------------------------------------------------
-  // PART 2E — bad: freeze
+  // PART 2E, bad: freeze
   // ---------------------------------------------------------------------
   {
     id: "the-freeze",
@@ -344,16 +344,16 @@ const scenes: Scene[] = [
     dialog: [
       {
         speakerId: null,
-        text: "Two seconds. Three. Four. You look at the ice in your glass. Someone coughs. Chase's smirk widens — he wasn't even sure the move would land this hard.",
+        text: "Two seconds. Three. Four. You look at the ice in your glass. Someone coughs. Chase's smirk widens, he wasn't even sure the move would land this hard.",
       },
       {
         speakerId: "inner-voice",
-        text: "Freezing is the loudest signal of all. Status theatre has one rule: silence with composure is dominant, silence without composure is collapse. You just broadcast collapse on a rooftop with six witnesses. The room will remember this for years. Cole already is — that's why he just looked at the floor.",
+        text: "Freezing is the loudest signal of all. Status theatre has one rule: silence with composure is dominant, silence without composure is collapse. You just broadcast collapse on a rooftop with six witnesses. The room will remember this for years. Cole already is, that's why he just looked at the floor.",
         emotion: "sad",
       },
       {
         speakerId: "chase",
-        text: "\"Anyway — Liv, I was going to ask you about Capri next month. You still thinking about it?\"",
+        text: "\"Anyway. Liv, I was going to ask you about Capri next month. You still thinking about it?\"",
         emotion: "neutral",
       },
       {
@@ -365,7 +365,7 @@ const scenes: Scene[] = [
   },
 
   // ---------------------------------------------------------------------
-  // PART 2F — bad: pull-aside
+  // PART 2F, bad: pull-aside
   // ---------------------------------------------------------------------
   {
     id: "the-sidebar",
@@ -375,7 +375,7 @@ const scenes: Scene[] = [
     dialog: [
       {
         speakerId: null,
-        text: "Chase follows you, amused. Not threatened — amused. Thirty feet from the group, next to a potted olive tree, you turn to face him.",
+        text: "Chase follows you, amused. Not threatened, amused. Thirty feet from the group, next to a potted olive tree, you turn to face him.",
       },
       {
         speakerId: null,
@@ -383,12 +383,12 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "inner-voice",
-        text: "On paper. The problem isn't the words — it's that pulling him aside just told the whole rooftop the cut was worth a sidebar. You legitimised his move. He got your attention, private attention, within sixty seconds of making you feel bad. From his perspective this is a win, not a confrontation. He'll walk back with that small smile that tells the group the conversation went exactly how he hoped it would.",
+        text: "On paper. The problem isn't the words, it's that pulling him aside just told the whole rooftop the cut was worth a sidebar. You legitimised his move. He got your attention, private attention, within sixty seconds of making you feel bad. From his perspective this is a win, not a confrontation. He'll walk back with that small smile that tells the group the conversation went exactly how he hoped it would.",
         emotion: "sad",
       },
       {
         speakerId: "chase",
-        text: "\"Whoa — hey man, I'm sorry, it was a joke, we're good. Let's get back over there. Really — we're good.\"",
+        text: "\"Whoa, hey man, I'm sorry, it was a joke, we're good. Let's get back over there. Really, we're good.\"",
         emotion: "happy",
       },
       {
@@ -400,7 +400,7 @@ const scenes: Scene[] = [
   },
 
   // ---------------------------------------------------------------------
-  // PART 3B — optimal's amateur follow-up (near-miss)
+  // PART 3B, optimal's amateur follow-up (near-miss)
   // ---------------------------------------------------------------------
   {
     id: "the-amateur-followup",
@@ -410,7 +410,7 @@ const scenes: Scene[] = [
     dialog: [
       {
         speakerId: "liv",
-        text: "\"Oh — yeah, I don't know him well. Seems intense.\"",
+        text: "\"Oh, yeah, I don't know him well. Seems intense.\"",
         emotion: "neutral",
       },
       {
@@ -438,7 +438,7 @@ const scenes: Scene[] = [
     outcomeType: "good",
     endingTitle: "You Held the Frame",
     endingSummary:
-      "Three words, no heat, and a clean pivot back to the conversation you were already winning. The rooftop re-oriented to you inside ninety seconds. Liv asks for your number two drinks later — her phrasing: 'in case I need another Lisbon recommendation.' Cole texts you the next day: 'That was a clinic.' Chase nods at you across a different bar six weeks later and doesn't come over. You didn't win a fight. You refused to enter one, and the refusal itself was the win — because alpha-testers only collect rank from men who engage. The men who don't flinch get routed around forever.",
+      "Three words, no heat, and a clean pivot back to the conversation you were already winning. The rooftop re-oriented to you inside ninety seconds. Liv asks for your number two drinks later, her phrasing: 'in case I need another Lisbon recommendation.' Cole texts you the next day: 'That was a clinic.' Chase nods at you across a different bar six weeks later and doesn't come over. You didn't win a fight. You refused to enter one, and the refusal itself was the win, because alpha-testers only collect rank from men who engage. The men who don't flinch get routed around forever.",
     dialog: [
       {
         speakerId: "inner-voice",
@@ -456,7 +456,7 @@ const scenes: Scene[] = [
     outcomeType: "neutral",
     endingTitle: "You Won, Then Spent It",
     endingSummary:
-      "The reframe landed. The room came back to you. Then you took one free swing too many and converted 'composed man' into 'man who's still thinking about Chase.' Liv stays in the conversation but doesn't ask for your number. Cole doesn't mention it the next day. You handled the first ninety seconds like a pro and the next five minutes like someone who needed the scoreboard updated. Next time: don't narrate the win. Let the room write it for you — they were going to, and your version is always smaller than theirs.",
+      "The reframe landed. The room came back to you. Then you took one free swing too many and converted 'composed man' into 'man who's still thinking about Chase.' Liv stays in the conversation but doesn't ask for your number. Cole doesn't mention it the next day. You handled the first ninety seconds like a pro and the next five minutes like someone who needed the scoreboard updated. Next time: don't narrate the win. Let the room write it for you, they were going to, and your version is always smaller than theirs.",
     dialog: [
       {
         speakerId: "inner-voice",
@@ -480,7 +480,7 @@ const scenes: Scene[] = [
     dialog: [
       {
         speakerId: "inner-voice",
-        text: "Matching aggression is entering a contest on his terms. The only winning move is to refuse the frame — not defeat it.",
+        text: "Matching aggression is entering a contest on his terms. The only winning move is to refuse the frame, not defeat it.",
         emotion: "sad",
       },
     ],
@@ -494,7 +494,7 @@ const scenes: Scene[] = [
     outcomeType: "bad",
     endingTitle: "The Denial Confirmed It",
     endingSummary:
-      "You defended yourself against a premise that didn't deserve defending. Explaining that you paid for the drink told the room the remark landed — defenders only defend real hits. Liv's face changed. You didn't see the change in real time, which is part of what made it worse. She leaves the rooftop at 11:14pm. You don't see her again. For the next eighteen months you'll wonder if you said something wrong afterwards. You didn't. You said it in the three seconds you thought you were recovering.",
+      "You defended yourself against a premise that didn't deserve defending. Explaining that you paid for the drink told the room the remark landed, defenders only defend real hits. Liv's face changed. You didn't see the change in real time, which is part of what made it worse. She leaves the rooftop at 11:14pm. You don't see her again. For the next eighteen months you'll wonder if you said something wrong afterwards. You didn't. You said it in the three seconds you thought you were recovering.",
     failureBlogSlug: "predators-gaze-how-sociopaths-detect-weakness",
     failureBlogTitle: "Predator's Gaze: How Sociopaths Detect Weakness",
     dialog: [
@@ -514,7 +514,7 @@ const scenes: Scene[] = [
     outcomeType: "bad",
     endingTitle: "You Signed His Frame",
     endingSummary:
-      "'Gotta work on that' — a three-word admission you'll replay in your head for a week. The self-deprecating laugh is the universal male tell for 'I hope this defuses it.' It doesn't defuse anything. It just tells the room the frame he offered was a frame you could agree with. Liv filed you as likeable, pliable, and not serious. Two weeks later at a mutual friend's thing she'll be warm to you and also, somehow, never quite free for the drink you suggest. You'll blame the timing. It wasn't the timing.",
+      "'Gotta work on that', a three-word admission you'll replay in your head for a week. The self-deprecating laugh is the universal male tell for 'I hope this defuses it.' It doesn't defuse anything. It just tells the room the frame he offered was a frame you could agree with. Liv filed you as likeable, pliable, and not serious. Two weeks later at a mutual friend's thing she'll be warm to you and also, somehow, never quite free for the drink you suggest. You'll blame the timing. It wasn't the timing.",
     failureBlogSlug: "ignore-the-alpha-target-the-omega",
     failureBlogTitle: "Ignore the Alpha, Target the Omega",
     dialog: [
@@ -534,7 +534,7 @@ const scenes: Scene[] = [
     outcomeType: "bad",
     endingTitle: "The Room Picked Its Omega",
     endingSummary:
-      "Four seconds of silence and a look at your ice. That's all it took. Predators and alpha-testers are trained by ten thousand hours of rooms to read exactly that moment — the freeze — and file you as the one who can be cut without cost. You will now be cut, subtly, at every rooftop, dinner, and house party you share with any of these six people for the next two years. Not because you deserve it. Because predators' gaze is cheap to give and reputations are expensive to undo. Cole looked at the floor because he's seen this happen to men before. It's survivable. You rebuild by training the calm reframe until it's muscle memory — so the next rooftop goes differently.",
+      "Four seconds of silence and a look at your ice. That's all it took. Predators and alpha-testers are trained by ten thousand hours of rooms to read exactly that moment, the freeze and file you as the one who can be cut without cost. You will now be cut, subtly, at every rooftop, dinner, and house party you share with any of these six people for the next two years. Not because you deserve it. Because predators' gaze is cheap to give and reputations are expensive to undo. Cole looked at the floor because he's seen this happen to men before. It's survivable. You rebuild by training the calm reframe until it's muscle memory so the next rooftop goes differently.",
     failureBlogSlug: "predators-gaze-how-sociopaths-detect-weakness",
     failureBlogTitle: "Predator's Gaze: How Sociopaths Detect Weakness",
     dialog: [
@@ -554,7 +554,7 @@ const scenes: Scene[] = [
     outcomeType: "bad",
     endingTitle: "Legitimised",
     endingSummary:
-      "The private apology meant nothing. The sidebar meant everything. You took a public cut and responded with a private conversation — which told the rooftop the cut was worth a private conversation. Chase collected the exact reward he was hunting: your focused, exclusive attention, inside one minute. He walks back to the group with the small, satisfied look of a man whose move worked. The next morning two of the six people on that rooftop will repeat the story. In their version you pulled him aside to complain. That's the version that sticks. Pulling him aside was politically correct and socially catastrophic.",
+      "The private apology meant nothing. The sidebar meant everything. You took a public cut and responded with a private conversation, which told the rooftop the cut was worth a private conversation. Chase collected the exact reward he was hunting: your focused, exclusive attention, inside one minute. He walks back to the group with the small, satisfied look of a man whose move worked. The next morning two of the six people on that rooftop will repeat the story. In their version you pulled him aside to complain. That's the version that sticks. Pulling him aside was politically correct and socially catastrophic.",
     failureBlogSlug: "ignore-the-alpha-target-the-omega",
     failureBlogTitle: "Ignore the Alpha, Target the Omega",
     dialog: [
@@ -591,7 +591,7 @@ export const datingMission1: Scenario = {
   tagline:
     "A cutting remark in front of six people. Status is lost in the reaction, not the insult.",
   description:
-    "Rooftop bar. You've been talking to the woman you came to meet. A higher-status man you've met once walks up and cuts you in front of the group — not loudly, not cruelly, just surgically. Three seconds of silence. Everyone turns. Every young man meets this moment once. Handle it with matched aggression and the room brands you volatile. Handle it with nervous denial and you confirm the hit landed. Freeze and the room picks its omega in front of you. There's exactly one clean move — the calm reframe — and it has to land inside ninety seconds or the brand hardens and lasts years.",
+    "Rooftop bar. You've been talking to the woman you came to meet. A higher-status man you've met once walks up and cuts you in front of the group, not loudly, not cruelly, just surgically. Three seconds of silence. Everyone turns. Every young man meets this moment once. Handle it with matched aggression and the room brands you volatile. Handle it with nervous denial and you confirm the hit landed. Freeze and the room picks its omega in front of you. There's exactly one clean move, the calm reframe and it has to land inside ninety seconds or the brand hardens and lasts years.",
   tier: "free",
   track: "male-dating",
   level: 1,
@@ -603,14 +603,14 @@ export const datingMission1: Scenario = {
   badgeId: "frame-held",
   startSceneId: "the-cut",
   tacticsLearned: [
-    "The calm reframe — labelling the cutter without heat",
+    "The calm reframe, labelling the cutter without heat",
     "Silence as status weapon when paired with composure",
     "Refusing the frame instead of fighting it",
     "Not narrating your own win after the reframe lands",
   ],
   redFlagsTaught: [
     "Public negging as status-protection (alpha-testing)",
-    "Peer-coordinated humiliation — the laugh chain",
+    "Peer-coordinated humiliation, the laugh chain",
     "'Just kidding' as the second half of the move",
     "Private sidebars that legitimise public cuts",
   ],

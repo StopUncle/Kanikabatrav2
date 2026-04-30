@@ -8,12 +8,12 @@ import type { DialogLine, Character } from "@/lib/simulator/types";
 /**
  * Splits a dialog line into sentence-length chunks at terminator punctuation
  * (`.`, `!`, `?`, `…`) followed by whitespace. Em-dashes are deliberately
- * NOT split points — they're mid-sentence beats, not sentence ends.
+ * NOT split points, they're mid-sentence beats, not sentence ends.
  *
  * This is the central anti-fatigue move: long DialogLines (the catalogue
  * has lines up to 518 chars) render as multiple sequential chunks instead
- * of one wall of text. The reader gets rhythm — read chunk, beat, next
- * chunk — instead of forcing through a paragraph.
+ * of one wall of text. The reader gets rhythm, read chunk, beat, next
+ * chunk, instead of forcing through a paragraph.
  *
  * Run-of-terminators ("..." or "?!") are preserved as a single terminal
  * so we don't fragment ellipses. Trailing fragments without terminal
@@ -46,7 +46,7 @@ function delayAfter(char: string, baseRate: number): number {
 }
 
 /**
- * Chunked typewriter — types each chunk character-by-character, pauses
+ * Chunked typewriter, types each chunk character-by-character, pauses
  * briefly between chunks (the "beat"), respects punctuation pauses
  * within a chunk. `revealed` is an array of progressively-typed strings,
  * one per chunk. `revealed[i]` is the prefix of `chunks[i]` shown so far.
@@ -62,7 +62,7 @@ function useChunkedTypewriter(text: string) {
 
   // Per-chunk base rate. Short chunks tick at human-comfortable pace;
   // longer chunks tick faster so reveal time stays bounded. Capped so
-  // even a 200-char "chunk" doesn't slap on screen — we still want to
+  // even a 200-char "chunk" doesn't slap on screen, we still want to
   // see the type-on, just at scanning speed.
   function baseRate(chunkLen: number): number {
     if (chunkLen <= 40) return 28;
@@ -149,7 +149,7 @@ type Props = {
   onAdvance: () => void;
   /**
    * Optional skip-scene callback. When present, a small "Skip scene"
-   * button appears alongside Continue — jumps past every remaining
+   * button appears alongside Continue, jumps past every remaining
    * dialog line in the current scene straight to the choices.
    */
   onSkipScene?: () => void;
@@ -168,7 +168,7 @@ export default function DialogBox({
     if (typeof window !== "undefined" && !(window as unknown as { __dialogV2?: boolean }).__dialogV2) {
       (window as unknown as { __dialogV2?: boolean }).__dialogV2 = true;
       // eslint-disable-next-line no-console
-      console.log("[DialogBox] chunked-v2 active — chunks per line:", chunks.length);
+      console.log("[DialogBox] chunked-v2 active, chunks per line:", chunks.length);
     }
   }, [chunks.length]);
 
@@ -202,7 +202,7 @@ export default function DialogBox({
   const bodyStyle = isInnerVoice ? "italic" : "";
   const railColor = isInnerVoice ? "bg-text-gray/30" : "bg-accent-gold/70";
 
-  // Last chunk index that has any text in it — used for the cursor
+  // Last chunk index that has any text in it, used for the cursor
   // placement so the blink lives at the actual reveal frontier.
   const activeChunkIdx = Math.max(
     0,
@@ -220,7 +220,7 @@ export default function DialogBox({
     >
       <div className="relative pl-5">
         {/* Persistent speaker rail. 3px gold (or gray for inner voice)
-            on the left edge of the dialog block — your eye locks onto
+            on the left edge of the dialog block, your eye locks onto
             "who's speaking" without re-reading the label every line. */}
         <span
           aria-hidden
@@ -238,7 +238,7 @@ export default function DialogBox({
         )}
 
         {/* Chunks render as a stack of paragraphs. Each chunk fades in
-            briefly when the typewriter starts populating it — gives a
+            briefly when the typewriter starts populating it, gives a
             chat-stream rhythm even though we're inside a single dialog
             line semantically. The blinking cursor lives only on the
             currently-typing chunk. */}

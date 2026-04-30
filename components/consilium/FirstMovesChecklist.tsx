@@ -13,7 +13,7 @@ import {
 } from "lucide-react";
 
 /**
- * "Your first moves" checklist strip — rendered above the feed for new
+ * "Your first moves" checklist strip, rendered above the feed for new
  * Consilium members. Five tiles covering the highest-leverage first
  * actions: take the quiz, run a simulator scenario, listen to a voice
  * note, pick a display name, leave a comment.
@@ -21,12 +21,12 @@ import {
  * Four of the five tiles read their checked state from DB-backed
  * server signals (passed in via `signals`). The fifth ("Voice Notes —
  * visited?") is purely client-side localStorage since we don't track
- * per-user audio plays. It's decorative — a nudge to open the surface
+ * per-user audio plays. It's decorative, a nudge to open the surface
  * at least once.
  *
  * Auto-hides when every tile is checked OR the member dismisses it
  * via the top-right X. Dismissal is per-device (localStorage) and
- * permanent — once hidden it stays hidden even if fresh items go
+ * permanent. Once hidden it stays hidden even if fresh items go
  * unchecked later. The server-rendered initial state is the
  * authoritative "completed" signal; localStorage only layers on top.
  */
@@ -59,7 +59,7 @@ export default function FirstMovesChecklist({
         window.localStorage.getItem(VOICE_NOTES_SEEN_KEY) === "1",
       );
     } catch {
-      /* private mode / quota — defaults are fine */
+      /* private mode / quota, defaults are fine */
     }
     setHydrated(true);
   }, []);
@@ -85,7 +85,7 @@ export default function FirstMovesChecklist({
       href: "/consilium/voice-notes",
       icon: AudioLines,
       done: voiceNotesSeen,
-      // Stamp localStorage on click — the route visit itself is enough
+      // Stamp localStorage on click, the route visit itself is enough
       // signal for a decorative tile.
       onClick: () => {
         try {
@@ -114,7 +114,7 @@ export default function FirstMovesChecklist({
   const completed = tiles.filter((t) => t.done).length;
   const allDone = completed === tiles.length;
 
-  // Hide entirely when everything is done — the strip has served its
+  // Hide entirely when everything is done, the strip has served its
   // purpose. Also hide before hydration if the server says everything's
   // done; post-hydration we factor in the localStorage-only tile.
   if (!hydrated) {
@@ -132,7 +132,7 @@ export default function FirstMovesChecklist({
     try {
       window.localStorage.setItem(DISMISSED_KEY, "1");
     } catch {
-      /* nothing we can do — hide in-memory */
+      /* nothing we can do, hide in-memory */
     }
     setDismissed(true);
   };
@@ -157,7 +157,7 @@ export default function FirstMovesChecklist({
       </div>
 
       {/* Scrollable row on mobile, 5-column grid on md+. The horizontal
-          scroll is important on phones — forcing a 5-column grid at 375px
+          scroll is important on phones, forcing a 5-column grid at 375px
           would squash the labels past readability. */}
       <div className="flex gap-2.5 overflow-x-auto md:grid md:grid-cols-5 md:overflow-visible -mx-1 px-1 pb-1 scrollbar-thin">
         {tiles.map((tile) => {

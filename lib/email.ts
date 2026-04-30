@@ -17,7 +17,7 @@ const SMTP_USER = process.env.SMTP_USER;
 const SMTP_PASS = process.env.SMTP_PASS;
 const FROM_EMAIL = process.env.FROM_EMAIL || "noreply@kanikarose.com";
 
-// Resend (transactional email service — preferred when configured)
+// Resend (transactional email service, preferred when configured)
 const RESEND_API_KEY = process.env.RESEND_API_KEY;
 const RESEND_FROM_EMAIL = process.env.RESEND_FROM_EMAIL || FROM_EMAIL;
 const resendClient = RESEND_API_KEY ? new Resend(RESEND_API_KEY) : null;
@@ -860,7 +860,7 @@ export const sendCoachingScheduling = async (
 
         <div style="margin-top: 30px; padding: 20px; background: #0a0a0a; border-radius: 8px;">
           <p style="color: #94a3b8; font-style: italic; text-align: center;">
-            "I don't teach you to be passive—I teach you to be strategic."
+            "I don't teach you to be passive. I teach you to be strategic."
           </p>
         </div>
 
@@ -1043,7 +1043,7 @@ export const sendQuizResults = async (
             Your $${c.amount.toFixed(2)} is credited toward The Consilium
           </h3>
           <p style="color: #94a3b8; margin: 0 0 22px 0; font-size: 14px; line-height: 1.7; text-align: center;">
-            Inside: the Dark Mirror Simulator (branching scenarios on the same axes you just scored on), the classroom, voice notes, and a moderated community. Use this code at checkout — it comes off your first month.
+            Inside: the Dark Mirror Simulator (branching scenarios on the same axes you just scored on), the classroom, voice notes, and a moderated community. Use this code at checkout, it comes off your first month.
           </p>
           <div style="background: #050511; border: 1px dashed #d4af37; border-radius: 8px; padding: 18px 20px; text-align: center; margin: 0 0 20px 0;">
             <p style="color: #94a3b8; margin: 0 0 6px 0; font-size: 10px; text-transform: uppercase; letter-spacing: 2px;">
@@ -1390,10 +1390,10 @@ const luxuryEmailShell = (innerHtml: string, headerTitle: string, headerSub: str
     </style>
   </head>
   <body bgcolor="#1a0d11" class="lux-body-wrap" style="margin: 0; padding: 0; background-color: #1a0d11; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; -webkit-font-smoothing: antialiased;">
-    <!-- Hidden preheader — shows as snippet preview next to subject in most
+    <!-- Hidden preheader, shows as snippet preview next to subject in most
          inbox lists. Burns 90 NBSPs so other quoted content doesn't leak in. -->
     <div style="display: none; max-height: 0; overflow: hidden; opacity: 0; visibility: hidden; mso-hide: all; font-size: 1px; line-height: 1px; color: #1a0d11;">
-      A thank-you from Kanika — one month inside The Consilium, on the house.
+      A thank-you from Kanika, one month inside The Consilium, on the house.
       &#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;
     </div>
     <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" bgcolor="#1a0d11" style="background-color: #1a0d11; width: 100%;">
@@ -1436,7 +1436,7 @@ export const sendApplicationConfirmation = async (
       Dear ${esc(applicantName)},
     </p>
     <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 20px 0; font-size: 15px;">
-      Your application to The Consilium has been received. Every applicant is reviewed personally — this is not a community you can buy your way into.
+      Your application to The Consilium has been received. Every applicant is reviewed personally. This is not a community you can buy your way into.
     </p>
     <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="margin: 25px 0;">
       <tr>
@@ -1557,7 +1557,7 @@ export const sendWeeklyDigest = async (
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://kanikarose.com";
 
   // If there's nothing new this week, send a lightweight nudge instead of
-  // a full digest — still valuable for retention but doesn't pretend
+  // a full digest, still valuable for retention but doesn't pretend
   // there's content when there isn't.
   const hasContent =
     data.newPosts.length > 0 ||
@@ -1702,7 +1702,7 @@ export const sendWeeklyDigest = async (
 
   return await sendEmail({
     to: data.memberEmail,
-    subject: `The Consilium — this week in review`,
+    subject: `The Consilium. This week in review`,
     html: luxuryEmailShell(inner, "Weekly Digest", weekRange),
   });
 };
@@ -1756,7 +1756,7 @@ export const sendInnerCircleWelcomeNewUser = async (
 
   return await sendEmail({
     to: userEmail,
-    subject: "Welcome to The Consilium — set your password",
+    subject: "Welcome to The Consilium, set your password",
     html: luxuryEmailShell(inner, "Welcome", "Your account is ready"),
   });
 };
@@ -1874,7 +1874,7 @@ export const sendMembershipRenewed = async (
 
   return await sendEmail({
     to: memberEmail,
-    subject: "Membership renewed — The Consilium",
+    subject: "Membership renewed. The Consilium",
     html: luxuryEmailShell(inner, "Membership Renewed", "The Consilium"),
   });
 };
@@ -1915,7 +1915,7 @@ export const sendMembershipSuspended = async (
 
   return await sendEmail({
     to: memberEmail,
-    subject: "Action needed — Consilium payment failed",
+    subject: "Action needed. Consilium payment failed",
     html: luxuryEmailShell(inner, "Payment Issue", "The Consilium"),
   });
 };
@@ -1991,7 +1991,7 @@ export const sendTrialExpiringSoon = async (
 
 /**
  * Generic "membership ending soon" email. Covers every non-renewing
- * billing cycle — gift (1 month free), bundle-1mo, bundle-3mo, trial.
+ * billing cycle, gift (1 month free), bundle-1mo, bundle-3mo, trial.
  * Paid monthly/annual subscriptions don't use this (Stripe handles renewal).
  *
  * One upgrade CTA → Stripe checkout for the standard $29/mo subscription.
@@ -2037,10 +2037,10 @@ export const sendMembershipEndingSoon = async (
       ${esc(memberName)},
     </p>
     <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 25px 0; font-size: 15px;">
-      Heads-up — your ${esc(cycleLabel)} inside The Consilium ends in <strong style="color: #d4af37;">${daysLeft} day${daysLeft === 1 ? "" : "s"}</strong>. No auto-charge. No surprises. Access just lapses unless you decide to keep it.
+      Heads-up, your ${esc(cycleLabel)} inside The Consilium ends in <strong style="color: #d4af37;">${daysLeft} day${daysLeft === 1 ? "" : "s"}</strong>. No auto-charge. No surprises. Access just lapses unless you decide to keep it.
     </p>
     <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 25px 0; font-size: 15px;">
-      If you've been using it — keep it. The feed, voice notes, classroom, and community carry on at <strong style="color: #d4af37;">$29/month</strong>, cancel anytime.
+      If you've been using it, keep it. The feed, voice notes, classroom, and community carry on at <strong style="color: #d4af37;">$29/month</strong>, cancel anytime.
     </p>
     <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="margin: 0 0 25px 0;">
       <tr>
@@ -2068,7 +2068,7 @@ export const sendMembershipEndingSoon = async (
 };
 
 /**
- * Gift-invite email for past book buyers — thank-you + claim button
+ * Gift-invite email for past book buyers, thank-you + claim button
  * that grants 1 month of Consilium access. The claim link hits the
  * existing /api/consilium/claim-trial endpoint with a token that
  * unlocks membership only when clicked, so the 30-day clock starts
@@ -2126,7 +2126,7 @@ export const sendConsiliumGiftInvite = async (
 
   return await sendEmail({
     to: recipientEmail,
-    subject: "A month inside The Consilium — my thank-you to you",
+    subject: "A month inside The Consilium, my thank-you to you",
     html: luxuryEmailShell(inner, "Thank You", "One month on me"),
   });
 };
@@ -2134,7 +2134,7 @@ export const sendConsiliumGiftInvite = async (
 /**
  * Bonus-month gift for an existing/returning member (e.g. someone whose
  * first gift month lapsed and we want to extend another 30 days). Same
- * signed-token claim flow as the first-time gift — just different copy
+ * signed-token claim flow as the first-time gift, just different copy
  * so it doesn't read as a duplicate of the welcome email.
  */
 export const sendConsiliumBonusMonth = async (
@@ -2184,14 +2184,14 @@ export const sendConsiliumBonusMonth = async (
 
   return await sendEmail({
     to: recipientEmail,
-    subject: "Another month inside The Consilium — on me",
+    subject: "Another month inside The Consilium, on me",
     html: luxuryEmailShell(inner, "A Bonus Month", "Another 30 days, on me"),
   });
 };
 
 // Fired by the Stripe webhook on a successful donation. Stripe sends
 // its own receipt; this is the personal-voice acknowledgement on top.
-// Failure here is non-critical (logged but never thrown) — the
+// Failure here is non-critical (logged but never thrown), the
 // Purchase row is already committed by the time this dispatches.
 export const sendDonationThankYou = async (params: {
   recipientEmail: string;
@@ -2210,7 +2210,7 @@ export const sendDonationThankYou = async (params: {
       Dear ${esc(params.recipientName)},
     </p>
     <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 25px 0; font-size: 15px;">
-      Your donation of <strong style="color: #d4af37;">${esc(formattedAmount)}</strong> came through. Thank you — genuinely. This kind of support is what keeps the writing, the simulator, and the community going.
+      Your donation of <strong style="color: #d4af37;">${esc(formattedAmount)}</strong> came through. Thank you, genuinely. This kind of support is what keeps the writing, the simulator, and the community going.
     </p>
     ${
       params.donorMessage
@@ -2234,13 +2234,13 @@ export const sendDonationThankYou = async (params: {
 
   return await sendEmail({
     to: params.recipientEmail,
-    subject: `Thank you for your donation — ${formattedAmount}`,
+    subject: `Thank you for your donation, ${formattedAmount}`,
     html: luxuryEmailShell(inner, "Thank You", "Your support means everything"),
   });
 };
 
 // Fired when Kanika links a voice note or video to a member-submitted
-// question via /admin/questions. Closes the engagement loop — without
+// question via /admin/questions. Closes the engagement loop, without
 // this email the asker has no reason to come back and check.
 export const sendQuestionAnswered = async (params: {
   recipientEmail: string;

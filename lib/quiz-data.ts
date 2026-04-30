@@ -73,7 +73,7 @@ export const PERSONALITY_PROFILES: Record<PersonalityType, PersonalityProfile> =
       name: "The Predator",
       tagline: "Cold. Calculated. Unstoppable.",
       description:
-        "You operate from a place of complete emotional detachment. Where others feel, you analyze. Where others react, you calculate. This isn't cruelty—it's efficiency. You see human interactions as a chess game, and you're always three moves ahead.",
+        "You operate from a place of complete emotional detachment. Where others feel, you analyze. Where others react, you calculate. This isn't cruelty, it's efficiency. You see human interactions as a chess game, and you're always three moves ahead.",
       traits: [
         "Emotional detachment as default state",
         "Fearlessness in high-stakes situations",
@@ -100,7 +100,7 @@ export const PERSONALITY_PROFILES: Record<PersonalityType, PersonalityProfile> =
       name: "The Wildcard",
       tagline: "Rules were made to be broken.",
       description:
-        "You live by your own code—and only your own code. Society's rules feel like suggestions at best, obstacles at worst. Your emotions run hot, and when provoked, you strike fast. You're not calculating like the psychopath; you're reactive, impulsive, and unapologetically chaotic.",
+        "You live by your own code and only your own code. Society's rules feel like suggestions at best, obstacles at worst. Your emotions run hot, and when provoked, you strike fast. You're not calculating like the psychopath; you're reactive, impulsive, and unapologetically chaotic.",
       traits: [
         "Impulsive decision-making",
         "Disregard for social norms and rules",
@@ -127,7 +127,7 @@ export const PERSONALITY_PROFILES: Record<PersonalityType, PersonalityProfile> =
       name: "The Emperor",
       tagline: "I am the prize. Always.",
       description:
-        "Your self-worth isn't up for debate—it's a fact. You know you're exceptional, and you expect the world to recognize it. Admiration isn't just nice to have; it's oxygen. When it's withheld, you know exactly how to reclaim the spotlight.",
+        "Your self-worth isn't up for debate, it's a fact. You know you're exceptional, and you expect the world to recognize it. Admiration isn't just nice to have; it's oxygen. When it's withheld, you know exactly how to reclaim the spotlight.",
       traits: [
         "Grandiose sense of self-importance",
         "Deep need for admiration and validation",
@@ -154,7 +154,7 @@ export const PERSONALITY_PROFILES: Record<PersonalityType, PersonalityProfile> =
       name: "The Storm",
       tagline: "Feel everything. Fear nothing.",
       description:
-        "You experience emotions at a frequency others can't comprehend. Love is consuming, fear is paralyzing, and anger is volcanic. You're terrified of abandonment, so you test constantly—pushing people away to see who stays.",
+        "You experience emotions at a frequency others can't comprehend. Love is consuming, fear is paralyzing, and anger is volcanic. You're terrified of abandonment, so you test constantly, pushing people away to see who stays.",
       traits: [
         "Intense, rapidly shifting emotions",
         "Fear of real or imagined abandonment",
@@ -181,7 +181,7 @@ export const PERSONALITY_PROFILES: Record<PersonalityType, PersonalityProfile> =
       name: "The Siren",
       tagline: "All eyes on me.",
       description:
-        "You were born for the spotlight, and you know exactly how to command it. Your emotional expressiveness is a performance—and what a performance it is. Attention isn't just wanted; it's required for your existence.",
+        "You were born for the spotlight, and you know exactly how to command it. Your emotional expressiveness is a performance and what a performance it is. Attention isn't just wanted; it's required for your existence.",
       traits: [
         "Constant need to be center of attention",
         "Dramatic emotional expression",
@@ -201,7 +201,7 @@ export const PERSONALITY_PROFILES: Record<PersonalityType, PersonalityProfile> =
         "May feel empty when not performing",
       ],
       relationshipPattern:
-        "You need a partner who makes you feel seen and special—constantly. Relationships feel like a stage where you must always be the star. When they stop applauding, you find a new audience.",
+        "You need a partner who makes you feel seen and special, constantly. Relationships feel like a stage where you must always be the star. When they stop applauding, you find a new audience.",
     },
     neurotypical: {
       type: "neurotypical",
@@ -289,7 +289,7 @@ export const QUIZ_QUESTIONS: QuizQuestion[] = [
       },
       {
         id: "2c",
-        text: "Share something about yourself too—maybe something you shouldn't.",
+        text: "Share something about yourself too, maybe something you shouldn't.",
         type: "sociopathic",
       },
       {
@@ -333,7 +333,7 @@ export const QUIZ_QUESTIONS: QuizQuestion[] = [
       },
       {
         id: "3e",
-        text: "Do something attention-grabbing—spill a drink, get emotional, start drama.",
+        text: "Do something attention-grabbing, spill a drink, get emotional, start drama.",
         type: "histrionic",
       },
     ],
@@ -381,7 +381,7 @@ export const QUIZ_QUESTIONS: QuizQuestion[] = [
     answers: [
       {
         id: "5a",
-        text: "Own it and fix it. Mistakes happen—what matters is the response.",
+        text: "Own it and fix it. Mistakes happen, what matters is the response.",
         type: "neurotypical",
       },
       {
@@ -410,7 +410,7 @@ export const QUIZ_QUESTIONS: QuizQuestion[] = [
     id: 6,
     title: "The Boundary",
     scenario:
-      "Your partner says they need some alone time this weekend—just for themselves. You:",
+      "Your partner says they need some alone time this weekend, just for themselves. You:",
     category: "personality",
     answers: [
       {
@@ -522,7 +522,7 @@ export const QUIZ_QUESTIONS: QuizQuestion[] = [
       },
       {
         id: "9b",
-        text: "Respond warmly. Keep them in your orbit—you never know.",
+        text: "Respond warmly. Keep them in your orbit, you never know.",
         type: "psychopathic",
       },
       {
@@ -537,7 +537,7 @@ export const QUIZ_QUESTIONS: QuizQuestion[] = [
       },
       {
         id: "9e",
-        text: "Tell your partner immediately—in a dramatic way that demands reassurance.",
+        text: "Tell your partner immediately, in a dramatic way that demands reassurance.",
         type: "histrionic",
       },
     ],
@@ -561,7 +561,7 @@ export const QUIZ_QUESTIONS: QuizQuestion[] = [
       },
       {
         id: "10c",
-        text: "Get angry. Their loss—they'll regret this.",
+        text: "Get angry. Their loss, they'll regret this.",
         type: "sociopathic",
       },
       {
@@ -680,7 +680,7 @@ export const QUIZ_QUESTIONS: QuizQuestion[] = [
     id: 14,
     title: "The Test",
     scenario:
-      "Someone gives you access to their private information—passwords, secrets. You:",
+      "Someone gives you access to their private information, passwords, secrets. You:",
     category: "personality",
     answers: [
       {
@@ -841,7 +841,7 @@ export const QUIZ_QUESTIONS: QuizQuestion[] = [
       },
       {
         id: "18e",
-        text: "Partners say I'm too much—too needy, too dramatic, too everything.",
+        text: "Partners say I'm too much, too needy, too dramatic, too everything.",
         type: "histrionic",
       },
     ],

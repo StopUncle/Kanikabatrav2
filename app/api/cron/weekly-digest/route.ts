@@ -24,7 +24,7 @@ import { logger } from "@/lib/logger";
  *
  * Idempotency: the cron fires once per week per the schedule, but if it
  * runs twice within the same week (manual dispatch, retry) members get
- * two emails. That's acceptable — the content is the same, and members
+ * two emails. That's acceptable, the content is the same, and members
  * can opt out via email preferences (toggle in /dashboard settings, or
  * one-click via the unsubscribe link in the digest itself).
  *
@@ -85,7 +85,7 @@ export async function POST(request: NextRequest) {
       }
 
       try {
-        // Gender-scoped FeedPost fetch — same filter the live feed uses.
+        // Gender-scoped FeedPost fetch. Same filter the live feed uses.
         const genderWhere = feedPostGenderWhere(user.gender);
 
         const newPosts = await prisma.feedPost.findMany({

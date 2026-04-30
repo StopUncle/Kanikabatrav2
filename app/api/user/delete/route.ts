@@ -5,7 +5,7 @@ import { stripe } from "@/lib/stripe";
 
 export async function DELETE(request: NextRequest) {
   try {
-    // Ban-aware resolver — deleted / banned / tokenVersion-revoked
+    // Ban-aware resolver, deleted / banned / tokenVersion-revoked
     // accounts are rejected before we ever reach the DB cascade.
     const userId = await resolveActiveUserIdFromRequest(request);
     if (!userId) {
@@ -51,7 +51,7 @@ export async function DELETE(request: NextRequest) {
           "[user/delete] failed to cancel Stripe subscription:",
           err,
         );
-        // Continue with deletion — the user explicitly requested it.
+        // Continue with deletion, the user explicitly requested it.
         // A dangling sub will hit dunning and auto-cancel eventually.
       }
     }

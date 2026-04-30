@@ -54,11 +54,11 @@ export default function VideoPlayer({
 
   const handleStart = () => {
     setStarted(true);
-    // Fire play() on the next tick — by then the controls are mounted
+    // Fire play() on the next tick, by then the controls are mounted
     // and the play() promise won't be interrupted by React's transition.
     requestAnimationFrame(() => {
       videoRef.current?.play().catch(() => {
-        /* Autoplay blocked or user navigated away — fall back to the
+        /* Autoplay blocked or user navigated away, fall back to the
            native controls, which are already visible. */
       });
     });

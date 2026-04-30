@@ -143,7 +143,7 @@ export default function PostsPage() {
 
   async function refreshWelcome() {
     const confirmed = window.confirm(
-      "Refresh the pinned welcome post to the latest house-rules version?\n\nKeeps the same post id — comments and likes carry over.",
+      "Refresh the pinned welcome post to the latest house-rules version?\n\nKeeps the same post id, comments and likes carry over.",
     );
     if (!confirmed) return;
     setFlash(null);

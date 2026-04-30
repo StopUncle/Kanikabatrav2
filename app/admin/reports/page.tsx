@@ -184,7 +184,7 @@ export default function ReportsPage() {
                       </span>
                       {r.reason && (
                         <span className="text-text-gray flex-1">
-                          — {r.reason}
+                         , {r.reason}
                         </span>
                       )}
                       {r.resolvedAt && (
@@ -196,7 +196,7 @@ export default function ReportsPage() {
                   ))}
                 </ul>
 
-                {/* Actions — only on open groups */}
+                {/* Actions, only on open groups */}
                 {filter !== "resolved" && !first.resolvedAt && !isHidden && (
                   <div className="flex items-center gap-2 pt-2 border-t border-white/5">
                     <button

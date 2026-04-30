@@ -160,7 +160,7 @@ export default function MemberBookClient({
             <BookOpen size={20} className="text-accent-gold mt-0.5 shrink-0" />
             <div>
               <p className="text-white font-light text-lg mb-1">
-                You own the book — download window closed
+                You own the book, download window closed
               </p>
               <p className="text-text-gray text-sm">
                 Your original 30-day download window has expired. Request a
@@ -190,7 +190,7 @@ export default function MemberBookClient({
         </div>
       )}
 
-      {/* Case 3: Member doesn't own the book yet — member-price claim CTA */}
+      {/* Case 3: Member doesn't own the book yet, member-price claim CTA */}
       {!ownsBook && (
         <>
           <div className="p-6 sm:p-8 rounded-xl border border-accent-gold/40 bg-gradient-to-br from-deep-burgundy/30 to-deep-black mb-6">
@@ -218,15 +218,15 @@ export default function MemberBookClient({
               </li>
               <li className="flex items-start gap-2 text-text-gray text-sm">
                 <Check size={16} className="text-accent-gold/80 mt-0.5 shrink-0" />
-                <span>70,000 words — the full premium edition, not the Kindle cut</span>
+                <span>70,000 words, the full premium edition, not the Kindle cut</span>
               </li>
               <li className="flex items-start gap-2 text-text-gray text-sm">
                 <Check size={16} className="text-accent-gold/80 mt-0.5 shrink-0" />
-                <span>EPUB + PDF — read on any device</span>
+                <span>EPUB + PDF, read on any device</span>
               </li>
               <li className="flex items-start gap-2 text-text-gray text-sm">
                 <Check size={16} className="text-accent-gold/80 mt-0.5 shrink-0" />
-                <span>30-day download window, 10 downloads — fresh links via the Consilium anytime</span>
+                <span>30-day download window, 10 downloads, fresh links via the Consilium anytime</span>
               </li>
             </ul>
 
@@ -250,7 +250,7 @@ export default function MemberBookClient({
             >
               Kanika@kanikarose.com
             </Link>{" "}
-            — she&apos;ll restore your access.
+           , she&apos;ll restore your access.
           </p>
         </>
       )}

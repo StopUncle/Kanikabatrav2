@@ -1,17 +1,17 @@
 /**
- * pc-5-1 — "The Legal Adult"
+ * pc-5-1, "The Legal Adult"
  *
  * PC-Child track, Level 5, order 1. Finn is twenty. He has been
  * out of the house for fourteen months. The specific incident
- * that prompted the nineteen-year boundary — a threat against his
- * sister, made in daylight, refused-to-take-back when asked — is
+ * that prompted the nineteen-year boundary, a threat against his
+ * sister, made in daylight, refused-to-take-back when asked, is
  * in the household log in your handwriting. Four months ago the
  * structural silence began: no contact, financial support
  * arranged through the trust so there is no gift-giving
  * dependency, a single specific condition named in writing for
  * any re-engagement.
  *
- * Tuesday night, 11:12 p.m. The phone rings. Finn.
+ * Tuesday night, 11:12 p.m. the phone rings. Finn.
  *
  * The scenario is not a reunion. It is a triage of three
  * sentences. The call has approximately one of four shapes. The
@@ -21,7 +21,7 @@
  * actually in.
  *
  * Teaches:
- *  - The first-three-sentences rule — a pc-adult's approach-call
+ *  - The first-three-sentences rule, a pc-adult's approach-call
  *    shape is legible inside the opening move if you listen for
  *    the specific tells
  *  - The named-condition discipline: the condition for
@@ -29,9 +29,9 @@
  *    holds regardless of the register of the call
  *  - The money-ask and the crisis-ask as the two specific
  *    manipulation shapes the pc-adult has most-practised
- *  - The rare genuine approach and what it looks like — the
+ *  - The rare genuine approach and what it looks like, the
  *    scenario takes this possibility seriously
- *  - The proportionate response — neither the wide-open reunion
+ *  - The proportionate response. Neither the wide-open reunion
  *    nor the reflex-refusal, but the specific in-person
  *    daylight meeting with the co-parent present
  *
@@ -71,7 +71,7 @@ const scenes: Scene[] = [
       {
         id: "continue",
         text: "Continue.",
-        tactic: "Tuesday, 11:12 p.m. The phone rings on the nightstand. The name on the screen is Finn.",
+        tactic: "Tuesday, 11:12 p.m. the phone rings on the nightstand. The name on the screen is Finn.",
         nextSceneId: "the-ring",
       },
       {
@@ -91,7 +91,7 @@ const scenes: Scene[] = [
     outcomeType: "neutral",
     endingTitle: "Not Tonight",
     endingLearnPrompt:
-      "The opt-out is a complete move. The scenario will be here. The conditions you bring into a call with a twenty-year-old pc-adult after fourteen months of structural silence need your own bandwidth — the scenario is not one to half-run.",
+      "The opt-out is a complete move. The scenario will be here. The conditions you bring into a call with a twenty-year-old pc-adult after fourteen months of structural silence need your own bandwidth, the scenario is not one to half-run.",
     dialog: [
       {
         speakerId: "inner-voice",
@@ -113,7 +113,7 @@ const scenes: Scene[] = [
     dialog: [
       {
         speakerId: null,
-        text: "Tuesday, 11:12 p.m. You and your partner are in bed, reading. The bedside light on your side is a single warm bulb. The partner's light is already off; they are halfway asleep. Your phone, on the nightstand, rings. The screen shows: FINN — mobile.",
+        text: "Tuesday, 11:12 p.m. you and your partner are in bed, reading. The bedside light on your side is a single warm bulb. The partner's light is already off; they are halfway asleep. Your phone, on the nightstand, rings. The screen shows: FINN, mobile.",
       },
       {
         speakerId: null,
@@ -144,7 +144,7 @@ const scenes: Scene[] = [
       {
         id: "let-voicemail",
         text: "Let it go to voicemail. Listen in the morning.",
-        tactic: "Valid as a regulation move — you are not obliged to answer at 11 p.m. But the morning listen is its own decision-point, and delaying does not change the shape of the call or the correct response.",
+        tactic: "Valid as a regulation move, you are not obliged to answer at 11 p.m. but the morning listen is its own decision-point, and delaying does not change the shape of the call or the correct response.",
         nextSceneId: "voicemail-morning",
         isOptimal: false,
       },
@@ -173,26 +173,26 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "child-5",
-        text: '"Hey. Look — sorry about the hour. I am in a bit of a situation and I did not know who else to call. I am in Manchester and I need fifteen hundred by tomorrow morning or it gets — it gets bigger."',
+        text: '"Hey. Look, sorry about the hour. I am in a bit of a situation and I did not know who else to call. I am in Manchester and I need fifteen hundred by tomorrow morning or it gets, it gets bigger."',
         emotion: "concerned",
       },
       {
         speakerId: "inner-voice",
-        text: "The three sentences are the tell. The shape: an apology for the timing, a claim of nowhere-else-to-turn, a specific money amount with a specific deadline and a vague escalation. This is the crisis-ask register. You have seen the specific shape before — once at seventeen in a taxi at 3 a.m., and once at eighteen in a campus phone booth. The amounts were different; the shape is the same.",
+        text: "The three sentences are the tell. The shape: an apology for the timing, a claim of nowhere-else-to-turn, a specific money amount with a specific deadline and a vague escalation. This is the crisis-ask register. You have seen the specific shape before. Once at seventeen in a taxi at 3 a.m., and once at eighteen in a campus phone booth. The amounts were different; the shape is the same.",
         emotion: "knowing",
       },
     ],
     choices: [
       {
         id: "name-the-shape",
-        text: '"I hear you. I am not transferring money on this call. The channel is the daytime meeting — tell me what the situation actually is, in one sentence, and I will decide from there."',
+        text: '"I hear you. I am not transferring money on this call. The channel is the daytime meeting, tell me what the situation actually is, in one sentence, and I will decide from there."',
         tactic: "Name the money-ask refusal inside the first response. Then redirect to the condition. The 'what is the situation actually' question gives him one attempt to either provide a real specific or to re-run the vague escalation; both produce information.",
         nextSceneId: "asked-the-specific",
         isOptimal: true,
       },
       {
         id: "transfer-the-money",
-        text: '"How do I send it — bank app or card?"',
+        text: '"How do I send it, bank app or card?"',
         tactic: "The transfer is the specific manipulation shape's designed outcome. The fifteen hundred will not be what stops the situation from 'getting bigger'; it will be the funding of the next call. The boundary just collapsed.",
         nextSceneId: "money-sent",
         isOptimal: false,
@@ -215,7 +215,7 @@ const scenes: Scene[] = [
   },
 
   // ===================================================================
-  // ASKED THE SPECIFIC — KEY TRIAGE
+  // ASKED THE SPECIFIC. KEY TRIAGE
   // ===================================================================
   {
     id: "asked-the-specific",
@@ -229,12 +229,12 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "child-5",
-        text: '"It is — someone I owe money to is going to come to my flat tomorrow morning if I do not pay. I do not want to say who. It is not drugs. I just need — I need this to go away."',
+        text: '"It is, someone I owe money to is going to come to my flat tomorrow morning if I do not pay. I do not want to say who. It is not drugs. I just need. I need this to go away."',
         emotion: "concerned",
       },
       {
         speakerId: "inner-voice",
-        text: "The answer is a slight upgrade on the initial vague — 'someone' and a location and a morning deadline. It is still structurally vague. A real emergency, in most cases, has specifics; it has a name, a number, a text you could screenshot. The refusal to specify is itself the second tell.",
+        text: "The answer is a slight upgrade on the initial vague, 'someone' and a location and a morning deadline. It is still structurally vague. A real emergency, in most cases, has specifics; it has a name, a number, a text you could screenshot. The refusal to specify is itself the second tell.",
         emotion: "knowing",
       },
     ],
@@ -249,8 +249,8 @@ const scenes: Scene[] = [
       },
       {
         id: "propose-alternative-route",
-        text: '"If this is genuine, call the police — they handle extortion. If it is not extortion, tell me what it actually is."',
-        tactic: "The police suggestion is correct in spirit but will end the call within one minute. The scenario's question is about the channel, not the outside referral. Closer to the structural answer — hold the condition — than the hand-off, but not as tight.",
+        text: '"If this is genuine, call the police, they handle extortion. If it is not extortion, tell me what it actually is."',
+        tactic: "The police suggestion is correct in spirit but will end the call within one minute. The scenario's question is about the channel, not the outside referral. Closer to the structural answer, hold the condition, than the hand-off, but not as tight.",
         nextSceneId: "police-suggested",
         isOptimal: false,
       },
@@ -272,12 +272,12 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "child-5",
-        text: '"... Alright. I thought you would say that. I — OK. Can we actually do the meeting. The one in the letter."',
+        text: '"... alright. I thought you would say that. I. OK. Can we actually do the meeting. The one in the letter."',
         emotion: "neutral",
       },
       {
         speakerId: "inner-voice",
-        text: "The register just shifted. 'I thought you would say that' is the specific giveaway — he had rehearsed the scenario both ways, and is now pivoting to the other path. The question is whether the pivot is performance (he will cancel the meeting when no money comes), or whether the structural refusal, held clean, just opened the actual channel.",
+        text: "The register just shifted. 'I thought you would say that' is the specific giveaway, he had rehearsed the scenario both ways, and is now pivoting to the other path. The question is whether the pivot is performance (he will cancel the meeting when no money comes), or whether the structural refusal, held clean, just opened the actual channel.",
         emotion: "knowing",
       },
       {
@@ -289,14 +289,14 @@ const scenes: Scene[] = [
     choices: [
       {
         id: "book-specific-meeting",
-        text: '"Good. Saturday at 11 a.m., the cafe on George Street — your mother and me, forty-five minutes. Confirm by email in the next forty-eight hours or the slot releases."',
+        text: '"Good. Saturday at 11 a.m., the cafe on George Street, your mother and me, forty-five minutes. Confirm by email in the next forty-eight hours or the slot releases."',
         tactic: "The structural proposal. Specific time, specific place, specific window for confirmation, specific consequence if unconfirmed. The consequences are not punitive; they are operational. This is the whole skill.",
         nextSceneId: "meeting-proposed",
         isOptimal: true,
       },
       {
         id: "offer-vague-next-week",
-        text: '"Yes — let us do it next week, I will find a time."',
+        text: '"Yes, let us do it next week, I will find a time."',
         tactic: "The vague offer. The vagueness is indulgent and sets up the same 11 p.m. call again to 'confirm the time.' Book the specific slot now.",
         nextSceneId: "vague-meeting-offered",
         isOptimal: false,
@@ -320,7 +320,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: null,
-        text: "The call ends at 11:19 p.m. Seven minutes. You put the phone face-down on the nightstand. Your partner, who has been awake since the second sentence of the call, looks at you.",
+        text: "The call ends at 11:19 p.m. seven minutes. You put the phone face-down on the nightstand. Your partner, who has been awake since the second sentence of the call, looks at you.",
       },
       {
         speakerId: "the-partner",
@@ -354,7 +354,7 @@ const scenes: Scene[] = [
   },
 
   // ===================================================================
-  // LOG AND CLOSE — BEST-PATH ENDING
+  // LOG AND CLOSE. BEST-PATH ENDING
   // ===================================================================
   {
     id: "log-and-close",
@@ -364,7 +364,7 @@ const scenes: Scene[] = [
     dialog: [
       {
         speakerId: null,
-        text: "11:26 p.m. You open the shared log on the laptop. You date the entry. You write: 'Finn called from Manchester, 11:12 p.m. Requested fifteen hundred citing non-specific extortion. Refused money; held named condition; proposed Saturday 11 a.m. cafe-on-George-Street with co-parent present, 45 min, 48h confirm window. Call ended 11:19 p.m. Confirm-email pending.' You save. You close the laptop.",
+        text: "11:26 p.m. you open the shared log on the laptop. You date the entry. You write: 'Finn called from Manchester, 11:12 p.m. requested fifteen hundred citing non-specific extortion. Refused money; held named condition; proposed Saturday 11 a.m. cafe-on-George-Street with co-parent present, 45 min, 48h confirm window. Call ended 11:19 p.m. confirm-email pending.' You save. You close the laptop.",
       },
       {
         speakerId: null,
@@ -398,11 +398,11 @@ const scenes: Scene[] = [
     dialog: [
       {
         speakerId: null,
-        text: "You decline the call. You send the text. 11:13 p.m. The phone shows 'Delivered' and then 'Read' at 11:13. No reply.",
+        text: "You decline the call. You send the text. 11:13 p.m. the phone shows 'Delivered' and then 'Read' at 11:13. No reply.",
       },
       {
         speakerId: "inner-voice",
-        text: "The read-receipt is itself a piece of information. He saw the text. He did not reply. The condition stands. The next move belongs to him — email to book the meeting, or silence.",
+        text: "The read-receipt is itself a piece of information. He saw the text. He did not reply. The condition stands. The next move belongs to him, email to book the meeting, or silence.",
         emotion: "knowing",
       },
       {
@@ -470,19 +470,19 @@ const scenes: Scene[] = [
     dialog: [
       {
         speakerId: "child-5",
-        text: '"... Wow. OK. So I finally call for actual help and you are reading me the pattern. Good to know where I stand."',
+        text: '"... wow. OK. So I finally call for actual help and you are reading me the pattern. Good to know where I stand."',
         emotion: "sad",
       },
       {
         speakerId: "inner-voice",
-        text: "The shape of the response is itself a tell — the injured-retreat move is well-practised. But — importantly — it is also how a genuine call could be received here. The naming was on-register; the timing was before the refusal, which inverted the order.",
+        text: "The shape of the response is itself a tell, the injured-retreat move is well-practised. But, importantly, it is also how a genuine call could be received here. The naming was on-register; the timing was before the refusal, which inverted the order.",
         emotion: "knowing",
       },
     ],
     choices: [
       {
         id: "recover-hold-condition",
-        text: '"The refusal on money stands. If this is real, come to the Saturday meeting — the one in the letter. We will talk about whatever it is then."',
+        text: '"The refusal on money stands. If this is real, come to the Saturday meeting, the one in the letter. We will talk about whatever it is then."',
         tactic: "The recovery move: hold the condition, do not defend the naming, open the correct channel.",
         nextSceneId: "condition-held",
         isOptimal: true,
@@ -502,7 +502,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "inner-voice",
-        text: "The two hundred will not stop the situation from 'getting bigger' — the situation was not real in those specifics. The two hundred did produce the Friday follow-up call. The compromise you offered is the shape the next three conversations will take.",
+        text: "The two hundred will not stop the situation from 'getting bigger', the situation was not real in those specifics. The two hundred did produce the Friday follow-up call. The compromise you offered is the shape the next three conversations will take.",
         emotion: "serious",
       },
     ],
@@ -525,7 +525,7 @@ const scenes: Scene[] = [
     dialog: [
       {
         speakerId: "child-5",
-        text: '"... Right. OK. I am not calling the police. Forget it."',
+        text: '"... right. OK. I am not calling the police. Forget it."',
         emotion: "sad",
       },
       {
@@ -557,7 +557,7 @@ const scenes: Scene[] = [
     dialog: [
       {
         speakerId: null,
-        text: "Wednesday, 7:14 a.m. You listen to the voicemail with your partner present. It is four minutes long. The first three sentences are the same crisis-ask shape as the live call would have been. The next three minutes are progressively more elaborate — a detail about a flatmate, a specific street name in Manchester, a vague reference to 'something worse if I cannot sort this.'",
+        text: "Wednesday, 7:14 a.m. you listen to the voicemail with your partner present. It is four minutes long. The first three sentences are the same crisis-ask shape as the live call would have been. The next three minutes are progressively more elaborate, a detail about a flatmate, a specific street name in Manchester, a vague reference to 'something worse if I cannot sort this.'",
       },
       {
         speakerId: "inner-voice",
@@ -654,7 +654,7 @@ const scenes: Scene[] = [
     choices: [
       {
         id: "firm-up-now",
-        text: '"Actually — Saturday 11 a.m., cafe on George Street, your mother and me, forty-five minutes. Confirm in 48h or the slot releases."',
+        text: '"Actually. Saturday 11 a.m., cafe on George Street, your mother and me, forty-five minutes. Confirm in 48h or the slot releases."',
         tactic: "Firm up on the first correction, not via the follow-up call.",
         nextSceneId: "meeting-proposed",
         isOptimal: true,
@@ -693,7 +693,7 @@ const scenes: Scene[] = [
     dialog: [
       {
         speakerId: "inner-voice",
-        text: "The cynical pre-decide is protective but it is also pre-authoring. If he emails and the meeting happens, you will have walked into Saturday braced for a collapse that does not arrive — and that bracing will be visible at the cafe.",
+        text: "The cynical pre-decide is protective but it is also pre-authoring. If he emails and the meeting happens, you will have walked into Saturday braced for a collapse that does not arrive and that bracing will be visible at the cafe.",
         emotion: "knowing",
       },
     ],
@@ -719,11 +719,11 @@ const scenes: Scene[] = [
     outcomeType: "good",
     endingTitle: "The Door Named, Not Opened",
     endingLearnPrompt:
-      "The twenty-year conversation does not happen on a 11 p.m. phone call. It happens — if it happens — in a daytime meeting you named three months ago in writing. The discipline is to hold the named condition regardless of the register of the call: whether the call is a manipulation shape or a rare genuine approach, the channel is the same. The rare genuine approach will walk through the named channel. The manipulation shape will not. Either way, the answer is the named channel.",
+      "The twenty-year conversation does not happen on a 11 p.m. phone call. It happens, if it happens, in a daytime meeting you named three months ago in writing. The discipline is to hold the named condition regardless of the register of the call: whether the call is a manipulation shape or a rare genuine approach, the channel is the same. The rare genuine approach will walk through the named channel. The manipulation shape will not. Either way, the answer is the named channel.",
     dialog: [
       {
         speakerId: "inner-voice",
-        text: "The Saturday will happen or it will not. The email will come or it will not. The log is written. The partner is briefed. The lights are off. The twenty-year door was named, not opened, tonight — which is the only version of opening it that is not a collapse of the next twenty years.",
+        text: "The Saturday will happen or it will not. The email will come or it will not. The log is written. The partner is briefed. The lights are off. The twenty-year door was named, not opened, tonight, which is the only version of opening it that is not a collapse of the next twenty years.",
         emotion: "knowing",
       },
     ],
@@ -738,11 +738,11 @@ const scenes: Scene[] = [
     outcomeType: "good",
     endingTitle: "The Structural Decline",
     endingLearnPrompt:
-      "Declining the call and restoring the channel in a one-line text is the cleanest version of the Tuesday-night triage. The signal lives entirely in your next forty-eight hours: email arrives, meeting happens; no email, no meeting, no chase. The structural decline is the textbook move when the call at 11 p.m. is not itself the named condition being met.",
+      "Declining the call and restoring the channel in a one-line text is the cleanest version of the Tuesday-night triage. The signal lives entirely in your next forty-eight hours: email arrives, meeting happens; no email, no meeting, no chase. The structural decline is the textbook move when the call at 11 p.m. Is not itself the named condition being met.",
     dialog: [
       {
         speakerId: "inner-voice",
-        text: "Logged, lights off, conditions intact. The Saturday exists in the calendar only if the email arrives. The nineteen-year boundary was load-bearing because you held it — on an 11 p.m. call, at a forty-nine-year-old's bedtime, with your partner breathing quietly across the pillow.",
+        text: "Logged, lights off, conditions intact. The Saturday exists in the calendar only if the email arrives. The nineteen-year boundary was load-bearing because you held it, on an 11 p.m. call, at a forty-nine-year-old's bedtime, with your partner breathing quietly across the pillow.",
         emotion: "knowing",
       },
     ],
@@ -757,9 +757,9 @@ const scenes: Scene[] = [
     outcomeType: "bad",
     endingTitle: "The Funded Iteration",
     failureBlogSlug: "architecture-of-control-how-emotional-dependency-is-built",
-    failureBlogTitle: "Architecture of Control — How Emotional Dependency Is Built",
+    failureBlogTitle: "Architecture of Control. How Emotional Dependency Is Built",
     endingLearnPrompt:
-      "The fifteen hundred does not resolve the situation the call described. It funds the next iteration of the call — approximately four weeks out, with a slightly larger number and a tighter deadline. The nineteen-year boundary is not broken by the money; it is broken by the precedent the money set. The recovery is the log tonight and the held-position on the next call.",
+      "The fifteen hundred does not resolve the situation the call described. It funds the next iteration of the call, approximately four weeks out, with a slightly larger number and a tighter deadline. The nineteen-year boundary is not broken by the money; it is broken by the precedent the money set. The recovery is the log tonight and the held-position on the next call.",
     dialog: [
       {
         speakerId: "inner-voice",
@@ -778,11 +778,11 @@ const scenes: Scene[] = [
     outcomeType: "bad",
     endingTitle: "Withheld From The Co-Parent",
     endingLearnPrompt:
-      "Withholding the money-send from your partner is the specific move that converts one operational failure into two. The co-parent was the co-parent on this exact condition. The withholding is itself the pc-adult's triangulation shape being executed through you — separating you from the one person whose presence made the boundary load-bearing.",
+      "Withholding the money-send from your partner is the specific move that converts one operational failure into two. The co-parent was the co-parent on this exact condition. The withholding is itself the pc-adult's triangulation shape being executed through you, separating you from the one person whose presence made the boundary load-bearing.",
     dialog: [
       {
         speakerId: "inner-voice",
-        text: "Two failures. The money, and the withholding. The triangulation is running now with the parent as vector, not as target. The recovery is a conversation with your partner tomorrow morning — a specific one, named as 'I need to tell you what I did last night and why it was a mistake.'",
+        text: "Two failures. The money, and the withholding. The triangulation is running now with the parent as vector, not as target. The recovery is a conversation with your partner tomorrow morning, a specific one, named as 'I need to tell you what I did last night and why it was a mistake.'",
         emotion: "serious",
         event: "tactic-named:triangulation",
       },
@@ -851,9 +851,9 @@ const scenes: Scene[] = [
 export const pcChild51: Scenario = {
   id: "pc-5-1",
   title: "The Legal Adult",
-  tagline: "Tuesday, 11:12 p.m. The phone rings. The name on the screen is Finn.",
+  tagline: "Tuesday, 11:12 p.m. the phone rings. The name on the screen is Finn.",
   description:
-    "Finn is twenty. Fourteen months since the last contact, four of them structural. A named condition for re-engagement was sent in writing three months ago. Tonight the phone rings at 11:12 p.m. The scenario is not a reunion. It is seven minutes of triage — read the first three sentences, hold the named condition regardless of the call's register, close the loop with a log entry, and leave the Saturday meeting to be the meeting it was always going to be, or the one it was never going to be.",
+    "Finn is twenty. Fourteen months since the last contact, four of them structural. A named condition for re-engagement was sent in writing three months ago. Tonight the phone rings at 11:12 p.m. the scenario is not a reunion. It is seven minutes of triage, read the first three sentences, hold the named condition regardless of the call's register, close the loop with a log entry, and leave the Saturday meeting to be the meeting it was always going to be, or the one it was never going to be.",
   tier: "vip",
   track: "pc-child",
   level: 5,
@@ -866,18 +866,18 @@ export const pcChild51: Scenario = {
   startSceneId: "content-gate",
   prerequisites: ["pc-4-1"],
   tacticsLearned: [
-    "The first-three-sentences triage — a pc-adult's call shape is legible in the opening move",
-    "Hold the named condition regardless of the call's register — the condition was named in writing months ago, it does not adjust tonight",
+    "The first-three-sentences triage, a pc-adult's call shape is legible in the opening move",
+    "Hold the named condition regardless of the call's register, the condition was named in writing months ago, it does not adjust tonight",
     "The specific-slot meeting proposal: time, place, window-to-confirm, consequence-if-unconfirmed",
     "Log the call in the shared document with the specific prediction (next-call date, amount, shape) so the next decision is pre-available",
-    "Brief the co-parent inside the same night — withholding converts one failure into two",
+    "Brief the co-parent inside the same night, withholding converts one failure into two",
   ],
   redFlagsTaught: [
     "The crisis-ask shape: apology for the hour, claim of nowhere-else, specific amount + vague escalation",
     "The compromise-transfer as the designed outcome at a slight discount",
     "The empathy-lead return call that re-opens the register the boundary was built to close",
     "The vague meeting offer that produces the follow-up 11 p.m. call to 'sort the time'",
-    "Pre-deciding (optimistic or cynical) the outcome of the confirmation window — both forms of pre-authoring",
+    "Pre-deciding (optimistic or cynical) the outcome of the confirmation window. Both forms of pre-authoring",
   ],
   characters: [INNER_VOICE, THE_PARTNER, CHILD_5],
   scenes,

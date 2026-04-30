@@ -1,5 +1,5 @@
 /**
- * Dating Line — Mission 4 "The Hoover"
+ * Dating Line. Mission 4 "The Hoover"
  *
  * Teaches: the hoovering cycle. Trauma-bond exploitation. Strategic
  * tears. Future-faking as comeback vector. The neurological pull of
@@ -22,7 +22,7 @@ import { EMBER, COLE, INNER_VOICE_M } from "../../characters-male";
 
 const scenes: Scene[] = [
   // ---------------------------------------------------------------------
-  // PART 1 — the opening. Six weeks of recovery.
+  // PART 1, the opening. Six weeks of recovery.
   // ---------------------------------------------------------------------
   {
     id: "six-weeks-out",
@@ -52,12 +52,12 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "inner-voice",
-        text: "Freeze. Don't touch the phone. That warmth in your chest is not love. It's your nervous system recognising the voice that trained it. The intermittent reinforcement neurologically wired you to light up at contact — good, bad, any contact.",
+        text: "Freeze. Don't touch the phone. That warmth in your chest is not love. It's your nervous system recognising the voice that trained it. The intermittent reinforcement neurologically wired you to light up at contact, good, bad, any contact.",
         emotion: "serious",
       },
       {
         speakerId: "inner-voice",
-        text: "'Not asking for anything' IS the ask. That's the whole play. The calibrated softness, the progress-report framing, the 9:47pm Thursday — nothing here is accidental. This is the hoovering cycle. Textbook.",
+        text: "'Not asking for anything' IS the ask. That's the whole play. The calibrated softness, the progress-report framing, the 9:47pm Thursday, nothing here is accidental. This is the hoovering cycle. Textbook.",
         emotion: "knowing",
       },
     ],
@@ -78,7 +78,7 @@ const scenes: Scene[] = [
       {
         id: "respond-coldly",
         text: '"I\'m glad you\'re doing better." Short. Civil. Then block.',
-        tactic: "The response gives her the opening. Any reply — even a cold one — is a door.",
+        tactic: "The response gives her the opening. Any reply, even a cold one, is a door.",
         nextSceneId: "cold-response-opens-door",
       },
       {
@@ -91,7 +91,7 @@ const scenes: Scene[] = [
   },
 
   // ---------------------------------------------------------------------
-  // PART 2 — Cole arrives. Witnessing breaks the spell.
+  // PART 2. Cole arrives. Witnessing breaks the spell.
   // ---------------------------------------------------------------------
   {
     id: "cole-arrives",
@@ -120,7 +120,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "inner-voice",
-        text: "Everything about that message is a tell. 'I've been in therapy' — future-faking the reform. 'I know I hurt you' — performed accountability, no specifics. 'Not asking for anything' — plausible deniability for the ask. The calibrated softness. She knows your grooves. She built them.",
+        text: "Everything about that message is a tell. 'I've been in therapy', future-faking the reform. 'I know I hurt you', performed accountability, no specifics. 'Not asking for anything', plausible deniability for the ask. The calibrated softness. She knows your grooves. She built them.",
         emotion: "knowing",
       },
     ],
@@ -128,7 +128,7 @@ const scenes: Scene[] = [
       {
         id: "ghost-protocol-now",
         text: "Tell Cole: block her on everything. One sitting. Do it with him watching.",
-        tactic: "Permanent Ghost Protocol. One sitting — piecemeal is weakness. Witness locks it in.",
+        tactic: "Permanent Ghost Protocol. One sitting, piecemeal is weakness. Witness locks it in.",
         nextSceneId: "second-wave",
         isOptimal: true,
       },
@@ -148,7 +148,7 @@ const scenes: Scene[] = [
   },
 
   // ---------------------------------------------------------------------
-  // PART 3A — optimal: the block is done, but the waves keep coming
+  // PART 3A, optimal: the block is done, but the waves keep coming
   // ---------------------------------------------------------------------
   {
     id: "second-wave",
@@ -157,7 +157,7 @@ const scenes: Scene[] = [
     dialog: [
       {
         speakerId: null,
-        text: "You blocked her Thursday night, Cole watching, one sitting. Number, iMessage, WhatsApp, Instagram, Facebook, LinkedIn. You took his phone and blocked her on his too — so she can't go around you. He called it 'closing the perimeter'.",
+        text: "You blocked her Thursday night, Cole watching, one sitting. Number, iMessage, WhatsApp, Instagram, Facebook, LinkedIn. You took his phone and blocked her on his too so she can't go around you. He called it 'closing the perimeter'.",
       },
       {
         speakerId: null,
@@ -174,7 +174,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "inner-voice",
-        text: "She was there on purpose. She sat where you wouldn't see her. 'I'm proud of you' is parental framing — she's restoring the bond by placing herself above you emotionally. The burner number is the giveaway: she's working around the block. This is wave two.",
+        text: "She was there on purpose. She sat where you wouldn't see her. 'I'm proud of you' is parental framing, she's restoring the bond by placing herself above you emotionally. The burner number is the giveaway: she's working around the block. This is wave two.",
         emotion: "knowing",
       },
     ],
@@ -202,7 +202,7 @@ const scenes: Scene[] = [
   },
 
   // ---------------------------------------------------------------------
-  // PART 4 — third wave: breadcrumbing
+  // PART 4, third wave: breadcrumbing
   // ---------------------------------------------------------------------
   {
     id: "third-wave",
@@ -227,12 +227,12 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "inner-voice",
-        text: "Breadcrumbing. Artefacts of the shared life, offered without caption, designed to bypass your words-brain and go straight to memory. The book is a hostage. The dog is the hostage with a heartbeat. No caption is the weapon — she's making you fill in the sentence.",
+        text: "Breadcrumbing. Artefacts of the shared life, offered without caption, designed to bypass your words-brain and go straight to memory. The book is a hostage. The dog is the hostage with a heartbeat. No caption is the weapon, she's making you fill in the sentence.",
         emotion: "serious",
       },
       {
         speakerId: "cole",
-        text: '"She\'s running the playbook, man. The book, the dog, the guilt-object. Don\'t answer. Don\'t even decide whether the book is worth the reply — that\'s the trap. You already decided when you left."',
+        text: '"She\'s running the playbook, man. The book, the dog, the guilt-object. Don\'t answer. Don\'t even decide whether the book is worth the reply, that\'s the trap. You already decided when you left."',
         emotion: "knowing",
       },
     ],
@@ -260,7 +260,7 @@ const scenes: Scene[] = [
   },
 
   // ---------------------------------------------------------------------
-  // PART 5 — fourth wave: strategic tears
+  // PART 5, fourth wave: strategic tears
   // ---------------------------------------------------------------------
   {
     id: "fourth-wave",
@@ -275,20 +275,20 @@ const scenes: Scene[] = [
       },
       {
         speakerId: null,
-        text: "A voice note. Forwarded through a mutual friend — someone you trusted, someone who looks confused and upset when they send it. 'She asked me to send this. I'm sorry. I told her I'd just do it once.'",
+        text: "A voice note. Forwarded through a mutual friend, someone you trusted, someone who looks confused and upset when they send it. 'She asked me to send this. I'm sorry. I told her I'd just do it once.'",
       },
       {
         speakerId: "ember",
-        text: '"I just need five minutes. In person. I know I don\'t deserve it. I\'m not asking for anything back — I just... I can\'t sleep. Please. I\'m begging. Five minutes and then I\'ll leave you alone forever. I promise."',
+        text: '"I just need five minutes. In person. I know I don\'t deserve it. I\'m not asking for anything back. I just... i can\'t sleep. Please. I\'m begging. Five minutes and then I\'ll leave you alone forever. I promise."',
         emotion: "pleading",
       },
       {
         speakerId: null,
-        text: "Her voice breaks twice. Once on 'begging', once on 'alone forever'. You can hear she's been crying before she recorded it. You can also hear — if you listen for it — that the breaks are in the same places the texts were.",
+        text: "Her voice breaks twice. Once on 'begging', once on 'alone forever'. You can hear she's been crying before she recorded it. You can also hear, if you listen for it, that the breaks are in the same places the texts were.",
       },
       {
         speakerId: "inner-voice",
-        text: "Strategic tears. They're real tears — narcissists can cry real tears and still be running a play. What matters is the function, not the sincerity. 'Five minutes in person' is the entire target. She reactivates trauma bonds in 90 seconds of eye contact. You know this. Your body doesn't want you to know it.",
+        text: "Strategic tears. They're real tears, narcissists can cry real tears and still be running a play. What matters is the function, not the sincerity. 'Five minutes in person' is the entire target. She reactivates trauma bonds in 90 seconds of eye contact. You know this. Your body doesn't want you to know it.",
         emotion: "serious",
       },
       {
@@ -327,7 +327,7 @@ const scenes: Scene[] = [
   },
 
   // ---------------------------------------------------------------------
-  // PART 6 — the real choice point
+  // PART 6, the real choice point
   // ---------------------------------------------------------------------
   {
     id: "choice-point",
@@ -345,7 +345,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: null,
-        text: "You do not send it. You seal it in an envelope and put it in the drawer. The writing is for you. The unsent letter is the closure. She doesn't get to be part of your healing. That was her job when she was your partner — it's not her job now.",
+        text: "You do not send it. You seal it in an envelope and put it in the drawer. The writing is for you. The unsent letter is the closure. She doesn't get to be part of your healing. That was her job when she was your partner, it's not her job now.",
       },
       {
         speakerId: "inner-voice",
@@ -374,7 +374,7 @@ const scenes: Scene[] = [
       },
       {
         id: "brief-the-inner-circle",
-        text: "Close the perimeter — and text three closest friends one line: \"she's hoovering, don't pass messages.\"",
+        text: "Close the perimeter and text three closest friends one line: \"she's hoovering, don't pass messages.\"",
         tactic: "Pre-load your allies. Mutuals who've been briefed don't unwittingly become her next channel.",
         nextSceneId: "smear-pivot",
         isOptimal: true,
@@ -390,7 +390,7 @@ const scenes: Scene[] = [
   },
 
   // ---------------------------------------------------------------------
-  // PART 7 — the smear pivot (she reframes publicly when she can't reach)
+  // PART 7, the smear pivot (she reframes publicly when she can't reach)
   // ---------------------------------------------------------------------
   {
     id: "smear-pivot",
@@ -400,11 +400,11 @@ const scenes: Scene[] = [
     dialog: [
       {
         speakerId: null,
-        text: "Two weeks after the last block. You've stopped checking. Cole checks for you — the mutuals' feeds, the visible-to-mutuals stories, the shape of her online footprint.",
+        text: "Two weeks after the last block. You've stopped checking. Cole checks for you, the mutuals' feeds, the visible-to-mutuals stories, the shape of her online footprint.",
       },
       {
         speakerId: "cole",
-        text: '"Heads up. She just posted — visible to mutuals only, so she knows you\'re not watching — something about \'men who can\'t handle accountability\'. Long caption. No names. Your face is the name. Classic smear pivot."',
+        text: '"Heads up. She just posted, visible to mutuals only, so she knows you\'re not watching, something about \'men who can\'t handle accountability\'. Long caption. No names. Your face is the name. Classic smear pivot."',
         emotion: "knowing",
       },
       {
@@ -417,7 +417,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "inner-voice",
-        text: "The smear pivot is the sign you're winning. She's re-framing the story because she can't restore access to the supply. The public narrative is her consolation prize — and it's yours to ignore. The moment you engage, you lose. The moment you explain yourself to anyone who believes her, you lose. Let the story die in a room you're not in.",
+        text: "The smear pivot is the sign you're winning. She's re-framing the story because she can't restore access to the supply. The public narrative is her consolation prize and it's yours to ignore. The moment you engage, you lose. The moment you explain yourself to anyone who believes her, you lose. Let the story die in a room you're not in.",
         emotion: "knowing",
       },
       {
@@ -450,7 +450,7 @@ const scenes: Scene[] = [
   },
 
   // ---------------------------------------------------------------------
-  // BAD BRANCHES — each of these is the realistic catastrophe
+  // BAD BRANCHES. Each of these is the realistic catastrophe
   // ---------------------------------------------------------------------
   {
     id: "the-lingering",
@@ -467,7 +467,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "inner-voice",
-        text: "The lingering IS the relationship, run at lower bandwidth. You are dating the thread. She hasn't had to type another word and she's already back in your life. Congratulations — you found the saddest version of not-breaking-up.",
+        text: "The lingering IS the relationship, run at lower bandwidth. You are dating the thread. She hasn't had to type another word and she's already back in your life. Congratulations, you found the saddest version of not-breaking-up.",
         emotion: "sad",
       },
     ],
@@ -489,12 +489,12 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "ember",
-        text: '"Thank you for responding. I know you didn\'t have to. It means more than you know. I wanted to tell you — my therapist asked me to write you a letter as part of my work. Not to send. But could I read it to you? Just once."',
+        text: '"Thank you for responding. I know you didn\'t have to. It means more than you know. I wanted to tell you, my therapist asked me to write you a letter as part of my work. Not to send. But could I read it to you? Just once."',
         emotion: "sad",
       },
       {
         speakerId: "inner-voice",
-        text: "The reply — even the cold one — was the acknowledgement she needed to build the next ask on. 'My therapist asked me' is future-faking dressed in clinical language. Any reply is a door. You just taught her which doors open.",
+        text: "The reply, even the cold one, was the acknowledgement she needed to build the next ask on. 'My therapist asked me' is future-faking dressed in clinical language. Any reply is a door. You just taught her which doors open.",
         emotion: "sad",
       },
     ],
@@ -512,7 +512,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "inner-voice",
-        text: "Ninety-second reply time means she was watching her phone. The voice on the other end is the one you missed in the recovery — she knows exactly which register to use. Your body says 'relief'. Your body is wrong.",
+        text: "Ninety-second reply time means she was watching her phone. The voice on the other end is the one you missed in the recovery, she knows exactly which register to use. Your body says 'relief'. Your body is wrong.",
         emotion: "sad",
       },
     ],
@@ -530,7 +530,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: null,
-        text: "Then a third. Then a fourth. No barrier, no friction — every message reopens the file.",
+        text: "Then a third. Then a fourth. No barrier, no friction. Every message reopens the file.",
       },
       {
         speakerId: "inner-voice",
@@ -552,7 +552,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "ember",
-        text: '"I understand. I just want to say one thing before we never speak again — I loved you. Really loved you. I\'ll carry that. Take care of yourself."',
+        text: '"I understand. I just want to say one thing before we never speak again. I loved you. Really loved you. I\'ll carry that. Take care of yourself."',
         emotion: "sad",
       },
       {
@@ -640,7 +640,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: null,
-        text: "She looks exactly the way she looked the night you met. She has made sure of this. She does not cry when you expect her to. She is calm. She apologises specifically — by name for three things you'd stopped expecting anyone to ever acknowledge.",
+        text: "She looks exactly the way she looked the night you met. She has made sure of this. She does not cry when you expect her to. She is calm. She apologises specifically, by name for three things you'd stopped expecting anyone to ever acknowledge.",
       },
       {
         speakerId: "ember",
@@ -713,7 +713,7 @@ const scenes: Scene[] = [
     outcomeType: "good",
     endingTitle: "Permanent Ghost Protocol",
     endingSummary:
-      "Three months since the first 9:47pm text. You are unrecognisable to yourself. You sleep eight hours. You lift five days a week. You closed a deal at work you couldn't have closed eight weeks ago, because your attention was not being eaten alive in a back room of your brain. The hoovering cycle ran its full course — four waves, a smear pivot, an attempted lobby ambush — and met a wall every time. The wall is the protocol, not your willpower. That's the lesson. You don't white-knuckle a hoover. You build a system that doesn't let it reach you and you let the system do the work while you do the living.\n\nOne day, a year from now, you'll realise you haven't thought about her in eleven days. That's what recovery looks like. Not closure. Not resolution. Just the quiet growing in the space she used to occupy.",
+      "Three months since the first 9:47pm text. You are unrecognisable to yourself. You sleep eight hours. You lift five days a week. You closed a deal at work you couldn't have closed eight weeks ago, because your attention was not being eaten alive in a back room of your brain. The hoovering cycle ran its full course. Four waves, a smear pivot, an attempted lobby ambush and met a wall every time. The wall is the protocol, not your willpower. That's the lesson. You don't white-knuckle a hoover. You build a system that doesn't let it reach you and you let the system do the work while you do the living.\n\nOne day, a year from now, you'll realise you haven't thought about her in eleven days. That's what recovery looks like. Not closure. Not resolution. Just the quiet growing in the space she used to occupy.",
     dialog: [
       {
         speakerId: "inner-voice",
@@ -731,13 +731,13 @@ const scenes: Scene[] = [
     outcomeType: "bad",
     endingTitle: "You Went Back",
     endingSummary:
-      "Ten days after the meeting, you're back in her apartment. Three weeks after that, she pulls the behaviour that made you leave the first time — now with six weeks of alibi built up: 'I'm still healing.' Six months later, you leave again, worse than the first time. The trauma bond is a groove that deepens every time you re-enter it. Fourteen more months of your life will be spent untangling this. Your thirties will not come back.\n\nThe hoover didn't trick you. It found the one part of you that was still willing to believe in the reform, and it pressed exactly there. That part of you is not weakness — it's the part that can love. You didn't need to kill it. You needed to not hand it the phone.",
+      "Ten days after the meeting, you're back in her apartment. Three weeks after that, she pulls the behaviour that made you leave the first time, now with six weeks of alibi built up: 'I'm still healing.' Six months later, you leave again, worse than the first time. The trauma bond is a groove that deepens every time you re-enter it. Fourteen more months of your life will be spent untangling this. Your thirties will not come back.\n\nThe hoover didn't trick you. It found the one part of you that was still willing to believe in the reform, and it pressed exactly there. That part of you is not weakness, it's the part that can love. You didn't need to kill it. You needed to not hand it the phone.",
     failureBlogSlug: "why-narcissists-always-come-back-hoovering-cycle",
     failureBlogTitle: "Why Narcissists Always Come Back: The Hoovering Cycle",
     dialog: [
       {
         speakerId: "inner-voice",
-        text: "The body read relief. The body was wrong. You knew — and you went anyway. That's the part to study.",
+        text: "The body read relief. The body was wrong. You knew and you went anyway. That's the part to study.",
         emotion: "sad",
       },
     ],
@@ -751,13 +751,13 @@ const scenes: Scene[] = [
     outcomeType: "bad",
     endingTitle: "Supply, at Lower Bandwidth",
     endingSummary:
-      "You never went back — not physically, not fully. But four months later, the texts are still a feature of your week. New numbers, old grooves. One reply in eight sends her into a crying voice note; one ignored week sends her to a mutual. You've become her background operating system — a source of intermittent reinforcement she can tap whenever her primary supply runs low.\n\nYou aren't in the relationship. You're in the aftertaste of it, stretched thin over four months of your life. The thing you call 'staying civil' is what she calls 'keeping him warm'. There's still time to close the perimeter. But every week you don't, the groove deepens.",
+      "You never went back, not physically, not fully. But four months later, the texts are still a feature of your week. New numbers, old grooves. One reply in eight sends her into a crying voice note; one ignored week sends her to a mutual. You've become her background operating system, a source of intermittent reinforcement she can tap whenever her primary supply runs low.\n\nYou aren't in the relationship. You're in the aftertaste of it, stretched thin over four months of your life. The thing you call 'staying civil' is what she calls 'keeping him warm'. There's still time to close the perimeter. But every week you don't, the groove deepens.",
     failureBlogSlug: "narcissistic-hoovering-explained",
     failureBlogTitle: "Narcissistic Hoovering Explained",
     dialog: [
       {
         speakerId: "inner-voice",
-        text: "You can be polite and still be supply. The polite version of this is the most efficient version — for her.",
+        text: "You can be polite and still be supply. The polite version of this is the most efficient version, for her.",
         emotion: "sad",
       },
     ],
@@ -769,9 +769,9 @@ const scenes: Scene[] = [
     mood: "cold",
     isEnding: true,
     outcomeType: "neutral",
-    endingTitle: "You Didn't Go Back — But You Never Closed It",
+    endingTitle: "You Didn't Go Back. But You Never Closed It",
     endingSummary:
-      "A year goes by. You did not meet her. You did not sleep with her. You did not reply to the voice note. On the outside, you recovered. On the inside, you carried her around for twelve months — the unblocked thread, the unchecked mutuals, the half-memory that kept you from fully meeting the woman you dated six weeks ago and couldn't quite feel anything for.\n\nThis is the quiet ending. Not catastrophe — just a muted year. The cost isn't what happened. It's what didn't. The second woman didn't stand a chance because half of you was still narrating to a ghost. Next time the hoover arrives — in a friend's story, in your own memory — you'll know: the lingering IS the relationship. Close the perimeter fully, or carry her for a year.",
+      "A year goes by. You did not meet her. You did not sleep with her. You did not reply to the voice note. On the outside, you recovered. On the inside, you carried her around for twelve months, the unblocked thread, the unchecked mutuals, the half-memory that kept you from fully meeting the woman you dated six weeks ago and couldn't quite feel anything for.\n\nThis is the quiet ending. Not catastrophe, just a muted year. The cost isn't what happened. It's what didn't. The second woman didn't stand a chance because half of you was still narrating to a ghost. Next time the hoover arrives, in a friend's story, in your own memory, you'll know: the lingering IS the relationship. Close the perimeter fully, or carry her for a year.",
     failureBlogSlug: "narcissistic-hoovering-explained",
     failureBlogTitle: "Narcissistic Hoovering Explained",
     dialog: [
@@ -791,7 +791,7 @@ const scenes: Scene[] = [
     outcomeType: "bad",
     endingTitle: "You Entered the Fight She Wanted",
     endingSummary:
-      "You posted. You messaged mutuals. You explained. The story branched into camps within seventy-two hours. She fed the fire with a second post — softer, the wounded party now. Her camp grew. Yours shrank, because the people who know you best don't engage with this kind of thing, and the people who engage with this kind of thing never knew you.\n\nThe smear pivot is a trap that closes only when you reach for it. You reached. Six months later you're still lightly defending yourself at parties, and she's dating a man who thinks he's rescuing her from a vindictive ex. Living well was the entire counter-narrative. You spent it on a rebuttal.",
+      "You posted. You messaged mutuals. You explained. The story branched into camps within seventy-two hours. She fed the fire with a second post, softer, the wounded party now. Her camp grew. Yours shrank, because the people who know you best don't engage with this kind of thing, and the people who engage with this kind of thing never knew you.\n\nThe smear pivot is a trap that closes only when you reach for it. You reached. Six months later you're still lightly defending yourself at parties, and she's dating a man who thinks he's rescuing her from a vindictive ex. Living well was the entire counter-narrative. You spent it on a rebuttal.",
     failureBlogSlug: "why-narcissists-always-come-back-hoovering-cycle",
     failureBlogTitle: "Why Narcissists Always Come Back: The Hoovering Cycle",
     dialog: [
@@ -810,7 +810,7 @@ export const datingMission4: Scenario = {
   tagline:
     "Six weeks out. She's reformed. She's in therapy. She misses you. Your nervous system forgets what she did.",
   description:
-    "Six weeks since you left. The chest-tightness is mostly gone. Then a text at 9:47pm Thursday: 'I've been in therapy. I just needed you to know. Not asking for anything.' Your whole body goes warm. This is the hoovering cycle, and it doesn't run on your intellect — it runs on grooves she spent two years cutting into your nervous system. Recognise it before you respond, build a protocol instead of a decision, and let the system do the work while you do the living. Or meet her for 'just five minutes' and lose the next fourteen months.",
+    "Six weeks since you left. The chest-tightness is mostly gone. Then a text at 9:47pm Thursday: 'I've been in therapy. I just needed you to know. Not asking for anything.' Your whole body goes warm. This is the hoovering cycle, and it doesn't run on your intellect, it runs on grooves she spent two years cutting into your nervous system. Recognise it before you respond, build a protocol instead of a decision, and let the system do the work while you do the living. Or meet her for 'just five minutes' and lose the next fourteen months.",
   tier: "premium",
   track: "male-dating",
   level: 4,
@@ -825,7 +825,7 @@ export const datingMission4: Scenario = {
     "Recognising the four-wave hoovering cycle in real time",
     "Permanent Ghost Protocol: one-sitting block with a witness",
     "Refusing the 'closure conversation' as a self-sabotage move",
-    "Writing the unsent letter — closure as something you give yourself",
+    "Writing the unsent letter, closure as something you give yourself",
     "Ignoring the smear pivot instead of entering the public fight",
   ],
   redFlagsTaught: [

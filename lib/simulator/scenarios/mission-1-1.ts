@@ -1,5 +1,5 @@
 /**
- * Mission 1-1 — "The Morning After"
+ * Mission 1-1, "The Morning After"
  *
  * Ported from SocialApp/content/simulator/scenarios/mission-1-1/.
  * Original structure was one metadata + morning + coffee + 3 endings files.
@@ -15,7 +15,7 @@ import { ALEX, DANA, PRIYA, INNER_VOICE } from "../characters";
 
 const scenes: Scene[] = [
   // ---------------------------------------------------------------------
-  // PART 1 — Morning (apartment)
+  // PART 1. Morning (apartment)
   // ---------------------------------------------------------------------
   {
     id: "wake-up",
@@ -24,7 +24,7 @@ const scenes: Scene[] = [
     dialog: [
       {
         speakerId: null,
-        text: "The blinds slice your face into stripes. Your phone is already warm against the sheet — someone has been pinging since sometime before six.",
+        text: "The blinds slice your face into stripes. Your phone is already warm against the sheet, someone has been pinging since sometime before six.",
         emotion: "neutral",
       },
       {
@@ -59,7 +59,7 @@ const scenes: Scene[] = [
       },
       {
         id: "scroll-feeds",
-        text: "Open Instagram — see what people posted about the gala",
+        text: "Open Instagram, see what people posted about the gala",
         nextSceneId: "alex-ambush",
         feedback: "Other people's framing of your night, before yours. Watch what that costs you next.",
       },
@@ -70,7 +70,7 @@ const scenes: Scene[] = [
     id: "phone-messages",
     backgroundId: "text-screen",
     dialog: [
-      { speakerId: null, text: 'PRIYA: "Hey! No pressure on replying. Coffee later if you are free — Campus Bean, I am there most mornings. I was at the Collins table last night."' },
+      { speakerId: null, text: 'PRIYA: "Hey! No pressure on replying. Coffee later if you are free. Campus Bean, I am there most mornings. I was at the Collins table last night."' },
       { speakerId: null, text: 'UNKNOWN: "Saw you talking to Maris. Impressive. We should connect."' },
       { speakerId: null, text: 'ALEX: "BRO. WHERE did you disappear to?? Heard you were at THE gala?? Call me"' },
       {
@@ -99,7 +99,7 @@ const scenes: Scene[] = [
       },
       {
         id: "reply-alex-first",
-        text: "Reply to Alex first — he's the loudest, get him handled",
+        text: "Reply to Alex first, he's the loudest, get him handled",
         nextSceneId: "alex-ambush",
         feedback: "The cheapest conversation. Might be the most expensive.",
       },
@@ -113,7 +113,7 @@ const scenes: Scene[] = [
         id: "mute-and-shower",
         text: "Mute the thread. Shower. Come back to all three later.",
         nextSceneId: "alex-ambush",
-        feedback: "Boundary set at 8 am. Morgan will ask Alex next — that's her problem, not yours.",
+        feedback: "Boundary set at 8 am. Morgan will ask Alex next, that's her problem, not yours.",
         isOptimal: true,
       },
     ],
@@ -197,12 +197,12 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "inner-voice",
-        text: "Note what did not happen in that reply. They did not answer the question. They did not give a name. They did not say where they saw you. They moved the conversation forward by asking a question of their own — and the question they asked was specific in exactly one direction: extract detail from you.",
+        text: "Note what did not happen in that reply. They did not answer the question. They did not give a name. They did not say where they saw you. They moved the conversation forward by asking a question of their own and the question they asked was specific in exactly one direction: extract detail from you.",
         emotion: "concerned",
       },
       {
         speakerId: "inner-voice",
-        text: "This pattern has a name. Information laundering — a person without standing to ask for something specific uses a vague intro to pull the specific out of the other party. The thing they actually want is in the second sentence, never the first. The word 'exactly' is the tell.",
+        text: "This pattern has a name. Information laundering, a person without standing to ask for something specific uses a vague intro to pull the specific out of the other party. The thing they actually want is in the second sentence, never the first. The word 'exactly' is the tell.",
         emotion: "knowing",
       },
     ],
@@ -270,7 +270,7 @@ const scenes: Scene[] = [
       },
       {
         id: "change-subject-alex",
-        text: "\"Forget that — did the Collins pitch get any traction?\"",
+        text: "\"Forget that, did the Collins pitch get any traction?\"",
         nextSceneId: "alex-satisfied",
         feedback: "Redirect to his favourite topic: himself. He'll take the new scent.",
         isOptimal: true,
@@ -417,7 +417,7 @@ const scenes: Scene[] = [
   },
 
   // ---------------------------------------------------------------------
-  // PART 2 — Coffee (coffee shop)
+  // PART 2. Coffee (coffee shop)
   // ---------------------------------------------------------------------
   {
     id: "coffee-arrival",
@@ -476,9 +476,9 @@ const scenes: Scene[] = [
       },
       {
         id: "deflect-praise",
-        text: '"I don\'t know what you saw — I was just trying not to say anything dumb."',
+        text: '"I don\'t know what you saw. I was just trying not to say anything dumb."',
         nextSceneId: "priya-bond",
-        feedback: "Self-deprecation is its own tell. She'll read it as honest — or as soft.",
+        feedback: "Self-deprecation is its own tell. She'll read it as honest or as soft.",
       },
     ],
   },
@@ -593,7 +593,7 @@ const scenes: Scene[] = [
       { speakerId: "priya", text: "...", emotion: "concerned" },
       {
         speakerId: "inner-voice",
-        text: "Dana opened with a compliment she does not actually know the evidence for — 'made quite an impression' is a frame she is selling, not a fact she witnessed. Her second sentence, 'Maris doesn't talk to just anyone,' is the same move in reverse — flattering Maris to imply you are now in her circle, so you will speak as though you are.",
+        text: "Dana opened with a compliment she does not actually know the evidence for, 'made quite an impression' is a frame she is selling, not a fact she witnessed. Her second sentence, 'Maris doesn't talk to just anyone,' is the same move in reverse, flattering Maris to imply you are now in her circle, so you will speak as though you are.",
         emotion: "knowing",
       },
       {
@@ -624,7 +624,7 @@ const scenes: Scene[] = [
       },
       {
         id: "priya-intercepts",
-        text: '(Let Priya answer — she\'s been quiet but she\'s watching)',
+        text: '(Let Priya answer, she\'s been quiet but she\'s watching)',
         nextSceneId: "dana-deflects",
         feedback: "Yield the floor to your ally. Priya handles Dana; you stay out of the record.",
         isOptimal: true,
@@ -787,7 +787,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "inner-voice",
-        text: "The word Priya just used is collector. It is an actual archetype, and once you see it you see it everywhere — the party guest who remembers every promotion, every engagement, every grudge, and produces them at the right moment. Collectors are not inherently hostile. They become hostile when the person they are collecting on becomes competition.",
+        text: "The word Priya just used is collector. It is an actual archetype, and once you see it you see it everywhere, the party guest who remembers every promotion, every engagement, every grudge, and produces them at the right moment. Collectors are not inherently hostile. They become hostile when the person they are collecting on becomes competition.",
         emotion: "knowing",
       },
       {
@@ -833,13 +833,13 @@ const scenes: Scene[] = [
     dialog: [
       {
         speakerId: "priya",
-        text: '"First rule — never brag about access. The second you do, you become a mark."',
+        text: '"First rule, never brag about access. The second you do, you become a mark."',
         emotion: "serious",
       },
       { speakerId: null, text: "She sips her coffee. Waits for that to land." },
       {
         speakerId: "priya",
-        text: '"Second — what someone tells you in private stays private. Even if it seems harmless."',
+        text: '"Second, what someone tells you in private stays private. Even if it seems harmless."',
         emotion: "serious",
       },
       {
@@ -912,21 +912,21 @@ const scenes: Scene[] = [
     outcomeType: "good",
     endingTitle: "Reputation Intact",
     endingSummary:
-      "You navigated the post-gala morning without spending any social capital. You did not brag. You did not leak. You made Priya a real ally, and Dana Morrison got exactly nothing to move against you with. The unknown number is still on your phone, unreturned — and a cream-stock card from the gala is sitting face-up on your desk. Thursday, 7 p.m., rooftop. The next move is not at the coffee shop. The next move is at the bar you have not decided yet whether to walk into.",
+      "You navigated the post-gala morning without spending any social capital. You did not brag. You did not leak. You made Priya a real ally, and Dana Morrison got exactly nothing to move against you with. The unknown number is still on your phone, unreturned and a cream-stock card from the gala is sitting face-up on your desk. Thursday, 7 p.m., rooftop. The next move is not at the coffee shop. The next move is at the bar you have not decided yet whether to walk into.",
     dialog: [
-      { speakerId: null, text: "You walk back from Campus Bean. Your coat smells like Priya's apartment — rosemary, something burnt earlier in the week, the standard student-flat perfume." },
+      { speakerId: null, text: "You walk back from Campus Bean. Your coat smells like Priya's apartment, rosemary, something burnt earlier in the week, the standard student-flat perfume." },
       {
         speakerId: null,
         text: "On your desk: the card Maris slid between your glasses last night. Cream stock. No title. Just a number. You have not touched it this morning.",
       },
       {
         speakerId: "inner-voice",
-        text: "You passed your first morning. That is not a small thing. The people who fail here fail in one of two ways — they brag the win into the ground, or they hand the win to the first person who asks about it. You did neither. That is a small, specific discipline, and you would be surprised how few people have it at your age.",
+        text: "You passed your first morning. That is not a small thing. The people who fail here fail in one of two ways, they brag the win into the ground, or they hand the win to the first person who asks about it. You did neither. That is a small, specific discipline, and you would be surprised how few people have it at your age.",
         emotion: "knowing",
       },
       {
         speakerId: "inner-voice",
-        text: "The card on the desk is not a question yet. It will be by Thursday. You have almost five days to decide who you want to be when you walk into that bar — or whether you want to walk into it at all.",
+        text: "The card on the desk is not a question yet. It will be by Thursday. You have almost five days to decide who you want to be when you walk into that bar or whether you want to walk into it at all.",
         emotion: "knowing",
       },
       {
@@ -969,12 +969,12 @@ const scenes: Scene[] = [
     failureBlogTitle: "Narcissist Playbook: How They Actually Operate",
     endingTitle: "Information Weaponized",
     endingSummary:
-      "You shared private information with someone who shouldn't have it. Whether it was the unknown texter or Dana Morrison, the result is the same — your words have been twisted and spread. You're now known as someone who can't keep secrets.",
+      "You shared private information with someone who shouldn't have it. Whether it was the unknown texter or Dana Morrison, the result is the same, your words have been twisted and spread. You're now known as someone who can't keep secrets.",
     dialog: [
       { speakerId: null, text: "Within days, a distorted version of what you said is campus gossip." },
-      { speakerId: null, text: "People look at you differently now. Not with respect — with caution." },
+      { speakerId: null, text: "People look at you differently now. Not with respect, with caution." },
       { speakerId: null, text: 'Dana texts with fake sympathy: "OMG I heard! That\'s SO unfair."' },
-      { speakerId: null, text: "Maris unfollowed you. Three months of careful positioning — gone." },
+      { speakerId: null, text: "Maris unfollowed you. Three months of careful positioning, gone." },
       {
         speakerId: "inner-voice",
         text: "You handed them the knife. They didn't hesitate.",
@@ -989,7 +989,7 @@ export const mission11: Scenario = {
   title: "The Morning After",
   tagline: "The gala is over. The game has just begun.",
   description:
-    "You wake up the day after the Caldwell Gala. Your phone is buzzing with messages from people you met — and people you didn't know were watching. How you handle this attention will define your next move.",
+    "You wake up the day after the Caldwell Gala. Your phone is buzzing with messages from people you met and people you didn't know were watching. How you handle this attention will define your next move.",
   tier: "free",
   level: 1,
   order: 1,

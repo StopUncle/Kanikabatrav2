@@ -17,7 +17,7 @@ export async function generateMetadata({ params }: { params: Promise<{ postId: s
   });
 
   return {
-    title: post ? `${post.title} — The Consilium | Kanika Batra` : "Post — The Consilium",
+    title: post ? `${post.title}. The Consilium | Kanika Batra` : "Post. The Consilium",
     description: "A post from the Consilium council.",
   };
 }

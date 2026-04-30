@@ -67,7 +67,7 @@ export default function LinksPage() {
   const [checkoutError, setCheckoutError] = useState<string | null>(null);
   const [landingVideoPlaying, setLandingVideoPlaying] = useState(false);
 
-  // Stripe checkout for the premium book — matches the BookShowcase /
+  // Stripe checkout for the premium book, matches the BookShowcase /
   // /book flow so webhook-driven book delivery, quiz unlock, email
   // sequence, and gift-campaign eligibility all fire the same way
   // whether the buyer arrives from the homepage or the linkinbio page.
@@ -86,12 +86,12 @@ export default function LinksPage() {
       });
       const data = await res.json();
       if (!res.ok || !data.checkoutUrl) {
-        throw new Error(data.error || "Checkout unavailable — try again.");
+        throw new Error(data.error || "Checkout unavailable, try again.");
       }
       window.location.href = data.checkoutUrl;
     } catch (err) {
       setCheckoutError(
-        err instanceof Error ? err.message : "Checkout unavailable — try again.",
+        err instanceof Error ? err.message : "Checkout unavailable, try again.",
       );
       setCheckoutLoading(false);
     }
@@ -244,7 +244,7 @@ export default function LinksPage() {
               boxShadow: "0 0 20px rgba(212,175,55,0.2), 0 4px 15px rgba(0,0,0,0.3)",
             }}
           >
-            {checkoutLoading ? "Opening checkout…" : "Buy Now — $24.99"}
+            {checkoutLoading ? "Opening checkout…" : "Buy Now, $24.99"}
           </button>
           {checkoutError && (
             <p className="text-[#f87171] text-xs text-center">{checkoutError}</p>
@@ -256,7 +256,7 @@ export default function LinksPage() {
             rel="noopener noreferrer"
             className="block w-full text-center py-3.5 rounded-full text-sm font-medium text-[#94a3b8] border border-[#1e1915] hover:border-[#d4af37]/30 active:scale-[0.97] transition-all"
           >
-            Or get on Kindle — $9.99
+            Or get on Kindle, $9.99
           </a>
         </div>
 
@@ -290,13 +290,13 @@ export default function LinksPage() {
             { quote: "Important for all women to read. Teaches you to navigate relationships with respect for yourself.", by: "Amazon Review" },
             { quote: "Within 3 weeks I went from being overlooked to being pursued.", by: "Sarah K." },
             { quote: "Finally, dating advice that treats attraction as a skill to master.", by: "Priya M." },
-            { quote: "Strategic, practical, powerful. Not feel-good fluff — a tactical manual.", by: "Daniel R." },
+            { quote: "Strategic, practical, powerful. Not feel-good fluff, a tactical manual.", by: "Daniel R." },
             { quote: "The Rotation System alone is worth ten times the price.", by: "Jessica T." },
             { quote: "This book transformed my life.", by: "Verified Reader" },
             { quote: "Important for all women to read. Teaches you to navigate relationships with respect for yourself.", by: "Amazon Review" },
             { quote: "Within 3 weeks I went from being overlooked to being pursued.", by: "Sarah K." },
             { quote: "Finally, dating advice that treats attraction as a skill to master.", by: "Priya M." },
-            { quote: "Strategic, practical, powerful. Not feel-good fluff — a tactical manual.", by: "Daniel R." },
+            { quote: "Strategic, practical, powerful. Not feel-good fluff, a tactical manual.", by: "Daniel R." },
             { quote: "The Rotation System alone is worth ten times the price.", by: "Jessica T." },
           ].map((t, i) => (
             <div key={i} className="inline-flex items-center gap-2 shrink-0">
@@ -483,7 +483,7 @@ function FooterEmailCapture() {
 
   return (
     <div className="text-center">
-      <p className="text-[#6b7280] text-xs mb-3">Get insights most people pay for — free.</p>
+      <p className="text-[#6b7280] text-xs mb-3">Get insights most people pay for, free.</p>
       <form onSubmit={handleSubmit} className="flex gap-2 max-w-xs mx-auto">
         <input
           type="email"

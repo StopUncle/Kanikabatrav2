@@ -9,11 +9,11 @@ import { Heart, Loader2 } from "lucide-react";
  * page is just the framing + an optional message + email + the redirect.
  *
  * Structure:
- *   1. Hero — what donations support, in plain language
- *   2. Form — optional email, optional message, optional anonymous toggle
- *   3. Submit — POSTs /api/donate/create-session, redirects to Stripe
+ *   1. Hero, what donations support, in plain language
+ *   2. Form, optional email, optional message, optional anonymous toggle
+ *   3. Submit. POSTs /api/donate/create-session, redirects to Stripe
  *
- * No suggested tiers / "$5 / $10 / $25" buttons — Stripe's amount field
+ * No suggested tiers / "$5 / $10 / $25" buttons. Stripe's amount field
  * does that natively, no need to duplicate.
  */
 export default function DonateClient() {
@@ -64,7 +64,7 @@ export default function DonateClient() {
           </h1>
           <p className="text-text-gray text-base leading-relaxed max-w-md mx-auto">
             If the books, the simulator, the community, or the writing has
-            meant something to you — thank you. A donation goes directly
+            meant something to you, thank you. A donation goes directly
             toward keeping it all going. Pay whatever feels right.
           </p>
         </div>
@@ -92,7 +92,7 @@ export default function DonateClient() {
             />
             <p className="mt-1 text-[11px] text-text-gray/55">
               For the thank-you email. Leave blank if you&apos;d rather not be
-              contacted — Stripe will still send a receipt.
+              contacted. Stripe will still send a receipt.
             </p>
           </div>
 
@@ -156,7 +156,7 @@ export default function DonateClient() {
 
           <p className="mt-4 text-[11px] text-text-gray/50 text-center leading-relaxed">
             You&apos;ll set the amount on the next page. Stripe handles the payment
-            securely — Kanika never sees your card details. One-time donation;
+            securely. Kanika never sees your card details. One-time donation;
             this is not a subscription.
           </p>
         </form>

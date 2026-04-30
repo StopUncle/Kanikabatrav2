@@ -156,7 +156,7 @@ export default function VideosPage() {
 
     try {
       // 1. Ask the server for a presigned PUT URL. The video bytes
-      //    never pass through Railway's edge proxy — previously the
+      //    never pass through Railway's edge proxy, previously the
       //    proxy 502'd on ~170 MB uploads before Next.js saw them.
       const presignRes = await fetch("/api/consilium/feed/video/presign", {
         method: "POST",
@@ -248,7 +248,7 @@ export default function VideosPage() {
       setUploadStatus("success");
       setStatusMessage(
         answersQuestionId
-          ? "Video published — asker has been notified"
+          ? "Video published, asker has been notified"
           : "Video published to feed",
       );
       setTitle("");

@@ -6,13 +6,13 @@ import { Mic, Square, Trash2 } from "lucide-react";
 /**
  * In-browser voice recorder for Kanika's admin panel.
  *
- * Uses the MediaRecorder API — no SDK, no external tooling. Records
+ * Uses the MediaRecorder API, no SDK, no external tooling. Records
  * webm/opus at browser-native quality, which is ~40 KB/sec (2.4 MB/min).
  * That stays well under the 50MB upload limit for any reasonable
  * voice note length (20+ minutes).
  *
  * On stop, calls onRecorded with a File object. The parent form then
- * uploads it the same way it uploads a drag-dropped file — no special
+ * uploads it the same way it uploads a drag-dropped file, no special
  * server handling needed since the upload endpoint already accepts
  * webm MIME type.
  */
@@ -32,7 +32,7 @@ export default function VoiceRecorder({ onRecorded, disabled }: Props) {
   const startedAtRef = useRef<number>(0);
   const tickerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
-  // Stop mic track when component unmounts — prevents the browser's
+  // Stop mic track when component unmounts, prevents the browser's
   // red "recording" indicator from sticking around after navigation.
   useEffect(() => {
     return () => {
@@ -65,7 +65,7 @@ export default function VoiceRecorder({ onRecorded, disabled }: Props) {
 
       // Let the browser pick the format. Chrome/Edge prefer webm/opus, iOS
       // Safari prefers audio/mp4 (AAC). On iOS, isTypeSupported sometimes
-      // lies — we try in order and let the MediaRecorder constructor throw
+      // lies, we try in order and let the MediaRecorder constructor throw
       // if the type isn't actually supported, then fall back to unspecified.
       const candidates = [
         "audio/webm;codecs=opus",
@@ -100,10 +100,10 @@ export default function VoiceRecorder({ onRecorded, disabled }: Props) {
       recorder.onstop = () => {
         const type = recorder.mimeType || "audio/mp4";
         const blob = new Blob(chunksRef.current, { type });
-        // Pick extension from the actual recorded MIME. iOS returns
+        // Pick extension from the actual recorded MIME. IOS returns
         // "audio/mp4;codecs=mp4a.40.2" → m4a. Others: webm → webm, ogg → ogg.
         // The server re-sniffs magic bytes regardless, so a wrong guess
-        // still uploads — this just gives a sensible filename.
+        // still uploads. This just gives a sensible filename.
         const lower = type.toLowerCase();
         const ext = lower.includes("mp4") || lower.includes("aac") || lower.includes("mpeg")
           ? "m4a"

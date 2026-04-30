@@ -14,7 +14,7 @@ const LAST_SEEN_KEY = "consilium:feedLastSeenAt";
 /**
  * Read the last-seen timestamp from localStorage synchronously during the
  * first render so "NEW" badges are decided *before* we bump the timestamp.
- * SSR falls through to 0 (no highlights on server render — the client
+ * SSR falls through to 0 (no highlights on server render, the client
  * effect re-decides after hydration).
  */
 function readLastSeen(): number {
@@ -36,7 +36,7 @@ function readLastSeen(): number {
  * user clicks "Load more".
  *
  * Also paints a subtle "NEW" badge on posts created after the viewer's
- * previous visit (stored in localStorage — no schema migration needed,
+ * previous visit (stored in localStorage, no schema migration needed,
  * per-device state is fine for a "what's new since last time" hint).
  */
 export default function FeedList({
@@ -70,7 +70,7 @@ export default function FeedList({
         try {
           window.localStorage.setItem(LAST_SEEN_KEY, String(newest));
         } catch {
-          /* quota / private mode — fall through, feature is decorative */
+          /* quota / private mode, fall through, feature is decorative */
         }
       }
     }

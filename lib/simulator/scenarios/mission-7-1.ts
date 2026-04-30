@@ -1,8 +1,8 @@
 /**
- * Mission 7-1 — "The Rotation"
+ * Mission 7-1, "The Rotation"
  *
  * Level 7, order 1. Offensive dating: managing multiple interests
- * without being dishonest — and without becoming what you used to
+ * without being dishonest and without becoming what you used to
  * fear. Teaches calibrated vulnerability, non-chasing, and
  * identifying who deserves escalation.
  */
@@ -22,11 +22,11 @@ const scenes: Scene[] = [
       },
       {
         speakerId: null,
-        text: 'ELIAS: "been thinking about you. free tuesday?"',
+        text: 'ELIAS: "been thinking about you. Free tuesday?"',
       },
       {
         speakerId: null,
-        text: 'NOVA: "hey — wanted to ask about wednesday without all the ambiguity of \'if you\'re free\'. are you?"',
+        text: 'NOVA: "hey, wanted to ask about wednesday without all the ambiguity of \'if you\'re free\'. Are you?"',
       },
       {
         speakerId: "inner-voice",
@@ -37,13 +37,13 @@ const scenes: Scene[] = [
     choices: [
       {
         id: "reply-elias-first",
-        text: "Reply to Elias first — he messaged first.",
-        tactic: "Chronological priority. Not strategic — you're reacting.",
+        text: "Reply to Elias first, he messaged first.",
+        tactic: "Chronological priority. Not strategic, you're reacting.",
         nextSceneId: "elias-thread",
       },
       {
         id: "reply-nova-first",
-        text: "Reply to Nova first — the clearer ask deserves the clearer response.",
+        text: "Reply to Nova first, the clearer ask deserves the clearer response.",
         tactic: "Reward direct communication with direct communication.",
         nextSceneId: "nova-thread",
         isOptimal: true,
@@ -56,7 +56,7 @@ const scenes: Scene[] = [
       },
       {
         id: "priya-first",
-        text: "Neither. Text Priya — think it through first.",
+        text: "Neither. Text Priya, think it through first.",
         tactic: "Consulting a veteran before moving. Good instinct.",
         nextSceneId: "priya-advises",
         isOptimal: true,
@@ -104,7 +104,7 @@ const scenes: Scene[] = [
       },
       {
         id: "ask-priya-do",
-        text: '"What would YOU do — if you were me, with these two?"',
+        text: '"What would YOU do, if you were me, with these two?"',
         tactic: "Skip the diagnosis, ask for the decision. Priya's a shortcut you've earned the right to use.",
         nextSceneId: "priya-crystallizes",
       },
@@ -171,14 +171,14 @@ const scenes: Scene[] = [
       },
       {
         id: "nova-maybe",
-        text: '"maybe. i\'ll let u know closer"',
+        text: '"maybe. I\'ll let u know closer"',
         tactic: "Playing hard to get with someone who already respects you is pointless.",
         nextSceneId: "nova-clarifies",
         isOptimal: false,
       },
       {
         id: "nova-ask-more",
-        text: '"tentative yes — what were you thinking?"',
+        text: '"tentative yes, what were you thinking?"',
         tactic: "Warm engagement. Soft but real.",
         nextSceneId: "nova-plans",
       },
@@ -192,7 +192,7 @@ const scenes: Scene[] = [
     dialog: [
       {
         speakerId: null,
-        text: 'NOVA: "perfect. that ramen place on 4th, or somewhere new?"',
+        text: 'NOVA: "perfect. That ramen place on 4th, or somewhere new?"',
       },
       {
         speakerId: "inner-voice",
@@ -210,7 +210,7 @@ const scenes: Scene[] = [
     dialog: [
       {
         speakerId: null,
-        text: "NOVA: \"okay — let me know by tomorrow so I can plan my week. take care.\"",
+        text: "NOVA: \"okay, let me know by tomorrow so I can plan my week. Take care.\"",
       },
       {
         speakerId: "inner-voice",
@@ -228,7 +228,7 @@ const scenes: Scene[] = [
     dialog: [
       {
         speakerId: null,
-        text: 'NOVA: "walk, food, a bar I want to try. in that order. no pressure."',
+        text: 'NOVA: "walk, food, a bar I want to try. In that order. No pressure."',
       },
     ],
     nextSceneId: "elias-problem",
@@ -259,14 +259,14 @@ const scenes: Scene[] = [
       },
       {
         id: "counter-with-friday",
-        text: '"tuesday\'s booked. friday?"',
+        text: '"tuesday\'s booked. Friday?"',
         tactic: "Move his day. Tests if he wanted YOU or just filled a slot.",
         nextSceneId: "elias-responds",
         isOptimal: true,
       },
       {
         id: "be-direct",
-        text: '"the last two plans fell through. i\'d want a plan we\'ll actually keep this time."',
+        text: '"the last two plans fell through. I\'d want a plan we\'ll actually keep this time."',
         tactic: "Name the pattern. If he's capable, he'll rise. If not, you find out now.",
         nextSceneId: "elias-responds-to-challenge",
         isOptimal: true,
@@ -310,14 +310,14 @@ const scenes: Scene[] = [
       },
       {
         id: "close-door",
-        text: '"i won\'t be rescheduling. good luck with everything."',
+        text: '"i won\'t be rescheduling. Good luck with everything."',
         tactic: "Clean cut. The third cancellation is the sign.",
         nextSceneId: "ending-rotation-clean",
         isOptimal: true,
       },
       {
         id: "honest-truth",
-        text: '"this is the third one. i don\'t think we want the same thing. i hope you figure out what you want."',
+        text: '"this is the third one. I don\'t think we want the same thing. I hope you figure out what you want."',
         tactic: "Naming the pattern on the way out. Graceful.",
         nextSceneId: "ending-rotation-clean",
         isOptimal: true,
@@ -336,7 +336,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: null,
-        text: 'ELIAS: "friday\'s tough. maybe next week?"',
+        text: 'ELIAS: "friday\'s tough. Maybe next week?"',
       },
       {
         speakerId: "inner-voice",
@@ -358,7 +358,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: null,
-        text: 'ELIAS: "fair. i\'ve been flaky. can we do wednesday, same place as last time, 8pm?"',
+        text: 'ELIAS: "fair. I\'ve been flaky. Can we do wednesday, same place as last time, 8pm?"',
       },
       {
         speakerId: "inner-voice",
@@ -369,20 +369,20 @@ const scenes: Scene[] = [
     choices: [
       {
         id: "accept-with-warmth",
-        text: '"wednesday 8 works. see you then."',
+        text: '"wednesday 8 works. See you then."',
         tactic: "Accept the rise, conditional on execution. Fair test.",
         nextSceneId: "ending-calibrated-test",
         isOptimal: true,
       },
       {
         id: "close-anyway",
-        text: "\"I appreciate that. Honestly — I'm not in a place to start over. Take care.\"",
+        text: "\"I appreciate that. Honestly. I'm not in a place to start over. Take care.\"",
         tactic: "Exit even on the rise. Valid if the pattern already cost too much.",
         nextSceneId: "ending-rotation-clean",
       },
       {
         id: "cooler-tone",
-        text: '"wednesday 8. confirm the day of."',
+        text: '"wednesday 8. Confirm the day of."',
         tactic: "Accept, but with a confirmation gate. The confirmation test is the real diagnostic.",
         nextSceneId: "ending-calibrated-test",
         isOptimal: true,
@@ -421,7 +421,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: null,
-        text: "NOVA: \"sounds good. let me know when.\"",
+        text: "NOVA: \"sounds good. Let me know when.\"",
       },
       {
         speakerId: null,
@@ -466,7 +466,7 @@ const scenes: Scene[] = [
     outcomeType: "good",
     endingTitle: "The Calibrated Test",
     endingSummary:
-      "You named the pattern. He rose — a concrete plan, specific time, specific place. You accepted conditional on execution. Wednesday either confirms him as capable of rising, or confirms the pattern. Either way you find out. You also locked in dinner Wednesday with Nova. Rotation = investment proportional to evidence.",
+      "You named the pattern. He rose, a concrete plan, specific time, specific place. You accepted conditional on execution. Wednesday either confirms him as capable of rising, or confirms the pattern. Either way you find out. You also locked in dinner Wednesday with Nova. Rotation = investment proportional to evidence.",
     dialog: [
       {
         speakerId: "inner-voice",
@@ -504,7 +504,7 @@ const scenes: Scene[] = [
     failureBlogTitle: "The Avoidant Defence System: Why They Pull Away",
     endingTitle: "You Funded the Pattern",
     endingSummary:
-      "He canceled again. You said 'no worries.' The subscription renews monthly — a flurry of warmth, a week of silence, a cancellation, a chapter-break apology, repeat. He'll keep doing this because you keep receiving it. Nova will find someone direct. You'll be waiting for a text that doesn't come.",
+      "He canceled again. You said 'no worries.' The subscription renews monthly, a flurry of warmth, a week of silence, a cancellation, a chapter-break apology, repeat. He'll keep doing this because you keep receiving it. Nova will find someone direct. You'll be waiting for a text that doesn't come.",
     dialog: [
       {
         speakerId: "inner-voice",

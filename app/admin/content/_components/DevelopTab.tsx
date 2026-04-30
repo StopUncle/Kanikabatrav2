@@ -101,7 +101,7 @@ const L2_MECHANISMS = [
   {
     id: "SPECIFICITY_ESCALATION",
     label: "Specificity escalation",
-    blurb: "Raise the stakes — commitment escalation. Strong payoff required.",
+    blurb: "Raise the stakes, commitment escalation. Strong payoff required.",
   },
   {
     id: "PERSONAL_STAKE",
@@ -184,7 +184,7 @@ const CLOSE_MECHANISMS = [
     id: "IMPLIED_CATALOGUE",
     label: "Implied catalogue",
     target: "follows",
-    blurb: "\"30 things I do\" — positions video as part of unfolding series.",
+    blurb: "\"30 things I do\", positions video as part of unfolding series.",
   },
 ];
 
@@ -506,7 +506,7 @@ export default function DevelopTab() {
 
   function advanceTooltip(target: Stage): string {
     if (target === "HOOK_DRAFTED") return "Need hook + hook type";
-    if (target === "LINES_DRAFTED") return "Need hook + payoff (line 3) — line 2 too if long format";
+    if (target === "LINES_DRAFTED") return "Need hook + payoff (line 3), line 2 too if long format";
     if (target === "READY_TO_FILM") return "Need hook + payoff + hook type + frame (and line 2 if long)";
     return "";
   }
@@ -564,7 +564,7 @@ export default function DevelopTab() {
           <span className="text-text-light">{STAGE_LABELS[stage]}</span> stage.
           {stage === "CONCEPT" && (
             <div className="text-xs mt-2 opacity-60">
-              Approve ideas in the Ideas Triage tab — they land here.
+              Approve ideas in the Ideas Triage tab, they land here.
             </div>
           )}
         </div>
@@ -787,7 +787,7 @@ export default function DevelopTab() {
                     {/* 1 · HOOK */}
                     <div>
                       <h4 className="text-xs uppercase tracking-wider text-accent-gold mb-2">
-                        1 · Hook (0–3s) — open the loop
+                        1 · Hook (0–3s), open the loop
                       </h4>
                       <BeatTextarea
                         value={getValue(idea, "hook")}
@@ -807,12 +807,12 @@ export default function DevelopTab() {
                       </div>
                     </div>
 
-                    {/* 2 · RE-ENERGIZE — only for long format */}
+                    {/* 2 · RE-ENERGIZE, only for long format */}
                     {!short && (
                       <div>
                         <div className="flex items-center justify-between mb-2">
                           <h4 className="text-xs uppercase tracking-wider text-accent-gold">
-                            2 · Re-energize (3–8s) — extend the willingness to wait
+                            2 · Re-energize (3–8s), extend the willingness to wait
                           </h4>
                           {recL2.length > 0 && (
                             <span className="text-[10px] text-amber-400 flex items-center gap-1">
@@ -830,17 +830,17 @@ export default function DevelopTab() {
                           <BeatTextarea
                             value={getValue(idea, "line2")}
                             onChange={(v) => setEdit(idea.id, "line2", v)}
-                            placeholder="Line 2 — extend willingness to wait."
+                            placeholder="Line 2, extend willingness to wait."
                           />
                         </div>
                       </div>
                     )}
 
-                    {/* 3 · SETUP — only for long format */}
+                    {/* 3 · SETUP, only for long format */}
                     {!short && (
                       <div>
                         <h4 className="text-xs uppercase tracking-wider text-accent-gold mb-2">
-                          3 · Setup (8–15s) — orient to the framework
+                          3 · Setup (8–15s), orient to the framework
                         </h4>
                         <BeatTextarea
                           value={getValue(idea, "setup")}
@@ -855,7 +855,7 @@ export default function DevelopTab() {
                     <div>
                       <div className="flex items-center justify-between mb-2">
                         <h4 className="text-xs uppercase tracking-wider text-accent-gold">
-                          {short ? "2" : "4"} · Payoff ({short ? "2–18s" : "15–30s"}) — deliver the insight
+                          {short ? "2" : "4"} · Payoff ({short ? "2–18s" : "15–30s"}), deliver the insight
                         </h4>
                         {recPayoff.length > 0 && (
                           <span className="text-[10px] text-amber-400 flex items-center gap-1">
@@ -874,16 +874,16 @@ export default function DevelopTab() {
                         <BeatTextarea
                           value={getValue(idea, "line3")}
                           onChange={(v) => setEdit(idea.id, "line3", v)}
-                          placeholder="Payoff — the promised insight, transmissible and specific."
+                          placeholder="Payoff, the promised insight, transmissible and specific."
                         />
                       </div>
                     </div>
 
-                    {/* 5 · DEEPENING — only for long format */}
+                    {/* 5 · DEEPENING, only for long format */}
                     {!short && (
                       <div>
                         <h4 className="text-xs uppercase tracking-wider text-accent-gold mb-2">
-                          5 · Deepening (30–45s) — the part most creators skip
+                          5 · Deepening (30–45s), the part most creators skip
                         </h4>
                         <MechanismGrid
                           options={DEEPENING_MECHANISMS}
@@ -897,19 +897,19 @@ export default function DevelopTab() {
                           <BeatTextarea
                             value={getValue(idea, "deepening")}
                             onChange={(v) => setEdit(idea.id, "deepening", v)}
-                            placeholder="Convert engaged watch into something more — second example, objection handle, personal disclosure, or escalation."
+                            placeholder="Convert engaged watch into something more, second example, objection handle, personal disclosure, or escalation."
                             rows={3}
                           />
                         </div>
                       </div>
                     )}
 
-                    {/* 6 · CLOSE — only for long format */}
+                    {/* 6 · CLOSE, only for long format */}
                     {!short && (
                       <div>
                         <div className="flex items-center justify-between mb-2">
                           <h4 className="text-xs uppercase tracking-wider text-accent-gold flex items-center gap-1.5">
-                            <Zap size={12} /> 6 · Close (45–55s) — trigger secondary action
+                            <Zap size={12} /> 6 · Close (45–55s), trigger secondary action
                           </h4>
                           <span className="text-[10px] text-text-gray/60">
                             pick by which signal you want
@@ -928,26 +928,26 @@ export default function DevelopTab() {
                           <BeatTextarea
                             value={getValue(idea, "closeBeat")}
                             onChange={(v) => setEdit(idea.id, "closeBeat", v)}
-                            placeholder="Close — the line that converts the engaged viewer into a save / share / comment / follow."
+                            placeholder="Close, the line that converts the engaged viewer into a save / share / comment / follow."
                           />
                         </div>
                       </div>
                     )}
 
-                    {/* 7 · TAIL — optional, both formats */}
+                    {/* 7 · TAIL, optional, both formats */}
                     <div>
                       <div className="flex items-center justify-between mb-2">
                         <h4 className="text-xs uppercase tracking-wider text-accent-gold">
-                          {short ? "3" : "7"} · Tail ({short ? "18–25s" : "55–60s"}) — rewatch trigger
+                          {short ? "3" : "7"} · Tail ({short ? "18–25s" : "55–60s"}), rewatch trigger
                         </h4>
                         <span className="text-[10px] text-text-gray/60">
-                          optional — only if you have a real second-order observation
+                          optional, only if you have a real second-order observation
                         </span>
                       </div>
                       <BeatTextarea
                         value={getValue(idea, "tail")}
                         onChange={(v) => setEdit(idea.id, "tail", v)}
-                        placeholder="A line that recontextualizes everything before it. e.g. I asked my fiancé this on our first date. He took six seconds. That's why I married him."
+                        placeholder="A line that recontextualizes everything before it. E.g. I asked my fiancé this on our first date. He took six seconds. That's why I married him."
                       />
                     </div>
 

@@ -1,5 +1,5 @@
 /**
- * pc-1-1 — "The Hamster"
+ * pc-1-1, "The Hamster"
  *
  * Psychopath-Child track, Level 1, order 1. Voice-lock scenario for
  * the whole track.
@@ -10,7 +10,7 @@
  * Written with clinical restraint. The child is not a villain. The
  * child has a neurological condition. The scenarios teach the parent
  * to act on behaviour, not on identity. Voice is unchanged Kanika —
- * cold, observational, merciless with softeners — but the subject is
+ * cold, observational, merciless with softeners but the subject is
  * your own five-year-old, which is the heaviest register in the
  * catalogue.
  *
@@ -30,7 +30,7 @@ import {
 
 const scenes: Scene[] = [
   // ===================================================================
-  // CONTENT GATE — mandatory opening for every scenario in this track
+  // CONTENT GATE, mandatory opening for every scenario in this track
   // ===================================================================
   {
     id: "content-gate",
@@ -69,7 +69,7 @@ const scenes: Scene[] = [
   },
 
   // ===================================================================
-  // ACT 1 — the kitchen
+  // ACT 1, the kitchen
   // ===================================================================
   {
     id: "the-kitchen",
@@ -80,7 +80,7 @@ const scenes: Scene[] = [
     dialog: [
       {
         speakerId: null,
-        text: "Saturday, 9:14 a.m. Your son Finn, aged five, was given his class's pet hamster to keep for the weekend. You went upstairs at 8:50 to get dressed. The last thing you saw before leaving the kitchen was Finn sitting cross-legged on the floor, the cage open on the tile, a piece of cereal held out to the hamster.",
+        text: "Saturday, 9:14 a.m. your son Finn, aged five, was given his class's pet hamster to keep for the weekend. You went upstairs at 8:50 to get dressed. The last thing you saw before leaving the kitchen was Finn sitting cross-legged on the floor, the cage open on the tile, a piece of cereal held out to the hamster.",
       },
       {
         speakerId: null,
@@ -97,12 +97,12 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "inner-voice",
-        text: "Note what is missing from the room. Note it in this order, because the sequence matters later. One — he is not crying. Two — he did not come find you upstairs when the hamster died. Three — he has not stopped eating. Four — the explanation he is giving is grammatically complete and ready on arrival, which is a form that five-year-olds in real distress almost never produce.",
+        text: "Note what is missing from the room. Note it in this order, because the sequence matters later. One, he is not crying. Two, he did not come find you upstairs when the hamster died. Three, he has not stopped eating. Four, the explanation he is giving is grammatically complete and ready on arrival, which is a form that five-year-olds in real distress almost never produce.",
         emotion: "concerned",
       },
       {
         speakerId: "inner-voice",
-        text: "The behaviour is one data point. It might not mean what you are afraid it means. The absence — the missing crying, the missing running to you, the uninterrupted breakfast — is a different kind of data. It is what the diagnostic literature on callous-unemotional traits describes as the 'telling stillness.' A neurotypical five-year-old who has witnessed the death of a small animal is a specific kind of hysterical. Your son is eating toast.",
+        text: "The behaviour is one data point. It might not mean what you are afraid it means. The absence, the missing crying, the missing running to you, the uninterrupted breakfast, is a different kind of data. It is what the diagnostic literature on callous-unemotional traits describes as the 'telling stillness.' A neurotypical five-year-old who has witnessed the death of a small animal is a specific kind of hysterical. Your son is eating toast.",
         emotion: "concerned",
       },
       {
@@ -122,7 +122,7 @@ const scenes: Scene[] = [
       {
         id: "call-partner",
         text: "Text your partner at the bank: 'Something happened with Finn. Come home when you can. Not an emergency.'",
-        tactic: "Bring the co-parent in early. This is a conversation that must not be held only in your head. The 'not an emergency' phrasing is deliberate — you do not want them driving home panicked.",
+        tactic: "Bring the co-parent in early. This is a conversation that must not be held only in your head. The 'not an emergency' phrasing is deliberate, you do not want them driving home panicked.",
         nextSceneId: "partner-on-way",
         isOptimal: true,
       },
@@ -143,7 +143,7 @@ const scenes: Scene[] = [
   },
 
   // ===================================================================
-  // ACT 2A — the evidence
+  // ACT 2A, the evidence
   // ===================================================================
   {
     id: "the-evidence",
@@ -160,7 +160,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "inner-voice",
-        text: "You are not a veterinary pathologist. You do not know, from this visual, what killed the animal. What you do know is that the story Finn is telling — 'it got scared and ran away from me' — does not explain why the cereal is intact, why the cage door is open, or why a hamster would sustain the kind of posture-injury suggested by that arch.",
+        text: "You are not a veterinary pathologist. You do not know, from this visual, what killed the animal. What you do know is that the story Finn is telling, 'it got scared and ran away from me', does not explain why the cereal is intact, why the cage door is open, or why a hamster would sustain the kind of posture-injury suggested by that arch.",
         emotion: "knowing",
       },
       {
@@ -194,7 +194,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "inner-voice",
-        text: "Note the addition. You did not ask him for a cause of death. He volunteered one. The volunteered cause — 'heart attack' — is a sophisticated deflection. It is also a sentence a five-year-old might have heard from an adult in the past week about a grandparent, or from a television programme. Or from no one. You do not know.",
+        text: "Note the addition. You did not ask him for a cause of death. He volunteered one. The volunteered cause, 'heart attack', is a sophisticated deflection. It is also a sentence a five-year-old might have heard from an adult in the past week about a grandparent, or from a television programme. Or from no one. You do not know.",
         emotion: "concerned",
       },
       {
@@ -207,7 +207,7 @@ const scenes: Scene[] = [
   },
 
   // ===================================================================
-  // ACT 2B — sibling + partner in the room
+  // ACT 2B, sibling + partner in the room
   // ===================================================================
   {
     id: "lily-settled",
@@ -221,7 +221,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "inner-voice",
-        text: "This is the first of approximately ten thousand decisions you will make in the next fifteen years that centre on protecting Lily. Today it is a cartoon. In six months it will be a different bedroom. In three years it will be supervision rules. In eight years it will be the decision about whether to tell her what the pattern is. Today is the easy version. Do not understate today — the motor habit of choosing her safety first is the habit you are training.",
+        text: "This is the first of approximately ten thousand decisions you will make in the next fifteen years that centre on protecting Lily. Today it is a cartoon. In six months it will be a different bedroom. In three years it will be supervision rules. In eight years it will be the decision about whether to tell her what the pattern is. Today is the easy version. Do not understate today, the motor habit of choosing her safety first is the habit you are training.",
         emotion: "knowing",
       },
     ],
@@ -278,7 +278,7 @@ const scenes: Scene[] = [
     dialog: [
       {
         speakerId: null,
-        text: "You open a note. You title it, after a pause, not 'Finn incidents' but 'Household log — family A.' The anonymisation is deliberate; you may have to show this to someone professional in years to come and you want the document to read as observation, not accusation.",
+        text: "You open a note. You title it, after a pause, not 'Finn incidents' but 'Household log, family A.' The anonymisation is deliberate; you may have to show this to someone professional in years to come and you want the document to read as observation, not accusation.",
       },
       {
         speakerId: null,
@@ -286,7 +286,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "inner-voice",
-        text: "You just did the hardest thing most parents in this position never do — you wrote it down on the day. Not at age eight when the school is calling, not at age fifteen when the therapist asks for a history, but today. A dated entry from the original moment is worth, in any future clinical or legal context, more than a thousand reconstructions.",
+        text: "You just did the hardest thing most parents in this position never do, you wrote it down on the day. Not at age eight when the school is calling, not at age fifteen when the therapist asks for a history, but today. A dated entry from the original moment is worth, in any future clinical or legal context, more than a thousand reconstructions.",
         emotion: "knowing",
       },
       {
@@ -311,7 +311,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: null,
-        text: "Finn produces tears. They arrive in the correct sequence — eyes first, voice-break second, face in hands third. The sequence is textbook. They do not convince you.",
+        text: "Finn produces tears. They arrive in the correct sequence, eyes first, voice-break second, face in hands third. The sequence is textbook. They do not convince you.",
       },
       {
         speakerId: "inner-voice",
@@ -328,7 +328,7 @@ const scenes: Scene[] = [
   },
 
   // ===================================================================
-  // ACT 3 — the partner in the room
+  // ACT 3, the partner in the room
   // ===================================================================
   {
     id: "partner-arrives",
@@ -356,7 +356,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "inner-voice",
-        text: "Your partner just said the most honest sentence available to a co-parent in this position — they want to believe it is nothing, and they know that wanting is a bias they will have to correct against. That sentence is a gift. It means the conversation is possible.",
+        text: "Your partner just said the most honest sentence available to a co-parent in this position, they want to believe it is nothing, and they know that wanting is a bias they will have to correct against. That sentence is a gift. It means the conversation is possible.",
         emotion: "knowing",
       },
     ],
@@ -469,7 +469,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "inner-voice",
-        text: "The 'maybe it was a one-off' position is understandable and, almost always, wrong. The next incident arrives in somewhere between six and eighteen months. During those six to eighteen months, Finn will refine his handling of the pattern — both the behaviour and the post-behaviour story — because he has had the feedback of one unchallenged event. You are not protecting him by waiting. You are giving him a practice run.",
+        text: "The 'maybe it was a one-off' position is understandable and, almost always, wrong. The next incident arrives in somewhere between six and eighteen months. During those six to eighteen months, Finn will refine his handling of the pattern. Both the behaviour and the post-behaviour story, because he has had the feedback of one unchallenged event. You are not protecting him by waiting. You are giving him a practice run.",
         emotion: "sad",
       },
       {
@@ -517,7 +517,7 @@ const scenes: Scene[] = [
     dialog: [
       {
         speakerId: "inner-voice",
-        text: "Today was hard. Today was also the easiest version of the decisions you will have to make about this child. Note that. The ones ahead — the school principal in five years, the triangulation in ten, the legal-adult boundary in fifteen — all depend on the reps you just put in at age five. You just proved to yourself you are capable of the category of decision this parenting will require.",
+        text: "Today was hard. Today was also the easiest version of the decisions you will have to make about this child. Note that. The ones ahead, the school principal in five years, the triangulation in ten, the legal-adult boundary in fifteen. All depend on the reps you just put in at age five. You just proved to yourself you are capable of the category of decision this parenting will require.",
         emotion: "knowing",
       },
       {
@@ -535,7 +535,7 @@ const scenes: Scene[] = [
     outcomeType: "good",
     endingTitle: "The Room Change",
     endingSummary:
-      "Lily moves to your room tonight. Finn notices at bath time. He asks why. You say, without drama, 'we are trying a different arrangement for a while.' He says 'okay.' He does not ask again. That is not necessarily suspicious — a five-year-old might reasonably not ask again. It is, however, noted. The travel cot goes up in your room in the corner by the window. You lie in bed at 10 p.m. listening to Lily's breathing on the floor and you are, for the first time in about two years, certain that you are doing one specific thing correctly in this house.",
+      "Lily moves to your room tonight. Finn notices at bath time. He asks why. You say, without drama, 'we are trying a different arrangement for a while.' He says 'okay.' He does not ask again. That is not necessarily suspicious, a five-year-old might reasonably not ask again. It is, however, noted. The travel cot goes up in your room in the corner by the window. You lie in bed at 10 p.m. listening to Lily's breathing on the floor and you are, for the first time in about two years, certain that you are doing one specific thing correctly in this house.",
     dialog: [
       {
         speakerId: "inner-voice",
@@ -553,10 +553,10 @@ const scenes: Scene[] = [
     outcomeType: "good",
     endingTitle: "The First Real Conversation",
     endingSummary:
-      "You and your partner had the conversation most couples in this position do not have until year four or year seven — the one where both of you say, out loud, in daylight, that you love your child and you are afraid of your child, and both are true. You agreed to the specialist. You agreed to the room change. You did not pretend. You also did not catastrophise. You held the double truth together, in the kitchen, before noon on a Saturday. This is the obsidian-rarity version of this scenario for a specific reason — most couples cannot produce this conversation on the first day. You did. Protect that capacity in your marriage above almost everything else over the next fifteen years. It is, statistically, the variable most predictive of surviving this.",
+      "You and your partner had the conversation most couples in this position do not have until year four or year seven, the one where both of you say, out loud, in daylight, that you love your child and you are afraid of your child, and both are true. You agreed to the specialist. You agreed to the room change. You did not pretend. You also did not catastrophise. You held the double truth together, in the kitchen, before noon on a Saturday. This is the obsidian-rarity version of this scenario for a specific reason. Most couples cannot produce this conversation on the first day. You did. Protect that capacity in your marriage above almost everything else over the next fifteen years. It is, statistically, the variable most predictive of surviving this.",
     endingLearnReference: "architecture-of-control-how-emotional-dependency-is-built",
     endingLearnPrompt:
-      "The marriage is the infrastructure. Every scenario in the upcoming levels will test it. Couples who can say the double truth — I love the child and I am afraid of the child — to each other without shattering have, by a large margin, the best outcomes. Revisit this sentence at every milestone.",
+      "The marriage is the infrastructure. Every scenario in the upcoming levels will test it. Couples who can say the double truth. I love the child and I am afraid of the child, to each other without shattering have, by a large margin, the best outcomes. Revisit this sentence at every milestone.",
     dialog: [
       {
         speakerId: "inner-voice",
@@ -565,7 +565,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: null,
-        text: "Lily sleeps in your room by 8:40 p.m. The log has three entries by midnight — the hamster, the partner conversation, the room change. You sleep at 11:47. Finn is asleep down the hall. The house is, structurally, different than it was at breakfast.",
+        text: "Lily sleeps in your room by 8:40 p.m. the log has three entries by midnight, the hamster, the partner conversation, the room change. You sleep at 11:47. Finn is asleep down the hall. The house is, structurally, different than it was at breakfast.",
       },
     ],
   },
@@ -577,10 +577,10 @@ const scenes: Scene[] = [
     isEnding: true,
     outcomeType: "bad",
     failureBlogSlug: "predators-gaze-how-sociopaths-detect-weakness",
-    failureBlogTitle: "Predator's Gaze — How Sociopaths Detect Weakness",
+    failureBlogTitle: "Predator's Gaze. How Sociopaths Detect Weakness",
     endingTitle: "Wait and See",
     endingSummary:
-      "You and your partner agreed to wait. The hamster is buried in the back garden on Sunday afternoon. Finn cries at the burial, at the appropriate moment in the ceremony, and neither of you can decide whether the tears are real. The specialist call does not happen. The log, if you began one, lapses by week three. Finn is on his best behaviour for approximately five months. Then the next incident arrives — at a friend's house, involving their cat, reported back to you by an apologetic parent who is not sure what to make of it. By then you have lost the clean first-day version of the documentation and, more importantly, Finn has had six months of practice handling the absence of consequences. The scenario is not catastrophic. It is simply a lost year. You will have this scene again. You will recognise it the second time.",
+      "You and your partner agreed to wait. The hamster is buried in the back garden on Sunday afternoon. Finn cries at the burial, at the appropriate moment in the ceremony, and neither of you can decide whether the tears are real. The specialist call does not happen. The log, if you began one, lapses by week three. Finn is on his best behaviour for approximately five months. Then the next incident arrives, at a friend's house, involving their cat, reported back to you by an apologetic parent who is not sure what to make of it. By then you have lost the clean first-day version of the documentation and, more importantly, Finn has had six months of practice handling the absence of consequences. The scenario is not catastrophic. It is simply a lost year. You will have this scene again. You will recognise it the second time.",
     dialog: [
       {
         speakerId: "inner-voice",
@@ -598,9 +598,9 @@ const scenes: Scene[] = [
 export const pcChild11: Scenario = {
   id: "pc-1-1",
   title: "The Hamster",
-  tagline: "Saturday, 9:14 a.m. Your five-year-old is eating toast. The hamster is on the floor.",
+  tagline: "Saturday, 9:14 a.m. your five-year-old is eating toast. The hamster is on the floor.",
   description:
-    "Opens with a content gate. This scenario is for parents of a child showing conduct-disorder or callous-unemotional traits. It is the morning a parent first recognises the pattern clearly — and the ninety minutes that follow, which shape the next fifteen years of the parenting. Voice-lock scenario for the pc-child track.",
+    "Opens with a content gate. This scenario is for parents of a child showing conduct-disorder or callous-unemotional traits. It is the morning a parent first recognises the pattern clearly and the ninety minutes that follow, which shape the next fifteen years of the parenting. Voice-lock scenario for the pc-child track.",
   tier: "vip",
   track: "pc-child",
   level: 1,
@@ -612,16 +612,16 @@ export const pcChild11: Scenario = {
   badgeId: "the-kitchen-held",
   startSceneId: "content-gate",
   tacticsLearned: [
-    "Observe before accusing — the absence of distress is the diagnostic signal, not the behaviour",
+    "Observe before accusing, the absence of distress is the diagnostic signal, not the behaviour",
     "Specialist referral (conduct disorder / CU-traits clinician), not paediatrician",
-    "The household log — dated entries, behaviour described, interpretation labelled",
-    "Sibling protection as motor habit — the room change tonight, not next week",
-    "The double truth — 'I love my child, I am afraid of my child' — spoken in daylight with your partner",
-    "Describe behaviour, not identity — in the log, in the partner conversation, in all clinical contexts",
+    "The household log, dated entries, behaviour described, interpretation labelled",
+    "Sibling protection as motor habit, the room change tonight, not next week",
+    "The double truth, 'I love my child, I am afraid of my child', spoken in daylight with your partner",
+    "Describe behaviour, not identity. In the log, in the partner conversation, in all clinical contexts",
   ],
   redFlagsTaught: [
     "Grammatically complete explanations delivered on arrival by a distressed five-year-old",
-    "The 'telling stillness' — continued eating, no crying, no parent-seeking after an event",
+    "The 'telling stillness', continued eating, no crying, no parent-seeking after an event",
     "Volunteered causes of death that were not asked for",
     "Tears in correct staged sequence under accusation (vs. disorganised real distress)",
     "The 'wait and see' parent-position as the most common and most costly error",

@@ -31,7 +31,7 @@ export async function PATCH(
   }
   if (notes !== undefined) data.notes = notes || null;
 
-  // "Mark as used" — increments usedCount and stamps lastUsedAt.
+  // "Mark as used", increments usedCount and stamps lastUsedAt.
   // Single-shot from the UI button on the line card.
   if (incrementUse) {
     const current = await prisma.contentConfession.findUnique({ where: { id } });

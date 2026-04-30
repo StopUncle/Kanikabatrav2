@@ -1,5 +1,5 @@
 /**
- * tn-4-1 — "The 18-Month Exit"
+ * tn-4-1, "The 18-Month Exit"
  *
  * Toxic-Narc track, Level 4 (The Narc Spouse), order 1. You are
  * nineteen years into a marriage that works on paper. The
@@ -10,7 +10,7 @@
  * across the kitchen table, about whose turn it was to drive.
  *
  * The decision is not the scenario. The scenario is one
- * Wednesday — specifically today, 6:37 a.m. to 7:14 p.m. — in
+ * Wednesday, specifically today, 6:37 a.m. to 7:14 p.m., in
  * which three logistics moves must be executed without the
  * spouse detecting any of them. The exit itself is eight to
  * twelve months away. This Wednesday is infrastructure.
@@ -28,10 +28,10 @@
  *  - The untraceable-by-default principle: every move lives
  *    outside the shared digital surface (joint browser history,
  *    shared cloud, car GPS, home Alexa, etc.)
- *  - The sister's role — offsite backup, not on-record in any
+ *  - The sister's role, offsite backup, not on-record in any
  *    phone you own that goes home
  *  - Staying in the marriage operationally for eight more months
- *    while the infrastructure completes — the scenario's
+ *    while the infrastructure completes, the scenario's
  *    hardest register
  *
  * Mandatory content gate. Register is clinical-operational, not
@@ -53,11 +53,11 @@ const scenes: Scene[] = [
     dialog: [
       {
         speakerId: null,
-        text: "Content note. This scenario assumes the decision to leave a long-term marriage has been made offstage. It does not prescribe or persuade. It teaches the operational discipline of a slow exit — the eight-to-twelve-month infrastructure window, not the leaving itself.",
+        text: "Content note. This scenario assumes the decision to leave a long-term marriage has been made offstage. It does not prescribe or persuade. It teaches the operational discipline of a slow exit, the eight-to-twelve-month infrastructure window, not the leaving itself.",
       },
       {
         speakerId: null,
-        text: "The register is clinical-operational, not emotional. If the scenario you need tonight is about whether to make the decision, this is the wrong one — come back to this when that conversation with yourself has already happened.",
+        text: "The register is clinical-operational, not emotional. If the scenario you need tonight is about whether to make the decision, this is the wrong one, come back to this when that conversation with yourself has already happened.",
       },
       {
         speakerId: null,
@@ -68,7 +68,7 @@ const scenes: Scene[] = [
       {
         id: "continue",
         text: "Continue.",
-        tactic: "Wednesday morning, 6:37 a.m. The spouse is in the shower. You have the kitchen to yourself for eleven minutes.",
+        tactic: "Wednesday morning, 6:37 a.m. the spouse is in the shower. You have the kitchen to yourself for eleven minutes.",
         nextSceneId: "wednesday-morning",
       },
       {
@@ -88,7 +88,7 @@ const scenes: Scene[] = [
     outcomeType: "neutral",
     endingTitle: "Not Tonight",
     endingLearnPrompt:
-      "The opt-out is a complete move. The scenario will be available when the conditions are right. Infrastructure work does not start until the decision is stable — and the scenario is built for the phase after the decision, not during it.",
+      "The opt-out is a complete move. The scenario will be available when the conditions are right. Infrastructure work does not start until the decision is stable and the scenario is built for the phase after the decision, not during it.",
     dialog: [
       {
         speakerId: "inner-voice",
@@ -100,7 +100,7 @@ const scenes: Scene[] = [
   },
 
   // ===================================================================
-  // WEDNESDAY MORNING — THE ELEVEN MINUTES
+  // WEDNESDAY MORNING. THE ELEVEN MINUTES
   // ===================================================================
   {
     id: "wednesday-morning",
@@ -110,7 +110,7 @@ const scenes: Scene[] = [
     dialog: [
       {
         speakerId: null,
-        text: "Wednesday, 6:37 a.m. The shower is running down the hall. The spouse takes eleven to thirteen minutes on a shower. You have the kitchen to yourself. The list for today is three items long. You have written the list, across eleven weeks, approximately two hundred times in your head. Today is the Wednesday you do it.",
+        text: "Wednesday, 6:37 a.m. the shower is running down the hall. The spouse takes eleven to thirteen minutes on a shower. You have the kitchen to yourself. The list for today is three items long. You have written the list, across eleven weeks, approximately two hundred times in your head. Today is the Wednesday you do it.",
       },
       {
         speakerId: null,
@@ -118,7 +118,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: null,
-        text: "1. Open the separate account with the digital-only bank. (Phone-only, no paper, no mail to the house.) 2. Book the GP appointment for Friday afternoon. 3. Book the locksmith for consultation-only — no date, just a quote in writing that exists in your name. ",
+        text: "1. Open the separate account with the digital-only bank. (Phone-only, no paper, no mail to the house.) 2. Book the GP appointment for Friday afternoon. 3. Book the locksmith for consultation-only, no date, just a quote in writing that exists in your name. ",
       },
       {
         speakerId: "inner-voice",
@@ -129,7 +129,7 @@ const scenes: Scene[] = [
     choices: [
       {
         id: "account-first-as-planned",
-        text: "Stick to the plan. Account first — open the app you sideloaded last month, start the application, give yourself nine minutes.",
+        text: "Stick to the plan. Account first, open the app you sideloaded last month, start the application, give yourself nine minutes.",
         tactic: "Plan-adherence is the whole discipline on a Wednesday like this. The order was chosen across eleven weeks; trust it over the Wednesday-morning nerve.",
         nextSceneId: "account-opening",
         isOptimal: true,
@@ -162,15 +162,15 @@ const scenes: Scene[] = [
     dialog: [
       {
         speakerId: null,
-        text: "You open the app. You have practised the application across two weekends on a burner scenario — the fields are memorised. Name, address, DOB, employer, proof of ID via a photo you took on Monday of your driver's licence (and deleted from the camera roll the same evening; it lives only in the app now).",
+        text: "You open the app. You have practised the application across two weekends on a burner scenario, the fields are memorised. Name, address, DOB, employer, proof of ID via a photo you took on Monday of your driver's licence (and deleted from the camera roll the same evening; it lives only in the app now).",
       },
       {
         speakerId: null,
-        text: "The address field is the one decision left. Not the house. Your sister's flat — with her written permission, pre-discussed, and a printed notice in her kitchen drawer confirming you receive mail there.",
+        text: "The address field is the one decision left. Not the house. Your sister's flat, with her written permission, pre-discussed, and a printed notice in her kitchen drawer confirming you receive mail there.",
       },
       {
         speakerId: "inner-voice",
-        text: "Your sister's flat is the right answer. It is legal, it is documented, and it removes the single highest-risk artefact — mail from an unknown bank arriving at the house during the eight months of infrastructure.",
+        text: "Your sister's flat is the right answer. It is legal, it is documented, and it removes the single highest-risk artefact, mail from an unknown bank arriving at the house during the eight months of infrastructure.",
         emotion: "knowing",
       },
     ],
@@ -178,14 +178,14 @@ const scenes: Scene[] = [
       {
         id: "sisters-flat-address",
         text: "Use your sister's flat. Submit the application.",
-        tactic: "The infrastructure's single most important decision. The alternative addresses — work, P.O. box, a friend — each have specific failure modes your sister's flat does not.",
+        tactic: "The infrastructure's single most important decision. The alternative addresses, work, P.O. Box, a friend. Each have specific failure modes your sister's flat does not.",
         nextSceneId: "verification-call-pending",
         isOptimal: true,
       },
       {
         id: "home-address-because-fast",
         text: "Use the home address. The mail can be intercepted; you are home more than he is.",
-        tactic: "The home-address decision is the specific infrastructure move that compounds across the eight months. One mis-timed morning — one stack of mail he happens to pick up — and the window closes. Do not.",
+        tactic: "The home-address decision is the specific infrastructure move that compounds across the eight months. One mis-timed morning, one stack of mail he happens to pick up and the window closes. Do not.",
         nextSceneId: "home-address-used",
         isOptimal: false,
       },
@@ -214,11 +214,11 @@ const scenes: Scene[] = [
       },
       {
         speakerId: null,
-        text: "6:51 a.m. You have nine minutes before he leaves for the gym. The plan is: he leaves at 7:00, you have the house until 8:30, you do the GP call from the office before starting work.",
+        text: "6:51 a.m. you have nine minutes before he leaves for the gym. The plan is: he leaves at 7:00, you have the house until 8:30, you do the GP call from the office before starting work.",
       },
       {
         speakerId: "inner-voice",
-        text: "The phone is on silent. If the bank calls now, it goes to voicemail with a generic greeting you changed last week. If he hears the phone vibrate on the counter, the question he asks will not be an emergency — but the answer you produce has to be ready.",
+        text: "The phone is on silent. If the bank calls now, it goes to voicemail with a generic greeting you changed last week. If he hears the phone vibrate on the counter, the question he asks will not be an emergency but the answer you produce has to be ready.",
         emotion: "knowing",
       },
     ],
@@ -256,14 +256,14 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "inner-voice",
-        text: "The 'we can drive in together' is the test. It is not a genuine offer. It is a scope-expansion — a way to convert your morning from his forty-minute absence into his presence in the car for the forty-minute commute. Decline cleanly.",
+        text: "The 'we can drive in together' is the test. It is not a genuine offer. It is a scope-expansion, a way to convert your morning from his forty-minute absence into his presence in the car for the forty-minute commute. Decline cleanly.",
         emotion: "knowing",
       },
     ],
     choices: [
       {
         id: "decline-the-drive-in",
-        text: '"I\'m going in earlier — I have an 8:30 meeting. See you tonight."',
+        text: '"I\'m going in earlier. I have an 8:30 meeting. See you tonight."',
         tactic: "The structural decline. A reason he cannot argue with, no apology, no performed regret, no re-opening.",
         nextSceneId: "alone-in-house",
         isOptimal: true,
@@ -278,7 +278,7 @@ const scenes: Scene[] = [
       },
       {
         id: "vague-maybe",
-        text: '"Maybe — I will see how the morning goes."',
+        text: '"Maybe. I will see how the morning goes."',
         tactic: "The vague-maybe is the anxious-appeasement move. He will read it as a soft yes and plan around it. You will have to firm it up in twenty minutes. Firm now.",
         nextSceneId: "vague-backfired",
         isOptimal: false,
@@ -287,7 +287,7 @@ const scenes: Scene[] = [
   },
 
   // ===================================================================
-  // ALONE IN HOUSE — THE GP CALL
+  // ALONE IN HOUSE. THE GP CALL
   // ===================================================================
   {
     id: "alone-in-house",
@@ -297,7 +297,7 @@ const scenes: Scene[] = [
     dialog: [
       {
         speakerId: null,
-        text: "The front door closes at 6:58 a.m. The car reverses out of the driveway at 7:00. You stand in the kitchen. The house is yours for ninety minutes.",
+        text: "The front door closes at 6:58 a.m. the car reverses out of the driveway at 7:00. You stand in the kitchen. The house is yours for ninety minutes.",
       },
       {
         speakerId: null,
@@ -319,7 +319,7 @@ const scenes: Scene[] = [
       },
       {
         id: "book-lunchtime-easier",
-        text: "Book Friday lunch — easier to hide from the spouse if he asks about the afternoon.",
+        text: "Book Friday lunch, easier to hide from the spouse if he asks about the afternoon.",
         tactic: "Plausible, but a lunch appointment compresses the conversation. Forty-five minutes of paper-trail work > twenty minutes that has to skip the specifics.",
         nextSceneId: "gp-booked-short",
         isOptimal: false,
@@ -335,7 +335,7 @@ const scenes: Scene[] = [
   },
 
   // ===================================================================
-  // GP BOOKED — LOCKSMITH NEXT (AT LUNCH)
+  // GP BOOKED. LOCKSMITH NEXT (AT LUNCH)
   // ===================================================================
   {
     id: "gp-booked",
@@ -345,7 +345,7 @@ const scenes: Scene[] = [
     dialog: [
       {
         speakerId: null,
-        text: "The GP is booked. Friday, 3:30 p.m. You end the call at 7:06. You put the phone down. Two of the three moves are, in their way, done — account submitted, GP booked.",
+        text: "The GP is booked. Friday, 3:30 p.m. you end the call at 7:06. You put the phone down. Two of the three moves are, in their way, done, account submitted, GP booked.",
       },
       {
         speakerId: "inner-voice",
@@ -354,13 +354,13 @@ const scenes: Scene[] = [
       },
       {
         speakerId: null,
-        text: "The verification call from the bank comes through at 10:47 a.m. You take it in the stairwell between the third and fourth floors. Eight minutes. Standard questions. The account is confirmed open at 10:55.",
+        text: "The verification call from the bank comes through at 10:47 a.m. you take it in the stairwell between the third and fourth floors. Eight minutes. Standard questions. The account is confirmed open at 10:55.",
       },
     ],
     choices: [
       {
         id: "to-lunch-locksmith",
-        text: "12:58 p.m. Grab the car keys. Tell the team you are taking lunch out. Drive.",
+        text: "12:58 p.m. grab the car keys. Tell the team you are taking lunch out. Drive.",
         tactic: "Commit to the third move on schedule. The temptation to defer will be highest here because two are already done.",
         nextSceneId: "locksmith-call",
         isOptimal: true,
@@ -386,11 +386,11 @@ const scenes: Scene[] = [
     dialog: [
       {
         speakerId: null,
-        text: "The car is in the industrial estate. You are driving slowly enough to take the call on the car's speaker. 1:17 p.m. The locksmith picks up. You ask for a consultation-only quote — written, emailed to a specific address (not the joint email, not your work email; the standalone Gmail you set up six weeks ago on the burner browser profile).",
+        text: "The car is in the industrial estate. You are driving slowly enough to take the call on the car's speaker. 1:17 p.m. the locksmith picks up. You ask for a consultation-only quote, written, emailed to a specific address (not the joint email, not your work email; the standalone Gmail you set up six weeks ago on the burner browser profile).",
       },
       {
         speakerId: "inner-voice",
-        text: "The language is: 'I would like a quote in writing for full rekeying of a three-bedroom detached — no work commissioned yet, just the quote for planning.' The locksmith has heard this call before. He will write the quote without asking anything further. His job is the quote; your job is to not volunteer.",
+        text: "The language is: 'I would like a quote in writing for full rekeying of a three-bedroom detached, no work commissioned yet, just the quote for planning.' The locksmith has heard this call before. He will write the quote without asking anything further. His job is the quote; your job is to not volunteer.",
         emotion: "knowing",
       },
     ],
@@ -405,7 +405,7 @@ const scenes: Scene[] = [
       {
         id: "ask-about-timing",
         text: "Ask how quickly he could do a rekeying if you needed it on short notice.",
-        tactic: "Timing questions in the quote call are recorded — often in the locksmith's own notes, sometimes in a call-recording system. The question is for the second call, six months from now. This call is the quote only.",
+        tactic: "Timing questions in the quote call are recorded. Often in the locksmith's own notes, sometimes in a call-recording system. The question is for the second call, six months from now. This call is the quote only.",
         nextSceneId: "timing-asked",
         isOptimal: false,
       },
@@ -413,7 +413,7 @@ const scenes: Scene[] = [
   },
 
   // ===================================================================
-  // THREE MOVES COMPLETE — EVENING
+  // THREE MOVES COMPLETE. EVENING
   // ===================================================================
   {
     id: "three-moves-complete",
@@ -423,15 +423,15 @@ const scenes: Scene[] = [
     dialog: [
       {
         speakerId: null,
-        text: "The quote arrives by email at 2:40 p.m. — £1,240, itemised, no date attached. You forward it to your sister from the Gmail; you delete it from the sent folder; you archive it in a folder your sister named. Wednesday's three moves are complete by 2:44 p.m.",
+        text: "The quote arrives by email at 2:40 p.m., £1,240, itemised, no date attached. You forward it to your sister from the Gmail; you delete it from the sent folder; you archive it in a folder your sister named. Wednesday's three moves are complete by 2:44 p.m.",
       },
       {
         speakerId: null,
-        text: "7:14 p.m. You are home. The spouse is making dinner. He turns when you walk in and asks how your day was. You answer with the specific phrase you have rehearsed for every Wednesday like this: 'Busy, fine — I will tell you over dinner.' Then you will talk, over dinner, about the three ordinary things that did happen at work, which were true and unrelated.",
+        text: "7:14 p.m. you are home. The spouse is making dinner. He turns when you walk in and asks how your day was. You answer with the specific phrase you have rehearsed for every Wednesday like this: 'Busy, fine. I will tell you over dinner.' Then you will talk, over dinner, about the three ordinary things that did happen at work, which were true and unrelated.",
       },
       {
         speakerId: "inner-voice",
-        text: "The eight months begin tonight. The infrastructure Wednesdays will be approximately eighteen of them before the exit Wednesday, which is not this one. Tonight is the first of them. You survive this dinner the way you have survived the last eleven weeks of dinners — with the operational log running quietly behind the ordinary sentences.",
+        text: "The eight months begin tonight. The infrastructure Wednesdays will be approximately eighteen of them before the exit Wednesday, which is not this one. Tonight is the first of them. You survive this dinner the way you have survived the last eleven weeks of dinners, with the operational log running quietly behind the ordinary sentences.",
         emotion: "knowing",
       },
     ],
@@ -446,7 +446,7 @@ const scenes: Scene[] = [
       {
         id: "log-everything-tonight",
         text: "After dinner, while he watches the news, log the Wednesday's three moves in the sister's shared document. Date, time, outcome, next steps.",
-        tactic: "The documentation is the obsidian-tier move. Two versions of the operational log — yours on the Gmail, your sister's on her drive — mean that if any one document is compromised the other survives. The logging itself takes eleven minutes and closes the Wednesday's loop.",
+        tactic: "The documentation is the obsidian-tier move. Two versions of the operational log, yours on the Gmail, your sister's on her drive, mean that if any one document is compromised the other survives. The logging itself takes eleven minutes and closes the Wednesday's loop.",
         nextSceneId: "ending-eighteen-month-infrastructure",
         isOptimal: true,
         event: "optimal-with-grace",
@@ -455,7 +455,7 @@ const scenes: Scene[] = [
   },
 
   // ===================================================================
-  // FAILURE BRANCHES — SHORTER
+  // FAILURE BRANCHES. SHORTER
   // ===================================================================
   {
     id: "reordered",
@@ -465,7 +465,7 @@ const scenes: Scene[] = [
     dialog: [
       {
         speakerId: "inner-voice",
-        text: "You re-ordered. The GP call is now first. It goes fine — two minutes. Then you go to open the bank app and the 7:00 a.m. moment you had earmarked for the longer call has become the 7:12 a.m. moment he is standing in the kitchen asking what you are working on. The plan fragmented.",
+        text: "You re-ordered. The GP call is now first. It goes fine, two minutes. Then you go to open the bank app and the 7:00 a.m. moment you had earmarked for the longer call has become the 7:12 a.m. moment he is standing in the kitchen asking what you are working on. The plan fragmented.",
         emotion: "serious",
       },
     ],
@@ -511,7 +511,7 @@ const scenes: Scene[] = [
     dialog: [
       {
         speakerId: "inner-voice",
-        text: "The home address is in the application. The account is submitted. The first piece of mail — a welcome letter — will arrive within seven to ten business days. Every morning between now and then is a coin-flip: do you get to the mailbox first, or does he?",
+        text: "The home address is in the application. The account is submitted. The first piece of mail, a welcome letter, will arrive within seven to ten business days. Every morning between now and then is a coin-flip: do you get to the mailbox first, or does he?",
         emotion: "serious",
       },
     ],
@@ -580,7 +580,7 @@ const scenes: Scene[] = [
     choices: [
       {
         id: "boring-truth-adjacent",
-        text: '"My sister — she is fighting with her landlord again, it is an email."',
+        text: '"My sister, she is fighting with her landlord again, it is an email."',
         tactic: "Boring, plausible, references a recurring real thing (your sister's actual landlord dispute), closes the question without inviting the next one.",
         nextSceneId: "spouse-leaves",
         isOptimal: true,
@@ -588,7 +588,7 @@ const scenes: Scene[] = [
       },
       {
         id: "elaborate-lie",
-        text: '"It is work — the Barcelona client is in a different time zone, they send things overnight."',
+        text: '"It is work, the Barcelona client is in a different time zone, they send things overnight."',
         tactic: "The elaborate lie introduces new verifiable facts (Barcelona, overnight, a client). Every new fact is a future risk. Prefer the boring truth-adjacent.",
         nextSceneId: "lie-compounded",
         isOptimal: false,
@@ -612,7 +612,7 @@ const scenes: Scene[] = [
       {
         id: "salvage-bank-only",
         text: "The bank app is already submitted. Treat today as a one-of-three day. Log it. Move the GP and locksmith to next Wednesday.",
-        tactic: "The partial-salvage. A one-of-three Wednesday is a real Wednesday, not a failure — provided it is logged and the next one re-commits to three.",
+        tactic: "The partial-salvage. A one-of-three Wednesday is a real Wednesday, not a failure, provided it is logged and the next one re-commits to three.",
         nextSceneId: "ending-one-of-three",
         isOptimal: true,
       },
@@ -627,7 +627,7 @@ const scenes: Scene[] = [
     dialog: [
       {
         speakerId: "spouse",
-        text: '"OK — I will wait until 7:45 in case you want to come in together."',
+        text: '"OK. I will wait until 7:45 in case you want to come in together."',
         emotion: "neutral",
       },
       {
@@ -639,7 +639,7 @@ const scenes: Scene[] = [
     choices: [
       {
         id: "firm-up-now",
-        text: '"Actually — I realised I have to prep for the 8:30. Go ahead without me."',
+        text: '"Actually. I realised I have to prep for the 8:30. Go ahead without me."',
         tactic: "Firm, specific, and does not re-open. The vague-backfire is recoverable if the firmness arrives within sixty seconds.",
         nextSceneId: "spouse-leaves",
         isOptimal: true,
@@ -655,7 +655,7 @@ const scenes: Scene[] = [
     dialog: [
       {
         speakerId: "inner-voice",
-        text: "Two of three is a two-of-three. The third item moves to next Wednesday. The specific cost is not the week; it is the precedent — the next time you are close, on adrenaline, and want to skip the hardest of three, the rationale will arrive faster.",
+        text: "Two of three is a two-of-three. The third item moves to next Wednesday. The specific cost is not the week; it is the precedent, the next time you are close, on adrenaline, and want to skip the hardest of three, the rationale will arrive faster.",
         emotion: "knowing",
       },
     ],
@@ -681,7 +681,7 @@ const scenes: Scene[] = [
     dialog: [
       {
         speakerId: "inner-voice",
-        text: "The receptionist was warm; she did not need the story. The over-explanation is a small tell — specifically to a receptionist who will not repeat it, but it establishes a pattern inside you. Keep the script for Friday.",
+        text: "The receptionist was warm; she did not need the story. The over-explanation is a small tell, specifically to a receptionist who will not repeat it, but it establishes a pattern inside you. Keep the script for Friday.",
         emotion: "knowing",
       },
     ],
@@ -807,7 +807,7 @@ const scenes: Scene[] = [
     choices: [
       {
         id: "walk-back",
-        text: '"Sorry — not Barcelona, I am confusing accounts. It was the landlord thing from my sister. I am under-caffeinated."',
+        text: '"Sorry, not Barcelona, I am confusing accounts. It was the landlord thing from my sister. I am under-caffeinated."',
         tactic: "Walking back via an under-caffeinated self-deprecation is plausible and close the thread without adding more facts.",
         nextSceneId: "spouse-leaves",
         isOptimal: true,
@@ -826,11 +826,11 @@ const scenes: Scene[] = [
     outcomeType: "good",
     endingTitle: "The Three Moves",
     endingLearnPrompt:
-      "Infrastructure is the unit of work, not escape. Three moves, executed untraceably, in an eleven-hour window, closed with one ordinary dinner — that is a Wednesday. Approximately eighteen more of them stand between today and the exit Wednesday, which will be the cleanest of them all because of the eighteen that came before.",
+      "Infrastructure is the unit of work, not escape. Three moves, executed untraceably, in an eleven-hour window, closed with one ordinary dinner, that is a Wednesday. Approximately eighteen more of them stand between today and the exit Wednesday, which will be the cleanest of them all because of the eighteen that came before.",
     dialog: [
       {
         speakerId: "inner-voice",
-        text: "Account open. GP booked. Quote in hand, forwarded, archived. The operational log for today reads clean. Tomorrow is a Thursday — no infrastructure moves, no adrenaline, just the ordinary eight months you are staying operationally inside the marriage while the infrastructure completes.",
+        text: "Account open. GP booked. Quote in hand, forwarded, archived. The operational log for today reads clean. Tomorrow is a Thursday, no infrastructure moves, no adrenaline, just the ordinary eight months you are staying operationally inside the marriage while the infrastructure completes.",
         emotion: "knowing",
       },
     ],
@@ -864,7 +864,7 @@ const scenes: Scene[] = [
     outcomeType: "neutral",
     endingTitle: "The One-Of-Three",
     endingLearnPrompt:
-      "The drive-in consumed the Wednesday's operational window. The one remaining move (the account, already submitted) stands. The cost is not catastrophic — it is the specific pattern of a co-presence request successfully converting a Wednesday into a half-Wednesday. Next time, decline in the first thirty seconds.",
+      "The drive-in consumed the Wednesday's operational window. The one remaining move (the account, already submitted) stands. The cost is not catastrophic, it is the specific pattern of a co-presence request successfully converting a Wednesday into a half-Wednesday. Next time, decline in the first thirty seconds.",
     dialog: [
       {
         speakerId: "inner-voice",
@@ -883,11 +883,11 @@ const scenes: Scene[] = [
     outcomeType: "neutral",
     endingTitle: "The Two-Of-Three",
     endingLearnPrompt:
-      "Two of three is real work; it is not a failed Wednesday. The discipline is to log the deferral with a specific next date — and to treat the next Wednesday as a must-complete-three, not a repeat of today's pattern.",
+      "Two of three is real work; it is not a failed Wednesday. The discipline is to log the deferral with a specific next date and to treat the next Wednesday as a must-complete-three, not a repeat of today's pattern.",
     dialog: [
       {
         speakerId: "inner-voice",
-        text: "Account open, GP booked, locksmith to next Wednesday 1:15 p.m. Logged. The system continues.",
+        text: "Account open, GP booked, locksmith to next Wednesday 1:15 p.m. logged. The system continues.",
         emotion: "knowing",
       },
     ],
@@ -902,7 +902,7 @@ const scenes: Scene[] = [
     outcomeType: "bad",
     endingTitle: "The Mailbox Watch",
     endingLearnPrompt:
-      "Every non-optimal decision in the infrastructure window produces a surveillance task on yourself. The mailbox-watching routine becomes a permanent part of the next eight months — it is cognitive load, it is adrenaline every morning, and it is a single coin-flip away from a mis-timed morning. The correction is to re-issue the address change tomorrow, which should have been done today.",
+      "Every non-optimal decision in the infrastructure window produces a surveillance task on yourself. The mailbox-watching routine becomes a permanent part of the next eight months, it is cognitive load, it is adrenaline every morning, and it is a single coin-flip away from a mis-timed morning. The correction is to re-issue the address change tomorrow, which should have been done today.",
     dialog: [
       {
         speakerId: "inner-voice",
@@ -921,7 +921,7 @@ const scenes: Scene[] = [
     outcomeType: "neutral",
     endingTitle: "The Logged Abort",
     endingLearnPrompt:
-      "A logged abort is countable; an unlogged one becomes a pattern. The aborted Wednesday is not a moral failure — it is a data point. The recovery is the log itself, which makes the next Wednesday more likely to complete.",
+      "A logged abort is countable; an unlogged one becomes a pattern. The aborted Wednesday is not a moral failure, it is a data point. The recovery is the log itself, which makes the next Wednesday more likely to complete.",
     dialog: [
       {
         speakerId: "inner-voice",
@@ -936,9 +936,9 @@ const scenes: Scene[] = [
 export const toxicNarc41: Scenario = {
   id: "tn-4-1",
   title: "The Eighteen-Month Exit",
-  tagline: "Wednesday, 6:37 a.m. The shower is running. Three moves before dinner, no detection.",
+  tagline: "Wednesday, 6:37 a.m. the shower is running. Three moves before dinner, no detection.",
   description:
-    "Nineteen years into a marriage that works on paper. The decision to leave was made eleven weeks ago. Today is one Wednesday in the eight-to-twelve-month infrastructure window — not the exit, not the decision, just one day's three moves executed untraceably. Survival, not escape, is the unit of work.",
+    "Nineteen years into a marriage that works on paper. The decision to leave was made eleven weeks ago. Today is one Wednesday in the eight-to-twelve-month infrastructure window, not the exit, not the decision, just one day's three moves executed untraceably. Survival, not escape, is the unit of work.",
   tier: "vip",
   track: "toxic-narc",
   level: 4,
@@ -951,18 +951,18 @@ export const toxicNarc41: Scenario = {
   startSceneId: "content-gate",
   prerequisites: ["tn-1-1"],
   tacticsLearned: [
-    "The three-move Wednesday: separate account, medical record, locksmith quote — executed in that order",
+    "The three-move Wednesday: separate account, medical record, locksmith quote, executed in that order",
     "The sister's-flat address rule: every address of record lives outside the shared digital surface",
     "Boring-truth-adjacent answers to unexpected questions (use recurring real facts, never introduce new ones)",
     "Decline the drive-in / drive-home scope-expansion in the first thirty seconds, with a reason that does not re-open",
-    "The log kept in two places — your Gmail and your sister's drive — as the operational redundancy",
+    "The log kept in two places, your Gmail and your sister's drive, as the operational redundancy",
   ],
   redFlagsTaught: [
-    "The abort-reflex on an adrenaline Wednesday morning — extends the infrastructure window by weeks each time",
+    "The abort-reflex on an adrenaline Wednesday morning, extends the infrastructure window by weeks each time",
     "Home-address shortcuts that convert a one-time decision into permanent mailbox surveillance",
     "Work-address contamination of the exit infrastructure with your professional life",
     "Timing questions in the quote call that the locksmith writes down or remembers",
-    "The elaborate lie with new verifiable facts — every new fact is a future risk",
+    "The elaborate lie with new verifiable facts. Every new fact is a future risk",
   ],
   characters: [INNER_VOICE, THE_SPOUSE],
   scenes,

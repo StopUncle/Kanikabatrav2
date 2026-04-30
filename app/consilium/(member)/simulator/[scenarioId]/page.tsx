@@ -8,7 +8,7 @@ import SimulatorPageClient from "@/components/simulator/SimulatorPageClient";
 /**
  * Play a scenario. Resumes mid-run progress from DB. If the scenario was
  * already completed, we start the replay from the opening scene instead
- * of dropping the player back on the ending screen — the latter killed
+ * of dropping the player back on the ending screen, the latter killed
  * engagement because "already done" scenarios never invited replay.
  */
 
@@ -21,7 +21,7 @@ export async function generateMetadata({
   const scenario = getScenario(scenarioId);
   if (!scenario) return { title: "Simulator | Kanika Batra" };
   return {
-    title: `${scenario.title} — The Dark Mirror | Kanika Batra`,
+    title: `${scenario.title}. The Dark Mirror | Kanika Batra`,
     description: scenario.description,
   };
 }
@@ -39,7 +39,7 @@ export default async function SimulatorPlay({
     `/consilium/simulator/${scenarioId}`,
   );
 
-  // Load persisted state — null when never played.
+  // Load persisted state, null when never played.
   const row = await prisma.simulatorProgress.findUnique({
     where: { userId_scenarioId: { userId, scenarioId } },
   });
@@ -50,7 +50,7 @@ export default async function SimulatorPlay({
   // scene or at a scene that doesn't exist anymore (scenario edited
   // after the row was written), ignore the resume. Historically, a
   // bad save ordering or a failed `endedAt` write could leave a row
-  // with currentSceneId = ending_id + completedAt = null — which
+  // with currentSceneId = ending_id + completedAt = null, which
   // dropped players directly onto the ending screen on re-entry.
   // Starting fresh is always safe; losing one mid-run save is not.
   let initialState: SimulatorState | undefined = undefined;
@@ -63,7 +63,7 @@ export default async function SimulatorPlay({
       initialState = {
         scenarioId: row.scenarioId,
         currentSceneId: row.currentSceneId,
-        // choicesMade is Json — Prisma types it as Prisma.JsonValue, but we
+        // choicesMade is Json. Prisma types it as Prisma.JsonValue, but we
         // wrote it in the shape ChoiceRecord[]. Cast narrowly.
         choicesMade: (row.choicesMade as unknown as ChoiceRecord[]) ?? [],
         xpEarned: row.xpEarned ?? 0,
@@ -73,7 +73,7 @@ export default async function SimulatorPlay({
     }
   }
 
-  // Previous-best summary — shown in the pre-game overlay and on the
+  // Previous-best summary, shown in the pre-game overlay and on the
   // ending screen so a replay feels like beating a record, not
   // repeating chores. Only populated for fully-completed runs.
   const previousBest = row?.completedAt
@@ -84,7 +84,7 @@ export default async function SimulatorPlay({
       }
     : null;
 
-  // "Next scenario" link — whatever comes after this one in ALL_SCENARIOS.
+  // "Next scenario" link, whatever comes after this one in ALL_SCENARIOS.
   const currentIdx = ALL_SCENARIOS.findIndex((s) => s.id === scenario.id);
   const next = currentIdx >= 0 ? ALL_SCENARIOS[currentIdx + 1] : undefined;
   const nextHref = next ? `/consilium/simulator/${next.id}` : null;

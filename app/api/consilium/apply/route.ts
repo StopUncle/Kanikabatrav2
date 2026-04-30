@@ -68,13 +68,13 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ error: "Your membership has been suspended" }, { status: 403 });
       }
       if (existing.status === "PENDING") {
-        return NextResponse.json({ error: "Application already submitted — we'll review it soon" }, { status: 400 });
+        return NextResponse.json({ error: "Application already submitted, we'll review it soon" }, { status: 400 });
       }
       if (existing.status === "APPROVED") {
-        return NextResponse.json({ error: "Your application is already approved — complete payment to activate" }, { status: 400 });
+        return NextResponse.json({ error: "Your application is already approved, complete payment to activate" }, { status: 400 });
       }
       if (existing.status === "CANCELLED") {
-        // Allow re-application for rejected users — reset their membership
+        // Allow re-application for rejected users, reset their membership
         // to PENDING so they go through the approval flow again. The admin
         // can see prior rejection history in applicationData.
         await prisma.communityMembership.update({
@@ -83,12 +83,12 @@ export async function POST(request: NextRequest) {
         });
         // Fall through to the upsert below, which will set it to PENDING
       }
-      // EXPIRED falls through — natural expiration allows re-application
+      // EXPIRED falls through, natural expiration allows re-application
     }
 
     // Save gender + displayName on the user record. Gender drives the
     // gender-split content filter; displayName is what other members see
-    // everywhere (posts, comments, forum, chat) — real name is never
+    // everywhere (posts, comments, forum, chat), real name is never
     // exposed to other members.
     await prisma.user.update({
       where: { id: user.id },

@@ -41,7 +41,7 @@ export async function POST(request: NextRequest) {
     switch (event.type) {
       case "checkout.session.completed": {
         const session = event.data.object;
-        // Normalize email to lowercase — register/login do this, but Stripe
+        // Normalize email to lowercase, register/login do this, but Stripe
         // preserves whatever casing the buyer typed at checkout. Without this,
         // a buyer who registered as alice@gmail.com but typed Alice@Gmail.com
         // at checkout would get a duplicate user or a missed findUnique.
@@ -68,7 +68,7 @@ export async function POST(request: NextRequest) {
 
           if (existing) {
             console.log(
-              `[stripe-webhook] BOOK purchase ${idempotencyKey} already processed — skipping`,
+              `[stripe-webhook] BOOK purchase ${idempotencyKey} already processed, skipping`,
             );
             break;
           }
@@ -101,7 +101,7 @@ export async function POST(request: NextRequest) {
           );
 
           // Flag the purchase if book delivery email silently failed so
-          // cron/retry-emails can pick it up. sendBookDelivery returns
+          // cron/retry-emails can pick it up. SendBookDelivery returns
           // false (doesn't throw) after exhausting 3 retries.
           if (!emailSent) {
             await prisma.purchase.update({
@@ -116,7 +116,7 @@ export async function POST(request: NextRequest) {
               },
             });
             console.error(
-              `[stripe-webhook] BOOK delivery email failed for ${email} (session ${sessionId}) — flagged for retry`,
+              `[stripe-webhook] BOOK delivery email failed for ${email} (session ${sessionId}), flagged for retry`,
             );
           }
 
@@ -133,7 +133,7 @@ export async function POST(request: NextRequest) {
             console.error("Failed to auto-unlock quiz for book buyer:", err);
           }
 
-          // Auto-enroll in email sequence (idempotent — checks the queue
+          // Auto-enroll in email sequence (idempotent, checks the queue
           // first; the outer Purchase guard above already prevents repeat
           // processing on retry, but this stays as a belt-and-braces check).
           try {
@@ -173,7 +173,7 @@ export async function POST(request: NextRequest) {
           });
           if (existingQuizPurchase) {
             console.log(
-              `[stripe-webhook] QUIZ purchase ${idempotencyKey} already processed — skipping`,
+              `[stripe-webhook] QUIZ purchase ${idempotencyKey} already processed, skipping`,
             );
             break;
           }
@@ -215,7 +215,7 @@ export async function POST(request: NextRequest) {
 
           // Generate a one-use $9.99 Stripe promotion code that
           // credits the quiz price toward the buyer's first
-          // Consilium month. Non-blocking — a Stripe hiccup here
+          // Consilium month. Non-blocking, a Stripe hiccup here
           // doesn't fail the webhook. 14-day expiry.
           if (unlockedQuizResultId) {
             const credit = await createQuizConsiliumCredit(unlockedQuizResultId);
@@ -238,7 +238,7 @@ export async function POST(request: NextRequest) {
           });
           if (existing) {
             console.log(
-              `[stripe-webhook] COACHING purchase ${idempotencyKey} already processed — skipping`,
+              `[stripe-webhook] COACHING purchase ${idempotencyKey} already processed, skipping`,
             );
             break;
           }
@@ -290,7 +290,7 @@ export async function POST(request: NextRequest) {
           });
           if (existing) {
             console.log(
-              `[stripe-webhook] ASK_KANIKA purchase ${idempotencyKey} already processed — skipping`,
+              `[stripe-webhook] ASK_KANIKA purchase ${idempotencyKey} already processed, skipping`,
             );
             break;
           }
@@ -323,7 +323,7 @@ export async function POST(request: NextRequest) {
           // takes over until they cancel.
           //
           // Two events per bundle: this checkout.session.completed (run
-          // ONCE — books, user, membership wired up) and a chain of
+          // ONCE, books, user, membership wired up) and a chain of
           // invoice.payment_succeeded events (handled by the existing
           // INNER_CIRCLE renewal path via paypalSubscriptionId lookup).
           const subscriptionId = session.subscription as string;
@@ -343,7 +343,7 @@ export async function POST(request: NextRequest) {
           });
           if (existing) {
             console.log(
-              `[stripe-webhook] ${productKey} purchase ${idempotencyKey} already processed — skipping`,
+              `[stripe-webhook] ${productKey} purchase ${idempotencyKey} already processed, skipping`,
             );
             break;
           }
@@ -389,7 +389,7 @@ export async function POST(request: NextRequest) {
               },
             });
             console.error(
-              `[stripe-webhook] ${productKey} book delivery email failed for ${email} — flagged for retry`,
+              `[stripe-webhook] ${productKey} book delivery email failed for ${email}, flagged for retry`,
             );
           }
 
@@ -446,7 +446,7 @@ export async function POST(request: NextRequest) {
 
           if (hasActiveSubscription) {
             console.log(
-              `[stripe-webhook] ${productKey} buyer ${email} already has subscription ${existingMembership.paypalSubscriptionId} — cancelling new bundle sub ${subscriptionId} to prevent double-charge`,
+              `[stripe-webhook] ${productKey} buyer ${email} already has subscription ${existingMembership.paypalSubscriptionId}, cancelling new bundle sub ${subscriptionId} to prevent double-charge`,
             );
             try {
               await stripe.subscriptions.cancel(subscriptionId);
@@ -457,7 +457,7 @@ export async function POST(request: NextRequest) {
               );
             }
           } else {
-            // Pull current_period_end from the subscription — during the
+            // Pull current_period_end from the subscription, during the
             // trial this IS the bundle end date (30 or 90 days out).
             // After trial it auto-extends via invoice.payment_succeeded.
             let consiliumExpiresAt: Date;
@@ -549,21 +549,21 @@ export async function POST(request: NextRequest) {
                 },
               });
               console.error(
-                `[stripe-webhook] ${productKey} welcome email failed for ${user.email} (session ${sessionId}) — flagged for retry`,
+                `[stripe-webhook] ${productKey} welcome email failed for ${user.email} (session ${sessionId}), flagged for retry`,
               );
             }
           }
         } else if (productKey === "DONATION") {
           // Pay-what-you-want donation. The amount is captured at the
-          // Stripe Checkout step (custom_unit_amount price) — webhook
+          // Stripe Checkout step (custom_unit_amount price), webhook
           // just records a Purchase row + fires the thank-you email.
           //
           // Idempotent on Stripe session id (mapped to paypalOrderId for
           // legacy compat). Anonymous donations still get a Purchase row
-          // — the is_anonymous flag is preserved in metadata so the admin
+          //, the is_anonymous flag is preserved in metadata so the admin
           // can decide whether to publicly thank them later.
           //
-          // Re-narrow `name` locally — it was declared above as
+          // Re-narrow `name` locally, it was declared above as
           // `customer_details?.name || email` while email was still
           // `string | undefined`, and the early return (`!email`) doesn't
           // retroactively narrow it. Falling back to email here keeps the
@@ -575,7 +575,7 @@ export async function POST(request: NextRequest) {
           });
           if (existing) {
             console.log(
-              `[stripe-webhook] DONATION ${idempotencyKey} already processed — skipping`,
+              `[stripe-webhook] DONATION ${idempotencyKey} already processed, skipping`,
             );
             break;
           }
@@ -584,7 +584,7 @@ export async function POST(request: NextRequest) {
           const isAnonymous = session.metadata?.is_anonymous === "true";
 
           // Best-effort link to a User row if the email matches a known
-          // member. Not required — anonymous donors and never-registered
+          // member. Not required, anonymous donors and never-registered
           // donors both get a Purchase row with userId=null.
           const matchedUser = await prisma.user.findUnique({
             where: { email },
@@ -610,7 +610,7 @@ export async function POST(request: NextRequest) {
             },
           });
 
-          // Thank-you email — fire-and-forget so a transient SMTP failure
+          // Thank-you email, fire-and-forget so a transient SMTP failure
           // doesn't unwind the Purchase write. The email is non-critical;
           // Stripe sends its own receipt as a backstop.
           import("@/lib/email")
@@ -629,7 +629,7 @@ export async function POST(request: NextRequest) {
               ),
             );
         } else if (productKey === "INNER_CIRCLE") {
-          // Subscription — Stripe webhook gives us the subscription id; we
+          // Subscription. Stripe webhook gives us the subscription id; we
           // upsert membership here for immediate access. Renewals are then
           // handled by invoice.payment_succeeded above.
           const subscriptionId = session.subscription as string;
@@ -651,7 +651,7 @@ export async function POST(request: NextRequest) {
           });
           if (existingPurchase) {
             console.log(
-              `[stripe-webhook] INNER_CIRCLE purchase ${idempotencyKey} already processed — skipping`,
+              `[stripe-webhook] INNER_CIRCLE purchase ${idempotencyKey} already processed, skipping`,
             );
             break;
           }
@@ -711,7 +711,7 @@ export async function POST(request: NextRequest) {
 
           // Purchase row exists for two reasons:
           //   1. Idempotency anchor for retried webhooks (see check above)
-          //   2. Refund linkage — charge.refunded looks up the Purchase by
+          //   2. Refund linkage, charge.refunded looks up the Purchase by
           //      ST-${sessionId} and reads metadata.productKey to decide
           //      whether to cancel the membership. Without this row, an
           //      INNER_CIRCLE refund would silently leave the user with
@@ -741,7 +741,7 @@ export async function POST(request: NextRequest) {
           // the standard BOOK checkout (see /api/stripe/checkout, which
           // swaps to STRIPE_PRICES.BOOK_MEMBER when an ACTIVE member is
           // authenticated). The BOOK_CONSILIUM_1MO / BOOK_CONSILIUM_3MO
-          // one-time bundles still deliver the book — those are separate
+          // one-time bundles still deliver the book. Those are separate
           // SKUs purchased for that express purpose.
 
           // If we just created the account, the user has no idea they have
@@ -795,7 +795,7 @@ export async function POST(request: NextRequest) {
                 },
               });
               console.error(
-                `[stripe-webhook] INNER_CIRCLE welcome email failed for ${user.email} (session ${sessionId}) — flagged for retry`,
+                `[stripe-webhook] INNER_CIRCLE welcome email failed for ${user.email} (session ${sessionId}), flagged for retry`,
               );
             }
           }
@@ -806,7 +806,7 @@ export async function POST(request: NextRequest) {
       }
 
       case "invoice.payment_succeeded": {
-        // Subscription renewal — extend membership to the actual paid-through
+        // Subscription renewal, extend membership to the actual paid-through
         // date, not a hardcoded +1 month. The previous code added 30 days
         // regardless of billing cycle, which would have shortchanged annual
         // subscribers by 11 months on every renewal.
@@ -856,14 +856,14 @@ export async function POST(request: NextRequest) {
         // advances past what we already have.
         if (membership.expiresAt && membership.expiresAt >= newExpiresAt) {
           console.log(
-            `[stripe-webhook] renewal for ${membership.id} is not newer than current expiresAt — skipping`,
+            `[stripe-webhook] renewal for ${membership.id} is not newer than current expiresAt, skipping`,
           );
           break;
         }
 
-        // Don't blindly flip SUSPENDED→ACTIVE — if the user paused, we want
+        // Don't blindly flip SUSPENDED→ACTIVE, if the user paused, we want
         // to leave them paused. Only re-activate from a payment-failed
-        // suspension. And NEVER extend a CANCELLED membership — the sub was
+        // suspension. And NEVER extend a CANCELLED membership, the sub was
         // cancelled (by user or refund) and a late invoice event shouldn't
         // grant extra access.
         if (membership.status === "CANCELLED") {
@@ -1001,7 +1001,7 @@ export async function POST(request: NextRequest) {
         });
 
         // Refunds of Consilium-granting purchases must also cancel the
-        // membership — otherwise a refunded user keeps community access
+        // membership, otherwise a refunded user keeps community access
         // until expiresAt naturally lapses. Covers:
         //   - INNER_CIRCLE (monthly subscription checkout)
         //   - BOOK_CONSILIUM_1MO / _3MO (one-time book + bundle)
@@ -1031,7 +1031,7 @@ export async function POST(request: NextRequest) {
       }
 
       case "invoice.payment_failed": {
-        // Failed renewal — suspend the membership immediately so we don't
+        // Failed renewal, suspend the membership immediately so we don't
         // keep granting access to a user whose card declined. Stripe will
         // also retry the charge per the dunning settings; if it eventually
         // succeeds, invoice.payment_succeeded above will flip status back to

@@ -1,14 +1,14 @@
 /**
- * Mission 12-1 — "The Whisper Network"
+ * Mission 12-1, "The Whisper Network"
  *
  * Level 12, order 1. Capstone of the Maris-arc family thread.
  *
  * Two weeks after L11-2. The mother could not get the signature direct, so
- * she went lateral. Ren is now holding a re-spun version of Sunday — sold
+ * she went lateral. Ren is now holding a re-spun version of Sunday, sold
  * to them on the drive home. Priya's mother got a phone call. The smear is
  * already in motion across two fronts by the time the player learns about
- * it. The scenario is the discipline of NOT defending — because defending
- * is the smear's amplifier — and instead pre-empting with one calibrated
+ * it. The scenario is the discipline of NOT defending, because defending
+ * is the smear's amplifier and instead pre-empting with one calibrated
  * sentence per affected party.
  *
  * Closes the structural loop opened in mission-1-1: that scenario taught
@@ -16,7 +16,7 @@
  * win. This one tests them on three contested fronts in the morning after
  * a no.
  *
- * Voice: reference/KANIKA-VOICE.md. The mother is now off-screen — she is
+ * Voice: reference/KANIKA-VOICE.md. The mother is now off-screen, she is
  * a force the player feels through the third parties she has called. The
  * player never speaks to her in this scenario. That is the win.
  */
@@ -31,7 +31,7 @@ import {
 
 const scenes: Scene[] = [
   // ---------------------------------------------------------------------
-  // PART 1 — The phone hums (Tuesday afternoon)
+  // PART 1. The phone hums (Tuesday afternoon)
   // ---------------------------------------------------------------------
   {
     id: "the-text",
@@ -87,7 +87,7 @@ const scenes: Scene[] = [
   },
 
   // ---------------------------------------------------------------------
-  // PART 2 — The second front opens
+  // PART 2. The second front opens
   // ---------------------------------------------------------------------
   {
     id: "the-priya-text",
@@ -101,12 +101,12 @@ const scenes: Scene[] = [
       },
       {
         speakerId: null,
-        text: 'PRIYA: "Hey. Random — your mom called my mum yesterday. She was asking how I am. Then she said something odd about you. I did not know what to say. Wanted to flag it."',
+        text: 'PRIYA: "Hey. Random, your mom called my mum yesterday. She was asking how I am. Then she said something odd about you. I did not know what to say. Wanted to flag it."',
         emotion: "concerned",
       },
       {
         speakerId: "inner-voice",
-        text: "Two fronts now. She did not call Priya — that would have been refused. She called Priya's mother, who would not refuse a call from an old family friend.",
+        text: "Two fronts now. She did not call Priya, that would have been refused. She called Priya's mother, who would not refuse a call from an old family friend.",
         emotion: "knowing",
       },
       {
@@ -149,7 +149,7 @@ const scenes: Scene[] = [
   },
 
   // ---------------------------------------------------------------------
-  // PART 3 — Triage. Who first, and how.
+  // PART 3. Triage. Who first, and how.
   // ---------------------------------------------------------------------
   {
     id: "triage",
@@ -185,14 +185,14 @@ const scenes: Scene[] = [
       },
       {
         id: "priya-first-short",
-        text: "Text Priya first — short frame. Then call Ren.",
+        text: "Text Priya first, short frame. Then call Ren.",
         nextSceneId: "the-priya-message-first",
         feedback:
           "Defensible. The cost is that Ren has been stewing for another hour by the time you get there.",
       },
       {
         id: "send-mass-text",
-        text: "Send the same group message to Ren and Priya — the whole story, your side.",
+        text: "Send the same group message to Ren and Priya, the whole story, your side.",
         nextSceneId: "defense-trap-2",
         feedback:
           "A group message about a smear is a smear about a smear. You just wrote her marketing copy.",
@@ -208,7 +208,7 @@ const scenes: Scene[] = [
   },
 
   // ---------------------------------------------------------------------
-  // PART 4 — The Ren call (the set-piece)
+  // PART 4. The Ren call (the set-piece)
   // ---------------------------------------------------------------------
   {
     id: "the-ren-call",
@@ -217,7 +217,7 @@ const scenes: Scene[] = [
     dialog: [
       {
         speakerId: null,
-        text: "You sit at the kitchen table. The fennel is in the bin. You take a glass of water before you dial — water gives you something to do with the second sentence if the first sentence lands wrong.",
+        text: "You sit at the kitchen table. The fennel is in the bin. You take a glass of water before you dial, water gives you something to do with the second sentence if the first sentence lands wrong.",
         emotion: "neutral",
       },
       {
@@ -234,12 +234,12 @@ const scenes: Scene[] = [
     choices: [
       {
         id: "ask-what-ren-remembers",
-        text: '"Ren — I want to ask you something. What do you remember about Sunday? Just what you saw, in order."',
+        text: '"Ren. I want to ask you something. What do you remember about Sunday? Just what you saw, in order."',
         nextSceneId: "ren-reconstructs",
         feedback:
           "You did not refute. You invited Ren to walk back into the room. Their version of Sunday is the only one they trust.",
         isOptimal: true,
-        tactic: "Witness reconstruction — let them name what they saw",
+        tactic: "Witness reconstruction, let them name what they saw",
         xpBonus: 8,
         event: "12-1-asked-ren-to-remember",
       },
@@ -259,10 +259,10 @@ const scenes: Scene[] = [
       },
       {
         id: "name-the-tactic",
-        text: '"Ren — what you are saying is the version she gave you on the drive home. I want to ask what you saw, before that version. Not what she said. What you saw."',
+        text: '"Ren, what you are saying is the version she gave you on the drive home. I want to ask what you saw, before that version. Not what she said. What you saw."',
         nextSceneId: "ren-recognizes",
         feedback:
-          "Naming the move directly is high-risk. With Ren, it can land — they were the witness, and they know how she talks. With anyone else this would be a bridge too far.",
+          "Naming the move directly is high-risk. With Ren, it can land, they were the witness, and they know how she talks. With anyone else this would be a bridge too far.",
         isOptimal: true,
         tactic: "Name the version vs. the memory",
         xpBonus: 6,
@@ -271,7 +271,7 @@ const scenes: Scene[] = [
   },
 
   // ---------------------------------------------------------------------
-  // Ren reconstructs — the optimal path
+  // Ren reconstructs, the optimal path
   // ---------------------------------------------------------------------
   {
     id: "ren-reconstructs",
@@ -285,7 +285,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "sibling",
-        text: '"Dinner was fine. The thing in the study — she had three documents out. Not one. She said it was for the cabin but two of them were not. You said no. You said it three times. You said it warm."',
+        text: '"Dinner was fine. The thing in the study, she had three documents out. Not one. She said it was for the cabin but two of them were not. You said no. You said it three times. You said it warm."',
         emotion: "neutral",
       },
       {
@@ -325,7 +325,7 @@ const scenes: Scene[] = [
     ],
   },
 
-  // Ren recognizes — also-good path
+  // Ren recognizes, also-good path
   {
     id: "ren-recognizes",
     backgroundId: "apartment-quiet",
@@ -350,7 +350,7 @@ const scenes: Scene[] = [
     choices: [
       {
         id: "take-less",
-        text: '"Nothing. Just — when she calls you next time, you can listen and not pass it on. That is enough."',
+        text: '"Nothing. Just, when she calls you next time, you can listen and not pass it on. That is enough."',
         nextSceneId: "the-priya-message",
         feedback:
           "Asking for nothing is asking for the right thing. Ren is not your soldier; Ren is your sibling.",
@@ -369,7 +369,7 @@ const scenes: Scene[] = [
   },
 
   // ---------------------------------------------------------------------
-  // PART 5 — The Priya message (the calibrated frame)
+  // PART 5. The Priya message (the calibrated frame)
   // ---------------------------------------------------------------------
   {
     id: "the-priya-message",
@@ -391,19 +391,19 @@ const scenes: Scene[] = [
       {
         id: "short-frame",
         text:
-          '"Hey — thanks for telling me. Two weeks ago I declined power of attorney over my mother. She has been calling people since. You will probably hear more. Nothing you need to do — wanted you to have the context. See you Tuesday."',
+          '"Hey, thanks for telling me. Two weeks ago I declined power of attorney over my mother. She has been calling people since. You will probably hear more. Nothing you need to do, wanted you to have the context. See you Tuesday."',
         nextSceneId: "ending-frame-held",
         feedback:
           "Names the move. Names the timeline. Asks for nothing. Closes with a real plan. Priya now has a frame to read everything she hears next month through.",
         isOptimal: true,
-        tactic: "The pre-empt — short, factual, no recruitment",
+        tactic: "The pre-empt, short, factual, no recruitment",
         xpBonus: 10,
         event: "12-1-pre-empted-clean",
       },
       {
         id: "long-explanation",
         text:
-          '"It is a long story. My mother has been like this my whole life. She does this thing where if she does not get what she wants she — well, in this case, she wanted me to sign a power of attorney, which would have given her control over half of what I own, and..." [continues for four paragraphs]',
+          '"It is a long story. My mother has been like this my whole life. She does this thing where if she does not get what she wants she, well, in this case, she wanted me to sign a power of attorney, which would have given her control over half of what I own, and..." [continues for four paragraphs]',
         nextSceneId: "ending-defended",
         feedback:
           "Every sentence after the third one is one Priya did not need. You also just spent your remaining social capital with her on this story instead of on something that mattered to you both.",
@@ -442,7 +442,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "sibling",
-        text: '"Whoa — okay. Slow down. She just said you were really cold to her."',
+        text: '"Whoa, okay. Slow down. She just said you were really cold to her."',
         emotion: "neutral",
       },
       {
@@ -461,7 +461,7 @@ const scenes: Scene[] = [
       },
       {
         id: "keep-pressing",
-        text: 'Talk faster. "She is lying, Ren, she is doing the thing she always does — "',
+        text: 'Talk faster. "She is lying, Ren, she is doing the thing she always does, "',
         nextSceneId: "ren-defensive",
         feedback:
           "The faster you talk the more she sounds like the calm one in the story.",
@@ -481,7 +481,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "priya",
-        text: '"Yeah — she said something about you not visiting much, and that you were difficult about money. Honestly I tuned out."',
+        text: '"Yeah, she said something about you not visiting much, and that you were difficult about money. Honestly I tuned out."',
         emotion: "knowing",
       },
       {
@@ -493,14 +493,14 @@ const scenes: Scene[] = [
     choices: [
       {
         id: "thank-priya-recover",
-        text: '"Got it. Thank you. I will explain in one short message later — promise."',
+        text: '"Got it. Thank you. I will explain in one short message later, promise."',
         nextSceneId: "triage",
         feedback:
           "Recovered. The temperature on the call drops. You owe Priya the short message you just promised.",
       },
       {
         id: "priya-deep-dive",
-        text: 'Tell Priya the whole story now, on the call. "So basically what is happening is — "',
+        text: 'Tell Priya the whole story now, on the call. "So basically what is happening is, "',
         nextSceneId: "ending-defended",
         feedback:
           "You used a phone call to deliver something that should have been one written paragraph. Priya is now your audience, not your friend.",
@@ -523,10 +523,10 @@ const scenes: Scene[] = [
       {
         id: "still-do-it-clean",
         text:
-          '"Hey — thanks for the heads-up. Declined POA over my mother two weeks ago; she is calling people. Nothing for you to do. See you Tuesday." — then call Ren.',
+          '"Hey, thanks for the heads-up. Declined POA over my mother two weeks ago; she is calling people. Nothing for you to do. See you Tuesday.", then call Ren.',
         nextSceneId: "the-ren-call",
         feedback:
-          "The frame to Priya is right. You can still recover Ren — just be aware Ren has been on the cold version of you for an extra hour.",
+          "The frame to Priya is right. You can still recover Ren, just be aware Ren has been on the cold version of you for an extra hour.",
       },
       {
         id: "long-priya-then-ren",
@@ -632,7 +632,7 @@ const scenes: Scene[] = [
     dialog: [
       {
         speakerId: "sibling",
-        text: '"Look — I cannot do this with you right now. She is crying. You are angry. I am tired. I have to go."',
+        text: '"Look. I cannot do this with you right now. She is crying. You are angry. I am tired. I have to go."',
         emotion: "sad",
       },
       {
@@ -670,7 +670,7 @@ const scenes: Scene[] = [
     dialog: [
       {
         speakerId: "sibling",
-        text: '"... I do not want to be in the middle of this. I love both of you. Please do not ask me to pick."',
+        text: '"... i do not want to be in the middle of this. I love both of you. Please do not ask me to pick."',
         emotion: "sad",
       },
       {
@@ -694,7 +694,7 @@ const scenes: Scene[] = [
     outcomeType: "good",
     endingTitle: "The Frame Held",
     endingSummary:
-      "Two weeks. Two fronts. Two short conversations. You did not refute her — you let Ren remember Sunday, and you gave Priya a frame to read every future call through. The smear traveled until it hit context, and then it stopped. The frame held because you did not defend it.",
+      "Two weeks. Two fronts. Two short conversations. You did not refute her, you let Ren remember Sunday, and you gave Priya a frame to read every future call through. The smear traveled until it hit context, and then it stopped. The frame held because you did not defend it.",
     failureBlogSlug: undefined,
     dialog: [
       {
@@ -704,7 +704,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "inner-voice",
-        text: "The discipline you just demonstrated — pre-empting instead of defending, naming the move once, asking for less than was offered — is the discipline most people lose at this exact phase. They survive the no. They lose the smear that follows.",
+        text: "The discipline you just demonstrated, pre-empting instead of defending, naming the move once, asking for less than was offered, is the discipline most people lose at this exact phase. They survive the no. They lose the smear that follows.",
         emotion: "knowing",
       },
       {
@@ -729,12 +729,12 @@ const scenes: Scene[] = [
     dialog: [
       {
         speakerId: "inner-voice",
-        text: "Defending a smear gives the smear a stage. Even when the defense lands, the topic has been promoted from background to foreground — and the smear's whole strategy was to be the topic.",
+        text: "Defending a smear gives the smear a stage. Even when the defense lands, the topic has been promoted from background to foreground and the smear's whole strategy was to be the topic.",
         emotion: "knowing",
       },
       {
         speakerId: "inner-voice",
-        text: "The replay version of this scenario starts when you can feel that — when the impulse to defend arrives and you can let it pass without writing the sentence.",
+        text: "The replay version of this scenario starts when you can feel that, when the impulse to defend arrives and you can let it pass without writing the sentence.",
         emotion: "knowing",
       },
     ],
@@ -759,7 +759,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "inner-voice",
-        text: "The recovery is one short paragraph, sent to one person at a time, no defense in it — three months from now, when there is something else to be said in the same conversation. Smears decay. Defenses do not.",
+        text: "The recovery is one short paragraph, sent to one person at a time, no defense in it. Three months from now, when there is something else to be said in the same conversation. Smears decay. Defenses do not.",
         emotion: "knowing",
       },
     ],
@@ -772,7 +772,7 @@ export const mission121: Scenario = {
   tagline:
     "She could not get the signature. She is getting the people instead.",
   description:
-    "Two weeks after you left her house on your curfew. The lateral attack — phone calls to the witness, calls to the friend's mother, the version of Sunday she sold to Ren on the drive home. The discipline of NOT defending, because defending is the smear's amplifier, and instead pre-empting with one calibrated sentence per affected party. Closes the loop opened in mission 1-1 — that morning you read three messages on your phone. This morning you read three contested fronts.",
+    "Two weeks after you left her house on your curfew. The lateral attack, phone calls to the witness, calls to the friend's mother, the version of Sunday she sold to Ren on the drive home. The discipline of NOT defending, because defending is the smear's amplifier, and instead pre-empting with one calibrated sentence per affected party. Closes the loop opened in mission 1-1, that morning you read three messages on your phone. This morning you read three contested fronts.",
   tier: "vip",
   level: 12,
   order: 1,
@@ -784,18 +784,18 @@ export const mission121: Scenario = {
   startSceneId: "the-text",
   prerequisites: ["mission-11-2"],
   tacticsLearned: [
-    "Pre-empting over defending — one calibrated sentence per affected party",
-    "Witness reconstruction — let the witness walk back into the room rather than refuting the rewrite",
-    "Triage discipline — the witness conversation and the friend conversation are different conversations",
-    "Asking for less than is offered — do not enlist allies into wars they did not start",
-    "Information laundering recognition — calls to your friend's mother bypass refusal",
+    "Pre-empting over defending, one calibrated sentence per affected party",
+    "Witness reconstruction, let the witness walk back into the room rather than refuting the rewrite",
+    "Triage discipline, the witness conversation and the friend conversation are different conversations",
+    "Asking for less than is offered, do not enlist allies into wars they did not start",
+    "Information laundering recognition, calls to your friend's mother bypass refusal",
   ],
   redFlagsTaught: [
-    "The drive-home rewrite — the version sold to a witness in the car after the event",
-    "Information laundering — calling someone's parent instead of someone",
-    "Defense-as-amplifier — written defenses become quotable evidence",
-    "The recruitment ask — turning an ally into a soldier costs the relationship",
-    "Smear-by-silence — the version someone tells in your silence becomes the room's version of you",
+    "The drive-home rewrite, the version sold to a witness in the car after the event",
+    "Information laundering, calling someone's parent instead of someone",
+    "Defense-as-amplifier, written defenses become quotable evidence",
+    "The recruitment ask, turning an ally into a soldier costs the relationship",
+    "Smear-by-silence, the version someone tells in your silence becomes the room's version of you",
   ],
   reward: {
     id: "frame-held",

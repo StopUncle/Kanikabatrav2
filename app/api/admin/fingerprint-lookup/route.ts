@@ -37,7 +37,7 @@ export async function POST(request: NextRequest) {
   }
 
   // Pull every userId and brute-force the match. At low-hundreds scale this
-  // is ~1ms; at 100k users it would be ~100ms — still fine for an admin
+  // is ~1ms; at 100k users it would be ~100ms, still fine for an admin
   // tool. When the member count grows past that, switch to a pre-computed
   // index table.
   const users = await prisma.user.findMany({

@@ -10,7 +10,7 @@ import { Mic } from "lucide-react";
 import { tierForMember } from "@/components/consilium/badge-tiers";
 
 export const metadata = {
-  title: "Voice Notes — The Consilium | Kanika Batra",
+  title: "Voice Notes. The Consilium | Kanika Batra",
 };
 
 export default async function VoiceNotesPage() {

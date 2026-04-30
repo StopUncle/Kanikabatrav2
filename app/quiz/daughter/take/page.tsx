@@ -21,7 +21,7 @@ import { ChevronLeft, ShieldAlert } from "lucide-react";
 // Two changes from the Dark Mirror version:
 // 1. Storage key is `daughterQuizResults` not `quizResults` so the two
 //    quizzes don't collide if a user takes both in the same session.
-// 2. Disclaimer chip surfaces in the header — Daisy required disclaimers
+// 2. Disclaimer chip surfaces in the header. Daisy required disclaimers
 //    visible on every page, including the take flow itself.
 export default function DaughterQuizTakePage() {
   const router = useRouter();
@@ -47,7 +47,7 @@ export default function DaughterQuizTakePage() {
         setCurrentQuestion((prev) => prev + 1);
         setSelectedAnswer(null);
       } else {
-        // Quiz complete — calculate, persist to sessionStorage, redirect.
+        // Quiz complete, calculate, persist to sessionStorage, redirect.
         // No DB save in Phase 1 of the daughter quiz; Phase 2 will add the
         // /api/quiz/save call with quizType="daughter" once the Prisma
         // discriminator + API routes are in place.
@@ -160,7 +160,7 @@ export default function DaughterQuizTakePage() {
         </div>
       </div>
 
-      {/* Disclaimer chip — fixed presence in the take flow per the Daisy
+      {/* Disclaimer chip, fixed presence in the take flow per the Daisy
           requirement that disclaimers must be visible at every step. Compact
           enough not to interrupt the quiz cadence, prominent enough to be
           read. */}

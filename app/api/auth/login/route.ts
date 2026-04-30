@@ -6,7 +6,7 @@ import { enforceRateLimit, getClientIp, limits } from "@/lib/rate-limit";
 
 export async function POST(request: NextRequest) {
   try {
-    // Rate limit by IP BEFORE parsing the body — denies brute-force floods
+    // Rate limit by IP BEFORE parsing the body, denies brute-force floods
     // without doing any real work.
     const ip = getClientIp(request);
     const rateLimited = await enforceRateLimit(limits.authLogin, ip);
@@ -22,7 +22,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Normalize email — register stores lowercase, so login must lowercase
+    // Normalize email, register stores lowercase, so login must lowercase
     // too or `User@Example.com` will fail to find the account.
     const normalizedEmail = body.email.toLowerCase().trim();
 
@@ -38,7 +38,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Generate tokens — embed tokenVersion so password resets and logouts
+    // Generate tokens, embed tokenVersion so password resets and logouts
     // invalidate outstanding tokens immediately.
     const tokens = generateTokenPair({
       userId: user.id,

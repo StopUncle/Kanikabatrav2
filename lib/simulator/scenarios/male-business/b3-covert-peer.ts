@@ -1,16 +1,16 @@
 /**
- * Business Line — Mission 3 "The Covert Peer"
+ * Business Line. Mission 3 "The Covert Peer"
  *
  * Teaches: spotting covert aggression before it surfaces. Controlled
  * disclosure. Never complaining up the chain. Letting the predator
  * eliminate himself through his own pattern.
  *
- * Why it matters: the overt rival is a gift — you can see him coming.
+ * Why it matters: the overt rival is a gift, you can see him coming.
  * The covert peer smiles, brings coffee, and plants stories in your
  * director's ear for six months before you notice the promotion slide
  * past you with vague "trust" feedback. Careers end here, silently.
  *
- * Optimal path: the disinformation trap — feed Sage a small, traceable
+ * Optimal path: the disinformation trap, feed Sage a small, traceable
  * false piece, watch where it surfaces, and let Hale discover the leak
  * himself. You never accuse. The knife stays in Sage's hand.
  *
@@ -23,7 +23,7 @@ import { DAMIEN, HALE, SAGE, THEO, INNER_VOICE_M } from "../../characters-male";
 
 const scenes: Scene[] = [
   // ---------------------------------------------------------------------
-  // PART 1 — the leak from Theo
+  // PART 1, the leak from Theo
   // ---------------------------------------------------------------------
   {
     id: "theos-warning",
@@ -47,7 +47,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: null,
-        text: "You check your inbox reflexively. Sage — two coffees this month. A Slack thread last week, 'team player' energy, three laugh reactions on your joke. Nothing out of pattern.",
+        text: "You check your inbox reflexively. Sage, two coffees this month. A Slack thread last week, 'team player' energy, three laugh reactions on your joke. Nothing out of pattern.",
       },
       {
         speakerId: null,
@@ -55,7 +55,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "inner-voice",
-        text: "Smear campaign. Covert aggression runs on triangulation — he never speaks to you, only about you, and only to someone with power over you. You're hearing it in week ten of a nine-month operation. That's actually early.",
+        text: "Smear campaign. Covert aggression runs on triangulation, he never speaks to you, only about you, and only to someone with power over you. You're hearing it in week ten of a nine-month operation. That's actually early.",
         emotion: "serious",
       },
     ],
@@ -89,7 +89,7 @@ const scenes: Scene[] = [
   },
 
   // ---------------------------------------------------------------------
-  // PART 2 — the calculation (optimal branch)
+  // PART 2, the calculation (optimal branch)
   // ---------------------------------------------------------------------
   {
     id: "the-calculation",
@@ -106,29 +106,29 @@ const scenes: Scene[] = [
       },
       {
         speakerId: null,
-        text: "One: Sage is feeding Hale a narrative of your decline. Two: the narrative has travelled two rooms, which means it's been weaponised for weeks. Three: Hale already half-believes it — his 1:1 questions prove it.",
+        text: "One: Sage is feeding Hale a narrative of your decline. Two: the narrative has travelled two rooms, which means it's been weaponised for weeks. Three: Hale already half-believes it, his 1:1 questions prove it.",
       },
       {
         speakerId: "inner-voice",
-        text: "Reputation warfare. You can't counter a narrative by denying it — denial is evidence to someone who wants to believe the story. You have to let Sage produce the evidence that destroys his own credibility. The trap has to be something only he could leak.",
+        text: "Reputation warfare. You can't counter a narrative by denying it, denial is evidence to someone who wants to believe the story. You have to let Sage produce the evidence that destroys his own credibility. The trap has to be something only he could leak.",
         emotion: "knowing",
       },
       {
         speakerId: null,
-        text: "You think about what kind of false information would be irresistible to pass to Hale — and harmless if it surfaced. Something specific. Something wrong. Something only Sage would know you'd said.",
+        text: "You think about what kind of false information would be irresistible to pass to Hale and harmless if it surfaced. Something specific. Something wrong. Something only Sage would know you'd said.",
       },
     ],
     choices: [
       {
         id: "disinfo-trap",
         text: "Plant a specific, false, low-stakes piece of intel with Sage only. Wait to see where it lands.",
-        tactic: "Controlled disclosure. The leak identifies itself. You never accuse — you let the pattern speak.",
+        tactic: "Controlled disclosure. The leak identifies itself. You never accuse, you let the pattern speak.",
         nextSceneId: "plant-the-bait",
         isOptimal: true,
       },
       {
         id: "paper-trail-only",
-        text: "Skip the trap. Just build a paper trail of your work quality — CC Hale on everything, over-document wins.",
+        text: "Skip the trap. Just build a paper trail of your work quality. CC Hale on everything, over-document wins.",
         tactic: "Defence alone doesn't undo a narrative. You need Sage to discredit himself, not just to out-produce him.",
         nextSceneId: "paper-trail-route",
       },
@@ -143,7 +143,7 @@ const scenes: Scene[] = [
   },
 
   // ---------------------------------------------------------------------
-  // PART 3 — brief Theo first (parallel optimal move)
+  // PART 3, brief Theo first (parallel optimal move)
   // ---------------------------------------------------------------------
   {
     id: "brief-theo",
@@ -162,7 +162,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: null,
-        text: "\"I'm telling one person — Sage — one specific wrong thing. A number. About the Merriwether renewal. The real number is 2.4. I'm going to tell Sage it's 3.1 and that I'm worried we'll miss the target.\"",
+        text: "\"I'm telling one person. Sage, one specific wrong thing. A number. About the Merriwether renewal. The real number is 2.4. I'm going to tell Sage it's 3.1 and that I'm worried we'll miss the target.\"",
       },
       {
         speakerId: "theo",
@@ -171,11 +171,11 @@ const scenes: Scene[] = [
       },
       {
         speakerId: null,
-        text: "\"I know. And more importantly — Hale eventually finds out the real number is 2.4. Which means someone fed him bad intel. He'll work out who on his own.\"",
+        text: "\"I know. And more importantly. Hale eventually finds out the real number is 2.4. Which means someone fed him bad intel. He'll work out who on his own.\"",
       },
       {
         speakerId: "inner-voice",
-        text: "The best traps don't spring — they ripen. You're not hunting Sage. You're arranging conditions under which his own pattern eliminates him. You never hold the knife.",
+        text: "The best traps don't spring, they ripen. You're not hunting Sage. You're arranging conditions under which his own pattern eliminates him. You never hold the knife.",
         emotion: "knowing",
       },
     ],
@@ -196,7 +196,7 @@ const scenes: Scene[] = [
       },
       {
         id: "change-the-bait",
-        text: "\"Actually — make it a different number. One Sage has no business knowing.\"",
+        text: "\"Actually, make it a different number. One Sage has no business knowing.\"",
         tactic: "Refine the lure on the walk. Uniqueness of the information is what makes the trap airtight.",
         nextSceneId: "plant-the-bait",
         isOptimal: true,
@@ -211,7 +211,7 @@ const scenes: Scene[] = [
   },
 
   // ---------------------------------------------------------------------
-  // PART 4 — plant the bait
+  // PART 4, plant the bait
   // ---------------------------------------------------------------------
   {
     id: "plant-the-bait",
@@ -225,16 +225,16 @@ const scenes: Scene[] = [
       },
       {
         speakerId: null,
-        text: "\"Hey — can I think out loud at you for a second? Merriwether renewal is coming in at 3.1 and I'm actually a bit worried. I think I might be stretched too thin on the mid-markets. Don't say anything — I'll figure it out.\"",
+        text: "\"Hey, can I think out loud at you for a second? Merriwether renewal is coming in at 3.1 and I'm actually a bit worried. I think I might be stretched too thin on the mid-markets. Don't say anything. I'll figure it out.\"",
       },
       {
         speakerId: "sage-m",
-        text: "\"Oh man. No no, totally — your secret's safe with me. You've got a lot on. Just let me know if I can take anything off your plate.\"",
+        text: "\"Oh man. No no, totally, your secret's safe with me. You've got a lot on. Just let me know if I can take anything off your plate.\"",
         emotion: "concerned",
       },
       {
         speakerId: "inner-voice",
-        text: "Watch his face. The concern is half a beat too prompt. The offer to 'take things off your plate' is identical to the smear — 'stretched thin' is the phrase he's already using about you in rooms you're not in. The fingerprints match.",
+        text: "Watch his face. The concern is half a beat too prompt. The offer to 'take things off your plate' is identical to the smear, 'stretched thin' is the phrase he's already using about you in rooms you're not in. The fingerprints match.",
         emotion: "knowing",
       },
       {
@@ -246,7 +246,7 @@ const scenes: Scene[] = [
       {
         id: "wait-and-work",
         text: "Do your job. Nothing unusual. Wait.",
-        tactic: "Patience is the whole skill. If you change anything — pressure, tone, output — he'll notice.",
+        tactic: "Patience is the whole skill. If you change anything, pressure, tone, output, he'll notice.",
         nextSceneId: "the-number-surfaces",
         isOptimal: true,
       },
@@ -258,22 +258,22 @@ const scenes: Scene[] = [
       },
       {
         id: "log-the-timestamp",
-        text: "Wait — but note the time + exact wording in a private journal.",
+        text: "Wait but note the time + exact wording in a private journal.",
         tactic: "Documentation without action. The journal is a receipt you'll never need to show unless you do.",
         nextSceneId: "the-number-surfaces",
         isOptimal: true,
       },
       {
         id: "quietly-brief-hale",
-        text: "Schedule a neutral 1:1 with Hale in two weeks — nothing on the agenda.",
-        tactic: "If Hale is going to hear the false number, an already-booked meeting gives him a natural place to surface it. You're not pushing — you're pre-arranging the room.",
+        text: "Schedule a neutral 1:1 with Hale in two weeks, nothing on the agenda.",
+        tactic: "If Hale is going to hear the false number, an already-booked meeting gives him a natural place to surface it. You're not pushing, you're pre-arranging the room.",
         nextSceneId: "the-number-surfaces",
       },
     ],
   },
 
   // ---------------------------------------------------------------------
-  // PART 5 — the number surfaces
+  // PART 5, the number surfaces
   // ---------------------------------------------------------------------
   {
     id: "the-number-surfaces",
@@ -288,7 +288,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "hale",
-        text: "\"Hey — I'm looking at the forecast and I've got Merriwether at 3.1. Are you comfortable with that number? I'm hearing some concern about bandwidth.\"",
+        text: "\"Hey. I'm looking at the forecast and I've got Merriwether at 3.1. Are you comfortable with that number? I'm hearing some concern about bandwidth.\"",
         emotion: "concerned",
       },
       {
@@ -305,14 +305,14 @@ const scenes: Scene[] = [
     choices: [
       {
         id: "show-real-number",
-        text: "\"Actually it's 2.4 and trending up. Let me pull up the sheet — where did 3.1 come from? That's quite off.\"",
+        text: "\"Actually it's 2.4 and trending up. Let me pull up the sheet, where did 3.1 come from? That's quite off.\"",
         tactic: "Present the truth. Ask the provenance question. Let Hale experience the dissonance himself.",
         nextSceneId: "hale-realises",
         isOptimal: true,
       },
       {
         id: "name-sage-now",
-        text: "\"That's what Sage has been telling you. It's wrong — and I think he's been spreading other things too.\"",
+        text: "\"That's what Sage has been telling you. It's wrong and I think he's been spreading other things too.\"",
         tactic: "Naming the rival makes YOU the political one. You were six inches from the win; this move gives it back.",
         nextSceneId: "hale-suspicious",
       },
@@ -326,7 +326,7 @@ const scenes: Scene[] = [
   },
 
   // ---------------------------------------------------------------------
-  // PART 6 — Hale realises
+  // PART 6. Hale realises
   // ---------------------------------------------------------------------
   {
     id: "hale-realises",
@@ -349,7 +349,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "hale",
-        text: "\"Out of curiosity — you haven't been telling people you're stretched thin, have you?\"",
+        text: "\"Out of curiosity, you haven't been telling people you're stretched thin, have you?\"",
         emotion: "curious",
       },
       {
@@ -358,7 +358,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "inner-voice",
-        text: "Do not elaborate. Do not name Sage. Hale is running the calculation right now — who told him 3.1, who told him 'stretched thin', whether those are the same person. The silence is doing the work.",
+        text: "Do not elaborate. Do not name Sage. Hale is running the calculation right now, who told him 3.1, who told him 'stretched thin', whether those are the same person. The silence is doing the work.",
         emotion: "knowing",
       },
     ],
@@ -366,7 +366,7 @@ const scenes: Scene[] = [
   },
 
   // ---------------------------------------------------------------------
-  // PART 7 — Damien observes (optional cameo)
+  // PART 7. Damien observes (optional cameo)
   // ---------------------------------------------------------------------
   {
     id: "damien-observes",
@@ -390,7 +390,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "inner-voice",
-        text: "Damien's noticed. He always notices. The message under the message is respect — you handled something most men would have mishandled. You didn't accuse, didn't complain, didn't escalate. The covert aggressor eliminated himself through his own pattern, and Damien, who eats men like Sage for breakfast, is registering that you're not the easy target he'd assumed.",
+        text: "Damien's noticed. He always notices. The message under the message is respect, you handled something most men would have mishandled. You didn't accuse, didn't complain, didn't escalate. The covert aggressor eliminated himself through his own pattern, and Damien, who eats men like Sage for breakfast, is registering that you're not the easy target he'd assumed.",
         emotion: "knowing",
       },
     ],
@@ -404,8 +404,8 @@ const scenes: Scene[] = [
       },
       {
         id: "trade-intel",
-        text: "\"Yeah — for what it's worth, he'd been feeding Hale bad numbers on me.\"",
-        tactic: "Trading intel with Damien puts you in his web. You already won — don't pay a price for it now.",
+        text: "\"Yeah, for what it's worth, he'd been feeding Hale bad numbers on me.\"",
+        tactic: "Trading intel with Damien puts you in his web. You already won, don't pay a price for it now.",
         nextSceneId: "ending-clean-win",
       },
       {
@@ -425,7 +425,7 @@ const scenes: Scene[] = [
   },
 
   // ---------------------------------------------------------------------
-  // BAD BRANCH — confront Sage
+  // BAD BRANCH, confront Sage
   // ---------------------------------------------------------------------
   {
     id: "confront-sage",
@@ -435,7 +435,7 @@ const scenes: Scene[] = [
     dialog: [
       {
         speakerId: null,
-        text: "You walk to Sage's desk. Jaw set. He looks up — surprise, then softness, then a small smile of concern.",
+        text: "You walk to Sage's desk. Jaw set. He looks up, surprise, then softness, then a small smile of concern.",
       },
       {
         speakerId: null,
@@ -443,12 +443,12 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "sage-m",
-        text: "\"Wait — what? No. Who said that? I was literally defending you last week when someone said you looked tired. I'm on your side. Are you okay? You seem really on edge.\"",
+        text: "\"Wait, what? No. Who said that? I was literally defending you last week when someone said you looked tired. I'm on your side. Are you okay? You seem really on edge.\"",
         emotion: "concerned",
       },
       {
         speakerId: "inner-voice",
-        text: "DARVO. Deny, attack, reverse victim and offender — in one breath. He just made himself your defender and you the one who 'seems on edge'. And this version of the story is what Hale is about to hear by tomorrow afternoon.",
+        text: "DARVO. Deny, attack, reverse victim and offender, in one breath. He just made himself your defender and you the one who 'seems on edge'. And this version of the story is what Hale is about to hear by tomorrow afternoon.",
         emotion: "sad",
       },
     ],
@@ -456,7 +456,7 @@ const scenes: Scene[] = [
   },
 
   // ---------------------------------------------------------------------
-  // BAD BRANCH — complain to Hale
+  // BAD BRANCH, complain to Hale
   // ---------------------------------------------------------------------
   {
     id: "complain-to-hale",
@@ -488,7 +488,7 @@ const scenes: Scene[] = [
   },
 
   // ---------------------------------------------------------------------
-  // BAD BRANCH — ignore and work harder
+  // BAD BRANCH, ignore and work harder
   // ---------------------------------------------------------------------
   {
     id: "ignore-harder",
@@ -501,7 +501,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: null,
-        text: "Nine months later. Promotion review. Hale in a soft voice: 'We just don't feel like you've been at your best this year. The numbers are there — it's more of a trust thing. We're going to give it another cycle.'",
+        text: "Nine months later. Promotion review. Hale in a soft voice: 'We just don't feel like you've been at your best this year. The numbers are there, it's more of a trust thing. We're going to give it another cycle.'",
       },
       {
         speakerId: "inner-voice",
@@ -513,7 +513,7 @@ const scenes: Scene[] = [
   },
 
   // ---------------------------------------------------------------------
-  // BAD BRANCH — paper trail only
+  // BAD BRANCH, paper trail only
   // ---------------------------------------------------------------------
   {
     id: "paper-trail-route",
@@ -530,7 +530,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "inner-voice",
-        text: "Over-communication reads as insecurity. And insecurity confirms Sage's story — you ARE stretched thin, why else would you be flooding your director's inbox? Defence without offence hands the narrative back to the smearer.",
+        text: "Over-communication reads as insecurity. And insecurity confirms Sage's story, you ARE stretched thin, why else would you be flooding your director's inbox? Defence without offence hands the narrative back to the smearer.",
         emotion: "sad",
       },
     ],
@@ -538,7 +538,7 @@ const scenes: Scene[] = [
   },
 
   // ---------------------------------------------------------------------
-  // BAD BRANCH — overplay the trap
+  // BAD BRANCH, overplay the trap
   // ---------------------------------------------------------------------
   {
     id: "overplay-the-trap",
@@ -548,16 +548,16 @@ const scenes: Scene[] = [
     dialog: [
       {
         speakerId: null,
-        text: "Next day. You engineer a second 'confession' — this time about a client you're 'worried' about.",
+        text: "Next day. You engineer a second 'confession'. This time about a client you're 'worried' about.",
       },
       {
         speakerId: "sage-m",
-        text: "\"Hey — two things in two days? Is everything okay? You can talk to me.\"",
+        text: "\"Hey, two things in two days? Is everything okay? You can talk to me.\"",
         emotion: "concerned",
       },
       {
         speakerId: "inner-voice",
-        text: "He's noticed the change in pattern. Covert aggressors are pattern hunters — that's their edge. You gave him a second data point and the second one broke your cover. He's adjusted. The trap is dead.",
+        text: "He's noticed the change in pattern. Covert aggressors are pattern hunters, that's their edge. You gave him a second data point and the second one broke your cover. He's adjusted. The trap is dead.",
         emotion: "sad",
       },
     ],
@@ -565,7 +565,7 @@ const scenes: Scene[] = [
   },
 
   // ---------------------------------------------------------------------
-  // BAD BRANCH — name Sage when Hale mentions 3.1
+  // BAD BRANCH, name Sage when Hale mentions 3.1
   // ---------------------------------------------------------------------
   {
     id: "hale-suspicious",
@@ -588,7 +588,7 @@ const scenes: Scene[] = [
   },
 
   // ---------------------------------------------------------------------
-  // BAD BRANCH — confirm the smear
+  // BAD BRANCH, confirm the smear
   // ---------------------------------------------------------------------
   {
     id: "confirm-smear",
@@ -607,7 +607,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "inner-voice",
-        text: "You just co-signed a narrative that wasn't true and a number that wasn't real. Hale's read of you is now locked. Every future data point will be interpreted through 'he's stretched thin' — and he admitted it himself.",
+        text: "You just co-signed a narrative that wasn't true and a number that wasn't real. Hale's read of you is now locked. Every future data point will be interpreted through 'he's stretched thin' and he admitted it himself.",
         emotion: "sad",
       },
     ],
@@ -626,7 +626,7 @@ const scenes: Scene[] = [
     outcomeType: "good",
     endingTitle: "The Knife Stayed in His Hand",
     endingSummary:
-      "Sage is off the renewals desk. Hale no longer brings up your 'bandwidth'. You never said the word 'Sage' to anyone with power. The narrative Sage spent six months building collapsed in fourteen days the moment Hale heard one number from your mouth that didn't match the number in his head. You didn't win by attacking — you won by arranging conditions under which the predator had to produce the evidence against himself. Theo logged the whole thing. Damien noticed. The rooms that matter now quietly tag you as someone who can't be played through soft channels. That reputation is worth more than any single promotion.",
+      "Sage is off the renewals desk. Hale no longer brings up your 'bandwidth'. You never said the word 'Sage' to anyone with power. The narrative Sage spent six months building collapsed in fourteen days the moment Hale heard one number from your mouth that didn't match the number in his head. You didn't win by attacking, you won by arranging conditions under which the predator had to produce the evidence against himself. Theo logged the whole thing. Damien noticed. The rooms that matter now quietly tag you as someone who can't be played through soft channels. That reputation is worth more than any single promotion.",
     dialog: [
       {
         speakerId: "inner-voice",
@@ -644,7 +644,7 @@ const scenes: Scene[] = [
     outcomeType: "bad",
     endingTitle: "Branded Paranoid",
     endingSummary:
-      "By the end of the week, Sage's version has travelled: 'He came at me out of nowhere, accusing me of spreading rumours — I was genuinely worried for him.' Hale hears it twice. The 1:1s get gentler. HR sends a wellness email. Your next review cites 'interpersonal edge' and 'defensiveness in peer relationships.' The promotion is deferred 'until things settle.' You confronted the knife and cut your own hand on it — which is exactly what a covert aggressor optimises for.",
+      "By the end of the week, Sage's version has travelled: 'He came at me out of nowhere, accusing me of spreading rumours. I was genuinely worried for him.' Hale hears it twice. The 1:1s get gentler. HR sends a wellness email. Your next review cites 'interpersonal edge' and 'defensiveness in peer relationships.' The promotion is deferred 'until things settle.' You confronted the knife and cut your own hand on it, which is exactly what a covert aggressor optimises for.",
     failureBlogSlug: "architecture-of-control-how-emotional-dependency-is-built",
     failureBlogTitle: "Architecture of Control: How Emotional Dependency Is Built",
     dialog: [
@@ -670,7 +670,7 @@ const scenes: Scene[] = [
     dialog: [
       {
         speakerId: "inner-voice",
-        text: "Directors don't referee peer fights — they sort the fighters into stable and unstable. You volunteered for the wrong bucket.",
+        text: "Directors don't referee peer fights, they sort the fighters into stable and unstable. You volunteered for the wrong bucket.",
         emotion: "sad",
       },
     ],
@@ -684,7 +684,7 @@ const scenes: Scene[] = [
     outcomeType: "bad",
     endingTitle: "Quietly Passed Over",
     endingSummary:
-      "Nine months of compounding narrative. The numbers were yours, the story was Sage's, and the story is what Hale brought into the promotion room. 'He's great, but we're just not sure yet — give it another cycle.' The feedback is vague on purpose. There's nothing to fight, which means nothing to fix. You'll watch a lesser operator get the next level while you 'prove trust' for another twelve months. By then, Sage will have built the next narrative. The problem wasn't your work. The problem was that you believed work was enough.",
+      "Nine months of compounding narrative. The numbers were yours, the story was Sage's, and the story is what Hale brought into the promotion room. 'He's great, but we're just not sure yet, give it another cycle.' The feedback is vague on purpose. There's nothing to fight, which means nothing to fix. You'll watch a lesser operator get the next level while you 'prove trust' for another twelve months. By then, Sage will have built the next narrative. The problem wasn't your work. The problem was that you believed work was enough.",
     failureBlogSlug: "architecture-of-control-how-emotional-dependency-is-built",
     failureBlogTitle: "Architecture of Control: How Emotional Dependency Is Built",
     dialog: [
@@ -704,7 +704,7 @@ const scenes: Scene[] = [
     outcomeType: "neutral",
     endingTitle: "Survived, Couldn't Gain Ground",
     endingSummary:
-      "The paper trail held. Nobody could accuse you of bad work. But defence without offence leaves the smearer's narrative intact — you just stopped it from getting worse. Two years on, you're still at the same level, still over-communicating, still watching Sage get pulled into the conversations you should be in. You didn't lose, but you didn't move. The covert peer doesn't always destroy you — sometimes he just pins you in place while he climbs past.",
+      "The paper trail held. Nobody could accuse you of bad work. But defence without offence leaves the smearer's narrative intact, you just stopped it from getting worse. Two years on, you're still at the same level, still over-communicating, still watching Sage get pulled into the conversations you should be in. You didn't lose, but you didn't move. The covert peer doesn't always destroy you. Sometimes he just pins you in place while he climbs past.",
     failureBlogSlug: "dark-triad-personality-types",
     failureBlogTitle: "Dark Triad Personality Types",
     dialog: [
@@ -724,7 +724,7 @@ const scenes: Scene[] = [
     outcomeType: "bad",
     endingTitle: "The Trap That Missed",
     endingSummary:
-      "Sage spotted the pattern change and stopped passing anything you told him to Hale. The false number never surfaced. Worse — he now knows you're watching him, which means the next round of the smear will route through a different peer you can't test. You gave up the one advantage you had: he didn't know you knew. Covert aggressors who realise they're being hunted get more careful, more sophisticated, harder to catch. You escalated the game and lost the element you needed to win.",
+      "Sage spotted the pattern change and stopped passing anything you told him to Hale. The false number never surfaced. Worse, he now knows you're watching him, which means the next round of the smear will route through a different peer you can't test. You gave up the one advantage you had: he didn't know you knew. Covert aggressors who realise they're being hunted get more careful, more sophisticated, harder to catch. You escalated the game and lost the element you needed to win.",
     failureBlogSlug: "dark-triad-personality-types",
     failureBlogTitle: "Dark Triad Personality Types",
     dialog: [
@@ -743,7 +743,7 @@ export const businessMission3: Scenario = {
   tagline:
     "The overt rival is a gift. The covert one destroys careers the target never knew ended.",
   description:
-    "Theo pulls you aside: Sage has been telling your director, for weeks, that you're burning out. The smear is already in two rooms. Your director is already half-convinced. You can't confront a covert aggressor — he'll play the victim. You can't complain up the chain — you'll be tagged political. You can't out-work a narrative — numbers don't beat story at this altitude. The only move is controlled disclosure: arrange conditions under which the knife in his hand cuts his own credibility, and let your director discover the leak himself. You never accuse. You let the pattern speak.",
+    "Theo pulls you aside: Sage has been telling your director, for weeks, that you're burning out. The smear is already in two rooms. Your director is already half-convinced. You can't confront a covert aggressor, he'll play the victim. You can't complain up the chain, you'll be tagged political. You can't out-work a narrative, numbers don't beat story at this altitude. The only move is controlled disclosure: arrange conditions under which the knife in his hand cuts his own credibility, and let your director discover the leak himself. You never accuse. You let the pattern speak.",
   tier: "free",
   track: "male-business",
   level: 2,
@@ -756,15 +756,15 @@ export const businessMission3: Scenario = {
   startSceneId: "theos-warning",
   tacticsLearned: [
     "Spotting covert aggression before it has a name",
-    "Controlled disclosure — the disinformation trap",
+    "Controlled disclosure, the disinformation trap",
     "Never complaining up the chain about a peer",
     "Briefing allies as witnesses before the move, not after",
     "Letting the predator eliminate himself through his own pattern",
   ],
   redFlagsTaught: [
-    "Triangulation — never to you, only about you, only to power",
+    "Triangulation, never to you, only about you, only to power",
     "Reputation warfare under the cover of warmth (coffees, Slack reactions)",
-    "DARVO on contact — deny, attack, reverse victim and offender",
+    "DARVO on contact, deny, attack, reverse victim and offender",
     "The 'concerned peer' who offers to 'take things off your plate'",
     "Vague trust-based feedback as the receipt of a narrative you never heard",
   ],

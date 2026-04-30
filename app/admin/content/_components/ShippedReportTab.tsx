@@ -209,7 +209,7 @@ export default function ShippedReportTab() {
             </p>
           </div>
 
-          {/* Personal disclosure ratio — the framework's "1 in 5" check */}
+          {/* Personal disclosure ratio, the framework's "1 in 5" check */}
           <div className="glass-card p-5">
             <div className="flex items-center justify-between mb-3">
               <h3 className="text-sm uppercase tracking-wider text-text-light">
@@ -234,13 +234,13 @@ export default function ShippedReportTab() {
               {report.disclosureRatio > 0.3 && (
                 <span className="text-red-400">
                   {" "}
-                  · OVERUSED — disclosure devalues at this frequency.
+                  · OVERUSED, disclosure devalues at this frequency.
                 </span>
               )}
               {report.disclosureRatio < 0.1 && report.longShippedCount > 5 && (
                 <span className="text-amber-400">
                   {" "}
-                  · UNDERUSED — disclosure is the highest-leverage move for follow growth.
+                  · UNDERUSED, disclosure is the highest-leverage move for follow growth.
                 </span>
               )}
             </div>

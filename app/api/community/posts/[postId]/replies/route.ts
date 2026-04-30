@@ -18,7 +18,7 @@ export async function GET(
     const limit = Math.min(parseInt(searchParams.get("limit") || "20"), 50);
 
     // Ban-aware resolver (isBanned + tokenVersion). Returns null for
-    // unauth / banned — access check below then applies PUBLIC-tier
+    // unauth / banned, access check below then applies PUBLIC-tier
     // rules (banned users see the same as signed-out visitors).
     const userId = await resolveActiveUserIdFromRequest(request);
 

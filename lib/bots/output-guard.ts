@@ -19,7 +19,7 @@ const LURKER_PATTERNS = [
   /\bneeded this today\b/i,
 ];
 
-// Em dash and en dash are AI tells — humans typing on a phone never
+// Em dash and en dash are AI tells, humans typing on a phone never
 // reach for U+2014. The model uses them everywhere unprompted, so even
 // with a strong negative instruction in the system prompt we still
 // reject as a backstop.

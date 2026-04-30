@@ -1,13 +1,13 @@
 /**
- * Male Dating Line — scenario registry for the male simulator's
+ * Male Dating Line, scenario registry for the male simulator's
  * dating/mate-selection/dark-psych track. 5 scenarios, progression-gated.
  *
  * Levels within this track (independent of the female simulator's levels):
- *   1 — Power (frame under challenge — status theatre)
- *   2 — Attraction (the exciting one — BPD/HPD)
- *   3 — Dark Psychology (gaslighter — DARVO in real time)
- *   4 — Defense (the hoover — permanent ghost protocol)
- *   5 — Mate Selection (the secure one — endgame recalibration)
+ *   1. Power (frame under challenge, status theatre)
+ *   2. Attraction (the exciting one. BPD/HPD)
+ *   3. Dark Psychology (gaslighter. DARVO in real time)
+ *   4. Defense (the hoover, permanent ghost protocol)
+ *   5. Mate Selection (the secure one, endgame recalibration)
  */
 
 import type { Scenario } from "../../types";

@@ -22,7 +22,7 @@ import { logger } from "@/lib/logger";
  *   2. Enable the portal
  *   3. Set default return URL to https://kanikarose.com/dashboard
  *   4. Configure which features members can access (cancel, update payment,
- *      invoices — all enabled by default, fine to leave as-is)
+ *      invoices. All enabled by default, fine to leave as-is)
  *   5. Set up the business info (branding, terms, privacy URLs)
  *   6. Save
  *

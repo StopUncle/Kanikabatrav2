@@ -1,5 +1,5 @@
 /**
- * Simulator demo layout — locks the body so the page can use `fixed inset-0`
+ * Simulator demo layout, locks the body so the page can use `fixed inset-0`
  * without the site Footer (z-20) bleeding through. Without this, the Footer
  * renders in flow below an empty <main>, scrollbar appears, and the user can
  * see site chrome underneath the "cinematic" overlay. Not what we want.

@@ -13,7 +13,7 @@ export async function GET(request: NextRequest) {
   const since = new Date(Date.now() - days * 24 * 60 * 60 * 1000);
 
   // Anything that has *moved past* development counts as shipped for the
-  // purposes of "did we actually produce it" — FILMED + PUBLISHED.
+  // purposes of "did we actually produce it". FILMED + PUBLISHED.
   const SHIPPED_STAGES = ["FILMED", "PUBLISHED"];
 
   const ideas = await prisma.contentIdea.findMany({
@@ -67,7 +67,7 @@ export async function GET(request: NextRequest) {
       (confessionCategoryBreakdown[c.category] ?? 0) + 1;
   }
 
-  // Disclosure ratio — should be ~20% per the framework
+  // Disclosure ratio, should be ~20% per the framework
   const longShipped = ideas.filter(
     (i) =>
       i.videoFormat !== "SHORT" &&

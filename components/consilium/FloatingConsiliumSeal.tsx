@@ -4,16 +4,16 @@ import { m } from "framer-motion";
 import ConsiliumSeal from "@/components/ConsiliumSeal";
 
 /**
- * The Consilium's section-anchor object — same role as the floating 3D
+ * The Consilium's section-anchor object. Same role as the floating 3D
  * book on `BookShowcase`. Wraps the static `ConsiliumSeal` medallion in
  * four layered animations so the brand mark feels alive and clearly
  * defines a section as a Consilium pitch:
  *
- *   1. Outer pulsing halo  — radial warm-gold glow, scale 1↔1.08, 6s loop
- *   2. Inner dashed ring   — slow forward rotation, 60s/revolution
- *   3. Outer ring + orbital cardinal-point gold dots — counter-rotating,
+ *   1. Outer pulsing halo , radial warm-gold glow, scale 1↔1.08, 6s loop
+ *   2. Inner dashed ring  , slow forward rotation, 60s/revolution
+ *   3. Outer ring + orbital cardinal-point gold dots, counter-rotating,
  *      90s/revolution. Two opposed rings = orbital without busy.
- *   4. Levitation wrap      — gentle vertical bob, 4.5s loop
+ *   4. Levitation wrap     , gentle vertical bob, 4.5s loop
  *
  * Used both on the homepage ConsiliumOverview block and the /consilium
  * landing hero, with size and label configurable per surface so each
@@ -22,11 +22,11 @@ import ConsiliumSeal from "@/components/ConsiliumSeal";
 type Props = {
   /**
    * Frame size of the wrapping circle (the orbital rings + halo extents).
-   * Tailwind size classes — pass the same value for both sm and base
+   * Tailwind size classes, pass the same value for both sm and base
    * breakpoints if no responsive change is needed.
    */
   frameSize?: string;
-  /** Inner seal size — overrides ConsiliumSeal's default size buckets. */
+  /** Inner seal size, overrides ConsiliumSeal's default size buckets. */
   sealSize?: string;
   /** Optional small uppercase label below the seal. */
   label?: string;
@@ -58,7 +58,7 @@ export default function FloatingConsiliumSeal({
         }}
       />
 
-      {/* Slow inner rotation ring — dashed gold hairline */}
+      {/* Slow inner rotation ring, dashed gold hairline */}
       <m.div
         aria-hidden
         className="absolute inset-6 rounded-full border border-warm-gold/15"

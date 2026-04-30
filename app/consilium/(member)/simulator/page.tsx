@@ -21,7 +21,7 @@ import StreakBanner from "@/components/simulator/StreakBanner";
 import { readSimulatorStreak } from "@/lib/simulator/streak";
 
 export const metadata = {
-  title: "The Dark Mirror — Simulator | Kanika Batra",
+  title: "The Dark Mirror. Simulator | Kanika Batra",
   description:
     "Interactive scenarios teaching pattern recognition, information discipline, and power dynamics through story.",
 };
@@ -145,7 +145,7 @@ export default async function SimulatorIndex({
     const nodes: ScenarioNode[] = scenariosInLevel.map((s) => {
       const { status, prereqTitles } = statusFor(s.id, s.prerequisites);
       const p = progressByScenario.get(s.id);
-      // Stars are computed from the BEST run we've seen — for v1 that's
+      // Stars are computed from the BEST run we've seen, for v1 that's
       // just the row in SimulatorProgress, since the table stores the
       // most-recent run not a per-attempt history. If we add per-run
       // history later, swap in a max() over the history here.
@@ -179,10 +179,10 @@ export default async function SimulatorIndex({
       // Boss treatment for mid-arc and finale levels. L5 is the
       // natural climax across most tracks (The Presentation, Christmas
       // at His Parents, The Legal Adult). L6 is toxic-narc's finale
-      // (The Narc Friend) — the track-boss crown belongs there too.
+      // (The Narc Friend), the track-boss crown belongs there too.
       // L10 is the Maris-arc mid-boss. The cluster-b-lab track
       // currently tops out at L4 so no boss renders; that's deliberate
-      // — a drill track doesn't need a mid-arc boss.
+      //, a drill track doesn't need a mid-arc boss.
       isBoss: level === 5 || level === 6 || level === 10,
     };
   });
@@ -229,7 +229,7 @@ export default async function SimulatorIndex({
         </h1>
         <p className="text-text-gray text-base sm:text-lg font-light max-w-2xl leading-relaxed">
           Interactive scenarios. Real dynamics. Real manipulation tactics.
-          Every choice teaches you something — whether it costs you or not.
+          Every choice teaches you something, whether it costs you or not.
         </p>
 
         <div className="mt-7">
@@ -271,19 +271,19 @@ export default async function SimulatorIndex({
       {/* Track selector.
           Mobile (<sm): horizontal scroll row of compact pills. Seven
           full-width tabs stacked vertically used to eat 700px of
-          mobile real estate — replaced with a scrollable row of
+          mobile real estate, replaced with a scrollable row of
           label-only pills. The active track's sublabel moves into
           the "Current track" panel below (already present), so the
           pills don't need to repeat it.
           Desktop (≥sm): wrapping card grid with the full eyebrow +
-          label + sublabel layout. basis-[220px] keeps each card's
+          label + sublabel layout. Basis-[220px] keeps each card's
           sublabel readable, flex-wrap breaks to a second row when
           the container can't hold all seven in a line. */}
       <nav
         aria-label="Simulator track"
         className="mb-8 p-1.5 rounded-xl border border-warm-gold/15 bg-deep-black/40"
       >
-        {/* Mobile: scrollable pill row. scrollbar-hide removes the
+        {/* Mobile: scrollable pill row. Scrollbar-hide removes the
             default bar so the row reads clean; snap keeps each pill
             landing at the left edge when scrolled. */}
         <div className="sm:hidden flex gap-1.5 overflow-x-auto snap-x snap-mandatory -mx-1.5 px-1.5 pb-0.5 scrollbar-hide">
@@ -307,7 +307,7 @@ export default async function SimulatorIndex({
           })}
         </div>
 
-        {/* Desktop: wrapping card grid — unchanged layout, hidden on
+        {/* Desktop: wrapping card grid, unchanged layout, hidden on
             small screens. */}
         <div className="hidden sm:flex sm:flex-wrap gap-2">
           {VALID_TRACKS.map((t) => {
@@ -380,7 +380,7 @@ export default async function SimulatorIndex({
         </p>
       </div>
 
-      {/* Bottom CTA — re-surfaces the next-up scenario for the visitor
+      {/* Bottom CTA, re-surfaces the next-up scenario for the visitor
           who's read the whole page and wants to act. */}
       {nextUp && nextUp.status !== "locked" && (
         <div className="mt-8 text-center">

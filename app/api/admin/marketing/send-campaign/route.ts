@@ -15,7 +15,7 @@ import {
  * staggered by 30 seconds each so a 1k-recipient blast spreads over
  * ~8 hours and doesn't blow up SMTP rate limits.
  *
- * Idempotent — re-running on the same campaign skips users who
+ * Idempotent, re-running on the same campaign skips users who
  * already have a PENDING or SENT row for that campaignId.
  */
 export async function POST(req: NextRequest) {

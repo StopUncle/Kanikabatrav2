@@ -10,7 +10,7 @@ export default function InlineCoachingCTA() {
       </p>
       <p className="text-text-gray text-base mb-4">
         Book a session with Kanika for a direct psychological breakdown of
-        what&apos;s happening — and what to do next.
+        what&apos;s happening and what to do next.
       </p>
       <Link
         href="/coaching"

@@ -1,12 +1,12 @@
 /**
- * tn-1-1 — "The Mother's Call"
+ * tn-1-1, "The Mother's Call"
  *
  * Toxic Narcissist track, Level 1, order 1. Voice-lock scenario for
- * the whole track. Everyday-life narcissism — not Maris's cold
+ * the whole track. Everyday-life narcissism, not Maris's cold
  * professional register, but the louder, messier, more familial one
  * every Kanika reader has at least one of.
  *
- * The Mother is canon — same character as in the Maris-arc L8 and
+ * The Mother is canon. Same character as in the Maris-arc L8 and
  * L11 scenarios. This scenario is set BEFORE those events, when the
  * protagonist is still actively pulled by the calls. Long-time
  * players will recognise her voice; new players meet her here and
@@ -16,7 +16,7 @@
  *  - The three performance registers of an everyday narc (cryer /
  *    rager / martyr) and how to identify each in under 30 seconds
  *  - Voice calls are the narc's home field; text is yours
- *  - The 48-hour rule — never decide anything in the first 48 hours
+ *  - The 48-hour rule, never decide anything in the first 48 hours
  *    of a contact attempt
  *  - The specific grief of declining your own mother
  *
@@ -33,7 +33,7 @@ import {
 
 const scenes: Scene[] = [
   // ===================================================================
-  // ACT 1 — the ring
+  // ACT 1, the ring
   // ===================================================================
   {
     id: "dinner-interrupted",
@@ -42,7 +42,7 @@ const scenes: Scene[] = [
     dialog: [
       {
         speakerId: null,
-        text: "Sunday, 7:42 p.m. You are at your kitchen counter eating dinner standing up — a habit you have been meaning to address for about a year. The pasta is, in fact, acceptable. The wine is acceptable. The kitchen is warm. The eleven days since you last picked up have been, by a certain measure, rather good for you.",
+        text: "Sunday, 7:42 p.m. you are at your kitchen counter eating dinner standing up, a habit you have been meaning to address for about a year. The pasta is, in fact, acceptable. The wine is acceptable. The kitchen is warm. The eleven days since you last picked up have been, by a certain measure, rather good for you.",
       },
       {
         speakerId: null,
@@ -50,12 +50,12 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "inner-voice",
-        text: "Note the physiological shift in your body before you have made any decision. Shoulders tightened half an inch. The fork paused. A specific thought arrived — 'something must be wrong,' which is the thought she has trained you to have about her calls for approximately thirty years. Nothing is wrong. She wants something.",
+        text: "Note the physiological shift in your body before you have made any decision. Shoulders tightened half an inch. The fork paused. A specific thought arrived, 'something must be wrong,' which is the thought she has trained you to have about her calls for approximately thirty years. Nothing is wrong. She wants something.",
         emotion: "knowing",
       },
       {
         speakerId: "inner-voice",
-        text: "You have four options in front of you, and only one of them involves hearing her voice. Pick the option that serves the version of you who will still be in this kitchen when the call is over — not the version of you who needs the call to be over in the fastest available way.",
+        text: "You have four options in front of you, and only one of them involves hearing her voice. Pick the option that serves the version of you who will still be in this kitchen when the call is over, not the version of you who needs the call to be over in the fastest available way.",
         emotion: "knowing",
       },
     ],
@@ -63,7 +63,7 @@ const scenes: Scene[] = [
       {
         id: "answer-it",
         text: "Answer it. Eleven days is long enough. If it's bad news, you want to hear it directly.",
-        tactic: "Voice is her home field. Whatever she has prepared, she has prepared for a phone call — register, cadence, the specific pauses. Answer only if you have prepared back.",
+        tactic: "Voice is her home field. Whatever she has prepared, she has prepared for a phone call, register, cadence, the specific pauses. Answer only if you have prepared back.",
         nextSceneId: "answered-cold",
       },
       {
@@ -75,7 +75,7 @@ const scenes: Scene[] = [
       },
       {
         id: "decline-with-text",
-        text: "Decline and send a text: 'Can't right now — everything okay?'",
+        text: "Decline and send a text: 'Can't right now, everything okay?'",
         tactic: "Opens a channel you just closed. The question at the end invites the martyr register in writing. She will compose a response that is engineered to make you call back.",
         nextSceneId: "declined-with-text",
       },
@@ -90,7 +90,7 @@ const scenes: Scene[] = [
   },
 
   // ===================================================================
-  // ACT 2A — answered
+  // ACT 2A, answered
   // ===================================================================
   {
     id: "answered-cold",
@@ -105,7 +105,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "mother",
-        text: "\"Oh. Oh, darling. You picked up. I'm — thank goodness. I've been quite worried.\"",
+        text: "\"Oh. Oh, darling. You picked up. I'm, thank goodness. I've been quite worried.\"",
         emotion: "pleading",
       },
       {
@@ -115,7 +115,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "inner-voice",
-        text: "Name the move. That was the martyr register — self-deprecation as the opening lever ('I do not mean to impose'), coupled with a manufactured worry frame ('I was beginning to think perhaps something had happened to you') that retroactively recasts your eleven-day silence as a thing she suffered through. Everything she has said so far is engineered to make the next thing she asks for land as compensation rather than as a request.",
+        text: "Name the move. That was the martyr register, self-deprecation as the opening lever ('I do not mean to impose'), coupled with a manufactured worry frame ('I was beginning to think perhaps something had happened to you') that retroactively recasts your eleven-day silence as a thing she suffered through. Everything she has said so far is engineered to make the next thing she asks for land as compensation rather than as a request.",
         emotion: "concerned",
       },
       {
@@ -141,7 +141,7 @@ const scenes: Scene[] = [
       {
         id: "name-the-frame",
         text: '"You weren\'t worried. What do you actually want?"',
-        tactic: "Direct. Loud. Satisfying but costly — the frame-naming triggers the rager register in some mothers. Know your mother before picking this.",
+        tactic: "Direct. Loud. Satisfying but costly, the frame-naming triggers the rager register in some mothers. Know your mother before picking this.",
         nextSceneId: "mother-pivots-rager",
       },
     ],
@@ -155,22 +155,22 @@ const scenes: Scene[] = [
     dialog: [
       {
         speakerId: "mother",
-        text: '"Well — I. Yes. Very well. Your cousin Cara is having her engagement party on the twenty-first, at the old house. I am hosting it, which is, frankly, far more work than I should be taking on at my age."',
+        text: '"Well. I. Yes. Very well. Your cousin Cara is having her engagement party on the twenty-first, at the old house. I am hosting it, which is, frankly, far more work than I should be taking on at my age."',
         emotion: "serious",
       },
       {
         speakerId: "mother",
-        text: '"I was rather hoping — and there is absolutely no obligation — that you would come, just for an hour or two. Cara would be so terribly pleased."',
+        text: '"I was rather hoping and there is absolutely no obligation, that you would come, just for an hour or two. Cara would be so terribly pleased."',
         emotion: "pleading",
       },
       {
         speakerId: "inner-voice",
-        text: "The ask arrived in the third sentence of the call. Clock the construction of it. One — 'far more work than I should be taking on at my age' plants the martyr framing so your decline costs you the guilt of having refused an aging mother. Two — 'there is absolutely no obligation' is the line you are meant to hear and then disregard. Three — 'Cara would be so terribly pleased' outsources the pressure to a cousin who, almost certainly, has no idea your mother is making this call.",
+        text: "The ask arrived in the third sentence of the call. Clock the construction of it. One, 'far more work than I should be taking on at my age' plants the martyr framing so your decline costs you the guilt of having refused an aging mother. Two, 'there is absolutely no obligation' is the line you are meant to hear and then disregard. Three, 'Cara would be so terribly pleased' outsources the pressure to a cousin who, almost certainly, has no idea your mother is making this call.",
         emotion: "concerned",
       },
       {
         speakerId: "inner-voice",
-        text: "Three manipulations in two sentences. Not hostile — this is how she always talks. She does not know she is doing it. That does not make the manipulations less effective.",
+        text: "Three manipulations in two sentences. Not hostile. This is how she always talks. She does not know she is doing it. That does not make the manipulations less effective.",
         emotion: "knowing",
       },
     ],
@@ -185,7 +185,7 @@ const scenes: Scene[] = [
       {
         id: "negotiate",
         text: '"Maybe for an hour. What time?"',
-        tactic: "You opened the door. She will widen the scope — 'an hour' becomes 'dinner afterwards,' becomes 'staying the night because the drive is long,' becomes a weekend.",
+        tactic: "You opened the door. She will widen the scope, 'an hour' becomes 'dinner afterwards,' becomes 'staying the night because the drive is long,' becomes a weekend.",
         nextSceneId: "mother-widens-scope",
       },
       {
@@ -213,7 +213,7 @@ const scenes: Scene[] = [
     dialog: [
       {
         speakerId: "mother",
-        text: '"Oh. Well — of course. If that is what you — I only. I had thought, perhaps, given that it has been so long, that —"',
+        text: '"Oh. Well, of course. If that is what you. I only. I had thought, perhaps, given that it has been so long, that —"',
         emotion: "sad",
       },
       {
@@ -223,7 +223,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "inner-voice",
-        text: "The trailing dashes and the manufactured incompletions are the martyr register's second act — she is giving you the opportunity to rescue her from the disappointment by reversing. The sentence 'I am sure Cara will be terribly disappointed' is the frame she is installing for you to replay at 2 a.m. on Tuesday.",
+        text: "The trailing dashes and the manufactured incompletions are the martyr register's second act, she is giving you the opportunity to rescue her from the disappointment by reversing. The sentence 'I am sure Cara will be terribly disappointed' is the frame she is installing for you to replay at 2 a.m. on Tuesday.",
         emotion: "knowing",
       },
       {
@@ -242,7 +242,7 @@ const scenes: Scene[] = [
       },
       {
         id: "rescue-her",
-        text: '"Mum — don\'t tell Cara that. Okay, I\'ll come. Just for an hour."',
+        text: '"Mum, don\'t tell Cara that. Okay, I\'ll come. Just for an hour."',
         tactic: "The reversal. The martyr register worked; you paid for it; the twenty-first is now in your calendar.",
         nextSceneId: "ending-lured-back",
         isOptimal: false,
@@ -266,7 +266,7 @@ const scenes: Scene[] = [
     dialog: [
       {
         speakerId: "mother",
-        text: '"Oh, wonderful. Starts at four. And, darling, could you perhaps come a bit earlier — I do need help with the flowers, and you know Ren has never had any sense for arrangement."',
+        text: '"Oh, wonderful. Starts at four. And, darling, could you perhaps come a bit earlier. I do need help with the flowers, and you know Ren has never had any sense for arrangement."',
         emotion: "hopeful",
       },
       {
@@ -276,14 +276,14 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "inner-voice",
-        text: "Twenty seconds. An hour became the full afternoon + dinner + a night in the spare room. This is not unusual — it is the standard scope-widening after any conditional acceptance. You said 'maybe an hour.' She heard 'yes, all in.' The widening arrives in small, reasonable-sounding increments. Each increment on its own sounds trivial; together they are the weekend.",
+        text: "Twenty seconds. An hour became the full afternoon + dinner + a night in the spare room. This is not unusual, it is the standard scope-widening after any conditional acceptance. You said 'maybe an hour.' She heard 'yes, all in.' The widening arrives in small, reasonable-sounding increments. Each increment on its own sounds trivial; together they are the weekend.",
         emotion: "concerned",
       },
     ],
     choices: [
       {
         id: "retract-scope",
-        text: '"Actually — I\'m going to come for exactly an hour. Four to five. I\'m not helping with flowers, I\'m not staying for dinner, and I\'m not sleeping over."',
+        text: '"Actually. I\'m going to come for exactly an hour. Four to five. I\'m not helping with flowers, I\'m not staying for dinner, and I\'m not sleeping over."',
         tactic: "Hold the line, explicitly, in the specific terms she tried to widen. She will not like it. The clarity is the protection.",
         nextSceneId: "ending-warm-no",
         isOptimal: true,
@@ -306,7 +306,7 @@ const scenes: Scene[] = [
     dialog: [
       {
         speakerId: "mother",
-        text: '"Forty-eight hours? For a family engagement? Darling, that is — I mean, I understand you are a modern woman, but this is your cousin, it is the old house, it is —"',
+        text: '"Forty-eight hours? For a family engagement? Darling, that is. I mean, I understand you are a modern woman, but this is your cousin, it is the old house, it is —"',
         emotion: "confused",
       },
       {
@@ -341,12 +341,12 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "mother",
-        text: '"I know you are busy. I am not asking for anything. I only — well. Cara is having her engagement party on the twenty-first..."',
+        text: '"I know you are busy. I am not asking for anything. I only, well. Cara is having her engagement party on the twenty-first..."',
         emotion: "pleading",
       },
       {
         speakerId: "inner-voice",
-        text: "She just ran twelve minutes of worry-performance in forty seconds. 'Coming up to check on you myself' is a threat dressed as concern. 'After everything that happened with your uncle' is an invocation of family mortality to establish urgency. Then the pivot — 'I know you are busy, I am not asking for anything' — directly followed by the ask.",
+        text: "She just ran twelve minutes of worry-performance in forty seconds. 'Coming up to check on you myself' is a threat dressed as concern. 'After everything that happened with your uncle' is an invocation of family mortality to establish urgency. Then the pivot, 'I know you are busy, I am not asking for anything', directly followed by the ask.",
         emotion: "concerned",
       },
       {
@@ -367,17 +367,17 @@ const scenes: Scene[] = [
     dialog: [
       {
         speakerId: "mother",
-        text: "\"How DARE you speak to me that way. I am your mother. Do you have any idea the sacrifices — thirty years, darling, THIRTY YEARS — and you have the nerve to —\"",
+        text: "\"How DARE you speak to me that way. I am your mother. Do you have any idea the sacrifices, thirty years, darling, THIRTY YEARS and you have the nerve to —\"",
         emotion: "angry",
       },
       {
         speakerId: "inner-voice",
-        text: "You named the frame. She pivoted from martyr to rager in one sentence. Both are available to her; she deploys whichever serves. Note the speed — under two seconds between 'oh darling' and 'HOW DARE YOU.' That is not an emotional woman losing control. That is a speaker switching registers.",
+        text: "You named the frame. She pivoted from martyr to rager in one sentence. Both are available to her; she deploys whichever serves. Note the speed, under two seconds between 'oh darling' and 'HOW DARE YOU.' That is not an emotional woman losing control. That is a speaker switching registers.",
         emotion: "knowing",
       },
       {
         speakerId: "inner-voice",
-        text: "The rager register does not actually require your response. She will talk herself down in approximately four minutes if you say nothing. You can also simply end the call — that is also allowed.",
+        text: "The rager register does not actually require your response. She will talk herself down in approximately four minutes if you say nothing. You can also simply end the call, that is also allowed.",
         emotion: "knowing",
       },
     ],
@@ -430,7 +430,7 @@ const scenes: Scene[] = [
   },
 
   // ===================================================================
-  // ACT 2B — silent decline
+  // ACT 2B, silent decline
   // ===================================================================
   {
     id: "declined-silent",
@@ -525,7 +525,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "inner-voice",
-        text: "Confirmed — the reading became the spiral. That was predictable. Do not respond tonight. The 48-hour rule applies to voicemails just as it applies to calls. Let the party live in your head for one sleep before you type anything.",
+        text: "Confirmed, the reading became the spiral. That was predictable. Do not respond tonight. The 48-hour rule applies to voicemails just as it applies to calls. Let the party live in your head for one sleep before you type anything.",
         emotion: "knowing",
       },
     ],
@@ -533,7 +533,7 @@ const scenes: Scene[] = [
   },
 
   // ===================================================================
-  // ACT 2C — declined with text
+  // ACT 2C, declined with text
   // ===================================================================
   {
     id: "declined-with-text",
@@ -543,7 +543,7 @@ const scenes: Scene[] = [
     dialog: [
       {
         speakerId: null,
-        text: "You press decline. You type: 'Can't right now — everything okay?'",
+        text: "You press decline. You type: 'Can't right now, everything okay?'",
       },
       {
         speakerId: null,
@@ -551,7 +551,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "mother",
-        text: '"Oh darling, not especially. I did not want to say on a text. I have been rather unwell, and Cara\'s party is on the twenty-first, and I was hoping — well, if you cannot, you cannot."',
+        text: '"Oh darling, not especially. I did not want to say on a text. I have been rather unwell, and Cara\'s party is on the twenty-first, and I was hoping, well, if you cannot, you cannot."',
         emotion: "sad",
       },
       {
@@ -576,7 +576,7 @@ const scenes: Scene[] = [
       },
       {
         id: "route-through-ren",
-        text: "Do not reply. Text your sibling Ren: 'mum says she\'s unwell — is she?'",
+        text: "Do not reply. Text your sibling Ren: 'mum says she\'s unwell, is she?'",
         tactic: "Verify through the independent witness. Ren will give you the actual health picture in one sentence. Do not let vague illness claims travel through her directly.",
         nextSceneId: "ren-verifies",
         isOptimal: true,
@@ -592,12 +592,12 @@ const scenes: Scene[] = [
     dialog: [
       {
         speakerId: "sibling",
-        text: '"she has a cold. she had it last week too. she is not dying. she wants you at the party and she is running the illness line because the guilt line did not land eleven days ago."',
+        text: '"she has a cold. She had it last week too. She is not dying. She wants you at the party and she is running the illness line because the guilt line did not land eleven days ago."',
         emotion: "knowing",
       },
       {
         speakerId: "sibling",
-        text: '"do whatever you want. i will tell her whatever you decide. love you."',
+        text: '"do whatever you want. I will tell her whatever you decide. Love you."',
         emotion: "knowing",
       },
       {
@@ -620,14 +620,14 @@ const scenes: Scene[] = [
     outcomeType: "good",
     endingTitle: "The Warm No",
     endingSummary:
-      "You answered the call. You heard the ask — Cara's engagement party on the twenty-first, at the old house, framed in the martyr register with a side of worry-performance. You declined warmly, without justification, without leaving the door open for a counter-offer. You did not apologise for declining. You did not accept the transferred guilt of Cara's 'disappointment.' You routed your relationship with Cara back through Cara directly — a card, a text, a separate phone call on your timing. The channel between you and your mother is closed on the question of the party. That is the whole discipline of this scene: a boundary delivered at normal volume, in a warm register, without negotiation.",
+      "You answered the call. You heard the ask. Cara's engagement party on the twenty-first, at the old house, framed in the martyr register with a side of worry-performance. You declined warmly, without justification, without leaving the door open for a counter-offer. You did not apologise for declining. You did not accept the transferred guilt of Cara's 'disappointment.' You routed your relationship with Cara back through Cara directly, a card, a text, a separate phone call on your timing. The channel between you and your mother is closed on the question of the party. That is the whole discipline of this scene: a boundary delivered at normal volume, in a warm register, without negotiation.",
     endingLearnReference: "how-to-leave-without-being-villain",
     endingLearnPrompt:
       "A boundary with your mother does not require a loud scene, a letter, or a therapist-witnessed sentence. It requires one clear sentence, one closed channel, and the discipline to not reopen it at 11 p.m. when the guilt arrives.",
     dialog: [
       {
         speakerId: "inner-voice",
-        text: "The twenty-first will pass. You will not be at the old house. Cara will receive a card. Your mother will perform disappointment to whoever is in the room with her on the day. None of that is your responsibility, and your absence from it is not a failure of love — it is the cleaning up of a role you were drafted into at age seven and have not yet formally declined.",
+        text: "The twenty-first will pass. You will not be at the old house. Cara will receive a card. Your mother will perform disappointment to whoever is in the room with her on the day. None of that is your responsibility, and your absence from it is not a failure of love, it is the cleaning up of a role you were drafted into at age seven and have not yet formally declined.",
         emotion: "knowing",
       },
       {
@@ -654,7 +654,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: null,
-        text: "10 p.m. You read the voicemail. You decide, rested and fed, that the party ask does not change your answer. You put the phone away. You sleep.",
+        text: "10 p.m. you read the voicemail. You decide, rested and fed, that the party ask does not change your answer. You put the phone away. You sleep.",
       },
     ],
   },
@@ -667,11 +667,11 @@ const scenes: Scene[] = [
     outcomeType: "good",
     endingTitle: "Forty-Eight Hours Held",
     endingSummary:
-      "You invoked the 48-hour rule. She did not like it. You held it anyway. For forty-eight hours you deliberately did not think about the twenty-first — you did the work you were doing, you slept two nights, and you woke rested on hour forty-seven to the same decision you would have made at hour two if you had not been adrenalized. The discipline is not the answer; the discipline is the conditions under which you made the answer. That is the skill this scenario teaches.",
+      "You invoked the 48-hour rule. She did not like it. You held it anyway. For forty-eight hours you deliberately did not think about the twenty-first, you did the work you were doing, you slept two nights, and you woke rested on hour forty-seven to the same decision you would have made at hour two if you had not been adrenalized. The discipline is not the answer; the discipline is the conditions under which you made the answer. That is the skill this scenario teaches.",
     dialog: [
       {
         speakerId: "inner-voice",
-        text: "Most answers to most questions are better at hour forty-seven than at hour two. Narc parents know this, which is why they optimise for hour two — the phone call, the urgent voicemail, the manufactured crisis. The 48-hour rule is not about cruelty; it is about giving the version of you who can see clearly the chance to be the one who decides.",
+        text: "Most answers to most questions are better at hour forty-seven than at hour two. Narc parents know this, which is why they optimise for hour two, the phone call, the urgent voicemail, the manufactured crisis. The 48-hour rule is not about cruelty; it is about giving the version of you who can see clearly the chance to be the one who decides.",
         emotion: "knowing",
       },
       {
@@ -689,7 +689,7 @@ const scenes: Scene[] = [
     outcomeType: "good",
     endingTitle: "One Week Quiet",
     endingSummary:
-      "You declined the call. You deleted the voicemail unread. You blocked the number for the night. In the morning you did not unblock it. You extended the block to a week. For seven days she did not have a channel into your week. Ren stayed in the picture as a buffer; Cara received a card; nothing burned down. At the end of the week you lifted the block calmly, on your schedule, having proved to yourself that a seven-day quiet is survivable — by both of you. This is the rarest version of the scene. Obsidian rarity. Most players who run this line reverse the block in the first thirty-six hours. You did not.",
+      "You declined the call. You deleted the voicemail unread. You blocked the number for the night. In the morning you did not unblock it. You extended the block to a week. For seven days she did not have a channel into your week. Ren stayed in the picture as a buffer; Cara received a card; nothing burned down. At the end of the week you lifted the block calmly, on your schedule, having proved to yourself that a seven-day quiet is survivable, by both of you. This is the rarest version of the scene. Obsidian rarity. Most players who run this line reverse the block in the first thirty-six hours. You did not.",
     endingLearnReference: "beige-protocol-strategic-boredom-weapon",
     endingLearnPrompt:
       "A week of quiet is not cruelty. It is the proof that the relationship can survive a structural pause. Every narc-parent dynamic is built on the assumption that contact will re-initiate within seventy-two hours. Shifting that assumption permanently is a multi-year project. The first seven days is the foundation.",
@@ -713,10 +713,10 @@ const scenes: Scene[] = [
     isEnding: true,
     outcomeType: "bad",
     failureBlogSlug: "architecture-of-control-how-emotional-dependency-is-built",
-    failureBlogTitle: "Architecture of Control — How Emotional Dependency Is Built",
+    failureBlogTitle: "Architecture of Control. How Emotional Dependency Is Built",
     endingTitle: "The Reversal",
     endingSummary:
-      "She ran the martyr register. You declined. She executed the second-act disappointment line. You reversed. The party is now in your calendar on the twenty-first. You will spend the next three weeks pre-regretting it and the day itself wanting to leave early. None of this is catastrophic — it is one lost Sunday and one training rep in the wrong direction. What matters is the pattern: the reversal this scene ended on is the exact shape of every reversal you have made with her for thirty years. She knows the shape. She deploys it because it works.",
+      "She ran the martyr register. You declined. She executed the second-act disappointment line. You reversed. The party is now in your calendar on the twenty-first. You will spend the next three weeks pre-regretting it and the day itself wanting to leave early. None of this is catastrophic, it is one lost Sunday and one training rep in the wrong direction. What matters is the pattern: the reversal this scene ended on is the exact shape of every reversal you have made with her for thirty years. She knows the shape. She deploys it because it works.",
     dialog: [
       {
         speakerId: "inner-voice",
@@ -725,7 +725,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: null,
-        text: "You hang up at 8:14 p.m. The kitchen is quiet again. The pasta is cold. The twenty-first is eleven days away.",
+        text: "You hang up at 8:14 p.m. the kitchen is quiet again. The pasta is cold. The twenty-first is eleven days away.",
       },
     ],
   },
@@ -737,19 +737,19 @@ const scenes: Scene[] = [
     isEnding: true,
     outcomeType: "bad",
     failureBlogSlug: "narcissist-playbook-how-they-actually-operate",
-    failureBlogTitle: "Narcissist Playbook — How They Actually Operate",
+    failureBlogTitle: "Narcissist Playbook. How They Actually Operate",
     endingTitle: "The Weekend",
     endingSummary:
       "You accepted. An hour became an afternoon. The afternoon became a dinner. The dinner became a night in the spare room. You agreed to the whole shape because it was easier than negotiating each increment. On the twenty-first you will spend six hours doing something you did not want to do, surrounded by people whose relationship with your mother is different from yours, pretending to be a version of yourself who has not done the last three years of work. You will drive home at 11 a.m. on the twenty-second with a specific hollow feeling that you will, predictably, need three days to recover from. This is the cost of scope-widening. It compounds.",
     dialog: [
       {
         speakerId: "inner-voice",
-        text: "The weekend is not a punishment you cannot survive. You will survive it. The lesson of this ending is not that you failed — it is that the failure had a specific shape: a conditional yes, followed by a series of small widenings that each sounded reasonable, followed by a total capitulation because retracting any single widening felt more expensive than accepting the next. Map the widenings. Next time the first 'could you come a bit earlier' is the line you hold.",
+        text: "The weekend is not a punishment you cannot survive. You will survive it. The lesson of this ending is not that you failed, it is that the failure had a specific shape: a conditional yes, followed by a series of small widenings that each sounded reasonable, followed by a total capitulation because retracting any single widening felt more expensive than accepting the next. Map the widenings. Next time the first 'could you come a bit earlier' is the line you hold.",
         emotion: "sad",
       },
       {
         speakerId: null,
-        text: "You end the call at 8:22 p.m. The spare room is made up.",
+        text: "You end the call at 8:22 p.m. the spare room is made up.",
       },
     ],
   },
@@ -758,9 +758,9 @@ const scenes: Scene[] = [
 export const toxicNarc11: Scenario = {
   id: "tn-1-1",
   title: "The Mother's Call",
-  tagline: "Sunday, 7:42 p.m. Eleven days of silence. Her ringtone you specifically set.",
+  tagline: "Sunday, 7:42 p.m. eleven days of silence. Her ringtone you specifically set.",
   description:
-    "Everyday narcissism, in the register every reader has at least one of. The antagonist is your mother — and she is the same woman from the Maris-arc L11. This scenario is the earlier version of the relationship, when you were still actively pulled by the calls. Voice-lock scenario for the toxic-narc track.",
+    "Everyday narcissism, in the register every reader has at least one of. The antagonist is your mother and she is the same woman from the Maris-arc L11. This scenario is the earlier version of the relationship, when you were still actively pulled by the calls. Voice-lock scenario for the toxic-narc track.",
   tier: "premium",
   track: "toxic-narc",
   level: 1,
@@ -774,12 +774,12 @@ export const toxicNarc11: Scenario = {
   tacticsLearned: [
     "Identify the three performance registers of an everyday narc (cryer / rager / martyr) in under 30 seconds",
     "Voice is her home field; text is yours; written answers are yours by a wide margin",
-    "The 48-hour rule — decisions at hour 47 beat decisions at hour 2",
+    "The 48-hour rule, decisions at hour 47 beat decisions at hour 2",
     "Route family intel through the independent-witness sibling, not through the parent",
-    "The warm no — one sentence, closed channel, no justification, no negotiation",
+    "The warm no, one sentence, closed channel, no justification, no negotiation",
   ],
   redFlagsTaught: [
-    "'There is absolutely no obligation' — the line meant to be disregarded",
+    "'There is absolutely no obligation', the line meant to be disregarded",
     "Self-deprecation as the opening martyr lever ('at my age,' 'more work than I should be taking on')",
     "Outsourcing pressure to a third party ('Cara would be so pleased')",
     "Vague illness claims delivered by text as pressure payloads",

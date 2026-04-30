@@ -10,15 +10,15 @@ import { catalogueStats, PUBLIC_TRACK_CHIPS } from "@/lib/simulator/stats";
  * reused without duplication.
  *
  * The `variant` prop controls the emphasis:
- *   - "homepage" — cold traffic. Leads with a "free demo · 10 min · no
+ *   - "homepage", cold traffic. Leads with a "free demo · 10 min · no
  *     signup" chip, makes "Try it free" the primary CTA, keeps "Step
  *     inside" as the secondary.
- *   - "landing"  — warm traffic. Leads with the "the only place you can
+ *   - "landing" , warm traffic. Leads with the "the only place you can
  *     practice this" superlative and makes "Step Inside" the primary.
  *
  * Both variants render the same SimulatorPreview loop, the same depth
  * stats row, and the same three-track chip row. The surface is designed
- * to be the single most converting block on the site — everything else
+ * to be the single most converting block on the site, everything else
  * is supporting material.
  */
 
@@ -37,7 +37,7 @@ export default function ConsiliumSimulatorTeaser({
     <section className="py-20 sm:py-24 px-4 relative">
       <div className="max-w-5xl mx-auto">
         <div className="relative overflow-hidden rounded-3xl border border-warm-gold/30 bg-gradient-to-br from-deep-burgundy/30 via-deep-black/70 to-deep-navy/40 backdrop-blur-sm">
-          {/* Radial highlight behind the headline — pulls the eye up and
+          {/* Radial highlight behind the headline, pulls the eye up and
               sets the "flagship surface" tone. Pointer-events off so the
               gradient can't intercept clicks on mobile. */}
           <div
@@ -51,7 +51,7 @@ export default function ConsiliumSimulatorTeaser({
 
           <div className="relative p-6 sm:p-10 lg:p-12">
             <div className="flex flex-col items-center text-center max-w-3xl mx-auto">
-              {/* Eyebrow — variant-specific framing */}
+              {/* Eyebrow, variant-specific framing */}
               <div className="flex items-center gap-2 mb-5">
                 <Sparkles
                   className="w-4 h-4 text-warm-gold"
@@ -83,10 +83,10 @@ export default function ConsiliumSimulatorTeaser({
                 Books tell you what manipulation looks like. The Dark Mirror
                 Simulator drops you inside it. Every scene is a choice. Every
                 choice branches. Every ending shows you what a trained eye
-                would have caught — and what it costs you if you missed it.
+                would have caught and what it costs you if you missed it.
               </p>
 
-              {/* Free-demo affordance chip — only on homepage. Signals that
+              {/* Free-demo affordance chip, only on homepage. Signals that
                   there's a zero-friction way to actually feel the product
                   before any paywall. The chip is quiet so it doesn't
                   compete with the headline. */}
@@ -99,7 +99,7 @@ export default function ConsiliumSimulatorTeaser({
                 </div>
               )}
 
-              {/* Live preview — three real scenes auto-playing on a loop.
+              {/* Live preview. Three real scenes auto-playing on a loop.
                   The viewer watches the optimal choice get picked, sees the
                   tactic reveal, hears the inner-voice line. Sells the
                   dopamine without spoiling the actual scenarios. */}
@@ -144,7 +144,7 @@ export default function ConsiliumSimulatorTeaser({
                 ))}
               </div>
 
-              {/* Dual CTA on homepage — lowers the barrier by giving cold
+              {/* Dual CTA on homepage, lowers the barrier by giving cold
                   traffic a no-commit entry (Try Free) alongside the
                   conversion button. On the landing page, the single
                   "Step Inside" CTA wins because the visitor is already

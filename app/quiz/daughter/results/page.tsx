@@ -64,7 +64,7 @@ export default function DaughterQuizResultsPage() {
         setData(parsed);
       }
     } catch {
-      // Ignore parse errors — null state will render the no-results screen
+      // Ignore parse errors, null state will render the no-results screen
     }
     setLoaded(true);
   }, []);
@@ -123,7 +123,7 @@ export default function DaughterQuizResultsPage() {
       <Header />
       <main className="min-h-screen pt-24 pb-16 relative z-10">
         <div className="container mx-auto px-4 max-w-3xl">
-          {/* Disclaimer banner — same as the landing page, surfaced again
+          {/* Disclaimer banner. Same as the landing page, surfaced again
               on results because Daisy required disclaimers visible on every
               page including the answer surface. */}
           <m.div
@@ -148,7 +148,7 @@ export default function DaughterQuizResultsPage() {
             </p>
           </m.div>
 
-          {/* Primary type — the headline result */}
+          {/* Primary type, the headline result */}
           <m.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -238,7 +238,7 @@ export default function DaughterQuizResultsPage() {
             </ul>
           </m.div>
 
-          {/* Mother signal — the second axis */}
+          {/* Mother signal, the second axis */}
           <m.div
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
@@ -261,7 +261,7 @@ export default function DaughterQuizResultsPage() {
             </p>
           </m.div>
 
-          {/* Recovery move — the practical takeaway */}
+          {/* Recovery move, the practical takeaway */}
           <m.div
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
@@ -284,19 +284,19 @@ export default function DaughterQuizResultsPage() {
             </div>
           </m.div>
 
-          {/* Email capture — soft opt-in. Surfaces after the recovery
+          {/* Email capture, soft opt-in. Surfaces after the recovery
               move (the most useful piece of content) so the user has
               already received their full free result before being asked.
               Tags the Subscriber with primary + secondary daughter type
               for future segmented email sequences. Reuses /api/newsletter
-              — no new endpoint, no schema change. */}
+             , no new endpoint, no schema change. */}
           <DaughterEmailCapture
             primaryType={data.primaryType}
             secondaryType={data.secondaryType}
             primaryProfileName={profile.name}
           />
 
-          {/* Secondary profile — the runner-up */}
+          {/* Secondary profile, the runner-up */}
           {data.primaryType !== data.secondaryType && (
             <m.div
               initial={{ opacity: 0, y: 16 }}
@@ -383,7 +383,7 @@ export default function DaughterQuizResultsPage() {
                 <p className="text-text-gray text-sm leading-relaxed">
                   This assessment told you what your household built into you.
                   The Dark Mirror tells you what the resulting personality
-                  pattern looks like across the six Cluster B axes — including
+                  pattern looks like across the six Cluster B axes, including
                   whether you&apos;ve absorbed any of her traits yourself.
                 </p>
               </Link>
@@ -406,7 +406,7 @@ export default function DaughterQuizResultsPage() {
                   The Sociopathic Dating Bible
                 </h3>
                 <p className="text-text-gray text-sm leading-relaxed">
-                  70,000 words on the partner-detection side — how the man you
+                  70,000 words on the partner-detection side, how the man you
                   keep ending up with maps onto your mother&apos;s pattern, and how
                   to interrupt the loop. Specifically useful for the
                   Hypervigilant and Fawn profiles.
@@ -433,7 +433,7 @@ export default function DaughterQuizResultsPage() {
                 <p className="text-text-gray text-sm leading-relaxed">
                   $29 a month. Private threads for women in this exact niche.
                   The members-only simulator runs the pc-child track scenarios
-                  — practice reps for the conversations you&apos;ve spent years
+                 , practice reps for the conversations you&apos;ve spent years
                   rehearsing alone.
                 </p>
               </Link>
@@ -456,7 +456,7 @@ export default function DaughterQuizResultsPage() {
             </Link>
           </m.div>
 
-          {/* Full Disclaimer — repeats at the bottom of results because the
+          {/* Full Disclaimer, repeats at the bottom of results because the
               user has just read a deeply personal interpretation of their
               relationship with their mother. The disclaimer here serves as
               the explicit reminder that this is one reading, not a verdict. */}

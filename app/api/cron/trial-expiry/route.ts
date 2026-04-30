@@ -11,7 +11,7 @@ import { sendMembershipEndingSoon } from "@/lib/email";
  *
  * Window: ACTIVE memberships expiring in the next 7 days that haven't
  * received a reminder yet. Idempotent via `expiryNotified7d` flag on
- * applicationData — keeps the legacy `trialExpiryNotified` flag intact
+ * applicationData, keeps the legacy `trialExpiryNotified` flag intact
  * so memberships already notified under the old 3-day window still have
  * their history.
  *
@@ -72,7 +72,7 @@ export async function POST(request: NextRequest) {
 
       // For bundle holders, mint a one-click resubscribe JWT so the
       // email link goes straight to Stripe Checkout for the standard
-      // $29/mo subscription — no re-application, no re-login. Other
+      // $29/mo subscription, no re-application, no re-login. Other
       // cycles (trial, gift) keep the default upgrade page which
       // already routes through the right pitch flow.
       let resubLink: string | undefined;

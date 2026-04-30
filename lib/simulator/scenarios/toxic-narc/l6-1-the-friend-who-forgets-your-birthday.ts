@@ -1,16 +1,16 @@
 /**
- * tn-6-1 — "The Friend Who Forgets Your Birthday"
+ * tn-6-1, "The Friend Who Forgets Your Birthday"
  *
  * Toxic-Narc track, Level 6 (The Narc Friend), order 1. Your closest
  * friend of ten years did not post for your birthday on Sunday. Did
  * not text. Did not like the post you wrote about it yourself. She
- * has posted for three other friends in the past year — each one
+ * has posted for three other friends in the past year. Each one
  * over-warm, with photo carousels, with the mock-roast caption that
  * means "we are intimate." The asymmetry is no longer deniable.
  *
  * The scenario is not the missed birthday. The missed birthday is
  * the artefact you are using to finally run the audit you have been
- * avoiding for two years. It also closes The Mother Arc — she
+ * avoiding for two years. It also closes The Mother Arc, she
  * learned these moves from her own mother, and you spotted them
  * here because you spotted them with yours.
  *
@@ -21,7 +21,7 @@
  *    well)
  *  - The cost of running the audit honestly when the friendship is
  *    a load-bearing part of your life
- *  - The restructure-without-a-scene move — downgrade her from
+ *  - The restructure-without-a-scene move, downgrade her from
  *    inner-circle to ring-2 without an announcement, without a
  *    confrontation, without giving her a martyr-story to tell at
  *    other people's tables
@@ -42,7 +42,7 @@ import { INNER_VOICE, THE_FRIEND, THE_PARTNER } from "../../characters";
 
 const scenes: Scene[] = [
   // ===================================================================
-  // OPENING — THREE DAYS LATER
+  // OPENING. THREE DAYS LATER
   // ===================================================================
   {
     id: "wednesday-evening",
@@ -52,11 +52,11 @@ const scenes: Scene[] = [
     dialog: [
       {
         speakerId: null,
-        text: "Wednesday, 7:14 p.m. Your birthday was Sunday. It is now Wednesday. Elise has not texted, posted, or liked your own birthday post. You are at the kitchen counter with the second glass of wine you did not pour for that reason but are about to acknowledge, internally, that you did.",
+        text: "Wednesday, 7:14 p.m. your birthday was Sunday. It is now Wednesday. Elise has not texted, posted, or liked your own birthday post. You are at the kitchen counter with the second glass of wine you did not pour for that reason but are about to acknowledge, internally, that you did.",
       },
       {
         speakerId: null,
-        text: "You open Instagram. You do not search her — that would be a confirmation move, and the confirmation is already in your hand. You scroll your own feed. Eleven posts down: Elise's story from Saturday night, the dinner she said she could not make on Friday because she was 'absolutely flattened by work.' She is in the photo with three women you do not know, holding what is clearly a third glass of red. The caption is one of those mock-affectionate jokes that signal a long-running in-group.",
+        text: "You open Instagram. You do not search her, that would be a confirmation move, and the confirmation is already in your hand. You scroll your own feed. Eleven posts down: Elise's story from Saturday night, the dinner she said she could not make on Friday because she was 'absolutely flattened by work.' She is in the photo with three women you do not know, holding what is clearly a third glass of red. The caption is one of those mock-affectionate jokes that signal a long-running in-group.",
       },
       {
         speakerId: "inner-voice",
@@ -67,7 +67,7 @@ const scenes: Scene[] = [
     choices: [
       {
         id: "open-the-audit",
-        text: "Open a blank document. Title it: 'Elise — pattern check.' Write the last six things you can remember.",
+        text: "Open a blank document. Title it: 'Elise, pattern check.' Write the last six things you can remember.",
         tactic: "The audit is a written act, not a thinking-while-scrolling act. Writing forces specificity; specifics resist the friendship-fog the relationship has been protecting. The blank document is the structural move; what you write in it is secondary.",
         nextSceneId: "the-document",
         isOptimal: true,
@@ -83,14 +83,14 @@ const scenes: Scene[] = [
       {
         id: "screenshot-to-priya",
         text: "Screenshot Elise's story. Send it to Priya with no caption.",
-        tactic: "Outsourcing the audit to Priya is fast, accurate, and emotionally cheap — Priya will see what you see in eleven seconds. The cost is that Priya now carries data about Elise that you have not chosen to give her, and the friend-circle starts sorting itself faster than you intended. Run the audit yourself first; consult after.",
+        tactic: "Outsourcing the audit to Priya is fast, accurate, and emotionally cheap. Priya will see what you see in eleven seconds. The cost is that Priya now carries data about Elise that you have not chosen to give her, and the friend-circle starts sorting itself faster than you intended. Run the audit yourself first; consult after.",
         nextSceneId: "outsourced-fast",
         isOptimal: false,
       },
       {
         id: "drop-it",
         text: "Close Instagram. Pour the third glass of wine. The friendship is what it is.",
-        tactic: "The drop-it move is its own answer — one you have given for two years. The scenario does not punish you for it; it just notes that you came to the kitchen counter on a Wednesday night for a reason, and the reason has not changed.",
+        tactic: "The drop-it move is its own answer, one you have given for two years. The scenario does not punish you for it; it just notes that you came to the kitchen counter on a Wednesday night for a reason, and the reason has not changed.",
         nextSceneId: "deferred-again",
         isOptimal: false,
       },
@@ -108,35 +108,35 @@ const scenes: Scene[] = [
     dialog: [
       {
         speakerId: null,
-        text: "You open Notes. You title it: 'Elise — pattern check, started Wed 7:18 pm.' You stop. You drink half the wine. You start typing.",
+        text: "You open Notes. You title it: 'Elise, pattern check, started Wed 7:18 pm.' You stop. You drink half the wine. You start typing.",
       },
       {
         speakerId: null,
-        text: "1. Sept '24 — promotion. You told her in person at lunch. Five-second pause. 'Oh wow. That is so much pressure though, are you ok?' No congratulations.",
+        text: "1. Sept '24, promotion. You told her in person at lunch. Five-second pause. 'Oh wow. That is so much pressure though, are you ok?' No congratulations.",
       },
       {
         speakerId: null,
-        text: "2. Christmas '24 — three-person dinner you'd planned six months. She cancelled at 4 p.m., 'absolutely shattered.' Posted a story at 8:47 p.m. at someone else's dinner.",
+        text: "2. Christmas '24, three-person dinner you'd planned six months. She cancelled at 4 p.m., 'absolutely shattered.' Posted a story at 8:47 p.m. at someone else's dinner.",
       },
       {
         speakerId: null,
-        text: "3. Jen's wedding '25 — Elise made an Instagram carousel. Eleven photos. Caption: 'my soul-friend.' Jen and Elise have known each other four years.",
+        text: "3. Jen's wedding '25. Elise made an Instagram carousel. Eleven photos. Caption: 'my soul-friend.' Jen and Elise have known each other four years.",
       },
       {
         speakerId: null,
-        text: "4. Saskia's pregnancy '25 — Elise hosted the announcement dinner. Four hours of cooking. Carousel, again.",
+        text: "4. Saskia's pregnancy '25. Elise hosted the announcement dinner. Four hours of cooking. Carousel, again.",
       },
       {
         speakerId: null,
-        text: "5. Your engagement '25 — text only. 'Yay congrats!! 🥳' Eight hours after you posted. No comment on the post.",
+        text: "5. Your engagement '25, text only. 'Yay congrats!! 🥳' Eight hours after you posted. No comment on the post.",
       },
       {
         speakerId: null,
-        text: "6. Your birthday '26 — nothing. Nothing.",
+        text: "6. Your birthday '26, nothing. Nothing.",
       },
       {
         speakerId: "inner-voice",
-        text: "The shape is on the screen. Asymmetric performance. The friends she over-celebrates are the friends whose lives are not running ahead of hers. The one whose life is — yours — gets the flat reply. The pattern is in writing now and you cannot un-see it.",
+        text: "The shape is on the screen. Asymmetric performance. The friends she over-celebrates are the friends whose lives are not running ahead of hers. The one whose life is, yours, gets the flat reply. The pattern is in writing now and you cannot un-see it.",
         emotion: "knowing",
       },
     ],
@@ -144,14 +144,14 @@ const scenes: Scene[] = [
       {
         id: "name-the-pattern",
         text: "Name it: 'covert narcissist friend, asymmetric performance, ten-year-pattern.' Save the document.",
-        tactic: "Naming is the threshold move. Once it is in writing it becomes operational data, not a feeling. The label is for you, not for any later conversation with her — you will never use it to her face.",
+        tactic: "Naming is the threshold move. Once it is in writing it becomes operational data, not a feeling. The label is for you, not for any later conversation with her, you will never use it to her face.",
         nextSceneId: "named",
         isOptimal: true,
       },
       {
         id: "soften-the-pattern",
         text: "Add a line: 'maybe she just struggles with my success.' Save.",
-        tactic: "The softening line is the friendship-fog reasserting. 'She struggles with your success' is true and is not the operational point — what matters is the asymmetric performance, which is a register, not a feeling. Do not trade the precise language for the kinder one.",
+        tactic: "The softening line is the friendship-fog reasserting. 'She struggles with your success' is true and is not the operational point, what matters is the asymmetric performance, which is a register, not a feeling. Do not trade the precise language for the kinder one.",
         nextSceneId: "softened",
         isOptimal: false,
       },
@@ -180,7 +180,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "inner-voice",
-        text: "The audit produced a register-name. The register-name produces a question: what do you do now. The question has three legitimate answers, not one — and the worst one is the public one.",
+        text: "The audit produced a register-name. The register-name produces a question: what do you do now. The question has three legitimate answers, not one and the worst one is the public one.",
         emotion: "knowing",
       },
     ],
@@ -195,7 +195,7 @@ const scenes: Scene[] = [
       },
       {
         id: "send-the-text",
-        text: "Text her: 'Hey — birthday went past Sunday. Did not hear from you. Wanted to mention it.'",
+        text: "Text her: 'Hey, birthday went past Sunday. Did not hear from you. Wanted to mention it.'",
         tactic: "The naming-text seems direct but is a confrontation in friendly clothing. It will produce a profuse warm apology, a lunch invitation, a story about how she was 'going through it.' It feels like a result; it produces no actual change in the register because the register is structural, not a forgotten birthday.",
         nextSceneId: "named-text-sent",
         isOptimal: false,
@@ -221,7 +221,7 @@ const scenes: Scene[] = [
     dialog: [
       {
         speakerId: null,
-        text: "Thursday. You do not text her. You do not unfriend her on anything. You do not change the way you respond when she texts you — but you no longer reach first.",
+        text: "Thursday. You do not text her. You do not unfriend her on anything. You do not change the way you respond when she texts you but you no longer reach first.",
       },
       {
         speakerId: null,
@@ -229,7 +229,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "inner-voice",
-        text: "The downgrade is invisible to the outside. It is detectable only as the absence of the things that used to happen — the unprompted lunch invitations, the share-this-news call, the long voice-note on a Sunday. The absence is the move.",
+        text: "The downgrade is invisible to the outside. It is detectable only as the absence of the things that used to happen, the unprompted lunch invitations, the share-this-news call, the long voice-note on a Sunday. The absence is the move.",
         emotion: "knowing",
       },
     ],
@@ -237,7 +237,7 @@ const scenes: Scene[] = [
       {
         id: "warm-but-boundaried",
         text: "When she texts about big news of her own, reply warmly and proportionately. Send the heart, do not send the carousel.",
-        tactic: "Symmetric performance is the structural counter-move. You do not punish her by withholding warmth; you simply match the register she has been giving you for ten years. She will, eventually, register the change — usually as a vague sense that something has shifted. She will not be able to name it.",
+        tactic: "Symmetric performance is the structural counter-move. You do not punish her by withholding warmth; you simply match the register she has been giving you for ten years. She will, eventually, register the change. Usually as a vague sense that something has shifted. She will not be able to name it.",
         nextSceneId: "ending-downgrade",
         isOptimal: true,
         event: "optimal-with-grace",
@@ -245,7 +245,7 @@ const scenes: Scene[] = [
       {
         id: "withhold-cold",
         text: "Stop reciprocating. Do not send the heart. Do not turn up to the next dinner.",
-        tactic: "Cold withdrawal is the variant of the exit move at half-speed. It produces the same ending without the cleanness. She will read the cold as data, will form a story about it, and will tell that story at other people's tables. The downgrade is symmetric — not warmer than her, not colder.",
+        tactic: "Cold withdrawal is the variant of the exit move at half-speed. It produces the same ending without the cleanness. She will read the cold as data, will form a story about it, and will tell that story at other people's tables. The downgrade is symmetric, not warmer than her, not colder.",
         nextSceneId: "ending-cold-withdraw",
         isOptimal: false,
       },
@@ -253,7 +253,7 @@ const scenes: Scene[] = [
   },
 
   // ===================================================================
-  // ENDINGS — DOWNGRADE
+  // ENDINGS. DOWNGRADE
   // ===================================================================
   {
     id: "ending-downgrade",
@@ -263,7 +263,7 @@ const scenes: Scene[] = [
     outcomeType: "good",
     endingTitle: "The Quiet Restructure",
     endingLearnPrompt:
-      "The covert-narc friend audit produces an operational answer that does not require a scene. Symmetric performance, no public marker, no confrontation. The friendship survives, calibrated to a register she is actually capable of holding. You stop bleeding warmth into a one-way channel. The closes-the-Mother-Arc note: this is the same move you ran on your mother in tn-1-1 — warm-no, no announcement, sustained across years. You spotted it here because you ran it there.",
+      "The covert-narc friend audit produces an operational answer that does not require a scene. Symmetric performance, no public marker, no confrontation. The friendship survives, calibrated to a register she is actually capable of holding. You stop bleeding warmth into a one-way channel. The closes-the-Mother-Arc note: this is the same move you ran on your mother in tn-1-1, warm-no, no announcement, sustained across years. You spotted it here because you ran it there.",
     dialog: [
       {
         speakerId: "inner-voice",
@@ -294,7 +294,7 @@ const scenes: Scene[] = [
   },
 
   // ===================================================================
-  // FAILURE BRANCHES — SHORTER
+  // FAILURE BRANCHES. SHORTER
   // ===================================================================
   {
     id: "performed-warm",
@@ -304,12 +304,12 @@ const scenes: Scene[] = [
     dialog: [
       {
         speakerId: "the-friend",
-        text: '"OH MY GOD I AM THE WORST. babe I have been DROWNING this week, completely missed your birthday, I am sending you something this weekend I PROMISE, lunch on me next week, I love you so much"',
+        text: '"OH MY GOD I AM THE WORST. Babe I have been DROWNING this week, completely missed your birthday, I am sending you something this weekend I PROMISE, lunch on me next week, I love you so much"',
         emotion: "neutral",
       },
       {
         speakerId: "inner-voice",
-        text: "The over-apology is its own register. The seven exclamation marks, the all-caps 'WORST,' the promise of the gift she will not send, the lunch she will reschedule twice — every move is the friendship's standard repair pattern. You have run it before. The wound stops hurting; the pattern resumes.",
+        text: "The over-apology is its own register. The seven exclamation marks, the all-caps 'WORST,' the promise of the gift she will not send, the lunch she will reschedule twice. Every move is the friendship's standard repair pattern. You have run it before. The wound stops hurting; the pattern resumes.",
         emotion: "knowing",
       },
     ],
@@ -343,7 +343,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "inner-voice",
-        text: "Priya named it because Priya has been watching it from outside the friendship for a year. Useful — and now Priya carries data she did not ask for, and the next time the three of you are in a room there will be a small unaddressed thing in it. Recoverable, but a tax was paid.",
+        text: "Priya named it because Priya has been watching it from outside the friendship for a year. Useful and now Priya carries data she did not ask for, and the next time the three of you are in a room there will be a small unaddressed thing in it. Recoverable, but a tax was paid.",
         emotion: "knowing",
       },
     ],
@@ -366,7 +366,7 @@ const scenes: Scene[] = [
     outcomeType: "neutral",
     endingTitle: "The Wednesday Resumed",
     endingLearnPrompt:
-      "The drop-it move has a specific operational cost: every Wednesday like this one will arrive again. The audit is the only move that ends the recurrence; declining the audit defers it. The scenario does not punish you for the deferral — it just notes that the next iteration will be longer, and the next wine will be poured with the same internal weather.",
+      "The drop-it move has a specific operational cost: every Wednesday like this one will arrive again. The audit is the only move that ends the recurrence; declining the audit defers it. The scenario does not punish you for the deferral, it just notes that the next iteration will be longer, and the next wine will be poured with the same internal weather.",
     dialog: [
       {
         speakerId: "inner-voice",
@@ -392,7 +392,7 @@ const scenes: Scene[] = [
     choices: [
       {
         id: "restore-precision",
-        text: "Re-write the line. 'Asymmetric performance — over-warm to friends less threatening, flat to friend whose life is going well.' Save.",
+        text: "Re-write the line. 'Asymmetric performance, over-warm to friends less threatening, flat to friend whose life is going well.' Save.",
         tactic: "Precision recovery. The fog returned in five seconds because the friendship is well-rehearsed at producing it. Hold the language.",
         nextSceneId: "named",
         isOptimal: true,
@@ -438,7 +438,7 @@ const scenes: Scene[] = [
     failureBlogSlug: "how-to-leave-without-being-villain",
     failureBlogTitle: "How To Leave Without Being The Villain",
     endingLearnPrompt:
-      "Ten-year friendships end through erosion or scene; you reached for scene on the strength of one Wednesday's audit. The exit will hold. It will also produce a story Elise tells at four mutual tables, a redistribution of the friendship-circle, and a six-month spell where you wonder if you over-corrected. The downgrade does the same operational work without producing the story — quiet erosion at chosen tempo, with the friendship available for the genuine moments she is capable of. Next time, restructure before exiting.",
+      "Ten-year friendships end through erosion or scene; you reached for scene on the strength of one Wednesday's audit. The exit will hold. It will also produce a story Elise tells at four mutual tables, a redistribution of the friendship-circle, and a six-month spell where you wonder if you over-corrected. The downgrade does the same operational work without producing the story, quiet erosion at chosen tempo, with the friendship available for the genuine moments she is capable of. Next time, restructure before exiting.",
     dialog: [
       {
         speakerId: "inner-voice",
@@ -457,9 +457,9 @@ const scenes: Scene[] = [
     outcomeType: "bad",
     endingTitle: "The Loop Resumed",
     failureBlogSlug: "architecture-of-control-how-emotional-dependency-is-built",
-    failureBlogTitle: "Architecture of Control — How Emotional Dependency Is Built",
+    failureBlogTitle: "Architecture of Control. How Emotional Dependency Is Built",
     endingLearnPrompt:
-      "The performed-warm reply absorbed the wound; the audit did not happen. The lunch will be rescheduled twice. The pattern will continue. Three to nine months from now you will be at this kitchen counter again with the same wine. The scenario is built specifically to interrupt this loop — running it and not landing the audit is the costliest version, because you used the warning shot.",
+      "The performed-warm reply absorbed the wound; the audit did not happen. The lunch will be rescheduled twice. The pattern will continue. Three to nine months from now you will be at this kitchen counter again with the same wine. The scenario is built specifically to interrupt this loop, running it and not landing the audit is the costliest version, because you used the warning shot.",
     dialog: [
       {
         speakerId: "inner-voice",
@@ -474,9 +474,9 @@ const scenes: Scene[] = [
 export const toxicNarc61: Scenario = {
   id: "tn-6-1",
   title: "The Friend Who Forgets Your Birthday",
-  tagline: "Wednesday, 7:14 p.m. Three days after. The audit you have been afraid to run for two years.",
+  tagline: "Wednesday, 7:14 p.m. three days after. The audit you have been afraid to run for two years.",
   description:
-    "Ten years of friendship. Three days ago she did not post for your birthday. She has posted for three other friends in the past year. The asymmetry is no longer deniable. The scenario is not the missed birthday — the missed birthday is the artefact you are using to finally run the audit. Closes the Mother Arc: the same register, in a different relationship, spotted because you have already done the work with your mother.",
+    "Ten years of friendship. Three days ago she did not post for your birthday. She has posted for three other friends in the past year. The asymmetry is no longer deniable. The scenario is not the missed birthday, the missed birthday is the artefact you are using to finally run the audit. Closes the Mother Arc: the same register, in a different relationship, spotted because you have already done the work with your mother.",
   tier: "premium",
   track: "toxic-narc",
   level: 6,
@@ -489,17 +489,17 @@ export const toxicNarc61: Scenario = {
   startSceneId: "wednesday-evening",
   prerequisites: ["tn-1-1"],
   tacticsLearned: [
-    "The written audit as the threshold move — pattern in writing becomes operational data, not a feeling",
+    "The written audit as the threshold move, pattern in writing becomes operational data, not a feeling",
     "Asymmetric performance as the diagnostic for covert-narc friendship",
-    "The no-scene downgrade — quiet restructure from inner-circle to ring-2 without an announcement",
+    "The no-scene downgrade, quiet restructure from inner-circle to ring-2 without an announcement",
     "Symmetric reciprocation as the structural counter-move (not warmer, not colder)",
-    "The Mother-Arc echo — the same register spotted in a different relationship because you ran the work with the mother first",
+    "The Mother-Arc echo, the same register spotted in a different relationship because you ran the work with the mother first",
   ],
   redFlagsTaught: [
     "The over-apology repair pattern (all-caps WORST, seven exclamations, the gift she will not send) as the friendship's loop-closing mechanism",
     "The friendship-fog softening line ('she struggles with my success') that re-fogs precise language",
-    "Cold withdrawal as the noisy variant of the downgrade — produces a martyr-story Elise tells at four shared tables",
-    "Premature exit on the strength of one audit — eight years of investment lost to the wrong move at the right moment",
+    "Cold withdrawal as the noisy variant of the downgrade, produces a martyr-story Elise tells at four shared tables",
+    "Premature exit on the strength of one audit, eight years of investment lost to the wrong move at the right moment",
   ],
   characters: [INNER_VOICE, THE_FRIEND, THE_PARTNER],
   scenes,

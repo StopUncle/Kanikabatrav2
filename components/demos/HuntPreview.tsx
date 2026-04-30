@@ -8,13 +8,13 @@ import { m, AnimatePresence } from "framer-motion";
  *
  * A predator-approach animation told through two orbs on a dark field.
  *
- *   Gold orb (you)    — centered, radiant, idle pulse.
- *   Red orb (hunter)  — enters from top-left, moves along a probe-and-
+ *   Gold orb (you)   , centered, radiant, idle pulse.
+ *   Red orb (hunter) , enters from top-left, moves along a probe-and-
  *                       retreat path toward the gold, leaves a fading
  *                       trail. Speed varies: bursts of motion, pauses
  *                       to "watch", sudden re-engagement.
  *
- * The story is entirely in the movement — no dialog, no labels, no
+ * The story is entirely in the movement, no dialog, no labels, no
  * tactic cards. A cold visitor reads it in under 5 seconds: something
  * is stalking you. It gets closer. It gets here. It captures. One
  * short verdict word surfaces briefly at the very end.
@@ -35,7 +35,7 @@ import { m, AnimatePresence } from "framer-motion";
 // right, retreat, circle under the target, pounce. The final waypoint
 // sits at the target position.
 const PATH: [number, number][] = [
-  [-10, 18], // entry — off canvas top-left
+  [-10, 18], // entry, off canvas top-left
   [22, 28], // probe right
   [18, 42], // watch
   [32, 50], // edge closer
@@ -61,7 +61,7 @@ export default function HuntPreview() {
   const [inView, setInView] = useState(true);
   const [cycle, setCycle] = useState(0);
 
-  // Trail — array of recent hunter positions. Sampled via rAF while
+  // Trail, array of recent hunter positions. Sampled via rAF while
   // visible. Older entries fade out.
   const [trail, setTrail] = useState<Point[]>([]);
   const hunterPosRef = useRef<Point>({ x: PATH[0][0], y: PATH[0][1] });
@@ -98,7 +98,7 @@ export default function HuntPreview() {
     return () => cancelAnimationFrame(raf);
   }, [inView]);
 
-  // Cycle loop — bump `cycle` every CYCLE_MS to restart animation.
+  // Cycle loop, bump `cycle` every CYCLE_MS to restart animation.
   useEffect(() => {
     if (!inView) return;
     const t = window.setTimeout(() => {
@@ -136,7 +136,7 @@ export default function HuntPreview() {
       aria-label="Demo · Hunt"
     >
       <div className="relative aspect-[16/10] rounded-xl overflow-hidden border border-warm-gold/20 bg-gradient-to-br from-[#0b0812] via-[#060409] to-[#0b0812]">
-        {/* Scanline / grid texture — gives the field a top-down map feel
+        {/* Scanline / grid texture, gives the field a top-down map feel
             without being busy. Low opacity. */}
         <div
           aria-hidden
@@ -148,7 +148,7 @@ export default function HuntPreview() {
           }}
         />
 
-        {/* Vignette — darken the edges so the centre glows. */}
+        {/* Vignette, darken the edges so the centre glows. */}
         <div
           aria-hidden
           className="absolute inset-0 pointer-events-none"
@@ -158,7 +158,7 @@ export default function HuntPreview() {
           }}
         />
 
-        {/* Gold orb — the target. Static at centre with an idle breath.
+        {/* Gold orb, the target. Static at centre with an idle breath.
             Dims during the capture beat. */}
         <m.div
           key={`target-${cycle}`}
@@ -199,7 +199,7 @@ export default function HuntPreview() {
           />
         </m.div>
 
-        {/* Trail — SVG polyline of recent hunter positions, fading out
+        {/* Trail. SVG polyline of recent hunter positions, fading out
             toward older points. Drawn as a gradient stroke. */}
         <svg
           className="absolute inset-0 w-full h-full pointer-events-none"
@@ -227,7 +227,7 @@ export default function HuntPreview() {
           )}
         </svg>
 
-        {/* Hunter orb — the predator. Moves along PATH. Uses Framer's
+        {/* Hunter orb, the predator. Moves along PATH. Uses Framer's
             keyframe animation with custom `times` to control per-
             segment speed. Writes its current position into a ref so
             the rAF loop above can sample for the trail. */}
@@ -260,7 +260,7 @@ export default function HuntPreview() {
           }}
           style={{ transform: "translate(-50%, -50%)" }}
         >
-          {/* Hunter body — a red dot with a subtle heartbeat pulse.
+          {/* Hunter body, a red dot with a subtle heartbeat pulse.
               Grows larger as it approaches the target (done via a
               separate nested animation). */}
           <m.div
@@ -288,7 +288,7 @@ export default function HuntPreview() {
           />
         </m.div>
 
-        {/* Capture burst — red tendrils fire from the target on the
+        {/* Capture burst, red tendrils fire from the target on the
             capture beat. Eight radial lines draw out and fade. */}
         <m.div
           key={`capture-${cycle}`}
@@ -342,7 +342,7 @@ export default function HuntPreview() {
           </svg>
         </m.div>
 
-        {/* Verdict word — appears for a beat after capture. ONE word.
+        {/* Verdict word, appears for a beat after capture. ONE word.
             That's the only text in this demo. */}
         <AnimatePresence>
           <m.div
@@ -380,7 +380,7 @@ export default function HuntPreview() {
           </m.div>
         </AnimatePresence>
 
-        {/* Tiny status strip — just a timestamp in the corner, no other
+        {/* Tiny status strip, just a timestamp in the corner, no other
             text anywhere. Keeps the frame readable as a "scene 01" */}
         <div className="absolute top-3 left-4 text-warm-gold/40 text-[9px] uppercase tracking-[0.35em]">
           10:32 PM

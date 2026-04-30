@@ -2,14 +2,14 @@ import Link from "next/link";
 import { Heart, ArrowLeft } from "lucide-react";
 
 export const metadata = {
-  title: "Thank you — Kanika Batra",
+  title: "Thank you. Kanika Batra",
   description: "Thank you for supporting Kanika's work.",
   robots: { index: false, follow: false }, // post-purchase page; no SEO value
 };
 
 /**
  * Lightweight static thanks page. Stripe redirects here with
- * ?session_id=cs_... but we don't actually need the id — the receipt
+ * ?session_id=cs_... but we don't actually need the id, the receipt
  * email is sent by the webhook (server-side, retry-safe), not by
  * polling the session here. This page is just the breath-out moment.
  */
@@ -38,7 +38,7 @@ export default function DonateThanksPage() {
           shortly.
         </p>
         <p className="text-text-gray/80 text-sm leading-relaxed mb-10 italic">
-          Genuinely — this kind of support is what keeps the writing,
+          Genuinely. This kind of support is what keeps the writing,
           the simulator, and the community going. Kanika reads every
           message that comes in.
         </p>

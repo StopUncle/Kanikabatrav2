@@ -45,7 +45,7 @@ export async function POST(request: NextRequest) {
         parsed = result.data;
       }
     } catch {
-      // Bad JSON — tolerate. The timestamp still updates.
+      // Bad JSON, tolerate. The timestamp still updates.
     }
 
     await prisma.user.update({

@@ -18,7 +18,7 @@ const patchSchema = z.object({
  * `answeredAt` is stamped, and an email is fired to the asker so they
  * see the green-dot pill on next visit.
  *
- * Email send is fire-and-forget — a transient SMTP issue must not
+ * Email send is fire-and-forget, a transient SMTP issue must not
  * unwind the DB update.
  */
 export async function PATCH(

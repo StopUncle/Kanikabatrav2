@@ -7,7 +7,7 @@ import { m, AnimatePresence } from "framer-motion";
  * Demo · MASK.
  *
  * A single Venetian mask animates: breath, blink, crack, split open.
- * Behind the first mask, a second appears — harder, more predatory.
+ * Behind the first mask, a second appears, harder, more predatory.
  * It too splits. The third is feral.
  *
  * The metaphor: people wear masks. You see the first, trust it, act
@@ -108,7 +108,7 @@ export default function MaskPreview() {
   const secondVisible = at("reveal-2") && !past("reveal-3");
   const secondSplit = at("split-2") && !past("reveal-3");
 
-  // Third mask — final, feral.
+  // Third mask, final, feral.
   const thirdVisible = at("reveal-3") && !past("close");
 
   return (
@@ -118,7 +118,7 @@ export default function MaskPreview() {
       aria-label="Demo · Mask"
     >
       <div className="relative aspect-[16/10] rounded-xl overflow-hidden border border-warm-gold/20 bg-gradient-to-br from-[#0b0812] via-[#060409] to-[#0b0812]">
-        {/* Atmospheric backdrop — single soft purple light source.
+        {/* Atmospheric backdrop, single soft purple light source.
             Slowly drifts. The whole scene is "lit" by this one light. */}
         <m.div
           aria-hidden
@@ -133,7 +133,7 @@ export default function MaskPreview() {
           transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
         />
 
-        {/* Film grain — same subtle noise pattern for tactile feel. */}
+        {/* Film grain. Same subtle noise pattern for tactile feel. */}
         <div
           aria-hidden
           className="absolute inset-0 pointer-events-none mix-blend-overlay opacity-[0.15]"
@@ -143,13 +143,13 @@ export default function MaskPreview() {
           }}
         />
 
-        {/* Perspective frame — centers the masks, enables 3D transforms. */}
+        {/* Perspective frame, centers the masks, enables 3D transforms. */}
         <div
           className="absolute inset-0 flex items-center justify-center"
           style={{ perspective: "1400px" }}
         >
           <div className="relative w-[60%] max-w-[380px] aspect-[2/1]">
-            {/* THIRD MASK — the feral one. Rendered lowest in the stack
+            {/* THIRD MASK, the feral one. Rendered lowest in the stack
                 so it's behind the others until they split away. */}
             <AnimatePresence>
               {thirdVisible && (
@@ -169,18 +169,18 @@ export default function MaskPreview() {
               )}
             </AnimatePresence>
 
-            {/* SECOND MASK — darker, more angular, burgundy stroke. */}
+            {/* SECOND MASK, darker, more angular, burgundy stroke. */}
             {secondVisible && !secondSplit && (
               <div className="absolute inset-0 flex items-center justify-center">
                 <MaskLayer variant="second" blink={beat === "reveal-2"} />
               </div>
             )}
-            {/* Second mask split — left and right halves rotate out. */}
+            {/* Second mask split, left and right halves rotate out. */}
             {secondSplit && (
               <MaskSplitAnim variant="second" />
             )}
 
-            {/* FIRST MASK — the gold one. Idle breathing + eye shift.
+            {/* FIRST MASK, the gold one. Idle breathing + eye shift.
                 Crack appears. Then splits open. */}
             {!firstHidden && !firstSplit && (
               <div className="absolute inset-0 flex items-center justify-center">
@@ -195,7 +195,7 @@ export default function MaskPreview() {
           </div>
         </div>
 
-        {/* Corner labels — tiny, mostly for parity with other demos. */}
+        {/* Corner labels, tiny, mostly for parity with other demos. */}
         <div className="absolute top-3 left-4 text-warm-gold/40 text-[9px] uppercase tracking-[0.35em]">
           10:32 PM
         </div>
@@ -226,7 +226,7 @@ export default function MaskPreview() {
 
 /**
  * A full mask SVG in one of three variants. Colours, angularity, and
- * detail shift across variants — the story is "underneath this polite
+ * detail shift across variants, the story is "underneath this polite
  * face is something harder, and underneath that, something animal."
  */
 function MaskLayer({
@@ -282,7 +282,7 @@ function MaskLayer({
       }}
     >
       <defs>
-        {/* First variant — gold lacquer, warm. */}
+        {/* First variant, gold lacquer, warm. */}
         <linearGradient id="mask-first-fill" x1="0" y1="0" x2="0" y2="1">
           <stop offset="0%" stopColor="rgba(44,32,60,0.98)" />
           <stop offset="55%" stopColor="rgba(18,12,26,0.99)" />
@@ -294,7 +294,7 @@ function MaskLayer({
           <stop offset="100%" stopColor="rgba(156,122,31,0.9)" />
         </linearGradient>
 
-        {/* Second variant — darker metal, burgundy edge. */}
+        {/* Second variant, darker metal, burgundy edge. */}
         <linearGradient id="mask-second-fill" x1="0" y1="0" x2="0" y2="1">
           <stop offset="0%" stopColor="rgba(30,10,18,0.98)" />
           <stop offset="55%" stopColor="rgba(14,4,8,0.99)" />
@@ -306,7 +306,7 @@ function MaskLayer({
           <stop offset="100%" stopColor="rgba(90,20,40,0.9)" />
         </linearGradient>
 
-        {/* Third variant — feral, raw. Black fill + red edge. */}
+        {/* Third variant, feral, raw. Black fill + red edge. */}
         <linearGradient id="mask-third-fill" x1="0" y1="0" x2="0" y2="1">
           <stop offset="0%" stopColor="rgba(20,2,4,0.99)" />
           <stop offset="55%" stopColor="rgba(8,0,2,0.99)" />
@@ -319,7 +319,7 @@ function MaskLayer({
         </linearGradient>
       </defs>
 
-      {/* Main mask shape — same silhouette across variants for the
+      {/* Main mask shape. Same silhouette across variants for the
           "peel underneath" illusion. Only fill/stroke change. */}
       <path
         d="
@@ -338,7 +338,7 @@ function MaskLayer({
         strokeWidth={palette.strokeW}
       />
 
-      {/* Brow flourishes — make it read as a carved mask. */}
+      {/* Brow flourishes, make it read as a carved mask. */}
       <path
         d="M 38 44 Q 64 26, 92 40"
         fill="none"
@@ -354,7 +354,7 @@ function MaskLayer({
         opacity={variant === "third" ? 0.9 : 0.6}
       />
 
-      {/* Crack — only shown on first mask's "crack" beat. A jagged
+      {/* Crack, only shown on first mask's "crack" beat. A jagged
           gold line that animates its draw. */}
       {showCrack && (
         <m.path
@@ -370,7 +370,7 @@ function MaskLayer({
         />
       )}
 
-      {/* Eyes — animated blink. scaleY collapses briefly. */}
+      {/* Eyes, animated blink. ScaleY collapses briefly. */}
       <m.g
         animate={blink ? { scaleY: [1, 0.1, 1] } : undefined}
         transition={{
@@ -405,7 +405,7 @@ function MaskLayer({
 }
 
 /**
- * Split animation — two half-mask SVGs rotate outward from the center.
+ * Split animation, two half-mask SVGs rotate outward from the center.
  * The first variant uses gold palette, the second uses burgundy.
  * Splits take ~1s, then the pieces fade out.
  */

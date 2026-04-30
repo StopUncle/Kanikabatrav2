@@ -25,7 +25,7 @@
  *     around 3-4 a.m., prefrontal regulation is reduced under
  *     sleep deprivation, and the absence of distracting stimuli
  *     means the brain has no scaffolding. The body that
- *     catastrophises at 3 a.m. is not the same body that will
+ *     catastrophises at 3 a.m. Is not the same body that will
  *     evaluate the same Slack message at 11 a.m. both are real;
  *     the 11 a.m. one is more accurate.
  *
@@ -349,7 +349,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "inner-voice",
-        text: "The phone at 3 a.m. is the most reliable loop-feeder available to a modern anxious body. Each piece of content soothes for 12 minutes by giving the brain the SHAPE of resolution, a specific outcome, a specific scenario, a specific data point. Then the brain notices the resolution was not a resolution and re-fires. Each cycle trains the body that anxiety is solved by content. Each cycle is shorter than the last.",
+        text: "The phone at 3 a.m. Is the most reliable loop-feeder available to a modern anxious body. Each piece of content soothes for 12 minutes by giving the brain the SHAPE of resolution, a specific outcome, a specific scenario, a specific data point. Then the brain notices the resolution was not a resolution and re-fires. Each cycle trains the body that anxiety is solved by content. Each cycle is shorter than the last.",
         emotion: "knowing",
       },
       {
@@ -475,7 +475,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "inner-voice",
-        text: "The body protesting the postponement is the body's standard move. The skill is to hold the postponement WITHOUT arguing with the body. You wrote the worry down. The notebook is the container. The notebook is real. 5 p.m. is real. The reach for the phone is the body trying to bypass the container.",
+        text: "The body protesting the postponement is the body's standard move. The skill is to hold the postponement WITHOUT arguing with the body. You wrote the worry down. The notebook is the container. The notebook is real. 5 p.m. Is real. The reach for the phone is the body trying to bypass the container.",
         emotion: "knowing",
       },
       {

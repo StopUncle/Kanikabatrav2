@@ -31,7 +31,7 @@ function isValidVideo(f: File): boolean {
  * a video URL. Used by the classroom lesson form so admins can either
  * paste a YouTube link or upload an mp4 directly.
  *
- * Reuses /api/consilium/feed/video/upload — that route is admin-gated
+ * Reuses /api/consilium/feed/video/upload, that route is admin-gated
  * and the R2 key prefix doesn't gate behavior anywhere downstream, so a
  * single upload path serves both feed and classroom.
  */
@@ -64,7 +64,7 @@ export default function VideoUrlField({
     setProgress(0);
     try {
       // 1. Ask the server for a presigned PUT URL. Keeps the video bytes
-      //    off Railway's edge entirely — a 502 was previously fired by
+      //    off Railway's edge entirely, a 502 was previously fired by
       //    Railway's proxy on ~170 MB uploads before Next.js saw them.
       const presignRes = await fetch("/api/consilium/feed/video/presign", {
         method: "POST",

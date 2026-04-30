@@ -1,5 +1,5 @@
 /**
- * Mission 7-2 — "The Exit"
+ * Mission 7-2, "The Exit"
  *
  * Level 7, order 2. The harder dating scenario: ending something
  * that was real but wrong, without scorching earth and without
@@ -18,11 +18,11 @@ const scenes: Scene[] = [
     dialog: [
       {
         speakerId: null,
-        text: "Three months with Nova. They're good. You're good with them. But something's off — not in them, in the shape of you-together.",
+        text: "Three months with Nova. They're good. You're good with them. But something's off, not in them, in the shape of you-together.",
       },
       {
         speakerId: "inner-voice",
-        text: "This is harder than leaving someone toxic. Nothing's wrong. It's just not right — and you owe yourself AND them a clean ending before it becomes resentment.",
+        text: "This is harder than leaving someone toxic. Nothing's wrong. It's just not right and you owe yourself AND them a clean ending before it becomes resentment.",
         emotion: "serious",
       },
     ],
@@ -430,7 +430,7 @@ const scenes: Scene[] = [
     failureBlogTitle: "Butterflies Are Warning, Not Romance",
     endingTitle: "Messy Delivery",
     endingSummary:
-      "You softened with flattery, then ended it. They heard warmth, then rejection in the same breath. You gave them a puzzle to solve — 'if I mean so much, why did they leave?' — that they'll chew on for a year. Kinder to have said nothing sweet at all.",
+      "You softened with flattery, then ended it. They heard warmth, then rejection in the same breath. You gave them a puzzle to solve, 'if I mean so much, why did they leave?', that they'll chew on for a year. Kinder to have said nothing sweet at all.",
     dialog: [
       {
         speakerId: "inner-voice",

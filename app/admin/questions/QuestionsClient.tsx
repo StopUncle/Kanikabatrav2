@@ -94,7 +94,7 @@ export default function QuestionsClient({ initialQuestions, initialTabCounts }: 
     <div className="text-text-light">
       <h1 className="text-2xl font-light tracking-wider uppercase mb-1">Ask Kanika</h1>
       <p className="text-text-gray/70 text-sm mb-6">
-        Member-submitted questions. Sorted by upvotes — top of the list is what the
+        Member-submitted questions. Sorted by upvotes, top of the list is what the
         community wants to hear most.
       </p>
 
@@ -151,7 +151,7 @@ export default function QuestionsClient({ initialQuestions, initialTabCounts }: 
                         <span className="inline-flex items-center gap-2">
                           {ident ? (
                             <span className="text-amber-300/80">
-                              {ident.displayName} ({ident.email}) — was anonymous
+                              {ident.displayName} ({ident.email}), was anonymous
                             </span>
                           ) : (
                             <>
@@ -209,7 +209,7 @@ export default function QuestionsClient({ initialQuestions, initialTabCounts }: 
                         {q.status === "ANSWERING" && (
                           <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-amber-400/10 text-amber-300 text-[11px] tracking-wider uppercase font-medium border border-amber-400/30">
                             <MessageSquare size={12} />
-                            In progress — link an answering voice/video to mark done
+                            In progress, link an answering voice/video to mark done
                           </span>
                         )}
                         {q.status !== "REJECTED" && (
@@ -229,7 +229,7 @@ export default function QuestionsClient({ initialQuestions, initialTabCounts }: 
                     )}
                     {q.status === "REJECTED" && (
                       <div className="mt-3 text-[11px] text-rose-300/70">
-                        Rejected{q.rejectionReason ? ` — ${q.rejectionReason}` : ""}
+                        Rejected{q.rejectionReason ? `, ${q.rejectionReason}` : ""}
                         <button
                           onClick={() => setStatus(q.id, "PENDING")}
                           disabled={busy === q.id}

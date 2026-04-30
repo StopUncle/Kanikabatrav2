@@ -614,7 +614,7 @@ const scenes: Scene[] = [
     dialog: [
       {
         speakerId: "inner-voice",
-        text: "Worry postponement applied across both 3 a.m. and 2:47 p.m. is the hallmark of a body that has internalised the worry-time container. Across treatment, the postponement becomes one of the few interventions that GENERALISES, meaning, the body does not need to relearn it for each new content slot. The notebook entries do not need to be elaborate. They need to be CONSISTENT. Lin's longest-running clients have notebooks that look like grocery lists from a distance. The grocery-list aesthetic is the skill working.",
+        text: "Worry postponement applied across both 3 a.m. and 2:47 p.m. Is the hallmark of a body that has internalised the worry-time container. Across treatment, the postponement becomes one of the few interventions that GENERALISES, meaning, the body does not need to relearn it for each new content slot. The notebook entries do not need to be elaborate. They need to be CONSISTENT. Lin's longest-running clients have notebooks that look like grocery lists from a distance. The grocery-list aesthetic is the skill working.",
         emotion: "knowing",
       },
     ],

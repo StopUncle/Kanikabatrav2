@@ -1,5 +1,5 @@
 /**
- * Mission 6-2 — "The Raise"
+ * Mission 6-2, "The Raise"
  *
  * Level 6, order 2. Salary negotiation against a director running
  * classic suppression tactics: anchoring low, citing "the team," and
@@ -22,7 +22,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "kaya",
-        text: '"One piece of advice. Don\'t let him anchor first. And don\'t accept \'budget\' as an answer — budget is always a choice, not a constraint."',
+        text: '"One piece of advice. Don\'t let him anchor first. And don\'t accept \'budget\' as an answer, budget is always a choice, not a constraint."',
         emotion: "knowing",
       },
       {
@@ -54,7 +54,7 @@ const scenes: Scene[] = [
       },
       {
         id: "thank-and-deepen",
-        text: "\"Noted. One more — what does the bad version of me look like in there?\"",
+        text: "\"Noted. One more, what does the bad version of me look like in there?\"",
         tactic: "Ask for the anti-pattern, not the play. Kaya's answer tells you what NOT to do in the next six minutes.",
         nextSceneId: "kaya-deflects",
         isOptimal: true,
@@ -85,11 +85,11 @@ const scenes: Scene[] = [
     dialog: [
       {
         speakerId: null,
-        text: "Marcus's office. He gestures to the chair. Already warming up a smile. Two sheets of paper on the desk — one face down.",
+        text: "Marcus's office. He gestures to the chair. Already warming up a smile. Two sheets of paper on the desk, one face down.",
       },
       {
         speakerId: "marcus",
-        text: '"I wanted to get ahead of the salary conversation. I\'m going to advocate for you — but I want to align first."',
+        text: '"I wanted to get ahead of the salary conversation. I\'m going to advocate for you but I want to align first."',
         emotion: "neutral",
       },
       {
@@ -101,7 +101,7 @@ const scenes: Scene[] = [
     choices: [
       {
         id: "give-your-number",
-        text: "Name your target — say $20k above what you'd actually accept.",
+        text: "Name your target, say $20k above what you'd actually accept.",
         tactic: "You anchored first. He'll walk it back to half your ask.",
         nextSceneId: "marcus-halves",
         isOptimal: false,
@@ -115,7 +115,7 @@ const scenes: Scene[] = [
       },
       {
         id: "leverage-first",
-        text: "\"Before we do salary — what does career progression look like for me here over the next 12 months?\"",
+        text: "\"Before we do salary, what does career progression look like for me here over the next 12 months?\"",
         tactic: "Shift to the bigger frame. Money conversations are easier after clarity on promotion.",
         nextSceneId: "marcus-evasive",
         isOptimal: true,
@@ -180,7 +180,7 @@ const scenes: Scene[] = [
     dialog: [
       {
         speakerId: "marcus",
-        text: '"Top of band is 135. But — you\'re not at top of band performance-wise."',
+        text: '"Top of band is 135. But, you\'re not at top of band performance-wise."',
         emotion: "neutral",
       },
       {
@@ -206,7 +206,7 @@ const scenes: Scene[] = [
       {
         id: "name-leverage",
         text: "\"I've had interest from two other companies this month.\"",
-        tactic: "External leverage — real or implied. Changes the risk calculus.",
+        tactic: "External leverage, real or implied. Changes the risk calculus.",
         nextSceneId: "marcus-takes-seriously",
         isOptimal: true,
       },
@@ -296,14 +296,14 @@ const scenes: Scene[] = [
       },
       {
         id: "date-the-revisit",
-        text: "\"Happy to separate — if you put 'title reviewed at Q3 review' in writing today.\"",
+        text: "\"Happy to separate, if you put 'title reviewed at Q3 review' in writing today.\"",
         tactic: "Agree on the separation but make 'later' a specific, dated commitment. Vague later is never.",
         nextSceneId: "marcus-reassesses",
         isOptimal: true,
       },
       {
         id: "flip-the-frame",
-        text: "\"Got it. I'll revisit title at my next review — with a different manager.\"",
+        text: "\"Got it. I'll revisit title at my next review, with a different manager.\"",
         tactic: "Name the unspoken alternative. Either he puts title on the table today or he watches you put yourself on the market.",
         nextSceneId: "marcus-reassesses",
       },
@@ -342,7 +342,7 @@ const scenes: Scene[] = [
     dialog: [
       {
         speakerId: "marcus",
-        text: '"That\'s aggressive. The team\'s budget won\'t allow it. Let\'s meet in the middle — I can advocate for half."',
+        text: '"That\'s aggressive. The team\'s budget won\'t allow it. Let\'s meet in the middle. I can advocate for half."',
         emotion: "neutral",
       },
       {
@@ -482,7 +482,7 @@ const scenes: Scene[] = [
     outcomeType: "neutral",
     endingTitle: "You Accepted the Ceiling",
     endingSummary:
-      "115 was his anchor; you made it your aspiration. The actual top of band was 135. You're getting a raise, but you're anchored 20k below where you should be — and that anchor carries into every future review.",
+      "115 was his anchor; you made it your aspiration. The actual top of band was 135. You're getting a raise, but you're anchored 20k below where you should be and that anchor carries into every future review.",
     dialog: [
       {
         speakerId: "inner-voice",
@@ -522,7 +522,7 @@ const scenes: Scene[] = [
     failureBlogTitle: "Narcissist Playbook: How They Actually Operate",
     endingTitle: "Split the Difference",
     endingSummary:
-      "You anchored first. He halved you. The 'budget' he cited was whatever number he wanted it to be. You got 50% of what you wanted, which was 120% of what you needed — so you accepted. He'll anchor harder next year because he knows your ceiling now.",
+      "You anchored first. He halved you. The 'budget' he cited was whatever number he wanted it to be. You got 50% of what you wanted, which was 120% of what you needed so you accepted. He'll anchor harder next year because he knows your ceiling now.",
     dialog: [
       {
         speakerId: "inner-voice",
@@ -542,7 +542,7 @@ const scenes: Scene[] = [
     failureBlogTitle: "Dark Triad Personality Types",
     endingTitle: "You Folded",
     endingSummary:
-      "One pushback and you recanted. He's now seen how much pressure it takes to collapse you. Your offer will reflect what he thinks he can get away with — which is always less than what you could have negotiated.",
+      "One pushback and you recanted. He's now seen how much pressure it takes to collapse you. Your offer will reflect what he thinks he can get away with, which is always less than what you could have negotiated.",
     dialog: [
       {
         speakerId: "inner-voice",

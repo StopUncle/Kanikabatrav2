@@ -7,13 +7,13 @@ import WebPreview from "@/components/demos/WebPreview";
 import { ArrowRight } from "lucide-react";
 
 /**
- * /try-demos — internal style comparison.
+ * /try-demos, internal style comparison.
  *
  * Three motion-first concepts replace the previous text-heavy drafts.
  * Each tells a dark-psychology story through pure visual metaphor:
- *   HUNT — a predator's approach and capture
- *   MASK — peeling layers revealing progressively harder faces
- *   WEB  — threads closing in around an unguarded target
+ *   HUNT, a predator's approach and capture
+ *   MASK, peeling layers revealing progressively harder faces
+ *   WEB , threads closing in around an unguarded target
  *
  * Near-zero text during playback. At most one verdict word per loop.
  * The motion IS the content.
@@ -138,7 +138,7 @@ function StyleCta() {
         href="/consilium/apply?src=demo-compare"
         className="inline-flex items-center justify-center gap-2 px-8 py-3 rounded-full bg-warm-gold text-deep-black font-medium text-sm tracking-[0.2em] uppercase transition-all hover:bg-warm-gold/90 hover:shadow-[0_12px_40px_-12px_rgba(212,175,55,0.55)]"
       >
-        Step inside — $29/mo
+        Step inside, $29/mo
         <ArrowRight size={14} />
       </Link>
     </div>

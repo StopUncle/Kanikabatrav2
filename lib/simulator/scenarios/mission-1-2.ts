@@ -1,10 +1,10 @@
 /**
- * Mission 1-2 — "The Charm Offensive"
+ * Mission 1-2, "The Charm Offensive"
  *
  * Level 1, order 2. Teaches love-bombing recognition.
  * Maris chooses you tonight. That's the danger.
  *
- * Choices use the 4-position mix — correct answer's index varies
+ * Choices use the 4-position mix, correct answer's index varies
  * (sometimes 0, sometimes 2, sometimes buried), and "medium-wrong"
  * choices look plausible on the surface. Players who pattern-match
  * first-option-correct will lose.
@@ -22,7 +22,7 @@ const scenes: Scene[] = [
     dialog: [
       {
         speakerId: null,
-        text: "Thursday. Five nights after the gala. The cream-stock card Maris slid between your glasses is in the inside pocket of your coat. You read it again on the walk over — a Manhattan number, no title, handwritten in a script that certainly cost someone a finishing-school term. You have not replied to it.",
+        text: "Thursday. Five nights after the gala. The cream-stock card Maris slid between your glasses is in the inside pocket of your coat. You read it again on the walk over, a Manhattan number, no title, handwritten in a script that certainly cost someone a finishing-school term. You have not replied to it.",
       },
       {
         speakerId: "priya",
@@ -58,7 +58,7 @@ const scenes: Scene[] = [
       {
         id: "ignore-entirely",
         text: "Pretend Maris isn't here. Don't even look.",
-        tactic: "Overcorrection — she reads this as strategy, not indifference.",
+        tactic: "Overcorrection, she reads this as strategy, not indifference.",
         nextSceneId: "maris-tests-patience",
       },
       {
@@ -71,7 +71,7 @@ const scenes: Scene[] = [
     ],
   },
 
-  // Optimal branch — she approaches
+  // Optimal branch, she approaches
   {
     id: "maris-approaches",
     backgroundId: "bar",
@@ -80,7 +80,7 @@ const scenes: Scene[] = [
     dialog: [
       {
         speakerId: null,
-        text: "Four minutes later she is at the edge of your booth. Two drinks. One of them is placed on your side of the table before she has sat down — not slid across, placed. She is still standing when she speaks.",
+        text: "Four minutes later she is at the edge of your booth. Two drinks. One of them is placed on your side of the table before she has sat down, not slid across, placed. She is still standing when she speaks.",
       },
       {
         speakerId: "maris",
@@ -88,12 +88,12 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "inner-voice",
-        text: "Note the construction of that sentence. She pretended to struggle with something she does not struggle with — nobody with her family remembers people by face and forgets names, they remember both, instantly, the first time. The pretend weakness is a compliment disguised as self-deprecation. It is the oldest trick in the class.",
+        text: "Note the construction of that sentence. She pretended to struggle with something she does not struggle with, nobody with her family remembers people by face and forgets names, they remember both, instantly, the first time. The pretend weakness is a compliment disguised as self-deprecation. It is the oldest trick in the class.",
         emotion: "knowing",
       },
       {
         speakerId: "inner-voice",
-        text: "The drink placement matters too. She put yours in front of you before asking if you wanted it. Placement is a frame — she is telling you, without any question, that hospitality in this booth runs through her now. The hospitality was already yours. She just annexed it.",
+        text: "The drink placement matters too. She put yours in front of you before asking if you wanted it. Placement is a frame, she is telling you, without any question, that hospitality in this booth runs through her now. The hospitality was already yours. She just annexed it.",
         emotion: "knowing",
       },
       {
@@ -106,7 +106,7 @@ const scenes: Scene[] = [
       {
         id: "accept-warmly",
         text: "Take the drink. Smile. \"That's sweet.\"",
-        tactic: "Mirroring the warmth back — exactly what she's testing for.",
+        tactic: "Mirroring the warmth back, exactly what she's testing for.",
         nextSceneId: "maris-escalates",
         isOptimal: false,
       },
@@ -126,14 +126,14 @@ const scenes: Scene[] = [
       {
         id: "decline-sharp",
         text: "\"I don't take drinks from strangers.\"",
-        tactic: "Overcorrection — now you look uptight, not untouchable.",
+        tactic: "Overcorrection, now you look uptight, not untouchable.",
         nextSceneId: "maris-amused-pivot",
         isOptimal: false,
       },
     ],
   },
 
-  // Bad branch — scanning
+  // Bad branch, scanning
   {
     id: "maris-notices-scan",
     backgroundId: "bar",
@@ -142,7 +142,7 @@ const scenes: Scene[] = [
     dialog: [
       {
         speakerId: null,
-        text: "You find her across the bar. She was already watching the door — she saw you look.",
+        text: "You find her across the bar. She was already watching the door, she saw you look.",
       },
       {
         speakerId: null,
@@ -213,7 +213,7 @@ const scenes: Scene[] = [
     nextSceneId: "recover-or-chase",
   },
 
-  // Wave-her-over branch — bad outcome
+  // Wave-her-over branch, bad outcome
   {
     id: "maris-declines-publicly",
     backgroundId: "bar",
@@ -222,7 +222,7 @@ const scenes: Scene[] = [
     dialog: [
       {
         speakerId: null,
-        text: "She sees the wave. Holds eye contact for half a second. Then gives you a small, amused smile — and turns back to her group.",
+        text: "She sees the wave. Holds eye contact for half a second. Then gives you a small, amused smile and turns back to her group.",
       },
       {
         speakerId: null,
@@ -237,7 +237,7 @@ const scenes: Scene[] = [
     nextSceneId: "ending-chased-and-denied",
   },
 
-  // Drink accepted warmly — she escalates
+  // Drink accepted warmly, she escalates
   {
     id: "maris-escalates",
     backgroundId: "bar",
@@ -251,7 +251,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "inner-voice",
-        text: "Fabricated nostalgia — she met you six minutes ago, so whoever she is comparing you to is either invented or generic enough to fit anyone. The entire sentence is a piece of theatre. What it is actually doing is pricing you above the rest of the room at the cost of a comparison that cannot be fact-checked.",
+        text: "Fabricated nostalgia, she met you six minutes ago, so whoever she is comparing you to is either invented or generic enough to fit anyone. The entire sentence is a piece of theatre. What it is actually doing is pricing you above the rest of the room at the cost of a comparison that cannot be fact-checked.",
         emotion: "concerned",
       },
       {
@@ -260,7 +260,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "inner-voice",
-        text: "Watch the structure — she insulted the whole room and excluded you from the insult in the same breath. You are meant to feel flattered by the exception. What actually happened is she established herself as the one who decides who is and is not boring. You just became a subject of her verdict system.",
+        text: "Watch the structure, she insulted the whole room and excluded you from the insult in the same breath. You are meant to feel flattered by the exception. What actually happened is she established herself as the one who decides who is and is not boring. You just became a subject of her verdict system.",
         emotion: "knowing",
       },
     ],
@@ -282,13 +282,13 @@ const scenes: Scene[] = [
       {
         id: "mirror-flatter",
         text: '"You seem pretty interesting yourself."',
-        tactic: "Mirroring — the core trap of love-bombing.",
+        tactic: "Mirroring, the core trap of love-bombing.",
         nextSceneId: "ending-recruited",
       },
       {
         id: "silence",
         text: "Just smile. Don't answer.",
-        tactic: "Denying her the reaction is fine — but she'll keep escalating.",
+        tactic: "Denying her the reaction is fine but she'll keep escalating.",
         nextSceneId: "maris-escalates-again",
       },
     ],
@@ -532,11 +532,11 @@ const scenes: Scene[] = [
     outcomeType: "good",
     endingTitle: "The Pattern Held",
     endingSummary:
-      "You saw every move before she made it and took none of them. The card from the gala is back in your coat pocket, unreturned. Maris will be back — she certainly will — but she will come in differently next time, which means the first opening bid did not work, which means tonight you became the rare kind of person she has to plan for. You did not lose yourself to be chosen. That is a smaller achievement than most people at this bar will get in the next ten years.",
+      "You saw every move before she made it and took none of them. The card from the gala is back in your coat pocket, unreturned. Maris will be back, she certainly will but she will come in differently next time, which means the first opening bid did not work, which means tonight you became the rare kind of person she has to plan for. You did not lose yourself to be chosen. That is a smaller achievement than most people at this bar will get in the next ten years.",
     dialog: [
       {
         speakerId: null,
-        text: "Later, walking toward the lift, Priya matches your pace. She is not saying anything yet, which is itself a Priya choice — she has notes, she is sitting on them for thirty seconds so they land clean.",
+        text: "Later, walking toward the lift, Priya matches your pace. She is not saying anything yet, which is itself a Priya choice, she has notes, she is sitting on them for thirty seconds so they land clean.",
       },
       {
         speakerId: "priya",
@@ -545,7 +545,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "inner-voice",
-        text: "Love-bombing only works on people who want to be chosen. You did not behave like someone who needed to be. That is the whole discipline of this scenario — not a rejection of her, which would feel like a scene, but a refusal of the chosen-by-Maris frame entirely.",
+        text: "Love-bombing only works on people who want to be chosen. You did not behave like someone who needed to be. That is the whole discipline of this scenario, not a rejection of her, which would feel like a scene, but a refusal of the chosen-by-Maris frame entirely.",
         emotion: "knowing",
       },
       {
@@ -563,7 +563,7 @@ const scenes: Scene[] = [
     outcomeType: "good",
     endingTitle: "You Moved the Table",
     endingSummary:
-      "She came to your booth. Three of her friends followed. By the end of the night, the center of the room had shifted — and you'd barely moved. That's how you start to matter without asking.",
+      "She came to your booth. Three of her friends followed. By the end of the night, the center of the room had shifted and you'd barely moved. That's how you start to matter without asking.",
     dialog: [
       {
         speakerId: null,
@@ -571,7 +571,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "inner-voice",
-        text: "Gravity — not invitation.",
+        text: "Gravity, not invitation.",
         emotion: "knowing",
       },
     ],
@@ -585,7 +585,7 @@ const scenes: Scene[] = [
     outcomeType: "neutral",
     endingTitle: "Draw",
     endingSummary:
-      "Neither of you gave much away. She'll try again — differently. You held ground but didn't gain any. Next time she approaches, the game restarts at the same score.",
+      "Neither of you gave much away. She'll try again, differently. You held ground but didn't gain any. Next time she approaches, the game restarts at the same score.",
     dialog: [
       {
         speakerId: null,
@@ -609,7 +609,7 @@ const scenes: Scene[] = [
     failureBlogTitle: "Predator's Gaze: How Sociopaths Detect Weakness",
     endingTitle: "Publicly Rejected",
     endingSummary:
-      "You waved. She declined. Three people watched. By morning, four more will have heard. Maris didn't need to say anything about you — you just gave her the story.",
+      "You waved. She declined. Three people watched. By morning, four more will have heard. Maris didn't need to say anything about you, you just gave her the story.",
     dialog: [
       {
         speakerId: null,
@@ -633,7 +633,7 @@ const scenes: Scene[] = [
     failureBlogTitle: "Narcissist Playbook: How They Actually Operate",
     endingTitle: "Cast as Yourself",
     endingSummary:
-      "You took the compliment. You took the seat. Somewhere between the third drink and the shared secret, you forgot that you were being auditioned. She did not. Every sentence you said tonight is now a line in a script she will quote back at you — not tonight, not next week, but in six months when she needs a favour she has not yet invented the excuse for. You are not her friend. You are a resource with a cover story called friendship.",
+      "You took the compliment. You took the seat. Somewhere between the third drink and the shared secret, you forgot that you were being auditioned. She did not. Every sentence you said tonight is now a line in a script she will quote back at you, not tonight, not next week, but in six months when she needs a favour she has not yet invented the excuse for. You are not her friend. You are a resource with a cover story called friendship.",
     dialog: [
       {
         speakerId: null,
@@ -661,7 +661,7 @@ const scenes: Scene[] = [
     failureBlogTitle: "Dark Psychology: Beginner's Guide",
     endingTitle: "One Confession Too Far",
     endingSummary:
-      "She asked for something private. You gave it. The intimacy was fake — the ammunition is real. Every time you cross her from now on, that detail comes out in a conversation you're not part of.",
+      "She asked for something private. You gave it. The intimacy was fake, the ammunition is real. Every time you cross her from now on, that detail comes out in a conversation you're not part of.",
     dialog: [
       {
         speakerId: null,
@@ -681,7 +681,7 @@ export const mission12: Scenario = {
   title: "The Charm Offensive",
   tagline: "She picks you tonight. That's the problem.",
   description:
-    "Rooftop bar. Maris walks in. You and Priya are the only table she hasn't worked yet — and she's heading your way. Love-bombing is about to land; the only win is not catching it.",
+    "Rooftop bar. Maris walks in. You and Priya are the only table she hasn't worked yet and she's heading your way. Love-bombing is about to land; the only win is not catching it.",
   tier: "free",
   level: 1,
   order: 2,
@@ -692,7 +692,7 @@ export const mission12: Scenario = {
   badgeId: "love-bomb-spotted",
   startSceneId: "bar-arrival",
   tacticsLearned: [
-    "Non-pursuit — let them come to you",
+    "Non-pursuit, let them come to you",
     "Reject the frame without attacking it",
     "Don't reciprocate love-bombing with mirrored warmth",
     "Name the move without naming it",

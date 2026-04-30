@@ -1,8 +1,8 @@
 /**
- * Mission 3-2 — "The Guilt Loop"
+ * Mission 3-2, "The Guilt Loop"
  *
  * Level 3, order 2. Teaches non-rescue under induced guilt.
- * Maris returns — NOT with charm this time, but with apparent
+ * Maris returns. NOT with charm this time, but with apparent
  * vulnerability. She's been crying. She needs "someone who gets it."
  * The test: do you rescue a predator performing fragility?
  */
@@ -26,7 +26,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "inner-voice",
-        text: "Three things to notice before you reply to anything. One — she has never texted you at 10 pm. Two — she has never described anything she does as 'unusual,' because admitting a behaviour is unusual is admitting a self-awareness she normally performs her way around. Three — the sentence is punctuated correctly, which most people fail at this hour, which means she wrote it carefully, which means she rewrote it at least twice.",
+        text: "Three things to notice before you reply to anything. One, she has never texted you at 10 pm. Two, she has never described anything she does as 'unusual,' because admitting a behaviour is unusual is admitting a self-awareness she normally performs her way around. Three, the sentence is punctuated correctly, which most people fail at this hour, which means she wrote it carefully, which means she rewrote it at least twice.",
         emotion: "concerned",
       },
       {
@@ -51,7 +51,7 @@ const scenes: Scene[] = [
       },
       {
         id: "hard-no",
-        text: '"not tonight. is it urgent?"',
+        text: '"not tonight. Is it urgent?"',
         tactic: "Available for emergencies. Not for scripts.",
         nextSceneId: "maris-claims-urgent",
         isOptimal: true,
@@ -80,7 +80,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "inner-voice",
-        text: "Read the form, not the content. Maris never writes in full sentences with capital letters to anyone she is not running something on. Most people, under genuine distress, drop punctuation and capitalisation — grief is fundamentally disorganised. Maris is producing the most composed grief text you have ever received. That is not a person falling apart. That is a person performing the fall.",
+        text: "Read the form, not the content. Maris never writes in full sentences with capital letters to anyone she is not running something on. Most people, under genuine distress, drop punctuation and capitalisation, grief is fundamentally disorganised. Maris is producing the most composed grief text you have ever received. That is not a person falling apart. That is a person performing the fall.",
         emotion: "concerned",
       },
       {
@@ -110,14 +110,14 @@ const scenes: Scene[] = [
       },
       {
         id: "decline-warmly",
-        text: '"that sounds really hard. i\'m not the right person for this one."',
+        text: '"that sounds really hard. I\'m not the right person for this one."',
         tactic: "Warm decline. Names the ask; names your limit. No justification for the limit.",
         nextSceneId: "maris-guilt-attempt",
         isOptimal: true,
       },
       {
         id: "name-history",
-        text: '"the last time we talked, you were running a game. i\'m not available for this."',
+        text: '"the last time we talked, you were running a game. I\'m not available for this."',
         tactic: "Direct history call-out. She can't pretend you haven't met.",
         nextSceneId: "maris-denies-history",
         isOptimal: true,
@@ -140,19 +140,19 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "inner-voice",
-        text: "She is installing herself. Every paragraph is a brick in a wall between you and the version of you who wanted to go to bed twenty minutes ago. The more you absorb, the more you are socially obligated to keep absorbing — because to stop now would be to 'abandon' her after she has 'opened up,' which was precisely the point of the opening up.",
+        text: "She is installing herself. Every paragraph is a brick in a wall between you and the version of you who wanted to go to bed twenty minutes ago. The more you absorb, the more you are socially obligated to keep absorbing, because to stop now would be to 'abandon' her after she has 'opened up,' which was precisely the point of the opening up.",
         emotion: "concerned",
       },
       {
         speakerId: "inner-voice",
-        text: "The sentence 'you always felt safe to me' is the hinge. It is a planted memory — you and Maris have never been close enough for that kind of read. The planted memory obligates the version of you she is narrating. Refuse the memory; you refuse the character.",
+        text: "The sentence 'you always felt safe to me' is the hinge. It is a planted memory, you and Maris have never been close enough for that kind of read. The planted memory obligates the version of you she is narrating. Refuse the memory; you refuse the character.",
         emotion: "knowing",
       },
     ],
     choices: [
       {
         id: "validate-heavily",
-        text: '"i\'m so sorry. i\'m here. talk to me."',
+        text: '"i\'m so sorry. I\'m here. Talk to me."',
         tactic: "Full therapist mode. You just took on a job she won't let you quit.",
         nextSceneId: "ending-therapist-forever",
         isOptimal: false,
@@ -181,7 +181,7 @@ const scenes: Scene[] = [
     dialog: [
       {
         speakerId: null,
-        text: "Twenty minutes pass. She hasn't stopped typing. You said 'short' — she heard 'start'.",
+        text: "Twenty minutes pass. She hasn't stopped typing. You said 'short', she heard 'start'.",
       },
       {
         speakerId: "maris",
@@ -233,7 +233,7 @@ const scenes: Scene[] = [
     dialog: [
       {
         speakerId: null,
-        text: "MARIS: \"i understand. i'm sorry for reaching out.\"",
+        text: "MARIS: \"i understand. I'm sorry for reaching out.\"",
       },
       {
         speakerId: null,
@@ -241,7 +241,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: null,
-        text: "MARIS: \"forget it. i'll figure it out.\"",
+        text: "MARIS: \"forget it. I'll figure it out.\"",
       },
       {
         speakerId: "inner-voice",
@@ -252,7 +252,7 @@ const scenes: Scene[] = [
     choices: [
       {
         id: "feel-bad-rescue",
-        text: '"okay, let\'s talk. i\'m here."',
+        text: '"okay, let\'s talk. I\'m here."',
         tactic: "You cracked. She got the hook back in on the second attempt.",
         nextSceneId: "maris-unloads",
         isOptimal: false,
@@ -281,7 +281,7 @@ const scenes: Scene[] = [
     dialog: [
       {
         speakerId: null,
-        text: "MARIS: \"i have no idea what you're talking about. i thought we connected.\"",
+        text: "MARIS: \"i have no idea what you're talking about. I thought we connected.\"",
       },
       {
         speakerId: null,
@@ -329,7 +329,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "maris",
-        text: '"i\'m not some stranger. i thought we had something"',
+        text: '"i\'m not some stranger. I thought we had something"',
         emotion: "sad",
       },
       {
@@ -379,7 +379,7 @@ const scenes: Scene[] = [
     dialog: [
       {
         speakerId: "maris",
-        text: '"wow. okay."',
+        text: '"wow. Okay."',
         emotion: "cold",
       },
       {
@@ -433,7 +433,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: null,
-        text: "MARIS: \"nvm, i worked it out. hope you're good.\"",
+        text: "MARIS: \"nvm, i worked it out. Hope you're good.\"",
       },
       {
         speakerId: "inner-voice",
@@ -451,7 +451,7 @@ const scenes: Scene[] = [
     dialog: [
       {
         speakerId: null,
-        text: "MARIS: \"no, not emergency. just... rough. needed a voice.\"",
+        text: "MARIS: \"no, not emergency. Just... rough. Needed a voice.\"",
       },
       {
         speakerId: "inner-voice",
@@ -498,7 +498,7 @@ const scenes: Scene[] = [
     dialog: [
       {
         speakerId: "maris",
-        text: '"love-bombing? wow. you\'re twisting every nice moment into something sinister. that says a lot about you."',
+        text: '"love-bombing? wow. You\'re twisting every nice moment into something sinister. That says a lot about you."',
         emotion: "angry",
       },
       {
@@ -538,7 +538,7 @@ const scenes: Scene[] = [
     outcomeType: "good",
     endingTitle: "The Sunlight Test",
     endingSummary:
-      "A crisis that's over by morning was never a crisis. Eleven hours of sleep was apparently sufficient treatment. You didn't do anything — and nothing bad happened. That's the whole lesson.",
+      "A crisis that's over by morning was never a crisis. Eleven hours of sleep was apparently sufficient treatment. You didn't do anything and nothing bad happened. That's the whole lesson.",
     dialog: [
       {
         speakerId: "inner-voice",
@@ -589,7 +589,7 @@ const scenes: Scene[] = [
     outcomeType: "good",
     endingTitle: "You Saw the Mask Drop",
     endingSummary:
-      "'I won't forget this' — when you wouldn't be her therapist. That's not vulnerability. That's a predator told 'no.' You kept the screenshots. Now you have documentation for when she tries to rewrite you to other people.",
+      "'I won't forget this', when you wouldn't be her therapist. That's not vulnerability. That's a predator told 'no.' You kept the screenshots. Now you have documentation for when she tries to rewrite you to other people.",
     dialog: [
       {
         speakerId: "inner-voice",
@@ -606,7 +606,7 @@ const scenes: Scene[] = [
     outcomeType: "good",
     endingTitle: "No Audience for the Rewrite",
     endingSummary:
-      "She tried to gaslight the history. You didn't argue. You exited. Her rewrite may reach other people — but it won't reach you back, and you don't need to live inside anyone else's false version.",
+      "She tried to gaslight the history. You didn't argue. You exited. Her rewrite may reach other people but it won't reach you back, and you don't need to live inside anyone else's false version.",
     dialog: [
       {
         speakerId: "inner-voice",
@@ -623,7 +623,7 @@ const scenes: Scene[] = [
     outcomeType: "good",
     endingTitle: "Resources Over Rescue",
     endingSummary:
-      "You gave her real resources. She rejected them, because she didn't want help — she wanted you. That refusal was the tell. The referral stayed the answer.",
+      "You gave her real resources. She rejected them, because she didn't want help, she wanted you. That refusal was the tell. The referral stayed the answer.",
     dialog: [
       {
         speakerId: "inner-voice",
@@ -640,7 +640,7 @@ const scenes: Scene[] = [
     outcomeType: "good",
     endingTitle: "Blocked",
     endingSummary:
-      "Clean exit. She can try through mutuals — but the direct channel is closed, and closed channels don't install anything. The weight is off you.",
+      "Clean exit. She can try through mutuals but the direct channel is closed, and closed channels don't install anything. The weight is off you.",
     dialog: [
       {
         speakerId: "inner-voice",
@@ -660,7 +660,7 @@ const scenes: Scene[] = [
     failureBlogTitle: "The Beige Protocol: Strategic Boredom as Weapon",
     endingTitle: "You Were Hired",
     endingSummary:
-      "She needed someone who 'gets it' at 10pm. You volunteered. Now the job has no hours, no pay, and no exit clause — every time you try to step back, the crisis escalates. You didn't save her. You got assigned.",
+      "She needed someone who 'gets it' at 10pm. You volunteered. Now the job has no hours, no pay, and no exit clause. Every time you try to step back, the crisis escalates. You didn't save her. You got assigned.",
     dialog: [
       {
         speakerId: "inner-voice",
@@ -676,7 +676,7 @@ export const mission32: Scenario = {
   title: "The Guilt Loop",
   tagline: "Predators perform fragility. Don't take the job.",
   description:
-    "Six weeks of silence. Then a 10pm DM from Maris — 'hey. i know this is weird. are you up?' Fragility, confession, flattery, escalation. The only way out is to refuse the contract before it's offered.",
+    "Six weeks of silence. Then a 10pm DM from Maris, 'hey. I know this is weird. Are you up?' Fragility, confession, flattery, escalation. The only way out is to refuse the contract before it's offered.",
   tier: "free",
   level: 3,
   order: 2,

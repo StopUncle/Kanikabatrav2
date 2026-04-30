@@ -40,7 +40,7 @@ export async function POST(request: NextRequest) {
     // Resolve the correct PIN.
     //
     // Production: must come from the ADMIN_PIN env var. If it's unset we
-    // refuse to authenticate — returning 503 rather than silently falling
+    // refuse to authenticate, returning 503 rather than silently falling
     // back to a default prevents a missing env var from accidentally
     // turning a predictable PIN into the admin password.
     //
@@ -57,7 +57,7 @@ export async function POST(request: NextRequest) {
           { status: 503 },
         );
       }
-      console.warn("ADMIN_PIN not set — using dev default 000000");
+      console.warn("ADMIN_PIN not set, using dev default 000000");
       correctPin = "000000";
     }
 
@@ -95,7 +95,7 @@ export async function POST(request: NextRequest) {
 
     return response;
   } catch (error) {
-    // Was an empty catch — admin would get locked out with no clue why.
+    // Was an empty catch, admin would get locked out with no clue why.
     // Now logged so JWT misconfig / crypto errors / JSON parse issues
     // surface in the server logs.
     logger.error("[admin-auth] PIN authentication failed", error as Error);

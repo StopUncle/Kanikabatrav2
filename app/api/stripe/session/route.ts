@@ -22,7 +22,7 @@ export async function GET(request: NextRequest) {
 
     // Determine type from product key or metadata
     const type = productKey || session.metadata?.product_key || "purchase";
-    // BOOK_CONSILIUM_*MO bundles also deliver the book — they need the
+    // BOOK_CONSILIUM_*MO bundles also deliver the book, they need the
     // same download-token surfacing on the success page so buyers see
     // the immediate-download button rather than only relying on email.
     const isBook =
@@ -34,7 +34,7 @@ export async function GET(request: NextRequest) {
     // For book purchases, find the purchase record with download token
     let downloadToken: string | null = null;
     if (isBook && email) {
-      // The webhook may or may not have fired yet — poll up to 20 seconds.
+      // The webhook may or may not have fired yet, poll up to 20 seconds.
       // Case-insensitive match because Stripe returns the email exactly
       // as the buyer typed it at checkout, while the webhook normalises
       // to lowercase before writing Purchase.customerEmail. A buyer who

@@ -84,7 +84,7 @@ export default function VoiceNotesPage() {
     }
   }
 
-  // Accept anything whose extension OR MIME type looks like audio. iPhone
+  // Accept anything whose extension OR MIME type looks like audio. IPhone
   // Voice Memos shared via the Files app occasionally arrive with empty
   // extension but a correct audio/* MIME, and the reverse also happens.
   function isValidAudio(f: File): boolean {
@@ -145,7 +145,7 @@ export default function VoiceNotesPage() {
 
       // If this voice note answers a member question, link it. The PATCH
       // sets MemberQuestion.status=ANSWERED and fires the asker email.
-      // Failure here is non-fatal — the voice note is already published.
+      // Failure here is non-fatal, the voice note is already published.
       if (answersQuestionId) {
         try {
           const post = await postRes.json();
@@ -162,7 +162,7 @@ export default function VoiceNotesPage() {
       setUploadStatus("success");
       setStatusMessage(
         answersQuestionId
-          ? "Voice note published — asker has been notified"
+          ? "Voice note published, asker has been notified"
           : "Voice note published to feed",
       );
       setTitle("");
@@ -277,7 +277,7 @@ export default function VoiceNotesPage() {
               // instead of the Files picker. Desktop browsers ignore it and
               // fall back to a normal file dialog.
               // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-              // @ts-ignore — `capture` is valid HTML but TS types lag
+              // @ts-ignore, `capture` is valid HTML but TS types lag
               capture="user"
               onChange={(e) => {
                 const f = e.target.files?.[0];

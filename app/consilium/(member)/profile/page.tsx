@@ -13,7 +13,7 @@ import { Lock, CheckCircle2, Calendar, MessageSquare, Heart, BookOpen, type Luci
 import ManageSubscriptionButton from "./ManageSubscriptionButton";
 
 export const metadata = {
-  title: "Your Rank — The Consilium | Kanika Batra",
+  title: "Your Rank. The Consilium | Kanika Batra",
   description: "Your tenure, rank, and membership inside the Consilium.",
 };
 
@@ -60,7 +60,7 @@ export default async function ConsiliumProfilePage() {
   const nextBadge = isQueen ? null : getBadge(currentTier + 1);
   const daysToNext = daysToNextTier(membership?.activatedAt ?? null);
 
-  // Progress within the current month — 0..1 fraction toward next tier
+  // Progress within the current month, 0..1 fraction toward next tier
   const daysIntoMonth = membership?.activatedAt
     ? ((Date.now() - membership.activatedAt.getTime()) /
         (1000 * 60 * 60 * 24)) %
@@ -92,7 +92,7 @@ export default async function ConsiliumProfilePage() {
 
   return (
     <div className="max-w-4xl mx-auto px-3 sm:px-4 py-6 sm:py-10 lg:py-14">
-      {/* Hero — current rank */}
+      {/* Hero, current rank */}
       <section className="mb-12">
         <div className="relative overflow-hidden rounded-3xl border border-warm-gold/20 bg-gradient-to-br from-deep-black/80 via-deep-burgundy/20 to-deep-black/80 p-8 sm:p-12">
           <div className="flex flex-col sm:flex-row items-center gap-8 sm:gap-10">
@@ -167,7 +167,7 @@ export default async function ConsiliumProfilePage() {
         <StatTile icon={Heart} label="Posts liked" value={likeCount} />
       </section>
 
-      {/* Achievements — Dark Mirror trophy case. Lives here so the profile
+      {/* Achievements. Dark Mirror trophy case. Lives here so the profile
           reads as "identity + ranking + run record" in one surface. Separate
           visual language from the tenure MemberBadge so the two seals don't
           compete: hex medallions in bronze/silver/gold/obsidian tiers. */}
@@ -184,7 +184,7 @@ export default async function ConsiliumProfilePage() {
           </h2>
           <p className="text-text-gray text-sm max-w-xl mx-auto">
             Your seal climbs one rank every month you stay in the Consilium.
-            Time is the only currency — no shortcuts, no purchase, no referral.
+            Time is the only currency, no shortcuts, no purchase, no referral.
           </p>
         </div>
 
@@ -240,7 +240,7 @@ export default async function ConsiliumProfilePage() {
                   )}
                 </div>
 
-                {/* Badge — dimmed if locked */}
+                {/* Badge, dimmed if locked */}
                 <div
                   className={`flex justify-center mb-3 transition-all ${
                     isLocked ? "opacity-30 saturate-50" : ""

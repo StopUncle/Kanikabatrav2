@@ -1,5 +1,5 @@
 /**
- * Business Line — Mission 1 "The First Win"
+ * Business Line. Mission 1 "The First Win"
  *
  * Teaches: reading the three reactions to your success (sincere,
  * performed, corrosive). Information discipline in the hour after a
@@ -18,7 +18,7 @@ import { DAMIEN, HALE, SAGE, THEO, INNER_VOICE_M } from "../../characters-male";
 
 const scenes: Scene[] = [
   // ---------------------------------------------------------------------
-  // PART 1 — the win
+  // PART 1, the win
   // ---------------------------------------------------------------------
   {
     id: "the-announcement",
@@ -27,7 +27,7 @@ const scenes: Scene[] = [
     dialog: [
       {
         speakerId: null,
-        text: "Tuesday, 4:47pm. The all-hands just ended. The CEO named you — promoted, with the account nobody could close. Your name is the last thing in the company Slack for fifteen seconds.",
+        text: "Tuesday, 4:47pm. The all-hands just ended. The CEO named you, promoted, with the account nobody could close. Your name is the last thing in the company Slack for fifteen seconds.",
       },
       {
         speakerId: null,
@@ -35,7 +35,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "inner-voice",
-        text: "The hour after a public win is the most information-rich hour of your career. Every man in this building just revealed what he actually thinks of you. Don't be drunk on it — read the room.",
+        text: "The hour after a public win is the most information-rich hour of your career. Every man in this building just revealed what he actually thinks of you. Don't be drunk on it, read the room.",
         emotion: "serious",
       },
     ],
@@ -43,7 +43,7 @@ const scenes: Scene[] = [
       {
         id: "read-the-room",
         text: "Stay still. Read who reaches out, in what order, with what tone.",
-        tactic: "Intelligence posture. Reactions are data — collect before you respond.",
+        tactic: "Intelligence posture. Reactions are data, collect before you respond.",
         nextSceneId: "inbox-scan",
         isOptimal: true,
       },
@@ -63,7 +63,7 @@ const scenes: Scene[] = [
   },
 
   // ---------------------------------------------------------------------
-  // PART 2 — the inbox
+  // PART 2, the inbox
   // ---------------------------------------------------------------------
   {
     id: "inbox-scan",
@@ -77,23 +77,23 @@ const scenes: Scene[] = [
       },
       {
         speakerId: null,
-        text: "Theo — short, specific: 'Well earned. Drinks Thursday, I'll buy.'",
+        text: "Theo, short, specific: 'Well earned. Drinks Thursday, I'll buy.'",
       },
       {
         speakerId: null,
-        text: "Hale — long, generous, 'team effort', 'couldn't be prouder', three emojis.",
+        text: "Hale, long, generous, 'team effort', 'couldn't be prouder', three emojis.",
       },
       {
         speakerId: null,
-        text: "Sage — warmest of all. 'Soooo happy for you. Can I grab 20 minutes this week to hear how you landed it? Writing a deck for my review.'",
+        text: "Sage, warmest of all. 'Soooo happy for you. Can I grab 20 minutes this week to hear how you landed it? Writing a deck for my review.'",
       },
       {
         speakerId: null,
-        text: "Damien — nothing. Then, twelve minutes later, a single word from an internal channel you're not on: 'Interesting.'",
+        text: "Damien, nothing. Then, twelve minutes later, a single word from an internal channel you're not on: 'Interesting.'",
       },
       {
         speakerId: "inner-voice",
-        text: "Four men. Four patterns. Theo is a friend. Hale is performing — 'team effort' is pre-positioning to claim the win later. Sage wants your playbook under the cover of a compliment. Damien just marked you a threat.",
+        text: "Four men. Four patterns. Theo is a friend. Hale is performing, 'team effort' is pre-positioning to claim the win later. Sage wants your playbook under the cover of a compliment. Damien just marked you a threat.",
         emotion: "knowing",
       },
     ],
@@ -121,7 +121,7 @@ const scenes: Scene[] = [
   },
 
   // ---------------------------------------------------------------------
-  // PART 3A — optimal branch: sage approaches
+  // PART 3A, optimal branch: sage approaches
   // ---------------------------------------------------------------------
   {
     id: "sage-approach",
@@ -135,12 +135,12 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "sage-m",
-        text: '"Hey — just wanted to say again, massive congrats. I was wondering, could I pick your brain? Just 15 minutes. I want to learn from the best."',
+        text: '"Hey, just wanted to say again, massive congrats. I was wondering, could I pick your brain? Just 15 minutes. I want to learn from the best."',
         emotion: "happy",
       },
       {
         speakerId: "inner-voice",
-        text: "'Pick your brain' is the corporate version of love-bombing. The flattery, the small gift, the vague ask. Covert narcissists extract. Give him 15 minutes and he walks out with the diagram of how you closed the deal — which becomes the diagram of how he replicates you and then differentiates himself from you.",
+        text: "'Pick your brain' is the corporate version of love-bombing. The flattery, the small gift, the vague ask. Covert narcissists extract. Give him 15 minutes and he walks out with the diagram of how you closed the deal, which becomes the diagram of how he replicates you and then differentiates himself from you.",
         emotion: "serious",
       },
     ],
@@ -155,7 +155,7 @@ const scenes: Scene[] = [
       {
         id: "share-selectively",
         text: '"Happy to talk about the industry angle. The client specifics I can\'t get into."',
-        tactic: "Partial share — acceptable. You control what he extracts.",
+        tactic: "Partial share, acceptable. You control what he extracts.",
         nextSceneId: "damien-move",
       },
       {
@@ -168,7 +168,7 @@ const scenes: Scene[] = [
   },
 
   // ---------------------------------------------------------------------
-  // PART 4 — Damien's move
+  // PART 4. Damien's move
   // ---------------------------------------------------------------------
   {
     id: "damien-move",
@@ -193,21 +193,21 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "inner-voice",
-        text: "Triangulation. He's offering intel on your boss as a friendship token. If you accept, you're in his web — he'll ask for things later, and 'I told you about Hale' becomes the leash. The power move is not declining rudely. It's staying warm and uninvolved.",
+        text: "Triangulation. He's offering intel on your boss as a friendship token. If you accept, you're in his web, he'll ask for things later, and 'I told you about Hale' becomes the leash. The power move is not declining rudely. It's staying warm and uninvolved.",
         emotion: "knowing",
       },
     ],
     choices: [
       {
         id: "warm-uninvolved",
-        text: '"Appreciate that. I\'m heads down on the new account for a few weeks — let me circle back."',
+        text: '"Appreciate that. I\'m heads down on the new account for a few weeks, let me circle back."',
         tactic: "Grey-rock with warmth. No information in, no information out. Deferred indefinitely.",
         nextSceneId: "ending-read",
         isOptimal: true,
       },
       {
         id: "accept-lunch",
-        text: '"Yes — let\'s do it." Put it on the calendar.',
+        text: '"Yes, let\'s do it." Put it on the calendar.',
         tactic: "You just joined his web. He'll collect the favour later.",
         nextSceneId: "ending-webbed",
       },
@@ -221,7 +221,7 @@ const scenes: Scene[] = [
   },
 
   // ---------------------------------------------------------------------
-  // PART 3B — bad branches
+  // PART 3B, bad branches
   // ---------------------------------------------------------------------
   {
     id: "warm-reply-trap",
@@ -235,7 +235,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "hale",
-        text: '"So grateful for the leadership you provided — really a team win."',
+        text: '"So grateful for the leadership you provided, really a team win."',
         emotion: "happy",
       },
       {
@@ -273,7 +273,7 @@ const scenes: Scene[] = [
     dialog: [
       {
         speakerId: "hale",
-        text: '"Really moved by your note. I\'ve been telling the exec team — this is exactly the kind of team execution we need to highlight upstairs."',
+        text: '"Really moved by your note. I\'ve been telling the exec team. This is exactly the kind of team execution we need to highlight upstairs."',
         emotion: "happy",
       },
       {
@@ -321,7 +321,7 @@ const scenes: Scene[] = [
     outcomeType: "good",
     endingTitle: "You Read the Room",
     endingSummary:
-      "You stayed still in the hour when everyone else moved. Theo became a closer ally. Sage extracted nothing and adjusted. Damien marked you as someone who can't be easily webbed. Hale got no language to steal. In three months you get the second big win — and this time, the reactions teach you who has already calibrated to you. The men you can't read are the men who run you. The ones you read early are the ones you outlast.",
+      "You stayed still in the hour when everyone else moved. Theo became a closer ally. Sage extracted nothing and adjusted. Damien marked you as someone who can't be easily webbed. Hale got no language to steal. In three months you get the second big win and this time, the reactions teach you who has already calibrated to you. The men you can't read are the men who run you. The ones you read early are the ones you outlast.",
     dialog: [
       {
         speakerId: "inner-voice",
@@ -339,7 +339,7 @@ const scenes: Scene[] = [
     outcomeType: "bad",
     endingTitle: "Webbed",
     endingSummary:
-      "Lunch with Damien happens. He gives you information about Hale that turns out to be three-quarters true. A month later he asks you to 'keep him in the loop' on your account. Three months later he asks you to hold back a piece of analysis from Hale. You realise you are no longer your own man — you're a source in his network. Untangling this takes eighteen months and costs you the promotion after the next one.",
+      "Lunch with Damien happens. He gives you information about Hale that turns out to be three-quarters true. A month later he asks you to 'keep him in the loop' on your account. Three months later he asks you to hold back a piece of analysis from Hale. You realise you are no longer your own man, you're a source in his network. Untangling this takes eighteen months and costs you the promotion after the next one.",
     failureBlogSlug: "predators-gaze-how-sociopaths-detect-weakness",
     failureBlogTitle: "Predator's Gaze: How Sociopaths Detect Weakness",
     dialog: [
@@ -359,7 +359,7 @@ const scenes: Scene[] = [
     outcomeType: "bad",
     endingTitle: "Marked Naive",
     endingSummary:
-      "Declining rudely read as both naive and hostile. Damien logged it. Over the next year, every room he's in quietly gets the assessment: 'Good operator — doesn't know how the building works.' You're tolerated, not promoted. Power skills are not separate from work skills above a certain level. The technicals got you here; refusing to learn the game keeps you here.",
+      "Declining rudely read as both naive and hostile. Damien logged it. Over the next year, every room he's in quietly gets the assessment: 'Good operator, doesn't know how the building works.' You're tolerated, not promoted. Power skills are not separate from work skills above a certain level. The technicals got you here; refusing to learn the game keeps you here.",
     failureBlogSlug: "predators-gaze-how-sociopaths-detect-weakness",
     failureBlogTitle: "Predator's Gaze: How Sociopaths Detect Weakness",
     dialog: [
@@ -379,7 +379,7 @@ const scenes: Scene[] = [
     outcomeType: "bad",
     endingTitle: "You Gave Him the Language",
     endingSummary:
-      "Within a quarter, Hale's narrative of 'the team execution I led' has landed upstairs. The close you authored is now co-authored in every room that matters. You didn't lose it — you handed it over, gift-wrapped in your own warmth. Your next big win will be quietly harder to claim, because the pattern 'Hale's team does good work' is now the frame. You'll spend two years clawing ownership back.",
+      "Within a quarter, Hale's narrative of 'the team execution I led' has landed upstairs. The close you authored is now co-authored in every room that matters. You didn't lose it, you handed it over, gift-wrapped in your own warmth. Your next big win will be quietly harder to claim, because the pattern 'Hale's team does good work' is now the frame. You'll spend two years clawing ownership back.",
     failureBlogSlug: "narcissist-playbook-how-they-actually-operate",
     failureBlogTitle: "Narcissist Playbook: How They Actually Operate",
     dialog: [
@@ -399,7 +399,7 @@ const scenes: Scene[] = [
     outcomeType: "bad",
     endingTitle: "Broadcaster",
     endingSummary:
-      "The post went viral internally. Every competitor now knows who closed the account; every recruiter is DMing your key people; every enemy inside the building just got a free target map. Within six weeks you lose your second-best analyst to a rival. Damien forwards the post to the board with the word 'branding' in the subject — as a compliment, then later, as a critique. You learn, expensively, that the men who run things don't post.",
+      "The post went viral internally. Every competitor now knows who closed the account; every recruiter is DMing your key people; every enemy inside the building just got a free target map. Within six weeks you lose your second-best analyst to a rival. Damien forwards the post to the board with the word 'branding' in the subject, as a compliment, then later, as a critique. You learn, expensively, that the men who run things don't post.",
     failureBlogSlug: "predators-gaze-how-sociopaths-detect-weakness",
     failureBlogTitle: "Predator's Gaze: How Sociopaths Detect Weakness",
     dialog: [
@@ -419,7 +419,7 @@ const scenes: Scene[] = [
     outcomeType: "bad",
     endingTitle: "Extracted",
     endingSummary:
-      "Eight weeks later, Sage's deck lands on the CEO's desk. The framework is your framework. The examples are your examples. The name is his. You spend the next review cycle explaining why 'Sage's methodology' isn't actually Sage's — which is a losing argument in any room that hasn't seen the timestamp of your whiteboard. You taught a covert narcissist to be you, and now you're competing against a copy with a clean attribution record.",
+      "Eight weeks later, Sage's deck lands on the CEO's desk. The framework is your framework. The examples are your examples. The name is his. You spend the next review cycle explaining why 'Sage's methodology' isn't actually Sage's, which is a losing argument in any room that hasn't seen the timestamp of your whiteboard. You taught a covert narcissist to be you, and now you're competing against a copy with a clean attribution record.",
     failureBlogSlug: "narcissist-playbook-how-they-actually-operate",
     failureBlogTitle: "Narcissist Playbook: How They Actually Operate",
     dialog: [
@@ -437,7 +437,7 @@ export const businessMission1: Scenario = {
   title: "The First Win",
   tagline: "The hour after you win is the most information-rich hour of your career.",
   description:
-    "You just got promoted. The all-hands ended six minutes ago. Within an hour, four different men will reveal who they are to you through how they react — the friend, the credit thief, the covert extractor, and the political operator. Read them correctly and you've built a map of the next five years. Read them wrong and you've already started losing ground you won't know you lost.",
+    "You just got promoted. The all-hands ended six minutes ago. Within an hour, four different men will reveal who they are to you through how they react, the friend, the credit thief, the covert extractor, and the political operator. Read them correctly and you've built a map of the next five years. Read them wrong and you've already started losing ground you won't know you lost.",
   tier: "free",
   track: "male-business",
   level: 1,

@@ -13,18 +13,18 @@ import {
 import KanikaroseLogo from "./KanikaroseLogo";
 
 /**
- * Header — the main site chrome.
+ * Header, the main site chrome.
  *
  * Layout hierarchy (desktop):
  *   [Logo]   [primary nav]                [search] [Consilium CTA] [auth]
  *
- * The Consilium is NOT inline in the primary nav — it's a standalone
+ * The Consilium is NOT inline in the primary nav, it's a standalone
  * warm-gold CTA on the right. This frees up horizontal space (nav
  * doesn't wrap) and makes the paid destination visually distinct from
  * ordinary navigation.
  *
  * Scroll-shrink: header collapses from 80px to 64px after scrolling
- * 24px. Smooth, pure CSS — nothing re-renders, just a class swap.
+ * 24px. Smooth, pure CSS, nothing re-renders, just a class swap.
  */
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -45,7 +45,7 @@ const Header = () => {
     pathname.startsWith("/consilium/chat");
 
   // Primary nav. Home is implicit in the logo click so it's not listed.
-  // The Consilium is explicitly NOT in this array — it's a standalone CTA
+  // The Consilium is explicitly NOT in this array, it's a standalone CTA
   // on the right side.
   const navLinks: { href: string; label: string }[] = [
     { href: "/book", label: "Book" },
@@ -75,7 +75,7 @@ const Header = () => {
 
   // Shrink the header after a small scroll threshold. The 24px threshold
   // means the full-size header persists on the hero but collapses as
-  // soon as the user starts reading — a standard premium pattern.
+  // soon as the user starts reading, a standard premium pattern.
   useEffect(() => {
     function onScroll() {
       setIsScrolled(window.scrollY > 24);
@@ -129,7 +129,7 @@ const Header = () => {
               <Link
                 href="/"
                 className="flex items-center group shrink-0"
-                aria-label="Kanikarose — home"
+                aria-label="Kanikarose, home"
               >
                 <KanikaroseLogo
                   size={isScrolled ? "sm" : "md"}
@@ -175,7 +175,7 @@ const Header = () => {
                   <SearchIcon size={16} strokeWidth={1.5} />
                 </Link>
 
-                {/* The Consilium — standalone CTA. Warm-gold metallic
+                {/* The Consilium, standalone CTA. Warm-gold metallic
                     to match the logo. Small arrow-up-right reinforces
                     "enter a separate space". */}
                 <Link
@@ -253,7 +253,7 @@ const Header = () => {
                 )}
               </div>
 
-              {/* Mobile Menu Button — hidden inside the member area so it
+              {/* Mobile Menu Button, hidden inside the member area so it
                   doesn't stack with the Consilium sidebar's toggle. */}
               <button
                 onClick={() => setIsMenuOpen(!isMenuOpen)}
@@ -283,7 +283,7 @@ const Header = () => {
         </nav>
       </header>
 
-      {/* Mobile Menu Overlay — outside <header> for stacking context.
+      {/* Mobile Menu Overlay, outside <header> for stacking context.
           Top offset binds to the same scroll state as the header (h-14/h-16
           when scrolled, h-16/h-20 otherwise) so there's no gap between the
           bottom of the header and the top of the menu. */}
@@ -301,7 +301,7 @@ const Header = () => {
               : "-translate-y-4 opacity-0"
           }`}
         >
-          {/* Consilium lives at the TOP on mobile — it's the primary
+          {/* Consilium lives at the TOP on mobile, it's the primary
               commercial destination, so it shouldn't be buried under
               seven secondary links. */}
           <Link

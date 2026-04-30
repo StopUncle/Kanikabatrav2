@@ -1,7 +1,7 @@
 /**
- * Mission 11-2 — "The Return"
+ * Mission 11-2, "The Return"
  *
- * Level 11, order 2. Act 2 continuation — "The Weight".
+ * Level 11, order 2. Act 2 continuation, "The Weight".
  *
  * The twenty-second. Sunday. Dinner at the old house. You arrived
  * with Ren at 4 pm; your curfew is 7:30. The scenario is three hours
@@ -10,7 +10,7 @@
  * the interior of watching for the ask to land.
  *
  * Canon hand-off: closes on whether the protagonist accepted, deflected,
- * or declined a power-of-attorney request — the artefact is a folder of
+ * or declined a power-of-attorney request, the artefact is a folder of
  * legal paperwork on the study desk. L12-1 opens on the consequence of
  * whichever answer was given.
  *
@@ -29,7 +29,7 @@ import {
 
 const scenes: Scene[] = [
   // ===================================================================
-  // ACT 1 — the arrival
+  // ACT 1, the arrival
   // ===================================================================
   {
     id: "the-arrival",
@@ -71,7 +71,7 @@ const scenes: Scene[] = [
       {
         id: "let-ren-open",
         text: "Let Ren open the door. You stand a half-step behind.",
-        tactic: "Let the middle sibling be the middle sibling — for one entrance. You are not hiding; you are letting Ren set the key.",
+        tactic: "Let the middle sibling be the middle sibling, for one entrance. You are not hiding; you are letting Ren set the key.",
         nextSceneId: "ren-opens",
         isOptimal: true,
       },
@@ -91,7 +91,7 @@ const scenes: Scene[] = [
   },
 
   // ===================================================================
-  // ACT 1B — the greeting (convergence from arrival branches)
+  // ACT 1B, the greeting (convergence from arrival branches)
   // ===================================================================
   {
     id: "the-greeting",
@@ -105,7 +105,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "mother",
-        text: '"You came. Oh — you came."',
+        text: '"You came. Oh, you came."',
         emotion: "hopeful",
       },
       {
@@ -114,7 +114,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "inner-voice",
-        text: "That half-second is the first expensive move of the evening. She is either genuinely uncertain — which would be new — or she is performing uncertainty to let you 'grant' the hug and own the warmth. Watch which version it is over the next twenty minutes. The body will tell you before the words do.",
+        text: "That half-second is the first expensive move of the evening. She is either genuinely uncertain, which would be new or she is performing uncertainty to let you 'grant' the hug and own the warmth. Watch which version it is over the next twenty minutes. The body will tell you before the words do.",
         emotion: "concerned",
       },
     ],
@@ -149,7 +149,7 @@ const scenes: Scene[] = [
   },
 
   // ===================================================================
-  // ACT 1C — settling into the living room
+  // ACT 1C, settling into the living room
   // ===================================================================
   {
     id: "the-living-room",
@@ -163,7 +163,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "mother",
-        text: '"Sit. Sit. Ren, get her the green tea — she likes the green tea." Pause. "You still like the green tea, darling?"',
+        text: '"Sit. Sit. Ren, get her the green tea, she likes the green tea." Pause. "You still like the green tea, darling?"',
         emotion: "hopeful",
       },
       {
@@ -205,14 +205,14 @@ const scenes: Scene[] = [
       {
         id: "compliment-the-room",
         text: '"You\'ve kept the place beautiful."',
-        tactic: "Warm but distancing — compliments the object, not the person. Low-commitment social lubrication.",
+        tactic: "Warm but distancing, compliments the object, not the person. Low-commitment social lubrication.",
         nextSceneId: "small-talk-test",
       },
     ],
   },
 
   // ===================================================================
-  // ACT 2 — the dinner (conversation phases)
+  // ACT 2, the dinner (conversation phases)
   // ===================================================================
   {
     id: "small-talk-test",
@@ -231,7 +231,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "inner-voice",
-        text: "'Your brother arranges everything now' is a set-up sentence. It is not a complaint and it is not a fact. It is a plot point she wants you to track, so that when she makes the ask later — 'could you help arrange this one thing' — it lands as relief rather than as request. Note the placement. You are meant to remember this sentence an hour from now.",
+        text: "'Your brother arranges everything now' is a set-up sentence. It is not a complaint and it is not a fact. It is a plot point she wants you to track, so that when she makes the ask later, 'could you help arrange this one thing', it lands as relief rather than as request. Note the placement. You are meant to remember this sentence an hour from now.",
         emotion: "concerned",
       },
       {
@@ -251,19 +251,19 @@ const scenes: Scene[] = [
       {
         id: "detailed-answer",
         text: "Tell her about the job. Team size, what you're building, the trajectory.",
-        tactic: "Too much information. She will use the detail later — either to flatter you into a bigger ask or to reference something you disclosed as proof of closeness.",
+        tactic: "Too much information. She will use the detail later. Either to flatter you into a bigger ask or to reference something you disclosed as proof of closeness.",
         nextSceneId: "the-too-much-info",
       },
       {
         id: "deflect-to-her",
-        text: '"It\'s going. Tell me about the follow-ups — Ren said heart?"',
+        text: '"It\'s going. Tell me about the follow-ups. Ren said heart?"',
         tactic: "Redirect to her health. Get the medical facts into the room now, when you can still calibrate them against what Ren told you.",
         nextSceneId: "the-illness-report",
         isOptimal: true,
       },
       {
         id: "deflect-to-ren",
-        text: '"Ask Ren — they know more than I tell most people."',
+        text: '"Ask Ren, they know more than I tell most people."',
         tactic: "Sends the question to the person who knows what you'd consent to sharing. Ren will answer in a frame that protects you.",
         nextSceneId: "ren-answers-for-you",
       },
@@ -317,7 +317,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "inner-voice",
-        text: "An actual partial admission. Small but real. She downgraded her own letter in your presence. That is a move she did not make in any of the five years before this evening. Note it. It does not erase the letter's original engineering — but it is a data point.",
+        text: "An actual partial admission. Small but real. She downgraded her own letter in your presence. That is a move she did not make in any of the five years before this evening. Note it. It does not erase the letter's original engineering but it is a data point.",
         emotion: "knowing",
       },
     ],
@@ -359,7 +359,7 @@ const scenes: Scene[] = [
     dialog: [
       {
         speakerId: "mother",
-        text: '"Dr. Agarwal at St. Barnabas. Bisoprolol and a statin. The statin was new in January. He wants to see me in six weeks. I can show you the letter."',
+        text: '"Dr. agarwal at St. barnabas. Bisoprolol and a statin. The statin was new in January. He wants to see me in six weeks. I can show you the letter."',
         emotion: "serious",
       },
       {
@@ -460,7 +460,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "inner-voice",
-        text: "There it is. Power of attorney — or something close enough to it. The letter was the invitation. The dinner is the ask. You now have the shape of the entire operation. It was never about reconciliation. It was about legal nomination of the daughter with the head for it. The illness was the runway. The warmth was the lubricant. The question was the payload.",
+        text: "There it is. Power of attorney or something close enough to it. The letter was the invitation. The dinner is the ask. You now have the shape of the entire operation. It was never about reconciliation. It was about legal nomination of the daughter with the head for it. The illness was the runway. The warmth was the lubricant. The question was the payload.",
         emotion: "concerned",
       },
       {
@@ -484,7 +484,7 @@ const scenes: Scene[] = [
       },
       {
         id: "offer-alternative",
-        text: '"No — but I will help you find a solicitor who specialises in this. A professional, not a daughter."',
+        text: '"No but I will help you find a solicitor who specialises in this. A professional, not a daughter."',
         tactic: "No with a door. Declines the role, opens a better one. Useful if the ask is real and the answer is still no.",
         nextSceneId: "the-alternative-offered",
         isOptimal: true,
@@ -497,7 +497,7 @@ const scenes: Scene[] = [
       },
       {
         id: "agree-conditionally",
-        text: '"Yes — if it is tightly scoped. Medical only, not financial."',
+        text: '"Yes, if it is tightly scoped. Medical only, not financial."',
         tactic: "Conditional yes. Opens the door you were about to close. Your mother is extremely good at widening scope after a conditional acceptance.",
         nextSceneId: "the-conditional-yes",
       },
@@ -505,7 +505,7 @@ const scenes: Scene[] = [
   },
 
   // ===================================================================
-  // ACT 3 — response branches
+  // ACT 3, response branches
   // ===================================================================
   {
     id: "the-no-response",
@@ -519,7 +519,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "mother",
-        text: '"Alright. Thank you for coming to say it in person. Ren — you\'re it then. I\'ll call the solicitor Monday."',
+        text: '"Alright. Thank you for coming to say it in person. Ren, you\'re it then. I\'ll call the solicitor Monday."',
         emotion: "serious",
       },
       {
@@ -544,7 +544,7 @@ const scenes: Scene[] = [
     dialog: [
       {
         speakerId: "mother",
-        text: '"A solicitor. Yes. That is — more sensible actually. Ren and I will use one. I would not have thought of it framed that way. Thank you."',
+        text: '"A solicitor. Yes. That is, more sensible actually. Ren and I will use one. I would not have thought of it framed that way. Thank you."',
         emotion: "serious",
       },
       {
@@ -554,7 +554,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "inner-voice",
-        text: "You just up-graded the plan by refusing the role. This is the version of a no that moves the whole situation forward. Save this sentence shape — 'no, but let me point at the better version' — it works in boardrooms and kitchens.",
+        text: "You just up-graded the plan by refusing the role. This is the version of a no that moves the whole situation forward. Save this sentence shape, 'no, but let me point at the better version', it works in boardrooms and kitchens.",
         emotion: "knowing",
       },
     ],
@@ -595,17 +595,17 @@ const scenes: Scene[] = [
     dialog: [
       {
         speakerId: "mother",
-        text: '"Medical only. Yes. Of course. We can narrow it. We will look at the forms together. There\'s a folder in the study — I\'ll show you after dinner."',
+        text: '"Medical only. Yes. Of course. We can narrow it. We will look at the forms together. There\'s a folder in the study. I\'ll show you after dinner."',
         emotion: "hopeful",
       },
       {
         speakerId: "inner-voice",
-        text: "Watch that sentence. 'We will look at the forms together.' 'There is a folder.' You agreed to a concept and she is now producing a document. The scope widening has already started — not in malice, in momentum. This is how scope widens on a conditional yes. Most of the damage is done in the twenty minutes after the yes, not at the yes itself.",
+        text: "Watch that sentence. 'We will look at the forms together.' 'There is a folder.' You agreed to a concept and she is now producing a document. The scope widening has already started, not in malice, in momentum. This is how scope widens on a conditional yes. Most of the damage is done in the twenty minutes after the yes, not at the yes itself.",
         emotion: "concerned",
       },
       {
         speakerId: "sibling",
-        text: '"Hey — look at the folder with me present. Not alone. That is a thing I need to be in the room for."',
+        text: '"Hey, look at the folder with me present. Not alone. That is a thing I need to be in the room for."',
         emotion: "serious",
       },
     ],
@@ -613,7 +613,7 @@ const scenes: Scene[] = [
   },
 
   // ===================================================================
-  // ACT 4 — after the ask / the study
+  // ACT 4, after the ask / the study
   // ===================================================================
   {
     id: "after-the-ask",
@@ -646,14 +646,14 @@ const scenes: Scene[] = [
       },
       {
         id: "decline-politely",
-        text: '"Next time. I should head off shortly — Ren has a seven-thirty."',
+        text: '"Next time. I should head off shortly. Ren has a seven-thirty."',
         tactic: "Clean early exit. You landed the ask, you held the no, you do not have to also accept the garden tour.",
         nextSceneId: "the-departure",
         isOptimal: true,
       },
       {
         id: "bring-ren",
-        text: '"Yes — if Ren comes."',
+        text: '"Yes, if Ren comes."',
         tactic: "Don\'t be solo with her in a soft moment. The solo garden walk is the kind of frame where another ask shows up as a spontaneous addition.",
         nextSceneId: "the-garden",
         isOptimal: true,
@@ -673,7 +673,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "inner-voice",
-        text: "Twenty minutes in the garden with no second ask. The ask was the ask. The dinner was, mostly, the dinner. This is not reconciliation — it is a minimum-viable adult transaction with the woman who raised you. That is a more useful outcome than reconciliation would have been.",
+        text: "Twenty minutes in the garden with no second ask. The ask was the ask. The dinner was, mostly, the dinner. This is not reconciliation, it is a minimum-viable adult transaction with the woman who raised you. That is a more useful outcome than reconciliation would have been.",
         emotion: "knowing",
       },
     ],
@@ -692,7 +692,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: null,
-        text: "The first document is exactly what she said — a medical power of attorney form. The second document is a continuing power of attorney for property. The third is a simple will with a blank in the executor line.",
+        text: "The first document is exactly what she said, a medical power of attorney form. The second document is a continuing power of attorney for property. The third is a simple will with a blank in the executor line.",
       },
       {
         speakerId: "inner-voice",
@@ -715,7 +715,7 @@ const scenes: Scene[] = [
       },
       {
         id: "pull-out-entirely",
-        text: '"Actually — I am out. All three. Solicitor. I am not doing this tonight."',
+        text: '"Actually. I am out. All three. Solicitor. I am not doing this tonight."',
         tactic: "Total retreat. You saw the widening and you are responding to it by closing the whole channel. Harsh but clean.",
         nextSceneId: "scope-retreated",
         isOptimal: true,
@@ -737,7 +737,7 @@ const scenes: Scene[] = [
     dialog: [
       {
         speakerId: "mother",
-        text: '"Alright. Medical only. The others — I will take them off the desk."',
+        text: '"Alright. Medical only. The others. I will take them off the desk."',
         emotion: "serious",
       },
       {
@@ -771,7 +771,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "inner-voice",
-        text: "Total retreat is not a failure — it is a correction of a decision you made under warmer conditions. You can always sign a medical form in six weeks from a solicitor's office. You cannot always un-sign one you signed at a kitchen desk.",
+        text: "Total retreat is not a failure, it is a correction of a decision you made under warmer conditions. You can always sign a medical form in six weeks from a solicitor's office. You cannot always un-sign one you signed at a kitchen desk.",
         emotion: "knowing",
       },
     ],
@@ -791,7 +791,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "inner-voice",
-        text: "The pen is the tell. It appeared in your hand during a reasonable-sounding explanation and you did not feel it arrive. This is not a dramatic moment. This is the entire mechanism of how scope widens — calmly, reasonably, with a pen you did not feel yourself accept. Put the pen down. Walk out of the study. Re-do the conversation with a solicitor next week or not at all.",
+        text: "The pen is the tell. It appeared in your hand during a reasonable-sounding explanation and you did not feel it arrive. This is not a dramatic moment. This is the entire mechanism of how scope widens, calmly, reasonably, with a pen you did not feel yourself accept. Put the pen down. Walk out of the study. Re-do the conversation with a solicitor next week or not at all.",
         emotion: "concerned",
       },
       {
@@ -804,7 +804,7 @@ const scenes: Scene[] = [
   },
 
   // ===================================================================
-  // ACT 5 — departure
+  // ACT 5, departure
   // ===================================================================
   {
     id: "the-departure",
@@ -896,7 +896,7 @@ const scenes: Scene[] = [
     dialog: [
       {
         speakerId: null,
-        text: "You use the key. You walk into the hall you knew as a child. Your mother is already in the corridor — she heard the lock and came to meet you.",
+        text: "You use the key. You walk into the hall you knew as a child. Your mother is already in the corridor, she heard the lock and came to meet you.",
       },
       {
         speakerId: "inner-voice",
@@ -914,7 +914,7 @@ const scenes: Scene[] = [
     dialog: [
       {
         speakerId: null,
-        text: "You knock twice. Firm. Your mother does not come to the door immediately — she finishes whatever she was doing and then walks. The door opens about fifteen seconds after you knocked.",
+        text: "You knock twice. Firm. Your mother does not come to the door immediately, she finishes whatever she was doing and then walks. The door opens about fifteen seconds after you knocked.",
       },
       {
         speakerId: "inner-voice",
@@ -981,7 +981,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "inner-voice",
-        text: "She does not need to know any of that. You gave her the access because the room felt safer than you expected — which is exactly the room someone like this engineers. Going forward tonight: facts only, no strategy, no internal politics. You already over-shared; the fix is not to over-share the fix.",
+        text: "She does not need to know any of that. You gave her the access because the room felt safer than you expected, which is exactly the room someone like this engineers. Going forward tonight: facts only, no strategy, no internal politics. You already over-shared; the fix is not to over-share the fix.",
         emotion: "concerned",
       },
     ],
@@ -1006,7 +1006,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "inner-voice",
-        text: "Ren answered in a sentence designed to close the topic. You will buy Ren a really good bottle of wine next time you see them alone. Not as gratitude — as recognition of a skill you did not realise Ren had developed.",
+        text: "Ren answered in a sentence designed to close the topic. You will buy Ren a really good bottle of wine next time you see them alone. Not as gratitude, as recognition of a skill you did not realise Ren had developed.",
         emotion: "knowing",
       },
     ],
@@ -1025,7 +1025,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "inner-voice",
-        text: "This is restraint. Real restraint. Somebody — probably Ren — taught her, or she taught herself, that pushing the ask into the meal would blow the ask entirely. She is pacing herself. Which means there is an ask. It is sitting behind the plates, waiting for dessert.",
+        text: "This is restraint. Real restraint. Somebody, probably Ren, taught her, or she taught herself, that pushing the ask into the meal would blow the ask entirely. She is pacing herself. Which means there is an ask. It is sitting behind the plates, waiting for dessert.",
         emotion: "knowing",
       },
     ],
@@ -1043,10 +1043,10 @@ const scenes: Scene[] = [
     outcomeType: "good",
     endingTitle: "The Sovereign No",
     endingSummary:
-      "You went. You stayed for the agreed three and a half hours. You heard the ask — medical power of attorney — and you declined it cleanly, either outright or by redirecting her to a solicitor. You did not sign paper you did not want to sign. You left at 7:30 on the curfew you named. Ren walked you to the car. Priya called before you hit the motorway; you debriefed the evening in twenty minutes and then you listened to music. The envelope sits on your counter at home; tonight you put it in a drawer. The next move is not tonight. The next move is the call you make to your own solicitor on Wednesday about how to document the refusal so it is not re-litigated by surprise in six months.",
+      "You went. You stayed for the agreed three and a half hours. You heard the ask, medical power of attorney and you declined it cleanly, either outright or by redirecting her to a solicitor. You did not sign paper you did not want to sign. You left at 7:30 on the curfew you named. Ren walked you to the car. Priya called before you hit the motorway; you debriefed the evening in twenty minutes and then you listened to music. The envelope sits on your counter at home; tonight you put it in a drawer. The next move is not tonight. The next move is the call you make to your own solicitor on Wednesday about how to document the refusal so it is not re-litigated by surprise in six months.",
     endingLearnReference: "sovereign-no-without-performance",
     endingLearnPrompt:
-      "A sovereign no is warm, bounded, and does not invite a re-negotiation lane. It also does not need to be re-litigated — document it in writing this week so the next letter can be answered in two sentences.",
+      "A sovereign no is warm, bounded, and does not invite a re-negotiation lane. It also does not need to be re-litigated, document it in writing this week so the next letter can be answered in two sentences.",
     dialog: [
       {
         speakerId: "inner-voice",
@@ -1064,7 +1064,7 @@ const scenes: Scene[] = [
     outcomeType: "neutral",
     endingTitle: "The Clean Cold Exit",
     endingSummary:
-      "You declined the ask, you left at 7:30, you did not hug her at the door, you did not say a warm sentence on the way out. You nodded and you went. The exit is clean. It is also colder than the evening called for — she had, by the standards of your history with her, behaved well. A warmer close would not have committed you to anything; the nod did not save you from anything. Over the next month you may find yourself rewriting the nod into a sentence; if you do, send the sentence in a card. One card. Not the beginning of a correspondence.",
+      "You declined the ask, you left at 7:30, you did not hug her at the door, you did not say a warm sentence on the way out. You nodded and you went. The exit is clean. It is also colder than the evening called for, she had, by the standards of your history with her, behaved well. A warmer close would not have committed you to anything; the nod did not save you from anything. Over the next month you may find yourself rewriting the nod into a sentence; if you do, send the sentence in a card. One card. Not the beginning of a correspondence.",
     dialog: [
       {
         speakerId: "inner-voice",
@@ -1082,14 +1082,14 @@ const scenes: Scene[] = [
     outcomeType: "good",
     endingTitle: "The Pen Put Down",
     endingSummary:
-      "She showed you three documents when you had agreed to one. The scope widened the way scope always widens with her — calmly, in paragraphs that each sounded reasonable, with a pen you did not feel yourself accept. Ren pulled you out. You did not sign. You left the house fast and the drive home was quiet. Nothing was signed. That is the single sentence that matters. You will, correctly, be rattled for three days. You will, correctly, be angry at yourself for getting as close as you did. Use the anger to write down exactly what happened — in a text to Priya, in a note to your solicitor — so the next time somebody calm and reasonable puts a pen in your hand, the body will know before the mind does.",
+      "She showed you three documents when you had agreed to one. The scope widened the way scope always widens with her, calmly, in paragraphs that each sounded reasonable, with a pen you did not feel yourself accept. Ren pulled you out. You did not sign. You left the house fast and the drive home was quiet. Nothing was signed. That is the single sentence that matters. You will, correctly, be rattled for three days. You will, correctly, be angry at yourself for getting as close as you did. Use the anger to write down exactly what happened, in a text to Priya, in a note to your solicitor so the next time somebody calm and reasonable puts a pen in your hand, the body will know before the mind does.",
     endingLearnReference: "scope-widens-with-reasonable-paragraphs",
     endingLearnPrompt:
       "Scope does not widen with shouting. It widens with reasonable paragraphs and a pen you did not feel arrive. The diagnostic is the pen, not the paragraphs.",
     dialog: [
       {
         speakerId: "inner-voice",
-        text: "You got close. Close is not signed. Close, documented, is a training set — the next time it happens you will recognise the pen by its weight.",
+        text: "You got close. Close is not signed. Close, documented, is a training set, the next time it happens you will recognise the pen by its weight.",
         emotion: "knowing",
       },
     ],
@@ -1101,7 +1101,7 @@ export const mission112: Scenario = {
   title: "The Return",
   tagline: "Sunday. 4 pm. The old house. Three hours on a curfew you wrote yourself.",
   description:
-    "The dinner the letter was asking for. Three hours inside the house you left five years ago, with your mother on-screen for the first time, with Ren as witness, on a 7:30 curfew. The evening has one ask hidden inside it. The scenario is whether you land the no without breaking the table — or whether the paper on the study desk pulls you across a line you did not mean to cross.",
+    "The dinner the letter was asking for. Three hours inside the house you left five years ago, with your mother on-screen for the first time, with Ren as witness, on a 7:30 curfew. The evening has one ask hidden inside it. The scenario is whether you land the no without breaking the table or whether the paper on the study desk pulls you across a line you did not mean to cross.",
   tier: "vip",
   level: 11,
   order: 2,
@@ -1113,10 +1113,10 @@ export const mission112: Scenario = {
   startSceneId: "the-arrival",
   prerequisites: ["mission-11-1"],
   tacticsLearned: [
-    "Sovereign no — warm, bounded, closed, no re-negotiation lane",
+    "Sovereign no, warm, bounded, closed, no re-negotiation lane",
     "Redirect the ask to a professional when the role is wrong but the need is real",
     "Scope-widening detection (three documents when you agreed to one)",
-    "The pen diagnostic — noticing tools you did not feel yourself accept",
+    "The pen diagnostic, noticing tools you did not feel yourself accept",
     "Using a named curfew and a named witness to bound a high-risk re-entry",
   ],
   redFlagsTaught: [

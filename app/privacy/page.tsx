@@ -42,7 +42,7 @@ export default function PrivacyPage() {
               <h3 className="text-lg font-light text-text-light mt-6 mb-3">Personal Information You Provide</h3>
               <ul className="text-text-gray space-y-2 list-disc list-inside">
                 <li>Name and email address (when you create an account, purchase a product, or subscribe to our newsletter)</li>
-                <li>Payment information (processed securely through our payment processors — we do not store card details)</li>
+                <li>Payment information (processed securely through our payment processors, we do not store card details)</li>
                 <li>Quiz and assessment responses (when you take the Dark Mirror Assessment)</li>
                 <li>Community posts, comments, and messages (when you participate in The Consilium)</li>
                 <li>Coaching session notes and questionnaire responses</li>
@@ -65,7 +65,7 @@ export default function PrivacyPage() {
                 <li>To manage your account and community membership</li>
                 <li>To provide coaching services and schedule sessions</li>
                 <li>To send transactional emails (purchase confirmations, download links, password resets)</li>
-                <li>To send marketing emails (newsletter, product announcements) — only with your consent</li>
+                <li>To send marketing emails (newsletter, product announcements), only with your consent</li>
                 <li>To personalise your experience based on your quiz results and preferences</li>
                 <li>To improve our Site, products, and services</li>
                 <li>To prevent fraud and ensure platform security</li>
@@ -79,14 +79,14 @@ export default function PrivacyPage() {
                 We do not sell your personal information. We share your data only with:
               </p>
               <ul className="text-text-gray space-y-2 list-disc list-inside">
-                <li><strong className="text-text-light">Payment processor</strong> — Stripe (stripe.com) handles all payments and stores card details on our behalf</li>
-                <li><strong className="text-text-light">Email providers</strong> — Resend and Nodemailer SMTP deliver transactional and marketing emails; open/click tracking may be enabled</li>
-                <li><strong className="text-text-light">Real-time chat</strong> — Pusher (pusher.com) powers Consilium chat rooms and receives message content in transit</li>
-                <li><strong className="text-text-light">Media storage</strong> — Cloudflare R2 stores voice notes and member avatars</li>
-                <li><strong className="text-text-light">Analytics</strong> — Google Analytics (anonymised IP) tracks aggregate site usage</li>
-                <li><strong className="text-text-light">Error tracking</strong> — Sentry captures application errors (personal data masked by default)</li>
-                <li><strong className="text-text-light">Hosting</strong> — Railway serves the application and database</li>
-                <li><strong className="text-text-light">Legal authorities</strong> — if required by law, court order, or to protect our rights</li>
+                <li><strong className="text-text-light">Payment processor</strong>. Stripe (stripe.com) handles all payments and stores card details on our behalf</li>
+                <li><strong className="text-text-light">Email providers</strong>. Resend and Nodemailer SMTP deliver transactional and marketing emails; open/click tracking may be enabled</li>
+                <li><strong className="text-text-light">Real-time chat</strong>. Pusher (pusher.com) powers Consilium chat rooms and receives message content in transit</li>
+                <li><strong className="text-text-light">Media storage</strong>. Cloudflare R2 stores voice notes and member avatars</li>
+                <li><strong className="text-text-light">Analytics</strong>. Google Analytics (anonymised IP) tracks aggregate site usage</li>
+                <li><strong className="text-text-light">Error tracking</strong>. Sentry captures application errors (personal data masked by default)</li>
+                <li><strong className="text-text-light">Hosting</strong>. Railway serves the application and database</li>
+                <li><strong className="text-text-light">Legal authorities</strong>, if required by law, court order, or to protect our rights</li>
               </ul>
             </section>
 
@@ -106,9 +106,9 @@ export default function PrivacyPage() {
                 We use cookies and similar technologies for:
               </p>
               <ul className="text-text-gray space-y-2 list-disc list-inside">
-                <li><strong className="text-text-light">Essential cookies</strong> — authentication tokens, session management (required for the Site to function)</li>
-                <li><strong className="text-text-light">Analytics cookies</strong> — Google Analytics to understand how visitors use our Site</li>
-                <li><strong className="text-text-light">Preference cookies</strong> — to remember your settings and choices</li>
+                <li><strong className="text-text-light">Essential cookies</strong>, authentication tokens, session management (required for the Site to function)</li>
+                <li><strong className="text-text-light">Analytics cookies</strong>. Google Analytics to understand how visitors use our Site</li>
+                <li><strong className="text-text-light">Preference cookies</strong>, to remember your settings and choices</li>
               </ul>
               <p className="text-text-gray leading-relaxed mt-4">
                 You can disable cookies through your browser settings, though this may affect Site functionality.
@@ -125,7 +125,7 @@ export default function PrivacyPage() {
                 <li>Request correction of inaccurate data</li>
                 <li>Request deletion of your data (&quot;right to be forgotten&quot;)</li>
                 <li>Object to or restrict processing of your data</li>
-                <li>Data portability — receive your data in a structured format</li>
+                <li>Data portability, receive your data in a structured format</li>
                 <li>Withdraw consent for marketing communications at any time</li>
                 <li>Lodge a complaint with your local data protection authority</li>
               </ul>

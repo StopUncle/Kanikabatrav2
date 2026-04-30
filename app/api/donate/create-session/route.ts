@@ -13,7 +13,7 @@ const bodySchema = z.object({
  * POST /api/donate/create-session
  *
  * Creates a Stripe Checkout Session for a pay-what-you-want donation.
- * Public — no auth required, donors can be logged-out visitors.
+ * Public, no auth required, donors can be logged-out visitors.
  *
  * The DONATION price is `custom_unit_amount` (Stripe-side $2 floor /
  * $1000 ceiling / $20 default), so the Checkout page renders an "Enter
@@ -21,9 +21,9 @@ const bodySchema = z.object({
  * own number; min/max enforced by Stripe before payment confirmation.
  *
  * Metadata stamped on the session:
- *   - product_key: "DONATION"        — webhook router uses this to dispatch
- *   - donorMessage: free text       — shown to Kanika in the admin
- *   - isAnonymous: "true" | "false" — controls public attribution
+ *   - product_key: "DONATION"       , webhook router uses this to dispatch
+ *   - donorMessage: free text      , shown to Kanika in the admin
+ *   - isAnonymous: "true" | "false", controls public attribution
  *
  * Webhook (`/api/webhooks/stripe` checkout.session.completed) creates a
  * Purchase row of type=DONATION and fires the thank-you email.
@@ -46,7 +46,7 @@ export async function POST(req: NextRequest) {
     const session = await stripe.checkout.sessions.create({
       mode: "payment",
       line_items: [{ price: priceId, quantity: 1 }],
-      // Don't show "Apply promotion code" on a donation — feels weird.
+      // Don't show "Apply promotion code" on a donation, feels weird.
       allow_promotion_codes: false,
       // Donate-themed wording on the Stripe-hosted page.
       submit_type: "donate",

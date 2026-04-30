@@ -1,10 +1,10 @@
 /**
- * Mission 9-1 — "The Slow Bleed"
+ * Mission 9-1, "The Slow Bleed"
  *
  * Level 9, order 1. VIP tier.
  * Someone has been running a sustained reputation campaign against
  * you for six months, covertly, in rooms you'll never see. You just
- * learned about it. The question is whether to respond — and how.
+ * learned about it. The question is whether to respond and how.
  */
 
 import type { Scenario, Scene } from "../types";
@@ -179,7 +179,7 @@ const scenes: Scene[] = [
       },
       {
         id: "counter-narrative",
-        text: "Begin quiet counter-narrative — meet with the same people she's been speaking to.",
+        text: "Begin quiet counter-narrative, meet with the same people she's been speaking to.",
         tactic: "Surgical. Specific. The right audience.",
         nextSceneId: "counter-campaign-begins",
         isOptimal: true,
@@ -237,7 +237,7 @@ const scenes: Scene[] = [
       },
       {
         id: "add-direct-mention",
-        text: "Start mentioning 'I heard there were some stories — here's my side.'",
+        text: "Start mentioning 'I heard there were some stories, here's my side.'",
         tactic: "You just amplified her stories to people who hadn't heard them.",
         nextSceneId: "ending-amplified-counter",
         isOptimal: false,
@@ -280,7 +280,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "inner-voice",
-        text: "You explain: a specific project she'll want to claim. You'll be seen leading it. She'll trash it covertly. When it succeeds publicly — her trash talk becomes the evidence she's unreliable.",
+        text: "You explain: a specific project she'll want to claim. You'll be seen leading it. She'll trash it covertly. When it succeeds publicly, her trash talk becomes the evidence she's unreliable.",
         emotion: "knowing",
       },
     ],
@@ -345,7 +345,7 @@ const scenes: Scene[] = [
     outcomeType: "good",
     endingTitle: "The Trap",
     endingSummary:
-      "Four months of discipline. The project you led succeeded publicly. Aria's covert trash talk, repeated to the same people she'd been poisoning, now reads as 'bitter and out of touch.' You never attacked her — you made her own behavior the argument against her. Her pipeline dried up. Your senior-role candidacy crystallized.",
+      "Four months of discipline. The project you led succeeded publicly. Aria's covert trash talk, repeated to the same people she'd been poisoning, now reads as 'bitter and out of touch.' You never attacked her, you made her own behavior the argument against her. Her pipeline dried up. Your senior-role candidacy crystallized.",
     dialog: [
       {
         speakerId: "inner-voice",
@@ -381,7 +381,7 @@ const scenes: Scene[] = [
     outcomeType: "neutral",
     endingTitle: "Partial Counter",
     endingSummary:
-      "Three weeks was enough to move about half the audience. The other half still carry residue of her stories. You'll get the next senior role — but only because Kaya advocated hard in a room you weren't in. Don't stop counter-campaigns halfway.",
+      "Three weeks was enough to move about half the audience. The other half still carry residue of her stories. You'll get the next senior role but only because Kaya advocated hard in a room you weren't in. Don't stop counter-campaigns halfway.",
     dialog: [
       {
         speakerId: "inner-voice",

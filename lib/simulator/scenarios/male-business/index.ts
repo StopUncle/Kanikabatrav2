@@ -1,11 +1,11 @@
 /**
- * Male Business Line — scenario registry for the male simulator's
+ * Male Business Line, scenario registry for the male simulator's
  * business/career/power track. 5 scenarios, progression-gated.
  *
  * Levels within this track (independent of the female simulator's levels):
- *   1 — Power (the first win, reading reactions)
- *   2 — Career (credit thief, covert peer)
- *   3 — Business (charming cofounder, predatory term sheet)
+ *   1. Power (the first win, reading reactions)
+ *   2. Career (credit thief, covert peer)
+ *   3. Business (charming cofounder, predatory term sheet)
  */
 
 import type { Scenario } from "../../types";

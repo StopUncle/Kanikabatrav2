@@ -52,7 +52,7 @@ export async function POST(request: NextRequest) {
 
     // Stamp acquisition attribution. Done as a follow-up update so the
     // legacy createUser signature stays clean. Errors here are
-    // non-fatal — the registration itself succeeded; missing attribution
+    // non-fatal, the registration itself succeeded; missing attribution
     // is a recoverable data-quality issue, not a user-facing failure.
     try {
       const attribution = buildAttributionRecord(body.attribution, request);
@@ -67,7 +67,7 @@ export async function POST(request: NextRequest) {
       console.error("[register] attribution stamp failed:", err);
     }
 
-    // Generate tokens — embed tokenVersion (0 for new users) so password
+    // Generate tokens, embed tokenVersion (0 for new users) so password
     // resets and logouts can invalidate them immediately.
     const tokens = generateTokenPair({
       userId: user.id,

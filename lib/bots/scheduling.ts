@@ -56,7 +56,7 @@ const TAIL_MIN_MS = 48 * 60 * 60 * 1000;
 const TAIL_MAX_MS = 72 * 60 * 60 * 1000;
 
 // Math.pow(u, 1.6) on uniform u in [0,1] approximates a Beta-like
-// distribution concentrated near 0 — gives us "first comment lands in
+// distribution concentrated near 0, gives us "first comment lands in
 // the first ~10 min, density tapers across the 90-min window".
 function frontDraw(rng: SeedRng): number {
   return Math.pow(rng(), 1.6);

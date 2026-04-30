@@ -40,7 +40,7 @@ export async function POST(
       // locks them out of the feed/courses until another webhook fires.
       if (membership.status !== "PENDING") {
         return NextResponse.json(
-          { error: `Cannot approve — membership is ${membership.status}, not PENDING` },
+          { error: `Cannot approve, membership is ${membership.status}, not PENDING` },
           { status: 400 },
         );
       }
@@ -62,7 +62,7 @@ export async function POST(
         },
       });
 
-      // Notify the applicant — fire-and-forget so a transient SMTP failure
+      // Notify the applicant, fire-and-forget so a transient SMTP failure
       // doesn't make the admin think the approval itself failed.
       if (updated.user?.email) {
         sendApplicationApproved(
