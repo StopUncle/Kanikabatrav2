@@ -11,6 +11,7 @@ import {
 } from "@/components/consilium/badge-tiers";
 import { Lock, CheckCircle2, Calendar, MessageSquare, Heart, BookOpen, type LucideIcon } from "lucide-react";
 import ManageSubscriptionButton from "./ManageSubscriptionButton";
+import NotificationPreferences from "./NotificationPreferences";
 
 export const metadata = {
   title: "Your Rank. The Consilium | Kanika Batra",
@@ -359,6 +360,20 @@ export default async function ConsiliumProfilePage() {
             ) : null}
           </div>
         </div>
+      </section>
+
+      {/* Notifications */}
+      <section className="mb-12">
+        <div className="text-center mb-6">
+          <p className="text-warm-gold text-xs uppercase tracking-[0.3em] mb-2">
+            Notifications
+          </p>
+          <h2 className="text-2xl font-extralight tracking-wider uppercase text-text-light">
+            What pings your phone
+          </h2>
+        </div>
+
+        <NotificationPreferences />
       </section>
 
       {/* Account */}

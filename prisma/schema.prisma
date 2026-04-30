@@ -73,6 +73,17 @@ model User {
   botActions                BotAction[]
   memberQuestions           MemberQuestion[]     @relation("MemberQuestions")
   questionUpvotes           QuestionUpvote[]     @relation("QuestionUpvotes")
+  // PWA push subscriptions (one per device). The browser issues a
+  // unique endpoint per (origin, device, browser-instance), so a
+  // user with phone + laptop has two rows. Pruned automatically
+  // when web-push reports a 404/410 from the push service.
+  pushSubscriptions         PushSubscription[]
+  // Per-category push notification opt-ins. JSON for flexibility:
+  // { questionAnswered: true, voiceNote: true, forumReply: false }.
+  // Null = all defaults (treated as opt-in for the categories
+  // shipped today). Member prefs UI in /consilium/profile lets the
+  // member toggle each category.
+  pushPreferences           Json?
   // Acquisition attribution — captured from URL params + headers on
   // the visit that ended in registration. Joinable against revenue
   // (Purchase), retention (CommunityMembership), and quiz outcomes
@@ -1158,4 +1169,35 @@ model BotEngagementSettings {
   enabled   Boolean  @default(false)
   dryRun    Boolean  @default(true)
   updatedAt DateTime @updatedAt
+}
+
+// Web Push subscription per device. A user can have multiple
+// (phone + tablet + laptop). Stored as the literal PushSubscription
+// JSON the browser hands back, plus a few derived fields for
+// admin-side filtering and pruning. The server uses these endpoints
+// to deliver notifications via VAPID.
+//
+// Endpoints occasionally expire / get revoked (user reset Chrome,
+// uninstalled the PWA, etc). When web-push returns 404/410 for a
+// subscription, we delete the row in the helper. No cron needed.
+model PushSubscription {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // The browser-issued push endpoint. UNIQUE — same browser/device
+  // always returns the same endpoint, so an upsert keeps re-subscribes
+  // idempotent without duplicate rows.
+  endpoint    String   @unique
+  p256dh      String   // public key for ECDH key agreement
+  auth        String   // shared auth secret
+
+  // User-agent at subscription time, useful for "your iPhone, your
+  // Pixel" labels in member prefs UI later. Not used for delivery.
+  userAgent   String?
+
+  createdAt   DateTime @default(now())
+  lastUsedAt  DateTime @default(now())
+
+  @@index([userId])
 }

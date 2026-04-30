@@ -1,13 +1,16 @@
 import { prisma } from "@/lib/prisma";
 import { sendQuestionAnswered } from "@/lib/email";
+import { sendPushToUser } from "@/lib/push";
 import { logger } from "@/lib/logger";
 
 /**
  * Closes the engagement loop. When the admin links an answering FeedPost
- * to a question, the asker gets an email pointing them at the answer.
+ * to a question, the asker gets an email pointing them at the answer
+ * AND a web-push notification (if subscribed). Both are best-effort —
+ * neither failure mode should break the admin's PATCH.
  *
  * Failure here is logged but never thrown — the admin's PATCH must
- * succeed even if Resend / SMTP is having a moment.
+ * succeed even if Resend / SMTP / web-push is having a moment.
  */
 export async function notifyAskerOfAnswer(params: {
   questionId: string;
@@ -54,6 +57,32 @@ export async function notifyAskerOfAnswer(params: {
     questionContent: params.questionContent,
     answerPostId: params.answerPostId,
     answerType: post.type,
+  });
+
+  // Web push delivery — fire-and-forget, deliberately not awaited
+  // beyond its own async boundary. The push helper internally
+  // respects pushPreferences and silently no-ops if VAPID is unset
+  // or the user has no subscriptions, so this is safe in any
+  // environment. Tag matches the question id so re-publishes
+  // collapse into one lock-screen entry instead of stacking.
+  const pushTitle =
+    post.type === "VIDEO"
+      ? "Kanika answered your question — video"
+      : "Kanika answered your question — voice note";
+  await sendPushToUser(params.userId, "questionAnswered", {
+    title: pushTitle,
+    body:
+      params.questionContent.length > 110
+        ? params.questionContent.slice(0, 107) + "…"
+        : params.questionContent,
+    url: `/consilium/feed#post-${params.answerPostId}`,
+    tag: `question-${params.questionId}`,
+  }).catch((err) => {
+    logger.warn("[questions/notify] push failed", {
+      questionId: params.questionId,
+      err: err instanceof Error ? err.message : String(err),
+    });
+    return 0;
   });
 
   logger.info("[questions/notify] dispatched", {
