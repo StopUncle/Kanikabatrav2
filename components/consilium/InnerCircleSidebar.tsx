@@ -6,9 +6,6 @@ import { usePathname, useRouter } from "next/navigation";
 import {
   Scroll,
   AudioLines,
-  Library,
-  MessagesSquare,
-  Hash,
   Menu,
   X,
   ArrowLeft,
@@ -31,25 +28,19 @@ import ConsiliumSeal from "@/components/ConsiliumSeal";
 import MemberBadge, { getBadge } from "@/components/consilium/MemberBadge";
 import type { ActivityItem, ActivityKind } from "@/lib/community/activity";
 
-interface ForumCategory {
-  id: string;
-  name: string;
-  slug: string;
-  postCount: number;
-}
-
-interface ChatRoom {
-  id: string;
-  name: string;
-  slug: string;
-  memberCount: number;
-}
-
+// Classroom hidden 2026-04-30 per multimillion-roadmap audit (zero
+// enrollments). Routes still exist; entry restored once certification
+// curriculum lands (Phase 3-4). Forum + Chat sections previously rendered
+// below were removed in the same pass: 0 forum posts, 0 chat messages
+// across 7d / nearly all-time, empty surfaces erode the premium feel of
+// the live ones. Their data-fetch effect was removed too. To revive,
+// `git log` this file and put back the ForumCategory / ChatRoom types,
+// the useEffect at line ~140 that called /api/community/categories +
+// /api/community/chat/rooms, and the JSX blocks they fed.
 const MAIN_NAV = [
   { href: "/consilium/feed", label: "Feed", icon: Scroll },
   { href: "/consilium/voice-notes", label: "Voice Notes", icon: AudioLines },
   { href: "/consilium/previews", label: "Previews", icon: Clock },
-  { href: "/consilium/classroom", label: "Classroom", icon: Library },
   { href: "/consilium/simulator", label: "Simulator", icon: Film },
   { href: "/consilium/book", label: "The Book", icon: BookOpen },
   { href: "/consilium/badges", label: "Badges", icon: Award },
@@ -96,8 +87,6 @@ export default function InnerCircleSidebar({
   const pathname = usePathname();
   const router = useRouter();
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [forumCategories, setForumCategories] = useState<ForumCategory[]>([]);
-  const [chatRooms, setChatRooms] = useState<ChatRoom[]>([]);
   const [loggingOut, setLoggingOut] = useState(false);
 
   // Swipe-to-close gesture state. We track the initial touch point
@@ -136,28 +125,6 @@ export default function InnerCircleSidebar({
       document.body.style.overflow = "";
     };
   }, [mobileOpen]);
-
-  useEffect(() => {
-    async function fetchNav() {
-      try {
-        const [catRes, roomRes] = await Promise.all([
-          fetch("/api/community/categories"),
-          fetch("/api/community/chat/rooms"),
-        ]);
-        if (catRes.ok) {
-          const d = await catRes.json();
-          setForumCategories(d.categories || []);
-        }
-        if (roomRes.ok) {
-          const d = await roomRes.json();
-          setChatRooms(d.rooms || []);
-        }
-      } catch {
-        // Sidebar nav is non-critical, fail silently
-      }
-    }
-    fetchNav();
-  }, []);
 
   const isActive = (href: string) => {
     if (href === "/consilium/feed") return pathname === "/consilium/feed";
@@ -277,63 +244,12 @@ export default function InnerCircleSidebar({
           </Link>
         ))}
 
-        {/* Forum categories */}
-        {forumCategories.length > 0 && (
-          <div className="mt-6">
-            <div className="px-5 mb-2">
-              <p className="text-[10px] font-semibold text-text-gray/50 uppercase tracking-[0.15em]">
-                Forum
-              </p>
-            </div>
-            {forumCategories.map((cat) => (
-              <Link
-                key={cat.id}
-                href={`/consilium/forum/${cat.slug}`}
-                className={`flex items-center justify-between mx-3 px-3 py-3 lg:py-2 min-h-[44px] lg:min-h-0 rounded-lg text-sm transition-all duration-200 active:bg-accent-gold/15 ${
-                  pathname.includes(`/forum/${cat.slug}`)
-                    ? "text-accent-gold bg-accent-gold/8"
-                    : "text-text-gray hover:text-text-light hover:bg-white/[0.03]"
-                }`}
-                onClick={() => setMobileOpen(false)}
-              >
-                <div className="flex items-center gap-2.5">
-                  <MessagesSquare size={14} strokeWidth={1.25} />
-                  <span className="font-light">{cat.name}</span>
-                </div>
-                <span className="text-[10px] text-text-gray/40">{cat.postCount}</span>
-              </Link>
-            ))}
-          </div>
-        )}
-
-        {/* Chat rooms */}
-        {chatRooms.length > 0 && (
-          <div className="mt-6">
-            <div className="px-5 mb-2">
-              <p className="text-[10px] font-semibold text-text-gray/50 uppercase tracking-[0.15em]">
-                Chat
-              </p>
-            </div>
-            {chatRooms.map((room) => (
-              <Link
-                key={room.id}
-                href={`/consilium/chat/${room.slug}`}
-                className={`flex items-center justify-between mx-3 px-3 py-3 lg:py-2 min-h-[44px] lg:min-h-0 rounded-lg text-sm transition-all duration-200 active:bg-accent-gold/15 ${
-                  pathname.includes(`/chat/${room.slug}`)
-                    ? "text-accent-gold bg-accent-gold/8"
-                    : "text-text-gray hover:text-text-light hover:bg-white/[0.03]"
-                }`}
-                onClick={() => setMobileOpen(false)}
-              >
-                <div className="flex items-center gap-2.5">
-                  <Hash size={14} strokeWidth={1.25} />
-                  <span className="font-light">{room.name}</span>
-                </div>
-                <span className="text-[10px] text-text-gray/40">{room.memberCount}</span>
-              </Link>
-            ))}
-          </div>
-        )}
+        {/* Forum + Chat sections hidden 2026-04-30 per multimillion-
+            roadmap audit (research/multimillion-roadmap/01-current-state-
+            audit.md sec 3): 0 forum posts and 0 chat messages in 7d /
+            nearly all-time. Empty rooms erode the premium feel of the
+            live surfaces. Data fetch above is left in place so reviving
+            either is a matter of putting the JSX back, no API rebuild. */}
 
         {/* Live in the Council, recent activity strip. Real signals
             (comments, likes, new members, simulator wins) merged with

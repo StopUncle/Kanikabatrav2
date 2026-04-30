@@ -8,7 +8,6 @@ import {
   Trophy,
   Award,
   AudioLines,
-  Library,
   Newspaper,
   type LucideIcon,
 } from "lucide-react";
@@ -49,6 +48,11 @@ type PillItem = {
   countKey?: "feed";
 };
 
+// Classroom pill removed 2026-04-30: zero enrollments per the
+// multimillion-roadmap audit (research/multimillion-roadmap/01-current-state-audit.md
+// section 3). Empty surfaces erode the premium feel of the live ones; the
+// route still exists for revival but is hidden from member nav until the
+// certification curriculum (Phase 3-4) gives it real content.
 const PILLS: PillItem[] = [
   { href: "/consilium/feed", label: "Feed", icon: Scroll, matchPrefix: "/consilium/feed", countKey: "feed" },
   { href: "/consilium/simulator", label: "Simulator", icon: Film, matchPrefix: "/consilium/simulator" },
@@ -59,7 +63,6 @@ const PILLS: PillItem[] = [
   },
   { href: "/consilium/badges", label: "Badges", icon: Award, matchPrefix: "/consilium/badges" },
   { href: "/consilium/voice-notes", label: "Voice Notes", icon: AudioLines, matchPrefix: "/consilium/voice-notes" },
-  { href: "/consilium/classroom", label: "Classroom", icon: Library, matchPrefix: "/consilium/classroom" },
   { href: "/blog", label: "Blog", icon: Newspaper, matchPrefix: "/blog" },
 ];
 
