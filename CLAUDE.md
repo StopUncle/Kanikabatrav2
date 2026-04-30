@@ -148,6 +148,89 @@ The retention loop. Members submit one question per rolling 24h, upvote others' 
 
 To raise the daily cap as the community grows: `UPDATE "MemberQuestionSettings" SET "dailyCap" = 3` (no code change). The 60s settings cache means it propagates within a minute.
 
+## 📱 Progressive Web App (PWA)
+
+The Consilium installs to a phone home screen and pushes notifications. Two phases — Phase 1 ships installable PWA, Phase 2 ships web push.
+
+### What's shipped (Phase 1, commit `1acf9cb`)
+- `app/manifest.ts` — Next 15 native manifest, dark luxury palette, 4 home-screen shortcuts (Feed / Voice / Simulator / Ask), references the existing logo for icons.
+- `public/sw.js` — service worker. Registers immediately on install/activate. Pass-through fetch handler (no caching yet — caching strategy interacts with Next's ISR layer in subtle ways and is a separate decision). Push + notificationclick handlers wired to render notifications and route taps to `data.url`.
+- `components/pwa/{ServiceWorkerRegister,InstallPrompt}.tsx` — mounted member-side only in `app/consilium/(member)/layout.tsx` so non-members aren't pestered. Install prompt has two paths: Android/Chromium native via `beforeinstallprompt`, iOS Safari via manual Share→Add-to-Home-Screen instructions. 14-day localStorage dismissal TTL.
+
+### What's shipped (Phase 2, commit `51d2560`)
+- **Server:** `lib/push/index.ts` — `sendPushToUser(userId, category, payload)` and `sendPushToUsers(userIds, ...)`. VAPID bootstrap from env, per-user fan-out across multiple device subscriptions, automatic 404/410 endpoint pruning, per-category opt-in gate against `User.pushPreferences`. **No-ops cleanly when env vars are missing** so it's safe to deploy ahead of the keys.
+- **Categories:** `questionAnswered`, `voiceNote`, `forumReply`, `mention`, `broadcast`. All default-on except `broadcast` (default-off, opt-in only).
+- **API:** `/api/push/subscribe` (idempotent upsert on endpoint), `/api/push/unsubscribe`, `/api/push/preferences` (GET resolves nulls against the default opt-in map; PATCH whitelists the five categories and merges).
+- **Client:** `components/pwa/NotificationPrompt.tsx` — sibling of InstallPrompt, self-defers 4.5s so banners don't fight, requests `Notification.requestPermission()`, subscribes via `PushManager` with the VAPID public key, POSTs to `/api/push/subscribe`. Caches success in localStorage. Silent re-subscribe on mount when permission already granted (handles the PWA-install-said-yes path). iOS Safari is gated to standalone-mode-only — web push on iOS requires the home-screen install.
+- **Prefs UI:** `app/consilium/(member)/profile/NotificationPreferences.tsx` — five-toggle card on `/consilium/profile`, optimistic-with-revert, one PATCH per toggle.
+- **Wired sender:** `lib/questions/notify-asker.ts` fires `sendPushToUser(userId, "questionAnswered", ...)` after the email send. Tag matches question id so re-publishes collapse to one lock-screen entry. Best-effort with `.catch` so push failures never break the admin's PATCH.
+- **Schema:** `PushSubscription` model (cuid, endpoint UNIQUE, p256dh + auth keys, userAgent, timestamps, FK with cascade delete) + `User.pushPreferences Json?`. Migration `20260430000000_add_push_subscriptions`.
+- **Deps:** `web-push@3.6.7` + `@types/web-push@3.6.4`.
+
+### Required env vars (production — Railway)
+
+```env
+NEXT_PUBLIC_VAPID_PUBLIC_KEY="<public key>"   # exposed to client; used by PushManager.subscribe
+VAPID_PRIVATE_KEY="<private key>"             # server-only; signs VAPID auth
+VAPID_SUBJECT="mailto:Kanika@kanikarose.com"  # contact for the push service
+```
+
+Generate the keypair once with `npx web-push generate-vapid-keys` (no install needed; the dep is already in package.json). The same keypair must persist across deploys — rotating it invalidates every existing subscription and forces all members to re-grant permission. If you ever do need to rotate, accept that fact, deploy the new keys, and the next page load triggers `silentResubscribe` in `NotificationPrompt.tsx` so members re-subscribe transparently.
+
+### Deploy order (the migration MUST run before code that references it)
+
+Per the long-standing Railway V2 + Prisma rule: `prisma db push` no-ops on prod, so any new schema must be applied manually with `prisma migrate deploy` BEFORE the code that references it gets pushed. The Phase 2 commit references `prisma.pushSubscription` and `User.pushPreferences` — both are dead-on-arrival without the migration.
+
+```bash
+# 1. Generate VAPID keys
+npx web-push generate-vapid-keys
+
+# 2. Set the three env vars on Railway
+#    (Railway dashboard → Variables → add the three above)
+
+# 3. Apply the migration
+railway login
+railway link --project f5ad660c-3afc-4ccd-b8b3-23f4dc47d190 \
+  --environment production --service Postgres-Bzm4
+railway variables --kv | grep DATABASE_PUBLIC_URL
+DATABASE_URL="<paste from above>" npx prisma migrate deploy
+
+# 4. Push to GitHub — Railway auto-deploys
+git push origin master
+```
+
+### What's NOT yet wired (intentional follow-ups)
+
+The other four push categories are configured in the prefs UI and the helper, but no code is calling `sendPushToUser` for them yet:
+
+- [ ] **`voiceNote`** — fire when a new voice note is published (admin-side voice-notes route). Fan out to all ACTIVE members via `sendPushToUsers`.
+- [ ] **`forumReply`** — fire when someone replies to a forum thread the user authored (or has replied in). Suppress self-replies.
+- [ ] **`mention`** — fire when the user is @-mentioned in a comment, post, or forum reply. Mention parser doesn't exist yet; this one is the heaviest lift.
+- [ ] **`broadcast`** — admin-initiated push fan-out. Probably surfaces as a button on `/admin/voice-notes` or as a standalone admin tool. Default-off in prefs so only opt-in members receive these.
+
+The toggles save preferences correctly in the meantime — wiring senders later doesn't lose any opt-out the member already set.
+
+### Smoke test after deploy
+
+- Open `https://kanikarose.com/consilium/feed` from a member account on Chrome desktop or Android Chrome.
+- Wait ~6 seconds — InstallPrompt fires first, NotificationPrompt 4.5s later.
+- Tap **Enable** → grant the browser permission → verify a row in `PushSubscription` keyed to that user (Prisma Studio or `SELECT * FROM "PushSubscription" WHERE "userId" = '<id>';`).
+- From `/admin/questions`, answer a pending question → asker receives both email AND a push notification that taps through to `/consilium/feed#post-<id>`.
+- Toggle a category off in `/consilium/profile` → answer another question for that user → no push (email still goes; the email opt-out is separate).
+
+### Operational notes
+
+- **Notification permission denied at the OS level cannot be reset by the app.** A user who denied push has to re-grant via browser settings or system settings. The prompt won't re-fire — `NotificationPrompt` checks `Notification.permission === "denied"` and bails. This is the expected platform behaviour, not a bug.
+- **Endpoints expire silently.** When a member resets Chrome, uninstalls the PWA, or switches browsers, their old `PushSubscription` row stops working. The push helper detects this on next send (404/410 from the push service) and auto-deletes the row — no cron job needed. The `lastUsedAt` column lets us spot stale-but-still-valid subs for admin filtering later if we ever need it.
+- **Chrome desktop ignores `requireInteraction: true` in some configs**; iOS PWA always auto-dismisses notifications after ~5 seconds regardless of the flag. Don't rely on `requireInteraction` for time-critical reads.
+- **Web push on iOS requires the PWA to be installed via Add-to-Home-Screen** AND iOS 16.4+. Plain Safari iOS visitors won't see the prompt — `NotificationPrompt` detects this and stays hidden. They get InstallPrompt instead, which is the right routing.
+
+### Why these env vars in this exact shape
+
+- `NEXT_PUBLIC_VAPID_PUBLIC_KEY` — the `NEXT_PUBLIC_` prefix is mandatory because the client component `NotificationPrompt.tsx` reads it via `process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY` to feed into `PushManager.subscribe`. Without the prefix, Next.js doesn't inline the value into the client bundle and the prompt silently no-ops with no error.
+- `VAPID_PRIVATE_KEY` — server-only, never `NEXT_PUBLIC_`. If this leaks to the client, anyone can sign push notifications as Kanika to any subscriber. Treat with the same care as `STRIPE_SECRET_KEY`.
+- `VAPID_SUBJECT` — the contact email the push service uses if it needs to reach Kanika about deliverability issues. Must be a `mailto:` URL or a valid `https://` URL — not a bare email. Defaults to `mailto:hello@kanikarose.com` if unset, which works fine, but setting it explicitly to `Kanika@kanikarose.com` is cleaner and makes deliverability bounces more findable.
+
 ## 💼 Coaching Packages (Stripe one-time)
 
 | productKey | Package | Sessions |
@@ -479,6 +562,12 @@ ADMIN_EMAIL="admin@example.com"
 NEXT_PUBLIC_BASE_URL="http://localhost:3000"
 NODE_ENV="development"
 ADMIN_SECRET="your-admin-secret-for-presale-stats"
+
+# PWA / Web Push (see PWA section above for full deploy steps)
+# Generate once with: npx web-push generate-vapid-keys
+NEXT_PUBLIC_VAPID_PUBLIC_KEY="<public key — exposed to client by design>"
+VAPID_PRIVATE_KEY="<private key — server only, NEVER NEXT_PUBLIC_>"
+VAPID_SUBJECT="mailto:Kanika@kanikarose.com"
 ```
 
 ### Production Configuration
@@ -650,6 +739,13 @@ The `ADMIN_SECRET` env var (server-side, not exposed) is still used as a fallbac
 - **TLS note:** When sending from local machine, add `tls: { rejectUnauthorized: false }` to nodemailer config
 
 ## 🔄 Recent Updates
+
+### April 2026 (30th) — PWA Phase 1 + Phase 2 (web push)
+
+- **Phase 1** (commit `1acf9cb`). Installable PWA: `app/manifest.ts`, `public/sw.js` (push + notificationclick handlers wired), `components/pwa/{ServiceWorkerRegister,InstallPrompt}.tsx` mounted member-side only.
+- **Phase 2** (commit `51d2560`). Web push end-to-end: `lib/push/index.ts` (sendPushToUser + sendPushToUsers, VAPID, per-user fan-out, auto-prune expired endpoints, per-category opt-in), three API routes (`/api/push/{subscribe,unsubscribe,preferences}`), `NotificationPrompt.tsx` client subscribe flow, five-toggle `NotificationPreferences` card on `/consilium/profile`, `lib/questions/notify-asker.ts` wired for the question-answered category. See **Progressive Web App (PWA)** section above for full details.
+- **Outstanding before this fires in prod:** generate VAPID keys, set 3 env vars on Railway, apply migration `20260430000000_add_push_subscriptions` via `prisma migrate deploy`, push commits. Order matters — the migration must run before the code lands.
+- **Not yet wired:** `voiceNote` / `forumReply` / `mention` / `broadcast` senders. The toggle UI saves preferences correctly in the meantime; senders will be wired in follow-up commits once question-answered has cooked.
 
 ### April 2026 (25th) — quiz-credit upsell + attribution + admin fixes
 
