@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { m, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import { ArrowRight, Mail, Loader2, CheckCircle2, ShieldCheck } from "lucide-react";
