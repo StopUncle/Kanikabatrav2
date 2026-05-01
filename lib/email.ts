@@ -182,6 +182,38 @@ export const sendEmail = async (
 ): Promise<boolean> => {
   for (let attempt = 1; attempt <= maxRetries; attempt++) {
     try {
+      // Microsoft-recipient override. When MS SMTP credentials are
+      // configured AND the recipient is on a Microsoft consumer domain
+      // (outlook.com / hotmail.* / live.com / etc), route through
+      // Microsoft's own SMTP server. Microsoft heavily favours emails
+      // delivered via its own infrastructure for inbox placement —
+      // sending Resend → Outlook on a fresh domain commonly lands in
+      // junk for the first 2-4 weeks of reputation building.
+      // Defensive: if MS_SMTP_USER is unset, this branch no-ops and
+      // falls through to Resend (status quo for everyone else).
+      if (
+        process.env.MS_SMTP_USER &&
+        process.env.MS_SMTP_PASS &&
+        isMicrosoftEmail(options.to)
+      ) {
+        const msTransport = getMicrosoftTransporter();
+        if (msTransport) {
+          const info = await msTransport.sendMail({
+            from: MS_FROM_EMAIL || FROM_EMAIL,
+            to: options.to,
+            subject: options.subject,
+            text: options.text || options.html.replace(/<[^>]*>/g, ""),
+            html: options.html,
+            replyTo: options.replyTo,
+            headers: options.headers,
+          });
+          logger.info(
+            `Email sent to ${options.to} via Microsoft SMTP (attempt ${attempt}) - Message ID: ${info.messageId}`,
+          );
+          return true;
+        }
+      }
+
       // Prefer Resend when configured (better deliverability, no SMTP quirks)
       if (resendClient) {
         const { error } = await resendClient.emails.send({
