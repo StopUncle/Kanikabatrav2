@@ -155,8 +155,8 @@ export default function MiniQuizClient() {
                 closest to, drawn from the DSM-5 Cluster B framework.
               </p>
               <p className="text-text-gray/70 text-sm font-light max-w-lg mx-auto mb-10">
-                Free. The same instrument Kanika uses with members,
-                shortened.
+                Free. Built from the same six-axis Cluster B framework
+                as the full Dark Mirror Assessment.
               </p>
 
               <button
@@ -170,12 +170,12 @@ export default function MiniQuizClient() {
 
               <p className="text-text-gray/50 text-xs mt-6">
                 No signup to start. Email at the end so we can send
-                you the full clinical report.
+                you the full clinical-style synthesis.
               </p>
 
               <div className="mt-12 pt-8 border-t border-warm-gold/10 max-w-md mx-auto">
                 <p className="text-text-gray/60 text-xs uppercase tracking-[0.25em] mb-2">
-                  Want the full clinical instrument?
+                  Want the full assessment?
                 </p>
                 <Link
                   href="/quiz"
@@ -269,11 +269,11 @@ export default function MiniQuizClient() {
                 Where to send it.
               </h2>
               <p className="text-text-gray text-base font-light leading-relaxed max-w-md mx-auto mb-8">
-                You&apos;ll see the full clinical synthesis on the next
-                screen, the radar across all six axes, the dominant
-                and secondary read, and the specific way this pattern
-                shows up in relationships. We also email you a copy
-                so it doesn&apos;t disappear when you close the tab.
+                You&apos;ll see the full clinical-style synthesis on
+                the next screen, the radar across all six axes, the
+                dominant and secondary read, and the specific way this
+                pattern shows up in relationships. We also email you a
+                copy so it doesn&apos;t disappear when you close the tab.
               </p>
 
               <form

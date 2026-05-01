@@ -2432,8 +2432,7 @@ export const sendMiniDarkMirrorResult = async (params: {
     </p>
 
     <p class="lux-text" style="color: #f5efe2; font-size: 15px; line-height: 1.85; margin: 0 0 22px 0;">
-      I read every result that comes through this quiz. Here&rsquo;s
-      yours.
+      Here&rsquo;s your read.
     </p>
 
     <p style="color: #d4af37; font-size: 11px; text-transform: uppercase; letter-spacing: 2px; margin: 32px 0 6px 0;">
