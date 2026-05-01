@@ -13,7 +13,7 @@ import {
  * across all dominant×secondary pairings.
  *
  * Voice: clinical-detached. Kanika-personal voice lives in the
- * follow-up email instead — keeps the page feeling like a real
+ * follow-up email instead, keeps the page feeling like a real
  * clinical artifact.
  *
  * Animated reveal: card fades in 200ms after the radar starts

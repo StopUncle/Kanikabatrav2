@@ -26,7 +26,7 @@ import ConsiliumAxisTile from "./ConsiliumAxisTile";
  * State machine:
  *   intro → quiz (12 sequential questions) → email-gate → reveal
  *
- * The reveal is the magnificent moment — animated radar (the
+ * The reveal is the magnificent moment, animated radar (the
  * screenshot moment), composed clinical card (primary + secondary
  * axis synthesis), axis-tailored Consilium tile (the funnel).
  *
@@ -270,7 +270,7 @@ export default function MiniQuizClient() {
               </h2>
               <p className="text-text-gray text-base font-light leading-relaxed max-w-md mx-auto mb-8">
                 You&apos;ll see the full clinical synthesis on the next
-                screen — the radar across all six axes, the dominant
+                screen, the radar across all six axes, the dominant
                 and secondary read, and the specific way this pattern
                 shows up in relationships. We also email you a copy
                 so it doesn&apos;t disappear when you close the tab.
@@ -364,7 +364,7 @@ export default function MiniQuizClient() {
                 </h1>
               </m.div>
 
-              {/* Radar — the screenshot moment */}
+              {/* Radar, the screenshot moment */}
               <m.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
@@ -384,7 +384,7 @@ export default function MiniQuizClient() {
               {/* Axis-tailored Consilium tile */}
               <ConsiliumAxisTile result={result} />
 
-              {/* Footer — email confirmation + upsell */}
+              {/* Footer, email confirmation + upsell */}
               <m.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}

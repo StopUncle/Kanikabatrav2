@@ -2,6 +2,11 @@
 
 This file contains development commands and notes for Claude AI assistant.
 
+## ✍️ Writing Style Rules
+
+- **No em dashes (`—` / `&mdash;`).** They read as "classic AI" to readers and erode the human voice the brand depends on. Use commas, periods, colons, semicolons, or parentheses instead, whichever fits the clause. Allowed only when *absolutely necessary*: signature lines (e.g. `— Kanika` closing a letter) and dictionary-style term/definition pairs (`<strong>Term</strong> &mdash; description`). Everything else: rewrite.
+- This rule applies to user-visible content (page copy, email bodies, quiz questions, marketing) AND to code comments, since comments leak into PR reviews and signal AI authorship.
+
 ## 🚀 Quick Commands
 
 ```bash

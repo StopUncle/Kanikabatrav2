@@ -1,10 +1,10 @@
-// The Mini Dark Mirror — free, email-gated, 12-question clinical
+// The Mini Dark Mirror, free, email-gated, 12-question clinical
 // assessment. The free front-door of the entire $10M roadmap funnel.
 //
 // Design philosophy:
 //   1. Questions are scenario-based and CLINICALLY non-obvious.
 //      A reader can't see "this is the narcissist option" on first
-//      read — the DSM-5 / Hare PCL-R signatures are embedded in
+//      read, the DSM-5 / Hare PCL-R signatures are embedded in
 //      the texture of each answer, not the topic.
 //   2. Every question has six answer choices, one per axis. So
 //      every axis gets twelve scoring opportunities and the
@@ -16,7 +16,7 @@
 //   4. The Consilium tie-in on the result page is axis-tailored:
 //      different content recommended per dominant axis.
 //
-// The full $9.99 quiz at /quiz remains the upsell — 20 questions,
+// The full $9.99 quiz at /quiz remains the upsell,20 questions,
 // functioning level (high/moderate/low), and the clinical-grade
 // long-form report. The mini's job is to be substantive enough
 // that taking the full version feels like the natural next step.
@@ -94,7 +94,7 @@ export const MINI_QUIZ_QUESTIONS: MiniQuestion[] = [
       {
         id: "1c",
         axis: "borderline",
-        text: "You feel a wave of grief — but it's mostly your own parent flashing through your head, and what you'd be feeling if it was you.",
+        text: "You feel a wave of grief, but it's mostly your own parent flashing through your head, and what you'd be feeling if it was you.",
       },
       {
         id: "1d",
@@ -109,7 +109,7 @@ export const MINI_QUIZ_QUESTIONS: MiniQuestion[] = [
       {
         id: "1f",
         axis: "sociopathic",
-        text: "You're oddly calm. You want to know logistics — when, how, what's needed — before the feelings part lands.",
+        text: "You're oddly calm. You want to know logistics (when, how, what's needed) before the feelings part lands.",
       },
     ],
   },
@@ -137,7 +137,7 @@ export const MINI_QUIZ_QUESTIONS: MiniQuestion[] = [
       {
         id: "2d",
         axis: "narcissistic",
-        text: "The first thing you feel is a flash of insult — that they'd choose distance from you. Then a cooler thought: how would this look to others, and how do you frame it.",
+        text: "The first thing you feel is a flash of insult, that they'd choose distance from you. Then a cooler thought: how would this look to others, and how do you frame it.",
       },
       {
         id: "2e",
@@ -160,17 +160,17 @@ export const MINI_QUIZ_QUESTIONS: MiniQuestion[] = [
       {
         id: "3a",
         axis: "narcissistic",
-        text: "You pivot the framing. You weren't wrong about the thing — you were misunderstood about the thing, and they should have asked clearly. The moral high ground stays intact.",
+        text: "You pivot the framing. You weren't wrong about the thing, you were misunderstood about the thing, and they should have asked clearly. The moral high ground stays intact.",
       },
       {
         id: "3b",
         axis: "psychopathic",
-        text: "You note the wrongness internally and file it. You don't concede now — that would weaken your position. You'll concede later in a context where it costs you less.",
+        text: "You note the wrongness internally and file it. You don't concede now, that would weaken your position. You'll concede later in a context where it costs you less.",
       },
       {
         id: "3c",
         axis: "neurotypical",
-        text: "You stop, take a breath, and say \"wait — I think I'm wrong about this. Let me think for a second.\" Even if it costs you the argument.",
+        text: "You stop, take a breath, and say \"wait, I think I'm wrong about this. Let me think for a second.\" Even if it costs you the argument.",
       },
       {
         id: "3d",
@@ -213,12 +213,12 @@ export const MINI_QUIZ_QUESTIONS: MiniQuestion[] = [
       {
         id: "4d",
         axis: "narcissistic",
-        text: "The irritation isn't quiet at all. You feel something close to rage — not at them, but at the idea that anyone in this room might not realise the original thought was yours.",
+        text: "The irritation isn't quiet at all. You feel something close to rage, not at them, but at the idea that anyone in this room might not realise the original thought was yours.",
       },
       {
         id: "4e",
         axis: "histrionic",
-        text: "You laugh, audibly, and say \"love it, I literally said this exact thing last week, ha!\" — confronting it through performance, charming the room.",
+        text: "You laugh, audibly, and say \"love it, I literally said this exact thing last week, ha!\", confronting it through performance, charming the room.",
       },
       {
         id: "4f",
@@ -231,12 +231,12 @@ export const MINI_QUIZ_QUESTIONS: MiniQuestion[] = [
     id: 5,
     title: "The Spike of Pleasure",
     scenario:
-      "You catch yourself, briefly, enjoying a co-worker's misfortune — they got passed over, embarrassed in front of leadership, something. The thirty seconds after you notice the feeling:",
+      "You catch yourself, briefly, enjoying a co-worker's misfortune, they got passed over, embarrassed in front of leadership, something. The thirty seconds after you notice the feeling:",
     answers: [
       {
         id: "5a",
         axis: "histrionic",
-        text: "You feel the spike, then immediately want to tell someone — partly to share it, partly to test whether the laugh is yours alone or the group's.",
+        text: "You feel the spike, then immediately want to tell someone, partly to share it, partly to test whether the laugh is yours alone or the group's.",
       },
       {
         id: "5b",
@@ -246,7 +246,7 @@ export const MINI_QUIZ_QUESTIONS: MiniQuestion[] = [
       {
         id: "5c",
         axis: "neurotypical",
-        text: "You feel uncomfortable about the feeling. You don't beat yourself up — schadenfreude is human — but you check yourself, and decide not to amplify it.",
+        text: "You feel uncomfortable about the feeling. You don't beat yourself up, schadenfreude is human, but you check yourself, and decide not to amplify it.",
       },
       {
         id: "5d",
@@ -279,12 +279,12 @@ export const MINI_QUIZ_QUESTIONS: MiniQuestion[] = [
       {
         id: "6b",
         axis: "neurotypical",
-        text: "A specific image. Probably banal — a kitchen at 10am, your kid laughing about something, low-stakes. The kind of \"want\" that isn't strategic.",
+        text: "A specific image. Probably banal, a kitchen at 10am, your kid laughing about something, low-stakes. The kind of \"want\" that isn't strategic.",
       },
       {
         id: "6c",
         axis: "psychopathic",
-        text: "A pause. You're aware the question is testing for emotional content. You pick something believable — security, autonomy, a career milestone. You're choosing it strategically.",
+        text: "A pause. You're aware the question is testing for emotional content. You pick something believable, security, autonomy, a career milestone. You're choosing it strategically.",
       },
       {
         id: "6d",
@@ -294,7 +294,7 @@ export const MINI_QUIZ_QUESTIONS: MiniQuestion[] = [
       {
         id: "6e",
         axis: "histrionic",
-        text: "A vivid scene — applause, a moment, a room turning to look. The specifics shift each time you imagine it. The shape of the want is the looking.",
+        text: "A vivid scene, applause, a moment, a room turning to look. The specifics shift each time you imagine it. The shape of the want is the looking.",
       },
       {
         id: "6f",
@@ -307,7 +307,7 @@ export const MINI_QUIZ_QUESTIONS: MiniQuestion[] = [
     id: 7,
     title: "The Hallway",
     scenario:
-      "You're about to walk into a room where ten people are going to evaluate you — interview panel, dinner with someone's family, audition, whatever. You're in the hallway. The minute before you walk in:",
+      "You're about to walk into a room where ten people are going to evaluate you, interview panel, dinner with someone's family, audition, whatever. You're in the hallway. The minute before you walk in:",
     answers: [
       {
         id: "7a",
@@ -360,12 +360,12 @@ export const MINI_QUIZ_QUESTIONS: MiniQuestion[] = [
       {
         id: "8c",
         axis: "psychopathic",
-        text: "Mild interest. You file it as data. You won't reach out — better to see what they do when they have to.",
+        text: "Mild interest. You file it as data. You won't reach out, better to see what they do when they have to.",
       },
       {
         id: "8d",
         axis: "narcissistic",
-        text: "A quiet, hot offence. You went out of your way for them last month. That kind of asymmetry doesn't just happen — it gets noticed and corrected.",
+        text: "A quiet, hot offence. You went out of your way for them last month. That kind of asymmetry doesn't just happen, it gets noticed and corrected.",
       },
       {
         id: "8e",
@@ -383,7 +383,7 @@ export const MINI_QUIZ_QUESTIONS: MiniQuestion[] = [
     id: 9,
     title: "The Wedding Question",
     scenario:
-      "A stranger at a wedding asks you, casually, to describe yourself. They mean it lightly — small talk. You have about thirty seconds to answer. What actually comes out of your mouth?",
+      "A stranger at a wedding asks you, casually, to describe yourself. They mean it lightly, small talk. You have about thirty seconds to answer. What actually comes out of your mouth?",
     answers: [
       {
         id: "9a",
@@ -398,7 +398,7 @@ export const MINI_QUIZ_QUESTIONS: MiniQuestion[] = [
       {
         id: "9c",
         axis: "psychopathic",
-        text: "A frame that you've used before. Calibrated to the room — at this wedding, you lead with the warmest, most relational part. At a different wedding, different lead.",
+        text: "A frame that you've used before. Calibrated to the room, at this wedding, you lead with the warmest, most relational part. At a different wedding, different lead.",
       },
       {
         id: "9d",
@@ -421,7 +421,7 @@ export const MINI_QUIZ_QUESTIONS: MiniQuestion[] = [
     id: 10,
     title: "The Three-Month Lie",
     scenario:
-      "You've been lying to someone you love about something small — not catastrophic, but ongoing. You realise tonight that it's been going for three months. The honest content of the next twenty minutes inside your head:",
+      "You've been lying to someone you love about something small, not catastrophic, but ongoing. You realise tonight that it's been going for three months. The honest content of the next twenty minutes inside your head:",
     answers: [
       {
         id: "10a",
@@ -436,7 +436,7 @@ export const MINI_QUIZ_QUESTIONS: MiniQuestion[] = [
       {
         id: "10c",
         axis: "narcissistic",
-        text: "A justification. The lie was protective — of them, of the relationship, of yourself. You actually weren't wrong to do it. The problem is them needing to be lied to.",
+        text: "A justification. The lie was protective, of them, of the relationship, of yourself. You actually weren't wrong to do it. The problem is them needing to be lied to.",
       },
       {
         id: "10d",
@@ -459,12 +459,12 @@ export const MINI_QUIZ_QUESTIONS: MiniQuestion[] = [
     id: 11,
     title: "The Win",
     scenario:
-      "You find out you got something you wanted — promotion, role, win. The first call you want to make is:",
+      "You find out you got something you wanted, promotion, role, win. The first call you want to make is:",
     answers: [
       {
         id: "11a",
         axis: "narcissistic",
-        text: "The person whose recognition will mean the most professionally. You're calling because you want them to know — and to know that you wanted them to know.",
+        text: "The person whose recognition will mean the most professionally. You're calling because you want them to know, and to know that you wanted them to know.",
       },
       {
         id: "11b",
@@ -502,7 +502,7 @@ export const MINI_QUIZ_QUESTIONS: MiniQuestion[] = [
       {
         id: "12a",
         axis: "narcissistic",
-        text: "An acute awareness of being unobserved. You feel the lack — the absence of anyone reflecting you back. It makes the room feel smaller.",
+        text: "An acute awareness of being unobserved. You feel the lack, the absence of anyone reflecting you back. It makes the room feel smaller.",
       },
       {
         id: "12b",
@@ -534,15 +534,15 @@ export const MINI_QUIZ_QUESTIONS: MiniQuestion[] = [
 ];
 
 // ============================================================
-// Clinical synthesis content — written for non-Buzzfeed readability
+// Clinical synthesis content, written for non-Buzzfeed readability
 // ============================================================
 //
 // Each axis has THREE pieces of content used in the result render:
 //   1. dsmLabel: the diagnostic anchor (DSM-5 cluster + criteria)
 //   2. primarySynthesis: ~140-word clinical paragraph for when this
-//      axis is the DOMINANT one — reads like an intake summary.
+//      axis is the DOMINANT one, reads like an intake summary.
 //   3. secondaryNote: ~70-word note for when this axis is the
-//      SECONDARY one — describes how it modifies the dominant axis.
+//      SECONDARY one, describes how it modifies the dominant axis.
 //
 // Voice on the page is clinical-detached. The follow-up email
 // re-frames the same content in Kanika-personal voice for the
@@ -557,51 +557,51 @@ export interface AxisClinicalContent {
 export const AXIS_CLINICAL: Record<PersonalityType, AxisClinicalContent> = {
   psychopathic: {
     dsmLabel:
-      "Cluster B / Hare PCL-R Factor 1 — primary affective psychopathy",
+      "Cluster B / Hare PCL-R Factor 1, primary affective psychopathy",
     primarySynthesis:
-      "Your answers cluster around the primary-affect signature: shallow affect, low autonomic reactivity to threat, and a strategic relationship to the emotional content of social life. Where most people FEEL their way through scenarios and then narrate the feeling afterwards, you appear to do the reverse — you assess, then perform the appropriate emotion if the situation calls for one. This is the clinical hallmark of Hare's Factor 1: not the absence of feeling, but the management of it. In relationships, this shows up as a kind of measured distance — partners describe you as composed, hard to read, present without being porous. The strength is calibration. The cost is that the people closest to you may, over time, come to suspect that the warmth they receive is performed rather than felt — and they're not entirely wrong, even when the affection is real.",
+      "Your answers cluster around the primary-affect signature: shallow affect, low autonomic reactivity to threat, and a strategic relationship to the emotional content of social life. Where most people FEEL their way through scenarios and then narrate the feeling afterwards, you appear to do the reverse. You assess, then perform the appropriate emotion if the situation calls for one. This is the clinical hallmark of Hare's Factor 1: not the absence of feeling, but the management of it. In relationships, this shows up as a kind of measured distance. Partners describe you as composed, hard to read, present without being porous. The strength is calibration. The cost is that the people closest to you may, over time, come to suspect that the warmth they receive is performed rather than felt, and they're not entirely wrong, even when the affection is real.",
     secondaryNote:
-      "When primary-affect psychopathy sits as your secondary axis, it shows up as the cold spine inside whatever else you're doing — the part of you that stays operational when the dominant pattern is at full volume. It's the strategic discipline that keeps the rest of your operating system effective.",
+      "When primary-affect psychopathy sits as your secondary axis, it shows up as the cold spine inside whatever else you're doing, the part of you that stays operational when the dominant pattern is at full volume. It's the strategic discipline that keeps the rest of your operating system effective.",
   },
   sociopathic: {
-    dsmLabel: "Cluster B / DSM-5 Antisocial PD — secondary, reactive subtype",
+    dsmLabel: "Cluster B / DSM-5 Antisocial PD, secondary, reactive subtype",
     primarySynthesis:
-      "Your scoring sits in the secondary-psychopathy band — the reactive, impulsive, lower-affective-control end of the antisocial cluster. Unlike the primary-affect type, your emotional life is intense; you feel things quickly and act on them quickly. The DSM-5 Antisocial PD criteria you map most clearly onto are impulsivity (criterion 3), irritability and aggression (criterion 4), and reckless disregard for self (criterion 5). In relationships, this presents as a pattern of high-heat connection followed by abrupt disengagement — you don't lack feeling, but you don't tolerate the slow work of repair when something breaks. The strength is that you're authentic in a world of performers; what people get from you is real, even when it's brief. The cost is the bridges. They tend not to come back.",
+      "Your scoring sits in the secondary-psychopathy band: the reactive, impulsive, lower-affective-control end of the antisocial cluster. Unlike the primary-affect type, your emotional life is intense; you feel things quickly and act on them quickly. The DSM-5 Antisocial PD criteria you map most clearly onto are impulsivity (criterion 3), irritability and aggression (criterion 4), and reckless disregard for self (criterion 5). In relationships, this presents as a pattern of high-heat connection followed by abrupt disengagement. You don't lack feeling, but you don't tolerate the slow work of repair when something breaks. The strength is that you're authentic in a world of performers; what people get from you is real, even when it's brief. The cost is the bridges. They tend not to come back.",
     secondaryNote:
-      "When the reactive subtype runs as your secondary, it's the impulse-to-action shortcut that takes over when the dominant pattern is overloaded. The version of you that bails, walks out of the bar, kisses the wrong person — not strategy, just velocity.",
+      "When the reactive subtype runs as your secondary, it's the impulse-to-action shortcut that takes over when the dominant pattern is overloaded. The version of you that bails, walks out of the bar, kisses the wrong person, not strategy, just velocity.",
   },
   narcissistic: {
     dsmLabel: "Cluster B / DSM-5 Narcissistic PD (301.81)",
     primarySynthesis:
-      "Your answers cluster around the centrality reflex — the subtle organising principle in which the self is the natural reference point of any given situation. The DSM-5 NPD criteria you map most clearly onto are entitlement (criterion 5), interpersonal exploitation (criterion 6), and the cluster around grandiosity and admiration-seeking (criteria 1, 4). What makes this pattern non-obvious from the inside is that it doesn't feel like vanity; it feels like clarity. You see your own perspective with high resolution and other perspectives at lower resolution, which makes your version of events feel objectively correct. In relationships, this presents as a partner who is reliably present at moments of public success and reliably absent during quieter low-stakes intimacy. The strength is decisiveness — you act when others stall. The cost is that the people closest to you, over time, learn that bringing you small needs is rarely worth the cost of competing with the big version of you.",
+      "Your answers cluster around the centrality reflex: the subtle organising principle in which the self is the natural reference point of any given situation. The DSM-5 NPD criteria you map most clearly onto are entitlement (criterion 5), interpersonal exploitation (criterion 6), and the cluster around grandiosity and admiration-seeking (criteria 1, 4). What makes this pattern non-obvious from the inside is that it doesn't feel like vanity; it feels like clarity. You see your own perspective with high resolution and other perspectives at lower resolution, which makes your version of events feel objectively correct. In relationships, this presents as a partner who is reliably present at moments of public success and reliably absent during quieter low-stakes intimacy. The strength is decisiveness; you act when others stall. The cost is that the people closest to you, over time, learn that bringing you small needs is rarely worth the cost of competing with the big version of you.",
     secondaryNote:
-      "When the narcissistic axis runs secondary, it's the self-protective frame that activates under threat — the pivot to high ground when the dominant pattern can't handle being wrong. It keeps the ego intact while the rest of you adapts.",
+      "When the narcissistic axis runs secondary, it's the self-protective frame that activates under threat, the pivot to high ground when the dominant pattern can't handle being wrong. It keeps the ego intact while the rest of you adapts.",
   },
   borderline: {
-    dsmLabel: "Cluster B / DSM-5 Borderline PD (301.83) — affective subtype",
+    dsmLabel: "Cluster B / DSM-5 Borderline PD (301.83), affective subtype",
     primarySynthesis:
-      "Your answers cluster around the BPD affective signature: marked reactivity of mood, identity disturbance, and the abandonment-vigilance reflex (DSM-5 criteria 1, 3, and 6). What discriminates this pattern from ordinary emotional sensitivity is the speed and amplitude — a delayed text reads as a verdict, a partner's quiet evening reads as the beginning of the end, and the verdict arrives before the audit can. Identity diffusion shows up in your answers around self-description and the wedding-stranger scenario; your sense of self is felt most clearly in proximity to specific people, and least clearly when you're alone. In relationships, this presents as a pattern of intense closeness followed by sudden distance, often initiated by you in pre-emptive defence. The strength is depth — you feel things at a register most people only access in grief. The cost is that the people you love spend a lot of energy trying to hold both you and themselves at once.",
+      "Your answers cluster around the BPD affective signature: marked reactivity of mood, identity disturbance, and the abandonment-vigilance reflex (DSM-5 criteria 1, 3, and 6). What discriminates this pattern from ordinary emotional sensitivity is the speed and amplitude. A delayed text reads as a verdict, a partner's quiet evening reads as the beginning of the end, and the verdict arrives before the audit can. Identity diffusion shows up in your answers around self-description and the wedding-stranger scenario; your sense of self is felt most clearly in proximity to specific people, and least clearly when you're alone. In relationships, this presents as a pattern of intense closeness followed by sudden distance, often initiated by you in pre-emptive defence. The strength is depth; you feel things at a register most people only access in grief. The cost is that the people you love spend a lot of energy trying to hold both you and themselves at once.",
     secondaryNote:
       "When the borderline axis runs secondary, it's the abandonment-vigilance the rest of your operating system is quietly running underneath. It's why even the cold-affect parts of you check, twice, whether the relationship is still safe.",
   },
   histrionic: {
     dsmLabel: "Cluster B / DSM-5 Histrionic PD (301.50)",
     primarySynthesis:
-      "Your answers cluster around the attention-coordinative signature of histrionic PD — emotional expression as an inherently relational act. The DSM-5 HPD criteria you map most clearly onto are theatrical and exaggerated emotional expression (criterion 6), discomfort when not at the centre of attention (criterion 1), and the rapid, shallow shifting of emotion (criterion 3). What makes this pattern non-obvious is that the emotion is real; it's not feigned. The performance and the feeling are running on the same circuit, which means the distinction matters less than people who don't have this pattern tend to assume. In relationships, this presents as a partner who is uncommonly fun, magnetic in groups, and harder than average to be alone with quietly. The strength is the room you walk into; you raise the temperature of any space. The cost is that intimacy without an audience can feel, even to you, like a stage with no lights — which is one of the cleanest signals of the pattern.",
+      "Your answers cluster around the attention-coordinative signature of histrionic PD: emotional expression as an inherently relational act. The DSM-5 HPD criteria you map most clearly onto are theatrical and exaggerated emotional expression (criterion 6), discomfort when not at the centre of attention (criterion 1), and the rapid, shallow shifting of emotion (criterion 3). What makes this pattern non-obvious is that the emotion is real; it's not feigned. The performance and the feeling are running on the same circuit, which means the distinction matters less than people who don't have this pattern tend to assume. In relationships, this presents as a partner who is uncommonly fun, magnetic in groups, and harder than average to be alone with quietly. The strength is the room you walk into; you raise the temperature of any space. The cost is that intimacy without an audience can feel, even to you, like a stage with no lights, which is one of the cleanest signals of the pattern.",
     secondaryNote:
       "When the histrionic axis runs secondary, it's the relational instinct that turns whatever the dominant pattern is doing into something that lands in a room. It's the polish on the delivery, the timing on the joke, the presence in the moment.",
   },
   neurotypical: {
-    dsmLabel: "Outside Cluster B — secure, integrated baseline",
+    dsmLabel: "Outside Cluster B, secure, integrated baseline",
     primarySynthesis:
-      "Your answers don't cluster around any single Cluster B signature. The pattern that emerges is best described in the negative: you don't reflexively centre yourself, you don't reflexively perform, you don't reflexively catastrophise, and you don't reflexively disengage. The DSM-5 alternative model uses the term \"integrated personality functioning\" — coherent identity, stable self-direction, capacity for empathy without absorption, and the ability to hold intimacy without losing self in it. In relationships, this presents as someone who is steady. Not flat — steady. You feel the full range, but the range doesn't run you. The strength is that the people in your life experience you as reliable, which is a quietly rare resource. The blind spot — and there is one — is that you tend to assume good faith in others longer than the people around you have earned, which is the failure mode of the Cluster B-naïve operator. Calibration is the work, not suppression.",
+      "Your answers don't cluster around any single Cluster B signature. The pattern that emerges is best described in the negative: you don't reflexively centre yourself, you don't reflexively perform, you don't reflexively catastrophise, and you don't reflexively disengage. The DSM-5 alternative model uses the term \"integrated personality functioning\": coherent identity, stable self-direction, capacity for empathy without absorption, and the ability to hold intimacy without losing self in it. In relationships, this presents as someone who is steady. Not flat, steady. You feel the full range, but the range doesn't run you. The strength is that the people in your life experience you as reliable, which is a quietly rare resource. The blind spot, and there is one, is that you tend to assume good faith in others longer than the people around you have earned, which is the failure mode of the Cluster B-naïve operator. Calibration is the work, not suppression.",
     secondaryNote:
       "When neurotypical baseline runs secondary, it's the steady backstop under whatever the dominant pattern is doing. The capacity to course-correct, repair, hold a hard conversation without setting fire to the relationship.",
   },
 };
 
 // ============================================================
-// Consilium tie-in content — axis-tailored
+// Consilium tie-in content, axis-tailored
 // ============================================================
 
 export interface AxisConsiliumTie {
@@ -619,9 +619,9 @@ export const AXIS_CONSILIUM_TIES: Record<PersonalityType, AxisConsiliumTie> = {
   psychopathic: {
     headline: "What works for the primary-affect operator",
     bullets: [
-      "The Track-Toxic-Narc scenarios — your blind spot is partners who out-perform calibration.",
+      "The Track-Toxic-Narc scenarios, your blind spot is partners who out-perform calibration.",
       "Voice notes on detection and exit, where Kanika's read of the pattern matches your own.",
-      "Ask Kanika queue — your axis has the highest signal-to-noise of any cohort.",
+      "Ask Kanika queue, your axis has the highest signal-to-noise of any cohort.",
     ],
     cta: "Step inside the Consilium",
   },
@@ -637,7 +637,7 @@ export const AXIS_CONSILIUM_TIES: Record<PersonalityType, AxisConsiliumTie> = {
   narcissistic: {
     headline: "For the centrality-reflex pattern",
     bullets: [
-      "Track-Toxic-Narc — built specifically to reverse the centrality lens.",
+      "Track-Toxic-Narc, built specifically to reverse the centrality lens.",
       "Voice notes on quiet intimacy and how the Emperor pattern tolerates it.",
       "Classroom modules on receiving small needs without the cost asymmetry.",
     ],
@@ -646,7 +646,7 @@ export const AXIS_CONSILIUM_TIES: Record<PersonalityType, AxisConsiliumTie> = {
   borderline: {
     headline: "Built for the storm-pattern operator",
     bullets: [
-      "Track-BPD — the only simulator track designed with mutual suffering in mind.",
+      "Track-BPD, the only simulator track designed with mutual suffering in mind.",
       "Voice notes on Mirror-Bonding and Splitting (the two patterns most weaponised against you).",
       "Daily-insight feed weighted toward affective regulation and identity work.",
     ],
@@ -664,9 +664,9 @@ export const AXIS_CONSILIUM_TIES: Record<PersonalityType, AxisConsiliumTie> = {
   neurotypical: {
     headline: "For the integrated baseline",
     bullets: [
-      "The simulator's Cluster-B Lab — pattern recognition for the operator who doesn't have the pattern.",
+      "The simulator's Cluster-B Lab, pattern recognition for the operator who doesn't have the pattern.",
       "Voice notes on calibrating good-faith assumptions to the actual person across from you.",
-      "Ask Kanika queue — your axis tends to ask the cleanest questions about the others.",
+      "Ask Kanika queue, your axis tends to ask the cleanest questions about the others.",
     ],
     cta: "Step inside the Consilium",
   },
@@ -725,7 +725,7 @@ export function pickDominantType(scores: QuizScores): PersonalityType {
   return best;
 }
 
-/** Pick the secondary axis — same as pickDominantType but excluding
+/** Pick the secondary axis, same as pickDominantType but excluding
  *  the dominant. Used for the composed clinical synthesis. */
 export function pickSecondaryType(
   scores: QuizScores,
@@ -753,7 +753,7 @@ export function pickSecondaryType(
 
 // Profile names + taglines, lifted from the existing PERSONALITY_PROFILES
 // in lib/quiz-data.ts. We duplicate them here ONLY to avoid a circular
-// import — the email template imports this file, and quiz-data is large.
+// import, the email template imports this file, and quiz-data is large.
 const ARCHETYPE_NAMES: Record<PersonalityType, { name: string; tagline: string }> = {
   psychopathic: { name: "The Predator", tagline: "Cold. Calculated. Unstoppable." },
   sociopathic: { name: "The Wildcard", tagline: "Rules were made to be broken." },

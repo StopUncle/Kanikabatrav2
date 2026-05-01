@@ -11,12 +11,12 @@ import {
 /**
  * Axis-tailored Consilium tile. Surfaces below the clinical card
  * on the Mini Dark Mirror result page. Each of the 6 dominant
- * axes gets a different tile — different headline, different 3
+ * axes gets a different tile, different headline, different 3
  * bullets naming actual Consilium content relevant to that
  * pattern.
  *
  * Reveal: fades in 1.0s after the radar starts, so it's the last
- * piece of the choreographed reveal — first the visual, then the
+ * piece of the choreographed reveal, first the visual, then the
  * substance, then the funnel ask.
  */
 

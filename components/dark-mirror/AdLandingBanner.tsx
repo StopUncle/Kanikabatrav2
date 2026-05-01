@@ -8,7 +8,7 @@ import { useEffect, useState } from "react";
  * Reads URL params on mount and surfaces a personalised acknowledgement
  * when the visitor arrived from a paid ad or a tagged organic post.
  * Closes the cognitive gap between "I clicked an ad about X" and
- * "I'm on a page that shows me three options" — without that gap,
+ * "I'm on a page that shows me three options", without that gap,
  * paid-ad ROAS leaks 20-40% to bouncing.
  *
  * The banner is intentionally thin (single-line strip) so it doesn't
@@ -23,7 +23,7 @@ interface CampaignMatch {
    *  promise of the ad creative without being so specific that it
    *  fights with whatever the actual ad said. */
   headline: string;
-  /** Short subline, optional — adds context without crowding the
+  /** Short subline, optional, adds context without crowding the
    *  banner. Skip on mobile-tight builds. */
   subline?: string;
 }
@@ -32,7 +32,7 @@ interface CampaignMatch {
  * Map utm_campaign prefixes to tailored banner copy. Match longest-
  * prefix-first so a "mirror-bonding-launch-v2" entry would beat
  * "mirror-bonding-launch" if both existed. Add new campaign names
- * here as ads launch — no code change needed downstream.
+ * here as ads launch, no code change needed downstream.
  */
 const CAMPAIGN_OVERRIDES: Record<string, CampaignMatch> = {
   "mirror-bonding": {

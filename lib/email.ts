@@ -191,7 +191,7 @@ export const sendEmail = async (
       // configured AND the recipient is on a Microsoft consumer domain
       // (outlook.com / hotmail.* / live.com / etc), try routing through
       // Microsoft's own SMTP server. Microsoft heavily favours emails
-      // delivered via its own infrastructure for inbox placement —
+      // delivered via its own infrastructure for inbox placement,
       // sending Resend → Outlook on a fresh domain commonly lands in
       // junk for the first 2-4 weeks of reputation building.
       //
@@ -199,7 +199,7 @@ export const sendEmail = async (
       // on consumer outlook.com accounts since 2022 (error 5.7.139
       // SmtpClientAuthentication disabled). If the auth attempt fails,
       // we fall through to Resend rather than retrying Microsoft and
-      // failing the whole send — better partial-junk delivery than
+      // failing the whole send, better partial-junk delivery than
       // total failure.
       //
       // Defensive: if MS_SMTP_USER is unset, this branch no-ops and
@@ -536,7 +536,7 @@ export const sendBookDelivery = async (
                           ${bookTitle}
                         </h2>
                         <p style="color: #94a3b8; margin: 0; font-size: 14px; line-height: 1.6;">
-                          70,000 words of strategic dating psychology from a diagnosed sociopath &mdash; now with 2 bonus addendum chapters
+                          70,000 words of strategic dating psychology from a diagnosed sociopath, now with 2 bonus addendum chapters
                         </p>
                       </td>
                     </tr>
@@ -1511,7 +1511,7 @@ export const sendApplicationConfirmation = async (
       </tr>
     </table>
     <p style="color: #94a3b8; line-height: 1.8; margin: 20px 0 0 0; font-size: 14px;">
-      In the meantime, keep an eye on your inbox &mdash; including your spam folder.
+      In the meantime, keep an eye on your inbox, including your spam folder.
     </p>
   `;
 
@@ -1841,10 +1841,10 @@ export const sendApplicationApproved = async (
             What You're Getting
           </h3>
           <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0">
-            <tr><td style="padding: 8px 0; color: #f5f0ed; font-size: 14px; line-height: 1.6; border-bottom: 1px solid #2a1820;"><strong style="color: #d4af37;">Daily insights</strong> &mdash; psychology drops curated for your patterns</td></tr>
-            <tr><td style="padding: 8px 0; color: #f5f0ed; font-size: 14px; line-height: 1.6; border-bottom: 1px solid #2a1820;"><strong style="color: #d4af37;">Voice notes from Kanika</strong> &mdash; private audio you won't hear anywhere else</td></tr>
-            <tr><td style="padding: 8px 0; color: #f5f0ed; font-size: 14px; line-height: 1.6; border-bottom: 1px solid #2a1820;"><strong style="color: #d4af37;">The Classroom</strong> &mdash; structured modules on dark psychology mastery</td></tr>
-            <tr><td style="padding: 8px 0; color: #f5f0ed; font-size: 14px; line-height: 1.6;"><strong style="color: #d4af37;">The community</strong> &mdash; people who finally see what you see</td></tr>
+            <tr><td style="padding: 8px 0; color: #f5f0ed; font-size: 14px; line-height: 1.6; border-bottom: 1px solid #2a1820;"><strong style="color: #d4af37;">Daily insights</strong>, psychology drops curated for your patterns</td></tr>
+            <tr><td style="padding: 8px 0; color: #f5f0ed; font-size: 14px; line-height: 1.6; border-bottom: 1px solid #2a1820;"><strong style="color: #d4af37;">Voice notes from Kanika</strong>, private audio you won't hear anywhere else</td></tr>
+            <tr><td style="padding: 8px 0; color: #f5f0ed; font-size: 14px; line-height: 1.6; border-bottom: 1px solid #2a1820;"><strong style="color: #d4af37;">The Classroom</strong>, structured modules on dark psychology mastery</td></tr>
+            <tr><td style="padding: 8px 0; color: #f5f0ed; font-size: 14px; line-height: 1.6;"><strong style="color: #d4af37;">The community</strong>, people who finally see what you see</td></tr>
           </table>
         </td>
       </tr>
@@ -1904,7 +1904,7 @@ export const sendApplicationRejected = async (
       This doesn&rsquo;t mean the door is closed forever. You&rsquo;re welcome to reapply in the future. If you have questions, reply to this email.
     </p>
     <p style="color: #94a3b8; line-height: 1.8; margin: 20px 0 0 0; font-size: 13px; font-style: italic;">
-      &mdash; Kanika
+     , Kanika
     </p>
   `;
 
@@ -1996,7 +1996,7 @@ export const sendMembershipCancelled = async (
       If this was a mistake or you change your mind, you can resubscribe from your dashboard at any time.
     </p>
     <p style="color: #94a3b8; line-height: 1.8; margin: 0; font-size: 13px; font-style: italic;">
-      &mdash; Kanika
+     , Kanika
     </p>
   `;
 
@@ -2147,10 +2147,10 @@ export const sendConsiliumGiftInvite = async (
       Dear ${esc(recipientName)},
     </p>
     <p class="lux-text" style="color: #efe7d6; line-height: 1.75; margin: 0 0 22px 0; font-size: 15.5px;">
-      You bought the Sociopathic Dating Bible direct from kanikarose.com &mdash; not through Amazon, not through a middleman. That matters to me.
+      You bought the Sociopathic Dating Bible direct from kanikarose.com, not through Amazon, not through a middleman. That matters to me.
     </p>
     <p class="lux-text" style="color: #efe7d6; line-height: 1.75; margin: 0 0 30px 0; font-size: 15.5px;">
-      As a thank-you, I'm giving you <strong style="color: #f3d98a;">one month inside The Consilium, free</strong>. No card required. No auto-charge. Your 30 days start the moment you claim &mdash; so claim when you're ready to actually use it.
+      As a thank-you, I'm giving you <strong style="color: #f3d98a;">one month inside The Consilium, free</strong>. No card required. No auto-charge. Your 30 days start the moment you claim, so claim when you're ready to actually use it.
     </p>
     <!-- Bulletproof button: bgcolor attr + inline background-color so
          Outlook desktop, which ignores CSS gradients and sometimes strips
@@ -2171,10 +2171,10 @@ export const sendConsiliumGiftInvite = async (
         <td bgcolor="#22151a" style="background-color: #22151a; border-left: 3px solid #d4af37; border-radius: 6px; padding: 18px 20px;">
           <p class="lux-text" style="color: #f3d98a; font-size: 12px; letter-spacing: 1.5px; text-transform: uppercase; margin: 0 0 10px 0; font-weight: 600;">What you get inside</p>
           <ul class="lux-text" style="color: #efe7d6; line-height: 1.85; margin: 0; padding-left: 18px; font-size: 14.5px;">
-            <li>The full course library &mdash; dark psychology, pattern recognition, career power</li>
-            <li>Voice notes from me &mdash; raw, unfiltered, nothing I post publicly</li>
-            <li>The feed &mdash; daily insights and discussions from inside</li>
-            <li>Early-access post previews &mdash; the next blog posts, read before anyone else</li>
+            <li>The full course library, dark psychology, pattern recognition, career power</li>
+            <li>Voice notes from me, raw, unfiltered, nothing I post publicly</li>
+            <li>The feed, daily insights and discussions from inside</li>
+            <li>Early-access post previews, the next blog posts, read before anyone else</li>
           </ul>
         </td>
       </tr>
@@ -2210,10 +2210,10 @@ export const sendConsiliumBonusMonth = async (
       Dear ${esc(recipientName)},
     </p>
     <p class="lux-text" style="color: #efe7d6; line-height: 1.75; margin: 0 0 22px 0; font-size: 15.5px;">
-      You've already had a month inside The Consilium. I want you to have another &mdash; on me.
+      You've already had a month inside The Consilium. I want you to have another, on me.
     </p>
     <p class="lux-text" style="color: #efe7d6; line-height: 1.75; margin: 0 0 30px 0; font-size: 15.5px;">
-      <strong style="color: #f3d98a;">A bonus month, free.</strong> No card required. No auto-charge. Your 30 days start the moment you claim &mdash; so claim when you're ready to use it.
+      <strong style="color: #f3d98a;">A bonus month, free.</strong> No card required. No auto-charge. Your 30 days start the moment you claim, so claim when you're ready to use it.
     </p>
     <table role="presentation" cellpadding="0" cellspacing="0" border="0" align="center" style="margin: 0 auto 30px auto;">
       <tr>
@@ -2231,7 +2231,7 @@ export const sendConsiliumBonusMonth = async (
           <ul class="lux-text" style="color: #efe7d6; line-height: 1.85; margin: 0; padding-left: 18px; font-size: 14.5px;">
             <li>New voice notes since you were last here</li>
             <li>Fresh courses and feed posts</li>
-            <li>The simulator &mdash; updated with more scenarios</li>
+            <li>The simulator, updated with more scenarios</li>
             <li>Everything you had before, still there</li>
           </ul>
         </td>
@@ -2350,14 +2350,14 @@ export const sendQuestionAnswered = async (params: {
 };
 
 // ============================================================
-// Mini Dark Mirror — top-of-funnel free email-capture deliveries
+// Mini Dark Mirror, top-of-funnel free email-capture deliveries
 // ============================================================
 
 /** Mini Dark Mirror result email. Mirror of the on-page reveal, but
  *  written in Kanika-personal voice (the page is clinical-detached).
  *  Includes the 6-axis score breakdown, the primary clinical
  *  synthesis, the secondary-axis modifier, and the axis-tailored
- *  Consilium tie-in. No Stripe credit code generated — those are
+ *  Consilium tie-in. No Stripe credit code generated, those are
  *  reserved for paid-quiz takers; the 4-email drip handles the
  *  Consilium funnel for free-quiz takers. */
 export const sendMiniDarkMirrorResult = async (params: {
@@ -2400,7 +2400,7 @@ export const sendMiniDarkMirrorResult = async (params: {
       return `
         <tr>
           <td style="padding: 10px 0; color: ${isPrimary ? "#d4af37" : isSecondary ? "rgba(212,175,55,0.9)" : "#d6cfc4"}; font-weight: ${isPrimary ? "600" : "400"}; font-size: 14px;">
-            ${esc(typeName)}${isPrimary ? " — primary" : isSecondary ? " — secondary" : ""}
+            ${esc(typeName)}${isPrimary ? ", primary" : isSecondary ? ", secondary" : ""}
           </td>
           <td style="padding: 10px 0; text-align: right;">
             <span style="display: inline-block; background: ${pillBg}; color: ${pillColor}; padding: 4px 14px; border-radius: 999px; font-weight: 600; font-size: 13px;">
@@ -2421,7 +2421,7 @@ export const sendMiniDarkMirrorResult = async (params: {
 
   const inner = `
     <p style="color: #d6cfc4; font-size: 13px; line-height: 1.7; margin: 0 0 24px 0; font-style: italic; opacity: 0.85;">
-      Quick favor before you read &mdash; if this landed in spam or
+      Quick favor before you read, if this landed in spam or
       promotions, drag it to your inbox. The follow-up emails are where
       this framework actually starts working in your relationships, and
       Microsoft / Gmail filters lean hard on that one signal.
@@ -2455,7 +2455,7 @@ export const sendMiniDarkMirrorResult = async (params: {
 
     <div style="margin: 0 0 32px 0; padding: 22px 24px; background: rgba(0,0,0,0.30); border-left: 3px solid rgba(212,175,55,0.55); border-radius: 6px;">
       <p style="color: rgba(212,175,55,0.8); font-size: 11px; text-transform: uppercase; letter-spacing: 2px; margin: 0 0 8px 0;">
-        Secondary axis &mdash; ${esc(secondaryProfile.name)}
+        Secondary axis, ${esc(secondaryProfile.name)}
       </p>
       <p class="lux-muted" style="color: #d6cfc4; font-size: 14px; line-height: 1.8; margin: 0;">
         ${esc(secondaryClinical.secondaryNote)}
@@ -2480,7 +2480,7 @@ export const sendMiniDarkMirrorResult = async (params: {
       your axis tomorrow, then a piece of the framework on Friday, then
       something on where this all goes if you want it to. Four emails,
       one a week-and-a-bit. You can unsubscribe at the bottom of any of
-      them &mdash; I won&rsquo;t take it personally.
+      them, I won&rsquo;t take it personally.
     </p>
 
     <hr style="border: none; border-top: 1px solid rgba(212,175,55,0.18); margin: 32px 0;" />
@@ -2507,7 +2507,7 @@ export const sendMiniDarkMirrorResult = async (params: {
     <hr style="border: none; border-top: 1px solid rgba(212,175,55,0.18); margin: 32px 0;" />
 
     <p class="lux-muted" style="color: #d6cfc4; font-size: 13px; line-height: 1.75; margin: 0 0 14px 0; text-align: center;">
-      If you want the comprehensive version &mdash; 20 questions, full
+      If you want the comprehensive version, 20 questions, full
       functioning analysis (high / moderate / low), tertiary axis read,
       and a $9.99 credit toward Consilium:
     </p>
@@ -2522,17 +2522,17 @@ export const sendMiniDarkMirrorResult = async (params: {
     </table>
 
     <p class="lux-muted" style="color: rgba(214,207,196,0.7); font-size: 13px; line-height: 1.75; margin: 26px 0 0 0; text-align: center;">
-      &mdash; Kanika
+     , Kanika
     </p>
   `;
 
   return await sendEmail({
     to: params.email,
-    subject: `Your Dark Mirror read — ${profile.name}`,
+    subject: `Your Dark Mirror read, ${profile.name}`,
     html: luxuryEmailShell(
       inner,
       profile.name,
-      "Mini Dark Mirror — clinical synthesis",
+      "Mini Dark Mirror, clinical synthesis",
     ),
   });
 };
@@ -2590,7 +2590,7 @@ export const sendStarterPack = async (params: {
 
   const inner = `
     <p style="color: #d6cfc4; font-size: 13px; line-height: 1.7; margin: 0 0 22px 0; font-style: italic; opacity: 0.85;">
-      Quick favor before you read &mdash; if this landed in spam or
+      Quick favor before you read, if this landed in spam or
       promotions, drag it to your inbox. The follow-ups go deeper
       on each pattern, and Microsoft / Gmail filters lean hard on
       that one signal.

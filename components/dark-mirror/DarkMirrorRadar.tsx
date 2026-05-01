@@ -8,14 +8,14 @@ import type { PersonalityType } from "@/lib/quiz-data";
  * Animated SVG hex radar for the Mini Dark Mirror result page.
  *
  * Design notes:
- *   - Pure SVG, no chart library — keeps the bundle clean and gives
+ *   - Pure SVG, no chart library, keeps the bundle clean and gives
  *     us full control over the animation timing.
  *   - 6 axes arranged at hex points, label rotated/positioned
  *     readably at each vertex.
  *   - Concentric grid rings at 25/50/75/100% so the magnitude is
  *     visible even on the secondary axes.
  *   - The score polygon draws in over ~1.2s with a stagger so the
- *     dominant axis vertex pulses last — the screenshot moment.
+ *     dominant axis vertex pulses last, the screenshot moment.
  *   - Color: warm-gold polygon fill at low alpha, gold stroke,
  *     dominant vertex marked with a brighter pulse.
  */
@@ -145,7 +145,7 @@ export default function DarkMirrorRadar({
           />
         ))}
 
-        {/* Score polygon — the wow */}
+        {/* Score polygon, the wow */}
         <m.path
           d={scorePath}
           fill="url(#scoreFill)"
