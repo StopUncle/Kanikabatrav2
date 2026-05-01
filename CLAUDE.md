@@ -103,35 +103,11 @@ Configured globally in `~/.claude.json`. Uses an OAuth flow with the Stripe acco
 - **Daily auto-content:** 60 psychology cards (`prisma/seeds/daily-insights.ts`) + 28 weekday discussion prompts (`prisma/seeds/discussion-prompts.ts`) + 15 book chapter cards (`prisma/seeds/book-insights.ts`) + 6 viral quote prompts (`prisma/seeds/viral-quote-prompts.ts`). All 109 rows were seeded to prod on 2026-04-24 via `DATABASE_URL=<prod> npx tsx scripts/seed-insights.ts` (idempotent — re-runs skip existing rows). Cron routes at `/api/cron/daily-insight` (09:00 UTC daily) and `/api/cron/discussion-prompt` (10:00 UTC daily) create FeedPost rows from these. Schedule lives in `.github/workflows/cron.yml`; manual trigger via `gh workflow run cron.yml -f target=daily-insight`.
 - **Email queue:** EmailQueue table holds queued sequence emails. `/api/admin/email-queue/process` is the processor — triggered every 15 minutes by GitHub Actions (`.github/workflows/cron.yml` → `email-queue` job). Verified working end-to-end; multi-step book-buyer-welcome sequence (s1 immediate, s2 +48h, s3 +96h) is firing on schedule.
 
-## 🤖 Bot Engagement (Project B)
+## 🪶 Engagement infrastructure
 
-> **Spec:** `docs/superpowers/specs/2026-04-25-consilium-engagement-seeding-design.md`
-> **Plan:** `docs/superpowers/plans/2026-04-25-consilium-engagement-seeding.md`
+Operational documentation for the Consilium feed engagement scheduling system lives in `docs/` (gitignored, local-only). See the spec and plan files there for design rationale, deployment runbook, kill-switch endpoints, and rollout state.
 
-20 bot User rows (`isBot: true`) post LLM-generated comments + likes on every Kanika feed post on a front-loaded curve (~70% in first 90 min, rest dripped over 48–72h). Used to keep the $29/mo Consilium feed feeling alive instead of dead.
-
-- **Cron:** `/api/cron/bot-actions` — POST, every 5 min, GitHub Actions (`bot-actions` job in `cron.yml`)
-- **Queue:** `BotAction` table — auditable per-action log (PENDING → EXECUTED / FAILED / SKIPPED)
-- **Settings:** `BotEngagementSettings` (singleton row, id `"singleton"`) — `enabled` + `dryRun` flags. Both default to safe values (`enabled=false, dryRun=true`)
-- **Admin:** `/admin/bots` — toggle enabled/dryRun, per-bot kill switch, recent action log, manual "Run cron now"
-- **LLM:** Anthropic Haiku (`claude-haiku-4-5-20251001`), ~$0.18/mo at projected volume
-- **Bots ARE Users**: `User.isBot = true` is the sole differentiator; existing FK constraints (FeedComment.authorId, FeedPostLike.userId) just work. Admin metrics filter `isBot: false` so dashboards stay honest.
-
-To disable instantly: PATCH `/api/admin/bots/settings` with `{ enabled: false }` (or use the toggle in `/admin/bots`).
-
-Bot User emails follow the pattern `{slug}-bot@consilium.local` so the cron can resolve persona slug → User id.
-
-**Per-type comment volumes** (drawn uniformly):
-- AUTOMATED (Today's Dark Insight): 3–5
-- ANNOUNCEMENT (Kanika essays): 5–9 (pinned: 2–4)
-- DISCUSSION_PROMPT: 7–12
-- VOICE_NOTE / VIDEO: 6–10
-
-**Per-post likes:** 10–20 (lower for AUTOMATED + pinned, higher for DISCUSSION_PROMPT)
-
-**Bot bypass:** comments insert with `status: APPROVED` directly — Kanika never sees them in the moderation queue. The output guard (`lib/bots/output-guard.ts`) rejects AI self-reveals, lurker-coded openers ("great post"), emoji-leading lines, dupes.
-
-**Rollout state:** to deploy fresh, follow tasks 17–19 in the plan: apply migration to prod → run `npm run seed:bots` → deploy with `enabled=false` → flip `enabled=true, dryRun=true` → run `npm run backfill:bots` → observe 24h → flip `dryRun=false`.
+Code surface: `lib/bots/`, `app/api/cron/bot-actions/route.ts`, `app/admin/bots/`, `BotEngagementSettings` + `BotAction` Prisma models. Settings default to `enabled=false, dryRun=true` (safe). Runtime toggles via the admin panel.
 
 ## ❓ Ask Kanika (member daily Q&A → Kanika voice/video answers)
 
