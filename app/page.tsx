@@ -3,6 +3,7 @@ import Link from "next/link";
 import BackgroundEffects from "@/components/BackgroundEffects";
 import Header from "@/components/Header";
 import Hero from "@/components/Hero";
+import HomepageDarkMirrorRail from "@/components/HomepageDarkMirrorRail";
 import BookShowcase from "@/components/BookShowcase";
 import CoachingSection from "@/components/CoachingSection";
 import Testimonial from "@/components/Testimonial";
@@ -90,6 +91,14 @@ export default function Home() {
       */}
       <main className="relative z-10 pt-20">
         <Hero />
+
+        {/* Email-capture rail. The Mini quiz + Starter Pack are the
+            only $0 entry points on the site; without a homepage tile,
+            organic traffic skips the email funnel entirely and gets
+            asked for $25/$29 cold. Slim 3-tile layout so it doesn't
+            visually compete with the Book + Consilium primaries
+            below. See components/HomepageDarkMirrorRail.tsx. */}
+        <HomepageDarkMirrorRail />
 
         {/* PRIMARY #1. Book (the tangible field guide) */}
         <BookShowcase />
