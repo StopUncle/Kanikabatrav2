@@ -2,6 +2,7 @@ import Link from "next/link";
 import Header from "@/components/Header";
 import BackgroundEffects from "@/components/BackgroundEffects";
 import StarterPackForm from "@/components/dark-mirror/StarterPackForm";
+import AdLandingBanner from "@/components/dark-mirror/AdLandingBanner";
 import { ArrowRight, Eye, FileText, Sparkles } from "lucide-react";
 
 /**
@@ -32,6 +33,11 @@ export default function DarkMirrorHubPage() {
     <>
       <BackgroundEffects />
       <Header />
+      {/* AdLandingBanner reads UTM params client-side and conditionally
+          shows a tailored welcome strip. Renders nothing for
+          non-paid-source visitors, so it's safe to mount here for
+          all viewers. */}
+      <AdLandingBanner />
       <div className="min-h-screen pt-28 pb-16 relative z-10">
         <div className="max-w-5xl mx-auto px-4 sm:px-6">
           {/* Hero */}
