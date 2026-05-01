@@ -184,11 +184,19 @@ export const sendEmail = async (
     try {
       // Microsoft-recipient override. When MS SMTP credentials are
       // configured AND the recipient is on a Microsoft consumer domain
-      // (outlook.com / hotmail.* / live.com / etc), route through
+      // (outlook.com / hotmail.* / live.com / etc), try routing through
       // Microsoft's own SMTP server. Microsoft heavily favours emails
       // delivered via its own infrastructure for inbox placement —
       // sending Resend → Outlook on a fresh domain commonly lands in
       // junk for the first 2-4 weeks of reputation building.
+      //
+      // Caveat: Microsoft has progressively disabled SMTP basic auth
+      // on consumer outlook.com accounts since 2022 (error 5.7.139
+      // SmtpClientAuthentication disabled). If the auth attempt fails,
+      // we fall through to Resend rather than retrying Microsoft and
+      // failing the whole send — better partial-junk delivery than
+      // total failure.
+      //
       // Defensive: if MS_SMTP_USER is unset, this branch no-ops and
       // falls through to Resend (status quo for everyone else).
       if (
@@ -198,19 +206,28 @@ export const sendEmail = async (
       ) {
         const msTransport = getMicrosoftTransporter();
         if (msTransport) {
-          const info = await msTransport.sendMail({
-            from: MS_FROM_EMAIL || FROM_EMAIL,
-            to: options.to,
-            subject: options.subject,
-            text: options.text || options.html.replace(/<[^>]*>/g, ""),
-            html: options.html,
-            replyTo: options.replyTo,
-            headers: options.headers,
-          });
-          logger.info(
-            `Email sent to ${options.to} via Microsoft SMTP (attempt ${attempt}) - Message ID: ${info.messageId}`,
-          );
-          return true;
+          try {
+            const info = await msTransport.sendMail({
+              from: MS_FROM_EMAIL || FROM_EMAIL,
+              to: options.to,
+              subject: options.subject,
+              text: options.text || options.html.replace(/<[^>]*>/g, ""),
+              html: options.html,
+              replyTo: options.replyTo,
+              headers: options.headers,
+            });
+            logger.info(
+              `Email sent to ${options.to} via Microsoft SMTP (attempt ${attempt}) - Message ID: ${info.messageId}`,
+            );
+            return true;
+          } catch (msError) {
+            // Microsoft SMTP failed (commonly 5.7.139 auth-disabled on
+            // consumer accounts). Log once and fall through to Resend
+            // rather than failing entirely. Don't rethrow.
+            logger.warn(
+              `Microsoft SMTP send to ${options.to} failed; falling back to Resend. Error: ${(msError as Error).message}`,
+            );
+          }
         }
       }
 
