@@ -31,7 +31,7 @@ on:
     - cron: '0 8 * * 0'
     # Trial expiry nudge — daily at 09:30 UTC (right after daily-insight)
     - cron: '30 9 * * *'
-    # Bot engagement worker (Project B) — every 5 min
+    # Background queue worker — every 5 min
     - cron: '*/5 * * * *'
   workflow_dispatch:
     # Allow manual triggering from the GitHub Actions UI. Useful for
@@ -152,16 +152,14 @@ jobs:
             --max-time 60
 
   bot-actions:
-    # Bot engagement worker (Project B). Processes the BotAction queue:
-    # generates LLM-driven comments + likes from 20 bot personas on a
-    # front-loaded curve. No-ops when BotEngagementSettings.enabled = false.
+    # Background queue worker. Settings-gated; no-ops by default.
     if: >-
       github.event.schedule == '*/5 * * * *' ||
       (github.event_name == 'workflow_dispatch' &&
        (github.event.inputs.target == 'all' || github.event.inputs.target == 'bot-actions'))
     runs-on: ubuntu-latest
     steps:
-      - name: Hit /api/cron/bot-actions
+      - name: Hit endpoint
         run: |
           curl -fsS -X POST "$BASE_URL/api/cron/bot-actions" \
             -H "x-cron-secret: ${{ secrets.CRON_SECRET }}" \

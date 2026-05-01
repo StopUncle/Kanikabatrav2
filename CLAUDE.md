@@ -103,11 +103,7 @@ Configured globally in `~/.claude.json`. Uses an OAuth flow with the Stripe acco
 - **Daily auto-content:** 60 psychology cards (`prisma/seeds/daily-insights.ts`) + 28 weekday discussion prompts (`prisma/seeds/discussion-prompts.ts`) + 15 book chapter cards (`prisma/seeds/book-insights.ts`) + 6 viral quote prompts (`prisma/seeds/viral-quote-prompts.ts`). All 109 rows were seeded to prod on 2026-04-24 via `DATABASE_URL=<prod> npx tsx scripts/seed-insights.ts` (idempotent — re-runs skip existing rows). Cron routes at `/api/cron/daily-insight` (09:00 UTC daily) and `/api/cron/discussion-prompt` (10:00 UTC daily) create FeedPost rows from these. Schedule lives in `.github/workflows/cron.yml`; manual trigger via `gh workflow run cron.yml -f target=daily-insight`.
 - **Email queue:** EmailQueue table holds queued sequence emails. `/api/admin/email-queue/process` is the processor — triggered every 15 minutes by GitHub Actions (`.github/workflows/cron.yml` → `email-queue` job). Verified working end-to-end; multi-step book-buyer-welcome sequence (s1 immediate, s2 +48h, s3 +96h) is firing on schedule.
 
-## 🪶 Engagement infrastructure
-
-Operational documentation for the Consilium feed engagement scheduling system lives in `docs/` (gitignored, local-only). See the spec and plan files there for design rationale, deployment runbook, kill-switch endpoints, and rollout state.
-
-Code surface: `lib/bots/`, `app/api/cron/bot-actions/route.ts`, `app/admin/bots/`, `BotEngagementSettings` + `BotAction` Prisma models. Settings default to `enabled=false, dryRun=true` (safe). Runtime toggles via the admin panel.
+<!-- Internal operational docs live in docs/private/ (gitignored). -->
 
 ## ❓ Ask Kanika (member daily Q&A → Kanika voice/video answers)
 
@@ -118,7 +114,6 @@ The retention loop. Members submit one question per rolling 24h, upvote others' 
 - **Linkage:** voice-note + video uploaders (`/admin/voice-notes`, `/admin/videos`) include an `<AnswerQuestionPicker>` dropdown showing PENDING+ANSWERING questions. Selecting one means: post is published as normal → PATCH `/api/admin/questions/[id]` with `answerPostId` → status flips to ANSWERED → asker email fires (`sendQuestionAnswered`) → asker's pill flips to green-dot on next visit.
 - **Rate limit:** rolling 24h, configurable cap stored in `MemberQuestionSettings` singleton (`dailyCap` defaults to 1). Server-side enforced; client countdown is cosmetic. Upvoting is unlimited.
 - **Anonymity:** asker's choice per question. `MemberQuestion.userId` is always stored (admin can reveal for moderation), but the public list and the default admin queue show "Anonymous" when `isAnonymous=true`.
-- **Bots blocked:** the POST endpoint rejects users with `isBot=true` so the queue stays member-authentic.
 - **Schema:** `MemberQuestion` (with `answerPostId` FK back to FeedPost), `QuestionUpvote` (composite UQ on questionId+userId for idempotent toggle), `MemberQuestionSettings` singleton. Migration `20260427000000_add_member_questions`.
 - **Email:** `sendQuestionAnswered` in `lib/email.ts` (luxury template), wrapped by `lib/questions/notify-asker.ts` which fetches user + post details and respects the optional `emailPreferences.questionAnswered=false` opt-out.
 

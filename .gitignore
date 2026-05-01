@@ -116,6 +116,9 @@ research/
 # Private voice/style reference material (author manuscripts, etc.) — local only
 reference/
 
+# Private engineering specs/plans not for public repo — local only
+docs/private/
+
 # Playwright MCP session artefacts — screenshots, snapshots, console logs
 .playwright-mcp/
 /*.png
