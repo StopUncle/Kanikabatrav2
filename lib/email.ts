@@ -7,6 +7,11 @@ import {
   type PersonalityType,
   type QuizScores,
 } from "@/lib/quiz-data";
+import {
+  AXIS_CLINICAL,
+  AXIS_CONSILIUM_TIES,
+  pickSecondaryType,
+} from "@/lib/mini-quiz";
 import { STARTER_PATTERNS } from "@/lib/starter-pack-content";
 
 const logger = {
@@ -2348,12 +2353,13 @@ export const sendQuestionAnswered = async (params: {
 // Mini Dark Mirror — top-of-funnel free email-capture deliveries
 // ============================================================
 
-/** Mini Dark Mirror result email. Visitor handed over their email
- *  after the 7-question free quiz; the on-page result was a single-
- *  axis teaser. This delivers the full read across all 6 axes plus
- *  the dominant-type description, and softly upsells the book + the
- *  full $9.99 assessment. No Stripe credit code generated (those are
- *  reserved for paid-quiz takers). */
+/** Mini Dark Mirror result email. Mirror of the on-page reveal, but
+ *  written in Kanika-personal voice (the page is clinical-detached).
+ *  Includes the 6-axis score breakdown, the primary clinical
+ *  synthesis, the secondary-axis modifier, and the axis-tailored
+ *  Consilium tie-in. No Stripe credit code generated — those are
+ *  reserved for paid-quiz takers; the 4-email drip handles the
+ *  Consilium funnel for free-quiz takers. */
 export const sendMiniDarkMirrorResult = async (params: {
   email: string;
   dominantType: PersonalityType;
@@ -2362,30 +2368,39 @@ export const sendMiniDarkMirrorResult = async (params: {
   const baseUrl =
     process.env.NEXT_PUBLIC_BASE_URL || "https://kanikarose.com";
   const profile = PERSONALITY_PROFILES[params.dominantType];
+  const secondaryType = pickSecondaryType(params.scores, params.dominantType);
+  const secondaryProfile = PERSONALITY_PROFILES[secondaryType];
+  const primaryClinical = AXIS_CLINICAL[params.dominantType];
+  const secondaryClinical = AXIS_CLINICAL[secondaryType];
+  const consiliumTie = AXIS_CONSILIUM_TIES[params.dominantType];
 
-  // Score rows sorted descending. The dominant axis gets the gold
-  // pill; everyone else gets neutral grey. Neurotypical is colour-coded
-  // green so the audience can spot it as the only "balanced" option.
+  // Score rows sorted descending. Dominant gold, secondary muted gold,
+  // others grey. Neurotypical green when not the dominant.
   const scoreRows = Object.entries(params.scores)
     .sort(([, a], [, b]) => b - a)
     .map(([type, score]) => {
       const isPrimary = type === params.dominantType;
+      const isSecondary = type === secondaryType;
       const isNeurotypical = type === "neurotypical";
       const typeName = type.charAt(0).toUpperCase() + type.slice(1);
-      const pillColor = isNeurotypical
-        ? "#22c55e"
-        : isPrimary
-          ? "#d4af37"
-          : "#94a3b8";
-      const pillBg = isNeurotypical
-        ? "rgba(34,197,94,0.12)"
-        : isPrimary
-          ? "rgba(212,175,55,0.18)"
-          : "rgba(148,163,184,0.08)";
+      const pillColor = isPrimary
+        ? "#d4af37"
+        : isSecondary
+          ? "rgba(212,175,55,0.85)"
+          : isNeurotypical
+            ? "#22c55e"
+            : "#94a3b8";
+      const pillBg = isPrimary
+        ? "rgba(212,175,55,0.18)"
+        : isSecondary
+          ? "rgba(212,175,55,0.10)"
+          : isNeurotypical
+            ? "rgba(34,197,94,0.10)"
+            : "rgba(148,163,184,0.08)";
       return `
         <tr>
-          <td style="padding: 10px 0; color: ${isPrimary ? "#d4af37" : "#d6cfc4"}; font-weight: ${isPrimary ? "600" : "400"}; font-size: 14px;">
-            ${esc(typeName)}${isPrimary ? " (your axis)" : ""}
+          <td style="padding: 10px 0; color: ${isPrimary ? "#d4af37" : isSecondary ? "rgba(212,175,55,0.9)" : "#d6cfc4"}; font-weight: ${isPrimary ? "600" : "400"}; font-size: 14px;">
+            ${esc(typeName)}${isPrimary ? " — primary" : isSecondary ? " — secondary" : ""}
           </td>
           <td style="padding: 10px 0; text-align: right;">
             <span style="display: inline-block; background: ${pillBg}; color: ${pillColor}; padding: 4px 14px; border-radius: 999px; font-weight: 600; font-size: 13px;">
@@ -2397,114 +2412,127 @@ export const sendMiniDarkMirrorResult = async (params: {
     })
     .join("");
 
-  const traitsList = profile.traits
+  const consiliumBullets = consiliumTie.bullets
     .map(
-      (t) =>
-        `<li style="color: #d6cfc4; margin: 8px 0; font-size: 14px; line-height: 1.7;">${esc(t)}</li>`,
-    )
-    .join("");
-  const blindSpotsList = profile.blindSpots
-    .map(
-      (t) =>
-        `<li style="color: #d6cfc4; margin: 8px 0; font-size: 14px; line-height: 1.7;">${esc(t)}</li>`,
+      (b) =>
+        `<li style="color: #d6cfc4; margin: 10px 0; font-size: 14px; line-height: 1.75; padding-left: 4px;">${esc(b)}</li>`,
     )
     .join("");
 
   const inner = `
-    <p style="color: #d6cfc4; font-size: 13px; line-height: 1.7; margin: 0 0 22px 0; font-style: italic; opacity: 0.85;">
-      Quick favor before you scroll &mdash; if this landed in spam or
+    <p style="color: #d6cfc4; font-size: 13px; line-height: 1.7; margin: 0 0 24px 0; font-style: italic; opacity: 0.85;">
+      Quick favor before you read &mdash; if this landed in spam or
       promotions, drag it to your inbox. The follow-up emails are where
-      the framework actually unfolds, and Microsoft / Gmail filters
-      lean hard on that one signal.
+      this framework actually starts working in your relationships, and
+      Microsoft / Gmail filters lean hard on that one signal.
     </p>
 
-    <p class="lux-text" style="color: #f5efe2; font-size: 16px; line-height: 1.75; margin: 0 0 18px 0;">
-      You scored highest on
+    <p class="lux-text" style="color: #f5efe2; font-size: 15px; line-height: 1.8; margin: 0 0 24px 0;">
+      Hey,
     </p>
-    <p style="color: #d4af37; font-size: 28px; font-weight: 300; letter-spacing: 1.5px; text-transform: uppercase; margin: 0 0 8px 0;">
+
+    <p class="lux-text" style="color: #f5efe2; font-size: 15px; line-height: 1.85; margin: 0 0 22px 0;">
+      I read every result that comes through this quiz. Here&rsquo;s
+      yours.
+    </p>
+
+    <p style="color: #d4af37; font-size: 11px; text-transform: uppercase; letter-spacing: 2px; margin: 32px 0 6px 0;">
+      Your dominant axis
+    </p>
+    <p style="color: #d4af37; font-size: 30px; font-weight: 300; letter-spacing: 1.5px; text-transform: uppercase; margin: 0 0 8px 0;">
       ${esc(profile.name)}
     </p>
-    <p style="color: #d4af37; font-style: italic; font-size: 15px; margin: 0 0 24px 0;">
+    <p style="color: #d4af37; font-style: italic; font-size: 15px; margin: 0 0 8px 0;">
       ${esc(profile.tagline)}
     </p>
-
-    <p class="lux-muted" style="color: #d6cfc4; font-size: 15px; line-height: 1.8; margin: 0 0 28px 0;">
-      ${esc(profile.description)}
+    <p style="color: rgba(214,207,196,0.65); font-size: 12px; letter-spacing: 1px; margin: 0 0 24px 0;">
+      ${esc(primaryClinical.dsmLabel)}
     </p>
 
-    <div style="margin: 0 0 28px 0; padding: 24px; background: rgba(0,0,0,0.25); border-left: 3px solid #d4af37; border-radius: 6px;">
-      <p style="color: #d4af37; font-size: 11px; text-transform: uppercase; letter-spacing: 2px; margin: 0 0 12px 0;">
-        Your relationship pattern
+    <p class="lux-muted" style="color: #d6cfc4; font-size: 15px; line-height: 1.85; margin: 0 0 32px 0;">
+      ${esc(primaryClinical.primarySynthesis)}
+    </p>
+
+    <div style="margin: 0 0 32px 0; padding: 22px 24px; background: rgba(0,0,0,0.30); border-left: 3px solid rgba(212,175,55,0.55); border-radius: 6px;">
+      <p style="color: rgba(212,175,55,0.8); font-size: 11px; text-transform: uppercase; letter-spacing: 2px; margin: 0 0 8px 0;">
+        Secondary axis &mdash; ${esc(secondaryProfile.name)}
       </p>
-      <p class="lux-muted" style="color: #d6cfc4; font-size: 14px; line-height: 1.75; margin: 0;">
-        ${esc(profile.relationshipPattern)}
+      <p class="lux-muted" style="color: #d6cfc4; font-size: 14px; line-height: 1.8; margin: 0;">
+        ${esc(secondaryClinical.secondaryNote)}
       </p>
     </div>
 
     <p style="color: #d4af37; font-size: 11px; text-transform: uppercase; letter-spacing: 2px; margin: 0 0 14px 0;">
       Your full radar
     </p>
-    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="margin: 0 0 28px 0;">
+    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="margin: 0 0 32px 0;">
       ${scoreRows}
     </table>
 
-    <p style="color: #d4af37; font-size: 11px; text-transform: uppercase; letter-spacing: 2px; margin: 0 0 14px 0;">
-      What this looks like in you
-    </p>
-    <ul style="margin: 0 0 28px 0; padding-left: 20px;">
-      ${traitsList}
-    </ul>
+    <hr style="border: none; border-top: 1px solid rgba(212,175,55,0.18); margin: 32px 0;" />
 
-    <p style="color: #d4af37; font-size: 11px; text-transform: uppercase; letter-spacing: 2px; margin: 0 0 14px 0;">
-      Your blind spots
+    <p style="color: #f5efe2; font-size: 15px; line-height: 1.85; margin: 0 0 18px 0;">
+      A few more thoughts on what to do with this:
     </p>
-    <ul style="margin: 0 0 32px 0; padding-left: 20px;">
-      ${blindSpotsList}
-    </ul>
 
-    <hr style="border: none; border-top: 1px solid rgba(212,175,55,0.2); margin: 32px 0;" />
+    <p style="color: #d6cfc4; font-size: 14px; line-height: 1.85; margin: 0 0 16px 0;">
+      I&rsquo;ll send you a deeper read on the under-stress version of
+      your axis tomorrow, then a piece of the framework on Friday, then
+      something on where this all goes if you want it to. Four emails,
+      one a week-and-a-bit. You can unsubscribe at the bottom of any of
+      them &mdash; I won&rsquo;t take it personally.
+    </p>
+
+    <hr style="border: none; border-top: 1px solid rgba(212,175,55,0.18); margin: 32px 0;" />
 
     <p style="color: #d4af37; font-size: 11px; text-transform: uppercase; letter-spacing: 2px; margin: 0 0 12px 0;">
-      Want to go deeper
+      ${esc(consiliumTie.headline)}
     </p>
-    <p class="lux-muted" style="color: #d6cfc4; font-size: 14px; line-height: 1.7; margin: 0 0 20px 0;">
-      The mini gives you the dominant axis. The full assessment is
-      20 questions instead of 7, with a functioning analysis and the
-      secondary-axis read. $9.99. Comes with a $9.99 credit toward
-      Consilium membership if you ever want to use it.
+    <p class="lux-muted" style="color: #d6cfc4; font-size: 14px; line-height: 1.75; margin: 0 0 14px 0;">
+      Three things in The Consilium that match your axis specifically:
     </p>
-    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="margin: 0 0 20px 0;">
+    <ul style="margin: 0 0 24px 0; padding-left: 22px;">
+      ${consiliumBullets}
+    </ul>
+    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="margin: 0 0 28px 0;">
       <tr>
         <td align="center">
-          <a href="${baseUrl}/quiz" style="display: inline-block; padding: 14px 32px; background-color: #d4af37; color: #0a0a0a; text-decoration: none; border-radius: 999px; font-weight: 600; font-size: 13px; letter-spacing: 1.2px; text-transform: uppercase;">
-            Take the full assessment
+          <a href="${baseUrl}/consilium" style="display: inline-block; padding: 14px 32px; background-color: #d4af37; color: #0a0a0a; text-decoration: none; border-radius: 999px; font-weight: 600; font-size: 13px; letter-spacing: 1.2px; text-transform: uppercase;">
+            Step inside the Consilium
           </a>
         </td>
       </tr>
     </table>
 
-    <p class="lux-muted" style="color: #d6cfc4; font-size: 13px; line-height: 1.7; margin: 24px 0 8px 0; text-align: center;">
-      Or, if you want the full clinical framework, the same one the
-      simulator scenarios are built from:
+    <hr style="border: none; border-top: 1px solid rgba(212,175,55,0.18); margin: 32px 0;" />
+
+    <p class="lux-muted" style="color: #d6cfc4; font-size: 13px; line-height: 1.75; margin: 0 0 14px 0; text-align: center;">
+      If you want the comprehensive version &mdash; 20 questions, full
+      functioning analysis (high / moderate / low), tertiary axis read,
+      and a $9.99 credit toward Consilium:
     </p>
-    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0">
+    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="margin: 0 0 18px 0;">
       <tr>
         <td align="center">
-          <a href="${baseUrl}/book" style="color: #d4af37; text-decoration: none; font-size: 14px; border-bottom: 1px solid rgba(212,175,55,0.4); padding-bottom: 2px;">
-            The Sociopathic Dating Bible →
+          <a href="${baseUrl}/quiz" style="color: #d4af37; text-decoration: none; font-size: 14px; border-bottom: 1px solid rgba(212,175,55,0.4); padding-bottom: 2px;">
+            The full Dark Mirror Assessment, $9.99 →
           </a>
         </td>
       </tr>
     </table>
+
+    <p class="lux-muted" style="color: rgba(214,207,196,0.7); font-size: 13px; line-height: 1.75; margin: 26px 0 0 0; text-align: center;">
+      &mdash; Kanika
+    </p>
   `;
 
   return await sendEmail({
     to: params.email,
-    subject: `Your Dark Mirror result, ${profile.name}`,
+    subject: `Your Dark Mirror read — ${profile.name}`,
     html: luxuryEmailShell(
       inner,
       profile.name,
-      "Your full Dark Mirror read",
+      "Mini Dark Mirror — clinical synthesis",
     ),
   });
 };

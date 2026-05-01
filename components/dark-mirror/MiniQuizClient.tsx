@@ -3,7 +3,12 @@
 import { useState } from "react";
 import { m, AnimatePresence } from "framer-motion";
 import Link from "next/link";
-import { ArrowRight, Mail, Loader2, CheckCircle2, ShieldCheck } from "lucide-react";
+import {
+  ArrowRight,
+  Mail,
+  Loader2,
+  ShieldCheck,
+} from "lucide-react";
 import {
   MINI_QUIZ_QUESTIONS,
   buildMiniResult,
@@ -11,25 +16,27 @@ import {
 } from "@/lib/mini-quiz";
 import type { PersonalityType } from "@/lib/quiz-data";
 import { getAttributionForSubmit } from "@/lib/attribution";
+import DarkMirrorRadar from "./DarkMirrorRadar";
+import ClinicalResultCard from "./ClinicalResultCard";
+import ConsiliumAxisTile from "./ConsiliumAxisTile";
 
 /**
- * Mini Dark Mirror, four-state client UI.
+ * Mini Dark Mirror, four-state client.
  *
  * State machine:
- *   intro → quiz (7 sequential questions) → result (one-axis teaser
- *   + email gate) → success (post-submit, "check your inbox")
+ *   intro → quiz (12 sequential questions) → email-gate → reveal
  *
- * Per the multimillion-roadmap (research/multimillion-roadmap/
- * 11-phase-1-detailed.md week 4), the goal is owned-email capture, not
- * paid conversion. The full $9.99 quiz is referenced as the upsell.
+ * The reveal is the magnificent moment — animated radar (the
+ * screenshot moment), composed clinical card (primary + secondary
+ * axis synthesis), axis-tailored Consilium tile (the funnel).
  *
- * Visual design: matches the existing Dark Mirror brand voice — dark
- * theme, warm-gold accents, light/extralight typography, uppercase
- * tracking-wider section headers, no em dashes per the project-wide
- * purge. Mobile-first; 7 questions sized for thumb-tapping.
+ * Email-gate sits BETWEEN the quiz and the reveal so the visitor
+ * is fully invested (12 questions of work) but has not yet seen
+ * the visual payoff. Conversion rate at this gate should be very
+ * high; users who balk haven't earned the radar yet.
  */
 
-type State = "intro" | "quiz" | "result" | "success";
+type State = "intro" | "quiz" | "email-gate" | "reveal";
 
 export default function MiniQuizClient() {
   const [state, setState] = useState<State>("intro");
@@ -46,22 +53,20 @@ export default function MiniQuizClient() {
   const question = MINI_QUIZ_QUESTIONS[currentQ];
   const progress = ((currentQ + 1) / MINI_QUIZ_QUESTIONS.length) * 100;
 
-  function handleAnswer(answerId: string, type: PersonalityType) {
+  function handleAnswer(answerId: string, axis: PersonalityType) {
     setSelectedAnswerId(answerId);
-    const next = { ...answers, [question.id]: type };
+    const next = { ...answers, [question.id]: axis };
     setAnswers(next);
 
-    // Brief feedback delay so the tap registers visually before the
-    // next question renders. Without this, mobile users feel like the
-    // tap was lost.
     setTimeout(() => {
       if (currentQ < MINI_QUIZ_QUESTIONS.length - 1) {
         setCurrentQ((i) => i + 1);
         setSelectedAnswerId(null);
       } else {
+        // Compute result now, but don't reveal until email is submitted.
         const r = buildMiniResult(next);
         setResult(r);
-        setState("result");
+        setState("email-gate");
       }
     }, 320);
   }
@@ -93,7 +98,9 @@ export default function MiniQuizClient() {
           data?.error ?? "Something went wrong. Try again in a moment.",
         );
       }
-      setState("success");
+      // Reveal the magnificent layout. The drip is already enqueued
+      // server-side; this transition is for the user-facing moment.
+      setState("reveal");
     } catch (err) {
       setSubmitError(
         err instanceof Error
@@ -105,15 +112,8 @@ export default function MiniQuizClient() {
     }
   }
 
-  // Suppress prefers-reduced-motion check for the typewriter on results,
-  // matching the simulator's recent fix (commit 6025c7d). The fade-in
-  // motion below is opacity-only, low-vestibular-impact.
-
   return (
     <div className="min-h-screen bg-deep-black text-text-light">
-      {/* Subtle gradient backdrop, same palette as the Consilium feed
-          and the simulator. Stays static across all four states; the
-          content above it transitions. */}
       <div
         aria-hidden
         className="fixed inset-0 pointer-events-none"
@@ -150,13 +150,13 @@ export default function MiniQuizClient() {
                 Find your axis.
               </h1>
               <p className="text-text-gray text-base sm:text-lg font-light leading-relaxed max-w-lg mx-auto mb-3">
-                Seven scenarios. About 90 seconds. We tell you which of
-                six personality patterns you sit closest to, and what
-                that means for the way you operate in relationships.
+                Twelve scenarios. About three minutes. A clinical-grade
+                read on which of six personality patterns you sit
+                closest to, drawn from the DSM-5 Cluster B framework.
               </p>
               <p className="text-text-gray/70 text-sm font-light max-w-lg mx-auto mb-10">
-                Free. Built from the same clinical assessment Kanika
-                uses with members.
+                Free. The same instrument Kanika uses with members,
+                shortened.
               </p>
 
               <button
@@ -169,15 +169,13 @@ export default function MiniQuizClient() {
               </button>
 
               <p className="text-text-gray/50 text-xs mt-6">
-                No signup to start. Email only at the end if you want
-                the full read.
+                No signup to start. Email at the end so we can send
+                you the full clinical report.
               </p>
 
-              {/* Soft cross-link to the full assessment. Kept quiet, not
-                  competing with the begin CTA above. */}
               <div className="mt-12 pt-8 border-t border-warm-gold/10 max-w-md mx-auto">
                 <p className="text-text-gray/60 text-xs uppercase tracking-[0.25em] mb-2">
-                  Want the full 6-axis read?
+                  Want the full clinical instrument?
                 </p>
                 <Link
                   href="/quiz"
@@ -197,8 +195,6 @@ export default function MiniQuizClient() {
               exit={{ opacity: 0, y: -8 }}
               transition={{ duration: 0.35 }}
             >
-              {/* Progress strip at the top. Members see "3 of 7" so
-                  they know they're not in an unbounded survey. */}
               <div className="flex items-center justify-between mb-5">
                 <p className="text-warm-gold/70 text-[10px] uppercase tracking-[0.3em]">
                   Question {currentQ + 1} of {MINI_QUIZ_QUESTIONS.length}
@@ -230,7 +226,7 @@ export default function MiniQuizClient() {
                     <button
                       key={answer.id}
                       type="button"
-                      onClick={() => handleAnswer(answer.id, answer.type)}
+                      onClick={() => handleAnswer(answer.id, answer.axis)}
                       disabled={selectedAnswerId !== null}
                       className={`w-full text-left rounded-xl border px-5 py-4 transition-all duration-200 disabled:cursor-not-allowed ${
                         isSelected
@@ -248,9 +244,9 @@ export default function MiniQuizClient() {
             </m.section>
           )}
 
-          {state === "result" && result && (
+          {state === "email-gate" && result && (
             <m.section
-              key="result"
+              key="email-gate"
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -8 }}
@@ -258,13 +254,10 @@ export default function MiniQuizClient() {
               className="text-center"
             >
               <p className="text-warm-gold/70 text-[10px] uppercase tracking-[0.4em] mb-4">
-                Result
-              </p>
-              <p className="text-text-gray text-sm font-light mb-3">
-                You scored highest on
+                Your read is ready
               </p>
               <h2
-                className="text-4xl sm:text-5xl md:text-6xl font-extralight tracking-wider uppercase leading-tight mb-3"
+                className="text-3xl sm:text-4xl md:text-5xl font-extralight tracking-wider uppercase leading-tight mb-5"
                 style={{
                   background:
                     "linear-gradient(135deg, #f3d98a 0%, #d4af37 50%, #9c7a1f 100%)",
@@ -273,27 +266,15 @@ export default function MiniQuizClient() {
                   backgroundClip: "text",
                 }}
               >
-                {result.dominantName}
+                Where to send it.
               </h2>
-              <p className="text-warm-gold/85 italic text-base sm:text-lg font-light mb-8 max-w-md mx-auto">
-                {result.dominantTagline}
+              <p className="text-text-gray text-base font-light leading-relaxed max-w-md mx-auto mb-8">
+                You&apos;ll see the full clinical synthesis on the next
+                screen — the radar across all six axes, the dominant
+                and secondary read, and the specific way this pattern
+                shows up in relationships. We also email you a copy
+                so it doesn&apos;t disappear when you close the tab.
               </p>
-
-              <div className="bg-gradient-to-br from-deep-burgundy/15 to-deep-navy/20 backdrop-blur-sm border border-warm-gold/20 rounded-2xl p-6 sm:p-8 text-left max-w-lg mx-auto mb-6">
-                <p className="text-text-light font-light leading-relaxed text-sm sm:text-base">
-                  {result.teaser}
-                </p>
-                <div className="mt-5 pt-5 border-t border-warm-gold/15">
-                  <p className="text-warm-gold/70 text-[10px] uppercase tracking-[0.3em] mb-2">
-                    Your full report
-                  </p>
-                  <p className="text-text-gray text-sm font-light leading-relaxed">
-                    Email it to me. The full read covers all 6 axes,
-                    your specific blind spots, and how this pattern
-                    plays out in your relationships.
-                  </p>
-                </div>
-              </div>
 
               <form
                 onSubmit={handleEmailSubmit}
@@ -338,11 +319,11 @@ export default function MiniQuizClient() {
                   {submitting ? (
                     <>
                       <Loader2 size={16} className="animate-spin" />
-                      Sending
+                      Composing your report
                     </>
                   ) : (
                     <>
-                      Send my full report
+                      Reveal my result
                       <ArrowRight size={16} strokeWidth={1.8} />
                     </>
                   )}
@@ -351,89 +332,85 @@ export default function MiniQuizClient() {
                 <div className="flex items-center justify-center gap-2 pt-2 text-text-gray/55 text-[11px]">
                   <ShieldCheck size={12} className="text-warm-gold/50" />
                   <span>
-                    No spam. One email with the report. Unsubscribe any
-                    time.
+                    No spam. One report, plus the follow-up sequence.
+                    Unsubscribe any time.
                   </span>
                 </div>
               </form>
-
-              {/* Anchor link to the paid full assessment, sits below
-                  the email form so the email-capture conversion fires
-                  first and the upgrade is the secondary path. */}
-              <div className="mt-12 pt-8 border-t border-warm-gold/10 max-w-md mx-auto">
-                <p className="text-text-gray/60 text-xs uppercase tracking-[0.25em] mb-2">
-                  Want the comprehensive version
-                </p>
-                <Link
-                  href="/quiz"
-                  className="text-warm-gold/80 hover:text-warm-gold text-sm font-light transition-colors"
-                >
-                  The full Dark Mirror Assessment, 20 questions, $9.99 →
-                </Link>
-              </div>
             </m.section>
           )}
 
-          {state === "success" && result && (
+          {state === "reveal" && result && (
             <m.section
-              key="success"
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -8 }}
+              key="reveal"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
               transition={{ duration: 0.5 }}
-              className="text-center"
+              className="space-y-7"
             >
+              {/* Eyebrow */}
               <m.div
-                initial={{ scale: 0.8, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                transition={{ delay: 0.15, duration: 0.5 }}
-                className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-warm-gold/15 border border-warm-gold/40 mb-6"
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.1, duration: 0.4 }}
+                className="text-center"
               >
-                <CheckCircle2
-                  size={28}
-                  strokeWidth={1.6}
-                  className="text-warm-gold"
+                <p className="text-warm-gold/70 text-[10px] uppercase tracking-[0.4em] mb-2">
+                  The Mini Dark Mirror
+                </p>
+                <h1 className="text-2xl sm:text-3xl font-extralight tracking-wider uppercase text-text-light leading-tight">
+                  Your read
+                </h1>
+              </m.div>
+
+              {/* Radar — the screenshot moment */}
+              <m.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.2, duration: 0.5 }}
+                className="flex justify-center"
+              >
+                <DarkMirrorRadar
+                  scores={result.scores}
+                  dominantType={result.dominantType}
+                  secondaryType={result.secondaryType}
                 />
               </m.div>
-              <p className="text-warm-gold/70 text-[10px] uppercase tracking-[0.4em] mb-4">
-                Sent
-              </p>
-              <h2 className="text-3xl sm:text-4xl font-extralight tracking-wider uppercase leading-tight mb-4 text-text-light">
-                Check your inbox.
-              </h2>
-              <p className="text-text-gray text-base font-light leading-relaxed max-w-md mx-auto mb-8">
-                Your full {result.dominantName} report is on its way.
-                It usually lands within 60 seconds. Check your promotions
-                tab if it doesn&apos;t show up.
-              </p>
 
-              <div className="bg-gradient-to-br from-deep-burgundy/15 to-deep-navy/20 backdrop-blur-sm border border-warm-gold/20 rounded-2xl p-6 max-w-md mx-auto">
-                <p className="text-warm-gold/80 text-[11px] uppercase tracking-[0.3em] mb-3">
-                  While you wait
-                </p>
-                <Link
-                  href="/quiz"
-                  className="block py-3 px-5 rounded-xl border border-warm-gold/30 hover:border-warm-gold/60 hover:bg-warm-gold/[0.04] transition-all text-left mb-3"
-                >
-                  <p className="text-text-light text-sm font-light">
-                    The full Dark Mirror Assessment
+              {/* Clinical synthesis card */}
+              <ClinicalResultCard result={result} />
+
+              {/* Axis-tailored Consilium tile */}
+              <ConsiliumAxisTile result={result} />
+
+              {/* Footer — email confirmation + upsell */}
+              <m.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 1.4, duration: 0.5 }}
+                className="text-center pt-4"
+              >
+                <div className="inline-flex items-center gap-2 text-text-gray/60 text-xs">
+                  <Mail size={12} className="text-warm-gold/60" />
+                  <span>
+                    A copy is on its way to {email}. Check spam if it
+                    doesn&apos;t land in 60 seconds.
+                  </span>
+                </div>
+
+                <div className="mt-10 pt-8 border-t border-warm-gold/10 max-w-md mx-auto">
+                  <p className="text-text-gray/60 text-xs uppercase tracking-[0.25em] mb-3">
+                    Want the comprehensive version
                   </p>
-                  <p className="text-text-gray/70 text-xs mt-1">
-                    20 questions, full 6-axis radar, $9.99
-                  </p>
-                </Link>
-                <Link
-                  href="/book"
-                  className="block py-3 px-5 rounded-xl border border-warm-gold/30 hover:border-warm-gold/60 hover:bg-warm-gold/[0.04] transition-all text-left"
-                >
-                  <p className="text-text-light text-sm font-light">
-                    The Sociopathic Dating Bible
-                  </p>
-                  <p className="text-text-gray/70 text-xs mt-1">
-                    The book the simulator scenarios came from
-                  </p>
-                </Link>
-              </div>
+                  <Link
+                    href="/quiz"
+                    className="text-warm-gold/80 hover:text-warm-gold text-sm font-light transition-colors"
+                  >
+                    The full Dark Mirror Assessment, 20 questions, $9.99 →
+                  </Link>
+                </div>
+              </m.div>
             </m.section>
           )}
         </AnimatePresence>
