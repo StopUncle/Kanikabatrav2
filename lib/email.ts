@@ -2411,6 +2411,13 @@ export const sendMiniDarkMirrorResult = async (params: {
     .join("");
 
   const inner = `
+    <p style="color: #d6cfc4; font-size: 13px; line-height: 1.7; margin: 0 0 22px 0; font-style: italic; opacity: 0.85;">
+      Quick favor before you scroll &mdash; if this landed in spam or
+      promotions, drag it to your inbox. The follow-up emails are where
+      the framework actually unfolds, and Microsoft / Gmail filters
+      lean hard on that one signal.
+    </p>
+
     <p class="lux-text" style="color: #f5efe2; font-size: 16px; line-height: 1.75; margin: 0 0 18px 0;">
       You scored highest on
     </p>
@@ -2554,6 +2561,13 @@ export const sendStarterPack = async (params: {
   }).join("");
 
   const inner = `
+    <p style="color: #d6cfc4; font-size: 13px; line-height: 1.7; margin: 0 0 22px 0; font-style: italic; opacity: 0.85;">
+      Quick favor before you read &mdash; if this landed in spam or
+      promotions, drag it to your inbox. The follow-ups go deeper
+      on each pattern, and Microsoft / Gmail filters lean hard on
+      that one signal.
+    </p>
+
     <p class="lux-text" style="color: #f5efe2; font-size: 16px; line-height: 1.75; margin: 0 0 24px 0;">
       Five named tactics. Memorise the names. Once you have a word
       for the move, you stop forgiving it.

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 import { sendStarterPack } from "@/lib/email";
+import { buildStarterPackDrip } from "@/lib/email-sequences";
 import { logger } from "@/lib/logger";
 
 /**
@@ -84,6 +85,25 @@ export async function POST(req: NextRequest) {
         new Error(`email=${normalised}`),
       );
       // Same as mini-quiz: still 200, email is recoverable.
+    }
+
+    // Enqueue the 4-email drip (Day 1 / 3 / 5 / 7). Idempotent — skip
+    // if this email already has a starter-pack-drip enrollment.
+    try {
+      const existingDrip = await prisma.emailQueue.findFirst({
+        where: {
+          recipientEmail: normalised,
+          sequence: "starter-pack-drip",
+        },
+        select: { id: true },
+      });
+      if (!existingDrip) {
+        const dripDisplayName = normalised.split("@")[0] || "you";
+        const entries = buildStarterPackDrip(normalised, dripDisplayName);
+        await prisma.emailQueue.createMany({ data: entries });
+      }
+    } catch (dripErr) {
+      logger.error("starter-pack drip enqueue failed", dripErr as Error);
     }
 
     return NextResponse.json({ ok: true });

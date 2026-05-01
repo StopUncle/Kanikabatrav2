@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 import { sendMiniDarkMirrorResult } from "@/lib/email";
+import { buildMiniDarkMirrorDrip } from "@/lib/email-sequences";
 import {
   buildAttributionRecord,
   type AttributionPayload,
@@ -143,6 +144,31 @@ export async function POST(req: NextRequest) {
       );
       // Still return 200 — the subscriber is captured. Email is
       // recoverable; subscription is the irreversible primary event.
+    }
+
+    // Enqueue the 4-email drip (Day 1 / 3 / 5 / 7). Idempotent — if
+    // this email already has a mini-dark-mirror-drip enrollment, skip
+    // re-queuing so re-takers don't get a duplicated sequence.
+    try {
+      const existingDrip = await prisma.emailQueue.findFirst({
+        where: {
+          recipientEmail: normalised,
+          sequence: "mini-dark-mirror-drip",
+        },
+        select: { id: true },
+      });
+      if (!existingDrip) {
+        const dripDisplayName = normalised.split("@")[0] || "you";
+        const entries = buildMiniDarkMirrorDrip(
+          normalised,
+          dripDisplayName,
+          dominantType,
+        );
+        await prisma.emailQueue.createMany({ data: entries });
+      }
+    } catch (dripErr) {
+      // Drip failure must not break the capture flow. Log and move on.
+      logger.error("mini-quiz drip enqueue failed", dripErr as Error);
     }
 
     return NextResponse.json({ ok: true });
