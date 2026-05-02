@@ -1,3 +1,5 @@
+import { escapeHtml as esc } from "@/lib/escape-html";
+
 const baseUrl =
   process.env.NEXT_PUBLIC_BASE_URL || "https://kanikarose.com";
 
@@ -96,7 +98,7 @@ function goldButton(text: string, href: string): string {
 function buildWelcomeHtml(name: string): string {
   const body = `
     <p style="color: #f5f0ed; font-size: 18px; margin: 0 0 20px 0; line-height: 1.6;">
-      Dear ${name},
+      Dear ${esc(name)},
     </p>
 
     <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 20px 0; font-size: 15px;">
@@ -143,7 +145,7 @@ function buildTrialOfferHtml(name: string, trialToken: string): string {
 
   const body = `
     <p style="color: #f5f0ed; font-size: 18px; margin: 0 0 20px 0; line-height: 1.6;">
-      ${name},
+      ${esc(name)},
     </p>
 
     <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 20px 0; font-size: 15px;">
@@ -204,7 +206,7 @@ function buildReminderHtml(name: string, trialToken: string): string {
 
   const body = `
     <p style="color: #f5f0ed; font-size: 18px; margin: 0 0 20px 0; line-height: 1.6;">
-      ${name},
+      ${esc(name)},
     </p>
 
     <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 20px 0; font-size: 15px;">
@@ -284,7 +286,7 @@ function buildMiniDripStep1(name: string, dominantType: string): string {
 
   const body = `
     <p style="color: #f5f0ed; font-size: 16px; margin: 0 0 8px 0; line-height: 1.7;">
-      Hey ${name},
+      Hey ${esc(name)},
     </p>
 
     <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 24px 0; font-size: 14px; font-style: italic;">
@@ -317,7 +319,7 @@ function buildMiniDripStep1(name: string, dominantType: string): string {
 function buildMiniDripStep2(name: string): string {
   const body = `
     <p style="color: #f5f0ed; font-size: 16px; margin: 0 0 20px 0; line-height: 1.7;">
-      ${name},
+      ${esc(name)},
     </p>
 
     <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 20px 0; font-size: 15px;">
@@ -350,7 +352,7 @@ function buildMiniDripStep2(name: string): string {
 function buildMiniDripStep3(name: string): string {
   const body = `
     <p style="color: #f5f0ed; font-size: 16px; margin: 0 0 20px 0; line-height: 1.7;">
-      ${name},
+      ${esc(name)},
     </p>
 
     <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 20px 0; font-size: 15px;">
@@ -406,7 +408,7 @@ function buildMiniDripStep4(name: string): string {
 
   const body = `
     <p style="color: #f5f0ed; font-size: 16px; margin: 0 0 20px 0; line-height: 1.7;">
-      ${name},
+      ${esc(name)},
     </p>
 
     <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 20px 0; font-size: 15px;">
@@ -488,7 +490,7 @@ export function buildMiniDarkMirrorDrip(
 function buildStarterDripStep1(name: string): string {
   const body = `
     <p style="color: #f5f0ed; font-size: 16px; margin: 0 0 8px 0; line-height: 1.7;">
-      Hey ${name},
+      Hey ${esc(name)},
     </p>
 
     <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 24px 0; font-size: 14px; font-style: italic;">
@@ -525,7 +527,7 @@ function buildStarterDripStep1(name: string): string {
 function buildStarterDripStep2(name: string): string {
   const body = `
     <p style="color: #f5f0ed; font-size: 16px; margin: 0 0 20px 0; line-height: 1.7;">
-      ${name},
+      ${esc(name)},
     </p>
 
     <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 20px 0; font-size: 15px;">
@@ -558,7 +560,7 @@ function buildStarterDripStep2(name: string): string {
 function buildStarterDripStep3(name: string): string {
   const body = `
     <p style="color: #f5f0ed; font-size: 16px; margin: 0 0 20px 0; line-height: 1.7;">
-      ${name},
+      ${esc(name)},
     </p>
 
     <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 20px 0; font-size: 15px;">
@@ -618,7 +620,7 @@ function buildStarterDripStep4(name: string): string {
 
   const body = `
     <p style="color: #f5f0ed; font-size: 16px; margin: 0 0 20px 0; line-height: 1.7;">
-      ${name},
+      ${esc(name)},
     </p>
 
     <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 20px 0; font-size: 15px;">
