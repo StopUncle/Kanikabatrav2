@@ -36,12 +36,22 @@ export const metadata: Metadata = {
       "Sixty seconds. One artifact, one question, one read. Train your instincts daily.",
     url: "https://kanikarose.com/tells",
     type: "website",
+    images: [
+      {
+        url: "/api/og?title=Today%27s%20Tell&subtitle=Train%20Your%20Instincts",
+        width: 1200,
+        height: 630,
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
     title: "Today's Tell · Train Your Instincts",
     description:
       "Sixty seconds. One artifact, one question, one read. Train your instincts daily.",
+    images: [
+      "/api/og?title=Today%27s%20Tell&subtitle=Train%20Your%20Instincts",
+    ],
   },
 };
 

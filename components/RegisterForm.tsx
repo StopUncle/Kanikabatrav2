@@ -8,6 +8,7 @@ import { z } from "zod";
 import { m } from "framer-motion";
 import { Eye, EyeOff, Mail, Lock, UserPlus } from "lucide-react";
 import { getAttributionForSubmit } from "@/lib/attribution";
+import { migrateLocalStreakIfPresent } from "@/lib/tells/migrate-streak-client";
 
 const registerSchema = z
   .object({
@@ -68,6 +69,10 @@ export default function RegisterForm() {
       if (!response.ok) {
         throw new Error(result.error || "Registration failed");
       }
+
+      // Carry an anonymous Tells streak forward onto the new user row.
+      // Fire-and-forget, never blocks the redirect.
+      migrateLocalStreakIfPresent();
 
       // Registration successful, redirect to returnTo or dashboard
       router.push(returnTo || "/dashboard");

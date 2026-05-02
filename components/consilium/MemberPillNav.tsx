@@ -9,6 +9,7 @@ import {
   Award,
   AudioLines,
   Newspaper,
+  Target,
   type LucideIcon,
 } from "lucide-react";
 import AskKanikaPill from "./AskKanikaPill";
@@ -55,6 +56,7 @@ type PillItem = {
 // certification curriculum (Phase 3-4) gives it real content.
 const PILLS: PillItem[] = [
   { href: "/consilium/feed", label: "Feed", icon: Scroll, matchPrefix: "/consilium/feed", countKey: "feed" },
+  { href: "/consilium/instincts/today", label: "Instincts", icon: Target, matchPrefix: "/consilium/instincts" },
   { href: "/consilium/simulator", label: "Simulator", icon: Film, matchPrefix: "/consilium/simulator" },
   {
     href: "/consilium/simulator/leaderboard",

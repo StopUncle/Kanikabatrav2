@@ -23,6 +23,7 @@ import {
   LogOut,
   Loader2,
   Target,
+  ScrollText,
   type LucideIcon,
 } from "lucide-react";
 import ConsiliumSeal from "@/components/ConsiliumSeal";
@@ -41,6 +42,7 @@ import type { ActivityItem, ActivityKind } from "@/lib/community/activity";
 const MAIN_NAV = [
   { href: "/consilium/feed", label: "Feed", icon: Scroll },
   { href: "/consilium/instincts/today", label: "Instincts", icon: Target },
+  { href: "/consilium/receipts", label: "Receipts", icon: ScrollText },
   { href: "/consilium/voice-notes", label: "Voice Notes", icon: AudioLines },
   { href: "/consilium/previews", label: "Previews", icon: Clock },
   { href: "/consilium/simulator", label: "Simulator", icon: Film },

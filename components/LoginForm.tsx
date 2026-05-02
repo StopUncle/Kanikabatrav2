@@ -7,6 +7,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { m } from "framer-motion";
 import { Eye, EyeOff, Mail, Lock, LogIn } from "lucide-react";
+import { migrateLocalStreakIfPresent } from "@/lib/tells/migrate-streak-client";
 
 const loginSchema = z.object({
   email: z.string().email("Invalid email address"),
@@ -56,6 +57,10 @@ export default function LoginForm() {
       if (!response.ok) {
         throw new Error(result.error || "Login failed");
       }
+
+      // Carry an anonymous Tells streak forward onto this account.
+      // Fire-and-forget, never blocks the redirect.
+      migrateLocalStreakIfPresent();
 
       // Login successful, redirect to returnTo or dashboard
       router.push(returnTo || "/dashboard");

@@ -90,6 +90,7 @@ model User {
   tellResponses             TellResponse[]
   instinctScore             InstinctScore?
   tellStreak                TellStreak?
+  receipts                  Receipt[]
   // Acquisition attribution — captured from URL params + headers on
   // the visit that ended in registration. Joinable against revenue
   // (Purchase), retention (CommunityMembership), and quiz outcomes
@@ -1359,4 +1360,44 @@ model TellStreak {
   updatedAt     DateTime @updatedAt
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+// ============================================================================
+// RECEIPTS — premium AI text-reader, "paste your situation, get the read"
+// ============================================================================
+
+// One Receipt per Kanika-voice read of a user-supplied text exchange.
+//
+// Privacy posture: we DO NOT store the raw input. We store:
+//   - the response Kanika returned (so the user can revisit later)
+//   - an inputCharCount for cost analytics
+//   - a sha256 hash of the input for replay-detection only
+// If a future product decision needs the input persisted (e.g. a true
+// "history view"), add an inputText field then; do not add it lazily
+// because it raises the bar on backups + GDPR + threat model.
+model Receipt {
+  id             String   @id @default(cuid())
+  userId         String
+  // User-provided label for their own organisation, e.g. "ex Tuesday".
+  // Optional, defaults to "Untitled" on display.
+  label          String?
+  // Kanika-voice response, the read.
+  response       String   @db.Text
+  // Length of the input the user pasted, in characters, for cost
+  // analytics and to detect "the user pasted a novel" abuse.
+  inputCharCount Int
+  // sha256 hex of the input. Used only to detect a same-input replay
+  // (return the same response without re-billing the LLM).
+  inputHash      String
+  // Model ID actually called, so cost analytics can split by model.
+  model          String
+  // Cost in USD * 10000, rounded. Stored as int to avoid float weirdness.
+  costMicros     Int      @default(0)
+
+  createdAt      DateTime @default(now())
+
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt])
+  @@index([inputHash])
 }

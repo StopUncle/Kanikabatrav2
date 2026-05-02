@@ -52,6 +52,9 @@ export default function TellPlayer({ tell }: { tell: Tell }) {
 
   // Hydrate the streak from localStorage on mount, then reconcile
   // against today (apply freeze or reset if days were missed).
+  // Also ask the server if this user already answered this Tell, so
+  // a refresh or a return visit lands on the reveal with the correct
+  // pick (not the placeholder pick the spike used).
   useEffect(() => {
     startedAtRef.current = Date.now();
     const loaded = loadStreak();
@@ -60,12 +63,52 @@ export default function TellPlayer({ tell }: { tell: Tell }) {
     setHydrated(true);
     if (reconciled !== loaded) saveStreak(reconciled);
 
-    // If today's Tell has already been completed, hop straight to
-    // the reveal so refreshes don't reset the user's progress.
-    if (reconciled.completedTellId === tell.id) {
-      const correct = tell.choices.find((c) => c.isCorrect);
-      if (correct) setPickedId(correct.id);
-    }
+    let cancelled = false;
+
+    fetch(`/api/tells/${encodeURIComponent(tell.id)}/my-response`)
+      .then(async (res) => (res.ok ? await res.json() : null))
+      .then(
+        (data: {
+          response: {
+            choiceId: string;
+            isCorrect: boolean;
+            scoreImpact: number;
+            countedScored: boolean;
+            countedStreak: boolean;
+          } | null;
+        } | null) => {
+          if (cancelled || !data?.response) {
+            // No prior server response. Fall back to localStorage hint.
+            if (reconciled.completedTellId === tell.id) {
+              const correct = tell.choices.find((c) => c.isCorrect);
+              if (correct) setPickedId(correct.id);
+            }
+            return;
+          }
+          // Lock to the actual choice the user picked previously.
+          const r = data.response;
+          setPickedId(r.choiceId);
+          setServerResult({
+            correct: r.isCorrect,
+            scoreImpact: r.scoreImpact,
+            isReplay: !r.countedScored,
+            countedStreak: r.countedStreak,
+            streak: null,
+          });
+        },
+      )
+      .catch(() => {
+        if (cancelled) return;
+        // Network failure during the lookup, just trust localStorage.
+        if (reconciled.completedTellId === tell.id) {
+          const correct = tell.choices.find((c) => c.isCorrect);
+          if (correct) setPickedId(correct.id);
+        }
+      });
+
+    return () => {
+      cancelled = true;
+    };
   }, [tell.id, tell.choices]);
 
   function handlePick(choiceId: string) {

@@ -4,7 +4,12 @@ import { ChevronRight } from "lucide-react";
 import { requireServerAuth } from "@/lib/auth/server-auth";
 import TellPlayer from "@/components/tells/TellPlayer";
 import InstinctsHex from "@/components/tells/InstinctsHex";
-import { getTodaysTellRow, getInstinctScore, getTellStreak } from "@/lib/tells/db";
+import {
+  getBonusTells,
+  getInstinctScore,
+  getTellStreak,
+  getTodaysTellRow,
+} from "@/lib/tells/db";
 import { getTodaysTell as getTodaysSeed } from "@/lib/tells/seed-tells";
 
 export const dynamic = "force-dynamic";
@@ -23,6 +28,17 @@ export default async function ConsiliumTellsTodayPage() {
     getTellStreak(userId),
   ]);
 
+  // Bonus Tells: up to 2 published Tells the user has not completed.
+  // Skipped on the seed-fallback path (no DB rows = no bonus pool).
+  const bonus =
+    tell.id.startsWith("tell-")
+      ? await getBonusTells({
+          excludeId: tell.id,
+          excludeUserId: userId,
+          limit: 2,
+        })
+      : [];
+
   return (
     <div className="min-h-screen px-4 py-10 sm:py-14">
       <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-10">
@@ -37,6 +53,28 @@ export default async function ConsiliumTellsTodayPage() {
           </header>
 
           <TellPlayer tell={tell} />
+
+          {bonus.length > 0 && (
+            <div className="mt-16 pt-10 border-t border-gray-800">
+              <div className="max-w-3xl mx-auto px-4">
+                <p className="text-accent-gold/70 text-[10px] uppercase tracking-[0.4em] mb-2">
+                  Bonus reps
+                </p>
+                <p className="text-text-gray text-sm font-light leading-relaxed mb-2">
+                  Two more Tells you have not seen. Half the rating
+                  weight, full streak credit.
+                </p>
+              </div>
+              {bonus.map((b) => (
+                <div
+                  key={b.id}
+                  className="mt-10 pt-10 border-t border-gray-800/50"
+                >
+                  <TellPlayer tell={b} />
+                </div>
+              ))}
+            </div>
+          )}
         </div>
 
         <aside className="space-y-6 lg:sticky lg:top-24 self-start">
