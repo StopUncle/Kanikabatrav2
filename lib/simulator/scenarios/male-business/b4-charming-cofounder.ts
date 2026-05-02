@@ -354,6 +354,12 @@ const scenes: Scene[] = [
         tactic: "Discounting a free, unsolicited, aligned warning is the sunk-cost fallacy wearing due-diligence clothes.",
         nextSceneId: "ending-signed",
       },
+      {
+        id: "delay-decide",
+        text: "Don't decide yet. Tell Ryker you need another week, then another, then another. Let the conversation die from your end without ever closing it.",
+        tactic: "Passive non-decision is a decision that costs you the months it takes to make. The deal won't happen, but neither will anything else you should have been building.",
+        nextSceneId: "ending-wasted",
+      },
     ],
   },
 

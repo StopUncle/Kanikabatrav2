@@ -491,6 +491,12 @@ const scenes: Scene[] = [
         nextSceneId: "ending-secure",
         isOptimal: true,
       },
+      {
+        id: "keep-the-small-room",
+        text: "Notice the flare is quieter, but it's still there in a small room of your chest you can visit when she's asleep. Don't tell her about the room. Don't close it either.",
+        tactic: "The hardest failure to name. Not leaving, not arriving. Most men live here for decades and call it adulthood.",
+        nextSceneId: "ending-half-lit",
+      },
     ],
   },
 
