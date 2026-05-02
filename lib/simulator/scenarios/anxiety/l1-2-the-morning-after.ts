@@ -69,6 +69,18 @@ const MAYA: Character = {
   silhouetteType: "female-soft",
 };
 
+const MIA: Character = {
+  id: "mia",
+  name: "Mia",
+  description:
+    "Sam's partner. Works from home from the second bedroom. Sleeps next to a body that ran 16-hour anxiety chemistry last night and named the part of it she felt without making it a problem at 6 a.m. The trusted witness.",
+  traits: ["attuned", "warm", "patient"],
+  defaultEmotion: "neutral",
+  gender: "female",
+  personalityType: "friend",
+  silhouetteType: "female-soft",
+};
+
 const scenes: Scene[] = [
   // ===================================================================
   // KANIKA FRAME, the integration problem
@@ -555,7 +567,7 @@ export const anxiety12: Scenario = {
     "Dismissing the disconfirmation, the relief-of-resolved-worry is psychoactive; moving on FEELS right; the dwell is what makes the next staircase shorter",
     "Adding a shame layer on top of the original spiral, anxiogenic in its own right via HPA chronic-activation mechanics; produces the next spiral on slightly less stimulus",
   ],
-  characters: [INNER_VOICE, SAM, DAVID, MAYA],
+  characters: [INNER_VOICE, SAM, DAVID, MAYA, MIA],
   scenes,
 };
 
