@@ -57,7 +57,7 @@ async function main() {
     byScenario.set(r.scenarioId, s);
   }
 
-  const sorted = [...byScenario.entries()].sort(
+  const sorted = Array.from(byScenario.entries()).sort(
     (a, b) => b[1].starts - a[1].starts,
   );
 
@@ -70,7 +70,7 @@ async function main() {
     for (const sid of stats.lastSceneIds) {
       sceneCounts.set(sid, (sceneCounts.get(sid) ?? 0) + 1);
     }
-    const topStuck = [...sceneCounts.entries()]
+    const topStuck = Array.from(sceneCounts.entries())
       .sort((a, b) => b[1] - a[1])
       .slice(0, 3)
       .map(([sid, n]) => `${sid}(${n})`)

@@ -40,7 +40,7 @@ async function main() {
     byScene.set(key, (byScene.get(key) ?? 0) + 1);
   }
   console.log("Stuck count by scenario::scene:");
-  for (const [k, v] of [...byScene.entries()].sort((a, b) => b[1] - a[1])) {
+  for (const [k, v] of Array.from(byScene.entries()).sort((a, b) => b[1] - a[1])) {
     console.log(`  ${v} × ${k}`);
   }
 

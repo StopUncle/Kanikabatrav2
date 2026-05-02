@@ -419,6 +419,19 @@ export default function SimulatorRunner({
     // Re-show the intro on replay so the player sees the "Replay"
     // framing + previous-best callout before diving back in.
     setShowIntro(true);
+    // Reset the server-side progress row so a page refresh during the
+    // replay doesn't snap back to the ending. Fire-and-forget: the
+    // local reset above is what the player sees; this is just the
+    // persistence catch-up. The server preserves completionCount and
+    // endingsReached so the player keeps their record + ending
+    // progress counter.
+    fetch("/api/simulator/replay", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ scenarioId: scenario.id }),
+    }).catch(() => {
+      /* non-fatal — the local state is the source of truth during play */
+    });
   }, [scenario]);
 
   // Exit button, small icon, top-right, above the letterbox. Shown on all

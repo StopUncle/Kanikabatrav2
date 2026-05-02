@@ -4,6 +4,7 @@ import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import type { Scenario } from "@/lib/simulator/types";
 import SimulatorRunner from "./SimulatorRunner";
+import SimulatorErrorBoundary from "./SimulatorErrorBoundary";
 
 type Props = {
   scenario: Scenario;
@@ -38,16 +39,18 @@ export default function PublicSimulatorClient({ scenario }: Props) {
   );
 
   return (
-    <SimulatorRunner
-      scenario={scenario}
-      exitHref="/"
-      endingCta={conversionCta}
-      /* Hide the failure-blog "Understand what happened" CTA on the
-         public demo. Cold visitors on the free demo should see exactly
-         one thing on the loss screen, the conversion CTA. Pulling
-         them into a blog tangent splits the moment of highest intent
-         and drops conversion. */
-      hideFailureBlog
-    />
+    <SimulatorErrorBoundary scenarioId={scenario.id} exitHref="/">
+      <SimulatorRunner
+        scenario={scenario}
+        exitHref="/"
+        endingCta={conversionCta}
+        /* Hide the failure-blog "Understand what happened" CTA on the
+           public demo. Cold visitors on the free demo should see exactly
+           one thing on the loss screen, the conversion CTA. Pulling
+           them into a blog tangent splits the moment of highest intent
+           and drops conversion. */
+        hideFailureBlog
+      />
+    </SimulatorErrorBoundary>
   );
 }

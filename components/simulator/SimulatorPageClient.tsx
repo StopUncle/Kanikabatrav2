@@ -9,6 +9,7 @@ import type {
 } from "@/lib/simulator/types";
 import SimulatorRunner from "./SimulatorRunner";
 import AchievementToast from "./AchievementToast";
+import SimulatorErrorBoundary from "./SimulatorErrorBoundary";
 
 export type PreviousBest = {
   xpEarned: number;
@@ -62,9 +63,13 @@ export default function SimulatorPageClient({
 
   // Throttle saves, only fire if state has actually changed on a key field.
   const lastSavedRef = useRef<string>("");
+  // Latest scene id, read by the error boundary so a crash report can
+  // pin the failure to a specific scene rather than just a scenario.
+  const currentSceneIdRef = useRef<string | null>(null);
 
   const handleStateChange = useCallback(
     (state: SimulatorState) => {
+      currentSceneIdRef.current = state.currentSceneId;
       // Key includes the fields we actually care about being persisted.
       const key = `${state.currentSceneId}|${state.choicesMade.length}|${state.outcome ?? ""}`;
       if (key === lastSavedRef.current) return;
@@ -146,7 +151,11 @@ export default function SimulatorPageClient({
   }, [router]);
 
   return (
-    <>
+    <SimulatorErrorBoundary
+      scenarioId={scenario.id}
+      currentSceneIdRef={currentSceneIdRef}
+      exitHref="/consilium/simulator"
+    >
       <SimulatorRunner
         scenario={scenario}
         initialState={initialState}
@@ -157,6 +166,6 @@ export default function SimulatorPageClient({
         badgesEarned={badgesEarned}
       />
       <AchievementToast unlocks={unlockedThisRun} />
-    </>
+    </SimulatorErrorBoundary>
   );
 }
