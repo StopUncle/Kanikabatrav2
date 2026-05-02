@@ -25,6 +25,10 @@ export async function GET(request: NextRequest) {
             suspendedAt: true,
             suspendReason: true,
             cancelledAt: true,
+            // Surface so the UI can differentiate between Stripe
+            // subscribers (auto-renewing, can cancel) and gift / trial /
+            // bundled members (no Stripe sub, lapses naturally).
+            paypalSubscriptionId: true,
           },
         },
         purchases: {

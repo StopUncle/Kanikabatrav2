@@ -952,6 +952,45 @@ export async function POST(request: NextRequest) {
         break;
       }
 
+      case "customer.subscription.updated": {
+        // Fires when the user clicks "Cancel subscription" inside the
+        // Stripe Customer Portal (sets cancel_at_period_end=true) and
+        // again when they reactivate (cancel_at_period_end=false). Mirror
+        // the flag onto the local membership row so the dashboard can
+        // render the right state without us re-deriving it from Stripe.
+        //
+        // Note: this event also fires for many other subscription
+        // mutations (price changes, metadata writes, etc). We only act
+        // on the cancel flag and ignore everything else; status flips
+        // happen in the .deleted / .paused / invoice.* handlers.
+        const subscription = event.data.object;
+        const membership = await prisma.communityMembership.findFirst({
+          where: { paypalSubscriptionId: `ST-${subscription.id}` },
+        });
+        if (membership) {
+          const willCancel = !!subscription.cancel_at_period_end;
+          const subAny = subscription as unknown as {
+            current_period_end?: number;
+            items?: { data?: Array<{ current_period_end?: number }> };
+          };
+          const periodEndSec =
+            subAny.current_period_end ??
+            subAny.items?.data?.[0]?.current_period_end;
+          const periodEndMs =
+            typeof periodEndSec === "number" ? periodEndSec * 1000 : null;
+          await prisma.communityMembership.update({
+            where: { id: membership.id },
+            data: {
+              cancelledAt: willCancel
+                ? membership.cancelledAt ?? new Date()
+                : null,
+              ...(periodEndMs ? { expiresAt: new Date(periodEndMs) } : {}),
+            },
+          });
+        }
+        break;
+      }
+
       case "charge.refunded": {
         const charge = event.data.object;
 

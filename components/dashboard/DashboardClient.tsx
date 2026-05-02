@@ -86,6 +86,7 @@ interface CommunityMembershipSummary {
   suspendedAt: string | null;
   suspendReason: string | null;
   cancelledAt: string | null;
+  paypalSubscriptionId: string | null;
 }
 
 interface DashboardData {
