@@ -639,9 +639,9 @@ const scenes: Scene[] = [
     choices: [
       {
         id: "firm-up-now",
-        text: '"Actually. I realised I have to prep for the 8:30. Go ahead without me."',
+        text: '"Actually. I realised I have to prep for the 8:30. Go ahead without me." He shrugs, picks up his keys, leaves at 7:00.',
         tactic: "Firm, specific, and does not re-open. The vague-backfire is recoverable if the firmness arrives within sixty seconds.",
-        nextSceneId: "spouse-leaves",
+        nextSceneId: "alone-in-house",
         isOptimal: true,
       },
     ],

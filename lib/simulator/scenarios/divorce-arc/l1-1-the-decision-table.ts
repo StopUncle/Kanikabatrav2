@@ -288,9 +288,9 @@ const scenes: Scene[] = [
     choices: [
       {
         id: "back-to-spoken",
-        text: "Close the laptop. Cross to the couch.",
+        text: 'Close the laptop. Cross to the couch. Sit down two feet from him. Wait until he looks up. Say: "I need to talk to you about something. I think it is time we separate."',
         tactic: "Recovery. The letter was a five-minute detour. Continue with the spoken version.",
-        nextSceneId: "the-counter",
+        nextSceneId: "the-seven-minutes",
         isOptimal: true,
       },
     ],

@@ -586,9 +586,9 @@ const scenes: Scene[] = [
     choices: [
       {
         id: "stop",
-        text: "Stop posting. Withdraw to the private channel with Ren.",
+        text: "Stop posting. Open a private thread with Ren: 'I should have stayed silent. Tell me what you need from me practically.'",
         tactic: "Late but correct. Stop replying in the public theatre. Redirect to practical contribution through Ren.",
-        nextSceneId: "ren-private",
+        nextSceneId: "ren-coordinated",
         isOptimal: true,
       },
     ],

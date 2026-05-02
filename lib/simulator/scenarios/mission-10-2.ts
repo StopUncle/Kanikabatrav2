@@ -133,7 +133,7 @@ const scenes: Scene[] = [
         id: "revise-devon",
         text: '"You\'re right. Not ready. Let me pick again."',
         tactic: "Catch your own bias. Kaya just gave you an exit, take it.",
-        nextSceneId: "the-nomination",
+        nextSceneId: "the-nomination-redo",
         isOptimal: true,
       },
       {
@@ -147,18 +147,66 @@ const scenes: Scene[] = [
         id: "devon-plus-timing",
         text: '"Devon, in eighteen months. If the board can wait, I\'d wait."',
         tactic: "Right person, wrong clock. Nominating with a timeline is a different answer than nominating for now.",
-        nextSceneId: "the-nomination",
+        nextSceneId: "the-nomination-redo",
         isOptimal: true,
       },
       {
         id: "name-two-options",
         text: '"Devon is my heart answer. My head answer is different. Which do you want?"',
         tactic: "Show Kaya you know the difference. She'll make you say the head answer out loud; the exercise is the point.",
-        nextSceneId: "the-nomination",
+        nextSceneId: "the-nomination-redo",
         isOptimal: true,
       },
     ],
   },
+
+  // ===================================================================
+  // THE NOMINATION, REDO. After catching the Devon bias, Kaya waits.
+  // No Devon option this time, the head answer has to land.
+  // ===================================================================
+
+  {
+    id: "the-nomination-redo",
+    backgroundId: "restaurant",
+    mood: "tense",
+    presentCharacterIds: ["kaya"],
+    dialog: [
+      {
+        speakerId: "kaya",
+        text: '"Good. So. Without Devon on the list. The head answer."',
+        emotion: "knowing",
+      },
+      {
+        speakerId: "inner-voice",
+        text: "She moved past it without ceremony. The exit you took was a real exit, not a punishment, but the next sentence has to be the answer you would have given if loyalty weren't quietly steering.",
+        emotion: "knowing",
+      },
+    ],
+    choices: [
+      {
+        id: "lennox",
+        text: "Lennox, the rival-turned-ally. Stronger record publicly, more independent.",
+        tactic: "Strategic pick. Lennox's reputation is now independent of yours.",
+        nextSceneId: "lennox-evaluation",
+        isOptimal: true,
+      },
+      {
+        id: "outside-candidate",
+        text: "An outside candidate, someone you respect who you haven't mentored.",
+        tactic: "Broadens your network. Shows you can spot talent you didn't create.",
+        nextSceneId: "outside-evaluation",
+        isOptimal: true,
+      },
+      {
+        id: "decline",
+        text: '"Let the board decide without me weighing in."',
+        tactic: "Abdication after a recovery. The exit becomes the answer, which costs more here than the first time.",
+        nextSceneId: "kaya-receives-abdication",
+        isOptimal: false,
+      },
+    ],
+  },
+
   {
     id: "kaya-marks-it",
     backgroundId: "restaurant",
