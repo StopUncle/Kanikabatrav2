@@ -2,7 +2,11 @@ import type { Metadata } from "next";
 import Header from "@/components/Header";
 import BackgroundEffects from "@/components/BackgroundEffects";
 import TellPlayer from "@/components/tells/TellPlayer";
-import { getTodaysTell } from "@/lib/tells/seed-tells";
+import { getTodaysTellRow } from "@/lib/tells/db";
+import { getTodaysTell as getTodaysSeed } from "@/lib/tells/seed-tells";
+
+// Always render fresh, the schedule changes daily.
+export const dynamic = "force-dynamic";
 
 /**
  * /tells, the public daily Tell. The funnel front door for the
@@ -41,8 +45,10 @@ export const metadata: Metadata = {
   },
 };
 
-export default function TellsPage() {
-  const tell = getTodaysTell();
+export default async function TellsPage() {
+  // Try the DB schedule first, fall back to the seed pool until the
+  // first PUBLISHED Tell rows exist.
+  const tell = (await getTodaysTellRow()) ?? getTodaysSeed();
 
   return (
     <>

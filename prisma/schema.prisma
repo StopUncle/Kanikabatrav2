@@ -84,6 +84,12 @@ model User {
   // shipped today). Member prefs UI in /consilium/profile lets the
   // member toggle each category.
   pushPreferences           Json?
+  // Tells, the daily Train-Your-Instincts product. Three tables:
+  // TellResponse (one row per answer), InstinctScore (six-axis Elo),
+  // TellStreak (current/longest day count + weekly freeze).
+  tellResponses             TellResponse[]
+  instinctScore             InstinctScore?
+  tellStreak                TellStreak?
   // Acquisition attribution — captured from URL params + headers on
   // the visit that ended in registration. Joinable against revenue
   // (Purchase), retention (CommunityMembership), and quiz outcomes
@@ -984,8 +990,8 @@ model ContentIdea {
   // Optional link to a shock-and-awe confession line drawn from the bank.
   // When set, the API bumps usedCount + stamps lastUsedAt on the confession
   // so we don't burn the same legendary line twice in 6 months.
-  confessionId       String?
-  confession         ContentConfession? @relation(fields: [confessionId], references: [id], onDelete: SetNull)
+  confessionId String?
+  confession   ContentConfession? @relation(fields: [confessionId], references: [id], onDelete: SetNull)
 
   @@index([status])
   @@index([source])
@@ -997,28 +1003,28 @@ model ContentIdea {
 // Each row is a single confession line. Categories grouped in UI.
 // Pull from this bank when scripting videos — don't generate on-the-fly.
 model ContentConfession {
-  id         String   @id @default(cuid())
+  id         String    @id @default(cuid())
   // LYING_WITHOUT_GUILT | CALCULATED_KINDNESS | EXPLOITING_VULNERABILITY |
   // INDIFFERENCE_TO_HARM | PERFORMING_EMOTIONS | FINDING_VULNERABILITY_BORING |
   // MIMICKING_GRIEF_OR_LOVE | MANIPULATING_LOVED_ONES |
   // TREATING_RELATIONSHIPS_AS_SYSTEMS | NOT_FEELING_EXPECTED_THINGS | (custom)
   category   String
   // The actual confession line, in its rawest form (softening stripped).
-  text       String   @db.Text
+  text       String    @db.Text
   // STANDARD | STRONG | LEGENDARY — quality tier.
   // Aim for ~1 LEGENDARY per 5 lines. 3-4 LEGENDARY per 20 videos shipped.
-  tier       String   @default("STANDARD")
+  tier       String    @default("STANDARD")
   // HOOK | TAIL | DEEPENING — where this line plays best.
   placement  String?
   // Set when shipped in a video (manual or via future ContentIdea linkage).
   // Don't burn the same legendary line twice in 6 months.
-  usedCount  Int      @default(0)
+  usedCount  Int       @default(0)
   lastUsedAt DateTime?
-  notes      String?  @db.Text
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+  notes      String?   @db.Text
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
 
-  ideas      ContentIdea[]
+  ideas ContentIdea[]
 
   @@index([category])
   @@index([tier])
@@ -1181,23 +1187,176 @@ model BotEngagementSettings {
 // uninstalled the PWA, etc). When web-push returns 404/410 for a
 // subscription, we delete the row in the helper. No cron needed.
 model PushSubscription {
-  id          String   @id @default(cuid())
-  userId      String
-  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id     String @id @default(cuid())
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   // The browser-issued push endpoint. UNIQUE — same browser/device
   // always returns the same endpoint, so an upsert keeps re-subscribes
   // idempotent without duplicate rows.
-  endpoint    String   @unique
-  p256dh      String   // public key for ECDH key agreement
-  auth        String   // shared auth secret
+  endpoint String @unique
+  p256dh   String // public key for ECDH key agreement
+  auth     String // shared auth secret
 
   // User-agent at subscription time, useful for "your iPhone, your
   // Pixel" labels in member prefs UI later. Not used for delivery.
-  userAgent   String?
+  userAgent String?
 
-  createdAt   DateTime @default(now())
-  lastUsedAt  DateTime @default(now())
+  createdAt  DateTime @default(now())
+  lastUsedAt DateTime @default(now())
 
   @@index([userId])
+}
+
+// ============================================================================
+// TELLS — daily Train-Your-Instincts exercises
+// ============================================================================
+
+// One Tell is a single 45-90 second exercise: an artifact (voicemail, text
+// exchange, paragraph) plus a multiple-choice question plus a Kanika-voice
+// reveal. Tells are scheduled to publish on a given date; the public /tells
+// surface picks PUBLISHED Tells whose scheduleDate <= now, ordered by
+// scheduleDate desc, deduped to one-per-day for the daily wedge.
+model Tell {
+  id           String        @id @default(cuid())
+  // Public-facing index, e.g. "Tell 247". Auto-incremented at create time
+  // by the API route, NOT a sequence — we want gaps to be impossible
+  // even if a Tell is later archived. Display only, never used for routing.
+  number       Int           @unique
+  // Slug for /tells/[slug] deep links. URL-safe, derived from question
+  // or set manually in the admin UI.
+  slug         String        @unique
+  format       TellFormat
+  track        InstinctTrack
+  // Multi-axis tagging via parallel array of strings. Postgres handles
+  // the array natively; an enum array would be tidier but Prisma's
+  // enum-array support is fragile across migrations.
+  axes         String[] // InstinctAxis values
+  difficulty   Int           @default(3) // 1-5
+  // Polymorphic artifact payload. Shape depends on format:
+  //   voicemail     → { kind, speakerLabel, transcript, durationLabel? }
+  //   text-exchange → { kind, label?, lines: [{from, text}] }
+  //   paragraph     → { kind, label?, text }
+  //   scene         → { kind, label?, text }
+  artifact     Json
+  question     String
+  // Choices array: [{ id, text, isCorrect, why }]. Exactly 4 entries,
+  // exactly 1 with isCorrect=true. Validated at API layer.
+  choices      Json
+  // Kanika-voice teach, 60-100 words. Read after the choice locks.
+  reveal       String        @db.Text
+  // The day this Tell becomes "Today's Tell" on /tells. Null = not
+  // scheduled yet (status DRAFT/REVIEW). UTC date-only is the conceptual
+  // type but we store DateTime for Prisma indexing.
+  scheduleDate DateTime?
+  status       TellStatus    @default(DRAFT)
+  authorId     String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  responses TellResponse[]
+
+  @@index([scheduleDate, status])
+  @@index([track, status])
+  @@index([status])
+}
+
+enum TellFormat {
+  DIAGNOSE
+  SPOT_THE_MOVE
+  NEXT_OPTIMAL
+  FIND_THE_DECOY
+  GRADE_THE_REPLY
+}
+
+enum InstinctTrack {
+  DARK_PSYCH
+  RED_FLAGS
+  CROSS_SEX
+  POWER
+  REFUSAL
+  SELF_REG
+}
+
+enum TellStatus {
+  DRAFT
+  REVIEW
+  SCHEDULED
+  PUBLISHED
+  ARCHIVED
+}
+
+// Every answer submission writes one TellResponse row. For logged-in
+// users a partial unique index (added in the migration SQL, since
+// Prisma cannot express "unique where userId IS NOT NULL") prevents
+// the same user counting a Tell toward score twice. Anonymous responses
+// can repeat freely — they are the visit telemetry.
+model TellResponse {
+  id            String   @id @default(cuid())
+  userId        String?
+  // Cookie-issued anonymous id for visit-level deduping when userId is null.
+  anonId        String?
+  tellId        String
+  // Which choice id from the Tell.choices array they picked.
+  choiceId      String
+  isCorrect     Boolean
+  // Net Elo delta from this answer. 0 for replays and bonus-overflow.
+  scoreImpact   Int      @default(0)
+  // Per-axis Elo delta as a JSON object, e.g. { "READ": 12, "SPOT": 4 }.
+  // Empty object for replays.
+  axesImpact    Json
+  // Whether this response counted toward score (one main per UTC day,
+  // up to two bonus per day, replays do not count). Computed at write,
+  // stored to avoid re-deriving on retention queries.
+  countedScored Boolean  @default(true)
+  // Whether this response counted toward streak (only the main).
+  countedStreak Boolean  @default(false)
+  answeredAt    DateTime @default(now())
+  // Time-to-answer in milliseconds, for difficulty calibration.
+  answerMs      Int?
+
+  user User? @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tell Tell  @relation(fields: [tellId], references: [id], onDelete: Cascade)
+
+  @@index([userId, answeredAt])
+  @@index([anonId])
+  @@index([tellId])
+}
+
+// Six-axis Elo rating per user. One row per user, created lazily on
+// first scored response. Default 1000 across all axes (mid-tier baseline).
+model InstinctScore {
+  id            String   @id @default(cuid())
+  userId        String   @unique
+  read          Int      @default(1000)
+  spot          Int      @default(1000)
+  reply         Int      @default(1000)
+  refuse        Int      @default(1000)
+  calibrate     Int      @default(1000)
+  hold          Int      @default(1000)
+  // Total scored responses (main + bonus). Used for K-factor decay
+  // (K=24 for the first 30, K=16 thereafter).
+  totalAnswered Int      @default(0)
+  updatedAt     DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+// Per-user streak with one auto-applied freeze per ISO week. Created
+// lazily on first main-Tell completion. UTC day boundaries.
+model TellStreak {
+  id            String   @id @default(cuid())
+  userId        String   @unique
+  currentDays   Int      @default(0)
+  longestDays   Int      @default(0)
+  // YYYY-MM-DD UTC of the last main-Tell completion.
+  lastTellDate  String?
+  // ISO week key (YYYY-Wnn) tracking when the freeze last reset.
+  freezeWeekKey String?
+  // 1 if a freeze is available this week, 0 if used.
+  freezesAvail  Int      @default(1)
+  updatedAt     DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }

@@ -115,6 +115,148 @@ export const SEED_TELLS: Tell[] = [
   },
 
   {
+    id: "tell-006-the-meeting-credit",
+    number: 6,
+    format: "DIAGNOSE",
+    track: "POWER",
+    axes: ["READ", "CALIBRATE"],
+    difficulty: 3,
+    artifact: {
+      kind: "scene",
+      label: "Quarterly review, conference room, 14 people",
+      text: "You spent six weeks rebuilding the data layer. You walked your senior through it twice. In the review, your senior says: 'We have to call out the work the team put in here. Particularly Marcus, who flagged the bottleneck early. And myself, frankly, I have been pushing this for two quarters.' Your name is not in the sentence. Marcus joined three weeks in.",
+    },
+    question: "What is the move being run?",
+    choices: [
+      {
+        id: "credit-laundering",
+        text: "Credit laundering. The frame names the work without naming you.",
+        isCorrect: true,
+        why: "Two non-you names get specificity (Marcus, herself), the work itself gets vague collective credit ('the team'). The shape is calibrated, not accidental.",
+      },
+      {
+        id: "honest-oversight",
+        text: "An honest oversight. People forget names under pressure.",
+        isCorrect: false,
+        why: "Possible in isolation. The diagnostic flag is the structure: she did not forget two names, she included them. Forgetting is uniform, this is selective.",
+      },
+      {
+        id: "narcissistic-display",
+        text: "Narcissistic. She is centring herself in front of leadership.",
+        isCorrect: false,
+        why: "Closer-call. NPD self-centring would more aggressively crowd out others. This move includes Marcus, which is the surgical part. NPD usually skips that detail.",
+      },
+      {
+        id: "passive-grudge",
+        text: "Personal grudge. Something happened between you two.",
+        isCorrect: false,
+        why: "The grudge might exist but the diagnostic is independent: even if she likes you, the move still extracts your visibility. Read the artefact, not the relationship.",
+      },
+    ],
+    reveal:
+      "Credit laundering. The diagnostic is selective specificity. Two names, two pieces of credit, one absence. The move is structural, not personal, the work has now been laundered into a story leadership will retell with two names in it. Your move is not to defend in the room. The defence is the receipt: a written follow-up to the leadership chain that named the timeline and the artefacts, in the next forty-eight hours, with no reference to the meeting. The meeting is the smear. The receipt is the correction.",
+  },
+
+  {
+    id: "tell-007-the-quick-favour",
+    number: 7,
+    format: "DIAGNOSE",
+    track: "REFUSAL",
+    axes: ["REFUSE", "HOLD"],
+    difficulty: 2,
+    artifact: {
+      kind: "text-exchange",
+      label: "Friend, Saturday 8:42 a.m.",
+      lines: [
+        {
+          from: "them",
+          text: "Hey, sorry to ask, I know you are busy. Can you watch Lily for like two hours this afternoon? Three at most.",
+        },
+        {
+          from: "them",
+          text: "Mum cancelled and I have this thing I cannot move. I would owe you huge.",
+        },
+        {
+          from: "them",
+          text: "If you really cannot, totally fine, I will figure something out. No pressure.",
+        },
+      ],
+    },
+    question: "Pick the structurally clean refusal.",
+    choices: [
+      {
+        id: "clean-no",
+        text: "'I can't this afternoon. Hope your thing goes well.'",
+        isCorrect: true,
+        why: "One sentence. Reason omitted (you do not owe one). Goodwill on the second line. Does not engage 'two hours, three at most,' the negotiating frame.",
+      },
+      {
+        id: "explained-no",
+        text: "'I would but I have to finish a project deadline tomorrow and I am already behind, you know how it is.'",
+        isCorrect: false,
+        why: "Explanation invites counter-offer. 'Even one hour?' arrives within ninety seconds. Explanations turn a refusal into a negotiation.",
+      },
+      {
+        id: "soft-maybe",
+        text: "'Let me see if I can shift things. I will text you in an hour.'",
+        isCorrect: false,
+        why: "The maybe is its own answer. You will text in an hour with a yes you do not want to give, or a no you have now made twice as expensive. Firm now is cheaper than firm later.",
+      },
+      {
+        id: "guilty-yes",
+        text: "'Okay, but only this once, and you really do owe me.'",
+        isCorrect: false,
+        why: "The 'only this once' is a flag you posted on the wrong post. It tells you that you are saying yes against your read. The conditional is for next time, but it does not protect you from this time.",
+      },
+    ],
+    reveal:
+      "The clean no is the short no. 'I cannot' plus a goodwill close. Reasons are courtesy, not obligation, and offering one converts the refusal from a fact into a debate. The 'no pressure' she added is real, treat it as real, the structurally clean response respects the offer she made. Most people refuse expensively because they want to refuse and be liked. The discipline is accepting a small drop in liking is the cost of the no, and not paying it now means paying it bigger in three weeks.",
+  },
+
+  {
+    id: "tell-008-the-3am-text",
+    number: 8,
+    format: "DIAGNOSE",
+    track: "SELF_REG",
+    axes: ["HOLD", "REPLY"],
+    difficulty: 3,
+    artifact: {
+      kind: "scene",
+      label: "Wednesday, 2:54 a.m. you are awake",
+      text: "You woke at 2:30, looked at his last message from yesterday afternoon ('hey hope your day is good x'), and now twenty-four minutes later you have drafted three replies. Reply one is short and warm. Reply two adds a soft question. Reply three is the question alone, no warmth, no preamble. You can feel the want to send. The 6 a.m. alarm is in three hours.",
+    },
+    question: "What is the one structurally correct move at 2:54 a.m.?",
+    choices: [
+      {
+        id: "do-not-send",
+        text: "Send nothing. Close the app. Reply tomorrow at a daylight hour.",
+        isCorrect: true,
+        why: "The diagnostic is not the content of the replies, all three may be fine. The diagnostic is the time stamp. A 2:54 a.m. send communicates 'I am awake at 2:54 thinking about you,' which is a frame you do not want set, particularly if you are the one being chased.",
+      },
+      {
+        id: "send-the-short-warm",
+        text: "Send reply one. It is short and clean. He will read it in the morning.",
+        isCorrect: false,
+        why: "He will read it but he will read it as 'sent at 2:54.' The metadata is the message at this hour. The replies you draft at 2:54 are not the replies you would draft at 9:14, the difference is what gets transmitted.",
+      },
+      {
+        id: "draft-and-schedule",
+        text: "Draft reply one. Schedule it to send at 8:30 a.m.",
+        isCorrect: false,
+        why: "Closer to right. The trap is in the drafting, the reply you write at 2:54 carries the energy of 2:54 even if it lands at 8:30. The discipline is not just timing the send, it is delaying the writing.",
+      },
+      {
+        id: "send-the-question-alone",
+        text: "Send reply three. The question is the most honest version.",
+        isCorrect: false,
+        why: "Honesty at 2:54 a.m. with no warmth is sniper-shot vulnerability. It will land as urgency. Honesty needs a frame the receiver can hold, and 'no warmth at 3 a.m.' is the wrong frame for the message you actually mean.",
+      },
+    ],
+    reveal:
+      "Hold. The whole rep is not sending. Sleep is the active move, drafting three replies at 2:54 a.m. is the urge surfing, sending one is the reactive collapse. The version of you at 9:14 will rewrite anything you would have sent at 2:54 and the rewrite will be cleaner because it will have been written by someone who is rested, has eaten, and is not in the chemistry of insomnia plus longing. The instinct trained here is not 'what to say.' It is 'when not to say.'",
+  },
+
+  {
     id: "tell-003-the-text-back",
     number: 3,
     format: "DIAGNOSE",

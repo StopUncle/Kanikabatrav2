@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, m } from "framer-motion";
 import { Check, X } from "lucide-react";
 import type { Tell, TellArtifact, TellChoice } from "@/lib/tells/types";
@@ -15,6 +15,19 @@ import {
   type StreakState,
 } from "@/lib/tells/streak";
 import StreakBadge from "./StreakBadge";
+
+interface ServerAnswerResult {
+  correct: boolean;
+  scoreImpact: number;
+  isReplay: boolean;
+  countedStreak: boolean;
+  streak: {
+    currentDays: number;
+    longestDays: number;
+    freezesAvail: number;
+    freezeUsed: boolean;
+  } | null;
+}
 
 /**
  * TellPlayer, the spike-phase orchestrator.
@@ -32,10 +45,15 @@ export default function TellPlayer({ tell }: { tell: Tell }) {
   const [streak, setStreak] = useState<StreakState>(EMPTY_STREAK);
   const [hydrated, setHydrated] = useState(false);
   const [delta, setDelta] = useState<CompletionDelta | null>(null);
+  const [serverResult, setServerResult] = useState<ServerAnswerResult | null>(
+    null,
+  );
+  const startedAtRef = useRef<number>(Date.now());
 
   // Hydrate the streak from localStorage on mount, then reconcile
   // against today (apply freeze or reset if days were missed).
   useEffect(() => {
+    startedAtRef.current = Date.now();
     const loaded = loadStreak();
     const reconciled = reconcile(loaded);
     setStreak(reconciled);
@@ -45,9 +63,6 @@ export default function TellPlayer({ tell }: { tell: Tell }) {
     // If today's Tell has already been completed, hop straight to
     // the reveal so refreshes don't reset the user's progress.
     if (reconciled.completedTellId === tell.id) {
-      // We do not know which choice they picked (not persisted in
-      // the spike), so lock to the correct answer as a placeholder.
-      // Spike acceptable; full persistence ships with the schema.
       const correct = tell.choices.find((c) => c.isCorrect);
       if (correct) setPickedId(correct.id);
     }
@@ -56,14 +71,37 @@ export default function TellPlayer({ tell }: { tell: Tell }) {
   function handlePick(choiceId: string) {
     if (pickedId !== null) return;
     setPickedId(choiceId);
+
+    // Optimistic local streak update — works offline, works for
+    // anonymous visitors, never blocks the reveal.
     const result = complete(streak, tell.id);
     setStreak(result.state);
     setDelta(result.delta);
     saveStreak(result.state);
-    // Clear the floating "+1" after its animation completes.
     if (result.delta.kind === "extended") {
       window.setTimeout(() => setDelta(null), 1200);
     }
+
+    // Authoritative server submit. Failures are non-fatal; the local
+    // reveal is already rendering. We use the server response to
+    // overlay score-delta and authoritative streak when the user is
+    // logged in.
+    const answerMs = Math.max(0, Date.now() - startedAtRef.current);
+    fetch(`/api/tells/${encodeURIComponent(tell.id)}/answer`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ choiceId, answerMs }),
+    })
+      .then(async (res) => {
+        if (!res.ok) return null;
+        return (await res.json()) as ServerAnswerResult;
+      })
+      .then((data) => {
+        if (data) setServerResult(data);
+      })
+      .catch(() => {
+        // Silent. Local UX continues.
+      });
   }
 
   const revealed = pickedId !== null;
@@ -106,6 +144,7 @@ export default function TellPlayer({ tell }: { tell: Tell }) {
               picked={pickedChoice!}
               correct={correctChoice}
               isCorrect={isCorrect}
+              serverResult={serverResult}
             />
           </m.div>
         )}
@@ -293,11 +332,13 @@ function TellRevealView({
   picked,
   correct,
   isCorrect,
+  serverResult,
 }: {
   tell: Tell;
   picked: TellChoice;
   correct: TellChoice;
   isCorrect: boolean;
+  serverResult: ServerAnswerResult | null;
 }) {
   return (
     <div className="mt-10 space-y-8">
@@ -316,6 +357,23 @@ function TellRevealView({
               Missed
             </span>
           </>
+        )}
+        {serverResult && serverResult.scoreImpact !== 0 && (
+          <span
+            className={`ml-auto text-[11px] uppercase tracking-[0.4em] ${
+              serverResult.scoreImpact > 0
+                ? "text-emerald-400"
+                : "text-accent-burgundy"
+            }`}
+          >
+            {serverResult.scoreImpact > 0 ? "+" : ""}
+            {serverResult.scoreImpact} rating
+          </span>
+        )}
+        {serverResult?.isReplay && (
+          <span className="ml-auto text-[10px] uppercase tracking-[0.4em] text-text-gray/60">
+            Replay
+          </span>
         )}
       </div>
 

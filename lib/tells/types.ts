@@ -118,3 +118,13 @@ export const AXIS_LABELS: Record<InstinctAxis, string> = {
   CALIBRATE: "Calibrate",
   HOLD: "Hold",
 };
+
+/** Stable iteration order for hex axes, score loops, etc. */
+export const AXIS_KEYS: InstinctAxis[] = [
+  "READ",
+  "SPOT",
+  "REPLY",
+  "REFUSE",
+  "CALIBRATE",
+  "HOLD",
+];

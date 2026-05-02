@@ -22,6 +22,7 @@ import {
   UserPlus,
   LogOut,
   Loader2,
+  Target,
   type LucideIcon,
 } from "lucide-react";
 import ConsiliumSeal from "@/components/ConsiliumSeal";
@@ -39,6 +40,7 @@ import type { ActivityItem, ActivityKind } from "@/lib/community/activity";
 // /api/community/chat/rooms, and the JSX blocks they fed.
 const MAIN_NAV = [
   { href: "/consilium/feed", label: "Feed", icon: Scroll },
+  { href: "/consilium/instincts/today", label: "Instincts", icon: Target },
   { href: "/consilium/voice-notes", label: "Voice Notes", icon: AudioLines },
   { href: "/consilium/previews", label: "Previews", icon: Clock },
   { href: "/consilium/simulator", label: "Simulator", icon: Film },
