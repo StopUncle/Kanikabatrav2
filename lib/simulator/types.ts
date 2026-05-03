@@ -89,11 +89,33 @@ export interface Character {
   portraitUrl?: string;
 }
 
+/**
+ * Voice register of a dialog line. Drives renderer styling so the player
+ * can visually predict the kind of beat they're about to read:
+ *   "scene"     — immersive sensory beat (the moment unfolding)
+ *   "tactical"  — Kanika-voice analytical observation (the named pattern)
+ *   "dialogue"  — spoken words from a character
+ *
+ * Authors set this explicitly when a beat is unambiguously analytical.
+ * Unset lines default by speaker: inner-voice → scene, named-speaker →
+ * dialogue. Existing content without a tone field keeps its prior
+ * rendering unchanged.
+ */
+export type DialogTone = "scene" | "tactical" | "dialogue";
+
 export interface DialogLine {
   text: string;
   speakerId?: string | null;
   emotion?: EmotionType;
   delay?: number;
+  /**
+   * Voice register override. Optional — defaults from speakerId when
+   * unset (inner-voice → scene, named speaker → dialogue). Set to
+   * "tactical" on Kanika-voice analytical observations so the
+   * renderer gives them a distinct visual register and the player
+   * learns to expect "this is a pattern read, not a scene moment."
+   */
+  tone?: DialogTone;
   /**
    * Optional instrumentation tag fired when the player passes through this
    * dialog line. Read by the achievements evaluator (see

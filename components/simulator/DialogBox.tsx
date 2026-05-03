@@ -1,23 +1,22 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { m } from "framer-motion";
 import { ArrowRight, FastForward } from "lucide-react";
-import type { DialogLine, Character } from "@/lib/simulator/types";
+import type {
+  DialogLine,
+  DialogTone,
+  Character,
+} from "@/lib/simulator/types";
 
 /**
  * Splits a dialog line into sentence-length chunks at terminator punctuation
  * (`.`, `!`, `?`, `…`) followed by whitespace. Em-dashes are deliberately
  * NOT split points, they're mid-sentence beats, not sentence ends.
  *
- * This is the central anti-fatigue move: long DialogLines (the catalogue
- * has lines up to 518 chars) render as multiple sequential chunks instead
- * of one wall of text. The reader gets rhythm, read chunk, beat, next
- * chunk, instead of forcing through a paragraph.
- *
- * Run-of-terminators ("..." or "?!") are preserved as a single terminal
- * so we don't fragment ellipses. Trailing fragments without terminal
- * punctuation are kept as their own chunk.
+ * Long DialogLines render as multiple sequential chunks so the reader gets
+ * rhythm: read chunk, beat, next chunk, instead of forcing through a
+ * paragraph in one go.
  */
 function splitIntoChunks(text: string): string[] {
   const out: string[] = [];
@@ -46,27 +45,25 @@ function delayAfter(char: string, baseRate: number): number {
 }
 
 /**
- * Chunked typewriter, types each chunk character-by-character, pauses
- * briefly between chunks (the "beat"), respects punctuation pauses
- * within a chunk. `revealed` is an array of progressively-typed strings,
- * one per chunk. `revealed[i]` is the prefix of `chunks[i]` shown so far.
+ * Chunked typewriter. Tracks the REVEALED PREFIX LENGTH of each chunk
+ * (not the partial string). The renderer uses this to slice the chunk's
+ * full text into visible + transparent halves, which keeps every chunk
+ * occupying its full layout space from mount and eliminates the upward
+ * push the player saw whenever a new chunk appeared.
  *
- * Note: this deliberately does NOT honor prefers-reduced-motion. The
+ * Note: deliberately does NOT honor prefers-reduced-motion. The
  * typewriter is text reveal, not motion, and the immersive pacing is
- * core to the simulator's experience. Other reduced-motion respects
- * (SceneShake, ImmersionOverlay, particle motion) remain in place.
+ * core to the simulator's experience.
  */
 function useChunkedTypewriter(text: string) {
-  const chunks = splitIntoChunks(text);
-  const [revealed, setRevealed] = useState<string[]>([]);
+  const chunks = useMemo(() => splitIntoChunks(text), [text]);
+  const [revealedLengths, setRevealedLengths] = useState<number[]>(() =>
+    new Array(chunks.length).fill(0),
+  );
   const [done, setDone] = useState(false);
   const cancelledRef = useRef(false);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  // Per-chunk base rate. Short chunks tick at human-comfortable pace;
-  // longer chunks tick faster so reveal time stays bounded. Capped so
-  // even a 200-char "chunk" doesn't slap on screen, we still want to
-  // see the type-on, just at scanning speed.
   function baseRate(chunkLen: number): number {
     if (chunkLen <= 40) return 28;
     if (chunkLen <= 100) return 22;
@@ -75,7 +72,7 @@ function useChunkedTypewriter(text: string) {
 
   useEffect(() => {
     cancelledRef.current = false;
-    setRevealed([]);
+    setRevealedLengths(new Array(chunks.length).fill(0));
     setDone(false);
 
     let chunkIdx = 0;
@@ -90,10 +87,10 @@ function useChunkedTypewriter(text: string) {
       const chunk = chunks[chunkIdx];
       charIdx += 1;
 
-      setRevealed((prev) => {
+      setRevealedLengths((prev) => {
         const next = prev.slice();
-        while (next.length <= chunkIdx) next.push("");
-        next[chunkIdx] = chunk.slice(0, charIdx);
+        while (next.length < chunks.length) next.push(0);
+        next[chunkIdx] = charIdx;
         return next;
       });
 
@@ -122,18 +119,29 @@ function useChunkedTypewriter(text: string) {
       cancelledRef.current = true;
       if (timerRef.current) clearTimeout(timerRef.current);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [text]);
+  }, [chunks]);
 
   function skip() {
     if (done) return;
     cancelledRef.current = true;
     if (timerRef.current) clearTimeout(timerRef.current);
-    setRevealed(chunks);
+    setRevealedLengths(chunks.map((c) => c.length));
     setDone(true);
   }
 
-  return { chunks, revealed, done, skip };
+  return { chunks, revealedLengths, done, skip };
+}
+
+/**
+ * Resolve a line's effective tone. Explicit `tone` wins; otherwise infer
+ * from speakerId. Used for renderer styling and label resolution.
+ */
+function effectiveTone(line: DialogLine): DialogTone {
+  if (line.tone) return line.tone;
+  if (line.speakerId == null || line.speakerId === "inner-voice") {
+    return "scene";
+  }
+  return "dialogue";
 }
 
 type Props = {
@@ -149,6 +157,19 @@ type Props = {
   onSkipScene?: () => void;
 };
 
+/**
+ * Post-typewriter dwell window. After the typewriter finishes, this many
+ * milliseconds pass before a tap-anywhere can advance the dialog. The
+ * window exists because the player's mental model is "tap to skip the
+ * typewriter"; their reflexive second tap (often within 100-200ms of the
+ * first) used to land as an advance, blowing through the next line
+ * before they'd finished reading. The dwell turns the second tap into
+ * a deliberate gesture rather than a reflex.
+ *
+ * Explicit Continue button clicks bypass the dwell entirely.
+ */
+const POST_TYPEWRITER_DWELL_MS = 320;
+
 export default function DialogBox({
   line,
   character,
@@ -156,17 +177,39 @@ export default function DialogBox({
   onAdvance,
   onSkipScene,
 }: Props) {
-  const { chunks, revealed, done, skip } = useChunkedTypewriter(line.text);
+  const { chunks, revealedLengths, done, skip } = useChunkedTypewriter(
+    line.text,
+  );
+  const [tapAdvanceReady, setTapAdvanceReady] = useState(false);
 
+  // Dwell timer: as soon as the typewriter completes, hold tap-advance
+  // back for a beat. Reset when the line re-mounts.
   useEffect(() => {
-    if (typeof window !== "undefined" && !(window as unknown as { __dialogV2?: boolean }).__dialogV2) {
-      (window as unknown as { __dialogV2?: boolean }).__dialogV2 = true;
-      // eslint-disable-next-line no-console
-      console.log("[DialogBox] chunked-v2 active, chunks per line:", chunks.length);
+    if (!done) {
+      setTapAdvanceReady(false);
+      return;
     }
-  }, [chunks.length]);
+    const timer = setTimeout(
+      () => setTapAdvanceReady(true),
+      POST_TYPEWRITER_DWELL_MS,
+    );
+    return () => clearTimeout(timer);
+  }, [done]);
 
-  function handleClick() {
+  // Background-tap path. Gated by the dwell so a reflex second tap can't
+  // accidentally advance.
+  function handleTap() {
+    if (!done) {
+      skip();
+      return;
+    }
+    if (!tapAdvanceReady) return;
+    onAdvance();
+  }
+
+  // Explicit button click bypasses the dwell — the user pressed a button
+  // on purpose. Same skip-or-advance branch.
+  function handleButtonClick() {
     if (!done) {
       skip();
     } else {
@@ -174,34 +217,63 @@ export default function DialogBox({
     }
   }
 
-  const handleClickRef = useRef(handleClick);
+  const handleTapRef = useRef(handleTap);
   useEffect(() => {
-    handleClickRef.current = handleClick;
+    handleTapRef.current = handleTap;
   });
   useEffect(() => {
-    const onTap = () => handleClickRef.current();
+    const onTap = () => handleTapRef.current();
     window.addEventListener("simulator:tap", onTap);
     return () => window.removeEventListener("simulator:tap", onTap);
   }, []);
 
-  const isInnerVoice = line.speakerId == null || line.speakerId === "inner-voice";
-  const speakerLabel = isInnerVoice
+  const tone = effectiveTone(line);
+  const isInner = tone === "scene";
+  const isTactical = tone === "tactical";
+  const speakerLabel = isInner
     ? "Inner voice"
-    : (character?.name ?? line.speakerId);
+    : isTactical
+      ? "Observation"
+      : (character?.name ?? line.speakerId);
 
-  // Color tokens per voice type. Inner voice gets a desaturated
-  // gray-violet so it visually separates from spoken dialog without
-  // being noisy. Spoken keeps off-white for read-comfort.
-  const bodyColor = isInnerVoice ? "text-text-gray" : "text-white/95";
-  const bodyStyle = isInnerVoice ? "italic" : "";
-  const railColor = isInnerVoice ? "bg-text-gray/30" : "bg-accent-gold/70";
+  // Per-tone visuals. The two big shifts:
+  //   - tactical lines get a desaturated rail + smaller text + non-italic,
+  //     reading as "this is a pattern read, settle in," visually distinct
+  //     from both inner-voice scene beats and spoken dialogue
+  //   - scene/inner gets the existing italic gray-violet
+  //   - dialogue gets the existing off-white
+  const labelColor = isInner
+    ? "text-text-gray/70"
+    : isTactical
+      ? "text-accent-gold/55"
+      : "text-accent-gold";
+  const bodyColor = isInner
+    ? "text-text-gray"
+    : isTactical
+      ? "text-text-light/85"
+      : "text-white/95";
+  const bodyStyle = isInner ? "italic" : "";
+  const railColor = isInner
+    ? "bg-text-gray/30"
+    : isTactical
+      ? "bg-accent-gold/35"
+      : "bg-accent-gold/70";
+  const railShadow = isTactical
+    ? ""
+    : "shadow-[0_0_8px_rgba(212,175,55,0.4)]";
+  const bodyTextSize = isTactical
+    ? "text-[15px] sm:text-base"
+    : "text-[17px] sm:text-lg";
 
-  // Last chunk index that has any text in it, used for the cursor
-  // placement so the blink lives at the actual reveal frontier.
-  const activeChunkIdx = Math.max(
-    0,
-    revealed.findLastIndex((c) => c.length > 0),
-  );
+  // Index of the chunk currently being typed. Used to position the
+  // blinking cursor at the reveal frontier. -1 when nothing's typing yet.
+  const activeChunkIdx = (() => {
+    for (let i = 0; i < chunks.length; i++) {
+      const len = revealedLengths[i] ?? 0;
+      if (len > 0 && len < chunks[i].length) return i;
+    }
+    return -1;
+  })();
 
   return (
     <m.div
@@ -213,44 +285,51 @@ export default function DialogBox({
       className="max-w-xl mx-auto px-6"
     >
       <div className="relative pl-5">
-        {/* Persistent speaker rail. 3px gold (or gray for inner voice)
-            on the left edge of the dialog block, your eye locks onto
-            "who's speaking" without re-reading the label every line. */}
+        {/* Persistent speaker rail. Tone-coded so a glance at the rail
+            tells you what register you're in before you start reading. */}
         <span
           aria-hidden
-          className={`absolute left-0 top-1 bottom-1 w-[4px] rounded-full ${railColor} shadow-[0_0_8px_rgba(212,175,55,0.4)]`}
+          className={`absolute left-0 top-1 bottom-1 w-[4px] rounded-full ${railColor} ${railShadow}`}
         />
 
         {speakerLabel && (
           <p
-            className={`text-xs uppercase tracking-[0.3em] mb-2.5 font-light ${
-              isInnerVoice ? "text-text-gray/70" : "text-accent-gold"
-            }`}
+            className={`text-xs uppercase tracking-[0.3em] mb-2.5 font-light ${labelColor}`}
           >
             {speakerLabel}
           </p>
         )}
 
-        {/* Chunks render as a stack of paragraphs. Each chunk fades in
-            briefly when the typewriter starts populating it, gives a
-            chat-stream rhythm even though we're inside a single dialog
-            line semantically. The blinking cursor lives only on the
-            currently-typing chunk. */}
-        <div className="space-y-5" data-dialog-version="chunked-v2">
+        {/* Chunks render as a stack of paragraphs. Every chunk mounts
+            with its FULL text, with the unrevealed suffix wrapped in a
+            text-transparent span so it occupies layout space without
+            being visible. As the typewriter advances `revealedLengths[i]`,
+            characters move from "transparent" to "visible" within the
+            same paragraph — no DOM additions, no layout shift. The
+            paragraph fades from opacity 0 to 1 the moment its first
+            character is revealed, preserving the chat-stream rhythm
+            without the upward push the prior implementation produced. */}
+        <div className="space-y-5" data-dialog-version="chunked-v3">
           {chunks.map((chunk, i) => {
-            const visible = revealed[i] ?? "";
+            const len = revealedLengths[i] ?? 0;
+            const visibleText = chunk.slice(0, len);
+            const hiddenText = chunk.slice(len);
             const isActive = !done && i === activeChunkIdx;
-            const isPending = visible.length === 0 && !done;
-            if (isPending) return null;
+            const hasAppeared = len > 0;
             return (
               <m.p
                 key={`${line.text}-${i}`}
-                initial={{ opacity: 0, y: 4 }}
-                animate={{ opacity: 1, y: 0 }}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: hasAppeared ? 1 : 0 }}
                 transition={{ duration: 0.25 }}
-                className={`font-light leading-[1.65] text-[17px] sm:text-lg ${bodyColor} ${bodyStyle}`}
+                className={`font-light leading-[1.65] ${bodyTextSize} ${bodyColor} ${bodyStyle}`}
               >
-                {visible}
+                {visibleText}
+                {hiddenText && (
+                  <span aria-hidden className="text-transparent">
+                    {hiddenText}
+                  </span>
+                )}
                 {isActive && (
                   <m.span
                     animate={{ opacity: [0.2, 1, 0.2] }}
@@ -265,17 +344,18 @@ export default function DialogBox({
         </div>
       </div>
 
-      {/* Affordance row. The continue button is more visible now —
-          larger, gold-tinted on hover, with a clear arrow. The "Skip"
-          mid-typing variant is muted because skipping is the secondary
-          path; reading is the primary one. */}
+      {/* Affordance row. The continue button transitions from muted (during
+          typewriter and during dwell) to gold (when tap-advance is ready),
+          giving the player a clear "now you can move" signal. */}
       <div className="mt-7 flex items-center gap-5 flex-wrap pl-5">
         <button
-          onClick={handleClick}
-          className={`inline-flex items-center gap-2 text-sm tracking-[0.18em] uppercase font-light transition-colors focus-visible:outline-none ${
-            done
+          onClick={handleButtonClick}
+          className={`inline-flex items-center gap-2 text-sm tracking-[0.18em] uppercase font-light transition-colors duration-300 focus-visible:outline-none ${
+            done && tapAdvanceReady
               ? "text-accent-gold hover:text-accent-gold/80"
-              : "text-text-gray/60 hover:text-text-gray"
+              : done
+                ? "text-text-gray/80 hover:text-text-light"
+                : "text-text-gray/60 hover:text-text-gray"
           }`}
         >
           {done ? (

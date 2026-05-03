@@ -4,7 +4,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { X, FastForward, AlertTriangle } from "lucide-react";
+import { X, FastForward, AlertTriangle, BookOpen } from "lucide-react";
 import { AnimatePresence, m } from "framer-motion";
 import * as Sentry from "@sentry/nextjs";
 import type {
@@ -34,6 +34,7 @@ import SceneProgress from "./SceneProgress";
 import ScenarioIntro from "./ScenarioIntro";
 import ChoiceTimer from "./ChoiceTimer";
 import ChoicePopularityReveal from "./ChoicePopularityReveal";
+import DialogTranscript from "./DialogTranscript";
 
 type Props = {
   scenario: Scenario;
@@ -108,6 +109,12 @@ export default function SimulatorRunner({
     (initialState.currentSceneId !== scenario.startSceneId ||
       initialState.choicesMade.length > 0);
   const [showIntro, setShowIntro] = useState(!hadResume);
+  // Transcript panel state. Read-only scrollback of dialog the player has
+  // already passed; the new "go back and re-read what I missed" affordance
+  // that replaces the missing back-button without requiring state to be
+  // reversible. Closed by default. Declared early so the keyboard +
+  // tap-dispatch hooks below can gate on it.
+  const [showTranscript, setShowTranscript] = useState(false);
 
   // Portal target, document.body. Escapes the parent layout's stacking
   // context (the consilium member layout wraps content in `relative z-10`,
@@ -183,7 +190,7 @@ export default function SimulatorRunner({
         !!sceneNow.choices &&
         sceneNow.choices.length > 0 &&
         lineIndex >= (sceneNow.dialog?.length ?? 0);
-      if (atEnding || choicesOut || showIntro) return;
+      if (atEnding || choicesOut || showIntro || showTranscript) return;
       e.preventDefault();
       // Route through the same lock as taps so a held-down key can't
       // outpace the AnimatePresence exit window and hit a stale listener.
@@ -191,7 +198,7 @@ export default function SimulatorRunner({
     }
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [scenario, state, lineIndex, showIntro]);
+  }, [scenario, state, lineIndex, showIntro, showTranscript]);
   // Dopamine state. XP floater + optimal-streak tracking
   const [xpFloat, setXpFloat] = useState<{
     id: number;
@@ -496,7 +503,7 @@ export default function SimulatorRunner({
   const lastDispatchAtRef = useRef(0);
   const dispatchTap = useCallback(
     (source: "background" | "keyboard" | "skip-button") => {
-      if (showChoices || showIntro) return;
+      if (showChoices || showIntro || showTranscript) return;
       const now =
         typeof performance !== "undefined" ? performance.now() : Date.now();
       // Timestamp dedupe, kills iOS double-fire (touchend + synthetic click).
@@ -532,6 +539,7 @@ export default function SimulatorRunner({
     [
       showChoices,
       showIntro,
+      showTranscript,
       scenario.id,
       scene?.id,
       lineIndex,
@@ -733,16 +741,40 @@ export default function SimulatorRunner({
           Quiet styling so it doesn't compete with the typewriter, but
           always reachable. Top-left, opposite the exit button. */}
       {inDialogPhase && (
-        <button
-          type="button"
-          onClick={skipDialogToChoices}
-          aria-label="Skip dialog, go to choices"
-          className="fixed top-[max(env(safe-area-inset-top),0.5rem)] left-[max(env(safe-area-inset-left),0.75rem)] z-[70] inline-flex items-center gap-1.5 px-3 h-11 rounded-full bg-deep-black/70 backdrop-blur-md border border-white/15 text-text-gray hover:text-accent-gold hover:border-accent-gold/40 active:scale-95 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-gold focus-visible:ring-offset-2 focus-visible:ring-offset-deep-black text-[10px] uppercase tracking-[0.25em]"
-        >
-          <FastForward size={12} strokeWidth={1.6} />
-          Skip
-        </button>
+        <div className="fixed top-[max(env(safe-area-inset-top),0.5rem)] left-[max(env(safe-area-inset-left),0.75rem)] z-[70] flex items-center gap-2">
+          <button
+            type="button"
+            onClick={skipDialogToChoices}
+            aria-label="Skip dialog, go to choices"
+            className="inline-flex items-center gap-1.5 px-3 h-11 rounded-full bg-deep-black/70 backdrop-blur-md border border-white/15 text-text-gray hover:text-accent-gold hover:border-accent-gold/40 active:scale-95 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-gold focus-visible:ring-offset-2 focus-visible:ring-offset-deep-black text-[10px] uppercase tracking-[0.25em]"
+          >
+            <FastForward size={12} strokeWidth={1.6} />
+            Skip
+          </button>
+          <button
+            type="button"
+            onClick={() => setShowTranscript(true)}
+            aria-label="Read transcript of dialog so far"
+            className="inline-flex items-center justify-center w-11 h-11 rounded-full bg-deep-black/70 backdrop-blur-md border border-white/15 text-text-gray hover:text-accent-gold hover:border-accent-gold/40 active:scale-95 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-gold focus-visible:ring-offset-2 focus-visible:ring-offset-deep-black"
+            title="Re-read what you've already passed"
+          >
+            <BookOpen size={14} strokeWidth={1.6} />
+          </button>
+        </div>
       )}
+
+      {/* Transcript panel. Renders only the lines the player has already
+          read past in the CURRENT scene, so the panel doesn't spoil the
+          line they're mid-typing. Bounded by `lineIndex`, which is
+          consistent with what's already on screen. */}
+      <DialogTranscript
+        open={showTranscript}
+        lines={
+          scene?.dialog?.slice(0, Math.min(lineIndex, totalLines)) ?? []
+        }
+        characterById={characterById}
+        onClose={() => setShowTranscript(false)}
+      />
 
       {/* Stuck-recovery overlay.
           Shown automatically when a player has been on the same scene
