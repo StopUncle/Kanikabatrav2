@@ -38,12 +38,20 @@ export default async function AdminTellsPage() {
             {totalScored} answers logged
           </p>
         </div>
-        <Link
-          href="/admin/tells/new"
-          className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-accent-gold text-deep-black font-medium tracking-wider uppercase text-xs hover:bg-accent-gold/90 transition-all"
-        >
-          <Plus size={14} /> New Tell
-        </Link>
+        <div className="flex items-center gap-3">
+          <Link
+            href="/admin/tells/analytics"
+            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full border border-gray-700 text-text-light font-medium tracking-wider uppercase text-xs hover:border-accent-gold/40 transition-all"
+          >
+            <BarChart3 size={14} /> Analytics
+          </Link>
+          <Link
+            href="/admin/tells/new"
+            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-accent-gold text-deep-black font-medium tracking-wider uppercase text-xs hover:bg-accent-gold/90 transition-all"
+          >
+            <Plus size={14} /> New Tell
+          </Link>
+        </div>
       </header>
 
       <div className="rounded-lg border border-gray-800 overflow-hidden">

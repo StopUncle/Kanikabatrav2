@@ -7,8 +7,11 @@ import FeedList from "@/components/consilium/FeedList";
 import OnboardingModal from "@/components/consilium/OnboardingModal";
 import FirstMovesChecklist from "@/components/consilium/FirstMovesChecklist";
 import FirstSevenDays from "@/components/consilium/FirstSevenDays";
+import InstinctsFeedCard from "@/components/consilium/InstinctsFeedCard";
 import { MessageCircle, Mail } from "lucide-react";
 import { tierForMember } from "@/components/consilium/badge-tiers";
+import { getInstinctScore, getTellStreak } from "@/lib/tells/db";
+import { utcDateKey } from "@/lib/tells/streak";
 
 export const metadata = {
   title: "Feed. The Consilium | Kanika Batra",
@@ -75,6 +78,17 @@ export default async function FeedPage({
 
   const viewerGender = await getViewerGender(userId);
   const genderWhere = feedPostGenderWhere(viewerGender);
+
+  // Pull score + streak so the InstinctsFeedCard above the feed can
+  // render the user's hex + streak. doneToday is true if the user
+  // has any TellResponse on today's UTC date — reused as the
+  // copy-switch between "Today's Tell is waiting" and "Composite ###".
+  const [instinctScore, tellStreak] = await Promise.all([
+    getInstinctScore(userId),
+    getTellStreak(userId),
+  ]);
+  const today = utcDateKey();
+  const doneToday = tellStreak?.lastTellDate === today;
 
   const PAGE_SIZE = 20;
   const rows = await prisma.feedPost.findMany({
@@ -207,6 +221,19 @@ export default async function FeedPage({
           signals={firstMovesSignals}
         />
         <FirstMovesChecklist signals={firstMovesSignals} />
+
+        <div className="mb-6">
+          <InstinctsFeedCard
+            score={instinctScore}
+            streak={{
+              currentDays: tellStreak?.currentDays ?? 0,
+              longestDays: tellStreak?.longestDays ?? 0,
+              freezesAvail: tellStreak?.freezesAvail ?? 1,
+              lastTellDate: tellStreak?.lastTellDate ?? null,
+            }}
+            doneToday={doneToday}
+          />
+        </div>
 
         {formatted.length === 0 ? (
           <div className="text-center py-16">
