@@ -35,6 +35,8 @@ export interface MockUser {
   timezone: string | null;
   isBot: boolean;
   botActive: boolean;
+  isTrainingBot: boolean;
+  botProfile: Prisma.JsonValue;
   simulatorStreakCurrent: number;
   simulatorStreakLongest: number;
   simulatorLastSession: Date | null;
@@ -81,6 +83,8 @@ export function createMockUser(overrides: Partial<MockUser> = {}): MockUser {
     timezone: null,
     isBot: false,
     botActive: true,
+    isTrainingBot: false,
+    botProfile: null,
     simulatorStreakCurrent: 0,
     simulatorStreakLongest: 0,
     simulatorLastSession: null,

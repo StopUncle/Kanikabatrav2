@@ -112,6 +112,7 @@ export async function sendPushToUser(
   const user = await prisma.user.findUnique({
     where: { id: userId },
     select: {
+      isTrainingBot: true,
       pushPreferences: true,
       pushSubscriptions: {
         select: {
@@ -125,6 +126,10 @@ export async function sendPushToUser(
   });
 
   if (!user) return 0;
+  // Training bots never receive push. They have no real device, but a
+  // future code path could accidentally subscribe one (e.g. an admin
+  // tool that impersonates a user). Belt-and-braces guard.
+  if (user.isTrainingBot) return 0;
   if (!userIsOptedIn(user.pushPreferences, category)) return 0;
   if (user.pushSubscriptions.length === 0) return 0;
 

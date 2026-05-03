@@ -71,6 +71,16 @@ model User {
   isBot                     Boolean              @default(false)
   botActive                 Boolean              @default(true)
   botActions                BotAction[]
+  // Training bots fill the Tells leaderboard / league brackets so the
+  // social pressure layer reads as alive at low real-member counts.
+  // Distinct from `isBot` (community-engagement bots that comment +
+  // post). Training bots never post, never get push, never have a
+  // CommunityMembership, never count in member-facing metrics.
+  isTrainingBot             Boolean              @default(false)
+  // { archetype, baseSkill, activityProb, axisStrengths, originDay }.
+  // Drives the daily-tick cron that advances each bot's TellResponse +
+  // streak + Elo without any LLM calls. Pure deterministic math.
+  botProfile                Json?
   memberQuestions           MemberQuestion[]     @relation("MemberQuestions")
   questionUpvotes           QuestionUpvote[]     @relation("QuestionUpvotes")
   // PWA push subscriptions (one per device). The browser issues a
@@ -127,6 +137,7 @@ model User {
   @@index([utmSource])
   @@index([utmCampaign])
   @@index([isBot])
+  @@index([isTrainingBot])
 }
 
 enum UserRole {

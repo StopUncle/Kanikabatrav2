@@ -40,6 +40,10 @@ on:
     - cron: '3 * * * *'
     # Auto-publish SCHEDULED Tells — daily at 00:05 UTC, just after the day rolls.
     - cron: '5 0 * * *'
+    # Training bots tick — daily at 00:15 UTC, ten minutes after the new
+    # Tell auto-publishes. Each training bot rolls against its archetype's
+    # activity probability and writes a TellResponse if it "shows up."
+    - cron: '15 0 * * *'
   workflow_dispatch:
     # Allow manual triggering from the GitHub Actions UI. Useful for
     # testing or firing a cron out-of-band without waiting for the next
@@ -61,6 +65,7 @@ on:
           - bot-actions
           - daily-tell-push
           - publish-tells
+          - training-bots-tick
 
 env:
   BASE_URL: https://kanikarose.com
@@ -209,3 +214,20 @@ jobs:
             -H "x-cron-secret: ${{ secrets.CRON_SECRET }}" \
             -H "Content-Type: application/json" \
             --max-time 60
+
+  training-bots-tick:
+    # Daily, 00:15 UTC. Each training bot rolls against its archetype's
+    # activity probability and writes a TellResponse if it shows up.
+    # Idempotent — safe to manually re-fire after a failure.
+    if: >-
+      github.event.schedule == '15 0 * * *' ||
+      (github.event_name == 'workflow_dispatch' &&
+       (github.event.inputs.target == 'all' || github.event.inputs.target == 'training-bots-tick'))
+    runs-on: ubuntu-latest
+    steps:
+      - name: Hit /api/cron/training-bots-tick
+        run: |
+          curl -fsS -X POST "$BASE_URL/api/cron/training-bots-tick" \
+            -H "x-cron-secret: ${{ secrets.CRON_SECRET }}" \
+            -H "Content-Type: application/json" \
+            --max-time 300
