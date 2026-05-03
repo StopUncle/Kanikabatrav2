@@ -6,6 +6,8 @@ import Header from "@/components/Header";
 import BackgroundEffects from "@/components/BackgroundEffects";
 import TellPlayer from "@/components/tells/TellPlayer";
 import { getTellBySlug } from "@/lib/tells/db";
+import { resolveTellContext } from "@/lib/tells/auth-context";
+import { checkMembership } from "@/lib/community/membership";
 import { TRACK_LABELS } from "@/lib/tells/types";
 
 export const dynamic = "force-dynamic";
@@ -68,6 +70,14 @@ export default async function TellSlugPage({ params }: PageParams) {
   const tell = await getTellBySlug(slug);
   if (!tell) notFound();
 
+  // Same membership-aware footer as /tells: members do not see the
+  // $29/mo upsell on a deep-page they hit from a share link.
+  const ctx = await resolveTellContext();
+  const { isMember } = ctx.userId
+    ? await checkMembership(ctx.userId)
+    : { isMember: false };
+  const surface = isMember ? "member" : "public";
+
   return (
     <>
       <BackgroundEffects />
@@ -81,7 +91,7 @@ export default async function TellSlugPage({ params }: PageParams) {
             <ArrowLeft size={14} /> Today&rsquo;s Tell
           </Link>
         </div>
-        <TellPlayer tell={tell} />
+        <TellPlayer tell={tell} surface={surface} />
       </main>
     </>
   );

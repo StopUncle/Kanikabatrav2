@@ -5,6 +5,8 @@ import TellPlayer from "@/components/tells/TellPlayer";
 import TellArchive from "@/components/tells/TellArchive";
 import { getRecentArchive, getTodaysTellRow } from "@/lib/tells/db";
 import { getTodaysTell as getTodaysSeed } from "@/lib/tells/seed-tells";
+import { resolveTellContext } from "@/lib/tells/auth-context";
+import { checkMembership } from "@/lib/community/membership";
 import type { InstinctTrack } from "@/lib/tells/types";
 
 // Always render fresh, the schedule changes daily.
@@ -67,6 +69,15 @@ export default async function TellsPage() {
     ? await getRecentArchive({ excludeId: tell.id, limit: 7 })
     : [];
 
+  // Detect membership server-side so a logged-in member who lands on
+  // /tells from TikTok does not see the "Train Your Instincts $29/mo"
+  // upsell they already pay for.
+  const ctx = await resolveTellContext();
+  const { isMember } = ctx.userId
+    ? await checkMembership(ctx.userId)
+    : { isMember: false };
+  const surface = isMember ? "member" : "public";
+
   return (
     <>
       <BackgroundEffects />
@@ -82,7 +93,7 @@ export default async function TellsPage() {
           </p>
         </div>
 
-        <TellPlayer tell={tell} />
+        <TellPlayer tell={tell} surface={surface} />
 
         <TellArchive
           items={archive.map((a) => ({

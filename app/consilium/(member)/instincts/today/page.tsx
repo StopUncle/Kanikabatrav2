@@ -52,7 +52,7 @@ export default async function ConsiliumTellsTodayPage() {
             </h1>
           </header>
 
-          <TellPlayer tell={tell} />
+          <TellPlayer tell={tell} surface="member" />
 
           {bonus.length > 0 && (
             <div className="mt-16 pt-10 border-t border-gray-800">

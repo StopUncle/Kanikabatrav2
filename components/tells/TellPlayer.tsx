@@ -40,7 +40,20 @@ interface ServerAnswerResult {
  * Motion respects prefers-reduced-motion via framer-motion's built-in
  * MotionConfig in the parent layout.
  */
-export default function TellPlayer({ tell }: { tell: Tell }) {
+export default function TellPlayer({
+  tell,
+  surface = "public",
+}: {
+  tell: Tell;
+  /**
+   * Where the player is rendered. Drives the reveal footer:
+   *   "public"   → "Train Your Instincts $29/mo" + "Tomorrow's Tell"
+   *                (cold-visitor funnel; current /tells, /tells/[slug]).
+   *   "member"   → "Your hex" + "History" + "Receipts"
+   *                (paying member; do NOT sell membership).
+   */
+  surface?: "public" | "member";
+}) {
   const [pickedId, setPickedId] = useState<string | null>(null);
   const [streak, setStreak] = useState<StreakState>(EMPTY_STREAK);
   const [hydrated, setHydrated] = useState(false);
@@ -188,6 +201,7 @@ export default function TellPlayer({ tell }: { tell: Tell }) {
               correct={correctChoice}
               isCorrect={isCorrect}
               serverResult={serverResult}
+              surface={surface}
             />
           </m.div>
         )}
@@ -376,12 +390,14 @@ function TellRevealView({
   correct,
   isCorrect,
   serverResult,
+  surface,
 }: {
   tell: Tell;
   picked: TellChoice;
   correct: TellChoice;
   isCorrect: boolean;
   serverResult: ServerAnswerResult | null;
+  surface: "public" | "member";
 }) {
   return (
     <div className="mt-10 space-y-8">
@@ -456,26 +472,51 @@ function TellRevealView({
         </p>
       </div>
 
-      {/* Footer disclaimer + CTA */}
+      {/* Footer disclaimer + CTA. Surface-aware: members never see the
+          $29/mo upsell because they already pay; cold visitors get the
+          conversion CTA. */}
       <div className="pt-6 border-t border-gray-800 space-y-6">
         <p className="text-text-gray/60 text-xs leading-relaxed">
           Pattern recognition training. Not medical or legal advice. Not a
           substitute for professional evaluation.
         </p>
-        <div className="flex flex-col sm:flex-row gap-3">
-          <a
-            href="/consilium/apply?src=tell"
-            className="inline-flex items-center justify-center px-7 py-3 rounded-full bg-accent-gold text-deep-black font-medium tracking-wider uppercase text-sm hover:bg-accent-gold/90 transition-all"
-          >
-            Train Your Instincts &middot; $29/mo
-          </a>
-          <a
-            href="/tells"
-            className="inline-flex items-center justify-center px-7 py-3 rounded-full border border-accent-gold/40 text-accent-gold font-medium tracking-wider uppercase text-sm hover:bg-accent-gold/10 transition-all"
-          >
-            Tomorrow&rsquo;s Tell
-          </a>
-        </div>
+        {surface === "public" ? (
+          <div className="flex flex-col sm:flex-row gap-3">
+            <a
+              href="/consilium/apply?src=tell"
+              className="inline-flex items-center justify-center px-7 py-3 rounded-full bg-accent-gold text-deep-black font-medium tracking-wider uppercase text-sm hover:bg-accent-gold/90 transition-all"
+            >
+              Train Your Instincts &middot; $29/mo
+            </a>
+            <a
+              href="/tells"
+              className="inline-flex items-center justify-center px-7 py-3 rounded-full border border-accent-gold/40 text-accent-gold font-medium tracking-wider uppercase text-sm hover:bg-accent-gold/10 transition-all"
+            >
+              Tomorrow&rsquo;s Tell
+            </a>
+          </div>
+        ) : (
+          <div className="flex flex-col sm:flex-row gap-3">
+            <a
+              href="/consilium/instincts/score"
+              className="inline-flex items-center justify-center px-6 py-3 rounded-full border border-accent-gold/40 text-accent-gold font-medium tracking-wider uppercase text-xs hover:bg-accent-gold/10 transition-all"
+            >
+              Your hex
+            </a>
+            <a
+              href="/consilium/instincts/history"
+              className="inline-flex items-center justify-center px-6 py-3 rounded-full border border-gray-700 text-text-light font-medium tracking-wider uppercase text-xs hover:border-accent-gold/40 transition-all"
+            >
+              History
+            </a>
+            <a
+              href="/consilium/receipts"
+              className="inline-flex items-center justify-center px-6 py-3 rounded-full border border-gray-700 text-text-light font-medium tracking-wider uppercase text-xs hover:border-accent-gold/40 transition-all"
+            >
+              Receipts
+            </a>
+          </div>
+        )}
       </div>
 
       {/* Hide-the-warning during dev only */}
