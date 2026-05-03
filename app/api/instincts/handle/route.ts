@@ -14,26 +14,80 @@ import { prisma } from "@/lib/prisma";
 
 const HANDLE_RE = /^[a-z0-9](?:[a-z0-9-]{1,28}[a-z0-9])?$/;
 
+// Reserved handles. Two categories worth keeping separate:
+// 1. Route segments (anything that maps to a top-level path on this app)
+//    so a profile URL can never shadow a real route.
+// 2. Brand + impersonation guard (Kanika's name, the platform name,
+//    moderator/admin variants).
+// Keep this list in sync with the Next.js app/ tree as new routes ship.
 const RESERVED = new Set([
+  // Routes / app surface
+  "_next",
+  "about",
   "admin",
   "api",
   "app",
+  "auth",
   "blog",
+  "book",
+  "cancel",
+  "checkout",
+  "coaching",
+  "community",
   "consilium",
-  "kanika",
-  "kanikabatra",
-  "kanika-batra",
-  "kanikarose",
+  "contact",
+  "dashboard",
+  "download",
+  "favicon.ico",
+  "forum",
+  "help",
+  "instincts",
   "login",
+  "logout",
+  "manifest",
+  "manifest.webmanifest",
+  "media",
+  "members",
   "press",
+  "privacy",
+  "profile",
+  "public",
+  "quiz",
+  "receipts",
   "register",
+  "robots.txt",
+  "settings",
+  "signin",
+  "signout",
+  "signup",
+  "sitemap.xml",
+  "static",
+  "success",
   "support",
   "tell",
   "tells",
+  "terms",
   "u",
   "user",
   "users",
+  "webhooks",
   "www",
+  // Brand + impersonation guard
+  "anonymous",
+  "guest",
+  "kanika",
+  "kanika-batra",
+  "kanikabatra",
+  "kanikarose",
+  "kbatra",
+  "mod",
+  "moderator",
+  "official",
+  "owner",
+  "root",
+  "staff",
+  "system",
+  "team",
 ]);
 
 const Body = z.object({
@@ -84,10 +138,13 @@ export async function POST(request: NextRequest) {
         { status: 400 },
       );
     }
+    // Reserved + already-taken collapse into a single "unavailable"
+    // error with status 409 so the client cannot enumerate which list a
+    // handle is on. The message is the same in both cases.
     if (RESERVED.has(h)) {
       return NextResponse.json(
-        { error: "That handle is reserved. Pick another." },
-        { status: 400 },
+        { error: "Handle unavailable. Pick another." },
+        { status: 409 },
       );
     }
     // Uniqueness check that excludes the current user (so they can
@@ -98,7 +155,7 @@ export async function POST(request: NextRequest) {
     });
     if (taken) {
       return NextResponse.json(
-        { error: "That handle is taken." },
+        { error: "Handle unavailable. Pick another." },
         { status: 409 },
       );
     }

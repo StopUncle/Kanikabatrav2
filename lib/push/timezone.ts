@@ -76,11 +76,10 @@ export function getLocalTimePointSafe(
  *
  * Rules:
  *   1. User must be opted-in (caller checks).
- *   2. Current local hour must match preferredHour. (We use a 1-hour
- *      window: [preferredHour, preferredHour] inclusive, since cron
- *      runs hourly. A delayed cron run still catches the target hour
- *      because the next run will fire within the same calendar day,
- *      so the dedup-by-date guard kicks in.)
+ *   2. Current local hour must be at or past preferredHour. Catch-up
+ *      delivery: if the cron skipped the user's preferred hour (Railway
+ *      lapse, GitHub Actions delay), the next hourly run still delivers
+ *      the same day. Better one push at 9:15 than no push at all.
  *   3. We must not have sent today already (lastSentDate !== currentLocalDate).
  *
  * Returns the new lastSentDate to write back, or null if we should not send.
@@ -95,8 +94,8 @@ export function shouldSendDailyTellPush(args: {
   // Already sent today.
   if (lastSentDate === currentLocal.date) return null;
 
-  // Not their hour yet.
-  if (currentLocal.hour !== preferredHour) return null;
+  // Not their hour yet — send only at or after the preferred hour.
+  if (currentLocal.hour < preferredHour) return null;
 
   return currentLocal.date;
 }

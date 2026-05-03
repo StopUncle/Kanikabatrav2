@@ -8,7 +8,7 @@ import TellPlayer from "@/components/tells/TellPlayer";
 import { getTellBySlug } from "@/lib/tells/db";
 import { resolveTellContext } from "@/lib/tells/auth-context";
 import { checkMembership } from "@/lib/community/membership";
-import { TRACK_LABELS } from "@/lib/tells/types";
+import { redactTell, TRACK_LABELS } from "@/lib/tells/types";
 
 export const dynamic = "force-dynamic";
 
@@ -91,7 +91,7 @@ export default async function TellSlugPage({ params }: PageParams) {
             <ArrowLeft size={14} /> Today&rsquo;s Tell
           </Link>
         </div>
-        <TellPlayer tell={tell} surface={surface} />
+        <TellPlayer tell={redactTell(tell)} surface={surface} />
       </main>
     </>
   );

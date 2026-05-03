@@ -64,8 +64,22 @@ function startOfIsoWeek(d: Date): Date {
 /* Replay detection                                                           */
 /* -------------------------------------------------------------------------- */
 
+/**
+ * Normalize before hashing so trivial whitespace edits don't bypass
+ * replay detection. The user pasting "Hey  there" vs "Hey there" should
+ * resolve to the same prior receipt.
+ *   - Trim outer whitespace
+ *   - Collapse runs of whitespace to a single space
+ *   - NFKC-normalize so visually identical Unicode encodes the same
+ */
+export function normalizeReceiptInput(input: string): string {
+  return input.normalize("NFKC").replaceAll(/\s+/g, " ").trim();
+}
+
 export function hashInput(input: string): string {
-  return createHash("sha256").update(input.trim()).digest("hex");
+  return createHash("sha256")
+    .update(normalizeReceiptInput(input))
+    .digest("hex");
 }
 
 /**

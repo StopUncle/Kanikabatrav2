@@ -11,6 +11,7 @@ import {
   getTodaysTellRow,
 } from "@/lib/tells/db";
 import { getTodaysTell as getTodaysSeed } from "@/lib/tells/seed-tells";
+import { redactTell } from "@/lib/tells/types";
 
 export const dynamic = "force-dynamic";
 
@@ -52,7 +53,7 @@ export default async function ConsiliumTellsTodayPage() {
             </h1>
           </header>
 
-          <TellPlayer tell={tell} surface="member" />
+          <TellPlayer tell={redactTell(tell)} surface="member" />
 
           {bonus.length > 0 && (
             <div className="mt-16 pt-10 border-t border-gray-800">
@@ -70,7 +71,7 @@ export default async function ConsiliumTellsTodayPage() {
                   key={b.id}
                   className="mt-10 pt-10 border-t border-gray-800/50"
                 >
-                  <TellPlayer tell={b} />
+                  <TellPlayer tell={redactTell(b)} surface="member" />
                 </div>
               ))}
             </div>

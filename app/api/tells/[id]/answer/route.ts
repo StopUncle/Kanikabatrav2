@@ -14,7 +14,7 @@ import {
   resolveTellContext,
   setAnonCookie,
 } from "@/lib/tells/auth-context";
-import { recordAnswer } from "@/lib/tells/db";
+import { recordAnswer, RecordAnswerInputError } from "@/lib/tells/db";
 import { logger } from "@/lib/logger";
 
 const Body = z.object({
@@ -59,6 +59,12 @@ export async function POST(
     if (ctx.anonIdMinted) setAnonCookie(res, ctx.anonId);
     return res;
   } catch (err) {
+    if (err instanceof RecordAnswerInputError) {
+      return NextResponse.json(
+        { error: err.message },
+        { status: 400 },
+      );
+    }
     logger.error(
       "[tells.answer] failed",
       err instanceof Error ? err : new Error(String(err)),
@@ -66,7 +72,7 @@ export async function POST(
     );
     return NextResponse.json(
       { error: "Could not record answer" },
-      { status: 400 },
+      { status: 500 },
     );
   }
 }

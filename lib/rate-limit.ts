@@ -198,4 +198,11 @@ export const limits = {
   feedComment: { action: "feed:comment", max: 10, windowMs: 60 * 60_000 },
   /** Quiz submit: 10 per day per IP */
   quizSubmit: { action: "quiz:submit", max: 10, windowMs: 24 * 60 * 60_000 },
+  /**
+   * Receipts create: 4 per minute per user. Backstop against parallel
+   * bursts that would otherwise fire 12 LLM calls before the weekly
+   * quota gate engages, burning cost on every one. The weekly cap (12 or
+   * 60 depending on tier) still bounds the long tail.
+   */
+  receiptsCreate: { action: "receipts:create", max: 4, windowMs: 60_000 },
 } satisfies Record<string, RateLimitConfig>;

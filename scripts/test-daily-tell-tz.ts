@@ -141,14 +141,24 @@ console.log("\nlib/push/timezone tests\n");
     }) === "2026-05-03",
   );
 
-  // Case D: hour doesn't match → SKIP
+  // Case D: hour is BEFORE preferred → SKIP (user wants later in the day)
   check(
-    "Skip when not the preferred hour",
+    "Skip when current hour is earlier than preferred",
     shouldSendDailyTellPush({
       preferredHour: 9,
       lastSentDate: null,
       currentLocal: local,
     }) === null,
+  );
+
+  // Case D2: hour is AFTER preferred → SEND (catch-up after a missed hour)
+  check(
+    "Catch-up send when current hour is past preferred and not yet sent",
+    shouldSendDailyTellPush({
+      preferredHour: 7,
+      lastSentDate: null,
+      currentLocal: local,
+    }) === "2026-05-03",
   );
 
   // Case E: midnight preference + 23:00 sent yesterday: hour=0, dates differ → SEND

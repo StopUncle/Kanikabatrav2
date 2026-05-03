@@ -130,6 +130,16 @@ export default function TellForm({ initial, mode, tellId }: Props) {
       setError("Exactly one choice must be marked correct.");
       return;
     }
+    // A PUBLISHED Tell without a scheduleDate is a footgun: it would
+    // immediately surface on /tells (scheduleDate <= now uses a NULL
+    // comparison that the DB treats as never-true, but the public-facing
+    // logic expects a real date for archival ordering and OG images).
+    if (status === "PUBLISHED" && !scheduleDate) {
+      setError(
+        "A published Tell needs a schedule date. Pick one or save as Draft.",
+      );
+      return;
+    }
     let artifactValue: unknown;
     try {
       artifactValue = JSON.parse(artifactJson);

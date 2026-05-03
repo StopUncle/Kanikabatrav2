@@ -73,6 +73,33 @@ export interface TellChoice {
   why: string;
 }
 
+/**
+ * Public-safe choice shape: stripped of the answer-key fields.
+ * Sent to anonymous + pre-answer surfaces so the network tab cannot
+ * leak the correct answer before the user clicks. The server-side
+ * answer endpoint returns the full TellChoice + reveal as part of
+ * its response payload, populated only after the response row is
+ * recorded.
+ */
+export interface PublicTellChoice {
+  id: string;
+  text: string;
+}
+
+/** Tell as visible to a player who has not yet answered. */
+export interface PublicTell {
+  id: string;
+  number: number;
+  format: TellFormat;
+  track: InstinctTrack;
+  axes: InstinctAxis[];
+  difficulty: 1 | 2 | 3 | 4 | 5;
+  artifact: TellArtifact;
+  question: string;
+  choices: PublicTellChoice[];
+  // NB: no `reveal`, no `choices[].isCorrect`, no `choices[].why`.
+}
+
 export interface Tell {
   id: string;
   number: number;                  // public-facing index, e.g. "Tell 247"
@@ -98,6 +125,28 @@ export interface Tell {
 export interface TellAnswerResult {
   correct: boolean;
   pickedChoiceId: string;
+}
+
+/**
+ * Redact a Tell to its public-safe shape: strip reveal, isCorrect,
+ * and per-choice why so anonymous + pre-answer surfaces cannot leak
+ * the answer key via the network tab or page HTML.
+ *
+ * Pure function, no I/O — call from any server-render or API route
+ * that returns a Tell to a user who has not yet answered.
+ */
+export function redactTell(tell: Tell): PublicTell {
+  return {
+    id: tell.id,
+    number: tell.number,
+    format: tell.format,
+    track: tell.track,
+    axes: tell.axes,
+    difficulty: tell.difficulty,
+    artifact: tell.artifact,
+    question: tell.question,
+    choices: tell.choices.map((c) => ({ id: c.id, text: c.text })),
+  };
 }
 
 /** Display labels, kept central so the marketing copy is one source. */

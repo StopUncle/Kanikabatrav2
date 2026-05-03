@@ -3,7 +3,12 @@
 import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, m } from "framer-motion";
 import { Check, X } from "lucide-react";
-import type { Tell, TellArtifact, TellChoice } from "@/lib/tells/types";
+import type {
+  PublicTell,
+  PublicTellChoice,
+  TellArtifact,
+  TellChoice,
+} from "@/lib/tells/types";
 import { TRACK_LABELS, AXIS_LABELS } from "@/lib/tells/types";
 import {
   EMPTY_STREAK,
@@ -30,21 +35,29 @@ interface ServerAnswerResult {
 }
 
 /**
- * TellPlayer, the spike-phase orchestrator.
+ * Reveal payload, hydrated only after the server confirms the user has
+ * answered. Holds the answer-key fields (choices' isCorrect/why + Kanika's
+ * read) that the public Tell deliberately omits to prevent network-tab
+ * answer-key leak.
+ */
+interface RevealPayload {
+  choices: TellChoice[];
+  reveal: string;
+}
+
+/**
+ * Renders one Tell end-to-end: artifact → choices → reveal.
  *
- * Renders one Tell end-to-end: artifact → choices → reveal. No
- * persistence, no score, no streak in this build. Once the loop
- * is approved, the answer-submit becomes a POST and the reveal
- * gets a score-delta float.
- *
- * Motion respects prefers-reduced-motion via framer-motion's built-in
- * MotionConfig in the parent layout.
+ * Critical invariant: the prop is `PublicTell` (no answer key). The reveal
+ * payload arrives from the server only after the answer is recorded, either
+ * via /api/tells/[id]/answer on submit or /api/tells/[id]/my-response on
+ * mount when the user has already answered.
  */
 export default function TellPlayer({
   tell,
   surface = "public",
 }: {
-  tell: Tell;
+  tell: PublicTell;
   /**
    * Where the player is rendered. Drives the reveal footer:
    *   "public"   → "Train Your Instincts $29/mo" + "Tomorrow's Tell"
@@ -61,13 +74,15 @@ export default function TellPlayer({
   const [serverResult, setServerResult] = useState<ServerAnswerResult | null>(
     null,
   );
+  const [reveal, setReveal] = useState<RevealPayload | null>(null);
+  const submittingRef = useRef(false);
   const startedAtRef = useRef<number>(Date.now());
 
   // Hydrate the streak from localStorage on mount, then reconcile
   // against today (apply freeze or reset if days were missed).
   // Also ask the server if this user already answered this Tell, so
-  // a refresh or a return visit lands on the reveal with the correct
-  // pick (not the placeholder pick the spike used).
+  // a refresh or a return visit lands on the reveal with the user's
+  // actual pick AND the answer-key payload.
   useEffect(() => {
     startedAtRef.current = Date.now();
     const loaded = loadStreak();
@@ -89,16 +104,9 @@ export default function TellPlayer({
             countedScored: boolean;
             countedStreak: boolean;
           } | null;
+          reveal: RevealPayload | null;
         } | null) => {
-          if (cancelled || !data?.response) {
-            // No prior server response. Fall back to localStorage hint.
-            if (reconciled.completedTellId === tell.id) {
-              const correct = tell.choices.find((c) => c.isCorrect);
-              if (correct) setPickedId(correct.id);
-            }
-            return;
-          }
-          // Lock to the actual choice the user picked previously.
+          if (cancelled || !data?.response) return;
           const r = data.response;
           setPickedId(r.choiceId);
           setServerResult({
@@ -108,28 +116,26 @@ export default function TellPlayer({
             countedStreak: r.countedStreak,
             streak: null,
           });
+          if (data.reveal) setReveal(data.reveal);
         },
       )
       .catch(() => {
-        if (cancelled) return;
-        // Network failure during the lookup, just trust localStorage.
-        if (reconciled.completedTellId === tell.id) {
-          const correct = tell.choices.find((c) => c.isCorrect);
-          if (correct) setPickedId(correct.id);
-        }
+        // Network failure: leave pickedId null, the user can answer fresh.
       });
 
     return () => {
       cancelled = true;
     };
-  }, [tell.id, tell.choices]);
+  }, [tell.id]);
 
   function handlePick(choiceId: string) {
-    if (pickedId !== null) return;
+    if (pickedId !== null || submittingRef.current) return;
+    submittingRef.current = true;
     setPickedId(choiceId);
 
     // Optimistic local streak update — works offline, works for
-    // anonymous visitors, never blocks the reveal.
+    // anonymous visitors. The reveal stays gated on the server response
+    // because we don't have the answer key on the client yet.
     const result = complete(streak, tell.id);
     setStreak(result.state);
     setDelta(result.delta);
@@ -138,10 +144,6 @@ export default function TellPlayer({
       window.setTimeout(() => setDelta(null), 1200);
     }
 
-    // Authoritative server submit. Failures are non-fatal; the local
-    // reveal is already rendering. We use the server response to
-    // overlay score-delta and authoritative streak when the user is
-    // logged in.
     const answerMs = Math.max(0, Date.now() - startedAtRef.current);
     fetch(`/api/tells/${encodeURIComponent(tell.id)}/answer`, {
       method: "POST",
@@ -150,22 +152,37 @@ export default function TellPlayer({
     })
       .then(async (res) => {
         if (!res.ok) return null;
-        return (await res.json()) as ServerAnswerResult;
+        return (await res.json()) as ServerAnswerResult & {
+          reveal: RevealPayload;
+        };
       })
       .then((data) => {
-        if (data) setServerResult(data);
+        if (!data) return;
+        setServerResult({
+          correct: data.correct,
+          scoreImpact: data.scoreImpact,
+          isReplay: data.isReplay,
+          countedStreak: data.countedStreak,
+          streak: data.streak,
+        });
+        if (data.reveal) setReveal(data.reveal);
       })
       .catch(() => {
-        // Silent. Local UX continues.
+        // Silent. Server unreachable; leave the user with the picked state
+        // but no reveal. They can refresh to retry the my-response fetch.
+      })
+      .finally(() => {
+        submittingRef.current = false;
       });
   }
 
-  const revealed = pickedId !== null;
-  const correctChoice = tell.choices.find((c) => c.isCorrect)!;
-  const pickedChoice = pickedId
-    ? tell.choices.find((c) => c.id === pickedId) ?? null
-    : null;
-  const isCorrect = pickedChoice?.isCorrect ?? false;
+  const revealed = pickedId !== null && reveal !== null;
+  const correctChoice = reveal?.choices.find((c) => c.isCorrect) ?? null;
+  const pickedRevealChoice =
+    pickedId && reveal
+      ? reveal.choices.find((c) => c.id === pickedId) ?? null
+      : null;
+  const isCorrect = pickedRevealChoice?.isCorrect ?? false;
 
   return (
     <div className="max-w-3xl mx-auto px-4 py-12">
@@ -183,21 +200,22 @@ export default function TellPlayer({
 
       <TellChoicesView
         choices={tell.choices}
+        revealChoices={reveal?.choices ?? null}
         pickedId={pickedId}
         onPick={handlePick}
         revealed={revealed}
       />
 
       <AnimatePresence>
-        {revealed && (
+        {revealed && reveal && pickedRevealChoice && correctChoice && (
           <m.div
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.35, ease: "easeOut" }}
           >
             <TellRevealView
-              tell={tell}
-              picked={pickedChoice!}
+              reveal={reveal}
+              picked={pickedRevealChoice}
               correct={correctChoice}
               isCorrect={isCorrect}
               serverResult={serverResult}
@@ -214,7 +232,7 @@ export default function TellPlayer({
 /* Header                                                                     */
 /* -------------------------------------------------------------------------- */
 
-function TellHeader({ tell }: { tell: Tell }) {
+function TellHeader({ tell }: { tell: PublicTell }) {
   return (
     <div className="mb-8">
       <p className="text-accent-gold/70 text-[10px] uppercase tracking-[0.4em] mb-3">
@@ -317,11 +335,13 @@ function TellArtifactView({ artifact }: { artifact: TellArtifact }) {
 
 function TellChoicesView({
   choices,
+  revealChoices,
   pickedId,
   onPick,
   revealed,
 }: {
-  choices: TellChoice[];
+  choices: PublicTellChoice[];
+  revealChoices: TellChoice[] | null;
   pickedId: string | null;
   onPick: (id: string) => void;
   revealed: boolean;
@@ -330,8 +350,9 @@ function TellChoicesView({
     <div className="space-y-3">
       {choices.map((c) => {
         const isPicked = c.id === pickedId;
-        const showResult = revealed;
-        const isThisCorrect = c.isCorrect;
+        const showResult = revealed && revealChoices !== null;
+        const revealChoice = revealChoices?.find((rc) => rc.id === c.id);
+        const isThisCorrect = revealChoice?.isCorrect ?? false;
 
         let stateClass =
           "border-gray-800 hover:border-accent-gold/60 hover:bg-accent-gold/5";
@@ -345,15 +366,22 @@ function TellChoicesView({
           } else {
             stateClass = "border-gray-800/50 opacity-50";
           }
+        } else if (isPicked) {
+          // Picked but reveal not yet hydrated: dim the others.
+          stateClass = "border-accent-gold/60 bg-accent-gold/5 text-text-light";
         }
+
+        // Once a pick is registered, lock the buttons even before reveal
+        // hydrates so the user can't double-submit.
+        const locked = pickedId !== null;
 
         return (
           <button
             key={c.id}
-            onClick={() => !revealed && onPick(c.id)}
-            disabled={revealed}
+            onClick={() => !locked && onPick(c.id)}
+            disabled={locked}
             className={`w-full text-left px-5 py-4 rounded-lg border transition-all duration-200 ${stateClass} ${
-              !revealed ? "cursor-pointer" : "cursor-default"
+              !locked ? "cursor-pointer" : "cursor-default"
             }`}
           >
             <div className="flex items-start gap-3">
@@ -385,14 +413,14 @@ function TellChoicesView({
 /* -------------------------------------------------------------------------- */
 
 function TellRevealView({
-  tell,
+  reveal,
   picked,
   correct,
   isCorrect,
   serverResult,
   surface,
 }: {
-  tell: Tell;
+  reveal: RevealPayload;
   picked: TellChoice;
   correct: TellChoice;
   isCorrect: boolean;
@@ -441,7 +469,7 @@ function TellRevealView({
         <p className="text-[10px] uppercase tracking-[0.4em] text-accent-gold/70">
           Why each choice
         </p>
-        {tell.choices.map((c) => (
+        {reveal.choices.map((c) => (
           <div
             key={c.id}
             className="border-l-2 pl-4 py-1"
@@ -468,7 +496,7 @@ function TellRevealView({
           className="text-text-light text-base sm:text-lg font-light leading-relaxed"
           style={{ fontFamily: "Georgia, serif" }}
         >
-          {tell.reveal}
+          {reveal.reveal}
         </p>
       </div>
 
@@ -519,7 +547,6 @@ function TellRevealView({
         )}
       </div>
 
-      {/* Hide-the-warning during dev only */}
       {process.env.NODE_ENV !== "production" && (
         <p className="text-text-gray/30 text-[10px] mt-4 font-mono">
           spike: picked={picked.id} correct={correct.id}

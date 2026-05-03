@@ -14,7 +14,7 @@
  */
 
 import { prisma } from "@/lib/prisma";
-import type { Prisma } from "@prisma/client";
+import { Prisma } from "@prisma/client";
 import {
   AXIS_KEYS,
   type InstinctAxis,
@@ -174,6 +174,15 @@ export async function getTellBySlug(slug: string): Promise<ClientTell | null> {
   return rowToClientTell(row);
 }
 
+/**
+ * Server-only fetch of the full Tell. Used by recordAnswer to validate
+ * correctness — never sent to a client without redaction.
+ */
+export async function getFullTellById(id: string): Promise<ClientTell | null> {
+  const row = await prisma.tell.findUnique({ where: { id } });
+  return row ? rowToClientTell(row) : null;
+}
+
 /* -------------------------------------------------------------------------- */
 /* Recording an answer                                                        */
 /* -------------------------------------------------------------------------- */
@@ -188,8 +197,15 @@ export interface RecordAnswerArgs {
 
 export interface RecordAnswerResult {
   correct: boolean;
-  /** The full reveal payload to render. */
-  tell: ClientTell;
+  /**
+   * Reveal payload, sent down to the client only AFTER the response is
+   * recorded. Contains the answer key (per-choice isCorrect/why) and
+   * Kanika's read. Never returned by pre-answer endpoints.
+   */
+  reveal: {
+    choices: TellChoice[];
+    reveal: string;
+  };
   /** Net Elo delta this answer produced. 0 for replays. */
   scoreImpact: number;
   /** Per-axis delta map. */
@@ -207,77 +223,165 @@ export interface RecordAnswerResult {
   isReplay: boolean;
 }
 
+/** Distinguishes "bad input" from "infra failure" so the API route can
+ *  return 400 vs 500 appropriately and we don't mask DB outages as
+ *  client errors in monitoring. */
+export class RecordAnswerInputError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = "RecordAnswerInputError";
+  }
+}
+
 /**
- * Record an answer with full side-effects:
- *   - TellResponse row written
- *   - InstinctScore upserted with Elo delta per axis (logged-in only)
- *   - TellStreak reconciled and (if first main of the day) extended
+ * Record an answer with full side-effects, transactionally:
+ *   1. Insert the TellResponse first (countedScored=TRUE for logged-in).
+ *      The partial unique index throws P2002 if a prior scored response
+ *      already exists — that's how we detect replays atomically. Concurrent
+ *      submits both try to insert; exactly one wins.
+ *   2. Only on successful insert do we apply Elo + streak side-effects.
+ *      A replay (P2002 caught) writes a non-counted row and skips the
+ *      side-effects so the user's score stays stable.
  *
  * Anti-cheat:
  *   - Server validates the choice belongs to the Tell (rejects bogus IDs)
  *   - Server determines correctness from the Tell row (never trusts client)
- *   - First scored response per (userId, tellId) wins; subsequent calls are
- *     replays with scoreImpact=0 (relies on the partial unique index)
+ *   - Concurrent first-time submits cannot double-apply Elo: the unique
+ *     index serializes them at the DB layer, the loser becomes a replay.
  */
 export async function recordAnswer(
   args: RecordAnswerArgs,
 ): Promise<RecordAnswerResult> {
+  // Phase 1: validate input. Throws RecordAnswerInputError on bad data.
   const tellRow = await prisma.tell.findUnique({
     where: { id: args.tellId },
   });
   if (!tellRow) {
-    throw new Error(`Tell not found: ${args.tellId}`);
+    throw new RecordAnswerInputError(`Tell not found: ${args.tellId}`);
   }
   if (tellRow.status !== "PUBLISHED") {
-    throw new Error(`Tell not published: ${args.tellId}`);
+    throw new RecordAnswerInputError(`Tell not published: ${args.tellId}`);
   }
 
   const choices = tellRow.choices as unknown as TellChoice[];
   const choice = choices.find((c) => c.id === args.choiceId);
   if (!choice) {
-    throw new Error(
+    throw new RecordAnswerInputError(
       `Choice "${args.choiceId}" not on Tell "${tellRow.id}"`,
     );
   }
 
   const isCorrect = choice.isCorrect;
-  const tell = rowToClientTell(tellRow);
+  const revealPayload = {
+    choices,
+    reveal: tellRow.reveal,
+  };
 
-  // Has this user already counted this Tell? Replays do not affect score
-  // or streak.
+  // Phase 2: try the insert with countedScored=TRUE for logged-in users.
+  // The partial unique index `TellResponse_user_tell_scored_unique`
+  // throws P2002 when this is the user's second scored attempt — that's
+  // our atomic replay detector.
+  const wantScoredInsert = args.userId !== null;
+
   let isReplay = false;
-  if (args.userId) {
-    const existing = await prisma.tellResponse.findFirst({
-      where: {
+  if (wantScoredInsert) {
+    try {
+      await prisma.tellResponse.create({
+        data: {
+          userId: args.userId,
+          anonId: null,
+          tellId: tellRow.id,
+          choiceId: args.choiceId,
+          isCorrect,
+          scoreImpact: 0, // updated below if first insert succeeds
+          axesImpact: {} as Prisma.InputJsonValue,
+          countedScored: true,
+          countedStreak: false, // updated below
+          answerMs: args.answerMs,
+        },
+      });
+    } catch (err) {
+      if (
+        err instanceof Prisma.PrismaClientKnownRequestError &&
+        err.code === "P2002"
+      ) {
+        isReplay = true;
+      } else {
+        throw err; // bubble infra errors as 500
+      }
+    }
+  }
+
+  // Replays write an un-counted row for telemetry but no side-effects.
+  if (isReplay) {
+    await prisma.tellResponse.create({
+      data: {
         userId: args.userId,
-        tellId: args.tellId,
-        countedScored: true,
+        anonId: null,
+        tellId: tellRow.id,
+        choiceId: args.choiceId,
+        isCorrect,
+        scoreImpact: 0,
+        axesImpact: {} as Prisma.InputJsonValue,
+        countedScored: false,
+        countedStreak: false,
+        answerMs: args.answerMs,
       },
-      select: { id: true },
     });
-    if (existing) isReplay = true;
+    return {
+      correct: isCorrect,
+      reveal: revealPayload,
+      scoreImpact: 0,
+      axesImpact: {},
+      countedStreak: false,
+      streak: null, // client already has the live streak; no update
+      isReplay: true,
+    };
   }
 
-  // Streak: only the first scored main of the day counts. We treat
-  // every Tell as eligible for "main" status; if a user plays multiple
-  // Tells on the same day, the FIRST one extends the streak, the rest
-  // do not.
-  let countedStreak = false;
-  let streakReconciled: StreakReconcileResult | null = null;
-  if (args.userId && !isReplay) {
-    streakReconciled = await reconcileAndMaybeExtendStreak(args.userId);
-    countedStreak = streakReconciled.didExtendToday;
+  // Anonymous: write the visit-telemetry row. No replay detection
+  // because anon doesn't share an identity across requests beyond cookie.
+  if (!wantScoredInsert) {
+    await prisma.tellResponse.create({
+      data: {
+        userId: null,
+        anonId: args.anonId,
+        tellId: tellRow.id,
+        choiceId: args.choiceId,
+        isCorrect,
+        scoreImpact: 0,
+        axesImpact: {} as Prisma.InputJsonValue,
+        countedScored: false,
+        countedStreak: false,
+        answerMs: args.answerMs,
+      },
+    });
+    return {
+      correct: isCorrect,
+      reveal: revealPayload,
+      scoreImpact: 0,
+      axesImpact: {},
+      countedStreak: false,
+      streak: null,
+      isReplay: false,
+    };
   }
 
-  // Score: apply Elo delta per axis for logged-in users on first answer.
+  // Phase 3: side-effects for the FIRST scored response. The unique
+  // index above guaranteed exclusivity; we are the winner of any race.
+  const streakReconciled = await reconcileAndMaybeExtendStreak(
+    args.userId as string,
+  );
+  const countedStreak = streakReconciled.didExtendToday;
+
   const axes = (tellRow.axes as InstinctAxis[]).filter((a) =>
     AXIS_KEYS.includes(a),
   );
   let axesImpact: Partial<Record<InstinctAxis, number>> = {};
   let scoreImpact = 0;
-  if (args.userId && !isReplay && axes.length > 0) {
+  if (axes.length > 0) {
     const update = await applyAnswerToScore(
-      args.userId,
+      args.userId as string,
       tellRow.difficulty,
       isCorrect,
       axes,
@@ -286,38 +390,41 @@ export async function recordAnswer(
     scoreImpact = update.netDelta;
   }
 
-  // Write the response row. countedScored is the marker for the partial
-  // unique index that prevents double-counting later.
-  await prisma.tellResponse.create({
-    data: {
-      userId: args.userId,
-      anonId: args.anonId,
-      tellId: tellRow.id,
-      choiceId: args.choiceId,
-      isCorrect,
-      scoreImpact,
-      axesImpact: axesImpact as Prisma.InputJsonValue,
-      countedScored: !isReplay && args.userId !== null,
-      countedStreak,
-      answerMs: args.answerMs,
-    },
-  });
+  // Phase 4: backfill the side-effect fields on the row we just inserted.
+  // The original insert wrote scoreImpact=0 + countedStreak=false; now
+  // that we've computed the real numbers, update them. Best-effort —
+  // the response is already counted via countedScored=TRUE, so a
+  // failure here just means analytics see slightly stale row values.
+  await prisma.tellResponse
+    .updateMany({
+      where: {
+        userId: args.userId as string,
+        tellId: tellRow.id,
+        countedScored: true,
+      },
+      data: {
+        scoreImpact,
+        axesImpact: axesImpact as Prisma.InputJsonValue,
+        countedStreak,
+      },
+    })
+    .catch(() => {
+      // non-fatal
+    });
 
   return {
     correct: isCorrect,
-    tell,
+    reveal: revealPayload,
     scoreImpact,
     axesImpact,
     countedStreak,
-    streak: streakReconciled
-      ? {
-          currentDays: streakReconciled.currentDays,
-          longestDays: streakReconciled.longestDays,
-          freezesAvail: streakReconciled.freezesAvail,
-          freezeUsed: streakReconciled.freezeUsed,
-        }
-      : null,
-    isReplay,
+    streak: {
+      currentDays: streakReconciled.currentDays,
+      longestDays: streakReconciled.longestDays,
+      freezesAvail: streakReconciled.freezesAvail,
+      freezeUsed: streakReconciled.freezeUsed,
+    },
+    isReplay: false,
   };
 }
 
@@ -370,6 +477,31 @@ async function reconcileAndMaybeExtendStreak(
 
   if (row.lastTellDate) {
     const gap = daysBetween(row.lastTellDate, today);
+    if (gap < 0) {
+      // Clock skew or replayed cron with a backdated wall clock: the
+      // stored lastTellDate is in the future relative to "today". Treat
+      // as same-day so we never roll backward, and persist any freeze
+      // refill, but do not extend or reset the streak.
+      await prisma.tellStreak.upsert({
+        where: { userId },
+        update: { freezesAvail, freezeWeekKey },
+        create: {
+          userId,
+          currentDays,
+          longestDays: row.longestDays,
+          lastTellDate: row.lastTellDate,
+          freezeWeekKey,
+          freezesAvail,
+        },
+      });
+      return {
+        currentDays,
+        longestDays: row.longestDays,
+        freezesAvail,
+        freezeUsed: false,
+        didExtendToday: false,
+      };
+    }
     if (gap === 0) {
       // Already extended today, this is a same-day second answer.
       // Persist the freeze refill but don't extend.

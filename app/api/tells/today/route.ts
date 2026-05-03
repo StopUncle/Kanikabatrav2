@@ -18,7 +18,16 @@ import {
 } from "@/lib/tells/auth-context";
 import { getBonusTells, getTodaysTellRow } from "@/lib/tells/db";
 import { getTodaysTell as getTodaysSeed } from "@/lib/tells/seed-tells";
+import { redactTell } from "@/lib/tells/types";
 
+/**
+ * Public-facing today's-Tell endpoint. Anonymous-friendly.
+ *
+ * Critical: returns the REDACTED Tell (no reveal, no per-choice
+ * isCorrect/why) so a visitor cannot read the answer key from the
+ * network tab before clicking. The answer endpoint returns the full
+ * reveal payload after recording the response.
+ */
 export async function GET() {
   const ctx = await resolveTellContext();
 
@@ -39,8 +48,8 @@ export async function GET() {
       });
 
   const res = NextResponse.json({
-    main,
-    bonus,
+    main: redactTell(main),
+    bonus: bonus.map(redactTell),
     usedSeed,
     isAuth: ctx.userId !== null,
   });

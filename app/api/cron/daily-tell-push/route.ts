@@ -99,76 +99,117 @@ export async function POST(request: NextRequest) {
   });
 
   const now = new Date();
-  let considered = 0;
-  let sent = 0;
-  let skippedNotEnabled = 0;
-  let skippedNotMyHour = 0;
-  let skippedAlreadySent = 0;
+  const counts = {
+    considered: 0,
+    sent: 0,
+    skippedNotEnabled: 0,
+    skippedNotMyHour: 0,
+    skippedAlreadySent: 0,
+  };
 
   for (const user of candidates) {
-    considered++;
-    const prefs = readDailyTellPrefs(user.pushPreferences);
-
-    if (!prefs.enabled) {
-      skippedNotEnabled++;
-      continue;
-    }
-
-    const local = getLocalTimePointSafe(user.timezone, now);
-    const newLastSent = shouldSendDailyTellPush({
-      preferredHour: prefs.hour,
-      lastSentDate: prefs.lastSent,
-      currentLocal: local,
-    });
-
-    if (newLastSent === null) {
-      if (prefs.lastSent === local.date) skippedAlreadySent++;
-      else skippedNotMyHour++;
-      continue;
-    }
-
-    // Send the push. tag-by-date so the same notification on the user's
-    // lock screen replaces the previous (rather than stacking) if they
-    // have multiple devices firing within the window.
-    try {
-      const delivered = await sendPushToUser(user.id, "dailyTell", {
-        title: "Today's Tell is ready",
-        body: "Sixty seconds. One artifact, one read. Train your instincts.",
-        url: "/consilium/instincts/today",
-        tag: `daily-tell-${newLastSent}`,
-      });
-
-      if (delivered > 0) {
-        sent++;
-        // Persist the lastSent date so the same user is not pinged
-        // again today. Re-merge the existing JSON so we don't clobber
-        // the boolean toggles.
-        const merged = {
-          ...(user.pushPreferences && typeof user.pushPreferences === "object"
-            ? (user.pushPreferences as Record<string, unknown>)
-            : {}),
-          dailyTellLastSent: newLastSent,
-        };
-        await prisma.user.update({
-          where: { id: user.id },
-          data: { pushPreferences: merged as Prisma.InputJsonValue },
-        });
-      }
-    } catch (err) {
-      logger.error(
-        "[cron daily-tell-push] send failed",
-        err instanceof Error ? err : new Error(String(err)),
-        { userId: user.id, hour: prefs.hour },
-      );
-    }
+    await processCandidate(user, now, counts);
   }
 
-  return NextResponse.json({
-    ok: true,
-    considered,
-    sent,
-    skippedNotEnabled,
-    skippedNotMyHour,
-    skippedAlreadySent,
+  return NextResponse.json({ ok: true, ...counts });
+}
+
+type Candidate = {
+  id: string;
+  timezone: string | null;
+  pushPreferences: Prisma.JsonValue | null;
+};
+type Counts = {
+  considered: number;
+  sent: number;
+  skippedNotEnabled: number;
+  skippedNotMyHour: number;
+  skippedAlreadySent: number;
+};
+
+async function processCandidate(
+  user: Candidate,
+  now: Date,
+  counts: Counts,
+): Promise<void> {
+  counts.considered++;
+  const prefs = readDailyTellPrefs(user.pushPreferences);
+
+  if (!prefs.enabled) {
+    counts.skippedNotEnabled++;
+    return;
+  }
+
+  const local = getLocalTimePointSafe(user.timezone, now);
+  const newLastSent = shouldSendDailyTellPush({
+    preferredHour: prefs.hour,
+    lastSentDate: prefs.lastSent,
+    currentLocal: local,
   });
+
+  if (newLastSent === null) {
+    if (prefs.lastSent === local.date) counts.skippedAlreadySent++;
+    else counts.skippedNotMyHour++;
+    return;
+  }
+
+  // Persist FIRST, send SECOND. If the persist fails the user is
+  // not yet marked as sent and the next cron run will retry. If the
+  // send fails we lose this day rather than spam — better than the
+  // alternative (send-first risks a persist failure causing every
+  // subsequent hourly cron run to ping again).
+  const persisted = await persistLastSent(user, newLastSent, prefs.hour);
+  if (!persisted) return;
+
+  const delivered = await sendDailyTellPush(user.id, newLastSent, prefs.hour);
+  if (delivered > 0) counts.sent++;
+}
+
+async function persistLastSent(
+  user: Candidate,
+  newLastSent: string,
+  hour: number,
+): Promise<boolean> {
+  const merged = {
+    ...(user.pushPreferences && typeof user.pushPreferences === "object"
+      ? (user.pushPreferences as Record<string, unknown>)
+      : {}),
+    dailyTellLastSent: newLastSent,
+  };
+  try {
+    await prisma.user.update({
+      where: { id: user.id },
+      data: { pushPreferences: merged as Prisma.InputJsonValue },
+    });
+    return true;
+  } catch (err) {
+    logger.error(
+      "[cron daily-tell-push] persist-before-send failed, skipping",
+      err instanceof Error ? err : new Error(String(err)),
+      { userId: user.id, hour },
+    );
+    return false;
+  }
+}
+
+async function sendDailyTellPush(
+  userId: string,
+  newLastSent: string,
+  hour: number,
+): Promise<number> {
+  try {
+    return await sendPushToUser(userId, "dailyTell", {
+      title: "Today's Tell is ready",
+      body: "Sixty seconds. One artifact, one read. Train your instincts.",
+      url: "/consilium/instincts/today",
+      tag: `daily-tell-${newLastSent}`,
+    });
+  } catch (err) {
+    logger.error(
+      "[cron daily-tell-push] send failed (already marked as sent)",
+      err instanceof Error ? err : new Error(String(err)),
+      { userId, hour },
+    );
+    return 0;
+  }
 }

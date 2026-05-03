@@ -7,7 +7,7 @@ import { getRecentArchive, getTodaysTellRow } from "@/lib/tells/db";
 import { getTodaysTell as getTodaysSeed } from "@/lib/tells/seed-tells";
 import { resolveTellContext } from "@/lib/tells/auth-context";
 import { checkMembership } from "@/lib/community/membership";
-import type { InstinctTrack } from "@/lib/tells/types";
+import { redactTell, type InstinctTrack } from "@/lib/tells/types";
 
 // Always render fresh, the schedule changes daily.
 export const dynamic = "force-dynamic";
@@ -93,7 +93,7 @@ export default async function TellsPage() {
           </p>
         </div>
 
-        <TellPlayer tell={tell} surface={surface} />
+        <TellPlayer tell={redactTell(tell)} surface={surface} />
 
         <TellArchive
           items={archive.map((a) => ({
