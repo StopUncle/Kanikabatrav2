@@ -36,6 +36,24 @@ import ChoiceTimer from "./ChoiceTimer";
 import ChoicePopularityReveal from "./ChoicePopularityReveal";
 import DialogTranscript from "./DialogTranscript";
 
+/**
+ * Decide whether the last-line echo above the choices should render.
+ *
+ * Echo earns its slot only when the player is replying to spoken words
+ * (a named speaker, no explicit override that says otherwise). For
+ * inner-voice / tactical lines — which are the PLAYER'S own thoughts —
+ * echoing them above the choices is redundant: the player just read
+ * those lines a moment ago, and seeing the same text re-displayed in
+ * compact centred form makes the transition feel cluttered and glitchy.
+ *
+ * Tone is consulted first when set; otherwise we infer from speakerId.
+ */
+function shouldShowEcho(line: DialogLine): boolean {
+  if (line.tone === "dialogue") return true;
+  if (line.tone === "scene" || line.tone === "tactical") return false;
+  return !!line.speakerId && line.speakerId !== "inner-voice";
+}
+
 type Props = {
   scenario: Scenario;
   /** Optional initial state, used to resume from server-persisted progress. */
@@ -952,49 +970,58 @@ export default function SimulatorRunner({
           below the letterbox (z-40) so the top/bottom frame reads as
           the outermost layer. */}
       <div className="absolute inset-x-0 bottom-16 sm:bottom-20 z-[35] flex flex-col items-center justify-end gap-3 sm:gap-5 px-4 max-h-[calc(100dvh-180px)] overflow-y-auto [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-        {/* Last-line echo. Only renders during the choices phase.
-            Sits above the choice cards, in its own slot, so it cannot
-            be covered by the choices grid. Animates in once with the
-            choices. */}
-        {!showIntro && showChoices && scene.choices && lastDialogLine && (
-          <m.div
-            key={`echo-${scene.id}`}
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.35 }}
-            className="max-w-2xl w-full px-2 text-center"
-          >
-            {lastDialogLine.speakerId && (
-              <p className="text-accent-gold/70 text-[10px] uppercase tracking-[0.35em] mb-1.5 font-light">
-                {lastDialogLine.speakerId === "inner-voice"
-                  ? "Inner voice"
-                  : (characterById[lastDialogLine.speakerId]?.name ??
-                    lastDialogLine.speakerId)}
-              </p>
-            )}
-            <p
-              className={`font-light leading-snug text-sm sm:text-base max-w-xl mx-auto ${
-                lastDialogLine.speakerId == null
-                  ? "italic text-text-gray/70"
-                  : "text-white/75"
-              }`}
-            >
-              {lastDialogLine.text}
-            </p>
-          </m.div>
-        )}
-
         {/* One AnimatePresence with mode="wait" so the dialog→choices
             swap is sequential (dialog exits, then choices enter) instead
-            of overlapping in the same vertical zone. */}
+            of overlapping in the same vertical zone.
+
+            Echo is bundled INSIDE the choices wrapper now (was a sibling
+            of AnimatePresence prior to this fix). The mid-transition pop
+            it caused — column briefly contained only the echo, which
+            slammed to the bottom by `justify-end`, then jumped back up
+            once the choices entered — is gone. Echo + cards mount as
+            one cohesive unit. */}
         <AnimatePresence mode="wait">
           {/* Suppress the dialog + choices column while the intro
               overlay is showing. Otherwise the typewriter races to
               completion behind the intro and the player hits Begin
               to find an already-revealed first line. */}
           {showIntro ? null : showChoices && scene.choices ? (
-            <div className="w-full" key={`choices-wrap-${scene.id}`}>
+            <m.div
+              className="w-full max-w-2xl mx-auto"
+              key={`choices-wrap-${scene.id}`}
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.32 }}
+            >
+              {/* Last-line echo. Only renders when the previous line was
+                  SPOKEN dialogue (named speaker, not inner-voice, not
+                  tactical observation). Inner-voice / tactical lines are
+                  the player's own thoughts — echoing them above choices
+                  is redundant noise, the player just read them. Spoken
+                  lines are the prompt the player is replying to, and the
+                  echo earns its place there.
+
+                  Visually rail-aligned to match the dialog box so the
+                  player's eye tracks down the same vertical line into
+                  the choices, instead of being thrown to a centre axis. */}
+              {lastDialogLine && shouldShowEcho(lastDialogLine) && (
+                <div className="relative pl-5 mb-4 sm:mb-5 max-w-xl mx-auto">
+                  <span
+                    aria-hidden
+                    className="absolute left-0 top-1 bottom-1 w-[3px] rounded-full bg-accent-gold/40"
+                  />
+                  <p className="text-accent-gold/60 text-[10px] uppercase tracking-[0.35em] mb-1.5 font-light">
+                    {lastDialogLine.speakerId
+                      ? (characterById[lastDialogLine.speakerId]?.name ??
+                          lastDialogLine.speakerId)
+                      : ""}
+                  </p>
+                  <p className="font-light leading-snug text-sm sm:text-base text-white/70">
+                    {lastDialogLine.text}
+                  </p>
+                </div>
+              )}
               {/* Soft choice timer, only on `mood: danger` scenes. Fills
                   a slim 12s bar above the cards; never auto-picks. The
                   timer is a felt-pressure tool, not a mechanic. */}
@@ -1007,7 +1034,7 @@ export default function SimulatorRunner({
                 onPick={pickChoice}
                 scenario={scenario}
               />
-            </div>
+            </m.div>
           ) : currentLine ? (
             <DialogBox
               key={`line-${scene.id}-${lineIndex}`}
