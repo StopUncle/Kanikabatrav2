@@ -33,6 +33,13 @@ on:
     - cron: '30 9 * * *'
     # Background queue worker — every 5 min
     - cron: '*/5 * * * *'
+    # Daily Tell push — every hour at :03 (every user has their own preferred
+    # local hour; the cron compares the hour-in-tz against their preference,
+    # so we run hourly and pick up everyone whose hour matches right now).
+    # Offset to :03 so it does not collide with the on-the-hour insight crons.
+    - cron: '3 * * * *'
+    # Auto-publish SCHEDULED Tells — daily at 00:05 UTC, just after the day rolls.
+    - cron: '5 0 * * *'
   workflow_dispatch:
     # Allow manual triggering from the GitHub Actions UI. Useful for
     # testing or firing a cron out-of-band without waiting for the next
@@ -52,6 +59,8 @@ on:
           - weekly-digest
           - trial-expiry
           - bot-actions
+          - daily-tell-push
+          - publish-tells
 
 env:
   BASE_URL: https://kanikarose.com
@@ -165,3 +174,38 @@ jobs:
             -H "x-cron-secret: ${{ secrets.CRON_SECRET }}" \
             -H "Content-Type: application/json" \
             --max-time 120
+
+  daily-tell-push:
+    # Hourly. Each user has a preferred local hour stored on their
+    # pushPreferences; the route checks "is now their hour in their
+    # timezone, and have we not yet sent today" and only sends to those
+    # who match. Safe to over-run — idempotent by lastSent date.
+    if: >-
+      github.event.schedule == '3 * * * *' ||
+      (github.event_name == 'workflow_dispatch' &&
+       (github.event.inputs.target == 'all' || github.event.inputs.target == 'daily-tell-push'))
+    runs-on: ubuntu-latest
+    steps:
+      - name: Hit /api/cron/daily-tell-push
+        run: |
+          curl -fsS -X POST "$BASE_URL/api/cron/daily-tell-push" \
+            -H "x-cron-secret: ${{ secrets.CRON_SECRET }}" \
+            -H "Content-Type: application/json" \
+            --max-time 120
+
+  publish-tells:
+    # Daily, just after midnight UTC. Promotes SCHEDULED Tells whose
+    # scheduleDate has arrived to PUBLISHED so Kanika can queue weeks
+    # ahead in /admin/tells without manually flipping each one live.
+    if: >-
+      github.event.schedule == '5 0 * * *' ||
+      (github.event_name == 'workflow_dispatch' &&
+       (github.event.inputs.target == 'all' || github.event.inputs.target == 'publish-tells'))
+    runs-on: ubuntu-latest
+    steps:
+      - name: Hit /api/cron/publish-tells
+        run: |
+          curl -fsS -X POST "$BASE_URL/api/cron/publish-tells" \
+            -H "x-cron-secret: ${{ secrets.CRON_SECRET }}" \
+            -H "Content-Type: application/json" \
+            --max-time 60

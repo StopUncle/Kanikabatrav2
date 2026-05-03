@@ -28,7 +28,8 @@ export type PushCategory =
   | "voiceNote"
   | "forumReply"
   | "mention"
-  | "broadcast";
+  | "broadcast"
+  | "dailyTell";
 
 export interface PushPayload {
   title: string;
@@ -59,6 +60,7 @@ const DEFAULT_OPT_IN: Record<PushCategory, boolean> = {
   forumReply: true,
   mention: true,
   broadcast: false, // Broadcast pushes are admin-initiated; default off.
+  dailyTell: false, // Daily-Tell push is opt-in; the user picks an hour.
 };
 
 let configured = false;
