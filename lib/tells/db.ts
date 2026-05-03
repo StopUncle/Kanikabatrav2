@@ -27,6 +27,7 @@ import {
   type EloUpdate,
 } from "./elo";
 import { utcDateKey, isoWeekKey, daysBetween } from "./streak";
+import { accrueLeague } from "./leagues/accrue";
 
 /* -------------------------------------------------------------------------- */
 /* Types: re-shape the DB Tell into the client-friendly shape used by         */
@@ -388,6 +389,17 @@ export async function recordAnswer(
     );
     axesImpact = update.axesImpact;
     scoreImpact = update.netDelta;
+
+    // Accrue this answer to the user's weekly league. Lazily creates
+    // their LeagueMembership for this ISO week if missing. Best-effort:
+    // a league failure must not break the response pipeline.
+    try {
+      await accrueLeague({ userId: args.userId as string, scoreDelta: scoreImpact });
+    } catch (err) {
+      // Non-fatal. The response is already counted via countedScored.
+      // Logged as a warning so we notice persistent failures.
+      console.warn("[recordAnswer] league accrue failed:", err);
+    }
   }
 
   // Phase 4: backfill the side-effect fields on the row we just inserted.

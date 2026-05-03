@@ -22,6 +22,7 @@ import {
 import { applyEloDelta, computeAxesImpact } from "@/lib/tells/elo";
 import { isoWeekKey, daysBetween } from "@/lib/tells/streak";
 import { correctnessProb, mulberry32, stableHash } from "./profiles";
+import { accrueLeague } from "@/lib/tells/leagues/accrue";
 
 export interface BotAnswerInput {
   botUserId: string;
@@ -113,6 +114,8 @@ export async function recordBotAnswer(
     AXIS_KEYS.includes(a),
   );
 
+  let committedScoreImpact = 0;
+
   await prisma.$transaction(async (tx) => {
     // 1. Insert the response.
     await tx.tellResponse.create({
@@ -149,6 +152,7 @@ export async function recordBotAnswer(
       scoreImpact = update.netDelta;
       axesImpact = update.axesImpact;
     }
+    committedScoreImpact = scoreImpact;
 
     // 4. Backfill the row's delta fields. Real-member path does this
     //    outside the transaction; we keep it inside because the cron
@@ -163,10 +167,19 @@ export async function recordBotAnswer(
     });
   });
 
+  // Accrue this answer to the bot's weekly league. Outside the main
+  // transaction so accrueLeague's own upsert tx doesn't nest. Best-
+  // effort — a league failure must not abort the cron's other bots.
+  try {
+    await accrueLeague({ userId: botUserId, scoreDelta: committedScoreImpact });
+  } catch (err) {
+    console.warn("[recordBotAnswer] league accrue failed:", err);
+  }
+
   return {
     inserted: true,
     isCorrect,
-    scoreImpact: 0, // updated in DB; not surfaced to caller currently.
+    scoreImpact: committedScoreImpact,
   };
 }
 

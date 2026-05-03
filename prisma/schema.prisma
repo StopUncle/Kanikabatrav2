@@ -100,6 +100,7 @@ model User {
   tellResponses             TellResponse[]
   instinctScore             InstinctScore?
   tellStreak                TellStreak?
+  leagueMemberships         LeagueMembership[]
   receipts                  Receipt[]
   // Public-profile slug for /u/[handle]. Optional (member opts in by
   // claiming a handle). Lowercase a-z, 0-9, hyphens. 3-30 chars.
@@ -1360,6 +1361,70 @@ model InstinctScore {
   updatedAt     DateTime @updatedAt
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+// Weekly league for Tells. One row per (ISO week, tier) pair. The
+// resolution cron sets resolvedAt on Sunday 23:59 UTC; until then the
+// league is "live" and weeklyScore on each LeagueMembership accrues
+// with every scored response.
+model League {
+  id          String    @id @default(cuid())
+  // ISO week the league represents, e.g. "2026-W19".
+  weekKey     String
+  // Tier name from the static TIERS list. Stored as a string rather
+  // than an enum so renaming a tier is a one-line copy change, not a
+  // schema migration.
+  tierName    String
+  // 0 = bottom tier, increasing. Used for promotion/demotion math
+  // (next tier up = tierOrder + 1).
+  tierOrder   Int
+  // Frozen Elo bounds at creation so changing the TIERS table later
+  // doesn't retroactively shift bounds on already-resolved leagues.
+  eloMin      Int
+  eloMax      Int
+  resolvedAt  DateTime?
+  createdAt   DateTime  @default(now())
+
+  memberships LeagueMembership[]
+
+  @@unique([weekKey, tierName])
+  @@index([weekKey])
+  @@index([resolvedAt])
+}
+
+// One row per user per ISO week. Created lazily on the user's first
+// scored response of the week. weeklyScore + weeklyAnswered accrue as
+// they answer; finalRank + outcome are stamped by the resolution cron.
+model LeagueMembership {
+  id             String         @id @default(cuid())
+  userId         String
+  leagueId       String
+  // Denormalised so "what's my membership this week" is one indexed
+  // lookup without joining through League.
+  weekKey        String
+  // Average of the user's six axis Elos at assignment time. Lets the
+  // bracket card show "you joined at 1240, now you're at 1267" without
+  // re-reading the InstinctScore row.
+  startElo       Int
+  weeklyScore    Int            @default(0)
+  weeklyAnswered Int            @default(0)
+  // Set on resolution. Null while the league is live.
+  finalRank      Int?
+  outcome        LeagueOutcome?
+  joinedAt       DateTime       @default(now())
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  league League @relation(fields: [leagueId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, weekKey])
+  @@index([leagueId, weeklyScore])
+  @@index([userId])
+}
+
+enum LeagueOutcome {
+  PROMOTED
+  DEMOTED
+  HELD
 }
 
 // Per-user streak with one auto-applied freeze per ISO week. Created

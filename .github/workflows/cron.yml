@@ -44,6 +44,11 @@ on:
     # Tell auto-publishes. Each training bot rolls against its archetype's
     # activity probability and writes a TellResponse if it "shows up."
     - cron: '15 0 * * *'
+    # Resolve leagues — Sunday 23:59 UTC. Stamps finalRank + outcome on
+    # every membership, sets league.resolvedAt. ISO week boundary is
+    # Monday 00:00 UTC, so this catches the just-ending week before the
+    # new week's first answers create new memberships.
+    - cron: '59 23 * * 0'
   workflow_dispatch:
     # Allow manual triggering from the GitHub Actions UI. Useful for
     # testing or firing a cron out-of-band without waiting for the next
@@ -66,6 +71,7 @@ on:
           - daily-tell-push
           - publish-tells
           - training-bots-tick
+          - resolve-leagues
 
 env:
   BASE_URL: https://kanikarose.com
@@ -231,3 +237,20 @@ jobs:
             -H "x-cron-secret: ${{ secrets.CRON_SECRET }}" \
             -H "Content-Type: application/json" \
             --max-time 300
+
+  resolve-leagues:
+    # Sunday 23:59 UTC. Stamps finalRank + outcome on every membership
+    # and sets league.resolvedAt. ISO week boundary is Monday 00:00 UTC,
+    # so this lands in the last minute of the just-ending week.
+    if: >-
+      github.event.schedule == '59 23 * * 0' ||
+      (github.event_name == 'workflow_dispatch' &&
+       (github.event.inputs.target == 'all' || github.event.inputs.target == 'resolve-leagues'))
+    runs-on: ubuntu-latest
+    steps:
+      - name: Hit /api/cron/resolve-leagues
+        run: |
+          curl -fsS -X POST "$BASE_URL/api/cron/resolve-leagues" \
+            -H "x-cron-secret: ${{ secrets.CRON_SECRET }}" \
+            -H "Content-Type: application/json" \
+            --max-time 120

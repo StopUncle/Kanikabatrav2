@@ -4,6 +4,7 @@ import { ChevronRight } from "lucide-react";
 import { requireServerAuth } from "@/lib/auth/server-auth";
 import TellPlayer from "@/components/tells/TellPlayer";
 import InstinctsHex from "@/components/tells/InstinctsHex";
+import LeagueCard from "@/components/tells/LeagueCard";
 import {
   getBonusTells,
   getInstinctScore,
@@ -105,6 +106,8 @@ export default async function ConsiliumTellsTodayPage() {
               <ChevronRight size={16} />
             </Link>
           </div>
+
+          <LeagueCard />
 
           <div className="rounded-lg border border-gray-800 bg-deep-black/60 p-5 space-y-3">
             <p className="text-[10px] uppercase tracking-[0.4em] text-accent-gold/70">
