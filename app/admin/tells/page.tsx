@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Plus, Pencil } from "lucide-react";
+import { Plus, Pencil, BarChart3 } from "lucide-react";
 import { prisma } from "@/lib/prisma";
 import { TRACK_LABELS } from "@/lib/tells/types";
 import type { InstinctTrack } from "@/lib/tells/types";

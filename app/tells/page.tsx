@@ -2,8 +2,10 @@ import type { Metadata } from "next";
 import Header from "@/components/Header";
 import BackgroundEffects from "@/components/BackgroundEffects";
 import TellPlayer from "@/components/tells/TellPlayer";
-import { getTodaysTellRow } from "@/lib/tells/db";
+import TellArchive from "@/components/tells/TellArchive";
+import { getRecentArchive, getTodaysTellRow } from "@/lib/tells/db";
 import { getTodaysTell as getTodaysSeed } from "@/lib/tells/seed-tells";
+import type { InstinctTrack } from "@/lib/tells/types";
 
 // Always render fresh, the schedule changes daily.
 export const dynamic = "force-dynamic";
@@ -60,6 +62,11 @@ export default async function TellsPage() {
   // first PUBLISHED Tell rows exist.
   const tell = (await getTodaysTellRow()) ?? getTodaysSeed();
 
+  // Archive is DB-only; the seed-pool fallback path skips it.
+  const archive = tell.id.startsWith("tell-")
+    ? await getRecentArchive({ excludeId: tell.id, limit: 7 })
+    : [];
+
   return (
     <>
       <BackgroundEffects />
@@ -76,6 +83,13 @@ export default async function TellsPage() {
         </div>
 
         <TellPlayer tell={tell} />
+
+        <TellArchive
+          items={archive.map((a) => ({
+            ...a,
+            track: a.track as InstinctTrack,
+          }))}
+        />
       </main>
     </>
   );

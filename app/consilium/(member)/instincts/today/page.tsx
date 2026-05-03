@@ -96,6 +96,13 @@ export default async function ConsiliumTellsTodayPage() {
               <span>Full breakdown</span>
               <ChevronRight size={16} />
             </Link>
+            <Link
+              href="/consilium/instincts/history"
+              className="mt-3 flex items-center justify-between text-text-gray hover:text-accent-gold transition-colors text-sm"
+            >
+              <span>History</span>
+              <ChevronRight size={16} />
+            </Link>
           </div>
 
           <div className="rounded-lg border border-gray-800 bg-deep-black/60 p-5 space-y-3">

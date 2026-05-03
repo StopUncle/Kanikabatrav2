@@ -3,7 +3,9 @@ import type { Metadata } from "next";
 import { ArrowLeft } from "lucide-react";
 import { requireServerAuth } from "@/lib/auth/server-auth";
 import InstinctsHex from "@/components/tells/InstinctsHex";
+import HandleClaim from "@/components/tells/HandleClaim";
 import { getInstinctScore, getTellStreak } from "@/lib/tells/db";
+import { prisma } from "@/lib/prisma";
 import { AXIS_KEYS, AXIS_LABELS } from "@/lib/tells/types";
 
 export const dynamic = "force-dynamic";
@@ -34,9 +36,13 @@ function tier(rating: number): { label: string; color: string } {
 export default async function ConsiliumInstinctsScorePage() {
   const userId = await requireServerAuth("/consilium/instincts/score");
 
-  const [score, streak] = await Promise.all([
+  const [score, streak, profile] = await Promise.all([
     getInstinctScore(userId),
     getTellStreak(userId),
+    prisma.user.findUnique({
+      where: { id: userId },
+      select: { handle: true, profilePublic: true },
+    }),
   ]);
 
   const ratings: Record<string, number> = {
@@ -98,6 +104,11 @@ export default async function ConsiliumInstinctsScorePage() {
                 {score.totalAnswered} answers logged
               </p>
             </div>
+
+            <HandleClaim
+              initialHandle={profile?.handle ?? null}
+              initialPublic={profile?.profilePublic ?? false}
+            />
 
             <div className="space-y-3">
               {AXIS_KEYS.map((axis) => {

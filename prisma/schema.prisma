@@ -91,6 +91,13 @@ model User {
   instinctScore             InstinctScore?
   tellStreak                TellStreak?
   receipts                  Receipt[]
+  // Public-profile slug for /u/[handle]. Optional (member opts in by
+  // claiming a handle). Lowercase a-z, 0-9, hyphens. 3-30 chars.
+  // Unique only when set; null users do not collide.
+  handle                    String?              @unique
+  // Whether the user has chosen to make their hex public on /u/[handle].
+  // Default false: claiming a handle does not auto-publish the hex.
+  profilePublic             Boolean              @default(false)
   // Acquisition attribution — captured from URL params + headers on
   // the visit that ended in registration. Joinable against revenue
   // (Purchase), retention (CommunityMembership), and quiz outcomes

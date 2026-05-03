@@ -125,6 +125,46 @@ export async function getBonusTells(opts: {
 }
 
 /**
+ * Recently-published Tells, excluding "today's main". Used by the
+ * /tells page to render an archive carousel below the reveal.
+ *
+ * Capped at 7 entries by default. Returns the most recently published
+ * first. Only PUBLISHED Tells whose scheduleDate is before now.
+ */
+export async function getRecentArchive(opts: {
+  excludeId?: string;
+  limit?: number;
+} = {}): Promise<
+  Array<{
+    id: string;
+    slug: string;
+    number: number;
+    track: InstinctTrack;
+    question: string;
+    scheduleDate: Date | null;
+  }>
+> {
+  const limit = opts.limit ?? 7;
+  return prisma.tell.findMany({
+    where: {
+      status: "PUBLISHED",
+      scheduleDate: { lte: new Date() },
+      id: opts.excludeId ? { not: opts.excludeId } : undefined,
+    },
+    orderBy: { scheduleDate: "desc" },
+    take: limit,
+    select: {
+      id: true,
+      slug: true,
+      number: true,
+      track: true,
+      question: true,
+      scheduleDate: true,
+    },
+  });
+}
+
+/**
  * Look up a Tell by slug for /tells/[slug] deep links.
  */
 export async function getTellBySlug(slug: string): Promise<ClientTell | null> {
