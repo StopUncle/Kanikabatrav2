@@ -700,14 +700,23 @@ export default function SimulatorRunner({
   // early returns up top, see `tapLockRef` / `handleBackgroundTap`.)
 
   // Whether the dialog phase is active for this non-ending scene.
-  // Used to gate the always-visible emergency skip-to-choices button —
-  // if the player ever loops on dialog, they have one reliable escape.
+  // Used to gate the always-visible emergency skip button — if the player
+  // ever loops on dialog, they have one reliable escape.
+  //
+  // Crucially, this includes AUTO-ADVANCE scenes (no choices, just
+  // nextSceneId). The credit-thief scenario, and many others, route
+  // optimal AND failure branches through dialog-only fallout scenes
+  // before the ending. With the prior `scene.choices.length > 0` gate,
+  // the skip button vanished on those scenes and the player had no
+  // recourse but to tap through every long inner-voice line, fighting
+  // the 320ms dwell + 500ms tap-lock the whole way. That is the "loop"
+  // playtesters reported. `skipDialogToChoices` already handles the
+  // no-choices branch (autoAdvance), so we just lift the gate.
   const inDialogPhase =
     !showIntro &&
     !showChoices &&
     !scene.isEnding &&
-    !!scene.choices &&
-    scene.choices.length > 0;
+    (scene.dialog?.length ?? 0) > 0;
 
   const game = (
     <div
@@ -763,7 +772,7 @@ export default function SimulatorRunner({
           <button
             type="button"
             onClick={skipDialogToChoices}
-            aria-label="Skip dialog, go to choices"
+            aria-label="Skip remaining dialog in this scene"
             className="inline-flex items-center gap-1.5 px-3 h-11 rounded-full bg-deep-black/70 backdrop-blur-md border border-white/15 text-text-gray hover:text-accent-gold hover:border-accent-gold/40 active:scale-95 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-gold focus-visible:ring-offset-2 focus-visible:ring-offset-deep-black text-[10px] uppercase tracking-[0.25em]"
           >
             <FastForward size={12} strokeWidth={1.6} />
