@@ -176,7 +176,7 @@ export default function NarcissistQuizLanding() {
               The Two Subscales
             </h2>
             <p className="text-text-gray text-center max-w-xl mx-auto mb-8 text-sm leading-relaxed">
-              The NPI's seven factors split cleanly into two clusters
+              The NPI&rsquo;s seven factors split cleanly into two clusters
               that read as different patterns in real life. The
               configuration of the two is what you actually want to
               know, not the total.
@@ -256,9 +256,9 @@ export default function NarcissistQuizLanding() {
               <p>
                 The voice difference here is not in the items, those
                 are reproduced from Raskin & Terry exactly, with only
-                punctuation harmonisation. It's in the result-page
+                punctuation harmonisation. It&rsquo;s in the result-page
                 interpretation, where most clinical-content sites lose
-                the courage of the data and where this one doesn't.
+                the courage of the data and where this one doesn&rsquo;t.
               </p>
               <p className="text-text-gray/70 text-xs italic">
                 Source instrument:

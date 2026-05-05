@@ -6,95 +6,76 @@ import Header from "@/components/Header";
 import BackgroundEffects from "@/components/BackgroundEffects";
 import FAQSection from "@/components/FAQSection";
 import {
-  SOCIOPATH_QUIZ_INFO,
-  SOCIOPATH_QUIZ_FAQ,
-} from "@/lib/quiz-sociopath-data";
+  DATING_QUIZ_INFO,
+  DATING_QUIZ_FAQ,
+} from "@/lib/quiz-dating-sociopath-data";
 import {
   ShieldAlert,
-  Snowflake,
-  Flame,
+  Eye,
+  Heart,
   ArrowRight,
   ScrollText,
   GraduationCap,
+  Phone,
 } from "lucide-react";
 
-// Companion landing page for the Sociopath Test (/quiz/sociopath).
-// Matches the Daughter Pattern landing's structure: above-the-fold
-// disclaimer, hero, two-subscale explainer (instead of six profiles),
-// "who built this" credibility row, how it works, FAQ, related links.
-//
-// Voice locked to reference/KANIKA-VOICE.md throughout. Second person.
-// No reassurance. No life-coach softeners. The credibility play is
-// "calibrated by the published instrument the field uses + written by
-// the rare author who has the diagnosis the test is built to detect."
-
-const RELATED_LINKS: Array<{
-  href: string;
-  title: string;
-  description: string;
-  type: string;
-}> = [
+const RELATED_LINKS = [
   {
-    href: "/quiz",
-    title: "The Dark Mirror Assessment",
+    href: "/book",
+    title: "The Sociopathic Dating Bible",
     description:
-      "Profiles you across six Cluster B types — Psychopathic, Sociopathic, Narcissistic, Borderline, Histrionic, Neurotypical. Most users take both. The Dark Mirror is the wide map; the Sociopath Test is the calibrated read on the specific axis the wide map flagged.",
-    type: "Companion quiz",
+      "The 70,000-word manual this quiz is drawn from. The chapters on partner detection cover the patterns these scenarios test for in much more depth.",
+    type: "Book",
+  },
+  {
+    href: "/quiz/sociopath",
+    title: "The Sociopath Test (LSRP)",
+    description:
+      "A self-assessment for the partner this quiz cannot score. If you can get them to take it (or take it as if you were them, based on what you know), the LSRP-calibrated read is informative.",
+    type: "Self-test",
   },
   {
     href: "/quiz/daughter",
     title: "The Daughter Pattern Assessment",
     description:
-      "For adult daughters of (likely) narcissistic mothers. Six daughter profiles plus a mother-signal band. Different question; different answer.",
+      "If you grew up in an NPD-trait-heavy household, the partner-pattern you keep ending up with often maps onto the household. The Daughter Pattern Assessment is the upstream read.",
     type: "Sister quiz",
-  },
-  {
-    href: "/book",
-    title: "The Sociopathic Dating Bible",
-    description:
-      "70,000-word manual. The chapters on the predator's interior were written by someone who configured similarly to the Full Pattern result, and they will read as either familiar or accusatory depending on where in the pattern you currently are.",
-    type: "Book",
   },
   {
     href: "/consilium",
     title: "Join the Consilium",
     description:
-      "$29/month. Higher concentration of people with the Calculator and Full Pattern configurations than the general population, by deliberate design. The room is not safer because it's gentler. It's safer because it's read.",
+      "$29/month members' room. Threads dedicated to the partner-detection territory this quiz covers, run by an author with adjacent personal experience. Not a substitute for therapy.",
     type: "Community",
   },
-];
+] as const;
 
-const SUBSCALE_PREVIEW = [
+const AXIS_PREVIEW = [
   {
-    name: "Primary Psychopathy",
-    short: "Cold core",
+    name: "Behavioural Red Flags",
+    short: "Visible",
     description:
-      "Callousness, manipulativeness, lack of remorse, the empathic deficit. The construct most people picture when they hear the word.",
-    Icon: Snowflake,
-    color: "blue",
+      "Money probes, future-faking, charm-on-demand, gaslighting, boundary erosion, isolation. The patterns you can point at.",
+    Icon: Eye,
+    color: "rose",
   },
   {
-    name: "Secondary Psychopathy",
-    short: "Hot wire",
+    name: "Internal Red Flags",
+    short: "Felt",
     description:
-      "Impulsivity, frustration intolerance, antisocial reactivity, the regulation gap. Often the part that produces real-world consequences.",
-    Icon: Flame,
+      "Smaller after, walking on eggshells, sleep loss, the stomach drop, the daydream of escape. The body's read.",
+    Icon: Heart,
     color: "amber",
   },
 ];
 
-export default function SociopathQuizLanding() {
+export default function DatingSociopathQuizLanding() {
   return (
     <>
       <BackgroundEffects />
       <Header />
       <main className="min-h-screen pt-24 pb-16 relative z-10">
         <div className="container mx-auto px-4 max-w-4xl">
-          {/* Above-the-fold disclaimer.
-              The "by a real sociopath" hook reads as edgy on first
-              glance; the disclaimer next to it makes it edgy + honest,
-              which is what protects the YMYL trust signal Google reads
-              for psychology content. */}
           <m.div
             initial={{ opacity: 0, y: -8 }}
             animate={{ opacity: 1, y: 0 }}
@@ -110,11 +91,11 @@ export default function SociopathQuizLanding() {
               <span className="text-accent-burgundy/90 font-medium">
                 Educational use only.
               </span>{" "}
-              Built on the Levenson Self-Report Psychopathy Scale, a
-              research instrument. Not a diagnosis. Only a licensed
-              clinician with a full history can diagnose Antisocial
-              Personality Disorder. Full disclaimer at the bottom of the
-              page.
+              This quiz cannot diagnose your partner or you. If you are
+              in immediate physical danger or being financially
+              entrapped, please contact a domestic violence service
+              first. Crisis resources surface on the result page when
+              scores are high.
             </p>
           </m.div>
 
@@ -127,38 +108,37 @@ export default function SociopathQuizLanding() {
           >
             <div className="inline-block mb-6 px-4 py-2 border border-accent-gold/30 rounded-full">
               <span className="text-accent-gold text-sm tracking-[0.2em] uppercase">
-                Calibrated · LSRP
+                Partner Detection
               </span>
             </div>
 
             <h1 className="text-4xl sm:text-5xl md:text-6xl font-extralight text-white mb-6 tracking-wide">
-              {SOCIOPATH_QUIZ_INFO.name}
+              {DATING_QUIZ_INFO.name}
             </h1>
 
             <p className="text-xl sm:text-2xl text-accent-gold font-light mb-8">
-              {SOCIOPATH_QUIZ_INFO.tagline}
+              {DATING_QUIZ_INFO.tagline}
             </p>
 
             <p className="text-text-gray text-lg max-w-2xl mx-auto mb-12 leading-relaxed">
-              Twenty-six items, two subscales, scored against published
-              research norms. Calibrated by the field. Written by the
-              rare author who has the diagnosis the test is built to
-              detect.
+              Twenty scenarios drawn from the Sociopathic Dating
+              Bible&rsquo;s red-flag chapters. Two axes &mdash; what you have seen,
+              and what your body has registered. Combined quadrant
+              read. Honest, not alarming.
             </p>
 
-            {/* Stats */}
             <div className="flex flex-wrap justify-center gap-8 mb-12">
               <div className="text-center">
                 <div className="text-3xl font-light text-accent-gold">
-                  {SOCIOPATH_QUIZ_INFO.itemCount}
+                  {DATING_QUIZ_INFO.itemCount}
                 </div>
                 <div className="text-text-gray text-sm uppercase tracking-wider">
-                  Items
+                  Scenarios
                 </div>
               </div>
               <div className="text-center">
                 <div className="text-3xl font-light text-accent-gold">
-                  ~{SOCIOPATH_QUIZ_INFO.estimatedMinutes} min
+                  ~{DATING_QUIZ_INFO.estimatedMinutes} min
                 </div>
                 <div className="text-text-gray text-sm uppercase tracking-wider">
                   To complete
@@ -167,13 +147,12 @@ export default function SociopathQuizLanding() {
               <div className="text-center">
                 <div className="text-3xl font-light text-accent-gold">2</div>
                 <div className="text-text-gray text-sm uppercase tracking-wider">
-                  Subscales
+                  Axes
                 </div>
               </div>
             </div>
 
-            {/* CTA */}
-            <Link href="/quiz/sociopath/take">
+            <Link href="/quiz/dating-sociopath/take">
               <m.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.98 }}
@@ -183,11 +162,11 @@ export default function SociopathQuizLanding() {
               </m.button>
             </Link>
             <p className="mt-3 text-text-gray text-xs">
-              Free. Full subscale scores returned. No paywall on the read.
+              Free. Quadrant read returned in full.
             </p>
           </m.div>
 
-          {/* Two subscales preview */}
+          {/* Two axes */}
           <m.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
@@ -195,17 +174,17 @@ export default function SociopathQuizLanding() {
             className="mb-16"
           >
             <h2 className="text-2xl font-light text-white text-center mb-3 tracking-wide">
-              The Two Subscales
+              The Two Axes
             </h2>
             <p className="text-text-gray text-center max-w-xl mx-auto mb-8 text-sm leading-relaxed">
-              Psychopathy is not one trait. The LSRP separates the cold
-              core from the impulsive shell because, in practice, they
-              come apart. The configuration of the two is the diagnostic
-              fact, not the total score.
+              Most partner-detection quizzes ask only what you can see.
+              The patterns the literature warns about live in the gap
+              between the visible and the felt. The combined read of
+              the two is more reliable than either alone.
             </p>
 
             <div className="grid sm:grid-cols-2 gap-4">
-              {SUBSCALE_PREVIEW.map((s, index) => (
+              {AXIS_PREVIEW.map((s, index) => (
                 <m.div
                   key={s.name}
                   initial={{ opacity: 0, y: 20 }}
@@ -215,14 +194,14 @@ export default function SociopathQuizLanding() {
                 >
                   <div
                     className={`w-10 h-10 mb-4 rounded-full flex items-center justify-center ${
-                      s.color === "blue"
-                        ? "bg-blue-400/10 group-hover:bg-blue-400/20"
+                      s.color === "rose"
+                        ? "bg-rose-400/10 group-hover:bg-rose-400/20"
                         : "bg-amber-400/10 group-hover:bg-amber-400/20"
                     } transition-colors`}
                   >
                     <s.Icon
                       size={20}
-                      className={s.color === "blue" ? "text-blue-300" : "text-amber-300"}
+                      className={s.color === "rose" ? "text-rose-300" : "text-amber-300"}
                     />
                   </div>
                   <div className="flex items-baseline justify-between mb-2">
@@ -239,12 +218,11 @@ export default function SociopathQuizLanding() {
                 </m.div>
               ))}
             </div>
-
             <p className="mt-6 text-text-gray/70 text-xs text-center max-w-2xl mx-auto leading-relaxed">
-              The four configurations of the two subscales (high/low ×
-              high/low) read as four very different patterns in real
-              life. Your result page returns both subscale percentiles
-              and the combined quadrant interpretation.
+              The four configurations of the two axes are: Probably
+              Not the Pattern · Visible But Unfelt · The Gut Knows ·
+              The Pattern Is Confirmed. Your result page returns the
+              configuration plus what to do with it.
             </p>
           </m.div>
 
@@ -270,76 +248,24 @@ export default function SociopathQuizLanding() {
             </div>
             <div className="text-text-gray text-sm leading-relaxed space-y-3">
               <p>
-                Most online sociopath tests are written by anonymous SEO
-                operators or by clinical-content sites that have to keep
-                a sterile distance from the construct they&rsquo;re describing.
-                This one is written by the rare author who has the
-                diagnosis the test is built to detect, working from the
-                published instrument the academic literature uses.
+                Most &ldquo;am I dating a sociopath&rdquo; quizzes online
+                are written by anonymous SEO operators or by survivor
+                blogs without the partner-detection literature
+                grounding. This one is drawn directly from the
+                Sociopathic Dating Bible chapters on partner detection
+                — the same author with the diagnosis (ASPD) the quiz
+                is built to detect, working through what the literature
+                consistently shows actually flags the configuration.
               </p>
               <p>
-                The items track the LSRP source paper closely with light
-                wording adjustments for clarity. The scoring follows
-                Levenson 1995 exactly. The two-subscale split is the
-                field&rsquo;s, not mine. What you get from me, on top of the
-                instrument, is the result-page interpretation, what the
-                configuration looks like in real life, who actually ends
-                up in each quadrant, and what to do with the score if
-                anything.
+                The two-axis structure (visible + felt) is the genuine
+                contribution. Partner-detection quizzes that score only
+                visible behaviour underread the configurations where
+                the body has caught what the head has not yet named;
+                quizzes that score only feelings overcall the relationships
+                where ambient anxiety produces the same internal
+                weather as a sociopathic partner.
               </p>
-              <p className="text-text-gray/70 text-xs italic">
-                Source instrument: Levenson, Kiehl, & Fitzpatrick (1995),
-                <span className="not-italic">
-                  {" "}
-                  &ldquo;Assessing psychopathic attributes in a
-                  noninstitutionalized population.&rdquo; Journal of
-                  Personality and Social Psychology 68(1), 151-158.
-                </span>
-              </p>
-            </div>
-          </m.div>
-
-          {/* How it works */}
-          <m.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.5 }}
-            className="mb-16"
-          >
-            <h2 className="text-2xl font-light text-white text-center mb-8 tracking-wide">
-              How it works
-            </h2>
-            <div className="grid md:grid-cols-3 gap-8">
-              {[
-                {
-                  step: "01",
-                  title: "Twenty-six Likert items",
-                  description:
-                    "Each item is a first-person statement (e.g. 'Looking out for myself is my top priority'). You agree or disagree on a four-point scale. Seven items are reverse-keyed; you do not need to identify them, the scoring handles it.",
-                },
-                {
-                  step: "02",
-                  title: "Two-subscale scoring",
-                  description:
-                    "Sixteen items load on Primary (cold core), ten load on Secondary (impulsive shell). Raw scores are converted to percentiles against the Levenson 1995 college-sample norms (n=487).",
-                },
-                {
-                  step: "03",
-                  title: "Quadrant interpretation",
-                  description:
-                    "The combined read of the two subscales places you in one of four configurations: Functional Self, the Calculator, the Hot Wire, or the Full Pattern. Your result page returns the configuration plus what to do with it.",
-                },
-              ].map((step) => (
-                <div key={step.step} className="text-center">
-                  <div className="text-accent-gold text-3xl font-light mb-2">
-                    {step.step}
-                  </div>
-                  <h3 className="text-white font-light mb-2">{step.title}</h3>
-                  <p className="text-text-gray text-sm leading-relaxed">
-                    {step.description}
-                  </p>
-                </div>
-              ))}
             </div>
           </m.div>
 
@@ -350,7 +276,7 @@ export default function SociopathQuizLanding() {
             transition={{ duration: 0.8, delay: 0.6 }}
             className="text-center mb-16"
           >
-            <Link href="/quiz/sociopath/take">
+            <Link href="/quiz/dating-sociopath/take">
               <m.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.98 }}
@@ -362,15 +288,13 @@ export default function SociopathQuizLanding() {
             </Link>
           </m.div>
 
-          {/* FAQ */}
           <FAQSection
-            items={SOCIOPATH_QUIZ_FAQ.map((q) => ({
+            items={DATING_QUIZ_FAQ.map((q) => ({
               question: q.question,
               answer: q.answer,
             }))}
           />
 
-          {/* Related */}
           <m.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -407,12 +331,47 @@ export default function SociopathQuizLanding() {
             </div>
           </m.div>
 
-          {/* Full disclaimer */}
+          {/* Crisis resources */}
           <m.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.8, delay: 1 }}
-            className="mt-12 p-6 rounded-lg border border-accent-burgundy/30 bg-accent-burgundy/5"
+            className="mt-12 p-6 rounded-lg border border-rose-400/30 bg-rose-400/5"
+          >
+            <div className="flex items-start gap-3">
+              <Phone
+                size={18}
+                strokeWidth={1.5}
+                className="text-rose-300/80 shrink-0 mt-1"
+              />
+              <div>
+                <h3 className="text-rose-300/90 text-sm font-medium uppercase tracking-wider mb-2">
+                  If you are in danger right now
+                </h3>
+                <p className="text-text-gray text-xs leading-relaxed">
+                  Please contact a domestic violence service before
+                  taking this quiz. US: National DV Hotline 1-800-799-7233.
+                  UK: 0808 2000 247. Australia: 1800RESPECT.
+                  International:{" "}
+                  <a
+                    href="https://findahelpline.com/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-rose-300 underline hover:text-rose-200"
+                  >
+                    findahelpline.com
+                  </a>
+                  . Your safety is more important than this score.
+                </p>
+              </div>
+            </div>
+          </m.div>
+
+          <m.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.8, delay: 1.05 }}
+            className="mt-4 p-6 rounded-lg border border-accent-burgundy/30 bg-accent-burgundy/5"
           >
             <div className="flex items-start gap-3">
               <ShieldAlert
@@ -425,7 +384,7 @@ export default function SociopathQuizLanding() {
                   Full disclaimer
                 </h3>
                 <p className="text-text-gray text-xs leading-relaxed">
-                  {SOCIOPATH_QUIZ_INFO.disclaimer}
+                  {DATING_QUIZ_INFO.disclaimer}
                 </p>
               </div>
             </div>

@@ -185,7 +185,7 @@ export default function DarkTriadQuizLanding() {
             <p className="text-text-gray text-center max-w-xl mx-auto mb-8 text-sm leading-relaxed">
               The dark triad is not one trait but three correlated
               ones. They sometimes co-occur (the Full Triad) and often
-              don't (single-axis or dual-axis dominant). The
+              don&rsquo;t (single-axis or dual-axis dominant). The
               configuration is what reads in real life.
             </p>
 

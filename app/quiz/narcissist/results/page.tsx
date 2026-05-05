@@ -18,7 +18,6 @@ import {
   ShieldAlert,
   Crown,
   Eye,
-  ArrowRight,
   RefreshCw,
   BookOpen,
   type LucideIcon,

@@ -218,7 +218,7 @@ export default function CovertNarcissistQuizLanding() {
                 anonymous SEO operators, by survivor-blog authors with
                 no clinical background, or by therapy-content sites that
                 have to keep a sterile distance from the construct
-                they're describing. This one is written by an author
+                they&rsquo;re describing. This one is written by an author
                 with an adjacent personality-disorder diagnosis (ASPD,
                 not NPD), working from the published instrument the
                 academic literature actually uses.
@@ -227,7 +227,7 @@ export default function CovertNarcissistQuizLanding() {
                 The items track HSNS exactly. The voice is in the
                 tier-profile interpretations, where most clinical
                 content sites lose the courage of the data and where
-                this one doesn't.
+                this one doesn&rsquo;t.
               </p>
             </div>
           </m.div>
