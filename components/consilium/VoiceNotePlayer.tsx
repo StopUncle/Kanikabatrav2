@@ -26,16 +26,51 @@ export default function VoiceNotePlayer({ src }: VoiceNotePlayerProps) {
     if (!audio) return;
 
     const onTimeUpdate = () => setCurrentTime(audio.currentTime);
-    const onLoadedMetadata = () => setDuration(audio.duration);
+
+    // MediaRecorder webm/opus blobs (and some iOS audio/mp4 recordings)
+    // ship without duration metadata in their container header. The
+    // browser reports audio.duration === Infinity until the stream is
+    // walked. The fix: when metadata loads with non-finite duration,
+    // seek past plausible end. Browser walks the file to find the
+    // actual length and fires `durationchange`. Then reset currentTime
+    // to 0 so playback starts at the beginning, not at our probe seek.
+    const onLoadedMetadata = () => {
+      if (!isFinite(audio.duration) || audio.duration === 0) {
+        try {
+          audio.currentTime = 1e10;
+        } catch {
+          // Some browsers throw on extreme seek before any data is
+          // loaded. The durationchange path still kicks in once
+          // playback starts, so the recovery is automatic.
+        }
+      } else {
+        setDuration(audio.duration);
+      }
+    };
+
+    const onDurationChange = () => {
+      if (isFinite(audio.duration) && audio.duration > 0) {
+        setDuration(audio.duration);
+        // Reset to start if we triggered the probe seek. The check
+        // is safe even for legitimate playback because
+        // currentTime > duration is otherwise impossible.
+        if (audio.currentTime > audio.duration) {
+          audio.currentTime = 0;
+        }
+      }
+    };
+
     const onEnded = () => setIsPlaying(false);
 
     audio.addEventListener("timeupdate", onTimeUpdate);
     audio.addEventListener("loadedmetadata", onLoadedMetadata);
+    audio.addEventListener("durationchange", onDurationChange);
     audio.addEventListener("ended", onEnded);
 
     return () => {
       audio.removeEventListener("timeupdate", onTimeUpdate);
       audio.removeEventListener("loadedmetadata", onLoadedMetadata);
+      audio.removeEventListener("durationchange", onDurationChange);
       audio.removeEventListener("ended", onEnded);
     };
   }, []);
