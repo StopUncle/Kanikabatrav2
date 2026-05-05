@@ -82,16 +82,20 @@ export default function QuestionsClient({ initialQuestions, initialTabCounts }: 
   }, []);
 
   const openReply = useCallback((q: Question) => {
-    // Pre-fill title with a short question stub so the feed entry reads
-    // as "Q: ..." in scroll without Kanika needing to think about it.
-    // She can blow it away if she wants something else.
+    // Pre-fill title as "Ask Kanika · "<stub>"" so feed scrollers can
+    // see at a glance that this post answers a member question.
+    // Mirrors the format used by the voice-note + video reply flows
+    // for cross-format consistency.
     const stub = q.content.length > 80 ? q.content.slice(0, 80).trimEnd() + "…" : q.content;
     setReplyingId(q.id);
-    setReplyTitle(`Q: ${stub}`);
-    // Body pre-fills with the question quoted, blank line, ready for
-    // her answer. Members reading the feed see the question they're
-    // looking at the answer to without us needing to fetch it.
-    setReplyBody(`"${q.content}"\n\n`);
+    setReplyTitle(`Ask Kanika · "${stub}"`);
+    // Body pre-fills with a markdown blockquote framing the post as
+    // an Ask Kanika answer. ReactMarkdown is wired in FeedPost with
+    // gold-bordered blockquote styling, so this renders distinctly.
+    // Two blank lines at the end park the cursor under the quote.
+    setReplyBody(
+      `**Ask Kanika** — answering a member question:\n\n> "${q.content}"\n\n`,
+    );
     setReplyError(null);
   }, []);
 

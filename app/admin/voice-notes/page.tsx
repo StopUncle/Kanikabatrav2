@@ -70,29 +70,52 @@ export default function VoiceNotesPage() {
     fetchVoiceNotes();
   }, [fetchVoiceNotes]);
 
-  // Deep-link from /admin/questions: ?answers=<questionId> opens the
-  // form pre-bound to a specific question so the AnswerQuestionPicker
-  // already has it selected, and pre-fills the title so the Publish
-  // button is enabled the moment a recording lands. Reads window.location
-  // once on mount to avoid a Suspense boundary from useSearchParams.
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-    const id = new URLSearchParams(window.location.search).get("answers");
-    if (!id) return;
-    setAnswersQuestionId(id);
-    setShowForm(true);
-    // Best-effort title pre-fill, the form is usable even if this fails.
-    fetch(`/api/admin/questions/${id}`)
-      .then((r) => (r.ok ? r.json() : null))
-      .then((body) => {
+  // Pre-fill the title + description fields from a question's content.
+  // Used by both the deep-link path (?answers=<id>) and the picker's
+  // onChange wrapper, so picking a question in either place lights up
+  // the form with a clear "answering an Ask Kanika question" frame.
+  // Empty-only: never clobbers a manual edit.
+  const pickQuestionAndPrefill = useCallback(
+    async (id: string | null) => {
+      setAnswersQuestionId(id);
+      if (!id) return;
+      try {
+        const r = await fetch(`/api/admin/questions/${id}`);
+        if (!r.ok) return;
+        const body = await r.json();
         const content: string | undefined = body?.question?.content;
         if (!content) return;
         const stub =
           content.length > 80 ? content.slice(0, 80).trimEnd() + "…" : content;
-        setTitle((prev) => prev || `Reply: ${stub}`);
-      })
-      .catch(() => {});
-  }, []);
+        // Title carries a scannable "Ask Kanika · <question>" so feed
+        // scrollers know at a glance what's being answered.
+        setTitle((prev) => prev || `Ask Kanika · "${stub}"`);
+        // Description gets a markdown-formatted blockquote of the full
+        // question, which renders with the gold left-border treatment
+        // in FeedPost. The audio carries Kanika's answer; the post body
+        // makes the question explicit so the answer has context.
+        setDescription(
+          (prev) =>
+            prev ||
+            `**Ask Kanika** — answering a member question:\n\n> "${content}"`,
+        );
+      } catch {
+        // Silent. Form still works without the pre-fill.
+      }
+    },
+    [],
+  );
+
+  // Deep-link from /admin/questions: ?answers=<questionId> opens the
+  // form pre-bound to a specific question. Reads window.location once
+  // on mount to avoid a Suspense boundary from useSearchParams.
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const id = new URLSearchParams(window.location.search).get("answers");
+    if (!id) return;
+    setShowForm(true);
+    void pickQuestionAndPrefill(id);
+  }, [pickQuestionAndPrefill]);
 
   function handleDrop(e: React.DragEvent) {
     e.preventDefault();
@@ -273,7 +296,7 @@ export default function VoiceNotesPage() {
 
           <AnswerQuestionPicker
             value={answersQuestionId}
-            onChange={setAnswersQuestionId}
+            onChange={pickQuestionAndPrefill}
             disabled={submitting}
           />
 
