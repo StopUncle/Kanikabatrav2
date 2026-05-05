@@ -6,6 +6,7 @@ import Header from "@/components/Header";
 import BackgroundEffects from "@/components/BackgroundEffects";
 import FAQSection from "@/components/FAQSection";
 import { QUIZ_INFO } from "@/lib/quiz-data";
+import { ADDITIONAL_QUIZZES } from "@/lib/quiz-registry";
 import {
   Crosshair,
   Flame,
@@ -288,6 +289,72 @@ export default function QuizLanding() {
                     {type.name}
                   </div>
                   <div className="text-text-gray text-xs">{type.trait}</div>
+                </m.div>
+              ))}
+            </div>
+          </m.div>
+
+          {/* The full suite — six additional calibrated assessments
+              alongside the Dark Mirror. Surfacing this here both
+              helps Dark Mirror visitors discover the rest of the
+              suite (internal-link equity into the deeper-read
+              instruments) and tells anyone arriving on /quiz that
+              this is a single-quiz page nested within a larger
+              product, not a standalone test. */}
+          <m.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.3 }}
+            className="mb-16"
+          >
+            <h2 className="text-2xl font-light text-white text-center mb-3 tracking-wide">
+              The Full Suite
+            </h2>
+            <p className="text-text-gray text-center max-w-2xl mx-auto mb-8 text-sm leading-relaxed">
+              The Dark Mirror is the wide map. Six more assessments
+              go deeper on each axis &mdash; each one calibrated against
+              published research norms, each one with the result page
+              written from the inside.
+            </p>
+            <div className="grid sm:grid-cols-2 gap-3">
+              {ADDITIONAL_QUIZZES.map((quiz, index) => (
+                <m.div
+                  key={quiz.slug}
+                  initial={{ opacity: 0, y: 12 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, delay: 0.4 + index * 0.05 }}
+                >
+                  <Link
+                    href={quiz.href}
+                    className="group block p-4 rounded-xl border border-accent-gold/15 bg-deep-black/40 hover:border-accent-gold/40 hover:bg-deep-black/60 transition-all duration-300"
+                  >
+                    <div className="flex items-start justify-between gap-3 mb-2">
+                      <div className="min-w-0">
+                        <h3 className="text-white text-sm font-light group-hover:text-accent-gold transition-colors leading-snug">
+                          {quiz.title}
+                        </h3>
+                        <p className="text-text-gray/70 text-[11px] uppercase tracking-wider mt-0.5">
+                          {quiz.caption}
+                        </p>
+                      </div>
+                      <ArrowRight
+                        size={14}
+                        strokeWidth={1.5}
+                        className="text-text-gray/40 group-hover:text-accent-gold group-hover:translate-x-0.5 transition-all shrink-0 mt-1"
+                      />
+                    </div>
+                    <p className="text-text-gray text-[12px] leading-relaxed mb-2">
+                      {quiz.blurb}
+                    </p>
+                    <div className="flex items-center justify-between">
+                      <span className="text-accent-gold/70 text-[10px] uppercase tracking-[0.2em]">
+                        {quiz.instrument}
+                      </span>
+                      <span className="text-text-gray/50 text-[11px] tabular-nums">
+                        {quiz.itemCount} items &middot; ~{quiz.minutes} min
+                      </span>
+                    </div>
+                  </Link>
                 </m.div>
               ))}
             </div>

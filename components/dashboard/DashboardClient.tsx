@@ -27,6 +27,7 @@ import ProgressBar from "@/components/course/ProgressBar";
 import MobileNavigation from "@/components/dashboard/MobileNavigation";
 import AccountSection from "@/components/dashboard/AccountSection";
 import QuizDashboardCard from "@/components/dashboard/QuizDashboardCard";
+import QuizSuiteSection from "@/components/dashboard/QuizSuiteSection";
 
 interface CourseSubscription {
   id: string;
@@ -522,13 +523,31 @@ export default function DashboardClient({ user }: DashboardClientProps) {
                 />
               </DashboardCard>
 
-              {/* Quiz Results Section */}
+              {/* Quiz Results Section — surfaces the user's
+                  Dark Mirror result (radar + clinical breakdown) when
+                  one exists. The QuizDashboardCard component handles
+                  its own paywall + unlock state internally. */}
               <DashboardCard
                 title="Dark Mirror Assessment"
                 subtitle="Your personality profile"
                 icon={Brain}
               >
                 <QuizDashboardCard />
+              </DashboardCard>
+
+              {/* The Quiz Suite — the dashboard's "clinic lobby."
+                  Six additional calibrated assessments, each one
+                  built on a published research instrument. Sits
+                  immediately below the Dark Mirror card so a
+                  member who has just taken (or unlocked) their
+                  primary result has the next moves visible without
+                  scrolling further. */}
+              <DashboardCard
+                title="The Quiz Suite"
+                subtitle="Six more calibrated assessments"
+                icon={Brain}
+              >
+                <QuizSuiteSection />
               </DashboardCard>
 
               {/* Purchases Section */}
