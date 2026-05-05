@@ -11,6 +11,39 @@ const patchSchema = z.object({
 });
 
 /**
+ * GET /api/admin/questions/[id]
+ *
+ * Cheap single-question fetch used by the voice-notes / videos
+ * deep-link flow: when /admin/voice-notes?answers=<id> opens, the
+ * page calls this to auto-fill the title field with a reply stub
+ * derived from the question content. Identity is intentionally not
+ * exposed here, /reveal is the right place for that.
+ */
+export async function GET(
+  _req: NextRequest,
+  { params }: { params: Promise<{ id: string }> },
+) {
+  const u = await requireAdminSession();
+  if (u) return u;
+
+  const { id } = await params;
+  const question = await prisma.memberQuestion.findUnique({
+    where: { id },
+    select: {
+      id: true,
+      content: true,
+      isAnonymous: true,
+      status: true,
+      upvoteCount: true,
+    },
+  });
+  if (!question) {
+    return NextResponse.json({ error: "Not found" }, { status: 404 });
+  }
+  return NextResponse.json({ question });
+}
+
+/**
  * PATCH /api/admin/questions/[id]
  *
  * Update question status and/or link an answering FeedPost. When

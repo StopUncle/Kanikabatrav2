@@ -72,15 +72,26 @@ export default function VoiceNotesPage() {
 
   // Deep-link from /admin/questions: ?answers=<questionId> opens the
   // form pre-bound to a specific question so the AnswerQuestionPicker
-  // already has it selected. Reads window.location once on mount to
-  // avoid a Suspense boundary from useSearchParams.
+  // already has it selected, and pre-fills the title so the Publish
+  // button is enabled the moment a recording lands. Reads window.location
+  // once on mount to avoid a Suspense boundary from useSearchParams.
   useEffect(() => {
     if (typeof window === "undefined") return;
     const id = new URLSearchParams(window.location.search).get("answers");
-    if (id) {
-      setAnswersQuestionId(id);
-      setShowForm(true);
-    }
+    if (!id) return;
+    setAnswersQuestionId(id);
+    setShowForm(true);
+    // Best-effort title pre-fill, the form is usable even if this fails.
+    fetch(`/api/admin/questions/${id}`)
+      .then((r) => (r.ok ? r.json() : null))
+      .then((body) => {
+        const content: string | undefined = body?.question?.content;
+        if (!content) return;
+        const stub =
+          content.length > 80 ? content.slice(0, 80).trimEnd() + "…" : content;
+        setTitle((prev) => prev || `Reply: ${stub}`);
+      })
+      .catch(() => {});
   }, []);
 
   function handleDrop(e: React.DragEvent) {
@@ -388,18 +399,33 @@ export default function VoiceNotesPage() {
             </div>
           </div>
 
-          <button
-            type="submit"
-            disabled={submitting || !title.trim() || !file}
-            className="flex items-center gap-2 px-6 py-3 text-sm font-light tracking-wide bg-accent-gold/10 text-accent-gold border border-accent-gold/30 rounded hover:bg-accent-gold/20 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            {submitting ? (
-              <Loader2 size={16} className="animate-spin" />
-            ) : (
-              <Upload size={16} />
+          <div className="flex flex-wrap items-center gap-3">
+            <button
+              type="submit"
+              disabled={submitting || !title.trim() || !file}
+              className="flex items-center gap-2 px-6 py-3 text-sm font-light tracking-wide bg-accent-gold/10 text-accent-gold border border-accent-gold/30 rounded hover:bg-accent-gold/20 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {submitting ? (
+                <Loader2 size={16} className="animate-spin" />
+              ) : (
+                <Upload size={16} />
+              )}
+              {submitting ? "Uploading..." : "Publish Voice Note"}
+            </button>
+            {/* Tells Kanika exactly why the button is greyed out. The
+                old version silently disabled with no hint, so a
+                recorded voice note + empty title field looked like a
+                broken submit. */}
+            {!submitting && (!title.trim() || !file) && (
+              <p className="text-xs text-amber-300/80">
+                {!title.trim() && !file
+                  ? "Add a title and a recording or upload to publish."
+                  : !title.trim()
+                    ? "Add a title at the top of the form to publish."
+                    : "Record or upload a voice note to publish."}
+              </p>
             )}
-            {submitting ? "Uploading..." : "Publish Voice Note"}
-          </button>
+          </div>
         </form>
       )}
 
