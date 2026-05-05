@@ -196,8 +196,8 @@ export default function EmailQueuePage() {
               <h2 className="text-lg font-light uppercase tracking-[0.1em] text-text-light mb-4">
                 Upcoming Emails
               </h2>
-              <div className="glass-card rounded-lg overflow-hidden">
-                <table className="w-full">
+              <div className="glass-card rounded-lg overflow-x-auto">
+                <table className="w-full min-w-[640px]">
                   <thead>
                     <tr className="border-b border-white/10">
                       <th className="px-4 py-3 text-left text-xs font-light uppercase tracking-wider text-text-gray">
@@ -247,8 +247,8 @@ export default function EmailQueuePage() {
               <h2 className="text-lg font-light uppercase tracking-[0.1em] text-text-light mb-4">
                 Recently Sent
               </h2>
-              <div className="glass-card rounded-lg overflow-hidden">
-                <table className="w-full">
+              <div className="glass-card rounded-lg overflow-x-auto">
+                <table className="w-full min-w-[640px]">
                   <thead>
                     <tr className="border-b border-white/10">
                       <th className="px-4 py-3 text-left text-xs font-light uppercase tracking-wider text-text-gray">

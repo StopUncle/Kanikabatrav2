@@ -54,8 +54,8 @@ export default async function AdminTellsPage() {
         </div>
       </header>
 
-      <div className="rounded-lg border border-gray-800 overflow-hidden">
-        <table className="w-full text-sm">
+      <div className="rounded-lg border border-gray-800 overflow-x-auto">
+        <table className="w-full min-w-[760px] text-sm">
           <thead className="bg-deep-black/60">
             <tr className="text-[10px] uppercase tracking-[0.3em] text-text-gray">
               <th className="text-left px-4 py-3">#</th>

@@ -88,7 +88,12 @@ export default function AdminSidebar() {
 
   const navContent = (
     <>
-      <nav className="flex-1 py-4">
+      {/* Scrollable nav. min-h-0 is required so this flex child can
+          shrink below its content size and let overflow-y-auto kick
+          in, otherwise on a phone the 16-item list runs off the
+          bottom of the viewport with no way to scroll to the
+          remaining items or the bottom actions. */}
+      <nav className="flex-1 min-h-0 overflow-y-auto py-4">
         {NAV_ITEMS.map(({ href, label, icon: Icon }) => (
           <Link
             key={href}
@@ -105,7 +110,7 @@ export default function AdminSidebar() {
         ))}
       </nav>
 
-      <div className="px-6 py-4 border-t border-accent-gold/10 space-y-3">
+      <div className="shrink-0 px-6 py-4 border-t border-accent-gold/10 space-y-3">
         <Link
           href="/consilium/feed"
           className="flex items-center gap-3 text-sm font-light tracking-wide text-accent-gold hover:text-accent-gold/80 transition-colors duration-200"
@@ -174,13 +179,18 @@ export default function AdminSidebar() {
         />
       )}
 
-      {/* Mobile slide-in sidebar */}
+      {/* Mobile slide-in sidebar.
+          h-dvh keeps the sidebar bound to the dynamic viewport on
+          mobile (accounts for browser chrome appearing/disappearing
+          on iOS) so the inner nav scroll has a real ceiling. With
+          h-full on a body that can grow, overflow on the nav never
+          activated and items below the fold were unreachable. */}
       <aside
-        className={`lg:hidden fixed top-0 left-0 z-50 w-64 h-full bg-[#050511] border-r border-accent-gold/10 flex flex-col transform transition-transform duration-300 ${
+        className={`lg:hidden fixed top-0 left-0 z-50 w-72 max-w-[88vw] h-dvh bg-[#050511] border-r border-accent-gold/10 flex flex-col transform transition-transform duration-300 ${
           mobileOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >
-        <div className="px-6 py-6 border-b border-accent-gold/10 flex items-center justify-between">
+        <div className="shrink-0 px-6 py-6 border-b border-accent-gold/10 flex items-center justify-between">
           <h1 className="text-lg font-light uppercase tracking-[0.2em] text-accent-gold">
             Admin Panel
           </h1>
@@ -195,7 +205,7 @@ export default function AdminSidebar() {
         {/* Mirrors the desktop top-of-sidebar Consilium shortcut so
             the mobile menu opens with the cross-area jump available
             instantly, not buried at the bottom. */}
-        <div className="px-4 pt-4">
+        <div className="shrink-0 px-4 pt-4">
           <Link
             href="/consilium/feed"
             className="group flex items-center justify-between gap-2 px-4 py-2.5 rounded-full border border-accent-gold/60 text-accent-gold text-[11px] tracking-[0.22em] uppercase hover:border-accent-gold hover:bg-accent-gold/10 transition-all"
@@ -211,9 +221,10 @@ export default function AdminSidebar() {
         {navContent}
       </aside>
 
-      {/* Desktop sidebar, always visible */}
-      <aside className="hidden lg:flex w-64 min-h-screen bg-[#050511] border-r border-accent-gold/10 flex-col shrink-0">
-        <div className="px-6 py-6 border-b border-accent-gold/10">
+      {/* Desktop sidebar, sticky viewport-tall so the inner nav can
+          scroll on short windows without the whole page jumping. */}
+      <aside className="hidden lg:flex sticky top-0 w-64 h-screen bg-[#050511] border-r border-accent-gold/10 flex-col shrink-0">
+        <div className="shrink-0 px-6 py-6 border-b border-accent-gold/10">
           <h1 className="text-lg font-light uppercase tracking-[0.2em] text-accent-gold">
             Admin Panel
           </h1>
@@ -224,7 +235,7 @@ export default function AdminSidebar() {
             into the member view, surfacing it here means it's the
             first thing visible after the panel title, no scroll
             needed even on a 13" laptop. */}
-        <div className="px-4 pt-4">
+        <div className="shrink-0 px-4 pt-4">
           <Link
             href="/consilium/feed"
             className="group flex items-center justify-between gap-2 px-4 py-2.5 rounded-full border border-accent-gold/60 text-accent-gold text-[11px] tracking-[0.22em] uppercase hover:border-accent-gold hover:bg-accent-gold/10 hover:shadow-[0_0_20px_-6px_rgba(212,175,55,0.5)] transition-all"

@@ -161,7 +161,7 @@ function IdeasTab() {
   return (
     <div>
       {/* Status tabs */}
-      <div className="flex gap-2 mb-6">
+      <div className="flex flex-wrap gap-2 mb-6">
         {(["PENDING", "APPROVED", "REJECTED"] as const).map((s) => (
           <button
             key={s}

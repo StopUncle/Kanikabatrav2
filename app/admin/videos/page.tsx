@@ -282,7 +282,7 @@ export default function VideosPage() {
 
   return (
     <div className="max-w-5xl mx-auto">
-      <div className="flex items-center justify-between mb-8">
+      <div className="flex flex-wrap items-center justify-between gap-3 mb-8">
         <h1 className="text-2xl font-light uppercase tracking-[0.15em] text-text-light">
           Videos
         </h1>

@@ -133,8 +133,8 @@ export default function MembersPage() {
           </p>
         </div>
       ) : (
-        <div className="glass-card rounded-lg overflow-hidden">
-          <table className="w-full">
+        <div className="glass-card rounded-lg overflow-x-auto">
+          <table className="w-full min-w-[760px]">
             <thead>
               <tr className="border-b border-white/10">
                 <th className="px-6 py-4 text-left text-xs font-light uppercase tracking-wider text-text-gray">
