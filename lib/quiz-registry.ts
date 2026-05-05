@@ -33,7 +33,8 @@ export interface QuizRegistryEntry {
     | "skull"
     | "activity"
     | "heart"
-    | "mirror";
+    | "mirror"
+    | "family";
 }
 
 export const QUIZ_REGISTRY: readonly QuizRegistryEntry[] = [
@@ -127,6 +128,19 @@ export const QUIZ_REGISTRY: readonly QuizRegistryEntry[] = [
     itemCount: 20,
     tone: "emerald",
     iconKey: "heart",
+  },
+  {
+    slug: "daughter",
+    href: "/quiz/daughter",
+    title: "The Daughter Pattern Assessment",
+    caption: "For daughters of narcissistic mothers",
+    blurb:
+      "20 scenarios mapping six daughter profiles. Plus a Mother Signal axis reading how strongly her behaviour matches the NPD pattern.",
+    instrument: "Original (DSM + family-systems-derived)",
+    minutes: 7,
+    itemCount: 20,
+    tone: "purple",
+    iconKey: "family",
   },
 ] as const;
 

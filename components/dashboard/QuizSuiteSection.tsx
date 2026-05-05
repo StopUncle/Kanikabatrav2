@@ -8,6 +8,7 @@ import {
   Skull,
   Activity,
   Heart,
+  Users,
   ArrowRight,
   type LucideIcon,
 } from "lucide-react";
@@ -40,6 +41,7 @@ const ICONS: Record<QuizRegistryEntry["iconKey"], LucideIcon> = {
   skull: Skull,
   activity: Activity,
   heart: Heart,
+  family: Users,
   // The Dark Mirror's icon is registered for completeness; this
   // section never renders the mirror entry, but a future hub page
   // might.
