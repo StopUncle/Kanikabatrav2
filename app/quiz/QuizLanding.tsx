@@ -81,6 +81,20 @@ const RELATED_LINKS: Array<{
   type: string;
 }> = [
   {
+    href: "/quiz/sociopath",
+    title: "The Sociopath Test (LSRP-Calibrated)",
+    description:
+      "The companion quiz: a calibrated read on the Primary and Secondary psychopathy subscales using the Levenson Self-Report Psychopathy Scale. Take this one if your Sociopathic or Psychopathic axis scored high on the Dark Mirror.",
+    type: "Companion quiz",
+  },
+  {
+    href: "/quiz/daughter",
+    title: "The Daughter Pattern Assessment",
+    description:
+      "Sister quiz for adult daughters of (likely) narcissistic mothers. Six daughter profiles plus a mother-signal band. Different question; different answer.",
+    type: "Sister quiz",
+  },
+  {
     href: "/blog/dark-triad-personality-types",
     title: "The Dark Triad: Narcissism, Machiavellianism, Psychopathy",
     description:
