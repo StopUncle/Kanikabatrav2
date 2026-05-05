@@ -10,9 +10,9 @@
 //     antisocial reactivity, poor planning. The hot, reactive shell.
 //
 // Items are scored 1-4 on a Likert (Disagree strongly → Agree strongly).
-// Seven items are reverse-scored (5, 12, 14, 15, 16 in Primary; 19, 23
-// in Secondary, using the canonical numbering). Subscale scores are
-// summed; total psychopathy is the sum of both.
+// Seven items are reverse-scored (10, 12, 14, 15, 16 in Primary;
+// 19, 23 in Secondary, using the canonical numbering). Subscale
+// scores are summed; total psychopathy is the sum of both.
 //
 // Calibration uses Levenson 1995 college-sample norms (n=487):
 //   Primary: M = 31.0, SD = 6.7,   range 16-64
@@ -37,10 +37,10 @@ import { SOCIOPATH_NORMS } from "@/lib/quiz-sociopath-norms";
 export type SociopathSubscale = "primary" | "secondary";
 export type SociopathTier = "low" | "average" | "high" | "very-high";
 export type SociopathQuadrant =
-  | "functional-self" //  Low Primary, Low Secondary — no pattern
-  | "the-calculator" //   High Primary, Low Secondary — cold-core, controlled
-  | "the-hot-wire" //     Low Primary, High Secondary — reactive, no cold core
-  | "the-full-pattern"; // High Primary, High Secondary — both subscales lit
+  | "functional-self" //  Low Primary, Low Secondary, no pattern
+  | "the-calculator" //   High Primary, Low Secondary, cold-core, controlled
+  | "the-hot-wire" //     Low Primary, High Secondary, reactive, no cold core
+  | "the-full-pattern"; // High Primary, High Secondary, both subscales lit
 
 export interface SociopathItem {
   /** 1-26, matches Levenson 1995 canonical numbering. */
@@ -121,7 +121,7 @@ export const SOCIOPATH_ITEMS: SociopathItem[] = [
     reverseScored: false,
   },
   // Note: item 5 in Levenson's original numbering is "Making a lot of
-  // money is my most important goal" — direct-keyed, NOT reverse. The
+  // money is my most important goal", direct-keyed, NOT reverse. The
   // reverse-keyed items in Primary are the ones below (10, 12, 14, 15,
   // 16). Several public reproductions of LSRP misstate which items
   // reverse; this list follows Levenson 1995 Table 1.
@@ -430,7 +430,7 @@ export function generateSociopathDiagnosis(
 }
 
 // -----------------------------------------------------------------------
-// QUADRANT PROFILES — the four combined-result interpretations
+// QUADRANT PROFILES, the four combined-result interpretations
 // -----------------------------------------------------------------------
 //
 // Each profile is written for the person who got it. Specific.
@@ -471,7 +471,7 @@ export const QUADRANT_PROFILES: Record<SociopathQuadrant, QuadrantProfile> = {
       "If you came here because someone *else* might be the sociopath, the relevant test is the Daughter Pattern Assessment or the partner-detection chapters of the book. Not this one.",
     ],
     whatNext:
-      "If you're reading this score and feeling vaguely unsatisfied, that itself is the data. The cultural pull toward wanting a darker score than you have is its own fascinating tell, the people the test is built to detect almost universally believe their score is normal. Wanting to be the predator is a different pattern from being one.",
+      "If you're reading this score and feeling vaguely unsatisfied, that itself is information. The cultural pull toward wanting a darker score than you have is its own fascinating tell, the people the test is built to detect almost universally believe their score is normal. Wanting to be the predator is a different pattern from being one.",
   },
   "the-calculator": {
     quadrant: "the-calculator",
@@ -500,21 +500,21 @@ export const QUADRANT_PROFILES: Record<SociopathQuadrant, QuadrantProfile> = {
     selfPattern:
       "You blow up. You sometimes regret it within the hour. You start things and abandon them. You have a relationship with consequences in which the consequences arrive about three days after the action and surprise you each time. You are not callous. You are reactive. The two get conflated, by you and by the people in your life, and the conflation is doing you damage.",
     externalRead:
-      "People who like you describe you as passionate or intense; people who don't describe you as exhausting. Both are reading the same data. The friend who has stuck around the longest is the one who learned to wait out the surge and not take the surge personally, this is rarer than you think and worth keeping.",
+      "People who like you describe you as passionate or intense; people who don't describe you as exhausting. Both are reading the same data. The friend who has stuck around the longest is the one who learned to wait out the surge and not take the surge personally. That is rarer than you think and worth keeping.",
     blindSpots: [
       "You read your impulsivity as authenticity. It is, in fact, dysregulation, and authenticity is what's underneath it once the surge passes. The two are different and worth distinguishing.",
       "The trouble you find yourself in repeatedly, your Secondary subscale's signature, is overwhelmingly self-generated. The instrument is asking you to notice the pattern; the test result is the noticing.",
       "Your frustration response is mostly trainable. The cold-core pattern of the Primary subscale is not. You happen to have the version that responds to the work. Most people don't realise this distinction is good news.",
     ],
     whatNext:
-      "The single most useful intervention for this profile is the consequence-delay protocol, when you feel the urge to send the message, blow up the relationship, quit the job, you write the action down and wait twenty-four hours before performing it. The urge passes in nine out of ten cases. The one in ten is data about which urges are actually load-bearing for you. Therapy that names the regulation gap (DBT, somatic work) helps; therapy that processes the feelings without addressing the regulation gap will frustrate you, which is itself diagnostic.",
+      "The single most useful intervention for this profile is the consequence-delay protocol: when you feel the urge to send the message, blow up the relationship, or quit the job, you write the action down and wait twenty-four hours before performing it. The urge passes in nine out of ten cases. The one in ten is data about which urges are actually load-bearing for you. Therapy that names the regulation gap (DBT, somatic work) helps; therapy that processes the feelings without addressing the regulation gap will frustrate you, which is itself diagnostic.",
   },
   "the-full-pattern": {
     quadrant: "the-full-pattern",
     name: "The Full Pattern",
     tagline: "Both subscales lit. The clinical-grade configuration.",
     description:
-      "Both your Primary and Secondary scores are high or very high. This is the configuration the LSRP was built to detect, and you have, in your own self-report, told it the thing it was listening for. The cold core is present; the impulsive shell is present; the regulation gap that produces real-world consequences is present. This places you in roughly the top 5% of the general population on this instrument. The instrument cannot tell you whether you meet ASPD criteria, that requires a clinician with a full history. It can tell you that the pattern is not subtle.",
+      "Both your Primary and Secondary scores are high or very high. This is the configuration the LSRP was built to detect, and you have, in your own self-report, told it the thing it was listening for. The cold core is present; the impulsive shell is present; the regulation gap that produces real-world consequences is present. This places you in roughly the top 5% of the general population on this instrument. The instrument cannot tell you whether you meet ASPD criteria; that requires a clinician with a full history. It can tell you that the pattern is not subtle.",
     selfPattern:
       "You have a long memory of trouble. You have a short memory of guilt. You have, somewhere on the way through your twenties or thirties, made peace with the fact that the way you read people is not the way they read each other and that this asymmetry is durable. You are reading these sentences and not feeling defensive about them. The lack of defensiveness is itself part of the pattern.",
     externalRead:
@@ -530,7 +530,7 @@ export const QUADRANT_PROFILES: Record<SociopathQuadrant, QuadrantProfile> = {
 };
 
 // -----------------------------------------------------------------------
-// SUBSCALE TIER INTERPRETATIONS — 8 short paragraphs, one per
+// SUBSCALE TIER INTERPRETATIONS, 8 short paragraphs, one per
 // subscale × tier, surfaced next to the bar chart on the results page.
 // -----------------------------------------------------------------------
 
@@ -643,7 +643,7 @@ export const SOCIOPATH_QUIZ_INFO = {
 } as const;
 
 // -----------------------------------------------------------------------
-// FAQ ITEMS — keyed to real searcher queries, designed for FAQ rich
+// FAQ ITEMS, keyed to real searcher queries, designed for FAQ rich
 // results and SEO topical authority. Disclaimer language repeats here
 // because Google's FAQ rich result is one of the few places we can
 // guarantee disclaimer visibility in the SERP itself.
@@ -671,7 +671,7 @@ export const SOCIOPATH_QUIZ_FAQ = [
     question:
       "What's the difference between Primary and Secondary psychopathy?",
     answer:
-      "Primary psychopathy is the cold-core construct, callousness, lack of empathy, manipulativeness, the absence of guilt. Secondary psychopathy is the impulsive shell, frustration intolerance, poor planning, reactive antisocial behaviour. They sometimes co-occur (the full pattern) and sometimes don't (the Calculator, high Primary low Secondary; the Hot Wire, low Primary high Secondary). The two configurations look different in real life and have different recovery trajectories.",
+      "Primary psychopathy is the cold-core construct: callousness, lack of empathy, manipulativeness, the absence of guilt. Secondary psychopathy is the impulsive shell: frustration intolerance, poor planning, reactive antisocial behaviour. They sometimes co-occur (the full pattern) and sometimes don't (the Calculator, high Primary low Secondary; the Hot Wire, low Primary high Secondary). The two configurations look different in real life and have different recovery trajectories.",
   },
   {
     question:

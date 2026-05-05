@@ -13,13 +13,13 @@
 //
 // Subscale structure (Raskin & Terry 1988 7-factor solution):
 //
-//   Authority         (8 items) — leadership, dominance
-//   Self-sufficiency  (6 items) — independence
-//   Superiority       (5 items) — feelings of being above others
-//   Exhibitionism     (7 items) — showing off
-//   Exploitativeness  (5 items) — manipulation
-//   Vanity            (3 items) — physical/personal vanity
-//   Entitlement       (6 items) — expectations of others
+//   Authority         (8 items), leadership, dominance
+//   Self-sufficiency  (6 items), independence
+//   Superiority       (5 items), feelings of being above others
+//   Exhibitionism     (7 items), showing off
+//   Exploitativeness  (5 items), manipulation
+//   Vanity            (3 items), physical/personal vanity
+//   Entitlement       (6 items), expectations of others
 //
 // Two-subscale presentation in the result page:
 //
@@ -35,7 +35,7 @@
 // or both (the Full Pattern).
 //
 // IMPORTANT: NPI measures GRANDIOSE narcissism specifically. It does
-// not measure vulnerable / covert narcissism — that's a separate
+// not measure vulnerable / covert narcissism, that's a separate
 // construct measured by the Hypersensitive Narcissism Scale (HSNS)
 // and surfaced via /quiz/covert-narcissist.
 
@@ -112,7 +112,7 @@ export interface NarcissistDiagnosis {
 // -----------------------------------------------------------------------
 
 export const NARCISSIST_ITEMS: NarcissistItem[] = [
-  // 1 — Authority
+  // 1, Authority
   {
     id: 1,
     factor: "authority",
@@ -121,7 +121,7 @@ export const NARCISSIST_ITEMS: NarcissistItem[] = [
       { key: "b", text: "I am not good at influencing people.", narcissistic: false },
     ],
   },
-  // 2 — Exhibitionism
+  // 2, Exhibitionism
   {
     id: 2,
     factor: "exhibitionism",
@@ -130,7 +130,7 @@ export const NARCISSIST_ITEMS: NarcissistItem[] = [
       { key: "b", text: "I am essentially a modest person.", narcissistic: false },
     ],
   },
-  // 3 — Exhibitionism
+  // 3, Exhibitionism
   {
     id: 3,
     factor: "exhibitionism",
@@ -139,7 +139,7 @@ export const NARCISSIST_ITEMS: NarcissistItem[] = [
       { key: "b", text: "I tend to be a fairly cautious person.", narcissistic: false },
     ],
   },
-  // 4 — Superiority
+  // 4, Superiority
   {
     id: 4,
     factor: "superiority",
@@ -148,7 +148,7 @@ export const NARCISSIST_ITEMS: NarcissistItem[] = [
       { key: "b", text: "I know that I am good because everybody keeps telling me so.", narcissistic: true },
     ],
   },
-  // 5 — Entitlement
+  // 5, Entitlement
   {
     id: 5,
     factor: "entitlement",
@@ -157,7 +157,7 @@ export const NARCISSIST_ITEMS: NarcissistItem[] = [
       { key: "b", text: "If I ruled the world it would be a better place.", narcissistic: true },
     ],
   },
-  // 6 — Exploitativeness
+  // 6, Exploitativeness
   {
     id: 6,
     factor: "exploitativeness",
@@ -166,7 +166,7 @@ export const NARCISSIST_ITEMS: NarcissistItem[] = [
       { key: "b", text: "I try to accept the consequences of my behaviour.", narcissistic: false },
     ],
   },
-  // 7 — Exhibitionism
+  // 7, Exhibitionism
   {
     id: 7,
     factor: "exhibitionism",
@@ -175,7 +175,7 @@ export const NARCISSIST_ITEMS: NarcissistItem[] = [
       { key: "b", text: "I like to be the centre of attention.", narcissistic: true },
     ],
   },
-  // 8 — Authority
+  // 8, Authority
   {
     id: 8,
     factor: "authority",
@@ -184,7 +184,7 @@ export const NARCISSIST_ITEMS: NarcissistItem[] = [
       { key: "b", text: "I am not too concerned about success.", narcissistic: false },
     ],
   },
-  // 9 — Superiority
+  // 9, Superiority
   {
     id: 9,
     factor: "superiority",
@@ -193,7 +193,7 @@ export const NARCISSIST_ITEMS: NarcissistItem[] = [
       { key: "b", text: "I think I am a special person.", narcissistic: true },
     ],
   },
-  // 10 — Authority
+  // 10, Authority
   {
     id: 10,
     factor: "authority",
@@ -202,7 +202,7 @@ export const NARCISSIST_ITEMS: NarcissistItem[] = [
       { key: "b", text: "I see myself as a good leader.", narcissistic: true },
     ],
   },
-  // 11 — Authority
+  // 11, Authority
   {
     id: 11,
     factor: "authority",
@@ -211,7 +211,7 @@ export const NARCISSIST_ITEMS: NarcissistItem[] = [
       { key: "b", text: "I wish I were more assertive.", narcissistic: false },
     ],
   },
-  // 12 — Authority
+  // 12, Authority
   {
     id: 12,
     factor: "authority",
@@ -220,7 +220,7 @@ export const NARCISSIST_ITEMS: NarcissistItem[] = [
       { key: "b", text: "I don't mind following orders.", narcissistic: false },
     ],
   },
-  // 13 — Exploitativeness
+  // 13, Exploitativeness
   {
     id: 13,
     factor: "exploitativeness",
@@ -229,7 +229,7 @@ export const NARCISSIST_ITEMS: NarcissistItem[] = [
       { key: "b", text: "I don't like it when I find myself manipulating people.", narcissistic: false },
     ],
   },
-  // 14 — Entitlement
+  // 14, Entitlement
   {
     id: 14,
     factor: "entitlement",
@@ -238,7 +238,7 @@ export const NARCISSIST_ITEMS: NarcissistItem[] = [
       { key: "b", text: "I usually get the respect that I deserve.", narcissistic: false },
     ],
   },
-  // 15 — Vanity
+  // 15, Vanity
   {
     id: 15,
     factor: "vanity",
@@ -247,7 +247,7 @@ export const NARCISSIST_ITEMS: NarcissistItem[] = [
       { key: "b", text: "I like to show off my body.", narcissistic: true },
     ],
   },
-  // 16 — Exploitativeness
+  // 16, Exploitativeness
   {
     id: 16,
     factor: "exploitativeness",
@@ -256,7 +256,7 @@ export const NARCISSIST_ITEMS: NarcissistItem[] = [
       { key: "b", text: "People are sometimes hard to understand.", narcissistic: false },
     ],
   },
-  // 17 — Self-sufficiency
+  // 17, Self-sufficiency
   {
     id: 17,
     factor: "self-sufficiency",
@@ -265,7 +265,7 @@ export const NARCISSIST_ITEMS: NarcissistItem[] = [
       { key: "b", text: "I like to take responsibility for making decisions.", narcissistic: true },
     ],
   },
-  // 18 — Entitlement
+  // 18, Entitlement
   {
     id: 18,
     factor: "entitlement",
@@ -274,7 +274,7 @@ export const NARCISSIST_ITEMS: NarcissistItem[] = [
       { key: "b", text: "I want to amount to something in the eyes of the world.", narcissistic: true },
     ],
   },
-  // 19 — Vanity
+  // 19, Vanity
   {
     id: 19,
     factor: "vanity",
@@ -283,7 +283,7 @@ export const NARCISSIST_ITEMS: NarcissistItem[] = [
       { key: "b", text: "I like to look at my body.", narcissistic: true },
     ],
   },
-  // 20 — Exhibitionism
+  // 20, Exhibitionism
   {
     id: 20,
     factor: "exhibitionism",
@@ -292,7 +292,7 @@ export const NARCISSIST_ITEMS: NarcissistItem[] = [
       { key: "b", text: "I will usually show off if I get the chance.", narcissistic: true },
     ],
   },
-  // 21 — Self-sufficiency
+  // 21, Self-sufficiency
   {
     id: 21,
     factor: "self-sufficiency",
@@ -301,7 +301,7 @@ export const NARCISSIST_ITEMS: NarcissistItem[] = [
       { key: "b", text: "Sometimes I am not sure of what I am doing.", narcissistic: false },
     ],
   },
-  // 22 — Self-sufficiency
+  // 22, Self-sufficiency
   {
     id: 22,
     factor: "self-sufficiency",
@@ -310,7 +310,7 @@ export const NARCISSIST_ITEMS: NarcissistItem[] = [
       { key: "b", text: "I rarely depend on anyone else to get things done.", narcissistic: true },
     ],
   },
-  // 23 — Exploitativeness
+  // 23, Exploitativeness
   {
     id: 23,
     factor: "exploitativeness",
@@ -319,7 +319,7 @@ export const NARCISSIST_ITEMS: NarcissistItem[] = [
       { key: "b", text: "Everybody likes to hear my stories.", narcissistic: true },
     ],
   },
-  // 24 — Entitlement
+  // 24, Entitlement
   {
     id: 24,
     factor: "entitlement",
@@ -328,7 +328,7 @@ export const NARCISSIST_ITEMS: NarcissistItem[] = [
       { key: "b", text: "I like to do things for other people.", narcissistic: false },
     ],
   },
-  // 25 — Entitlement
+  // 25, Entitlement
   {
     id: 25,
     factor: "entitlement",
@@ -337,7 +337,7 @@ export const NARCISSIST_ITEMS: NarcissistItem[] = [
       { key: "b", text: "I take my satisfactions as they come.", narcissistic: false },
     ],
   },
-  // 26 — Superiority
+  // 26, Superiority
   {
     id: 26,
     factor: "superiority",
@@ -346,7 +346,7 @@ export const NARCISSIST_ITEMS: NarcissistItem[] = [
       { key: "b", text: "I like to be complimented.", narcissistic: true },
     ],
   },
-  // 27 — Entitlement
+  // 27, Entitlement
   {
     id: 27,
     factor: "entitlement",
@@ -355,7 +355,7 @@ export const NARCISSIST_ITEMS: NarcissistItem[] = [
       { key: "b", text: "Power for its own sake doesn't interest me.", narcissistic: false },
     ],
   },
-  // 28 — Exhibitionism
+  // 28, Exhibitionism
   {
     id: 28,
     factor: "exhibitionism",
@@ -364,7 +364,7 @@ export const NARCISSIST_ITEMS: NarcissistItem[] = [
       { key: "b", text: "I like to start new fads and fashions.", narcissistic: true },
     ],
   },
-  // 29 — Vanity
+  // 29, Vanity
   {
     id: 29,
     factor: "vanity",
@@ -373,7 +373,7 @@ export const NARCISSIST_ITEMS: NarcissistItem[] = [
       { key: "b", text: "I am not particularly interested in looking at myself in the mirror.", narcissistic: false },
     ],
   },
-  // 30 — Exhibitionism
+  // 30, Exhibitionism
   {
     id: 30,
     factor: "exhibitionism",
@@ -382,7 +382,7 @@ export const NARCISSIST_ITEMS: NarcissistItem[] = [
       { key: "b", text: "It makes me uncomfortable to be the centre of attention.", narcissistic: false },
     ],
   },
-  // 31 — Self-sufficiency
+  // 31, Self-sufficiency
   {
     id: 31,
     factor: "self-sufficiency",
@@ -391,7 +391,7 @@ export const NARCISSIST_ITEMS: NarcissistItem[] = [
       { key: "b", text: "People can't always live their lives in terms of what they want.", narcissistic: false },
     ],
   },
-  // 32 — Authority
+  // 32, Authority
   {
     id: 32,
     factor: "authority",
@@ -400,7 +400,7 @@ export const NARCISSIST_ITEMS: NarcissistItem[] = [
       { key: "b", text: "People always seem to recognise my authority.", narcissistic: true },
     ],
   },
-  // 33 — Authority
+  // 33, Authority
   {
     id: 33,
     factor: "authority",
@@ -409,7 +409,7 @@ export const NARCISSIST_ITEMS: NarcissistItem[] = [
       { key: "b", text: "It makes little difference to me whether I am a leader or not.", narcissistic: false },
     ],
   },
-  // 34 — Self-sufficiency
+  // 34, Self-sufficiency
   {
     id: 34,
     factor: "self-sufficiency",
@@ -418,7 +418,7 @@ export const NARCISSIST_ITEMS: NarcissistItem[] = [
       { key: "b", text: "I hope I am going to be successful.", narcissistic: false },
     ],
   },
-  // 35 — Exploitativeness
+  // 35, Exploitativeness
   {
     id: 35,
     factor: "exploitativeness",
@@ -427,7 +427,7 @@ export const NARCISSIST_ITEMS: NarcissistItem[] = [
       { key: "b", text: "I can make anybody believe anything I want them to.", narcissistic: true },
     ],
   },
-  // 36 — Authority
+  // 36, Authority
   {
     id: 36,
     factor: "authority",
@@ -436,7 +436,7 @@ export const NARCISSIST_ITEMS: NarcissistItem[] = [
       { key: "b", text: "Leadership is a quality that takes a long time to develop.", narcissistic: false },
     ],
   },
-  // 37 — Superiority
+  // 37, Superiority
   {
     id: 37,
     factor: "superiority",
@@ -445,7 +445,7 @@ export const NARCISSIST_ITEMS: NarcissistItem[] = [
       { key: "b", text: "I don't like people to pry into my life for any reason.", narcissistic: false },
     ],
   },
-  // 38 — Exhibitionism
+  // 38, Exhibitionism
   {
     id: 38,
     factor: "exhibitionism",
@@ -454,7 +454,7 @@ export const NARCISSIST_ITEMS: NarcissistItem[] = [
       { key: "b", text: "I don't mind blending into the crowd when I go out in public.", narcissistic: false },
     ],
   },
-  // 39 — Self-sufficiency
+  // 39, Self-sufficiency
   {
     id: 39,
     factor: "self-sufficiency",
@@ -463,7 +463,7 @@ export const NARCISSIST_ITEMS: NarcissistItem[] = [
       { key: "b", text: "There is a lot that I can learn from other people.", narcissistic: false },
     ],
   },
-  // 40 — Superiority
+  // 40, Superiority
   {
     id: 40,
     factor: "superiority",
@@ -639,7 +639,7 @@ export const QUADRANT_PROFILES: Record<
       "If you came here because someone *else* in your life might be the narcissist, the instrument you actually want is not a self-report; it's the partner-detection chapters of the book or the Daughter Pattern Assessment.",
     ],
     whatNext:
-      "If you scored low and feel a small disappointment about it, that itself is the data. The cultural pull toward wanting to be the dark one in the room is its own pattern, and the people the test is built to detect almost universally believe their score is normal. Wanting to be the predator is a different shape from being one.",
+      "If you scored low and feel a small disappointment about it, that itself is information. The cultural pull toward wanting to be the dark one in the room is its own pattern, and the people the test is built to detect almost universally believe their score is normal. Wanting to be the predator is a different shape from being one.",
   },
   "the-sovereign": {
     quadrant: "the-sovereign",
@@ -672,7 +672,7 @@ export const QUADRANT_PROFILES: Record<
     blindSpots: [
       "You experience your Predatory subscale's behaviour as reactive rather than chosen, and the people on the receiving end experience it as chosen rather than reactive. The gap between the two readings is where most of your relational damage compounds.",
       "Covert narcissism is the configuration most likely to score low on this NPI and high on the companion HSNS (Hypersensitive Narcissism Scale). If your Charmer score feels too low for what you suspect about yourself, take the Covert Narcissist Test next. It's looking for the pattern this instrument can underread.",
-      "The Charmer's longest-running relationships are often with people who are themselves on a different axis — high Sociopathy or high BPD profiles. The matching is not random and the chemistry is not fate.",
+      "The Charmer's longest-running relationships are often with people who are themselves on a different axis, high Sociopathy or high BPD profiles. The matching is not random and the chemistry is not fate.",
     ],
     whatNext:
       "Two genuinely different paths. One: take the Covert Narcissist Test next, the construct it measures (vulnerable narcissism, hypersensitivity, shame-based grandiosity) often configures with this exact NPI shape and the second test sharpens the read. Two: a clinician with experience in vulnerable narcissism specifically, not just NPD, and not just anxiety. The right diagnosis matters, the wrong therapy entrenches the pattern.",
@@ -682,7 +682,7 @@ export const QUADRANT_PROFILES: Record<
     name: "The Full Pattern",
     tagline: "Both subscales lit. The clinical-grade grandiose configuration.",
     description:
-      "Both your Grandiose Confidence and your Predatory Pattern are high or very high. This is the configuration the NPI was built to detect, the same one most people picture when they hear the word 'narcissist'. It places you in roughly the top 5% of the general population on this instrument. The instrument cannot diagnose Narcissistic Personality Disorder, that requires a clinician with a full history, but a high score on both subscales is the right signal for considering a diagnostic assessment with a personality-disorder specialist.",
+      "Both your Grandiose Confidence and your Predatory Pattern are high or very high. This is the configuration the NPI was built to detect, the same one most people picture when they hear the word 'narcissist'. It places you in roughly the top 5% of the general population on this instrument. The instrument cannot diagnose Narcissistic Personality Disorder; that requires a clinician with a full history. But a high score on both subscales is the right signal for considering a diagnostic assessment with a personality-disorder specialist.",
     selfPattern:
       "You have a long memory of being underestimated and a short memory of being wrong. You have, somewhere along the way, made peace with the fact that the way you read your own importance is not the way other people read theirs and that the asymmetry is durable. You may notice that conversations bend toward you in groups, and you may have stopped wondering why. Your most stable relationships are with people who can be subordinated without resenting it; the ones who couldn't have already left.",
     externalRead:
@@ -698,7 +698,7 @@ export const QUADRANT_PROFILES: Record<
 };
 
 // -----------------------------------------------------------------------
-// SUBSCALE TIER INTERPRETATIONS — 8 short paragraphs
+// SUBSCALE TIER INTERPRETATIONS, 8 short paragraphs
 // -----------------------------------------------------------------------
 
 export interface NarcissistSubscaleTierInterpretation {
@@ -811,7 +811,7 @@ export const NARCISSIST_QUIZ_FAQ = [
     question:
       "What is the Narcissist Test and what does it actually measure?",
     answer:
-      "The Narcissist Test is a 40-item forced-choice assessment built on the Narcissistic Personality Inventory (NPI-40, Raskin & Terry 1988). It scores you on two subscales: Grandiose Confidence (Authority, Self-sufficiency, Superiority — the leadership and self-belief factors) and Predatory Pattern (Exploitativeness, Entitlement, Exhibitionism, Vanity — the factors that produce real-world relational damage). Your raw score is calibrated against published population norms (n>500, M=15.3, SD=6.8).",
+      "The Narcissist Test is a 40-item forced-choice assessment built on the Narcissistic Personality Inventory (NPI-40, Raskin & Terry 1988). It scores you on two subscales: Grandiose Confidence (Authority, Self-sufficiency, Superiority, the leadership and self-belief factors) and Predatory Pattern (Exploitativeness, Entitlement, Exhibitionism, Vanity, the factors that produce real-world relational damage). Your raw score is calibrated against published population norms (n>500, M=15.3, SD=6.8).",
   },
   {
     question: "Is this a diagnosis?",
@@ -821,7 +821,7 @@ export const NARCISSIST_QUIZ_FAQ = [
   {
     question: "What's the difference between this and the Covert Narcissist Test?",
     answer:
-      "The NPI-40 measures GRANDIOSE narcissism — confidence, dominance, exhibitionism, the loud version. The Covert Narcissist Test (/quiz/covert-narcissist) measures VULNERABLE narcissism — hypersensitivity, shame-based grandiosity, the quiet version. They sometimes co-occur, often don't, and they look completely different in real life. If you scored high on Predatory Pattern but low on Grandiose Confidence here, the Covert test is the next call.",
+      "The NPI-40 measures GRANDIOSE narcissism, confidence, dominance, exhibitionism, the loud version. The Covert Narcissist Test (/quiz/covert-narcissist) measures VULNERABLE narcissism, hypersensitivity, shame-based grandiosity, the quiet version. They sometimes co-occur, often don't, and they look completely different in real life. If you scored high on Predatory Pattern but low on Grandiose Confidence here, the Covert test is the next call.",
   },
   {
     question: "Why forced-choice instead of agree/disagree?",
@@ -846,7 +846,7 @@ export const NARCISSIST_QUIZ_FAQ = [
   {
     question: "Can the test detect a narcissist I'm dating?",
     answer:
-      "Not directly. This is a self-report — your partner has to take it for it to score them. What you CAN do is read the four quadrant profiles on the result page and recognise the configuration in someone you know. The partner-detection chapters of the Sociopathic Dating Bible go further; they are built for that question specifically.",
+      "Not directly. This is a self-report, your partner has to take it for it to score them. What you CAN do is read the four quadrant profiles on the result page and recognise the configuration in someone you know. The partner-detection chapters of the Sociopathic Dating Bible go further; they are built for that question specifically.",
   },
   {
     question: "Are my answers private?",
@@ -856,6 +856,6 @@ export const NARCISSIST_QUIZ_FAQ = [
   {
     question: "I'm worried I'm a narcissist. Should I take this?",
     answer:
-      "Yes, with one caveat. People who are actively worried they might be narcissists almost universally are not the ones the test is built to detect. The worry itself is the diagnostic line — diagnosable narcissism rarely produces sincere doubt about the diagnosis. But the test will give you a calibrated answer, which is more useful than the worry, and you can take that to a clinician if anything in the result genuinely surprised you.",
+      "Yes, with one caveat. People who are actively worried they might be narcissists almost universally are not the ones the test is built to detect. The worry itself is the diagnostic line, diagnosable narcissism rarely produces sincere doubt about the diagnosis. But the test will give you a calibrated answer, which is more useful than the worry, and you can take that to a clinician if anything in the result genuinely surprised you.",
   },
 ] as const;

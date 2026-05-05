@@ -240,7 +240,7 @@ export default function DatingSociopathResultsPage() {
             </div>
           </m.div>
 
-          {/* Safety callout — surfaces above the long-form for high-score quadrants */}
+          {/* Safety callout, surfaces above the long-form for high-score quadrants */}
           {diagnosis.surfaceSafetyCallout && (
             <m.div
               initial={{ opacity: 0, y: 10 }}
@@ -343,7 +343,7 @@ export default function DatingSociopathResultsPage() {
                 <p className="text-text-gray text-sm leading-relaxed mb-4">
                   Twenty scenarios is what fits in a quiz. The
                   Sociopathic Dating Bible is 70,000 words on the same
-                  territory — what each red flag actually looks like
+                  territory, what each red flag actually looks like
                   across months of a relationship, why each one
                   matters, what the literature says about leaving
                   safely. Written by an author with the diagnosis the

@@ -294,7 +294,7 @@ export default function QuizLanding() {
             </div>
           </m.div>
 
-          {/* The full suite — six additional calibrated assessments
+          {/* The full suite, six additional calibrated assessments
               alongside the Dark Mirror. Surfacing this here both
               helps Dark Mirror visitors discover the rest of the
               suite (internal-link equity into the deeper-read
@@ -312,7 +312,7 @@ export default function QuizLanding() {
             </h2>
             <p className="text-text-gray text-center max-w-2xl mx-auto mb-8 text-sm leading-relaxed">
               The Dark Mirror is the wide map. Six more assessments
-              go deeper on each axis &mdash; each one calibrated against
+              go deeper on each axis, each one calibrated against
               published research norms, each one with the result page
               written from the inside.
             </p>

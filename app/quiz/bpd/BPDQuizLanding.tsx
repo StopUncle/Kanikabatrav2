@@ -40,7 +40,7 @@ const RELATED_LINKS = [
     href: "/book",
     title: "The Sociopathic Dating Bible",
     description:
-      "The chapter on the BPD pattern in relationships covers both sides — what it's like to date someone with BPD, and what it's like to be the one with BPD trying to date.",
+      "The chapter on the BPD pattern in relationships covers both sides, what it's like to date someone with BPD, and what it's like to be the one with BPD trying to date.",
     type: "Book",
   },
 ] as const;
@@ -176,7 +176,7 @@ export default function BPDQuizLanding() {
               <p>
                 The MSI-BPD is the most widely cited brief screening
                 instrument. It maps directly to the DSM-5 BPD criteria
-                and was designed for the contemplation stage — when
+                and was designed for the contemplation stage, when
                 someone wants to know whether the pattern they suspect
                 in themselves is registering at the level the field
                 takes seriously, before booking with a clinician.

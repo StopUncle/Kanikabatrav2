@@ -122,7 +122,7 @@ export default function DatingSociopathQuizLanding() {
 
             <p className="text-text-gray text-lg max-w-2xl mx-auto mb-12 leading-relaxed">
               Twenty scenarios drawn from the Sociopathic Dating
-              Bible&rsquo;s red-flag chapters. Two axes &mdash; what you have seen,
+              Bible&rsquo;s red-flag chapters. Two axes, what you have seen,
               and what your body has registered. Combined quadrant
               read. Honest, not alarming.
             </p>
@@ -253,7 +253,7 @@ export default function DatingSociopathQuizLanding() {
                 blogs without the partner-detection literature
                 grounding. This one is drawn directly from the
                 Sociopathic Dating Bible chapters on partner detection
-                — the same author with the diagnosis (ASPD) the quiz
+               , the same author with the diagnosis (ASPD) the quiz
                 is built to detect, working through what the literature
                 consistently shows actually flags the configuration.
               </p>

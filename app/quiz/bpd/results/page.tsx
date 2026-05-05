@@ -283,7 +283,7 @@ export default function BPDResultsPage() {
                   <p className="text-text-gray text-sm leading-relaxed">
                     Item 2 covers self-harm and suicide attempts. If
                     that pattern is currently active for you, the right
-                    next step is not this assessment — it is a crisis
+                    next step is not this assessment, it is a crisis
                     line or a clinician you can see this week. In the
                     US: 988 (Suicide &amp; Crisis Lifeline). In the UK:
                     Samaritans 116 123. International:{" "}

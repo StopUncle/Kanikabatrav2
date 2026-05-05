@@ -267,7 +267,7 @@ export default function CovertNarcissistResultsPage() {
                 Narcissist Test (NPI-40)
               </Link>{" "}
               for grandiose narcissism. The two scores together are
-              substantially more informative than either alone — high
+              substantially more informative than either alone, high
               HSNS + low NPI is classical covert; both high is the rare
               and high-cost &ldquo;malignant&rdquo; / exhibitionistic-vulnerable
               blend (Pincus et al. 2009).

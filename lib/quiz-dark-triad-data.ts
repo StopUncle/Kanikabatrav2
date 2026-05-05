@@ -66,7 +66,7 @@ export interface DarkTriadDiagnosis {
 }
 
 // -----------------------------------------------------------------------
-// THE 27 ITEMS — reproduced from Jones & Paulhus 2014, with light
+// THE 27 ITEMS, reproduced from Jones & Paulhus 2014, with light
 // punctuation harmonisation. Item order matches the published SD3.
 // -----------------------------------------------------------------------
 
@@ -399,7 +399,7 @@ export function getAxisTierInterpretation(
 }
 
 // -----------------------------------------------------------------------
-// ARCHETYPE PROFILES — long-form interpretation for each
+// ARCHETYPE PROFILES, long-form interpretation for each
 // -----------------------------------------------------------------------
 
 export interface ArchetypeProfile {
@@ -419,7 +419,7 @@ export const ARCHETYPE_PROFILES: Record<DarkTriadArchetype, ArchetypeProfile> = 
     description:
       "All three SD3 axes sit in or below the broad middle of the population. The dark-triad construct is not registering as your operating profile. You may have arrived here because the term &lsquo;dark triad&rsquo; surfaced in something you read or in an argument, or because you wanted to know whether your suspicion of yourself was, in fact, accurate.",
     selfPattern:
-      "You don't keep mental files on the people in your life for later strategic use. You don't require the room. You hold normal-range guilt and have brakes on impulse. None of this is virtue — it's the absence of the specific construct the SD3 measures.",
+      "You don't keep mental files on the people in your life for later strategic use. You don't require the room. You hold normal-range guilt and have brakes on impulse. None of this is virtue, it's the absence of the specific construct the SD3 measures.",
     externalRead:
       "People around you describe you as steady. The closest people to you, asked privately, would not be surprised by this profile.",
     blindSpots: [
@@ -434,7 +434,7 @@ export const ARCHETYPE_PROFILES: Record<DarkTriadArchetype, ArchetypeProfile> = 
     archetype: "single-axis",
     // Dynamic copy uses {axis} token resolved at render
     description:
-      "One of the three SD3 axes is registering as elevated; the other two are within or below the population mean. The interpretation depends entirely on which axis it is. Single-axis dominant configurations are common — most people who score high on the dark triad are high on one axis, not all three. Your specific axis profile is below.",
+      "One of the three SD3 axes is registering as elevated; the other two are within or below the population mean. The interpretation depends entirely on which axis it is. Single-axis dominant configurations are common, most people who score high on the dark triad are high on one axis, not all three. Your specific axis profile is below.",
     selfPattern:
       "The single-axis pattern is genuinely different from the multi-axis ones. It is not 'the full triad in early stages'; it is its own configuration. The literature treats it as such, and the lived experience of the people who configure this way reflects that.",
     externalRead:
@@ -457,7 +457,7 @@ export const ARCHETYPE_PROFILES: Record<DarkTriadArchetype, ArchetypeProfile> = 
       "People close to you have, by now, organised themselves around the configuration. The closest ones can articulate at least a piece of the pattern; the next-closest layer has noticed but not named it.",
     blindSpots: [
       "Dual-axis configurations are the ones most likely to be misdiagnosed in therapy because each individual axis presents with its own surface features that can be treated as a singular issue (anxiety, anger, grandiosity) without the clinician seeing the full picture.",
-      "The third axis being low is meaningful information about how the configuration shows up — e.g. high Mach + high Narc with low Psych is the corner-office configuration, where high Mach + high Psych with low Narc is the cold-strategist configuration. Read the headline, then the per-axis interpretations.",
+      "The third axis being low is meaningful information about how the configuration shows up, e.g. high Mach + high Narc with low Psych is the corner-office configuration, where high Mach + high Psych with low Narc is the cold-strategist configuration. Read the headline, then the per-axis interpretations.",
       "If the third axis is close to the threshold (i.e. high-end of average), the clinical implication is closer to a Full Triad than the score suggests. Watch for drift.",
     ],
     whatNext:
@@ -495,7 +495,7 @@ export const DARK_TRIAD_QUIZ_INFO = {
   shortName: "Dark Triad Test",
   tagline: "Calibrated by the SD3. Read by a real one.",
   description:
-    "A 27-item self-report assessment based on the Short Dark Triad (Jones & Paulhus 2014). Three axes — Machiavellianism, Narcissism, Psychopathy — scored against published norms (n=2929). Configuration archetype interpretation. Educational only, not a diagnosis.",
+    "A 27-item self-report assessment based on the Short Dark Triad (Jones & Paulhus 2014). Three axes, Machiavellianism, Narcissism, Psychopathy, scored against published norms (n=2929). Configuration archetype interpretation. Educational only, not a diagnosis.",
   itemCount: DARK_TRIAD_ITEMS.length,
   estimatedMinutes: 5,
   price: 0,
@@ -509,7 +509,7 @@ export const DARK_TRIAD_QUIZ_FAQ = [
   {
     question: "What is the Dark Triad and what does this test measure?",
     answer:
-      "The 'dark triad' refers to three socially aversive personality traits — Machiavellianism (strategic manipulation), Narcissism (grandiosity, attention-seeking), and Psychopathy (callousness, impulsivity). The construct was named by Paulhus & Williams in 2002 and has since become one of the most-studied frameworks in personality psychology. This test uses the Short Dark Triad (SD3, Jones & Paulhus 2014), the canonical brief measure: 27 items, 9 per axis.",
+      "The 'dark triad' refers to three socially aversive personality traits, Machiavellianism (strategic manipulation), Narcissism (grandiosity, attention-seeking), and Psychopathy (callousness, impulsivity). The construct was named by Paulhus & Williams in 2002 and has since become one of the most-studied frameworks in personality psychology. This test uses the Short Dark Triad (SD3, Jones & Paulhus 2014), the canonical brief measure: 27 items, 9 per axis.",
   },
   {
     question: "Is this a diagnosis?",
@@ -520,13 +520,13 @@ export const DARK_TRIAD_QUIZ_FAQ = [
     question:
       "Why is this only 27 items when other dark-triad tests have more?",
     answer:
-      "Because the SD3 was deliberately designed as a brief measure — 9 items per axis is the minimum for adequate factor reliability. Longer instruments exist (Dirty Dozen at 12, Mach-IV + NPI + SRP-III at ~70 combined) but the SD3 has comparable psychometric properties to the long combinations and is the standard brief instrument used by the field. If you want deeper reads on a specific axis, the dedicated tests are linked in the result page.",
+      "Because the SD3 was deliberately designed as a brief measure, 9 items per axis is the minimum for adequate factor reliability. Longer instruments exist (Dirty Dozen at 12, Mach-IV + NPI + SRP-III at ~70 combined) but the SD3 has comparable psychometric properties to the long combinations and is the standard brief instrument used by the field. If you want deeper reads on a specific axis, the dedicated tests are linked in the result page.",
   },
   {
     question:
       "How is this different from the individual narcissism / sociopathy tests?",
     answer:
-      "The dedicated tests (NPI-40 for grandiose narcissism, HSNS for vulnerable narcissism, LSRP for psychopathy) are deeper reads on a single construct. The SD3 is the wide map across all three. Most users take the SD3 first, then take the dedicated test for whichever axis came in elevated. The two together — wide map + close read — produce a substantially better picture than either alone.",
+      "The dedicated tests (NPI-40 for grandiose narcissism, HSNS for vulnerable narcissism, LSRP for psychopathy) are deeper reads on a single construct. The SD3 is the wide map across all three. Most users take the SD3 first, then take the dedicated test for whichever axis came in elevated. The two together, wide map + close read, produce a substantially better picture than either alone.",
   },
   {
     question:

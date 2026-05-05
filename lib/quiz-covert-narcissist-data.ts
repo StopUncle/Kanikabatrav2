@@ -2,7 +2,7 @@
 //
 // Built on the Hypersensitive Narcissism Scale (HSNS), Hendin & Cheek
 // 1997, J Res Pers 31(4), 588-599. The HSNS is the canonical
-// self-report measure of vulnerable / covert narcissism — the quiet
+// self-report measure of vulnerable / covert narcissism, the quiet
 // version that the NPI-40 systematically underreads.
 //
 // Format: 10 items, 5-point Likert (1 = Very uncharacteristic, 5 =
@@ -11,8 +11,8 @@
 //
 // This is a single-subscale instrument. Where the Sociopath and
 // Narcissist tests offer two-axis quadrant interpretations, this one
-// reads as a tier on the construct — Low / Average / High / Very
-// High — with a long-form profile per tier.
+// reads as a tier on the construct (Low / Average / High / Very
+// High) with a long-form profile per tier.
 //
 // Pairs deliberately with /quiz/narcissist (NPI-40, grandiose).
 // Together they triangulate: high-NPI + low-HSNS reads as classical
@@ -177,7 +177,7 @@ export function generateCovertNarcissistDiagnosis(
 }
 
 // -----------------------------------------------------------------------
-// TIER PROFILES — the four long-form interpretations
+// TIER PROFILES, the four long-form interpretations
 // -----------------------------------------------------------------------
 
 export interface CovertNarcissistTierProfile {
@@ -200,7 +200,7 @@ export const TIER_PROFILES: Record<
     name: "The Functional Self",
     tagline: "Vulnerable narcissism does not register on this instrument.",
     description:
-      "Your HSNS score sits in the bottom 16% of the population. The construct of vulnerable / covert narcissism — hypersensitivity to slights, shame-based grandiosity, the secret reservoir of contempt for people who ask for your sympathy — is not registering as your operating system. You may have arrived here because someone called you a covert narcissist in an argument, or because the worry has been quietly chewing through you for months. The result is the result.",
+      "Your HSNS score sits in the bottom 16% of the population. The construct of vulnerable / covert narcissism, hypersensitivity to slights, shame-based grandiosity, the secret reservoir of contempt for people who ask for your sympathy, is not registering as your operating system. You may have arrived here because someone called you a covert narcissist in an argument, or because the worry has been quietly chewing through you for months. The result is the result.",
     selfPattern:
       "You take a slight as a slight, not as a referendum on your worth. You can give credit without resenting the giving. You can leave a room of strangers without first auditing whether they noticed you. None of this is virtue, it's the absence of the specific hypersensitivity HSNS is built to detect.",
     externalRead:
@@ -218,7 +218,7 @@ export const TIER_PROFILES: Record<
     name: "Average-Range",
     tagline: "Within the broad middle of the population.",
     description:
-      "Your HSNS score sits in the broad middle band, ±1 SD from the mean. Some hypersensitivity to ridicule, some self-consciousness in groups, some interpretation of remarks in personal terms — all in the normal range, what the literature describes as the everyday human portion of the construct rather than the pathological one.",
+      "Your HSNS score sits in the broad middle band, ±1 SD from the mean. Some hypersensitivity to ridicule, some self-consciousness in groups, some interpretation of remarks in personal terms, all in the normal range, what the literature describes as the everyday human portion of the construct rather than the pathological one.",
     selfPattern:
       "You sometimes leave a social interaction running it back, sometimes feel the slight cut deeper than it deserved, sometimes notice a small reservoir of envy when a peer succeeds. This is not covert narcissism, it's being a person with a normally-organised ego in a culture that hasn't given any of us a particularly good script for handling threat to it.",
     externalRead:
@@ -243,19 +243,19 @@ export const TIER_PROFILES: Record<
     externalRead:
       "The people closest to you have, by now, learned the script. They edit. They moderate the directness of feedback. They route around your moods. They do not name what they're doing. The friend group you have at 35 is not the friend group you had at 22, and the gap is not random; the high-HSNS configuration produces a specific attrition pattern in social networks because the maintenance work compounds across years.",
     blindSpots: [
-      "Vulnerable narcissism is the pattern most likely to be confused with anxiety, depression, or trauma response — and to be treated as those things, sometimes for years, by therapists who don't have specific covert-narcissism training. The right diagnosis matters; the wrong therapy entrenches.",
+      "Vulnerable narcissism is the pattern most likely to be confused with anxiety, depression, or trauma response, and to be treated as those things, sometimes for years, by therapists who don't have specific covert-narcissism training. The right diagnosis matters; the wrong therapy entrenches.",
       "You are not getting smaller doses of the standard narcissistic pattern; you are getting the same construct organised around shame instead of around grandiosity. This is why the NPI-40 misses it. You are not a 'less successful' grandiose narcissist. You are a different configuration entirely.",
       "The contempt is the hardest part to admit, and the most diagnostic. Most people in the high-HSNS tier will read item 10 (secretly put out when others come with their troubles) and recognise themselves with a small jolt. The jolt is the construct's signature.",
     ],
     whatNext:
-      "Two paths that work, one that doesn't. The one that doesn't: any therapy that treats this as anxiety or low self-esteem, those frames protect the construct rather than expose it. The two that do: (1) a clinician with specific training in vulnerable narcissism (ask, by name, before you book), and (2) the long-form reading on covert narcissism — Malkin's *Rethinking Narcissism* and Pincus's PNI papers are the technical entry. The pattern is harder to shift than grandiose narcissism because the surface presents as suffering, but it is genuinely shiftable; the shift starts with the patient naming the contempt without flinching.",
+      "Two paths that work, one that doesn't. The one that doesn't: any therapy that treats this as anxiety or low self-esteem, those frames protect the construct rather than expose it. The two that do: (1) a clinician with specific training in vulnerable narcissism (ask, by name, before you book), and (2) the long-form reading on covert narcissism, Malkin's *Rethinking Narcissism* and Pincus's PNI papers are the technical entry. The pattern is harder to shift than grandiose narcissism because the surface presents as suffering, but it is genuinely shiftable; the shift starts with the patient naming the contempt without flinching.",
   },
   "very-high": {
     tier: "very-high",
     name: "The Hidden Layer",
     tagline: "Top 2-3%. The fully-organised covert configuration.",
     description:
-      "Your HSNS score sits in roughly the top 2-3% of the population. The full vulnerable-narcissistic configuration is registering — hypersensitivity, shame-based grandiosity, contempt-for-the-needy, the secret feeling of temperamental superiority that lives underneath the public posture of being a person who takes things hard. This is the configuration the more recent narcissism literature (Pincus 2009, Krizan & Herlache 2018) takes most seriously and that the NPI-40 most reliably misses.",
+      "Your HSNS score sits in roughly the top 2-3% of the population. The full vulnerable-narcissistic configuration is registering, hypersensitivity, shame-based grandiosity, contempt-for-the-needy, the secret feeling of temperamental superiority that lives underneath the public posture of being a person who takes things hard. This is the configuration the more recent narcissism literature (Pincus 2009, Krizan & Herlache 2018) takes most seriously and that the NPI-40 most reliably misses.",
     selfPattern:
       "You read these tier profiles and you flinch at the specifics. Item 10 in particular, the secret resentment of people who come to you with their troubles, is a sentence you have never said out loud and have not, until now, seen written down by someone who knew you wouldn't say it. The flinch is the data. People in this tier do not, typically, score this high by accident; the construct is consolidated.",
     externalRead:
@@ -266,7 +266,7 @@ export const TIER_PROFILES: Record<
       "Vulnerable narcissism at this level co-occurs at higher-than-base rates with depression, with eating-disorder histories in women, and with a specific pattern of relational violence in men. The instrument cannot tell you which (if any) is also true of you; a clinician with the right specialty can.",
     ],
     whatNext:
-      "Honest options. One: a clinician with specific training in vulnerable narcissism, named explicitly before you book. The wrong clinician will either treat this as depression and entrench the construct, or treat this as classical NPD and miss most of the actual mechanism. Two: the long-form reading — Pincus's PNI papers, Malkin's book, and the *Sociopathic Dating Bible*'s chapter on the covert pattern, which was written by an author with an adjacent diagnosis and reads from the inside. Three: the Consilium has, by deliberate design, threads dedicated to this exact configuration; the room is not safer because it's gentler, it is safer because it has been read.",
+      "Honest options. One: a clinician with specific training in vulnerable narcissism, named explicitly before you book. The wrong clinician will either treat this as depression and entrench the construct, or treat this as classical NPD and miss most of the actual mechanism. Two: the long-form reading, Pincus's PNI papers, Malkin's book, and the *Sociopathic Dating Bible*'s chapter on the covert pattern, which was written by an author with an adjacent diagnosis and reads from the inside. Three: the Consilium has, by deliberate design, threads dedicated to this exact configuration; the room is not safer because it's gentler, it is safer because it has been read.",
   },
 };
 
@@ -282,7 +282,7 @@ export const COVERT_NARCISSIST_QUIZ_INFO = {
   shortName: "Covert Narcissist Test",
   tagline: "The quiet version of the loud disorder.",
   description:
-    "A 10-item Likert assessment based on the Hypersensitive Narcissism Scale (HSNS, Hendin & Cheek 1997). Measures vulnerable / covert narcissism specifically — the pattern the NPI-40 systematically underreads. Calibrated against published norms (M=26.7, SD=6.6).",
+    "A 10-item Likert assessment based on the Hypersensitive Narcissism Scale (HSNS, Hendin & Cheek 1997). Measures vulnerable / covert narcissism specifically, the pattern the NPI-40 systematically underreads. Calibrated against published norms (M=26.7, SD=6.6).",
   itemCount: COVERT_NARCISSIST_ITEMS.length,
   estimatedMinutes: 3,
   price: 0,
@@ -303,7 +303,7 @@ export const COVERT_NARCISSIST_QUIZ_FAQ = [
     question:
       "What's the difference between covert narcissism and regular (grandiose) narcissism?",
     answer:
-      "Different organisations of the same underlying construct. Grandiose narcissism (measured by the NPI-40 on /quiz/narcissist) presents as confident, dominant, exhibitionist, and unbothered — the loud, public version. Covert / vulnerable narcissism (this test) presents as hypersensitive, anxious in groups, secretly contemptuous, shame-based — the quiet version. The same underlying need for narcissistic supply, organised around shame rather than around grandiosity. The two configurations look completely different in real life and respond to different interventions.",
+      "Different organisations of the same underlying construct. Grandiose narcissism (measured by the NPI-40 on /quiz/narcissist) presents as confident, dominant, exhibitionist, and unbothered, the loud, public version. Covert / vulnerable narcissism (this test) presents as hypersensitive, anxious in groups, secretly contemptuous, shame-based, the quiet version. The same underlying need for narcissistic supply, organised around shame rather than around grandiosity. The two configurations look completely different in real life and respond to different interventions.",
   },
   {
     question:
@@ -324,12 +324,12 @@ export const COVERT_NARCISSIST_QUIZ_FAQ = [
   {
     question: "I'm worried I'm a covert narcissist. Should I take this?",
     answer:
-      "Yes, with one caveat. Sincere worry that you might be a covert narcissist is, in itself, weak diagnostic evidence against the configuration — the people the test is built to detect rarely worry about it in plain terms; they worry about it as 'people don't appreciate me' or 'I'm too sensitive'. But the test will give you a calibrated answer, which is more useful than the worry, and the result page lays out the four tiers in enough detail that you'll recognise yourself if the configuration is genuinely there.",
+      "Yes, with one caveat. Sincere worry that you might be a covert narcissist is, in itself, weak diagnostic evidence against the configuration, the people the test is built to detect rarely worry about it in plain terms; they worry about it as 'people don't appreciate me' or 'I'm too sensitive'. But the test will give you a calibrated answer, which is more useful than the worry, and the result page lays out the four tiers in enough detail that you'll recognise yourself if the configuration is genuinely there.",
   },
   {
     question: "Can the test detect a covert narcissist I'm dating?",
     answer:
-      "Not directly — this is a self-report; your partner has to take it for it to score them. What you CAN do is read the High and Very High tier profiles on the result page and recognise the configuration in someone you know. The partner-detection chapters of the Sociopathic Dating Bible go further; they are written for that question specifically and the covert pattern is one of the configurations they cover in detail.",
+      "Not directly. This is a self-report; your partner has to take it for it to score them. What you CAN do is read the High and Very High tier profiles on the result page and recognise the configuration in someone you know. The partner-detection chapters of the Sociopathic Dating Bible go further; they are written for that question specifically and the covert pattern is one of the configurations they cover in detail.",
   },
   {
     question: "Why only 10 items?",
@@ -344,6 +344,6 @@ export const COVERT_NARCISSIST_QUIZ_FAQ = [
   {
     question: "How is this different from a social anxiety quiz?",
     answer:
-      "The two constructs overlap on hypersensitivity-to-others-in-groups, but they diverge on the underlying motivation. Social anxiety is about fear of negative evaluation; vulnerable narcissism is about the hidden grandiosity AND the shame, both at once. Items 4 (sharing credit), 8 (forgetting others' existence), 9 (need-to-be-appreciated), and 10 (secret contempt for askers-of-sympathy) are the discriminators — high social anxiety alone would not produce high scores on those four.",
+      "The two constructs overlap on hypersensitivity-to-others-in-groups, but they diverge on the underlying motivation. Social anxiety is about fear of negative evaluation; vulnerable narcissism is about the hidden grandiosity AND the shame, both at once. Items 4 (sharing credit), 8 (forgetting others' existence), 9 (need-to-be-appreciated), and 10 (secret contempt for askers-of-sympathy) are the discriminators, high social anxiety alone would not produce high scores on those four.",
   },
 ] as const;

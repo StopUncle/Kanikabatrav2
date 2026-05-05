@@ -17,7 +17,7 @@ export const metadata: Metadata = {
   title:
     "Covert Narcissist Test (HSNS, Calibrated) · The Quiet Version | Kanika Rose",
   description:
-    "A 10-item covert narcissist test built on the Hypersensitive Narcissism Scale (HSNS, Hendin & Cheek 1997). Measures vulnerable / covert narcissism — the pattern the NPI systematically underreads. Scored against published norms (M=26.7, SD=6.6). Free, ~3 minutes. Educational only.",
+    "A 10-item covert narcissist test built on the Hypersensitive Narcissism Scale (HSNS, Hendin & Cheek 1997). Measures vulnerable / covert narcissism, the pattern the NPI systematically underreads. Scored against published norms (M=26.7, SD=6.6). Free, ~3 minutes. Educational only.",
   keywords:
     "covert narcissist test, vulnerable narcissism test, hypersensitive narcissism scale, HSNS, am I a covert narcissist, covert narcissism quiz, vulnerable narcissist test, covert narcissist signs, covert NPD test",
   alternates: {

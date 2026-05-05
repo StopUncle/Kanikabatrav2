@@ -132,7 +132,7 @@ export default function SociopathTakePage() {
   }
 
   if (!item) {
-    // Defensive — should never happen since the take flow gates on
+    // Defensive, should never happen since the take flow gates on
     // currentIndex < length, but TypeScript wants it and a graceful
     // fallback is cheap.
     return null;
@@ -175,7 +175,7 @@ export default function SociopathTakePage() {
         </div>
       </div>
 
-      {/* Disclaimer chip — matches the Daughter quiz's permanent in-flow
+      {/* Disclaimer chip, matches the Daughter quiz's permanent in-flow
           disclaimer presence. Disclaimers visible at every step. */}
       <div className="px-4 pt-3">
         <div className="max-w-2xl mx-auto flex items-center gap-2 text-[10px] uppercase tracking-[0.2em] text-accent-burgundy/70 justify-center">
@@ -197,7 +197,7 @@ export default function SociopathTakePage() {
               exit={{ opacity: 0, x: -20 }}
               transition={{ duration: 0.3 }}
             >
-              {/* Subscale chip — surfaces which axis the item loads on,
+              {/* Subscale chip, surfaces which axis the item loads on,
                   so users get a feel for the two-subscale structure as
                   they go. Quietly educational. */}
               <div className="text-center mb-6">
@@ -217,7 +217,7 @@ export default function SociopathTakePage() {
                 &ldquo;{item.statement}&rdquo;
               </h2>
 
-              {/* Likert options — vertical stack so labels never truncate
+              {/* Likert options, vertical stack so labels never truncate
                   on mobile. Order is Disagree strongly → Agree strongly,
                   matching the LSRP's published response format. */}
               <div className="space-y-3">

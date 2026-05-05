@@ -17,7 +17,7 @@ import {
   type QuizRegistryEntry,
 } from "@/lib/quiz-registry";
 
-// QuizSuiteSection — the dashboard's "clinic lobby."
+// QuizSuiteSection, the dashboard's "clinic lobby."
 //
 // Renders the six post-Dark-Mirror quizzes as a card grid. The Dark
 // Mirror itself has its own dedicated dashboard card (QuizDashboardCard,
@@ -25,7 +25,7 @@ import {
 // already-completed result), so this section is the "what else is on
 // offer" view: a row of doors the member can walk through next.
 //
-// Phase 1 is presentation-only — each card links to its quiz's
+// Phase 1 is presentation-only, each card links to its quiz's
 // landing page, no per-quiz "completed" state surfaced. The new six
 // quizzes persist results to sessionStorage rather than the DB, so a
 // dashboard render cannot (yet) know which the user has taken.

@@ -1,4 +1,4 @@
-// Quiz suite registry — single source of truth for the seven quizzes.
+// Quiz suite registry, single source of truth for the seven quizzes.
 //
 // Used by the dashboard's QuizSuiteSection (client-side) and by any
 // future server surface that needs to enumerate the suite (sitemap
@@ -83,7 +83,7 @@ export const QUIZ_REGISTRY: readonly QuizRegistryEntry[] = [
     title: "The Covert Narcissist Test",
     caption: "Vulnerable narcissism · the quiet version",
     blurb:
-      "10 items measuring vulnerable narcissism — hypersensitivity, shame-based grandiosity. The pattern the NPI underreads.",
+      "10 items measuring vulnerable narcissism, hypersensitivity, shame-based grandiosity. The pattern the NPI underreads.",
     instrument: "HSNS (Hendin & Cheek 1997)",
     minutes: 3,
     itemCount: 10,
@@ -94,7 +94,7 @@ export const QUIZ_REGISTRY: readonly QuizRegistryEntry[] = [
     slug: "dark-triad",
     href: "/quiz/dark-triad",
     title: "The Dark Triad Test",
-    caption: "Mach + Narc + Psych — the wide map",
+    caption: "Mach + Narc + Psych, the wide map",
     blurb:
       "27 items across Machiavellianism, Narcissism, and Psychopathy. Configuration archetype interpretation.",
     instrument: "SD3 (Jones & Paulhus 2014)",
@@ -122,7 +122,7 @@ export const QUIZ_REGISTRY: readonly QuizRegistryEntry[] = [
     title: "Are You Dating a Sociopath?",
     caption: "Behavioural + Internal red flags",
     blurb:
-      "20 partner-detection scenarios. Two axes — what you have seen, what your body has registered.",
+      "20 partner-detection scenarios. Two axes, what you have seen, what your body has registered.",
     instrument: "From the Sociopathic Dating Bible",
     minutes: 6,
     itemCount: 20,

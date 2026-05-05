@@ -17,7 +17,7 @@ export const metadata: Metadata = {
   title:
     "Am I Dating a Sociopath? · 20-Scenario Partner-Detection Quiz | Kanika Rose",
   description:
-    "A 20-scenario partner-detection quiz drawn from the Sociopathic Dating Bible. Two axes — Behavioural Red Flags (visible patterns) and Internal Red Flags (the body's read). Combined quadrant interpretation. Free, ~6 minutes. Educational only, not a diagnosis.",
+    "A 20-scenario partner-detection quiz drawn from the Sociopathic Dating Bible. Two axes, Behavioural Red Flags (visible patterns) and Internal Red Flags (the body's read). Combined quadrant interpretation. Free, ~6 minutes. Educational only, not a diagnosis.",
   keywords:
     "am I dating a sociopath, sociopath partner test, am I dating a narcissist, partner red flags quiz, signs you're dating a sociopath, sociopath relationship test, dating a sociopath, sociopathic partner signs",
   alternates: {

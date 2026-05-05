@@ -17,7 +17,7 @@ export const metadata: Metadata = {
   title:
     "Dark Triad Test (SD3, Calibrated) · Read by a Real One | Kanika Rose",
   description:
-    "A 27-item Dark Triad test built on the Short Dark Triad (Jones & Paulhus 2014). Three axes — Machiavellianism, Narcissism, Psychopathy — scored against published norms (n=2929). Configuration archetype interpretation. Free, ~5 minutes. Educational only, not a diagnosis.",
+    "A 27-item Dark Triad test built on the Short Dark Triad (Jones & Paulhus 2014). Three axes, Machiavellianism, Narcissism, Psychopathy, scored against published norms (n=2929). Configuration archetype interpretation. Free, ~5 minutes. Educational only, not a diagnosis.",
   keywords:
     "dark triad test, SD3, Short Dark Triad, machiavellianism test, dark triad quiz, dark triad personality, dark triad measure, Jones Paulhus, dark triad assessment",
   alternates: {

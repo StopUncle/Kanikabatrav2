@@ -38,7 +38,7 @@ const RELATED_LINKS: Array<{
     href: "/quiz",
     title: "The Dark Mirror Assessment",
     description:
-      "Profiles you across six Cluster B types — Psychopathic, Sociopathic, Narcissistic, Borderline, Histrionic, Neurotypical. Most users take both. The Dark Mirror is the wide map; the Sociopath Test is the calibrated read on the specific axis the wide map flagged.",
+      "Profiles you across six Cluster B types, Psychopathic, Sociopathic, Narcissistic, Borderline, Histrionic, Neurotypical. Most users take both. The Dark Mirror is the wide map; the Sociopath Test is the calibrated read on the specific axis the wide map flagged.",
     type: "Companion quiz",
   },
   {

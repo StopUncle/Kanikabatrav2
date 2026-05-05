@@ -23,7 +23,7 @@ const RELATED_LINKS = [
     href: "/quiz/covert-narcissist",
     title: "The Covert Narcissist Test (HSNS)",
     description:
-      "The companion test. Where the NPI-40 measures the loud version of narcissism, the HSNS measures the quiet one — vulnerable narcissism, hypersensitivity, shame-based grandiosity. Many people score low here and high there.",
+      "The companion test. Where the NPI-40 measures the loud version of narcissism, the HSNS measures the quiet one, vulnerable narcissism, hypersensitivity, shame-based grandiosity. Many people score low here and high there.",
     type: "Companion quiz",
   },
   {

@@ -217,7 +217,7 @@ export default function SociopathResultsPage() {
             />
           </m.div>
 
-          {/* Combined quadrant profile — the long-form interpretation */}
+          {/* Combined quadrant profile, the long-form interpretation */}
           <m.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -269,7 +269,7 @@ export default function SociopathResultsPage() {
             </div>
           </m.div>
 
-          {/* Consilium nudge — only surfaces for the two configurations
+          {/* Consilium nudge, only surfaces for the two configurations
               where the room is actually built for the result. The nudge
               is contextual, not a blanket pitch. */}
           {(diagnosis.quadrant === "the-calculator" ||
@@ -377,7 +377,7 @@ export default function SociopathResultsPage() {
             </Link>
           </m.div>
 
-          {/* Source footnote — keeps the calibration honest */}
+          {/* Source footnote, keeps the calibration honest */}
           <m.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -397,7 +397,7 @@ export default function SociopathResultsPage() {
 }
 
 // -----------------------------------------------------------------------
-// Subscale card — the bar + score + percentile chip
+// Subscale card, the bar + score + percentile chip
 // -----------------------------------------------------------------------
 
 interface SubscaleCardProps {
@@ -477,7 +477,7 @@ function SubscaleCard(props: SubscaleCardProps) {
 }
 
 // -----------------------------------------------------------------------
-// Subscale interpretation — the two-sentence read under each bar
+// Subscale interpretation, the two-sentence read under each bar
 // -----------------------------------------------------------------------
 
 interface SubscaleInterpretationProps {

@@ -57,7 +57,7 @@ export interface BPDDiagnosis {
 }
 
 // -----------------------------------------------------------------------
-// THE 10 ITEMS — MSI-BPD canonical wording with light edits
+// THE 10 ITEMS, MSI-BPD canonical wording with light edits
 // -----------------------------------------------------------------------
 
 export const BPD_ITEMS: BPDItem[] = [
@@ -181,7 +181,7 @@ export const TIER_PROFILES: Record<BPDTier, BPDTierProfile> = {
     name: "The Functional Self",
     tagline: "BPD pattern is not registering on this screen.",
     description:
-      "Your MSI-BPD score is in the bottom range (0-2 yes responses). Borderline traits are not registering as your operating profile. You may have arrived here because someone — a partner, a sibling, a therapist with a soft definition of the term — applied the BPD label to you in a way that didn't sit right. The instrument did not find it.",
+      "Your MSI-BPD score is in the bottom range (0-2 yes responses). Borderline traits are not registering as your operating profile. You may have arrived here because someone, a partner, a sibling, a therapist with a soft definition of the term, applied the BPD label to you in a way that didn't sit right. The instrument did not find it.",
     selfPattern:
       "You experience emotional reactivity within the normal range for your circumstances. You have not, by your own honest report, made repeated suicide attempts or self-harmed. You have an identity you can locate without effort. You are not, on this measure, the person the diagnosis is built to detect.",
     externalRead:
@@ -194,9 +194,9 @@ export const TIER_PROFILES: Record<BPDTier, BPDTierProfile> = {
     name: "Sub-Clinical Range",
     tagline: "Some BPD trait registration, below the threshold the literature treats as clinical.",
     description:
-      "Your MSI-BPD score is 3-4 yes responses, which puts you in the sub-clinical band. Some BPD traits are registering — possibly mood reactivity, identity uncertainty, the chronic emptiness, or one or two of the relational items — but not at the level Zanarini's threshold treats as a likely BPD pattern. The literature considers this range non-diagnostic; the suffering, where it's there, is real but does not configure as the disorder.",
+      "Your MSI-BPD score is 3-4 yes responses, which puts you in the sub-clinical band. Some BPD traits are registering, possibly mood reactivity, identity uncertainty, the chronic emptiness, or one or two of the relational items, but not at the level Zanarini's threshold treats as a likely BPD pattern. The literature considers this range non-diagnostic; the suffering, where it's there, is real but does not configure as the disorder.",
     selfPattern:
-      "You may experience some of the features of BPD — moodiness, reactive anger, identity confusion — without the full constellation. Many of these features are also present in mood disorders, in PTSD, in adolescents and young adults during normal developmental transitions, and in adults under prolonged acute stress.",
+      "You may experience some of the features of BPD, moodiness, reactive anger, identity confusion, without the full constellation. Many of these features are also present in mood disorders, in PTSD, in adolescents and young adults during normal developmental transitions, and in adults under prolonged acute stress.",
     externalRead:
       "People close to you have probably noticed at least one of the registering items, depending on which ones came back yes. They have not, by and large, organised their relationship with you around the diagnosis, because the configuration is not consistent enough to require that.",
     whatNext:
@@ -208,13 +208,13 @@ export const TIER_PROFILES: Record<BPDTier, BPDTierProfile> = {
     tagline:
       "Significant trait registration. Below the Zanarini cutoff, but close enough to take seriously.",
     description:
-      "Your MSI-BPD score is 5-6 yes responses, which puts you in the High tier — significant trait registration that sits just below the Zanarini cutoff of 7 for likely BPD. The pattern is real. Whether or not it crosses into a clinical diagnosis depends on the severity of each registering item, on duration, and on the specific configuration of which items came back yes. The MSI-BPD is a screen; it cannot give you the answer that interview-based instruments (DIB-R, SCID-II) can.",
+      "Your MSI-BPD score is 5-6 yes responses, which puts you in the High tier, significant trait registration that sits just below the Zanarini cutoff of 7 for likely BPD. The pattern is real. Whether or not it crosses into a clinical diagnosis depends on the severity of each registering item, on duration, and on the specific configuration of which items came back yes. The MSI-BPD is a screen; it cannot give you the answer that interview-based instruments (DIB-R, SCID-II) can.",
     selfPattern:
-      "You experience the BPD-trait configuration in real life. The relational instability, the impulsivity in multiple domains, the chronic emptiness or identity uncertainty — at least five of these registered as yes. The configuration is not subtle, and the people closest to you have noticed pieces of it across years.",
+      "You experience the BPD-trait configuration in real life. The relational instability, the impulsivity in multiple domains, the chronic emptiness or identity uncertainty, at least five of these registered as yes. The configuration is not subtle, and the people closest to you have noticed pieces of it across years.",
     externalRead:
       "The people in your life have, by now, learned to anticipate your emotional weather. The closest ones can sometimes name the pattern; the next layer adapts without naming. Your friend group at 30 is not the friend group you had at 22, and the gap is not random.",
     whatNext:
-      "Two paths. One: a clinician with specific BPD experience (not just 'a therapist' — the diagnosis is famously misread by generalists). Ask, by name, if they have DBT or MBT training before booking. Two: the long-form reading on BPD is good and getting better. *I Hate You — Don't Leave Me* (Kreisman & Straus) is the accessible classic; Linehan's *Building a Life Worth Living* is the personal account from the founder of DBT, who has the diagnosis herself. The pattern is one of the most treatable personality disorders when treated properly.",
+      "Two paths. One: a clinician with specific BPD experience (not just 'a therapist', the diagnosis is famously misread by generalists). Ask, by name, if they have DBT or MBT training before booking. Two: the long-form reading on BPD is good and getting better. *I Hate You, Don't Leave Me* (Kreisman & Straus) is the accessible classic; Linehan's *Building a Life Worth Living* is the personal account from the founder of DBT, who has the diagnosis herself. The pattern is one of the most treatable personality disorders when treated properly.",
   },
   "very-high": {
     tier: "very-high",
@@ -222,9 +222,9 @@ export const TIER_PROFILES: Record<BPDTier, BPDTierProfile> = {
     tagline:
       "At or above the Zanarini cutoff. The instrument is flagging a likely BPD configuration.",
     description:
-      "Your MSI-BPD score is 7 or higher, at or above the cutoff Zanarini's research uses to flag a likely BPD pattern. In the validation study, 81% of people who scored at this level had clinically diagnosed BPD; 15% of the general population scoring above the cutoff did not. The instrument is a screen, not a diagnosis — but a score in this range is the strongest signal a brief instrument can give for considering a full diagnostic interview.",
+      "Your MSI-BPD score is 7 or higher, at or above the cutoff Zanarini's research uses to flag a likely BPD pattern. In the validation study, 81% of people with clinically diagnosed BPD scored at this level (sensitivity), and 85% of people without BPD scored below it (specificity). The instrument is a screen, not a diagnosis, but a score in this range is the strongest signal a brief instrument can give for considering a full diagnostic interview.",
     selfPattern:
-      "You have likely been carrying this configuration for years, possibly decades. The relational instability, the self-harm or suicide attempts, the impulsivity, the mood reactivity, the dissociation, the emptiness, the identity uncertainty, the desperate moves to avoid abandonment — at least seven of these have been part of your operating system. You have likely been told, formally or informally, that this is BPD before. You may have rejected the label because of how it gets used culturally, which is reasonable; the cultural shorthand is wrong about most of what the diagnosis actually means clinically.",
+      "You have likely been carrying this configuration for years, possibly decades. The relational instability, the self-harm or suicide attempts, the impulsivity, the mood reactivity, the dissociation, the emptiness, the identity uncertainty, the desperate moves to avoid abandonment, at least seven of these have been part of your operating system. You have likely been told, formally or informally, that this is BPD before. You may have rejected the label because of how it gets used culturally, which is reasonable; the cultural shorthand is wrong about most of what the diagnosis actually means clinically.",
     externalRead:
       "The people in your life have organised themselves around the configuration. Some have stayed and learned to read your weather. Some have left, sometimes more than once. The people who genuinely know you are aware of the pattern; the people who don't, often experience your reactivity as personal when it is structural.",
     whatNext:
@@ -279,7 +279,7 @@ export const BPD_QUIZ_FAQ = [
     question:
       "I scored high. Should I see a clinician?",
     answer:
-      "If you scored at or above 7 (the Zanarini cutoff), yes — and specifically a clinician with BPD experience, not just any therapist. The diagnosis is famously hard to read accurately without that experience. If your score was in the 5-6 'High' tier, it's also worth seeing someone, since the configuration is real even if it's below the formal screening cutoff. Crisis resources are linked at the bottom of the result page if needed.",
+      "If you scored at or above 7 (the Zanarini cutoff), yes, and specifically a clinician with BPD experience, not just any therapist. The diagnosis is famously hard to read accurately without that experience. If your score was in the 5-6 'High' tier, it's also worth seeing someone, since the configuration is real even if it's below the formal screening cutoff. Crisis resources are linked at the bottom of the result page if needed.",
   },
   {
     question: "Is BPD treatable?",
@@ -290,7 +290,7 @@ export const BPD_QUIZ_FAQ = [
     question:
       "I'm dating someone I think has BPD. Can this test detect that?",
     answer:
-      "Not directly — this is a self-report; your partner has to take it for it to score them. What the test CAN do is help you recognise the configuration in someone you know by reading the High and Very High tier profiles on the result page. The Sociopathic Dating Bible's chapters on the BPD pattern in relationships are the longer-form companion to that question. Also: BPD in a partner is genuinely difficult, but the cultural shorthand 'dating someone with BPD = abuse' is not supported by the literature; the pattern is more nuanced than that.",
+      "Not directly. This is a self-report; your partner has to take it for it to score them. What the test CAN do is help you recognise the configuration in someone you know by reading the High and Very High tier profiles on the result page. The Sociopathic Dating Bible's chapters on the BPD pattern in relationships are the longer-form companion to that question. Also: BPD in a partner is genuinely difficult, but the cultural shorthand 'dating someone with BPD = abuse' is not supported by the literature; the pattern is more nuanced than that.",
   },
   {
     question: "Are my answers private?",
@@ -301,7 +301,7 @@ export const BPD_QUIZ_FAQ = [
     question:
       "I'm in crisis. Should I be taking this?",
     answer:
-      "Probably not in this order. If you are in active crisis (suicidal thoughts, self-harm, severe dissociation), please contact a licensed therapist or a crisis line first. Your country's helpline information should be a search away. This screening tool is most useful at the contemplation stage — you suspect a pattern, you want a sharper read, you're stable enough to take in the answer. If that's not where you are right now, bookmark the page and come back when it is.",
+      "Probably not in this order. If you are in active crisis (suicidal thoughts, self-harm, severe dissociation), please contact a licensed therapist or a crisis line first. Your country's helpline information should be a search away. This screening tool is most useful at the contemplation stage, you suspect a pattern, you want a sharper read, you're stable enough to take in the answer. If that's not where you are right now, bookmark the page and come back when it is.",
   },
   {
     question:
