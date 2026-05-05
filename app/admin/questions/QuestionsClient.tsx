@@ -334,6 +334,23 @@ export default function QuestionsClient({ initialQuestions, initialTabCounts }: 
                           <Reply size={12} />
                           Reply with text
                         </button>
+                        {/* Deep-link into the existing voice-notes / videos
+                            uploaders with this question pre-selected, so
+                            she's recording within two clicks of the queue. */}
+                        <a
+                          href={`/admin/voice-notes?answers=${q.id}`}
+                          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-warm-gold/10 hover:bg-warm-gold/20 text-warm-gold text-[11px] tracking-wider uppercase font-medium border border-warm-gold/30 transition"
+                        >
+                          <Mic size={12} />
+                          Reply with voice
+                        </a>
+                        <a
+                          href={`/admin/videos?answers=${q.id}`}
+                          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-warm-gold/10 hover:bg-warm-gold/20 text-warm-gold text-[11px] tracking-wider uppercase font-medium border border-warm-gold/30 transition"
+                        >
+                          <Film size={12} />
+                          Reply with video
+                        </a>
                         {q.status === "PENDING" && (
                           <button
                             onClick={() => setStatus(q.id, "ANSWERING")}

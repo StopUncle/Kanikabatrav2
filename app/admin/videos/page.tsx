@@ -116,6 +116,19 @@ export default function VideosPage() {
     fetchVideos();
   }, [fetchVideos]);
 
+  // Deep-link from /admin/questions: ?answers=<questionId> opens the
+  // form pre-bound to a specific question so the AnswerQuestionPicker
+  // already has it selected. Reads window.location once on mount to
+  // avoid a Suspense boundary from useSearchParams.
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const id = new URLSearchParams(window.location.search).get("answers");
+    if (id) {
+      setAnswersQuestionId(id);
+      setShowForm(true);
+    }
+  }, []);
+
   function handleDrop(e: React.DragEvent) {
     e.preventDefault();
     setDragOver(false);
