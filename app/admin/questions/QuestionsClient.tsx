@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useCallback } from "react";
-import { Eye, ChevronUp, Mic, Film, Check, X, Pause, MessageSquare } from "lucide-react";
+import { Eye, ChevronUp, Mic, Film, Check, X, Pause, MessageSquare, Reply, Send, Loader2 } from "lucide-react";
 
 type Question = {
   id: string;
@@ -38,6 +38,17 @@ export default function QuestionsClient({ initialQuestions, initialTabCounts }: 
   const [loading, setLoading] = useState(false);
   const [busy, setBusy] = useState<string | null>(null);
 
+  // Inline text-reply composer state. Only one composer is open at a
+  // time, keyed by questionId.
+  const [replyingId, setReplyingId] = useState<string | null>(null);
+  const [replyTitle, setReplyTitle] = useState("");
+  const [replyBody, setReplyBody] = useState("");
+  const [replyError, setReplyError] = useState<string | null>(null);
+  // Orphan-post recovery: when feed-post POST succeeds but the question
+  // PATCH fails, we keep the post id around so a retry only re-runs the
+  // link step (rather than duplicating the FeedPost). Keyed by question.
+  const [orphanPostByQ, setOrphanPostByQ] = useState<Record<string, string>>({});
+
   const switchTab = useCallback(async (next: Tab) => {
     setTab(next);
     setLoading(true);
@@ -69,6 +80,119 @@ export default function QuestionsClient({ initialQuestions, initialTabCounts }: 
       setBusy(null);
     }
   }, []);
+
+  const openReply = useCallback((q: Question) => {
+    // Pre-fill title with a short question stub so the feed entry reads
+    // as "Q: ..." in scroll without Kanika needing to think about it.
+    // She can blow it away if she wants something else.
+    const stub = q.content.length > 80 ? q.content.slice(0, 80).trimEnd() + "…" : q.content;
+    setReplyingId(q.id);
+    setReplyTitle(`Q: ${stub}`);
+    // Body pre-fills with the question quoted, blank line, ready for
+    // her answer. Members reading the feed see the question they're
+    // looking at the answer to without us needing to fetch it.
+    setReplyBody(`"${q.content}"\n\n`);
+    setReplyError(null);
+  }, []);
+
+  const cancelReply = useCallback(() => {
+    setReplyingId(null);
+    setReplyTitle("");
+    setReplyBody("");
+    setReplyError(null);
+  }, []);
+
+  // Two-step publish: create the FeedPost (ANNOUNCEMENT), then link it
+  // to the question. If step 2 fails, keep the post id so a retry
+  // doesn't duplicate the post in the feed.
+  const submitReply = useCallback(
+    async (questionId: string) => {
+      if (busy === questionId) return;
+      const trimmedTitle = replyTitle.trim();
+      const trimmedBody = replyBody.trim();
+      if (trimmedTitle.length === 0 || trimmedBody.length === 0) {
+        setReplyError("Title and answer are both required.");
+        return;
+      }
+      setBusy(questionId);
+      setReplyError(null);
+
+      // Step 1, create the FeedPost (skip if we already have an orphan
+      // from a previous attempt that only failed at step 2).
+      let answerPostId = orphanPostByQ[questionId] ?? null;
+      if (!answerPostId) {
+        try {
+          const res = await fetch("/api/consilium/feed/posts", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              title: trimmedTitle,
+              content: trimmedBody,
+              type: "ANNOUNCEMENT",
+            }),
+          });
+          if (!res.ok) {
+            const errBody = await res.json().catch(() => ({}));
+            setReplyError(errBody.error ?? "Failed to publish the post.");
+            setBusy(null);
+            return;
+          }
+          const body = await res.json();
+          answerPostId = body.post?.id ?? body.id ?? null;
+          if (!answerPostId) {
+            setReplyError("Post created but no id returned. Refresh and try again.");
+            setBusy(null);
+            return;
+          }
+        } catch {
+          setReplyError("Couldn't reach the server. Try again.");
+          setBusy(null);
+          return;
+        }
+      }
+
+      // Step 2, link as the answer to this question.
+      try {
+        const res = await fetch(`/api/admin/questions/${questionId}`, {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ answerPostId }),
+        });
+        if (!res.ok) {
+          // Keep the post id so the retry doesn't duplicate the post.
+          setOrphanPostByQ((prev) => ({ ...prev, [questionId]: answerPostId! }));
+          const errBody = await res.json().catch(() => ({}));
+          setReplyError(
+            errBody.error
+              ? `Posted, but couldn't link as answer: ${errBody.error}. Retry to link.`
+              : "Posted, but couldn't link as answer. Retry to link.",
+          );
+          setBusy(null);
+          return;
+        }
+      } catch {
+        setOrphanPostByQ((prev) => ({ ...prev, [questionId]: answerPostId! }));
+        setReplyError("Posted, but couldn't link as answer. Retry to link.");
+        setBusy(null);
+        return;
+      }
+
+      // Success, clear orphan, close composer, refresh queue (the question
+      // moves to the ANSWERED tab).
+      setOrphanPostByQ((prev) => {
+        const next = { ...prev };
+        delete next[questionId];
+        return next;
+      });
+      setReplyingId(null);
+      setReplyTitle("");
+      setReplyBody("");
+      setReplyError(null);
+      setBusy(null);
+      await refresh();
+    },
+    [busy, replyTitle, replyBody, orphanPostByQ, refresh],
+  );
 
   const setStatus = useCallback(
     async (id: string, status: Tab | "HIDDEN", reason?: string) => {
@@ -187,20 +311,35 @@ export default function QuestionsClient({ initialQuestions, initialTabCounts }: 
                           href={`/consilium/feed#post-${q.answerPost.id}`}
                           className="inline-flex items-center gap-1 text-emerald-300 hover:text-emerald-200"
                         >
-                          {q.answerPost.type === "VIDEO" ? <Film size={11} /> : <Mic size={11} />}
+                          {q.answerPost.type === "VIDEO" ? (
+                            <Film size={11} />
+                          ) : q.answerPost.type === "VOICE_NOTE" ? (
+                            <Mic size={11} />
+                          ) : (
+                            <MessageSquare size={11} />
+                          )}
                           {q.answerPost.title.slice(0, 40)}
                         </a>
                       )}
                     </div>
 
                     {/* Actions row */}
-                    {q.status !== "ANSWERED" && (
+                    {q.status !== "ANSWERED" && replyingId !== q.id && (
                       <div className="mt-4 flex flex-wrap items-center gap-2">
+                        <button
+                          onClick={() => openReply(q)}
+                          disabled={busy === q.id}
+                          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-emerald-400/10 hover:bg-emerald-400/20 text-emerald-300 text-[11px] tracking-wider uppercase font-medium border border-emerald-400/30 transition"
+                        >
+                          <Reply size={12} />
+                          Reply with text
+                        </button>
                         {q.status === "PENDING" && (
                           <button
                             onClick={() => setStatus(q.id, "ANSWERING")}
                             disabled={busy === q.id}
                             className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-amber-400/10 hover:bg-amber-400/20 text-amber-300 text-[11px] tracking-wider uppercase font-medium border border-amber-400/30 transition"
+                            title="Reserve for a voice note or video answer"
                           >
                             <Pause size={12} />
                             Mark answering
@@ -209,7 +348,7 @@ export default function QuestionsClient({ initialQuestions, initialTabCounts }: 
                         {q.status === "ANSWERING" && (
                           <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-amber-400/10 text-amber-300 text-[11px] tracking-wider uppercase font-medium border border-amber-400/30">
                             <MessageSquare size={12} />
-                            In progress, link an answering voice/video to mark done
+                            Awaiting voice/video answer
                           </span>
                         )}
                         {q.status !== "REJECTED" && (
@@ -225,6 +364,77 @@ export default function QuestionsClient({ initialQuestions, initialTabCounts }: 
                             Reject
                           </button>
                         )}
+                      </div>
+                    )}
+
+                    {/* Inline reply composer — opens above the actions row. */}
+                    {replyingId === q.id && (
+                      <div className="mt-4 rounded-lg border border-emerald-400/30 bg-emerald-400/[0.04] p-4 space-y-3">
+                        <div className="flex items-center justify-between">
+                          <p className="text-emerald-300/90 text-[10px] font-semibold tracking-[0.25em] uppercase">
+                            Reply with text
+                          </p>
+                          <button
+                            type="button"
+                            onClick={cancelReply}
+                            disabled={busy === q.id}
+                            className="text-text-gray/60 hover:text-warm-gold text-[11px] underline"
+                          >
+                            Cancel
+                          </button>
+                        </div>
+                        <input
+                          type="text"
+                          value={replyTitle}
+                          onChange={(e) => setReplyTitle(e.target.value.slice(0, 200))}
+                          disabled={busy === q.id}
+                          placeholder="Title for the feed post"
+                          className="w-full rounded-md border border-warm-gold/20 bg-deep-black/60 px-3 py-2 text-text-light text-[13px] focus:outline-none focus:border-warm-gold/50"
+                          maxLength={200}
+                        />
+                        <textarea
+                          value={replyBody}
+                          onChange={(e) => setReplyBody(e.target.value.slice(0, 10_000))}
+                          disabled={busy === q.id}
+                          placeholder="Your answer…"
+                          rows={6}
+                          className="w-full rounded-md border border-warm-gold/20 bg-deep-black/60 px-3 py-2 text-text-light text-[13px] leading-relaxed focus:outline-none focus:border-warm-gold/50 resize-y"
+                        />
+                        {replyError && (
+                          <p className="text-[12px] text-rose-300/90">{replyError}</p>
+                        )}
+                        <div className="flex items-center justify-between gap-3">
+                          <span className="text-text-gray/50 text-[11px]">
+                            Plain text. Line breaks render. Posts to feed, links as the answer, asker is emailed and pushed.
+                          </span>
+                          <button
+                            type="button"
+                            onClick={() => submitReply(q.id)}
+                            disabled={
+                              busy === q.id ||
+                              replyTitle.trim().length === 0 ||
+                              replyBody.trim().length === 0
+                            }
+                            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-md bg-emerald-400/15 hover:bg-emerald-400/25 text-emerald-300 text-[11px] tracking-[0.18em] uppercase font-semibold border border-emerald-400/40 transition disabled:opacity-40 disabled:cursor-not-allowed"
+                          >
+                            {busy === q.id ? (
+                              <>
+                                <Loader2 size={12} className="animate-spin" />
+                                Publishing…
+                              </>
+                            ) : orphanPostByQ[q.id] ? (
+                              <>
+                                <Send size={12} />
+                                Retry link
+                              </>
+                            ) : (
+                              <>
+                                <Send size={12} />
+                                Reply &amp; publish
+                              </>
+                            )}
+                          </button>
+                        </div>
                       </div>
                     )}
                     {q.status === "REJECTED" && (

@@ -43,16 +43,22 @@ export async function PATCH(
     return NextResponse.json({ error: "Invalid request body" }, { status: 400 });
   }
 
-  // If linking an answer post, verify it exists and is a voice/video type.
+  // If linking an answer post, verify it exists and is one of the
+  // answer-eligible types: VOICE_NOTE / VIDEO (recorded answers) or
+  // ANNOUNCEMENT (text replies composed inline on /admin/questions).
   if (body.answerPostId) {
     const post = await prisma.feedPost.findUnique({
       where: { id: body.answerPostId },
       select: { id: true, type: true },
     });
     if (!post) return NextResponse.json({ error: "Answer post not found" }, { status: 404 });
-    if (post.type !== "VOICE_NOTE" && post.type !== "VIDEO") {
+    if (
+      post.type !== "VOICE_NOTE" &&
+      post.type !== "VIDEO" &&
+      post.type !== "ANNOUNCEMENT"
+    ) {
       return NextResponse.json(
-        { error: "Answer must be a voice note or video post" },
+        { error: "Answer must be a voice note, video, or text post" },
         { status: 400 },
       );
     }

@@ -2307,18 +2307,29 @@ export const sendQuestionAnswered = async (params: {
   recipientName: string;
   questionContent: string;
   answerPostId: string;
-  answerType: "VOICE_NOTE" | "VIDEO";
+  answerType: "VOICE_NOTE" | "VIDEO" | "ANNOUNCEMENT";
 }): Promise<boolean> => {
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://kanikarose.com";
   const answerUrl = `${baseUrl}/consilium/feed#post-${params.answerPostId}`;
-  const formatLabel = params.answerType === "VIDEO" ? "video" : "voice note";
+  const intro =
+    params.answerType === "VIDEO"
+      ? "Kanika answered your question in a new video on the Consilium feed."
+      : params.answerType === "VOICE_NOTE"
+        ? "Kanika answered your question in a new voice note on the Consilium feed."
+        : "Kanika answered your question on the Consilium feed.";
+  const ctaLabel =
+    params.answerType === "VIDEO"
+      ? "Watch the answer"
+      : params.answerType === "VOICE_NOTE"
+        ? "Listen to the answer"
+        : "Read the answer";
 
   const inner = `
     <p style="color: #f5f0ed; font-size: 18px; margin: 0 0 20px 0; line-height: 1.6;">
       Dear ${esc(params.recipientName)},
     </p>
     <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 25px 0; font-size: 15px;">
-      Kanika answered your question in a new ${formatLabel} on the Consilium feed.
+      ${intro}
     </p>
     <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="margin: 0 0 25px 0;">
       <tr>
@@ -2332,7 +2343,7 @@ export const sendQuestionAnswered = async (params: {
       <tr>
         <td align="center">
           <a href="${answerUrl}" style="display: inline-block; padding: 14px 32px; background-color: #d4af37; color: #0a0a0a; text-decoration: none; border-radius: 6px; font-weight: 600; font-size: 14px; letter-spacing: 1px; text-transform: uppercase;">
-            Watch the answer
+            ${ctaLabel}
           </a>
         </td>
       </tr>

@@ -33,8 +33,13 @@ export async function notifyAskerOfAnswer(params: {
     logger.warn("[questions/notify] asker not found", { questionId: params.questionId });
     return;
   }
-  if (!post || (post.type !== "VOICE_NOTE" && post.type !== "VIDEO")) {
-    logger.warn("[questions/notify] answer post is not voice/video", {
+  if (
+    !post ||
+    (post.type !== "VOICE_NOTE" &&
+      post.type !== "VIDEO" &&
+      post.type !== "ANNOUNCEMENT")
+  ) {
+    logger.warn("[questions/notify] answer post is not an answer-eligible type", {
       questionId: params.questionId,
       postType: post?.type,
     });
@@ -68,7 +73,9 @@ export async function notifyAskerOfAnswer(params: {
   const pushTitle =
     post.type === "VIDEO"
       ? "Kanika answered your question — video"
-      : "Kanika answered your question — voice note";
+      : post.type === "VOICE_NOTE"
+        ? "Kanika answered your question — voice note"
+        : "Kanika answered your question";
   await sendPushToUser(params.userId, "questionAnswered", {
     title: pushTitle,
     body:

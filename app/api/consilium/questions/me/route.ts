@@ -32,10 +32,11 @@ export async function GET() {
       cooldown: null,
       questions: [],
       hasUnreadAnswer: false,
+      isAdmin: false,
     });
   }
 
-  const [cooldown, mine] = await Promise.all([
+  const [cooldown, mine, viewer] = await Promise.all([
     checkAskCooldown(userId),
     prisma.memberQuestion.findMany({
       where: { userId },
@@ -58,7 +59,12 @@ export async function GET() {
         },
       },
     }),
+    prisma.user.findUnique({
+      where: { id: userId },
+      select: { role: true },
+    }),
   ]);
+  const isAdmin = viewer?.role === "ADMIN";
 
   // "Unread" = answered in the last 14 days. Members can dismiss the
   // green-dot state explicitly later; for now the timer expires it.
@@ -71,5 +77,6 @@ export async function GET() {
     cooldown,
     questions: mine,
     hasUnreadAnswer,
+    isAdmin,
   });
 }

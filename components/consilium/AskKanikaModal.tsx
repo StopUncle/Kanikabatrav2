@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useCallback, useRef } from "react";
 import { createPortal } from "react-dom";
-import { X, ChevronUp, Mic, Film } from "lucide-react";
+import { X, ChevronUp, Mic, Film, MessageSquare, ArrowUpRight } from "lucide-react";
 
 type AnswerPost = {
   id: string;
@@ -65,6 +65,7 @@ export default function AskKanikaModal({ open, onClose }: Props) {
   const [cooldown, setCooldown] = useState<CooldownState | null>(null);
   const [myQuestions, setMyQuestions] = useState<MyQuestion[]>([]);
   const [queue, setQueue] = useState<QueueItem[]>([]);
+  const [isAdmin, setIsAdmin] = useState(false);
   const [content, setContent] = useState("");
   const [isAnonymous, setIsAnonymous] = useState(false);
   const [submitting, setSubmitting] = useState(false);
@@ -86,6 +87,7 @@ export default function AskKanikaModal({ open, onClose }: Props) {
         setCooldown(me.cooldown ?? null);
         setMyQuestions(me.questions ?? []);
         setQueue(list.questions ?? []);
+        setIsAdmin(Boolean(me.isAdmin));
       })
       .catch(() => {
         // Soft-fail. The modal still opens; sections that have no data
@@ -230,18 +232,32 @@ export default function AskKanikaModal({ open, onClose }: Props) {
       >
         {/* Header */}
         <div className="sticky top-0 z-10 flex items-center justify-between gap-4 px-6 py-4 border-b border-warm-gold/15 bg-deep-black/95 backdrop-blur">
-          <div>
+          <div className="min-w-0">
             <h2 className="text-warm-gold text-xs font-semibold tracking-[0.3em] uppercase">
               Ask Kanika
             </h2>
             <p className="text-text-gray/70 text-[11px] mt-0.5">
               Kanika reads every question. The best ones become voice notes and video answers.
             </p>
+            {/* Admin shortcut: only renders for role=ADMIN viewers
+                (Kanika). Deep-links into the admin queue where she can
+                reply with text, link a voice note, reject, etc. The
+                /admin route is gated by the admin_session cookie, so
+                first hit per 24h prompts for PIN, then it's instant. */}
+            {isAdmin && (
+              <a
+                href="/admin/questions"
+                className="mt-2 inline-flex items-center gap-1 text-emerald-300/90 hover:text-emerald-200 text-[10px] tracking-[0.22em] uppercase font-medium"
+              >
+                Manage queue
+                <ArrowUpRight size={11} />
+              </a>
+            )}
           </div>
           <button
             onClick={onClose}
             aria-label="Close"
-            className="p-1.5 rounded-full text-text-gray/60 hover:text-warm-gold hover:bg-warm-gold/10 transition"
+            className="p-1.5 rounded-full text-text-gray/60 hover:text-warm-gold hover:bg-warm-gold/10 transition shrink-0"
           >
             <X size={18} strokeWidth={1.6} />
           </button>
@@ -270,11 +286,21 @@ export default function AskKanikaModal({ open, onClose }: Props) {
                         className="inline-flex items-center gap-2 text-emerald-300 hover:text-emerald-200 text-[12px] font-medium tracking-wider uppercase"
                       >
                         {q.answerPost.type === "VIDEO" ? (
-                          <Film size={13} />
+                          <>
+                            <Film size={13} />
+                            Watch the answer
+                          </>
+                        ) : q.answerPost.type === "VOICE_NOTE" ? (
+                          <>
+                            <Mic size={13} />
+                            Listen to the answer
+                          </>
                         ) : (
-                          <Mic size={13} />
+                          <>
+                            <MessageSquare size={13} />
+                            Read the answer
+                          </>
                         )}
-                        Watch the answer
                       </a>
                     )}
                   </div>
