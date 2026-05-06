@@ -384,7 +384,7 @@ function buildMiniDripStep3(name: string): string {
             </tr>
             <tr>
               <td style="padding: 10px 0; color: #f5f0ed; font-size: 14px; line-height: 1.6;">
-                <strong style="color: #d4af37;">The book bundled in</strong> &mdash; Sociopathic Dating Bible, full text + addendums, no extra cost.
+                <strong style="color: #d4af37;">Member-exclusive book pricing</strong> &mdash; Sociopathic Dating Bible at $9.99 for active members ($24.99 standalone), separate purchase.
               </td>
             </tr>
           </table>

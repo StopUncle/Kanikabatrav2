@@ -256,9 +256,11 @@ export default async function InnerCircleLanding({
               bundled reveal. Each row names what the component
               would cost if sold separately, totals at the bottom,
               then the actual $29/mo lands as the punch. The effect
-              is anchor-and-drop, the prospect reads $515 first and
+              is anchor-and-drop, the prospect reads $490 first and
               metabolises the $29 against that ceiling, not against
-              "is $29 worth it on its own". */}
+              "is $29 worth it on its own". The Sociopathic Dating
+              Bible is NOT in this stack, it is sold separately
+              ($9.99 member price, $24.99 standalone). */}
           <div className="mb-20">
             <div className="max-w-2xl mx-auto">
               <div className="text-center mb-8">
@@ -272,11 +274,6 @@ export default async function InnerCircleLanding({
 
               <div className="bg-gradient-to-br from-deep-navy/60 to-deep-burgundy/40 backdrop-blur-sm border border-warm-gold/25 rounded-2xl overflow-hidden">
                 {[
-                  {
-                    name: "The Sociopathic Dating Bible",
-                    sub: "Full ebook + PDF + 2 addendum chapters (Narcissists, Avoidants)",
-                    price: "$24.99",
-                  },
                   {
                     name: "Weekly voice-note debriefs from Kanika",
                     sub: "52 a year, dropped when something needs to be said",
@@ -326,7 +323,7 @@ export default async function InnerCircleLanding({
                     Standalone value
                   </p>
                   <p className="text-warm-gold text-xl sm:text-2xl font-extralight tabular-nums">
-                    ~$515
+                    ~$490
                   </p>
                 </div>
 
@@ -344,7 +341,7 @@ export default async function InnerCircleLanding({
                     <span className="text-text-gray font-light">/ month</span>
                   </div>
                   <p className="text-text-gray/75 text-xs sm:text-sm font-light">
-                    Cancel any time. Keep the book.
+                    Cancel any time.
                   </p>
                 </div>
               </div>
@@ -364,7 +361,7 @@ export default async function InnerCircleLanding({
                   <p className="text-text-gray/85 font-light text-xs sm:text-sm mt-0.5 leading-relaxed">
                     If it&apos;s not the most useful $29 you&apos;ve spent
                     this year, message us for a full refund. No form, no
-                    survey. You keep the book.
+                    survey.
                   </p>
                 </div>
               </div>
@@ -422,8 +419,8 @@ export default async function InnerCircleLanding({
               </div>
               <p className="text-text-gray/85 text-sm font-light leading-relaxed">
                 One coaching session covers ten months inside the Consilium.
-                The book alone is $24.99 retail and comes bundled. Pricing
-                isn&apos;t the question. Showing up is.
+                The book is sold separately, $9.99 for members ($24.99
+                standalone). Pricing isn&apos;t the question. Showing up is.
               </p>
             </div>
           </div>

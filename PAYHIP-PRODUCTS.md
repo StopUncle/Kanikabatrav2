@@ -22,7 +22,7 @@ Sign up at payhip.com. Use the $99/mo Pro plan (0% transaction fees).
 ### 3. Premium Membership — Monthly
 - **Price:** $29/month
 - **Type:** Membership / Subscription
-- **Description:** Monthly membership to our private community. Includes course library, exclusive audio content, community feed, and premium book access.
+- **Description:** Monthly membership to our private community. Includes course library, exclusive audio content, community feed, and member-exclusive book pricing ($9.99 vs $24.99 standalone, separate purchase). The Sociopathic Dating Bible is NOT bundled into the $29/mo subscription.
 
 ### 4. Psychology Consultation — Single Session
 - **Price:** $297

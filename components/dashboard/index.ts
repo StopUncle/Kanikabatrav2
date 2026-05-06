@@ -1,7 +1,6 @@
 // Dashboard Components Export
 export { default as DashboardHeader } from "./DashboardHeader";
 export { default as DashboardCard } from "./DashboardCard";
-export { default as DashboardClient } from "./DashboardClient";
 export { default as PurchaseItem } from "./PurchaseItem";
 export { default as QuickStats } from "./QuickStats";
 export { default as SessionCard } from "./SessionCard";
