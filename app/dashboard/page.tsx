@@ -277,7 +277,7 @@ export default async function DashboardPage() {
 
   return (
     <>
-      <DashboardHeader userEmail={user.email} />
+      <DashboardHeader userEmail={user.email} userName={user.name} />
 
       <main className="min-h-screen bg-deep-black pt-28 pb-24">
         <div className="container mx-auto px-4 sm:px-6 lg:px-10 max-w-6xl">
