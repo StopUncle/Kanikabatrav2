@@ -244,9 +244,9 @@ const scenes: Scene[] = [
     choices: [
       {
         id: "retry",
-        text: "Try again.",
-        tactic: "Drill.",
-        nextSceneId: "the-diagnosis",
+        text: "Continue.",
+        tactic: "The teaching has landed; the answer follows.",
+        nextSceneId: "diagnosis-correct",
         isOptimal: true,
       },
     ],
@@ -267,9 +267,9 @@ const scenes: Scene[] = [
     choices: [
       {
         id: "retry-2",
-        text: "Try again.",
-        tactic: "Drill.",
-        nextSceneId: "the-diagnosis",
+        text: "Continue.",
+        tactic: "The teaching has landed; the answer follows.",
+        nextSceneId: "diagnosis-correct",
         isOptimal: true,
       },
     ],

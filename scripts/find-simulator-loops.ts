@@ -139,6 +139,9 @@ function sccEdges(scc: Set<string>, adj: Map<string, Edge[]>): Edge[] {
 let totalLoops = 0;
 let totalSelfLoops = 0;
 let totalTrapLoops = 0;
+let totalDeadEnds = 0;
+let totalUnreachable = 0;
+let totalBadStart = 0;
 
 for (const scenario of ALL_SCENARIOS) {
   const { sceneById, adj } = buildGraph(scenario);
@@ -163,7 +166,43 @@ for (const scenario of ALL_SCENARIOS) {
     }
   }
 
-  if (sccs.length === 0 && selfLoops.length === 0 && dangling.length === 0) {
+  // 4. Dead-end scenes — non-ending scenes with no outgoing edges.
+  //    Player lands on the screen and has nothing to tap. Looks like a freeze
+  //    / a loop on the same screen. The simulator runner has no fallback for
+  //    this — choices.length === 0 + !isEnding + no nextSceneId is just stuck.
+  const deadEnds: string[] = [];
+  for (const s of scenario.scenes) {
+    if (s.isEnding) continue;
+    const hasChoices = (s.choices?.length ?? 0) > 0;
+    const hasAuto = !!s.nextSceneId;
+    if (!hasChoices && !hasAuto) deadEnds.push(s.id);
+  }
+
+  // 5. Unreachable scenes — not reachable from startSceneId. Orphan content.
+  const reachable = new Set<string>();
+  const queue: string[] = scenario.startSceneId ? [scenario.startSceneId] : [];
+  while (queue.length > 0) {
+    const id = queue.pop()!;
+    if (reachable.has(id)) continue;
+    reachable.add(id);
+    for (const e of adj.get(id) ?? []) {
+      if (!reachable.has(e.to)) queue.push(e.to);
+    }
+  }
+  const unreachable = nodes.filter((id) => !reachable.has(id));
+
+  // 6. startSceneId points at a scene that does not exist.
+  const badStart =
+    !!scenario.startSceneId && !sceneById.has(scenario.startSceneId);
+
+  if (
+    sccs.length === 0 &&
+    selfLoops.length === 0 &&
+    dangling.length === 0 &&
+    deadEnds.length === 0 &&
+    unreachable.length === 0 &&
+    !badStart
+  ) {
     continue;
   }
 
@@ -171,6 +210,13 @@ for (const scenario of ALL_SCENARIOS) {
   console.log(`Scenario: ${scenario.id}  (${scenario.title})`);
   console.log(`  track=${scenario.track ?? "female"}  scenes=${scenario.scenes.length}`);
   console.log("========================================");
+
+  if (badStart) {
+    totalBadStart++;
+    console.log(
+      `\n  BAD START: startSceneId="${scenario.startSceneId}" not found in scenes`,
+    );
+  }
 
   if (selfLoops.length > 0) {
     totalSelfLoops += selfLoops.length;
@@ -184,6 +230,26 @@ for (const scenario of ALL_SCENARIOS) {
     console.log(`\n  DANGLING EDGES (${dangling.length}):`);
     for (const e of dangling) {
       console.log(`    - ${e.from} --(${e.via})--> ${e.to}  [missing scene]`);
+    }
+  }
+
+  if (deadEnds.length > 0) {
+    totalDeadEnds += deadEnds.length;
+    console.log(
+      `\n  DEAD-END SCENES (${deadEnds.length})  [no choices, no nextSceneId, not isEnding — player stuck on screen]:`,
+    );
+    for (const id of deadEnds) {
+      console.log(`    - ${id}`);
+    }
+  }
+
+  if (unreachable.length > 0) {
+    totalUnreachable += unreachable.length;
+    console.log(
+      `\n  UNREACHABLE SCENES (${unreachable.length})  [orphan content, no path from startSceneId]:`,
+    );
+    for (const id of unreachable) {
+      console.log(`    - ${id}`);
     }
   }
 
@@ -216,9 +282,12 @@ console.log("========================================");
 console.log(`  scenarios scanned : ${ALL_SCENARIOS.length}`);
 console.log(`  self-loops        : ${totalSelfLoops}`);
 console.log(`  cycles total      : ${totalLoops}`);
-console.log(`  trap cycles       : ${totalTrapLoops}  ← these are the "stuck forever" bugs`);
+console.log(`  trap cycles       : ${totalTrapLoops}  ← cycles with no path to any ending`);
+console.log(`  dead-end scenes   : ${totalDeadEnds}   ← non-ending scenes with no exit, player stuck on screen`);
+console.log(`  unreachable scenes: ${totalUnreachable}  ← orphan content, no path from start`);
+console.log(`  bad startSceneId  : ${totalBadStart}   ← scenario boots into a non-existent scene`);
 console.log("========================================\n");
 
-if (totalSelfLoops + totalTrapLoops > 0) {
+if (totalSelfLoops + totalTrapLoops + totalDeadEnds + totalBadStart > 0) {
   process.exit(1);
 }
