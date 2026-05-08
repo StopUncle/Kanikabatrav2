@@ -12,6 +12,7 @@ import type {
   SimulatorState,
   Choice,
   DialogLine,
+  Character,
 } from "@/lib/simulator/types";
 import {
   applyChoice,
@@ -48,10 +49,24 @@ import DialogTranscript from "./DialogTranscript";
  *
  * Tone is consulted first when set; otherwise we infer from speakerId.
  */
-function shouldShowEcho(line: DialogLine): boolean {
-  if (line.tone === "dialogue") return true;
-  if (line.tone === "scene" || line.tone === "tactical") return false;
-  return !!line.speakerId && line.speakerId !== "inner-voice";
+/**
+ * Speaker label shown on the last-line echo above the choices. Always
+ * derives a sensible label so the echo can render regardless of tone,
+ * which keeps the layout consistent (cards below 4-choice scenes used
+ * to drift down with empty space above when the prior line was
+ * inner-voice / tactical / scene and no echo was rendered).
+ *
+ * Matches the conventions used in DialogTranscript so the player sees
+ * the same vocabulary in both surfaces.
+ */
+function echoSpeakerLabel(
+  line: DialogLine,
+  characterById: Record<string, Character>,
+): string {
+  if (line.tone === "tactical") return "Observation";
+  if (line.tone === "scene") return "Moment";
+  if (!line.speakerId || line.speakerId === "inner-voice") return "Inner voice";
+  return characterById[line.speakerId]?.name ?? line.speakerId;
 }
 
 type Props = {
@@ -270,6 +285,18 @@ export default function SimulatorRunner({
   const stuckCheckTimerRef = useRef<ReturnType<typeof setInterval> | null>(
     null,
   );
+  // Once the player dismisses the stuck overlay (or skips to choices),
+  // we suppress re-firing for the rest of the scene. Without this, the
+  // interval would re-evaluate the same conditions on the next tick
+  // (taps still > 5, elapsed still > 60s, choicesMade still 0) and
+  // re-show the overlay 5 seconds later. Reset on scene change.
+  const stuckDismissedRef = useRef(false);
+  // Mirrors lineIndex into a ref so the stuck-detector interval (which
+  // captures stale state by closure) can read the CURRENT dialog
+  // position. lineIndex >= totalLines means the player has read every
+  // dialog line and the choice cards are showing — that's not "stuck",
+  // it's "thinking", and the detector must not fire.
+  const lineIndexRef = useRef(0);
 
   const scene = currentScene(scenario, state);
   const totalLines = scene?.dialog?.length ?? 0;
@@ -580,6 +607,12 @@ export default function SimulatorRunner({
     dispatchTapRef.current = dispatchTap;
   }, [dispatchTap]);
 
+  // Mirror lineIndex into a ref so the stuck-detector interval below
+  // can check current dialog position without re-running on every tap.
+  useEffect(() => {
+    lineIndexRef.current = lineIndex;
+  }, [lineIndex]);
+
   // Reset tap counter + scene-entered timestamp whenever the scene changes.
   // This is the heartbeat for the stuck-detector: every fresh scene starts
   // a new 60s window, and a player who's progressing normally will reset
@@ -587,12 +620,23 @@ export default function SimulatorRunner({
   useEffect(() => {
     tapCountRef.current = 0;
     sceneEnteredAtRef.current = Date.now();
+    stuckDismissedRef.current = false;
     setShowStuckRecovery(false);
     if (stuckCheckTimerRef.current) clearInterval(stuckCheckTimerRef.current);
     // Only arm the detector for non-ending dialog scenes. Endings have
     // their own UI; intro is gated separately.
     if (!scene || scene.isEnding) return;
+    const totalDialogLines = scene.dialog?.length ?? 0;
     stuckCheckTimerRef.current = setInterval(() => {
+      // Hard suppress: the player has already told us they're fine.
+      if (stuckDismissedRef.current) return;
+      // The choices are visible (player has read every dialog line and
+      // the choice cards are on screen). Pausing to think there is not
+      // "stuck" — it's deliberation. Without this gate the detector
+      // would fire on every reflective player who reads slowly through
+      // dialog (>5 taps to advance, >60s) and then sat with the choice
+      // cards. This was the production reappear-after-skip bug.
+      if (lineIndexRef.current >= totalDialogLines) return;
       const elapsed = Date.now() - sceneEnteredAtRef.current;
       // Trigger: been on this scene >60s, tapped >5 times, no progress.
       // The "no progress" check is on choicesMade for THIS scene, players
@@ -627,6 +671,7 @@ export default function SimulatorRunner({
     }
     setLineIndex(scene.dialog?.length ?? 0);
     setShowStuckRecovery(false);
+    stuckDismissedRef.current = true;
     try {
       Sentry.addBreadcrumb({
         category: "simulator.skip",
@@ -837,7 +882,13 @@ export default function SimulatorRunner({
             </button>
             <button
               type="button"
-              onClick={() => setShowStuckRecovery(false)}
+              onClick={() => {
+                setShowStuckRecovery(false);
+                // Mark the scene as "player declared fine" so the
+                // 5-second interval doesn't reopen the overlay on the
+                // next tick when the same conditions still hold.
+                stuckDismissedRef.current = true;
+              }}
               className="mt-3 text-text-gray/60 hover:text-text-gray text-xs font-light"
             >
               I&apos;m fine, dismiss
@@ -996,35 +1047,36 @@ export default function SimulatorRunner({
               to find an already-revealed first line. */}
           {showIntro ? null : showChoices && scene.choices ? (
             <m.div
-              className="w-full max-w-2xl mx-auto"
+              // mb-auto pushes the choices block to the TOP of the
+              // bottom-anchored flex column so the player reads top-down
+              // (echo first, then cards) and the empty space falls
+              // BELOW the cards instead of above. Touching only this
+              // wrapper avoids mid-transition layout shifts on the
+              // dialog box (which has no mb-auto and stays bottom-
+              // anchored under the parent's justify-end).
+              className="w-full max-w-2xl mx-auto mb-auto"
               key={`choices-wrap-${scene.id}`}
               initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.32 }}
             >
-              {/* Last-line echo. Only renders when the previous line was
-                  SPOKEN dialogue (named speaker, not inner-voice, not
-                  tactical observation). Inner-voice / tactical lines are
-                  the player's own thoughts — echoing them above choices
-                  is redundant noise, the player just read them. Spoken
-                  lines are the prompt the player is replying to, and the
-                  echo earns its place there.
-
-                  Visually rail-aligned to match the dialog box so the
-                  player's eye tracks down the same vertical line into
-                  the choices, instead of being thrown to a centre axis. */}
-              {lastDialogLine && shouldShowEcho(lastDialogLine) && (
+              {/* Last-line echo. Always renders so the player can see
+                  what they're replying to, regardless of tone (spoken,
+                  inner-voice, tactical, scene). The previous tone-gated
+                  version meant scenes ending on inner-voice / tactical
+                  beats had no context above the choice cards, so 1-3
+                  choice layouts (which don't fill the bottom area as
+                  fully as a 2x2 grid) drifted with empty space above.
+                  echoSpeakerLabel handles the tone variations. */}
+              {lastDialogLine && (
                 <div className="relative pl-5 mb-4 sm:mb-5 max-w-xl mx-auto">
                   <span
                     aria-hidden
                     className="absolute left-0 top-1 bottom-1 w-[3px] rounded-full bg-accent-gold/40"
                   />
                   <p className="text-accent-gold/60 text-[10px] uppercase tracking-[0.35em] mb-1.5 font-light">
-                    {lastDialogLine.speakerId
-                      ? (characterById[lastDialogLine.speakerId]?.name ??
-                          lastDialogLine.speakerId)
-                      : ""}
+                    {echoSpeakerLabel(lastDialogLine, characterById)}
                   </p>
                   <p className="font-light leading-snug text-sm sm:text-base text-white/70">
                     {lastDialogLine.text}

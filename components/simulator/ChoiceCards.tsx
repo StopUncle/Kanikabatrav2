@@ -25,18 +25,25 @@ export default function ChoiceCards({ choices, onPick }: Props) {
 
   // Choice-count → column layout. 4 choices deliberately break to a
   // 2×2 grid rather than 3-cols-plus-orphan, 118 scenes catalogue-wide
-  // have 4 choices and were silently rendering 3+1 on desktop. 1/2
-  // choices get 2 columns (wider cards at low counts read better than
-  // stretched single columns); 3 → 3 cols; 5+ → 3 cols (accepts
-  // a 3+N tail for rare high-count scenes).
+  // have 4 choices and were silently rendering 3+1 on desktop. 1 choice
+  // → 1 col (a single card span across a 2-col grid rendered half-width
+  // with empty whitespace next to it, looked broken); 2 choices → 2 cols;
+  // 3 → 3 cols; 4 → 2x2; 5+ → 3 cols (accepts a 3+N tail for rare
+  // high-count scenes).
   const desktopCols =
-    choices.length <= 2
-      ? "md:grid-cols-2"
-      : choices.length === 3
-        ? "md:grid-cols-3"
-        : choices.length === 4
-          ? "md:grid-cols-2"
-          : "md:grid-cols-3";
+    choices.length === 1
+      ? "md:grid-cols-1"
+      : choices.length === 2
+        ? "md:grid-cols-2"
+        : choices.length === 3
+          ? "md:grid-cols-3"
+          : choices.length === 4
+            ? "md:grid-cols-2"
+            : "md:grid-cols-3";
+  // Narrow the wrapper for 1-choice scenes so the single card doesn't
+  // stretch to the full 4xl rail and read like a mistake. Other counts
+  // keep the wide 4xl rail because the grid fills it.
+  const wrapperMaxW = choices.length === 1 ? "max-w-xl" : "max-w-4xl";
 
   return (
     <m.div
@@ -44,7 +51,7 @@ export default function ChoiceCards({ choices, onPick }: Props) {
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: 12, transition: { duration: 0.25 } }}
       transition={{ duration: 0.5, delay: 0.1 }}
-      className={`max-w-4xl mx-auto w-full px-4 grid gap-4 grid-cols-1 ${desktopCols}`}
+      className={`${wrapperMaxW} mx-auto w-full px-4 grid gap-4 grid-cols-1 ${desktopCols}`}
     >
       {choices.map((c, i) => {
         const isSelected = selectedId === c.id;
