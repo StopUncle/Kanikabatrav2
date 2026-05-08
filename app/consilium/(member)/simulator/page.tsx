@@ -155,8 +155,14 @@ export default async function SimulatorIndex({
       // Endings counter: distinct ending sceneIds the player has reached
       // / total endings declared in the scenario. The total is computed
       // from the scenario object directly so it stays in sync with content.
+      // /api/simulator/complete writes endingsReached via atomic Prisma
+      // push (race-safe under concurrent completions), which can persist
+      // duplicates when a player replays the same ending. Dedup here so
+      // the counter reports distinct endings, not raw row count.
       const endingsTotal = s.scenes.filter((sc) => sc.isEnding).length;
-      const endingsFound = p?.endingsReached?.length ?? 0;
+      const endingsFound = p?.endingsReached
+        ? new Set(p.endingsReached).size
+        : 0;
       return {
         scenario: s,
         status,

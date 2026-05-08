@@ -132,17 +132,28 @@ export async function POST(request: NextRequest) {
       });
 
       // Endings-found tracking, push the current ending sceneId onto the
-      // user's set of distinct endings reached on this scenario, idempotently.
-      // Length of this array vs scenes.filter(isEnding).length renders the
-      // "X / Y endings found" counter on catalog cards.
-      const priorEndings = existingRow?.endingsReached ?? [];
-      const endingsReached = priorEndings.includes(body.currentSceneId)
-        ? priorEndings
-        : [...priorEndings, body.currentSceneId];
-      // mergeProgress keeps the best-of payload; we just need to add our
-      // endings field on top of both branches.
-      const createWithEndings = { ...create, endingsReached };
-      const updateWithEndings = { ...update, endingsReached };
+      // user's set of distinct endings reached on this scenario.
+      //
+      // The previous read-modify-write (read priorEndings, recompute
+      // dedup'd array, write whole array) raced under concurrent
+      // completions: two simultaneous writes to different endings would
+      // both read priorEndings = [], each compute their own one-element
+      // array, and the second writer would clobber the first. Atomic
+      // Prisma `push` is array_append at the SQL layer, so concurrent
+      // appends serialize at the row lock and never lose either value.
+      //
+      // Tradeoff: duplicates can accumulate when a player replays the
+      // same ending. The single read site at app/consilium/(member)/
+      // simulator/page.tsx dedupes via `new Set(...).size` so the
+      // "X / Y endings found" counter stays accurate.
+      const createWithEndings = {
+        ...create,
+        endingsReached: [body.currentSceneId],
+      };
+      const updateWithEndings = {
+        ...update,
+        endingsReached: { push: body.currentSceneId },
+      };
 
       // Persist progress + badges in one round-trip.
       const [, existing] = await prisma.$transaction([
