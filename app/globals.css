@@ -464,3 +464,23 @@
     outline-offset: 2px;
   }
 }
+
+/* Simulator immersive mode.
+   The runner is sized to 100dvh and the global site footer would render
+   beneath it, forcing the page to scroll past the play area to reveal
+   the footer. SimulatorPageClient sets data-simulator-active on body
+   while the runner is mounted; these rules hide the global chrome and
+   lock body scroll so the player can't accidentally scroll the runner
+   off-screen. Cleared on unmount, so other pages are unaffected. The
+   descendant `footer` selector targets the global Footer (the only
+   <footer> element on the simulator route). */
+body[data-simulator-active="true"] footer {
+  display: none;
+}
+body[data-simulator-active="true"] {
+  overflow: hidden;
+}
+body[data-simulator-active="true"] main {
+  min-height: 100dvh;
+  height: 100dvh;
+}

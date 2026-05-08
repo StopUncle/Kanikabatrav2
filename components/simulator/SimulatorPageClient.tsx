@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import type {
   Scenario,
@@ -60,6 +60,18 @@ export default function SimulatorPageClient({
   const [bestToDate, setBestToDate] = useState<PreviousBest | null>(
     previousBest,
   );
+
+  // Toggle a body data attribute while the runner is mounted so
+  // app/globals.css can hide the global Footer and lock body overflow.
+  // Without this, the site Footer renders beneath the 100dvh runner
+  // and the page scrolls off the play area to reveal it. Cleared on
+  // unmount so leaving the simulator restores normal site chrome.
+  useEffect(() => {
+    document.body.dataset.simulatorActive = "true";
+    return () => {
+      delete document.body.dataset.simulatorActive;
+    };
+  }, []);
 
   // Throttle saves, only fire if state has actually changed on a key field.
   const lastSavedRef = useRef<string>("");
