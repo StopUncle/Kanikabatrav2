@@ -50,19 +50,19 @@ export function autoAdvance(
   if (scene.isEnding) return finalizeEnding(scene, state);
   if (scene.choices && scene.choices.length > 0) return state;
   if (!scene.nextSceneId) return state;
+  // Belt-and-braces self-loop guard. The build-time validator
+  // (scripts/validate-scenarios.ts) catches `nextSceneId === id`, but a
+  // future content edit that bypasses CI must not oscillate forever
+  // through the runner's useEffect → autoAdvance → setState loop.
+  if (scene.nextSceneId === scene.id) return state;
 
-  // If the next scene is an ending, finalize directly — same pattern as
-  // applyChoice. Without this, no-choice scenes that point at an ending
-  // (e.g. mission-2-2 → ending-proxy-neutralized) move the cursor but
-  // never stamp outcome/endedAt, so isComplete() stays false and the
-  // /api/simulator/complete POST never fires. Symptom: completed runs
-  // sit forever as in-progress with currentSceneId === "ending-X".
+  // If the next scene is an ending, finalize directly. finalizeEnding
+  // stamps currentSceneId itself so the caller can hand over bare state
+  // and never forget to advance the cursor. The previous bug Sten hit
+  // (board-escalation auto-advance loop) was exactly this missing step.
   const nextScene = scenario.scenes.find((s) => s.id === scene.nextSceneId);
   if (nextScene?.isEnding) {
-    return finalizeEnding(nextScene, {
-      ...state,
-      currentSceneId: scene.nextSceneId,
-    });
+    return finalizeEnding(nextScene, state);
   }
 
   return {
@@ -126,7 +126,18 @@ function xpForChoice(choice: Choice): number {
   return base + 3; // neither flagged — mid-tier credit
 }
 
-/** Mark an ending scene as terminal and stamp the outcome + XP bonus. */
+/**
+ * Mark an ending scene as terminal and stamp outcome + XP bonus.
+ *
+ * Always sets `currentSceneId = scene.id` so callers can hand over
+ * pre-advance state without remembering to bump the cursor themselves.
+ * The bug that stuck Sten on b2-credit-thief was an autoAdvance branch
+ * passing bare `state` (cursor still on the auto-advance scene) into
+ * finalizeEnding — the run was marked complete server-side but the UI
+ * kept rendering the prior scene because scene.isEnding never became
+ * true at the renderer's gate. This invariant rules that class of bug
+ * out at the engine level.
+ */
 function finalizeEnding(scene: Scene, state: SimulatorState): SimulatorState {
   const outcome: OutcomeType = scene.outcomeType ?? "neutral";
   const endingBonus =
@@ -138,6 +149,7 @@ function finalizeEnding(scene: Scene, state: SimulatorState): SimulatorState {
 
   return {
     ...state,
+    currentSceneId: scene.id,
     outcome,
     xpEarned: state.xpEarned + endingBonus,
     endedAt: new Date().toISOString(),
