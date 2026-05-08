@@ -4,7 +4,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { X, FastForward, AlertTriangle, BookOpen } from "lucide-react";
+import { X, FastForward, AlertTriangle, BookOpen, ChevronDown } from "lucide-react";
 import { AnimatePresence, m } from "framer-motion";
 import * as Sentry from "@sentry/nextjs";
 import type {
@@ -294,9 +294,18 @@ export default function SimulatorRunner({
   // Mirrors lineIndex into a ref so the stuck-detector interval (which
   // captures stale state by closure) can read the CURRENT dialog
   // position. lineIndex >= totalLines means the player has read every
-  // dialog line and the choice cards are showing — that's not "stuck",
+  // dialog line and the choice cards are showing, that's not "stuck",
   // it's "thinking", and the detector must not fire.
   const lineIndexRef = useRef(0);
+
+  // Scroll-overflow detection for the choice cards container. The
+  // native scrollbar is hidden on mobile, so without an explicit hint
+  // a player with 5+ choices doesn't realise there's more below the
+  // fold. We only render the indicator when content actually exceeds
+  // the visible area; for 1-4 choices it stays hidden.
+  const choicesScrollRef = useRef<HTMLDivElement>(null);
+  const [isChoicesOverflowing, setIsChoicesOverflowing] = useState(false);
+  const [isAtChoicesBottom, setIsAtChoicesBottom] = useState(false);
 
   const scene = currentScene(scenario, state);
   const totalLines = scene?.dialog?.length ?? 0;
@@ -612,6 +621,27 @@ export default function SimulatorRunner({
   useEffect(() => {
     lineIndexRef.current = lineIndex;
   }, [lineIndex]);
+
+  // Measure whether the choice cards overflow the visible play area.
+  // Runs after the scene's first paint with choices on screen, plus
+  // whenever the scene changes (different choice count). Uses a
+  // ResizeObserver so a viewport rotation or in-app browser chrome
+  // shrink also re-evaluates without a full re-render.
+  useEffect(() => {
+    const el = choicesScrollRef.current;
+    if (!el) return;
+    const measure = () => {
+      const overflow = el.scrollHeight > el.clientHeight + 4;
+      setIsChoicesOverflowing(overflow);
+      setIsAtChoicesBottom(
+        el.scrollHeight - el.scrollTop - el.clientHeight < 24,
+      );
+    };
+    measure();
+    const ro = new ResizeObserver(measure);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, [scene?.id, showChoices]);
 
   // Reset tap counter + scene-entered timestamp whenever the scene changes.
   // This is the heartbeat for the stuck-detector: every fresh scene starts
@@ -1029,7 +1059,23 @@ export default function SimulatorRunner({
           the text bleeding through the cards' backdrop-blur. Still
           below the letterbox (z-40) so the top/bottom frame reads as
           the outermost layer. */}
-      <div className="absolute inset-x-0 bottom-16 sm:bottom-20 z-[35] flex flex-col items-center justify-end gap-3 sm:gap-5 px-4 max-h-[calc(100dvh-180px)] overflow-y-auto [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+      <div
+        ref={choicesScrollRef}
+        onScroll={(e) => {
+          const el = e.currentTarget;
+          // Hide the indicator once the player has scrolled within
+          // 24px of the bottom (small slack so end-of-list flips it
+          // off cleanly, not pixel-perfect dependent).
+          setIsAtChoicesBottom(
+            el.scrollHeight - el.scrollTop - el.clientHeight < 24,
+          );
+        }}
+        // Fixed height (was max-h, which let the column shrink to
+        // content). With the explicit height, the choices wrapper's
+        // mb-auto has space to absorb and pull the cards to the top
+        // of the play area instead of leaving them bottom-bunched.
+        className="absolute inset-x-0 bottom-16 sm:bottom-20 z-[35] flex flex-col items-center justify-end gap-3 sm:gap-5 px-4 h-[calc(100dvh-180px)] overflow-y-auto [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+      >
         {/* One AnimatePresence with mode="wait" so the dialog→choices
             swap is sequential (dialog exits, then choices enter) instead
             of overlapping in the same vertical zone.
@@ -1131,6 +1177,26 @@ export default function SimulatorRunner({
             />
           ) : null}
         </AnimatePresence>
+        {/* Scroll-indicator. Native scrollbars are hidden on mobile,
+            so a player with 5+ choices wouldn't otherwise know there's
+            more below the fold. Sticky-bottom chevron, gold-tinted at
+            low opacity, gentle bounce. Hides as soon as the player
+            scrolls within 24px of the bottom (set by the onScroll
+            handler on the container) so it doesn't sit at the visible
+            bottom of the last card. pointer-events:none keeps taps
+            falling through to the cards behind. */}
+        {showChoices && isChoicesOverflowing && !isAtChoicesBottom && (
+          <div
+            aria-hidden
+            className="sticky bottom-0 self-center pb-1 pointer-events-none"
+          >
+            <ChevronDown
+              size={20}
+              strokeWidth={1.5}
+              className="text-accent-gold/55 animate-bounce"
+            />
+          </div>
+        )}
       </div>
 
       </SceneShake>
