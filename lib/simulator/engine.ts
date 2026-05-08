@@ -206,15 +206,33 @@ export function replayXp(
   choicesMade: ChoiceRecord[],
 ): { xp: number; endedAt: SimulatorState } {
   let state = initState(scenario);
+  const validated: ChoiceRecord[] = [];
   for (const record of choicesMade) {
     const scene = currentScene(scenario, state);
     if (!scene) break;
-    // The record.sceneId must match where the replay currently sits —
+    // The record.sceneId must match where the replay currently sits,
     // otherwise the client's choice log is out of sync with the engine.
     if (scene.id !== record.sceneId) break;
     const choice = scene.choices?.find((c) => c.id === record.choiceId);
     if (!choice) break;
     state = applyChoice(scenario, state, choice.id);
+    validated.push(record);
   }
-  return { xp: state.xpEarned + streakBonusXp(choicesMade), endedAt: state };
+  // Drain any auto-advance chain so the final state reflects ending XP
+  // when the last validated choice landed on a non-choice scene that
+  // routes (directly or via a chain) to an ending. Without this, every
+  // scenario that ends via auto-advance under-counts authoritative XP
+  // and /complete clamps the player to the lower server number.
+  // Cycle-safe via the iteration cap; autoAdvance returns the same
+  // reference when it cannot advance further.
+  for (let i = 0; i <= scenario.scenes.length; i++) {
+    if (isComplete(state)) break;
+    const next = autoAdvance(scenario, state);
+    if (next === state) break;
+    state = next;
+  }
+  // Streak bonus is computed over validated records only. Padding the
+  // input with bogus optimal records past an abort point cannot inflate
+  // the bonus.
+  return { xp: state.xpEarned + streakBonusXp(validated), endedAt: state };
 }
