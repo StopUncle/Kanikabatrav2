@@ -23,14 +23,17 @@ import { logger } from "@/lib/logger";
 const ProgressBody = z.object({
   scenarioId: z.string().min(1).max(100),
   currentSceneId: z.string().min(1).max(200),
-  choicesMade: z.array(
-    z.object({
-      sceneId: z.string(),
-      choiceId: z.string(),
-      wasOptimal: z.boolean(),
-      timestamp: z.string(),
-    }),
-  ),
+  // Same 500-cap as /complete. See that route for rationale.
+  choicesMade: z
+    .array(
+      z.object({
+        sceneId: z.string(),
+        choiceId: z.string(),
+        wasOptimal: z.boolean(),
+        timestamp: z.string(),
+      }),
+    )
+    .max(500),
   xpEarned: z.number().int().min(0).max(10_000),
   outcome: z.enum(["good", "neutral", "bad", "passed", "failed"]).nullable().optional(),
   endedAt: z.string().nullable().optional(),

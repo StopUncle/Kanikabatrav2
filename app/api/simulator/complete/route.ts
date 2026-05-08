@@ -39,14 +39,20 @@ import { logger } from "@/lib/logger";
 const CompleteBody = z.object({
   scenarioId: z.string().min(1).max(100),
   currentSceneId: z.string().min(1).max(200),
-  choicesMade: z.array(
-    z.object({
-      sceneId: z.string(),
-      choiceId: z.string(),
-      wasOptimal: z.boolean(),
-      timestamp: z.string(),
-    }),
-  ),
+  // Cap at 500: largest scenarios are ~30 scenes, so 500 is ~16x the
+  // worst case. Prevents a malformed client from posting an unbounded
+  // array that bloats the choicesMade JSON column even though replayXp
+  // would abort early on the first invalid record.
+  choicesMade: z
+    .array(
+      z.object({
+        sceneId: z.string(),
+        choiceId: z.string(),
+        wasOptimal: z.boolean(),
+        timestamp: z.string(),
+      }),
+    )
+    .max(500),
   xpEarned: z.number().int().min(0).max(10_000),
   outcome: z.enum(["good", "neutral", "bad", "passed", "failed"]),
   endedAt: z.string(),
