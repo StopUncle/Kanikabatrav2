@@ -5,11 +5,11 @@
   "scripts": {
     "dev": "next dev",
     "prebuild": "node scripts/prebuild.js",
-    "build": "npx prisma generate && npm run prebuild && next build",
+    "build": "npx prisma generate && npm run prebuild && npm run validate:scenarios && next build",
     "start": "npx prisma db push --skip-generate && next start",
     "lint": "next lint",
     "type-check": "tsc --noEmit",
-    "railway-build": "npm run prebuild && next build",
+    "railway-build": "npm run prebuild && npm run validate:scenarios && next build",
     "test": "jest",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
