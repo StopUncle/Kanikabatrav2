@@ -630,6 +630,11 @@ export default function SimulatorRunner({
   useEffect(() => {
     const el = choicesScrollRef.current;
     if (!el) return;
+    // When choices appear, force the scroll position to the top.
+    // Defensive against any scroll position carried over from the
+    // dialog phase, plus a guard against browsers that anchor an
+    // overflowing flex column to the end on first paint.
+    if (showChoices) el.scrollTop = 0;
     const measure = () => {
       const overflow = el.scrollHeight > el.clientHeight + 4;
       setIsChoicesOverflowing(overflow);
@@ -1070,11 +1075,16 @@ export default function SimulatorRunner({
             el.scrollHeight - el.scrollTop - el.clientHeight < 24,
           );
         }}
-        // Fixed height (was max-h, which let the column shrink to
-        // content). With the explicit height, the choices wrapper's
-        // mb-auto has space to absorb and pull the cards to the top
-        // of the play area instead of leaving them bottom-bunched.
-        className="absolute inset-x-0 bottom-16 sm:bottom-20 z-[35] flex flex-col items-center justify-end gap-3 sm:gap-5 px-4 h-[calc(100dvh-180px)] overflow-y-auto [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+        // justify-start when choices are showing so the echo + first
+        // card top-anchor and the scroll position starts at the TOP.
+        // With justify-end, an overflowing 4-choice stack landed the
+        // player at the bottom of the scroll — they had to scroll UP
+        // to see what they were replying to. justify-end is kept for
+        // the dialog phase so a single dialog line reads cinematically
+        // near the bottom of the screen.
+        className={`absolute inset-x-0 bottom-16 sm:bottom-20 z-[35] flex flex-col items-center ${
+          showChoices ? "justify-start" : "justify-end"
+        } gap-3 sm:gap-5 px-4 h-[calc(100dvh-180px)] overflow-y-auto [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden`}
       >
         {/* One AnimatePresence with mode="wait" so the dialog→choices
             swap is sequential (dialog exits, then choices enter) instead
@@ -1093,14 +1103,12 @@ export default function SimulatorRunner({
               to find an already-revealed first line. */}
           {showIntro ? null : showChoices && scene.choices ? (
             <m.div
-              // mb-auto pushes the choices block to the TOP of the
-              // bottom-anchored flex column so the player reads top-down
-              // (echo first, then cards) and the empty space falls
-              // BELOW the cards instead of above. Touching only this
-              // wrapper avoids mid-transition layout shifts on the
-              // dialog box (which has no mb-auto and stays bottom-
-              // anchored under the parent's justify-end).
-              className="w-full max-w-2xl mx-auto mb-auto"
+              // Container flips to justify-start when choices are
+              // showing, so the wrapper sits naturally at the top of
+              // the play area without needing mb-auto. Top-anchored +
+              // overflow-y-auto means the scroll starts at the top —
+              // player reads top-down, scrolls DOWN if there's more.
+              className="w-full max-w-2xl mx-auto"
               key={`choices-wrap-${scene.id}`}
               initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
