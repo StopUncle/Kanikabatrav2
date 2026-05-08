@@ -5,7 +5,6 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import {
   LayoutDashboard,
-  UserCheck,
   MessageSquare,
   FileText,
   Mic,
@@ -33,7 +32,6 @@ const NAV_ITEMS = [
   { href: "/admin", label: "Dashboard", icon: LayoutDashboard },
   { href: "/admin/metrics", label: "Metrics", icon: BarChart3 },
   { href: "/admin/content", label: "Content", icon: Lightbulb },
-  { href: "/admin/applications", label: "Applications", icon: UserCheck },
   { href: "/admin/comments", label: "Comments", icon: MessageSquare },
   { href: "/admin/reports", label: "Reports", icon: Flag },
   { href: "/admin/posts", label: "Posts", icon: FileText },

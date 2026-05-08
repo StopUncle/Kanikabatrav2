@@ -6,6 +6,7 @@ import { m } from "framer-motion";
 import Link from "next/link";
 import Header from "@/components/Header";
 import BackgroundEffects from "@/components/BackgroundEffects";
+import QuizEmailCapture from "@/components/quiz/QuizEmailCapture";
 import {
   BPDDiagnosis,
   BPDScores,
@@ -340,6 +341,12 @@ export default function BPDResultsPage() {
               </div>
             </m.div>
           )}
+
+          <QuizEmailCapture
+            source="bpd-quiz"
+            tags={[`tier:${diagnosis.tier}`]}
+            resultLabel={profile.name}
+          />
 
           {/* Related */}
           <m.div

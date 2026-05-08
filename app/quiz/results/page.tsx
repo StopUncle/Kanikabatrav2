@@ -540,54 +540,20 @@ export default function QuizResultsPage() {
               )}
             </m.div>
 
-            {/* Personalized Recommendation */}
+            {/* Personalized Recommendation.
+                Order matters at peak intent. Consilium credit (highest
+                LTV, recurring) leads. Book / coaching is the secondary
+                recommendation, framed as a complementary path rather
+                than the headline. Pre-2026-05-08 the order was inverted
+                and quiz-buyer credit redemption was 0/9 over 30 days. */}
             <m.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.55 }}
               className="mt-12"
             >
-              {primaryType &&
-              ["narcissistic", "borderline", "histrionic"].includes(
-                primaryType,
-              ) ? (
-                <div className="p-6 rounded-xl border border-accent-gold/20 bg-accent-gold/[0.03] text-center">
-                  <p className="text-text-gray text-sm mb-2">
-                    Based on your results
-                  </p>
-                  <p className="text-white font-light text-lg mb-4">
-                    Your pattern suggests you may be attracting or attracted to
-                   , high-risk personality types. A session could help you see
-                    what you keep missing.
-                  </p>
-                  <Link
-                    href="/coaching"
-                    className="inline-block px-8 py-3 text-sm font-medium uppercase tracking-wider text-accent-gold border border-accent-gold/30 rounded-full hover:bg-accent-gold/10 transition-all"
-                  >
-                    Explore Coaching
-                  </Link>
-                </div>
-              ) : (
-                <div className="p-6 rounded-xl border border-white/[0.06] bg-white/[0.02] text-center">
-                  <p className="text-text-gray text-sm mb-2">
-                    Based on your results
-                  </p>
-                  <p className="text-white font-light text-lg mb-4">
-                    Your empathy levels make you a target for manipulation. The
-                    Sociopathic Dating Bible teaches you the playbook they use —
-                    so you can see it coming.
-                  </p>
-                  <Link
-                    href="/book"
-                    className="inline-block px-8 py-3 text-sm font-medium uppercase tracking-wider text-accent-gold border border-accent-gold/30 rounded-full hover:bg-accent-gold/10 transition-all"
-                  >
-                    Get the Book
-                  </Link>
-                </div>
-              )}
-
               {apiData?.consiliumCredit ? (
-                <div className="mt-6 p-6 rounded-xl border border-accent-gold/40 bg-gradient-to-br from-accent-gold/[0.08] to-deep-burgundy/[0.1] text-center">
+                <div className="p-6 rounded-xl border border-accent-gold/40 bg-gradient-to-br from-accent-gold/[0.08] to-deep-burgundy/[0.1] text-center">
                   <p className="text-accent-gold text-[10px] uppercase tracking-[0.25em] mb-3 font-semibold">
                     A thank-you from Kanika
                   </p>
@@ -621,18 +587,56 @@ export default function QuizResultsPage() {
                   </Link>
                 </div>
               ) : (
-                <div className="mt-6 p-5 bg-deep-black/30 border border-accent-gold/10 rounded-xl text-center">
-                  <p className="text-text-gray text-sm mb-2">
-                    Want to practise spotting these patterns in the wild?
+                <div className="p-6 rounded-xl border border-accent-gold/30 bg-accent-gold/[0.04] text-center">
+                  <p className="text-accent-gold text-[10px] uppercase tracking-[0.25em] mb-3 font-semibold">
+                    Where this gets practised
                   </p>
-                  <p className="text-text-gray/70 text-xs mb-3 max-w-md mx-auto leading-relaxed">
-                    The Dark Mirror Simulator inside The Consilium, branching scenarios on the same axes you just scored on, in real-world artefacts. Plus courses, voice notes, and a moderated community.
+                  <p className="text-white font-light text-lg mb-3">
+                    The Consilium, $29/month
+                  </p>
+                  <p className="text-text-gray text-xs mb-5 max-w-md mx-auto leading-relaxed">
+                    The Dark Mirror Simulator runs the patterns you just scored on as branching scenarios, in real-world artefacts. Plus the classroom, voice notes, and a moderated community. Cancel any time.
                   </p>
                   <Link
                     href="/consilium"
+                    className="inline-block px-8 py-3 text-sm font-medium uppercase tracking-wider text-deep-black bg-accent-gold rounded-full hover:bg-accent-gold/90 transition-all"
+                  >
+                    Step Inside
+                  </Link>
+                </div>
+              )}
+
+              {primaryType &&
+              ["narcissistic", "borderline", "histrionic"].includes(
+                primaryType,
+              ) ? (
+                <div className="mt-6 p-5 rounded-xl border border-white/[0.06] bg-white/[0.02] text-center">
+                  <p className="text-text-gray text-sm mb-2">
+                    Also based on your results
+                  </p>
+                  <p className="text-text-gray/85 font-light text-base mb-4 max-w-md mx-auto leading-relaxed">
+                    Your pattern suggests you may be attracting or attracted to high-risk personality types. A session can help you see what you keep missing.
+                  </p>
+                  <Link
+                    href="/coaching"
                     className="inline-block px-6 py-2 text-sm font-medium text-accent-gold border border-accent-gold/20 rounded-full hover:bg-accent-gold/10 transition-all"
                   >
-                    Explore The Consilium, $29/mo
+                    Explore Coaching
+                  </Link>
+                </div>
+              ) : (
+                <div className="mt-6 p-5 rounded-xl border border-white/[0.06] bg-white/[0.02] text-center">
+                  <p className="text-text-gray text-sm mb-2">
+                    Also based on your results
+                  </p>
+                  <p className="text-text-gray/85 font-light text-base mb-4 max-w-md mx-auto leading-relaxed">
+                    Your empathy levels make you a target for manipulation. The Sociopathic Dating Bible teaches you the playbook so you can see it coming. Members get it for $9.99 (vs $24.99 standalone).
+                  </p>
+                  <Link
+                    href="/book"
+                    className="inline-block px-6 py-2 text-sm font-medium text-accent-gold border border-accent-gold/20 rounded-full hover:bg-accent-gold/10 transition-all"
+                  >
+                    Get the Book
                   </Link>
                 </div>
               )}

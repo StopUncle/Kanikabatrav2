@@ -6,6 +6,7 @@ import { m } from "framer-motion";
 import Link from "next/link";
 import Header from "@/components/Header";
 import BackgroundEffects from "@/components/BackgroundEffects";
+import QuizEmailCapture from "@/components/quiz/QuizEmailCapture";
 import {
   CovertNarcissistDiagnosis,
   CovertNarcissistScores,
@@ -310,6 +311,12 @@ export default function CovertNarcissistResultsPage() {
               </div>
             </m.div>
           )}
+
+          <QuizEmailCapture
+            source="covert-narcissist-quiz"
+            tags={[`tier:${diagnosis.tier}`]}
+            resultLabel={profile.name}
+          />
 
           {/* Related */}
           <m.div

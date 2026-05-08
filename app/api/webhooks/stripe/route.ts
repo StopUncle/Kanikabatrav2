@@ -217,6 +217,7 @@ export async function POST(request: NextRequest) {
           // credits the quiz price toward the buyer's first
           // Consilium month. Non-blocking, a Stripe hiccup here
           // doesn't fail the webhook. 14-day expiry.
+          let issuedCredit: { code: string; expiresAt: Date; amount: number } | null = null;
           if (unlockedQuizResultId) {
             const credit = await createQuizConsiliumCredit(unlockedQuizResultId);
             if (credit) {
@@ -227,6 +228,47 @@ export async function POST(request: NextRequest) {
                   consiliumCreditExpiresAt: credit.expiresAt,
                 },
               });
+              issuedCredit = {
+                code: credit.code,
+                expiresAt: credit.expiresAt,
+                amount: amount,
+              };
+            }
+          }
+
+          // Auto-enroll the quiz buyer in the 3-email drip that
+          // surfaces the credit code on Day 1, 5, and 12. Without
+          // this, the credit's only surface is the unlock moment,
+          // and historical redemption was 0/9. Idempotent on the
+          // recipient + sequence pair so retries don't double-enqueue.
+          if (issuedCredit && unlockedQuizResultId) {
+            try {
+              const { buildQuizBuyerSequence } = await import(
+                "@/lib/email-sequences"
+              );
+              const existingSeq = await prisma.emailQueue.findFirst({
+                where: {
+                  recipientEmail: email,
+                  sequence: "quiz-buyer-welcome",
+                  metadata: { path: ["quizResultId"], equals: unlockedQuizResultId },
+                },
+                select: { id: true },
+              });
+              if (!existingSeq) {
+                const dripDisplayName = name || email.split("@")[0] || "you";
+                const entries = buildQuizBuyerSequence(email, dripDisplayName, {
+                  quizResultId: unlockedQuizResultId,
+                  creditCode: issuedCredit.code,
+                  creditAmount: issuedCredit.amount,
+                  creditExpiresAt: issuedCredit.expiresAt,
+                });
+                await prisma.emailQueue.createMany({ data: entries });
+              }
+            } catch (err) {
+              console.error(
+                "[stripe-webhook] quiz buyer sequence enrollment failed:",
+                err,
+              );
             }
           }
         } else if (

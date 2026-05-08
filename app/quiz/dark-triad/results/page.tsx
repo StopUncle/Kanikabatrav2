@@ -6,6 +6,7 @@ import { m } from "framer-motion";
 import Link from "next/link";
 import Header from "@/components/Header";
 import BackgroundEffects from "@/components/BackgroundEffects";
+import QuizEmailCapture from "@/components/quiz/QuizEmailCapture";
 import {
   DarkTriadDiagnosis,
   DarkTriadScores,
@@ -268,6 +269,12 @@ export default function DarkTriadResultsPage() {
               </div>
             </div>
           </m.div>
+
+          <QuizEmailCapture
+            source="dark-triad-quiz"
+            tags={[`archetype:${diagnosis.archetype}`]}
+            resultLabel={diagnosis.headline}
+          />
 
           {/* Related */}
           <m.div

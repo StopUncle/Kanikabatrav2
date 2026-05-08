@@ -6,6 +6,7 @@ import { m } from "framer-motion";
 import Link from "next/link";
 import Header from "@/components/Header";
 import BackgroundEffects from "@/components/BackgroundEffects";
+import QuizEmailCapture from "@/components/quiz/QuizEmailCapture";
 import {
   SociopathDiagnosis,
   SociopathScores,
@@ -306,6 +307,16 @@ export default function SociopathResultsPage() {
               </div>
             </m.div>
           )}
+
+          <QuizEmailCapture
+            source="sociopath-quiz"
+            tags={[
+              `quadrant:${diagnosis.quadrant}`,
+              `primary:${diagnosis.primary.tier}`,
+              `secondary:${diagnosis.secondary.tier}`,
+            ]}
+            resultLabel={profile.name}
+          />
 
           {/* Related reading + book pitch */}
           <m.div

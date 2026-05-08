@@ -144,9 +144,12 @@ export async function checkMembership(userId: string | null): Promise<Membership
   }
 
   if (membership.status !== "ACTIVE") {
+    // Legacy PENDING/APPROVED rows (from before the application gate
+    // was removed on 2026-04-19) fall through to the landing page,
+    // where the one-click join button takes them straight to checkout.
     const redirectMap: Record<string, string> = {
-      PENDING: "/consilium/apply?status=pending",
-      APPROVED: "/consilium/apply?status=approved",
+      PENDING: "/consilium",
+      APPROVED: "/consilium",
       CANCELLED: "/consilium?status=cancelled",
       EXPIRED: "/consilium?status=expired",
       SUSPENDED: "/consilium?status=suspended",

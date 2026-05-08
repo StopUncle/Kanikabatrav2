@@ -1390,16 +1390,14 @@ export const sendQuizResults = async (
 };
 
 // ============================================
-// Consilium Application Emails
+// Member-facing transactional email shell.
+// Used by membership lifecycle (renewed / suspended / cancelled / ending),
+// the weekly digest, and gift / bonus-month invites. Kept under the old
+// "Consilium Application" header anchor for grep continuity, but the
+// application-specific senders (sendApplicationConfirmation,
+// sendAdminApplicationAlert, sendApplicationApproved, sendApplicationRejected)
+// were removed when the application gate came out (2026-04-19).
 // ============================================
-
-interface ApplicationDetails {
-  applicantName: string;
-  applicantEmail: string;
-  whyJoin: string;
-  whatHope: string;
-  howFound: string;
-}
 
 const luxuryEmailShell = (innerHtml: string, headerTitle: string, headerSub: string): string => `
   <!DOCTYPE html>
@@ -1487,91 +1485,7 @@ const luxuryEmailShell = (innerHtml: string, headerTitle: string, headerSub: str
   </html>
 `;
 
-export const sendApplicationConfirmation = async (
-  applicantEmail: string,
-  applicantName: string,
-): Promise<boolean> => {
-  const inner = `
-    <p style="color: #f5f0ed; font-size: 18px; margin: 0 0 20px 0; line-height: 1.6;">
-      Dear ${esc(applicantName)},
-    </p>
-    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 20px 0; font-size: 15px;">
-      Your application to The Consilium has been received. Every applicant is reviewed personally. This is not a community you can buy your way into.
-    </p>
-    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="margin: 25px 0;">
-      <tr>
-        <td bgcolor="#1a0d11" style="padding: 25px; border-radius: 10px; border: 1px solid #d4af37;">
-          <h3 style="color: #d4af37; margin: 0 0 12px 0; font-size: 15px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px;">
-            What Happens Next
-          </h3>
-          <p style="color: #94a3b8; margin: 0; font-size: 14px; line-height: 1.7;">
-            We review every application within 24 hours. If you're approved, you'll receive a follow-up email with your subscription link and immediate access to the community feed, daily insights, classroom modules, and Kanika's voice notes.
-          </p>
-        </td>
-      </tr>
-    </table>
-    <p style="color: #94a3b8; line-height: 1.8; margin: 20px 0 0 0; font-size: 14px;">
-      In the meantime, keep an eye on your inbox, including your spam folder.
-    </p>
-  `;
 
-  return await sendEmail({
-    to: applicantEmail,
-    subject: "Your Consilium application has been received",
-    html: luxuryEmailShell(inner, "Application Received", "We're reviewing your submission"),
-  });
-};
-
-export const sendAdminApplicationAlert = async (
-  details: ApplicationDetails,
-): Promise<boolean> => {
-  const adminEmail = process.env.ADMIN_EMAIL || "Kanika@kanikarose.com";
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://kanikarose.com";
-
-  const inner = `
-    <p style="color: #f5f0ed; font-size: 16px; margin: 0 0 25px 0; line-height: 1.6;">
-      A new application has been submitted to The Consilium.
-    </p>
-    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="margin: 0 0 25px 0;">
-      <tr>
-        <td bgcolor="#1a0d11" style="padding: 22px; border-radius: 10px; border: 1px solid #d4af37;">
-          <p style="color: #94a3b8; margin: 0 0 8px 0; font-size: 13px;"><strong style="color: #d4af37;">Name:</strong> ${esc(details.applicantName)}</p>
-          <p style="color: #94a3b8; margin: 0 0 8px 0; font-size: 13px;"><strong style="color: #d4af37;">Email:</strong> ${esc(details.applicantEmail)}</p>
-          <p style="color: #94a3b8; margin: 0; font-size: 13px;"><strong style="color: #d4af37;">How they found us:</strong> ${esc(details.howFound)}</p>
-        </td>
-      </tr>
-    </table>
-    <h3 style="color: #d4af37; margin: 25px 0 10px 0; font-size: 14px; text-transform: uppercase; letter-spacing: 1px;">Why They Want To Join</h3>
-    <div style="background: #0a0a0a; padding: 18px; border-radius: 8px; border-left: 3px solid #d4af37;">
-      <p style="color: #f5f0ed; margin: 0; font-size: 14px; line-height: 1.7; white-space: pre-wrap;">${esc(details.whyJoin)}</p>
-    </div>
-    <h3 style="color: #d4af37; margin: 25px 0 10px 0; font-size: 14px; text-transform: uppercase; letter-spacing: 1px;">What They Hope To Gain</h3>
-    <div style="background: #0a0a0a; padding: 18px; border-radius: 8px; border-left: 3px solid #d4af37;">
-      <p style="color: #f5f0ed; margin: 0; font-size: 14px; line-height: 1.7; white-space: pre-wrap;">${esc(details.whatHope)}</p>
-    </div>
-    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="margin: 30px 0 0 0;">
-      <tr>
-        <td align="center">
-          <table role="presentation" cellspacing="0" cellpadding="0" border="0">
-            <tr>
-              <td bgcolor="#d4af37" style="border-radius: 50px;" align="center">
-                <a href="${baseUrl}/admin/applications" target="_blank" style="display: inline-block; color: #050511; padding: 16px 42px; text-decoration: none; font-weight: 700; font-size: 14px; letter-spacing: 1px; text-transform: uppercase; border-radius: 50px;">Review Application</a>
-              </td>
-            </tr>
-          </table>
-        </td>
-      </tr>
-    </table>
-  `;
-
-  return await sendEmail({
-    to: adminEmail,
-    // Strip CRLF from user-supplied names to prevent header injection.
-    subject: `[Consilium] New application from ${details.applicantName.replace(/[\r\n]/g, " ")}`,
-    html: luxuryEmailShell(inner, "New Application", `From ${esc(details.applicantName)}`),
-    replyTo: details.applicantEmail,
-  });
-};
 
 // ============================================
 // Weekly digest for Consilium members
@@ -1821,99 +1735,7 @@ export const sendInnerCircleWelcomeNewUser = async (
   });
 };
 
-export const sendApplicationApproved = async (
-  applicantEmail: string,
-  applicantName: string,
-): Promise<boolean> => {
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://kanikarose.com";
 
-  const inner = `
-    <p style="color: #f5f0ed; font-size: 18px; margin: 0 0 20px 0; line-height: 1.6;">
-      Dear ${esc(applicantName)},
-    </p>
-    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 25px 0; font-size: 15px;">
-      You've been approved for The Consilium. Welcome to the room you've been trying to enter.
-    </p>
-    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="margin: 0 0 30px 0;">
-      <tr>
-        <td bgcolor="#1a0d11" style="padding: 25px; border-radius: 10px; border: 2px solid #d4af37;">
-          <h3 style="color: #d4af37; margin: 0 0 15px 0; font-size: 17px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; text-align: center;">
-            What You're Getting
-          </h3>
-          <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0">
-            <tr><td style="padding: 8px 0; color: #f5f0ed; font-size: 14px; line-height: 1.6; border-bottom: 1px solid #2a1820;"><strong style="color: #d4af37;">Daily insights</strong>, psychology drops curated for your patterns</td></tr>
-            <tr><td style="padding: 8px 0; color: #f5f0ed; font-size: 14px; line-height: 1.6; border-bottom: 1px solid #2a1820;"><strong style="color: #d4af37;">Voice notes from Kanika</strong>, private audio you won't hear anywhere else</td></tr>
-            <tr><td style="padding: 8px 0; color: #f5f0ed; font-size: 14px; line-height: 1.6; border-bottom: 1px solid #2a1820;"><strong style="color: #d4af37;">The Classroom</strong>, structured modules on dark psychology mastery</td></tr>
-            <tr><td style="padding: 8px 0; color: #f5f0ed; font-size: 14px; line-height: 1.6;"><strong style="color: #d4af37;">The community</strong>, people who finally see what you see</td></tr>
-          </table>
-        </td>
-      </tr>
-    </table>
-    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 25px 0; font-size: 15px; text-align: center;">
-      Complete your subscription below to activate your membership.
-    </p>
-    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="margin: 0 0 25px 0;">
-      <tr>
-        <td align="center">
-          <table role="presentation" cellspacing="0" cellpadding="0" border="0">
-            <tr>
-              <td bgcolor="#d4af37" style="border-radius: 50px;" align="center">
-                <a href="${baseUrl}/consilium/apply?status=approved" target="_blank" style="display: inline-block; color: #050511; padding: 18px 50px; text-decoration: none; font-weight: 700; font-size: 16px; letter-spacing: 1px; text-transform: uppercase; border-radius: 50px;">Activate Membership</a>
-              </td>
-            </tr>
-          </table>
-        </td>
-      </tr>
-    </table>
-    <p style="color: #94a3b8; line-height: 1.8; margin: 20px 0 0 0; font-size: 13px; text-align: center; font-style: italic;">
-      You earned this. Now use it.
-    </p>
-  `;
-
-  return await sendEmail({
-    to: applicantEmail,
-    subject: "You're in. Welcome to The Consilium.",
-    html: luxuryEmailShell(inner, "Application Approved", "Welcome to The Consilium"),
-  });
-};
-
-export const sendApplicationRejected = async (
-  applicantEmail: string,
-  applicantName: string,
-  reason?: string,
-): Promise<boolean> => {
-  const inner = `
-    <p style="color: #f5f0ed; font-size: 18px; margin: 0 0 20px 0; line-height: 1.6;">
-      Dear ${esc(applicantName)},
-    </p>
-    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 25px 0; font-size: 15px;">
-      Thank you for your interest in The Consilium. After reviewing your application, we&rsquo;re unable to offer you a spot at this time.
-    </p>
-    ${reason ? `
-    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="margin: 0 0 25px 0;">
-      <tr>
-        <td bgcolor="#1a0d11" style="padding: 20px; border-radius: 10px; border: 1px solid #2a1820;">
-          <p style="color: #94a3b8; line-height: 1.8; margin: 0; font-size: 14px; font-style: italic;">
-            &ldquo;${esc(reason)}&rdquo;
-          </p>
-        </td>
-      </tr>
-    </table>
-    ` : ""}
-    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 25px 0; font-size: 15px;">
-      This doesn&rsquo;t mean the door is closed forever. You&rsquo;re welcome to reapply in the future. If you have questions, reply to this email.
-    </p>
-    <p style="color: #94a3b8; line-height: 1.8; margin: 20px 0 0 0; font-size: 13px; font-style: italic;">
-     , Kanika
-    </p>
-  `;
-
-  return await sendEmail({
-    to: applicantEmail,
-    subject: "Your Consilium Application",
-    html: luxuryEmailShell(inner, "Application Update", "The Consilium"),
-  });
-};
 
 export const sendMembershipRenewed = async (
   memberEmail: string,

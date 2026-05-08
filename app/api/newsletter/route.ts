@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { sendEmail } from "@/lib/email";
+import { buildNewsletterDrip } from "@/lib/email-sequences";
 import { logger } from "@/lib/logger";
 
 export async function POST(request: NextRequest) {
@@ -58,6 +59,32 @@ export async function POST(request: NextRequest) {
         verified: true,
       },
     });
+
+    // Enqueue the 3-email newsletter drip (Day 2 / 4 / 7). Idempotent
+    // on the recipient + sequence pair so re-subscribes (caught above
+    // by the existingSubscriber branch) don't double-enqueue. Failure
+    // here doesn't break the capture.
+    try {
+      const existingDrip = await prisma.emailQueue.findFirst({
+        where: {
+          recipientEmail: email.toLowerCase(),
+          sequence: "newsletter-drip",
+        },
+        select: { id: true },
+      });
+      if (!existingDrip) {
+        const dripDisplayName = name || email.split("@")[0] || "you";
+        const entries = buildNewsletterDrip(
+          email.toLowerCase(),
+          dripDisplayName,
+        );
+        await prisma.emailQueue.createMany({ data: entries });
+      }
+    } catch (dripErr) {
+      logger.error("[newsletter] drip enqueue failed", dripErr as Error, {
+        email,
+      });
+    }
 
     // Send welcome email (fire and forget, don't block the response)
     sendEmail({

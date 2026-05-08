@@ -102,7 +102,7 @@ function buildWelcomeHtml(name: string): string {
     </p>
 
     <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 20px 0; font-size: 15px;">
-      Welcome. You just made a decision most people never will &mdash; investing in the kind of knowledge that actually changes how you move through the world.
+      Welcome. You just made a decision most people never will, investing in the kind of knowledge that actually changes how you move through the world.
     </p>
 
     <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 25px 0; font-size: 15px;">
@@ -120,7 +120,7 @@ function buildWelcomeHtml(name: string): string {
             </tr>
             <tr>
               <td style="padding: 12px 0; color: #f5f0ed; font-size: 14px; line-height: 1.6; border-bottom: 1px solid #3d2030;">
-                <strong style="color: #d4af37;">2.</strong> Keep a journal as you read. Write down every pattern you recognise from your own life &mdash; the awareness alone will shift how you operate.
+                <strong style="color: #d4af37;">2.</strong> Keep a journal as you read. Write down every pattern you recognise from your own life, the awareness alone will shift how you operate.
               </td>
             </tr>
             <tr>
@@ -134,7 +134,7 @@ function buildWelcomeHtml(name: string): string {
     </table>
 
     <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 0 0; font-size: 15px;">
-      Take your time with it. This isn&rsquo;t a book you rush through &mdash; it&rsquo;s one you live with.
+      Take your time with it. This isn&rsquo;t a book you rush through, it&rsquo;s one you live with.
     </p>`;
 
   return emailShell("Welcome to the Dark Side", "Your journey begins now", body);
@@ -149,7 +149,7 @@ function buildTrialOfferHtml(name: string, trialToken: string): string {
     </p>
 
     <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 20px 0; font-size: 15px;">
-      Because you invested in the premium edition, I&rsquo;m giving you something I don&rsquo;t offer publicly &mdash; a free month inside The Consilium.
+      Because you invested in the premium edition, I&rsquo;m giving you something I don&rsquo;t offer publicly, a free month inside The Consilium.
     </p>
 
     <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 25px 0; font-size: 15px;">
@@ -167,22 +167,22 @@ function buildTrialOfferHtml(name: string, trialToken: string): string {
           <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0">
             <tr>
               <td style="padding: 12px 0; color: #f5f0ed; font-size: 14px; line-height: 1.6; border-bottom: 1px solid #3d2030;">
-                <strong style="color: #d4af37;">Weekly Voice Notes</strong> &mdash; raw, unfiltered audio directly from me on psychology, power, and strategy
+                <strong style="color: #d4af37;">Weekly Voice Notes</strong>, raw, unfiltered audio directly from me on psychology, power, and strategy
               </td>
             </tr>
             <tr>
               <td style="padding: 12px 0; color: #f5f0ed; font-size: 14px; line-height: 1.6; border-bottom: 1px solid #3d2030;">
-                <strong style="color: #d4af37;">Course Library</strong> &mdash; structured lessons you won&rsquo;t find on my public channels
+                <strong style="color: #d4af37;">Course Library</strong>, structured lessons you won&rsquo;t find on my public channels
               </td>
             </tr>
             <tr>
               <td style="padding: 12px 0; color: #f5f0ed; font-size: 14px; line-height: 1.6; border-bottom: 1px solid #3d2030;">
-                <strong style="color: #d4af37;">Community Feed</strong> &mdash; women-only, troll-free space for real conversations
+                <strong style="color: #d4af37;">Community Feed</strong>, every comment human-reviewed, troll-free by design
               </td>
             </tr>
             <tr>
               <td style="padding: 12px 0; color: #f5f0ed; font-size: 14px; line-height: 1.6;">
-                <strong style="color: #d4af37;">Private Community</strong> &mdash; a space where you can actually be honest about what you want
+                <strong style="color: #d4af37;">Private Community</strong>, a space where you can actually be honest about what you want
               </td>
             </tr>
           </table>
@@ -191,12 +191,12 @@ function buildTrialOfferHtml(name: string, trialToken: string): string {
     </table>
 
     <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 0 0; font-size: 15px;">
-      After the free month, you can subscribe at $29/month or simply let it expire &mdash; no obligation, no hidden charges.
+      After the free month, you can subscribe at $29/month or simply let it expire, no obligation, no hidden charges.
     </p>`;
 
   return emailShell(
     "You&rsquo;ve Been Invited",
-    "The Consilium &mdash; free month",
+    "The Consilium, free month",
     body,
   );
 }
@@ -210,11 +210,11 @@ function buildReminderHtml(name: string, trialToken: string): string {
     </p>
 
     <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 20px 0; font-size: 15px;">
-      Quick reminder &mdash; your free month inside The Consilium is still waiting for you, but the invitation won&rsquo;t be open forever.
+      Quick reminder, your free month inside The Consilium is still waiting for you, but the invitation won&rsquo;t be open forever.
     </p>
 
     <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 25px 0; font-size: 15px;">
-      Over 2,000 women are already inside. The conversations happening right now are the ones you won&rsquo;t see on any public platform.
+      The conversations happening inside right now are the ones you won&rsquo;t see on any public platform. Daily psychology drops, voice notes, and the Dark Mirror Simulator (60+ branching scenarios) are all live the moment you join.
     </p>
 
     ${goldButton("Claim Your Free Month", claimUrl)}
@@ -246,7 +246,7 @@ function addDays(date: Date, days: number): Date {
 //
 // Cadence: Day 1 / 3 / 5 / 7 after capture. The immediate result
 // email goes out from the API route via sendMiniDarkMirrorResult /
-// sendStarterPack — these queue what comes after.
+// sendStarterPack, these queue what comes after.
 //
 // Voice: Kanika, first person, no marketing fluff. Each email
 // delivers a piece of standalone value before the soft pivot to
@@ -256,7 +256,7 @@ function addDays(date: Date, days: number): Date {
 const PERSONALITY_HEADLINE: Record<string, { name: string; underStress: string }> = {
   psychopathic: {
     name: "The Predator",
-    underStress: "When the stakes climb, you go quieter, not louder. Most people miss this — they assume disengagement is loss of interest. It's the opposite. You're calculating cost.",
+    underStress: "When the stakes climb, you go quieter, not louder. Most people miss this, they assume disengagement is loss of interest. It's the opposite. You're calculating cost.",
   },
   sociopathic: {
     name: "The Wildcard",
@@ -264,7 +264,7 @@ const PERSONALITY_HEADLINE: Record<string, { name: string; underStress: string }
   },
   narcissistic: {
     name: "The Mirror",
-    underStress: "Under stress, supply demand spikes. Threats to image read as threats to self. You'll either escalate or punish — and both routes feel justified in the moment.",
+    underStress: "Under stress, supply demand spikes. Threats to image read as threats to self. You'll either escalate or punish, and both routes feel justified in the moment.",
   },
   borderline: {
     name: "The Storm",
@@ -272,11 +272,11 @@ const PERSONALITY_HEADLINE: Record<string, { name: string; underStress: string }
   },
   histrionic: {
     name: "The Stage",
-    underStress: "Pressure reads as invisibility. The fix you reach for — bigger emotion, bigger gesture — works socially and costs you privately every time.",
+    underStress: "Pressure reads as invisibility. The fix you reach for, bigger emotion, bigger gesture, works socially and costs you privately every time.",
   },
   neurotypical: {
     name: "The Witness",
-    underStress: "You're the cohort the others read. Your strength is also your blind spot — you assume good faith longer than the people around you have earned.",
+    underStress: "You're the cohort the others read. Your strength is also your blind spot, you assume good faith longer than the people around you have earned.",
   },
 };
 
@@ -290,7 +290,7 @@ function buildMiniDripStep1(name: string, dominantType: string): string {
     </p>
 
     <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 24px 0; font-size: 14px; font-style: italic;">
-      Quick favor first &mdash; if this landed in spam or promotions, drag it to your inbox so I can actually reach you next time. The result email is one thing; what comes next is where the real read sits.
+      Quick favor first, if this landed in spam or promotions, drag it to your inbox so I can actually reach you next time. The result email is one thing; what comes next is where the real read sits.
     </p>
 
     <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 20px 0; font-size: 15px;">
@@ -302,7 +302,7 @@ function buildMiniDripStep1(name: string, dominantType: string): string {
     </p>
 
     <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 20px 0; font-size: 15px;">
-      The mini-quiz can tell you the dominant axis. It can&rsquo;t tell you how high or low you function on it &mdash; and that&rsquo;s the question that actually matters in your relationships. A high-functioning version of your axis is a quiet superpower. A low-functioning version is the thing that ends a marriage.
+      The mini-quiz can tell you the dominant axis. It can&rsquo;t tell you how high or low you function on it, and that&rsquo;s the question that actually matters in your relationships. A high-functioning version of your axis is a quiet superpower. A low-functioning version is the thing that ends a marriage.
     </p>
 
     <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 0 0; font-size: 15px;">
@@ -311,7 +311,7 @@ function buildMiniDripStep1(name: string, dominantType: string): string {
 
   return emailShell(
     `What ${profile.name} looks like under stress`,
-    "Mini Dark Mirror — Day 1",
+    "Mini Dark Mirror, Day 1",
     body,
   );
 }
@@ -331,7 +331,7 @@ function buildMiniDripStep2(name: string): string {
     </p>
 
     <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 20px 0; font-size: 15px;">
-      <strong style="color: #d4af37;">Mirror-Bonding</strong> is the one most people get caught in and never get a name for. It&rsquo;s the early-relationship feeling that you&rsquo;ve never been understood like this before &mdash; that this person <em>gets</em> you in a way no one else has. It feels like fate. It&rsquo;s actually a tactic.
+      <strong style="color: #d4af37;">Mirror-Bonding</strong> is the one most people get caught in and never get a name for. It&rsquo;s the early-relationship feeling that you&rsquo;ve never been understood like this before, that this person <em>gets</em> you in a way no one else has. It feels like fate. It&rsquo;s actually a tactic.
     </p>
 
     <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 25px 0; font-size: 15px;">
@@ -339,12 +339,12 @@ function buildMiniDripStep2(name: string): string {
     </p>
 
     <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 0 0; font-size: 15px;">
-      The tell is in the texture &mdash; mirror-bonders agree too smoothly. There&rsquo;s no friction, no honest disagreement, no view of theirs that contradicts yours. Real people have edges. Reflections don&rsquo;t.
+      The tell is in the texture, mirror-bonders agree too smoothly. There&rsquo;s no friction, no honest disagreement, no view of theirs that contradicts yours. Real people have edges. Reflections don&rsquo;t.
     </p>`;
 
   return emailShell(
     "The move you didn't see",
-    "Mini Dark Mirror — Day 3",
+    "Mini Dark Mirror, Day 3",
     body,
   );
 }
@@ -369,22 +369,22 @@ function buildMiniDripStep3(name: string): string {
           <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0">
             <tr>
               <td style="padding: 10px 0; color: #f5f0ed; font-size: 14px; line-height: 1.6; border-bottom: 1px solid #3d2030;">
-                <strong style="color: #d4af37;">The simulator</strong> &mdash; you make the call, the scene unfolds. 60+ scenarios, named tactics, real outcomes.
+                <strong style="color: #d4af37;">The simulator</strong>, you make the call, the scene unfolds. 60+ scenarios, named tactics, real outcomes.
               </td>
             </tr>
             <tr>
               <td style="padding: 10px 0; color: #f5f0ed; font-size: 14px; line-height: 1.6; border-bottom: 1px solid #3d2030;">
-                <strong style="color: #d4af37;">Voice notes from me</strong> &mdash; the unfiltered version. Things I won&rsquo;t put on Instagram.
+                <strong style="color: #d4af37;">Voice notes from me</strong>, the unfiltered version. Things I won&rsquo;t put on Instagram.
               </td>
             </tr>
             <tr>
               <td style="padding: 10px 0; color: #f5f0ed; font-size: 14px; line-height: 1.6; border-bottom: 1px solid #3d2030;">
-                <strong style="color: #d4af37;">Ask Kanika</strong> &mdash; one question per day, my answer in voice or video.
+                <strong style="color: #d4af37;">Ask Kanika</strong>, one question per day, my answer in voice or video.
               </td>
             </tr>
             <tr>
               <td style="padding: 10px 0; color: #f5f0ed; font-size: 14px; line-height: 1.6;">
-                <strong style="color: #d4af37;">Member-exclusive book pricing</strong> &mdash; Sociopathic Dating Bible at $9.99 for active members ($24.99 standalone), separate purchase.
+                <strong style="color: #d4af37;">Member-exclusive book pricing</strong>, Sociopathic Dating Bible at $9.99 for active members ($24.99 standalone), separate purchase.
               </td>
             </tr>
           </table>
@@ -398,7 +398,7 @@ function buildMiniDripStep3(name: string): string {
 
   return emailShell(
     "Where this goes deeper",
-    "Mini Dark Mirror — Day 5",
+    "Mini Dark Mirror, Day 5",
     body,
   );
 }
@@ -416,7 +416,7 @@ function buildMiniDripStep4(name: string): string {
     </p>
 
     <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 25px 0; font-size: 15px;">
-      Membership is $29/month. The book is bundled in (that&rsquo;s $24.99 of the price right there). You can cancel any time &mdash; one click on the billing page, no email, no friction.
+      Membership is $29/month. Members get the Sociopathic Dating Bible at $9.99 instead of $24.99 (separate purchase, not bundled). Cancel any time, one click on the billing page, no email, no friction.
     </p>
 
     ${goldButton("Join The Consilium", consiliumUrl)}
@@ -426,12 +426,12 @@ function buildMiniDripStep4(name: string): string {
     </p>
 
     <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 0 0; font-size: 15px;">
-      Either way &mdash; thanks for taking the quiz.
+      Either way, thanks for taking the quiz.
     </p>`;
 
   return emailShell(
     "Your invitation to The Consilium",
-    "Mini Dark Mirror — Day 7",
+    "Mini Dark Mirror, Day 7",
     body,
   );
 }
@@ -494,11 +494,11 @@ function buildStarterDripStep1(name: string): string {
     </p>
 
     <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 24px 0; font-size: 14px; font-style: italic;">
-      Quick favor &mdash; if this landed in spam or promotions, drag it to your inbox so I can keep reaching you. The pack is one thing; what I send next is where the framework actually starts working.
+      Quick favor, if this landed in spam or promotions, drag it to your inbox so I can keep reaching you. The pack is one thing; what I send next is where the framework actually starts working.
     </p>
 
     <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 20px 0; font-size: 15px;">
-      Of the five patterns in the pack, <strong style="color: #d4af37;">Mirror-Bonding</strong> is the one almost no one names correctly &mdash; and it&rsquo;s the one that does the most damage.
+      Of the five patterns in the pack, <strong style="color: #d4af37;">Mirror-Bonding</strong> is the one almost no one names correctly, and it&rsquo;s the one that does the most damage.
     </p>
 
     <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 20px 0; font-size: 15px;">
@@ -514,12 +514,12 @@ function buildStarterDripStep1(name: string): string {
     </p>
 
     <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 0 0; font-size: 15px;">
-      The tell is texture. Real people disagree with you on small things, even early. Mirrors don&rsquo;t. Watch for the absence of friction &mdash; not for the presence of red flags.
+      The tell is texture. Real people disagree with you on small things, even early. Mirrors don&rsquo;t. Watch for the absence of friction, not for the presence of red flags.
     </p>`;
 
   return emailShell(
     "The pattern most people miss",
-    "Starter Pack — Day 1",
+    "Starter Pack, Day 1",
     body,
   );
 }
@@ -543,7 +543,7 @@ function buildStarterDripStep2(name: string): string {
     </p>
 
     <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 20px 0; font-size: 15px;">
-      Naming changes what you can do. <strong style="color: #d4af37;">DARVO</strong> &mdash; Deny, Attack, Reverse Victim and Offender &mdash; is a defensive scramble; once you can see it as one move instead of a confusing emotional storm, you can answer it as one move. Calmly. Without flinching. Which is the only thing that breaks it.
+      Naming changes what you can do. <strong style="color: #d4af37;">DARVO</strong>, Deny, Attack, Reverse Victim and Offender, is a defensive scramble; once you can see it as one move instead of a confusing emotional storm, you can answer it as one move. Calmly. Without flinching. Which is the only thing that breaks it.
     </p>
 
     <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 0 0; font-size: 15px;">
@@ -552,7 +552,7 @@ function buildStarterDripStep2(name: string): string {
 
   return emailShell(
     "Why naming the move changes everything",
-    "Starter Pack — Day 3",
+    "Starter Pack, Day 3",
     body,
   );
 }
@@ -564,7 +564,7 @@ function buildStarterDripStep3(name: string): string {
     </p>
 
     <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 20px 0; font-size: 15px;">
-      The Starter Pack is recognition. Most people stop there and that&rsquo;s a real result &mdash; spotting the move is half the work.
+      The Starter Pack is recognition. Most people stop there and that&rsquo;s a real result, spotting the move is half the work.
     </p>
 
     <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 25px 0; font-size: 15px;">
@@ -581,22 +581,22 @@ function buildStarterDripStep3(name: string): string {
           <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0">
             <tr>
               <td style="padding: 10px 0; color: #f5f0ed; font-size: 14px; line-height: 1.6; border-bottom: 1px solid #3d2030;">
-                <strong style="color: #d4af37;">The simulator</strong> &mdash; 60+ scenarios where you make the call and the scene unfolds. The pack&rsquo;s patterns, in motion.
+                <strong style="color: #d4af37;">The simulator</strong>, 60+ scenarios where you make the call and the scene unfolds. The pack&rsquo;s patterns, in motion.
               </td>
             </tr>
             <tr>
               <td style="padding: 10px 0; color: #f5f0ed; font-size: 14px; line-height: 1.6; border-bottom: 1px solid #3d2030;">
-                <strong style="color: #d4af37;">Voice notes</strong> &mdash; the unfiltered version of what I think, weekly. Not a podcast. Closer to a letter.
+                <strong style="color: #d4af37;">Voice notes</strong>, the unfiltered version of what I think, weekly. Not a podcast. Closer to a letter.
               </td>
             </tr>
             <tr>
               <td style="padding: 10px 0; color: #f5f0ed; font-size: 14px; line-height: 1.6; border-bottom: 1px solid #3d2030;">
-                <strong style="color: #d4af37;">Ask Kanika</strong> &mdash; one question per day, my answer in voice or video.
+                <strong style="color: #d4af37;">Ask Kanika</strong>, one question per day, my answer in voice or video.
               </td>
             </tr>
             <tr>
               <td style="padding: 10px 0; color: #f5f0ed; font-size: 14px; line-height: 1.6;">
-                <strong style="color: #d4af37;">The book</strong> &mdash; Sociopathic Dating Bible, full text + addendums, bundled.
+                <strong style="color: #d4af37;">Member book pricing</strong>, $9.99 for the Sociopathic Dating Bible (vs $24.99 standalone), bought separately whenever you want.
               </td>
             </tr>
           </table>
@@ -610,7 +610,7 @@ function buildStarterDripStep3(name: string): string {
 
   return emailShell(
     "Recognition vs response",
-    "Starter Pack — Day 5",
+    "Starter Pack, Day 5",
     body,
   );
 }
@@ -628,22 +628,22 @@ function buildStarterDripStep4(name: string): string {
     </p>
 
     <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 25px 0; font-size: 15px;">
-      $29/month, cancel any time. The book is bundled in. The simulator is where you practice the patterns from the pack at full clinical depth. The voice notes are for the parts I won&rsquo;t put on Instagram.
+      $29/month, cancel any time. The simulator is where you practice the patterns from the pack at full clinical depth. The voice notes are for the parts I won&rsquo;t put on Instagram. The book is sold separately, $9.99 for members vs $24.99 standalone.
     </p>
 
     ${goldButton("Join The Consilium", consiliumUrl)}
 
     <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 20px 0; font-size: 15px;">
-      If you&rsquo;re going to keep working on pattern recognition, this is where the practice happens. If you&rsquo;ve got what you needed from the pack &mdash; honestly, that&rsquo;s a real outcome too. Either way I&rsquo;m glad you&rsquo;re reading.
+      If you&rsquo;re going to keep working on pattern recognition, this is where the practice happens. If you&rsquo;ve got what you needed from the pack, honestly, that&rsquo;s a real outcome too. Either way I&rsquo;m glad you&rsquo;re reading.
     </p>
 
     <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 0 0; font-size: 15px;">
-      &mdash; Kanika
+     , Kanika
     </p>`;
 
   return emailShell(
     "Your invitation to The Consilium",
-    "Starter Pack — Day 7",
+    "Starter Pack, Day 7",
     body,
   );
 }
@@ -721,7 +721,7 @@ export function buildBookBuyerSequence(
       recipientName,
       sequence: "book-buyer-welcome",
       step: 2,
-      subject: "You've been invited \u2014 The Consilium (free month)",
+      subject: "You've been invited, The Consilium (free month)",
       htmlBody: buildTrialOfferHtml(recipientName, trialToken),
       scheduledAt: addDays(now, 3),
       metadata: { type: "trial-offer", trialToken },
@@ -731,10 +731,392 @@ export function buildBookBuyerSequence(
       recipientName,
       sequence: "book-buyer-welcome",
       step: 3,
-      subject: "Your free month expires soon \u2014 The Consilium",
+      subject: "Your free month expires soon, The Consilium",
       htmlBody: buildReminderHtml(recipientName, trialToken),
       scheduledAt: addDays(now, 7),
       metadata: { type: "trial-reminder", trialToken },
+    },
+  ];
+}
+
+// ============================================================
+// Quiz-buyer drip.
+//
+// Fires on QUIZ ($9.99) checkout. Mirror of book-buyer-welcome but
+// for a much hotter cohort: this person just paid for personality
+// results and the webhook minted them a single-use $9.99 promo code
+// off their first Consilium month, valid 14 days.
+//
+// Cadence is shaped by the credit clock, not by drip best practice:
+//   Day 1, results recap + credit code surfaced.
+//   Day 5, midpoint nudge, ~9 days left.
+//   Day 12, last-call, 48 hours before expiry.
+//
+// Pre-2026-05-08 there was NO drip on this cohort. Code generation
+// rate was 9 in 30 days, redemption rate was 0/9. The only Consilium
+// pitch a quiz buyer saw was the moment of unlock; if they didn't
+// click "Apply My Credit" right there, the code expired silently.
+// ============================================================
+
+interface QuizBuyerCreditArgs {
+  quizResultId: string;
+  creditCode: string;
+  creditAmount: number;
+  creditExpiresAt: Date;
+}
+
+function formatCreditExpiry(d: Date): string {
+  return d.toLocaleDateString("en-US", {
+    month: "long",
+    day: "numeric",
+    year: "numeric",
+  });
+}
+
+function creditCodeBlock(args: QuizBuyerCreditArgs): string {
+  const consiliumUrl = `${baseUrl}/consilium`;
+  const expiry = formatCreditExpiry(args.creditExpiresAt);
+  return `
+    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="margin: 0 0 25px 0;">
+      <tr>
+        <td bgcolor="#1a0d11" style="padding: 28px; border-radius: 10px; border: 1px solid #d4af37;">
+          <p style="color: #d4af37; margin: 0 0 10px 0; font-size: 11px; text-transform: uppercase; letter-spacing: 2px; text-align: center; font-weight: 600;">
+            Your Consilium credit
+          </p>
+          <h3 style="color: #ffffff; margin: 0 0 12px 0; font-size: 20px; font-weight: 300; text-align: center; letter-spacing: 0.5px;">
+            $${args.creditAmount.toFixed(2)} off your first Consilium month
+          </h3>
+          <div style="background: #050511; border: 1px dashed #d4af37; border-radius: 8px; padding: 18px 20px; text-align: center; margin: 0 0 16px 0;">
+            <p style="color: #94a3b8; margin: 0 0 6px 0; font-size: 10px; text-transform: uppercase; letter-spacing: 2px;">
+              Your code
+            </p>
+            <p style="color: #d4af37; margin: 0; font-family: 'Courier New', monospace; font-size: 22px; font-weight: 700; letter-spacing: 2px;">
+              ${esc(args.creditCode)}
+            </p>
+          </div>
+          <p style="color: #666; margin: 0 0 18px 0; font-size: 11px; text-align: center;">
+            Expires ${expiry} · Single use · Applies to your first month
+          </p>
+          <div style="text-align: center;">
+            <a href="${consiliumUrl}" style="display: inline-block; background: #d4af37; color: #0a0a0a; padding: 14px 32px; text-decoration: none; border-radius: 50px; font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;">
+              Apply My Credit
+            </a>
+          </div>
+        </td>
+      </tr>
+    </table>
+  `;
+}
+
+function buildQuizDripStep1(name: string, args: QuizBuyerCreditArgs): string {
+  const resultsUrl = `${baseUrl}/quiz/results/${args.quizResultId}`;
+
+  const body = `
+    <p style="color: #f5f0ed; font-size: 16px; margin: 0 0 8px 0; line-height: 1.7;">
+      Hey ${esc(name)},
+    </p>
+
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 20px 0; font-size: 15px;">
+      Your full clinical results are unlocked. The radar chart, the trait stack, the blind-spot list, the strengths, the diagnosis, all of it.
+    </p>
+
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 20px 0; font-size: 15px;">
+      Read your results once. Then read them again in two days. The second read is where the actual recognition happens, the parts you skimmed over because they felt slightly too accurate to sit with.
+    </p>
+
+    ${goldButton("Reopen My Results", resultsUrl)}
+
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 20px 0; font-size: 15px;">
+      One more thing. Because you paid for the unlock, your $${args.creditAmount.toFixed(2)} comes back to you as a credit toward The Consilium, the place where the patterns you just scored on get drilled into instinct.
+    </p>
+
+    ${creditCodeBlock(args)}
+
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 0 0; font-size: 15px;">
+      The code expires in two weeks. I'll remind you once before then. After that, results are still yours, but the credit isn't.
+    </p>`;
+
+  return emailShell(
+    "Your unlocked results are inside",
+    "Dark Mirror, Day 1",
+    body,
+  );
+}
+
+function buildQuizDripStep2(name: string, args: QuizBuyerCreditArgs): string {
+  const body = `
+    <p style="color: #f5f0ed; font-size: 16px; margin: 0 0 20px 0; line-height: 1.7;">
+      ${esc(name)},
+    </p>
+
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 20px 0; font-size: 15px;">
+      The quiz tells you which axis you're on. It can't tell you what you do under pressure on that axis, when the stakes climb and the easy version of you stops working. That second question is the one that actually changes outcomes.
+    </p>
+
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 25px 0; font-size: 15px;">
+      That's what the Dark Mirror Simulator is for. 60+ branching scenarios on the same axes you just scored on, each one in a real-world artefact: a text exchange, a workplace conflict, a first date, a family dinner. You make the call. The scene resolves on it. You see what move you ran without knowing you ran it.
+    </p>
+
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 20px 0; font-size: 15px;">
+      Plus voice notes, the classroom, daily psychology drops, and member pricing on the book ($9.99 instead of $24.99, separate purchase).
+    </p>
+
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 20px 0; font-size: 15px;">
+      Your credit still works. Roughly nine days left.
+    </p>
+
+    ${creditCodeBlock(args)}`;
+
+  return emailShell(
+    "What the quiz can't tell you",
+    "Dark Mirror, Day 5",
+    body,
+  );
+}
+
+function buildQuizDripStep3(name: string, args: QuizBuyerCreditArgs): string {
+  const body = `
+    <p style="color: #f5f0ed; font-size: 16px; margin: 0 0 20px 0; line-height: 1.7;">
+      ${esc(name)},
+    </p>
+
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 20px 0; font-size: 15px;">
+      Last call. Your $${args.creditAmount.toFixed(2)} Consilium credit expires in 48 hours.
+    </p>
+
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 25px 0; font-size: 15px;">
+      If you're going to use it, this is the window. Apply it on your first month and you're in for $${(29 - args.creditAmount).toFixed(2)}. Cancel any time, one click on the billing page.
+    </p>
+
+    ${creditCodeBlock(args)}
+
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 0 0; font-size: 15px;">
+      Either way, thank you for taking the quiz. Your results stay unlocked regardless.
+    </p>`;
+
+  return emailShell(
+    "48 hours, your Consilium credit",
+    "Dark Mirror, Day 12",
+    body,
+  );
+}
+
+// ============================================================
+// Newsletter drip.
+//
+// Fires after the welcome email sent inline by /api/newsletter.
+// Newsletter subs have no quiz axis to personalise off, so this
+// sequence carries its own standalone-value emails. Same shape
+// as the mini and starter drips: deliver insight first, name the
+// move, then invite into the Consilium on the final step.
+// ============================================================
+
+function buildNewsletterStep1(name: string): string {
+  const body = `
+    <p style="color: #f5f0ed; font-size: 16px; margin: 0 0 8px 0; line-height: 1.7;">
+      Hey ${esc(name)},
+    </p>
+
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 24px 0; font-size: 14px; font-style: italic;">
+      Quick favor first, if this landed in spam or promotions, drag it to your inbox so I can keep reaching you. The welcome was the door. This is the part where the framework actually starts working.
+    </p>
+
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 20px 0; font-size: 15px;">
+      The single biggest predictor of whether someone gets out of a manipulative relationship cleanly is one variable: <strong style="color: #d4af37;">whether they have a name for the move being run on them.</strong>
+    </p>
+
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 20px 0; font-size: 15px;">
+      Not a feeling. Not a vibe. A name.
+    </p>
+
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 20px 0; font-size: 15px;">
+      The gap between "something is off" and "this is DARVO and the next move is to bring receipts to the next conversation" is the difference between leaving a bad relationship in three weeks and leaving in three years.
+    </p>
+
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 0 0; font-size: 15px;">
+      Naming changes what you can do. That's what these emails are for. I'll send you a piece of the framework on Friday.
+    </p>`;
+
+  return emailShell(
+    "The single biggest predictor",
+    "Newsletter, Day 2",
+    body,
+  );
+}
+
+function buildNewsletterStep2(name: string): string {
+  const body = `
+    <p style="color: #f5f0ed; font-size: 16px; margin: 0 0 20px 0; line-height: 1.7;">
+      ${esc(name)},
+    </p>
+
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 20px 0; font-size: 15px;">
+      <strong style="color: #d4af37;">Mirror-Bonding</strong> is the move most people get caught in and never get a name for.
+    </p>
+
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 20px 0; font-size: 15px;">
+      It's the early-relationship feeling that you've never been understood like this before, that this person <em>gets</em> you in a way no one else has. It feels like fate. It's actually a tactic.
+    </p>
+
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 20px 0; font-size: 15px;">
+      A mirror-bonder studies you for the first three to six weeks. They watch what you light up at. They listen to which stories you tell with the most heat. Then they perform a version of you back at you, with the spiky bits sanded off, and let you fall in love with the reflection.
+    </p>
+
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 25px 0; font-size: 15px;">
+      You leave the relationship two years later thinking <em>they changed</em>. They didn't. The mirror just stopped being held up.
+    </p>
+
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 0 0; font-size: 15px;">
+      The tell is texture. Real people disagree with you on small things, even early. Mirrors don't. Watch for the absence of friction, not for the presence of red flags.
+    </p>`;
+
+  return emailShell(
+    "The move you didn't see",
+    "Newsletter, Day 4",
+    body,
+  );
+}
+
+function buildNewsletterStep3(name: string): string {
+  const consiliumUrl = `${baseUrl}/consilium`;
+
+  const body = `
+    <p style="color: #f5f0ed; font-size: 16px; margin: 0 0 20px 0; line-height: 1.7;">
+      ${esc(name)},
+    </p>
+
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 20px 0; font-size: 15px;">
+      Recognition is half the work. Response is the other half. What do you actually <em>say</em> when DARVO hits in a conversation you can't walk out of? What does a clean exit look like when you've been mirror-bonded for two years and you're still in love with the reflection?
+    </p>
+
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 25px 0; font-size: 15px;">
+      That's what the <strong style="color: #d4af37;">Consilium</strong> is for. $29/month, cancel any time. Inside:
+    </p>
+
+    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="margin: 0 0 25px 0;">
+      <tr>
+        <td bgcolor="#1a0d11" style="padding: 25px; border-radius: 10px; border: 1px solid #d4af37;">
+          <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0">
+            <tr>
+              <td style="padding: 10px 0; color: #f5f0ed; font-size: 14px; line-height: 1.6; border-bottom: 1px solid #3d2030;">
+                <strong style="color: #d4af37;">The simulator</strong>, 60+ branching scenarios where you make the call and the scene resolves on it. Mirror-bonding, DARVO, and the rest, in motion.
+              </td>
+            </tr>
+            <tr>
+              <td style="padding: 10px 0; color: #f5f0ed; font-size: 14px; line-height: 1.6; border-bottom: 1px solid #3d2030;">
+                <strong style="color: #d4af37;">Voice notes</strong>, the unfiltered version of what I think, weekly. Not a podcast. Closer to a letter.
+              </td>
+            </tr>
+            <tr>
+              <td style="padding: 10px 0; color: #f5f0ed; font-size: 14px; line-height: 1.6; border-bottom: 1px solid #3d2030;">
+                <strong style="color: #d4af37;">Ask Kanika</strong>, one question per day, my answer in voice or video.
+              </td>
+            </tr>
+            <tr>
+              <td style="padding: 10px 0; color: #f5f0ed; font-size: 14px; line-height: 1.6;">
+                <strong style="color: #d4af37;">Member book pricing</strong>, $9.99 for the Sociopathic Dating Bible (vs $24.99 standalone), bought separately.
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+
+    ${goldButton("Step Inside", consiliumUrl)}
+
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 0 0; font-size: 15px;">
+      Or don't, the newsletter keeps coming either way. If pattern recognition is something you're going to keep developing, the Consilium is where the practice lives.
+    </p>`;
+
+  return emailShell(
+    "Recognition vs response",
+    "Newsletter, Day 7",
+    body,
+  );
+}
+
+export function buildNewsletterDrip(
+  recipientEmail: string,
+  recipientName: string,
+): EmailQueueEntry[] {
+  const now = new Date();
+
+  return [
+    {
+      recipientEmail,
+      recipientName,
+      sequence: "newsletter-drip",
+      step: 1,
+      subject: "The single biggest predictor",
+      htmlBody: buildNewsletterStep1(recipientName),
+      scheduledAt: addDays(now, 2),
+      metadata: {},
+    },
+    {
+      recipientEmail,
+      recipientName,
+      sequence: "newsletter-drip",
+      step: 2,
+      subject: "The move you didn't see",
+      htmlBody: buildNewsletterStep2(recipientName),
+      scheduledAt: addDays(now, 4),
+      metadata: {},
+    },
+    {
+      recipientEmail,
+      recipientName,
+      sequence: "newsletter-drip",
+      step: 3,
+      subject: "Recognition vs response",
+      htmlBody: buildNewsletterStep3(recipientName),
+      scheduledAt: addDays(now, 7),
+      metadata: {},
+    },
+  ];
+}
+
+export function buildQuizBuyerSequence(
+  recipientEmail: string,
+  recipientName: string,
+  args: QuizBuyerCreditArgs,
+): EmailQueueEntry[] {
+  const now = new Date();
+
+  const sharedMeta = {
+    quizResultId: args.quizResultId,
+    creditCode: args.creditCode,
+  };
+
+  return [
+    {
+      recipientEmail,
+      recipientName,
+      sequence: "quiz-buyer-welcome",
+      step: 1,
+      subject: "Your unlocked results are inside",
+      htmlBody: buildQuizDripStep1(recipientName, args),
+      scheduledAt: addDays(now, 1),
+      metadata: { ...sharedMeta, type: "results-recap" },
+    },
+    {
+      recipientEmail,
+      recipientName,
+      sequence: "quiz-buyer-welcome",
+      step: 2,
+      subject: "9 days on your Consilium credit",
+      htmlBody: buildQuizDripStep2(recipientName, args),
+      scheduledAt: addDays(now, 5),
+      metadata: { ...sharedMeta, type: "midpoint" },
+    },
+    {
+      recipientEmail,
+      recipientName,
+      sequence: "quiz-buyer-welcome",
+      step: 3,
+      subject: "48 hours, your Consilium credit",
+      htmlBody: buildQuizDripStep3(recipientName, args),
+      scheduledAt: addDays(now, 12),
+      metadata: { ...sharedMeta, type: "last-call" },
     },
   ];
 }

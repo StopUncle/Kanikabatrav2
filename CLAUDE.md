@@ -69,13 +69,15 @@ Files at `private/books/EVENBETTERBOOK/*` (main) and `private/books/Addendums/*`
 
 > Full ops manual: `docs/INNER-CIRCLE.md` (gitignored).
 
-**Membership state machine:** PENDING → APPROVED → ACTIVE → SUSPENDED / CANCELLED / EXPIRED.
-- PENDING on `/api/inner-circle/apply`
-- APPROVED on admin click at `/admin/applications`
-- ACTIVE on Stripe `checkout.session.completed`
-- SUSPENDED on `subscription.paused`, `payment_failed`, or member-requested pause
-- CANCELLED on `subscription.deleted` or `charge.refunded` (INNER_CIRCLE)
-- EXPIRED set lazily on read by `lib/community/membership.ts` when `expiresAt < now`
+**Application gate removed (2026-04-19).** No PENDING / APPROVED gating, no admin review queue. `/consilium/apply` is now a one-click join page that POSTs to `/api/consilium/subscription/create` and redirects to Stripe. Legacy PENDING / APPROVED rows from before the cutover are treated as "finish joining" via the same checkout path.
+
+**Membership state machine:** ACTIVE → SUSPENDED / CANCELLED / EXPIRED.
+- ACTIVE on Stripe `checkout.session.completed` (creates the row if missing).
+- SUSPENDED on `subscription.paused`, `payment_failed`, or member-requested pause.
+- CANCELLED on `subscription.deleted` or `charge.refunded` (INNER_CIRCLE).
+- EXPIRED set lazily on read by `lib/community/membership.ts` when `expiresAt < now`.
+
+Legacy PENDING / APPROVED rows survive in the DB but are not produced by any current code path. `lib/community/membership.ts` redirects them to `/consilium`.
 
 **What's inside:**
 - **Feed** (`/inner-circle/feed`): Kanika posts + cron-driven daily insights / discussion prompts. Members comment + react, cannot create top-level posts.

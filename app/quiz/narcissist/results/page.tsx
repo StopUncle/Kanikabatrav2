@@ -6,6 +6,7 @@ import { m } from "framer-motion";
 import Link from "next/link";
 import Header from "@/components/Header";
 import BackgroundEffects from "@/components/BackgroundEffects";
+import QuizEmailCapture from "@/components/quiz/QuizEmailCapture";
 import {
   NarcissistDiagnosis,
   NarcissistScores,
@@ -384,6 +385,12 @@ export default function NarcissistResultsPage() {
               </p>
             </m.div>
           )}
+
+          <QuizEmailCapture
+            source="narcissist-quiz"
+            tags={[`quadrant:${diagnosis.quadrant}`]}
+            resultLabel={profile.name}
+          />
 
           {/* Related */}
           <m.div

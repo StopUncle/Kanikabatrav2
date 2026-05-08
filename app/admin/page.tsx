@@ -3,7 +3,6 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import {
-  UserCheck,
   MessageSquare,
   Users,
   Mail,
@@ -13,7 +12,6 @@ import {
 } from "lucide-react";
 
 interface Stats {
-  pendingApplications: number;
   pendingComments: number;
   totalMembers: number;
   emailQueue: { pending: number; sent: number; failed: number };
@@ -25,16 +23,12 @@ export default function AdminDashboardPage() {
 
   useEffect(() => {
     async function fetchStats() {
-      const [appsRes, commentsRes, usersRes, emailRes] = await Promise.allSettled([
-        fetch("/api/admin/applications?status=PENDING"),
+      const [commentsRes, usersRes, emailRes] = await Promise.allSettled([
         fetch("/api/admin/comments?status=PENDING_REVIEW"),
         fetch("/api/admin/users"),
         fetch("/api/admin/email-queue/status"),
       ]);
 
-      const apps = appsRes.status === "fulfilled" && appsRes.value.ok
-        ? await appsRes.value.json()
-        : { count: 0 };
       const comments = commentsRes.status === "fulfilled" && commentsRes.value.ok
         ? await commentsRes.value.json()
         : { count: 0 };
@@ -46,7 +40,6 @@ export default function AdminDashboardPage() {
         : { pending: 0, sent: 0, failed: 0 };
 
       setStats({
-        pendingApplications: apps.count || 0,
         pendingComments: comments.count || 0,
         // The "Total Members" tile means active Consilium members, not
         // registered users. Endpoint returns both: memberCount is the
@@ -65,13 +58,6 @@ export default function AdminDashboardPage() {
   }, []);
 
   const cards = [
-    {
-      label: "Pending Applications",
-      value: stats?.pendingApplications ?? 0,
-      icon: UserCheck,
-      href: "/admin/applications",
-      accent: "text-amber-400",
-    },
     {
       label: "Pending Comments",
       value: stats?.pendingComments ?? 0,

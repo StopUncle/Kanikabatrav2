@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { ArrowRight, CreditCard, Clock, CheckCircle, AlertTriangle, Loader2, Gift, RotateCcw } from "lucide-react";
+import { ArrowRight, CreditCard, CheckCircle, AlertTriangle, Loader2, Gift, RotateCcw } from "lucide-react";
 
 interface Membership {
   id: string;
@@ -29,13 +29,13 @@ interface Props {
  * State-aware Inner Circle card for the dashboard.
  *
  * Renders different content depending on the member's status:
- *   - null           → not a member yet, CTA to apply
- *   - PENDING        → application under review
- *   - APPROVED       → complete payment CTA (hits /consilium/apply)
- *   - ACTIVE         → member status + expiry + Manage Subscription + Feed
- *   - SUSPENDED      → suspension reason + resume / contact
- *   - CANCELLED      → cancelled but still has access until expiry
- *   - EXPIRED        → expired, re-apply
+ *   - null                 → not a member yet, CTA to join
+ *   - PENDING / APPROVED   → legacy pre-2026-04-19 application states.
+ *                            One-click "continue to checkout" CTA.
+ *   - ACTIVE               → member status + expiry + Manage Subscription + Feed
+ *   - SUSPENDED            → suspension reason + resume / contact
+ *   - CANCELLED            → cancelled but still has access until expiry
+ *   - EXPIRED              → expired, re-join
  *
  * The "Manage Subscription" button hits the Stripe Customer Portal via
  * /api/consilium/subscription/portal, redirecting the user to Stripe's
@@ -131,33 +131,21 @@ export default function InnerCircleDashboardCard({ membership }: Props) {
     );
   }
 
-  // Application pending review
-  if (membership.status === "PENDING") {
-    return (
-      <div className="text-center py-6">
-        <Clock className="w-10 h-10 text-accent-gold mx-auto mb-3" />
-        <p className="text-text-light font-light mb-1">Application Under Review</p>
-        <p className="text-text-gray/70 text-sm">
-          We review every application within 24 hours. You&apos;ll get an email when it&apos;s ready.
-        </p>
-      </div>
-    );
-  }
-
-  // Approved but hasn't paid yet
-  if (membership.status === "APPROVED") {
+  // Legacy PENDING / APPROVED rows from before the application gate
+  // was removed (2026-04-19). One-click resume to checkout, no review.
+  if (membership.status === "PENDING" || membership.status === "APPROVED") {
     return (
       <div className="text-center py-6">
         <CheckCircle className="w-10 h-10 text-accent-gold mx-auto mb-3" />
-        <p className="text-accent-gold font-light text-lg mb-2">You&apos;re Approved!</p>
+        <p className="text-text-light font-light text-lg mb-2">Finish Joining</p>
         <p className="text-text-gray/70 text-sm mb-4">
-          Complete your subscription to activate your membership.
+          Pick up where you left off. One click to checkout.
         </p>
         <Link
-          href="/consilium/apply?status=approved"
+          href="/consilium"
           className="inline-flex items-center gap-2 px-6 py-2 bg-accent-gold text-deep-black rounded-full font-medium hover:bg-accent-gold/90 transition-all"
         >
-          Activate Membership
+          Continue
           <ArrowRight size={16} />
         </Link>
       </div>
@@ -371,7 +359,7 @@ export default function InnerCircleDashboardCard({ membership }: Props) {
         href="/consilium"
         className="inline-flex items-center gap-2 px-6 py-2 bg-accent-gold text-deep-black rounded-full font-medium hover:bg-accent-gold/90 transition-all"
       >
-        Re-apply
+        Re-join
         <ArrowRight size={16} />
       </Link>
     </div>
