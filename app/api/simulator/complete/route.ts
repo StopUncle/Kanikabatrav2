@@ -83,6 +83,12 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Anti-cheat: outcome is dictated by the ending scene, not the client.
+    // Without this, a curl with `outcome: "good"` against an ending whose
+    // outcomeType is "bad" would inflate the player's best-of outcome rank
+    // (good=4 > bad=0), defeating mergeProgress's best-of guarantee.
+    const safeOutcome: OutcomeType = endingScene.outcomeType ?? "neutral";
+
     // Anti-cheat: recompute XP from the claimed choicesMade and clamp.
     // See /api/simulator/progress for the same rationale, the server
     // owns the engine, so it computes the truth and never trusts the
@@ -95,7 +101,7 @@ export async function POST(request: NextRequest) {
       currentSceneId: body.currentSceneId,
       choicesMade: body.choicesMade,
       xpEarned: safeXp,
-      outcome: body.outcome,
+      outcome: safeOutcome,
       endedAt: body.endedAt,
     };
 
@@ -121,7 +127,7 @@ export async function POST(request: NextRequest) {
         currentSceneId: body.currentSceneId,
         choicesMade: body.choicesMade,
         xpEarned: safeXp,
-        outcome: body.outcome,
+        outcome: safeOutcome,
         endedAt: body.endedAt,
       });
 
@@ -223,7 +229,7 @@ export async function POST(request: NextRequest) {
         body.choicesMade.length > 0 &&
         body.choicesMade.every((c) => c.wasOptimal);
       const isGoodOutcome =
-        body.outcome === "good" || body.outcome === "passed";
+        safeOutcome === "good" || safeOutcome === "passed";
       if (wasFirstCompletion && allOptimalThisRun && isGoodOutcome) {
         const firstTryKey = "ach-all-optimal-first-try";
         if (!heldNowSet.has(firstTryKey)) {
