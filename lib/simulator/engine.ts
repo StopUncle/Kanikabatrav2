@@ -59,7 +59,10 @@ export function autoAdvance(
   // sit forever as in-progress with currentSceneId === "ending-X".
   const nextScene = scenario.scenes.find((s) => s.id === scene.nextSceneId);
   if (nextScene?.isEnding) {
-    return finalizeEnding(nextScene, state);
+    return finalizeEnding(nextScene, {
+      ...state,
+      currentSceneId: scene.nextSceneId,
+    });
   }
 
   return {

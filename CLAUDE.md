@@ -5,6 +5,15 @@
 - **No em dashes (`—` / `&mdash;`).** They read as "classic AI" and erode the human voice. Use commas, periods, colons, semicolons, or parentheses instead. Allowed only when *absolutely necessary*: signature lines (`— Kanika`) and dictionary-style term/definition pairs (`<strong>Term</strong> &mdash; description`).
 - Applies to user-visible content AND code comments (comments leak into PR reviews and signal AI authorship).
 
+## ⚠️ Simulator: Read with Care
+
+Scenario files under `lib/simulator/scenarios/**` are HUGE (600+ lines each, mostly prose dialogue). Reading even a few of them blows out the context window in one turn. Rules:
+
+- **Engine bugs live in `lib/simulator/engine.ts`** (217 lines). The engine fix benefits every scenario automatically. Do NOT open scenario files to fix engine behavior.
+- **Audit scenarios structurally, not by reading prose.** Use `Glob` for filenames and `Grep` with `output_mode: "count"` or `"files_with_matches"` for patterns like `isEnding: true`, `nextSceneId:`, `choices:`. That surfaces which files have a given shape with zero prose loaded.
+- **Spot-check with tight ranges only.** If you must look inside a scenario, `Read` with `offset` + `limit` (~50 lines around a known scene id), never the whole file.
+- **Typecheck validates all scenarios at once.** `npm run type-check` enforces the engine contract across every scenario without loading any of them into context. Use it as the safety net.
+
 ## 🚀 Quick Commands
 
 ```bash
