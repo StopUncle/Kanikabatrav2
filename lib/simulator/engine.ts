@@ -140,12 +140,19 @@ function xpForChoice(choice: Choice): number {
  */
 function finalizeEnding(scene: Scene, state: SimulatorState): SimulatorState {
   const outcome: OutcomeType = scene.outcomeType ?? "neutral";
+  // Bonus tier follows outcomeRank in lib/simulator/progress-merge.ts so
+  // a "failed" ending (rank 1, above "bad") also pays more XP than "bad"
+  // (rank 0). Without this, a "failed" ending paid 0 like "bad", which
+  // contradicted the rank ordering. No current scenario uses "failed",
+  // so this is purely defensive for future authors.
   const endingBonus =
     outcome === "good"
       ? 50
-      : outcome === "neutral" || outcome === "passed"
+      : outcome === "passed" || outcome === "neutral"
         ? 20
-        : 0;
+        : outcome === "failed"
+          ? 10
+          : 0; // "bad"
 
   return {
     ...state,
