@@ -66,13 +66,13 @@ async function seedCommunity() {
       update: {
         name: "The Counselors",
         description:
-          "Premium chamber — advanced strategy for coaching clients",
+          "Premium chamber: advanced strategy for coaching clients",
       },
       create: {
         name: "The Counselors",
         slug: "inner-circle",
         description:
-          "Premium chamber — advanced strategy for coaching clients",
+          "Premium chamber: advanced strategy for coaching clients",
         icon: "👑",
         sortOrder: 5,
         accessTier: "COACHING_CLIENT",

@@ -86,7 +86,7 @@ export const dailyInsights = [
   },
   {
     content:
-      "**The Broken Record Technique:** When someone keeps pushing past your boundary, repeat the same response verbatim. 'I'm not available that day.' 'But why?' 'I'm not available that day.' 'Come on, just—' 'I'm not available that day.' No justification. No negotiation. Repetition is a wall.",
+      "**The Broken Record Technique:** When someone keeps pushing past your boundary, repeat the same response verbatim. 'I'm not available that day.' 'But why?' 'I'm not available that day.' 'Come on, just...' 'I'm not available that day.' No justification. No negotiation. Repetition is a wall.",
     category: "defense-strategy",
     dayOfYear: 14,
   },

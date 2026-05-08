@@ -187,6 +187,11 @@ https://kanikarose.com/<path>?utm_source=<platform>&utm_medium=<how>&utm_campaig
 
 ## 🔧 Outstanding High-Value TODO
 
+### Simulator (post-2026-05-08 hardening pass)
+- [ ] **Engine unit tests.** `lib/simulator/engine.ts` is 100% pure functions, never exercised by a test. Jest is already wired (`package.json:13`). A ~150-line `engine.test.ts` should cover: `autoAdvance` reaching an ending via direct `nextSceneId`; `autoAdvance` no-op on terminal scenes / self-loops / missing `nextSceneId`; `applyChoice` reaching an ending via `choice.nextSceneId`; `replayXp` draining the auto-advance chain and crediting ending bonus; `replayXp` aborting on stale records and ignoring padding past the abort; `finalizeEnding` stamping `currentSceneId` even when the caller forgets. Locks in the 2026-05-08 hardening pass.
+- [ ] **Immersion polish (runner-side).** Surface streak bonus in real-time (pulse on 3rd/5th/7th optimal); subtle audio cue on `DialogTone: "tactical"` lines; verify auto-advance scenes hold long enough to read; on replay, dim already-seen endings in the catalog. All require touching `SimulatorRunner.tsx` and friends, which are large UI files, allocate a dedicated session.
+- [ ] **Cosmetic.** `replayXp`'s return field is named `endedAt` but it's actually the final `SimulatorState`. Rename to `state` or `finalState`. Nothing currently depends on the name.
+
 ### Infrastructure
 - [ ] **Add `prisma migrate deploy` to nixpacks build.** Railway runs `npx prisma db push --skip-generate`, which no-ops on Railway V2 Postgres. New schema must be applied manually with `DATABASE_URL=<prod> npx prisma migrate deploy` BEFORE pushing referencing code. Outstanding migrations to apply manually as of 2026-04-25: `20260425000000_add_simulator_completion_count`, `20260425120000_add_quiz_consilium_credit`, `20260425130000_add_attribution_capture`.
 
