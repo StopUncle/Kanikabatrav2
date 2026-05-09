@@ -29,22 +29,44 @@ async function marketingPreflight(
   const meta = (row.metadata as QueueMetadata | null) ?? {};
   if (!meta.isMarketing) return { skip: false };
 
+  const email = row.recipientEmail.toLowerCase();
+  const type = meta.unsubscribeType ?? "marketing";
+
   const user = await prisma.user.findUnique({
-    where: { email: row.recipientEmail.toLowerCase() },
+    where: { email },
     select: { id: true, emailPreferences: true, isBanned: true, isBot: true },
   });
-  if (!user || user.isBanned || user.isBot) return { skip: true };
-  const prefs = user.emailPreferences as { marketing?: boolean } | null;
-  const type = meta.unsubscribeType ?? "marketing";
-  const optedOut = prefs && (prefs as Record<string, unknown>)[type] === false;
-  if (optedOut) return { skip: true };
+
+  // Banned or bot accounts always skip. Non-existence is fine —
+  // subscribers (mini-quiz capture, pre-account book buyers,
+  // newsletter sign-ups) legitimately don't have a User row.
+  if (user?.isBanned || user?.isBot) return { skip: true };
+
+  if (user) {
+    const prefs = user.emailPreferences as { marketing?: boolean } | null;
+    const optedOut = prefs && (prefs as Record<string, unknown>)[type] === false;
+    if (optedOut) return { skip: true };
+  } else {
+    // No User row — fall back to the Subscriber suppression marker
+    // written by /unsubscribe. Tag shape: `unsubscribed:<type>`
+    // (per-type) or generic `unsubscribed:marketing`.
+    const sub = await prisma.subscriber.findUnique({
+      where: { email },
+      select: { tags: true },
+    });
+    if (sub?.tags?.some((t) => t === `unsubscribed:${type}`)) {
+      return { skip: true };
+    }
+  }
 
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://kanikarose.com";
   // POST one-click endpoint for RFC 8058. The clickable link in the
   // email body footer (already baked into htmlBody at enqueue time)
   // points at /unsubscribe; this header points at the API endpoint.
+  // Token is keyed by userId when we have one, by email otherwise —
+  // the unsubscribe handler resolves either to the right rows.
   const token = buildUnsubscribeUrl(
-    { userId: user.id, type },
+    user ? { userId: user.id, type } : { email, type },
     baseUrl,
   ).split("token=")[1];
   const oneClickUrl = `${baseUrl}/api/marketing/unsubscribe-oneclick?token=${token}`;

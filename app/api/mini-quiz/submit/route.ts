@@ -98,17 +98,28 @@ export async function POST(req: NextRequest) {
     // filter by acquisition channel without joining QuizResult.
     if (attribution?.utmSource) tags.push(`utm-source:${attribution.utmSource}`);
 
+    // Preserve any `unsubscribed:*` tag a returning visitor may have
+     // collected via /unsubscribe — re-submitting the mini-quiz must
+     // not silently re-opt-in someone who explicitly opted out.
+    const existingSub = await prisma.subscriber.findUnique({
+      where: { email: normalised },
+      select: { tags: true },
+    });
+    const preservedUnsubTags =
+      existingSub?.tags?.filter((t) => t.startsWith("unsubscribed:")) ?? [];
+    const mergedTags = [...tags, ...preservedUnsubTags];
+
     await prisma.subscriber.upsert({
       where: { email: normalised },
       update: {
         // On re-submit, refresh the source + tags but keep verified state.
         source: "mini-quiz",
-        tags: { set: tags },
+        tags: { set: mergedTags },
       },
       create: {
         email: normalised,
         source: "mini-quiz",
-        tags,
+        tags: mergedTags,
         verified: false,
       },
     });

@@ -13,6 +13,7 @@ import {
   pickSecondaryType,
 } from "@/lib/mini-quiz";
 import { STARTER_PATTERNS } from "@/lib/starter-pack-content";
+import { marketingFooterByEmailHtml } from "@/lib/email-footer";
 
 const logger = {
   info: (message: string) => console.log(`[EMAIL INFO] ${message}`),
@@ -1940,6 +1941,7 @@ export const sendMembershipEndingSoon = async (
     <p style="color: #94a3b8; line-height: 1.6; margin: 0 0 15px 0; font-size: 13px; text-align: center; font-style: italic;">
       You won't be billed unless you choose to subscribe. Just letting you know the clock.
     </p>
+    ${marketingFooterByEmailHtml(memberEmail.toLowerCase(), "marketing")}
   `;
 
   return await sendEmail({

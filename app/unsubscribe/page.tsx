@@ -52,19 +52,20 @@ export default async function UnsubscribePage({ searchParams }: PageProps) {
       state = "invalid";
     } else {
       try {
-        // Read existing prefs first so we preserve any other keys.
-        const user = await prisma.user.findUnique({
-          where: { id: payload.userId },
-          select: { emailPreferences: true },
-        });
+        // Look up the user by id OR email — drips for mini-quiz
+        // subscribers and book buyers carry email-keyed tokens because
+        // those recipients often don't have a User row yet.
+        const user = payload.userId
+          ? await prisma.user.findUnique({
+              where: { id: payload.userId },
+              select: { id: true, emailPreferences: true },
+            })
+          : await prisma.user.findUnique({
+              where: { email: payload.email! },
+              select: { id: true, emailPreferences: true },
+            });
 
-        if (!user) {
-          // Token signed for a user that no longer exists. Treat as
-          // success, there's nothing to opt out of, the unsubscribe
-          // intent is satisfied.
-          state = "success";
-          unsubscribedFrom = payload.type;
-        } else {
+        if (user) {
           const existing =
             user.emailPreferences && typeof user.emailPreferences === "object"
               ? (user.emailPreferences as Record<string, unknown>)
@@ -75,17 +76,31 @@ export default async function UnsubscribePage({ searchParams }: PageProps) {
             UPDATE "User"
             SET "emailPreferences" = ${JSON.stringify(next)}::jsonb,
                 "updatedAt" = NOW()
-            WHERE id = ${payload.userId}
+            WHERE id = ${user.id}
           `;
-
-          state = "success";
-          unsubscribedFrom = payload.type;
         }
+
+        // Also tag the matching Subscriber row (if any) with an
+        // unsubscribe marker. Future drip enrollments check this tag
+        // and skip. Safe to no-op when the email isn't on the list.
+        if (payload.email) {
+          await prisma.subscriber.updateMany({
+            where: { email: payload.email },
+            data: { tags: { push: `unsubscribed:${payload.type}` } },
+          });
+        }
+
+        state = "success";
+        unsubscribedFrom = payload.type;
       } catch (err) {
         logger.error(
           "[unsubscribe] failed to update preferences",
           err as Error,
-          { userId: payload.userId, type: payload.type },
+          {
+            userId: payload.userId,
+            email: payload.email,
+            type: payload.type,
+          },
         );
         state = "invalid";
       }

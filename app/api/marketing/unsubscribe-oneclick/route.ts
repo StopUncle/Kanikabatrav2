@@ -26,30 +26,42 @@ async function handle(token: string | null): Promise<{ ok: boolean }> {
   if (!payload) return { ok: false };
 
   try {
-    const user = await prisma.user.findUnique({
-      where: { id: payload.userId },
-      select: { emailPreferences: true },
-    });
-    // Token signed for a deleted user, return success so the
-    // unsubscribe intent is satisfied (nothing to opt out of).
-    if (!user) return { ok: true };
+    const user = payload.userId
+      ? await prisma.user.findUnique({
+          where: { id: payload.userId },
+          select: { id: true, emailPreferences: true },
+        })
+      : await prisma.user.findUnique({
+          where: { email: payload.email! },
+          select: { id: true, emailPreferences: true },
+        });
 
-    const existing =
-      user.emailPreferences && typeof user.emailPreferences === "object"
-        ? (user.emailPreferences as Record<string, unknown>)
-        : {};
-    const next = { ...existing, [payload.type]: false };
+    if (user) {
+      const existing =
+        user.emailPreferences && typeof user.emailPreferences === "object"
+          ? (user.emailPreferences as Record<string, unknown>)
+          : {};
+      const next = { ...existing, [payload.type]: false };
+      await prisma.$executeRaw`
+        UPDATE "User"
+        SET "emailPreferences" = ${JSON.stringify(next)}::jsonb,
+            "updatedAt" = NOW()
+        WHERE id = ${user.id}
+      `;
+    }
 
-    await prisma.$executeRaw`
-      UPDATE "User"
-      SET "emailPreferences" = ${JSON.stringify(next)}::jsonb,
-          "updatedAt" = NOW()
-      WHERE id = ${payload.userId}
-    `;
+    if (payload.email) {
+      await prisma.subscriber.updateMany({
+        where: { email: payload.email },
+        data: { tags: { push: `unsubscribed:${payload.type}` } },
+      });
+    }
+
     return { ok: true };
   } catch (err) {
     logger.error("[unsubscribe-oneclick] failed", err as Error, {
       userId: payload.userId,
+      email: payload.email,
       type: payload.type,
     });
     return { ok: false };

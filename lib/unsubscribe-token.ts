@@ -39,8 +39,15 @@ const VALID_TYPES: ReadonlySet<string> = new Set([
   "weeklyDigest",
 ]);
 
+/**
+ * A token addresses its target by either `userId` (logged-in members)
+ * or `email` (mini-quiz subscribers and book/quiz buyers who never
+ * created a User account). Exactly one MUST be present at sign time.
+ * Verifying never returns a payload with both fields populated.
+ */
 export interface UnsubscribePayload {
-  userId: string;
+  userId?: string;
+  email?: string;
   type: UnsubscribeType;
 }
 
@@ -64,7 +71,17 @@ function getSecret(): string {
 }
 
 export function signUnsubscribeToken(payload: UnsubscribePayload): string {
-  return jwt.sign(payload, getSecret(), {
+  const hasUserId = typeof payload.userId === "string" && payload.userId.length > 0;
+  const hasEmail = typeof payload.email === "string" && payload.email.length > 0;
+  if (hasUserId === hasEmail) {
+    throw new Error(
+      "signUnsubscribeToken requires exactly one of userId or email",
+    );
+  }
+  const claim: Record<string, unknown> = { type: payload.type };
+  if (hasUserId) claim.userId = payload.userId;
+  if (hasEmail) claim.email = payload.email!.toLowerCase();
+  return jwt.sign(claim, getSecret(), {
     audience: UNSUBSCRIBE_AUDIENCE,
     expiresIn: UNSUBSCRIBE_TTL,
   });
@@ -84,19 +101,19 @@ export function verifyUnsubscribeToken(
       audience: UNSUBSCRIBE_AUDIENCE,
     }) as DecodedUnsubscribePayload;
 
-    if (
-      typeof decoded.userId !== "string" ||
-      decoded.userId.length === 0 ||
-      typeof decoded.type !== "string" ||
-      !VALID_TYPES.has(decoded.type)
-    ) {
+    if (typeof decoded.type !== "string" || !VALID_TYPES.has(decoded.type)) {
       return null;
     }
 
-    return {
-      userId: decoded.userId,
-      type: decoded.type as UnsubscribeType,
-    };
+    const hasUserId =
+      typeof decoded.userId === "string" && decoded.userId.length > 0;
+    const hasEmail =
+      typeof decoded.email === "string" && decoded.email.length > 0;
+    if (hasUserId === hasEmail) return null;
+
+    return hasUserId
+      ? { userId: decoded.userId, type: decoded.type as UnsubscribeType }
+      : { email: decoded.email!.toLowerCase(), type: decoded.type as UnsubscribeType };
   } catch {
     return null;
   }

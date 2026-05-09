@@ -38,6 +38,14 @@ import {
   buildUnsubscribeUrl,
   type UnsubscribeType,
 } from "@/lib/unsubscribe-token";
+import {
+  marketingFooterHtml,
+  marketingFooterByEmailHtml,
+} from "@/lib/email-footer";
+
+// Re-exported for compatibility with existing call sites that
+// imported from this module.
+export { marketingFooterHtml, marketingFooterByEmailHtml };
 
 interface EmailPreferences {
   marketing?: boolean;
@@ -63,35 +71,6 @@ function isOptedIn(prefs: unknown, type: UnsubscribeType): boolean {
  * The `type` is what gets switched off — usually "marketing", but
  * "productUpdates" or "weeklyDigest" can also flow through here.
  */
-export function marketingFooterHtml(
-  userId: string,
-  type: UnsubscribeType,
-  recipientEmail: string,
-): string {
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://kanikarose.com";
-  const unsubLink = buildUnsubscribeUrl({ userId, type }, baseUrl);
-  const profileLink = `${baseUrl}/profile`;
-  return `
-    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin: 36px 0 0 0; border-top: 1px solid #d4af3722; padding-top: 24px;">
-      <tr>
-        <td align="center" style="padding: 0 16px;">
-          <p style="margin: 0 0 10px 0; font-size: 12px; color: #7a6f60; line-height: 1.7; text-align: center;">
-            You're receiving this because you signed up at kanikarose.com. Don't want these?
-          </p>
-          <p style="margin: 0 0 14px 0; font-size: 12px; line-height: 1.7; text-align: center;">
-            <a href="${unsubLink}" style="color: #d4af37; text-decoration: underline;">One-click unsubscribe</a>
-            <span style="color: #4f463c; margin: 0 6px;">·</span>
-            <a href="${profileLink}" style="color: #d4af37; text-decoration: underline;">Manage preferences</a>
-          </p>
-          <p style="margin: 0; font-size: 11px; color: #56504a; line-height: 1.6; text-align: center;">
-            kanikarose.com &middot; sent to ${recipientEmail}
-          </p>
-        </td>
-      </tr>
-    </table>
-  `;
-}
-
 interface MarketingEmailOptions {
   to: string;
   subject: string;

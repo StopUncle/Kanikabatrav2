@@ -64,16 +64,27 @@ export async function POST(req: NextRequest) {
     const tags: string[] = ["starter-pack"];
     if (attribution?.utmSource) tags.push(`utm-source:${attribution.utmSource}`);
 
+    // Preserve unsubscribe markers across re-submits. Same reasoning
+    // as /api/mini-quiz/submit: an explicit opt-out must survive a
+    // re-capture event.
+    const existingSub = await prisma.subscriber.findUnique({
+      where: { email: normalised },
+      select: { tags: true },
+    });
+    const preservedUnsubTags =
+      existingSub?.tags?.filter((t) => t.startsWith("unsubscribed:")) ?? [];
+    const mergedTags = [...tags, ...preservedUnsubTags];
+
     await prisma.subscriber.upsert({
       where: { email: normalised },
       update: {
         source: "starter-pack",
-        tags: { set: tags },
+        tags: { set: mergedTags },
       },
       create: {
         email: normalised,
         source: "starter-pack",
-        tags,
+        tags: mergedTags,
         verified: false,
       },
     });

@@ -1,4 +1,5 @@
 import { escapeHtml as esc } from "@/lib/escape-html";
+import { marketingFooterByEmailHtml } from "@/lib/email-footer";
 
 const baseUrl =
   process.env.NEXT_PUBLIC_BASE_URL || "https://kanikarose.com";
@@ -11,8 +12,27 @@ export interface EmailQueueEntry {
   subject: string;
   htmlBody: string;
   scheduledAt: Date;
-  metadata: Record<string, string>;
+  metadata: Record<string, string | boolean | number>;
 }
+
+/**
+ * Bake the standard one-click unsubscribe footer into the rendered
+ * HTML body of a drip step. Keyed by recipient email because most
+ * drip recipients (mini-quiz subscribers, pre-account book buyers)
+ * don't have a User row yet. The /unsubscribe handler resolves the
+ * email to a User and/or Subscriber at click time.
+ */
+function withMarketingFooter(html: string, email: string): string {
+  const footer = marketingFooterByEmailHtml(email, "marketing");
+  return html.includes("</body>")
+    ? html.replace("</body>", `${footer}</body>`)
+    : `${html}\n${footer}`;
+}
+
+const MARKETING_META = {
+  isMarketing: true,
+  unsubscribeType: "marketing" as const,
+};
 
 function emailShell(title: string, subtitle: string, body: string): string {
   return `<!DOCTYPE html>
@@ -450,9 +470,12 @@ export function buildMiniDarkMirrorDrip(
       sequence: "mini-dark-mirror-drip",
       step: 1,
       subject: "What your axis looks like under stress",
-      htmlBody: buildMiniDripStep1(recipientName, dominantType),
+      htmlBody: withMarketingFooter(
+        buildMiniDripStep1(recipientName, dominantType),
+        recipientEmail,
+      ),
       scheduledAt: addDays(now, 1),
-      metadata: { dominantType },
+      metadata: { ...MARKETING_META, dominantType },
     },
     {
       recipientEmail,
@@ -460,9 +483,12 @@ export function buildMiniDarkMirrorDrip(
       sequence: "mini-dark-mirror-drip",
       step: 2,
       subject: "The move you didn't see",
-      htmlBody: buildMiniDripStep2(recipientName),
+      htmlBody: withMarketingFooter(
+        buildMiniDripStep2(recipientName),
+        recipientEmail,
+      ),
       scheduledAt: addDays(now, 3),
-      metadata: { dominantType },
+      metadata: { ...MARKETING_META, dominantType },
     },
     {
       recipientEmail,
@@ -470,9 +496,12 @@ export function buildMiniDarkMirrorDrip(
       sequence: "mini-dark-mirror-drip",
       step: 3,
       subject: "Where this goes deeper",
-      htmlBody: buildMiniDripStep3(recipientName),
+      htmlBody: withMarketingFooter(
+        buildMiniDripStep3(recipientName),
+        recipientEmail,
+      ),
       scheduledAt: addDays(now, 5),
-      metadata: { dominantType },
+      metadata: { ...MARKETING_META, dominantType },
     },
     {
       recipientEmail,
@@ -480,9 +509,12 @@ export function buildMiniDarkMirrorDrip(
       sequence: "mini-dark-mirror-drip",
       step: 4,
       subject: "Your invitation to The Consilium",
-      htmlBody: buildMiniDripStep4(recipientName),
+      htmlBody: withMarketingFooter(
+        buildMiniDripStep4(recipientName),
+        recipientEmail,
+      ),
       scheduledAt: addDays(now, 7),
-      metadata: { dominantType },
+      metadata: { ...MARKETING_META, dominantType },
     },
   ];
 }
@@ -661,9 +693,12 @@ export function buildStarterPackDrip(
       sequence: "starter-pack-drip",
       step: 1,
       subject: "The pattern most people miss",
-      htmlBody: buildStarterDripStep1(recipientName),
+      htmlBody: withMarketingFooter(
+        buildStarterDripStep1(recipientName),
+        recipientEmail,
+      ),
       scheduledAt: addDays(now, 1),
-      metadata: {},
+      metadata: { ...MARKETING_META },
     },
     {
       recipientEmail,
@@ -671,9 +706,12 @@ export function buildStarterPackDrip(
       sequence: "starter-pack-drip",
       step: 2,
       subject: "Why naming the move changes everything",
-      htmlBody: buildStarterDripStep2(recipientName),
+      htmlBody: withMarketingFooter(
+        buildStarterDripStep2(recipientName),
+        recipientEmail,
+      ),
       scheduledAt: addDays(now, 3),
-      metadata: {},
+      metadata: { ...MARKETING_META },
     },
     {
       recipientEmail,
@@ -681,9 +719,12 @@ export function buildStarterPackDrip(
       sequence: "starter-pack-drip",
       step: 3,
       subject: "Recognition vs response",
-      htmlBody: buildStarterDripStep3(recipientName),
+      htmlBody: withMarketingFooter(
+        buildStarterDripStep3(recipientName),
+        recipientEmail,
+      ),
       scheduledAt: addDays(now, 5),
-      metadata: {},
+      metadata: { ...MARKETING_META },
     },
     {
       recipientEmail,
@@ -691,9 +732,12 @@ export function buildStarterPackDrip(
       sequence: "starter-pack-drip",
       step: 4,
       subject: "Your invitation to The Consilium",
-      htmlBody: buildStarterDripStep4(recipientName),
+      htmlBody: withMarketingFooter(
+        buildStarterDripStep4(recipientName),
+        recipientEmail,
+      ),
       scheduledAt: addDays(now, 7),
-      metadata: {},
+      metadata: { ...MARKETING_META },
     },
   ];
 }
@@ -712,9 +756,12 @@ export function buildBookBuyerSequence(
       sequence: "book-buyer-welcome",
       step: 1,
       subject: `Welcome to the dark side, ${recipientName}`,
-      htmlBody: buildWelcomeHtml(recipientName),
+      htmlBody: withMarketingFooter(
+        buildWelcomeHtml(recipientName),
+        recipientEmail,
+      ),
       scheduledAt: now,
-      metadata: { type: "welcome", trialToken },
+      metadata: { ...MARKETING_META, type: "welcome", trialToken },
     },
     {
       recipientEmail,
@@ -722,9 +769,12 @@ export function buildBookBuyerSequence(
       sequence: "book-buyer-welcome",
       step: 2,
       subject: "You've been invited, The Consilium (free month)",
-      htmlBody: buildTrialOfferHtml(recipientName, trialToken),
+      htmlBody: withMarketingFooter(
+        buildTrialOfferHtml(recipientName, trialToken),
+        recipientEmail,
+      ),
       scheduledAt: addDays(now, 3),
-      metadata: { type: "trial-offer", trialToken },
+      metadata: { ...MARKETING_META, type: "trial-offer", trialToken },
     },
     {
       recipientEmail,
@@ -732,9 +782,12 @@ export function buildBookBuyerSequence(
       sequence: "book-buyer-welcome",
       step: 3,
       subject: "Your free month expires soon, The Consilium",
-      htmlBody: buildReminderHtml(recipientName, trialToken),
+      htmlBody: withMarketingFooter(
+        buildReminderHtml(recipientName, trialToken),
+        recipientEmail,
+      ),
       scheduledAt: addDays(now, 7),
-      metadata: { type: "trial-reminder", trialToken },
+      metadata: { ...MARKETING_META, type: "trial-reminder", trialToken },
     },
   ];
 }
@@ -1048,9 +1101,12 @@ export function buildNewsletterDrip(
       sequence: "newsletter-drip",
       step: 1,
       subject: "The single biggest predictor",
-      htmlBody: buildNewsletterStep1(recipientName),
+      htmlBody: withMarketingFooter(
+        buildNewsletterStep1(recipientName),
+        recipientEmail,
+      ),
       scheduledAt: addDays(now, 2),
-      metadata: {},
+      metadata: { ...MARKETING_META },
     },
     {
       recipientEmail,
@@ -1058,9 +1114,12 @@ export function buildNewsletterDrip(
       sequence: "newsletter-drip",
       step: 2,
       subject: "The move you didn't see",
-      htmlBody: buildNewsletterStep2(recipientName),
+      htmlBody: withMarketingFooter(
+        buildNewsletterStep2(recipientName),
+        recipientEmail,
+      ),
       scheduledAt: addDays(now, 4),
-      metadata: {},
+      metadata: { ...MARKETING_META },
     },
     {
       recipientEmail,
@@ -1068,9 +1127,12 @@ export function buildNewsletterDrip(
       sequence: "newsletter-drip",
       step: 3,
       subject: "Recognition vs response",
-      htmlBody: buildNewsletterStep3(recipientName),
+      htmlBody: withMarketingFooter(
+        buildNewsletterStep3(recipientName),
+        recipientEmail,
+      ),
       scheduledAt: addDays(now, 7),
-      metadata: {},
+      metadata: { ...MARKETING_META },
     },
   ];
 }
@@ -1094,9 +1156,12 @@ export function buildQuizBuyerSequence(
       sequence: "quiz-buyer-welcome",
       step: 1,
       subject: "Your unlocked results are inside",
-      htmlBody: buildQuizDripStep1(recipientName, args),
+      htmlBody: withMarketingFooter(
+        buildQuizDripStep1(recipientName, args),
+        recipientEmail,
+      ),
       scheduledAt: addDays(now, 1),
-      metadata: { ...sharedMeta, type: "results-recap" },
+      metadata: { ...MARKETING_META, ...sharedMeta, type: "results-recap" },
     },
     {
       recipientEmail,
@@ -1104,9 +1169,12 @@ export function buildQuizBuyerSequence(
       sequence: "quiz-buyer-welcome",
       step: 2,
       subject: "9 days on your Consilium credit",
-      htmlBody: buildQuizDripStep2(recipientName, args),
+      htmlBody: withMarketingFooter(
+        buildQuizDripStep2(recipientName, args),
+        recipientEmail,
+      ),
       scheduledAt: addDays(now, 5),
-      metadata: { ...sharedMeta, type: "midpoint" },
+      metadata: { ...MARKETING_META, ...sharedMeta, type: "midpoint" },
     },
     {
       recipientEmail,
@@ -1114,9 +1182,12 @@ export function buildQuizBuyerSequence(
       sequence: "quiz-buyer-welcome",
       step: 3,
       subject: "48 hours, your Consilium credit",
-      htmlBody: buildQuizDripStep3(recipientName, args),
+      htmlBody: withMarketingFooter(
+        buildQuizDripStep3(recipientName, args),
+        recipientEmail,
+      ),
       scheduledAt: addDays(now, 12),
-      metadata: { ...sharedMeta, type: "last-call" },
+      metadata: { ...MARKETING_META, ...sharedMeta, type: "last-call" },
     },
   ];
 }
