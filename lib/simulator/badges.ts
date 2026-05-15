@@ -550,6 +550,21 @@ export const SIMULATOR_BADGES: SimulatorBadgeDef[] = [
   { key: "the-half-build",           title: "The Half-Build",           description: "Diagnosis clean. Repair handed to her. The work was the redesign you stopped one move short of doing.",                                    tier: "scenario", icon: "eye"      },
   { key: "apology-worked",           title: "The Apology Worked",       description: "You apologised. She accepted. The muscle was not built. The eight-week clock has started.",                                                 tier: "scenario", icon: "sparkles" },
   { key: "liv-reflex",               title: "The Liv Reflex",           description: "The body's old protocol on a woman who did not ask for it. Two hours and eleven minutes on a bike. A flat that has been filed.",            tier: "scenario", icon: "skull"    },
+
+  // female, mission-13-1 "The Allegation"
+  { key: "lawyer-first",             title: "Lawyer First",             description: "The 47-second teaser tried to bait you into a paragraph by 9:00 am. You declined. The preservation letter went out at 10:00.",            tier: "scenario", icon: "shield"   },
+  { key: "wrong-order",              title: "The Wrong Order",          description: "You called the journalist before you called the lawyer. The piece will run with two sourced quotes from you that you did not know you were giving.", tier: "scenario", icon: "eye"      },
+  { key: "quoted-statement",         title: "The Quoted Statement",     description: "You drafted the statement before the lawyer call. The podcast quoted three sentences inside ninety minutes.",                              tier: "scenario", icon: "skull"    },
+
+  // male-business, b7-board-seat
+  { key: "cohort-declined",          title: "The Cohort Declined",      description: "Four sentences at 8:24 am. The cohort named, the structure declined, the introducer kept intact.",                                          tier: "scenario", icon: "shield"   },
+  { key: "papers-read",              title: "The Papers Read",          description: "You declined to commit at the table. The CFO read clauses 14 to 19. The decline went out by Tuesday.",                                      tier: "scenario", icon: "sparkles" },
+  { key: "surveillance-grid",        title: "The Surveillance Grid",    description: "You signed. The cohort is now four founders. Vaughn sees four boards four times a year. He completes the grid.",                            tier: "scenario", icon: "skull"    },
+
+  // male-dating, d7-work-crisis
+  { key: "steady-in-the-room",       title: "Steady In The Room",       description: "Twenty minutes of listening at 4:02 pm. No deck. No fixing. The afternoon was the room you did not author.",                                tier: "scenario", icon: "shield"   },
+  { key: "the-deck",                 title: "The Deck",                 description: "You made a deck she did not ask for. The deck contains love. So does the cost.",                                                            tier: "scenario", icon: "sparkles" },
+  { key: "door-closed-quietly",      title: "The Door Closed Quietly",  description: "The phrases were correct. The size was wrong. The bedroom door closed at 3:48 pm.",                                                         tier: "scenario", icon: "skull"    },
 ];
 
 export const BADGE_BY_KEY: Record<string, SimulatorBadgeDef> =
@@ -649,6 +664,21 @@ export const V3_SCENARIO_ENDING_BADGES: V3EndingMap = {
     "ending-conflict-half-built":   ["the-half-build"],
     "ending-conflict-soothed":      ["apology-worked"],
     "ending-conflict-avoided":      ["liv-reflex"],
+  },
+  "mission-13-1": {
+    "ending-lawyer-first":          ["lawyer-first"],
+    "ending-allies-first":          ["wrong-order"],
+    "ending-the-statement":         ["quoted-statement"],
+  },
+  "b7-board-seat": {
+    "ending-cohort-declined":       ["cohort-declined"],
+    "ending-papers-read":           ["papers-read"],
+    "ending-cohort-joined":         ["surveillance-grid"],
+  },
+  "d7-work-crisis": {
+    "ending-steady-in-the-room":    ["steady-in-the-room"],
+    "ending-project-manager":       ["the-deck"],
+    "ending-went-small":            ["door-closed-quietly"],
   },
 };
 

@@ -56,6 +56,7 @@ import mission111 from "./mission-11-1";
 import mission112 from "./mission-11-2";
 import mission121 from "./mission-12-1";
 import mission122 from "./mission-12-2";
+import mission131 from "./mission-13-1";
 
 /**
  * Female track, the original Maris-arc scenarios. `track` is implicit
@@ -86,6 +87,7 @@ export const FEMALE_SCENARIOS: Scenario[] = [
   mission112,
   mission121,
   mission122,
+  mission131,
 ];
 
 export {
@@ -284,5 +286,10 @@ export const LEVEL_TITLES: Record<number, { title: string; blurb: string }> = {
     title: "The Lateral",
     blurb:
       "She could not get the signature, so she is getting the people. The discipline of not defending.",
+  },
+  13: {
+    title: "The Crisis",
+    blurb:
+      "The smear left the family. The first hour is the hour the next nine days are built on. Lawyer first.",
   },
 };

@@ -15,6 +15,7 @@ import businessMission3 from "./b3-covert-peer";
 import businessMission4 from "./b4-charming-cofounder";
 import businessMission5 from "./b5-predatory-term-sheet";
 import businessMission6 from "./b6-first-firing";
+import businessMission7 from "./b7-board-seat";
 
 export const MALE_BUSINESS_SCENARIOS: Scenario[] = [
   businessMission1,
@@ -23,6 +24,7 @@ export const MALE_BUSINESS_SCENARIOS: Scenario[] = [
   businessMission4,
   businessMission5,
   businessMission6,
+  businessMission7,
 ];
 
 /** Human labels for the Business Line levels, mirrors LEVEL_TITLES in the main registry. */
@@ -46,5 +48,10 @@ export const MALE_BUSINESS_LEVEL_TITLES: Record<
     title: "The Founder's Cost",
     blurb:
       "Nineteen minutes to do the humane procedural thing. The first one is the pattern the next eight are built on.",
+  },
+  7: {
+    title: "The Boardroom",
+    blurb:
+      "Observer rights, distributed cohorts, and a cheque dressed as a favour. The structure is always the product.",
   },
 };

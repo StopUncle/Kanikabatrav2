@@ -17,6 +17,7 @@ import datingMission3 from "./d3-gaslighter";
 import datingMission4 from "./d4-hoover";
 import datingMission5 from "./d5-secure-one";
 import datingMission6 from "./d6-first-real-fight";
+import datingMission7 from "./d7-work-crisis";
 
 export const MALE_DATING_SCENARIOS: Scenario[] = [
   datingMission1,
@@ -25,6 +26,7 @@ export const MALE_DATING_SCENARIOS: Scenario[] = [
   datingMission4,
   datingMission5,
   datingMission6,
+  datingMission7,
 ];
 
 export const MALE_DATING_LEVEL_TITLES: Record<
@@ -55,5 +57,10 @@ export const MALE_DATING_LEVEL_TITLES: Record<
     title: "The Life Built",
     blurb:
       "Conflict without drama. The muscle you have never built because the last one taught you the wrong protocol.",
+  },
+  7: {
+    title: "The Test",
+    blurb:
+      "Her crisis lands in your kitchen. The room you build for her is more useful than the work you do for her.",
   },
 };

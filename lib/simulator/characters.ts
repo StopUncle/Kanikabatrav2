@@ -244,7 +244,30 @@ export const DEVON: Character = {
 };
 
 // ===================================================================
-// ANXIETY TRACK — introduced in TRACK-anxiety
+// FEMALE TRACK, L13+ characters (V3 expansion)
+// ===================================================================
+
+/**
+ * Elanor Webb. Partner at a small Manhattan firm specialising in
+ * defamation and reputation. Forty-seven. Picks up on Sundays. Speaks
+ * in finished sentences. Charges $1,400 an hour. Verbal tic: opens
+ * calls with the time on her clock, not yours ("It is 8:31 here.").
+ * Appears in mission-13-1 and will recur in L13-2 / L14-1.
+ */
+export const ELANOR: Character = {
+  id: "elanor",
+  name: "Elanor Webb",
+  description:
+    "Crisis lawyer. Partner at a small firm specialising in defamation and reputation. Speaks in finished sentences, charges by the hour for the hour, opens calls by naming the time on her clock. The first call when an industry-adjacent podcast names you with the word allegations.",
+  traits: ["precise", "expensive", "structurally-warm"],
+  defaultEmotion: "knowing",
+  gender: "female",
+  personalityType: "mentor",
+  silhouetteType: "female-elegant",
+};
+
+// ===================================================================
+// ANXIETY TRACK, introduced in TRACK-anxiety
 // ===================================================================
 
 /**
