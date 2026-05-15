@@ -192,19 +192,19 @@ export default async function LeaderboardPage() {
         <div className="grid grid-cols-3 gap-3 sm:gap-5 mb-10 items-end">
           <PodiumCard
             entry={podium[1]}
-            height="h-44 sm:h-52"
+            height="min-h-44 sm:min-h-52"
             accent="silver"
             icon={<Medal className="w-3 h-3" strokeWidth={2} />}
           />
           <PodiumCard
             entry={podium[0]}
-            height="h-52 sm:h-60"
+            height="min-h-52 sm:min-h-60"
             accent="gold"
             icon={<Crown className="w-3 h-3" strokeWidth={2} />}
           />
           <PodiumCard
             entry={podium[2]}
-            height="h-40 sm:h-48"
+            height="min-h-44 sm:min-h-48"
             accent="bronze"
             icon={<Trophy className="w-3 h-3" strokeWidth={2} />}
           />
