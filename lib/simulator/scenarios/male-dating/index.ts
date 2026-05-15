@@ -20,6 +20,7 @@ import datingMission6 from "./d6-first-real-fight";
 import datingMission7 from "./d7-work-crisis";
 import datingMission8 from "./d8-ex-in-trouble";
 import datingMission9 from "./d9-the-question";
+import datingMission10 from "./d10-the-mothers-lunch";
 
 export const MALE_DATING_SCENARIOS: Scenario[] = [
   datingMission1,
@@ -31,6 +32,7 @@ export const MALE_DATING_SCENARIOS: Scenario[] = [
   datingMission7,
   datingMission8,
   datingMission9,
+  datingMission10,
 ];
 
 export const MALE_DATING_LEVEL_TITLES: Record<
@@ -76,5 +78,10 @@ export const MALE_DATING_LEVEL_TITLES: Record<
     title: "The Question",
     blurb:
       "Eleven weeks after the first real fight. The proposal as architecture, not destination.",
+  },
+  10: {
+    title: "The Trust",
+    blurb:
+      "Her mother brings you a piece of trust. The work is the receiving, not the plan.",
   },
 };

@@ -595,6 +595,21 @@ export const SIMULATOR_BADGES: SimulatorBadgeDef[] = [
   { key: "the-named-future",         title: "The Naming",               description: "The bench at 21st. The chain in your pocket. You asked for the name on a thing that already existed. Yes to the naming.",                   tier: "scenario", icon: "shield"   },
   { key: "the-bench-story",          title: "The Bench Story",          description: "Standard worked. The yes was real. The story is the bench. The cost is the named version of the question you did not ask.",                 tier: "scenario", icon: "sparkles" },
   { key: "the-ambush-story",         title: "The Story You Do Not Tell", description: "The kitchen. Barefoot. Before the coffee. The yes was yes. The frame was the nervous system's, not the morning's.",                          tier: "scenario", icon: "skull"    },
+
+  // female, mission-14-2 "The Partnership"
+  { key: "booth-as-room",            title: "The Booth As Room",        description: "Thursday's nine minutes. The floor named to the partner before the partners' table. The four-year seat starts October.",                     tier: "scenario", icon: "shield"   },
+  { key: "disclosure-late",          title: "The Disclosure Made Late", description: "You took the week. The conversation that should have been Thursday happened the following Thursday. Lennox stayed. The bevel is small.",   tier: "scenario", icon: "sparkles" },
+  { key: "october-meeting",          title: "The October Meeting",      description: "Accepted without disclosure. Adrian Vale saw it from across a partners' table. The booth conversation happened on a Saturday in November.", tier: "scenario", icon: "skull"    },
+
+  // male-business, b10-series-b
+  { key: "cage-removed",             title: "The Cage Removed",         description: "The 51 percent class threshold replaced with a board-level vote. The plan-miss trigger removed. The Series B starts with optionality intact.", tier: "scenario", icon: "shield"   },
+  { key: "higher-threshold",         title: "The Higher Threshold",     description: "60 percent. The cage slightly enlarged. The door at the same place. The threshold negotiation was the wrong negotiation.",                   tier: "scenario", icon: "sparkles" },
+  { key: "cage-accepted",            title: "The Cage Accepted",        description: "Optimistic acceptance of 4.7 as drafted. Halberd has unilateral veto on change-of-control transactions. The cage closes in eighteen months.", tier: "scenario", icon: "skull"    },
+
+  // male-dating, d10-the-mothers-lunch
+  { key: "soup-eaten",               title: "The Soup Eaten",           description: "Ninety minutes at La Bonne Soupe. The diagnosis named. The ask received. The thirty-day frame agreed. The ordinary is the practice.",         tier: "scenario", icon: "shield"   },
+  { key: "questions-redirected",     title: "The Questions That Did Not Land", description: "Twelve clinical questions. She redirected with grace. You recovered. The first ten minutes will be redeemed in August.",            tier: "scenario", icon: "sparkles" },
+  { key: "distinction-collapsed",    title: "The Distinction Collapsed", description: "You insisted Noor should know tonight. Yasmin walked you to the corner. She told Noor that evening. The three months of ordinary are gone.", tier: "scenario", icon: "skull"    },
 ];
 
 export const BADGE_BY_KEY: Record<string, SimulatorBadgeDef> =
@@ -739,6 +754,21 @@ export const V3_SCENARIO_ENDING_BADGES: V3EndingMap = {
     "ending-the-named-future":      ["the-named-future"],
     "ending-the-standard-proposal": ["the-bench-story"],
     "ending-the-ambush":            ["the-ambush-story"],
+  },
+  "mission-14-2": {
+    "ending-the-booth-as-room":     ["booth-as-room"],
+    "ending-the-week-later":        ["disclosure-late"],
+    "ending-the-october-meeting":   ["october-meeting"],
+  },
+  "b10-series-b": {
+    "ending-the-clause-out":        ["cage-removed"],
+    "ending-the-cap":               ["higher-threshold"],
+    "ending-the-cage-accepted":     ["cage-accepted"],
+  },
+  "d10-the-mothers-lunch": {
+    "ending-the-soup-eaten":        ["soup-eaten"],
+    "ending-the-questions-redirected": ["questions-redirected"],
+    "ending-the-planning-override": ["distinction-collapsed"],
   },
 };
 

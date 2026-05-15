@@ -18,6 +18,7 @@ import businessMission6 from "./b6-first-firing";
 import businessMission7 from "./b7-board-seat";
 import businessMission8 from "./b8-cofounder-offer";
 import businessMission9 from "./b9-acquisition-lure";
+import businessMission10 from "./b10-series-b";
 
 export const MALE_BUSINESS_SCENARIOS: Scenario[] = [
   businessMission1,
@@ -29,6 +30,7 @@ export const MALE_BUSINESS_SCENARIOS: Scenario[] = [
   businessMission7,
   businessMission8,
   businessMission9,
+  businessMission10,
 ];
 
 /** Human labels for the Business Line levels, mirrors LEVEL_TITLES in the main registry. */
@@ -67,5 +69,10 @@ export const MALE_BUSINESS_LEVEL_TITLES: Record<
     title: "The Acquisition Lure",
     blurb:
       "Acquihire, acquisition, or strategic partnership. The math is rich. The structure is poor. Read what is actually being offered.",
+  },
+  10: {
+    title: "The Capital",
+    blurb:
+      "The headline numbers are the door. The protective provisions are the cage. Read clause-by-clause.",
   },
 };
