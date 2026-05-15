@@ -23,6 +23,7 @@ import datingMission9 from "./d9-the-question";
 import datingMission10 from "./d10-the-mothers-lunch";
 import datingMission11 from "./d11-noors-birthday";
 import datingMission12 from "./d12-the-october-telling";
+import datingMission13 from "./d13-november-call";
 
 export const MALE_DATING_SCENARIOS: Scenario[] = [
   datingMission1,
@@ -37,6 +38,7 @@ export const MALE_DATING_SCENARIOS: Scenario[] = [
   datingMission10,
   datingMission11,
   datingMission12,
+  datingMission13,
 ];
 
 export const MALE_DATING_LEVEL_TITLES: Record<
@@ -97,5 +99,10 @@ export const MALE_DATING_LEVEL_TITLES: Record<
     title: "The Telling",
     blurb:
       "Yasmin tells Noor. You are in the next room. The discipline is the not-doing.",
+  },
+  13: {
+    title: "The Call",
+    blurb:
+      "Tuesday 7:42 pm. Yasmin calls you directly. The ask is yours to answer.",
   },
 };

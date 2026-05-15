@@ -267,6 +267,26 @@ export const ELANOR: Character = {
 };
 
 /**
+ * Elena Vasquez. The L1 protagonist analog, three-plus years after
+ * the V3 expansion's L16. Twenty-seven, two years post-MBA, currently
+ * at a growth-stage operating role. Came in through the inbound list,
+ * not through a referral. The resume Kaya would have flagged a decade
+ * ago. Verbal tic: she pauses one second before naming a number, the
+ * pause of someone who has been told her numbers should sound careful.
+ */
+export const ELENA: Character = {
+  id: "elena",
+  name: "Elena Vasquez",
+  description:
+    "The candidate sitting across the table. Twenty-seven. Two years post-MBA. Came in through the inbound list. Operating background at a growth-stage company. The resume the protagonist would have submitted at her age, three months before she met Maris at the rooftop.",
+  traits: ["operating-experience", "earnest", "promising"],
+  defaultEmotion: "hopeful",
+  gender: "female",
+  personalityType: "aspirant",
+  silhouetteType: "female-athletic",
+};
+
+/**
  * Hugh Carrey. Founding partner of Halberd Carrey. Mid-sixties,
  * ex-Bain, twenty-two years at the firm, the name on the door. Speaks
  * in two-sentence units. Verbal tic: opens partners' meetings with

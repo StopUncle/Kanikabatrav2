@@ -640,6 +640,21 @@ export const SIMULATOR_BADGES: SimulatorBadgeDef[] = [
   { key: "sat-and-stayed",           title: "Sat And Stayed",           description: "The 2:14 call-in. Forty-three seconds of silence. The chair you sat in for ninety more minutes without making the room about you.",          tier: "scenario", icon: "shield"   },
   { key: "knocked-uncalled",         title: "The Knock Uncalled",       description: "You knocked at 2:08. Yasmin said please go back. Noor noticed. The bevel is small. The August practice will need two more dinners.",         tier: "scenario", icon: "sparkles" },
   { key: "walked-away",              title: "The Cafe On Atlantic",     description: "You left at 2:01. You returned at 2:47, after the moment. Noor named the leaving as a decision to know better than the structure.",         tier: "scenario", icon: "skull"    },
+
+  // female, mission-16-1 "The Interview"
+  { key: "door-built",               title: "The Door Built",           description: "Three Kaya questions. Three Elena answers. In eight years she will run her own interview using these three.",                              tier: "scenario", icon: "shield"   },
+  { key: "mixed-three",              title: "The Mixed Three",          description: "Two Kaya questions and one Maris. The room tilted a quarter-degree. Elena did not notice. You did.",                                        tier: "scenario", icon: "sparkles" },
+  { key: "mirror-failed",            title: "The Mirror Failed",        description: "Three Maris questions. The interview was the room you swore you would not run. Elena will accept another offer.",                           tier: "scenario", icon: "skull"    },
+
+  // male-business, b13-series-c
+  { key: "open-process",             title: "The Open Process",         description: "Seven funds. Bridge competed on the merits. The board now has two non-Halberd-friendly voices with votes.",                                tier: "scenario", icon: "shield"   },
+  { key: "shaped-list",              title: "The Shaped List",          description: "Two swaps. Anna Petrov on the board. The voting math is still mostly Bridge-favourable. The diplomacy preserved the structural posture.",   tier: "scenario", icon: "sparkles" },
+  { key: "halberd-stack",            title: "The Halberd Stack",        description: "Closed process. Four Halberd-friendly funds. The board is the board Bridge would have built. He does not need to push. He needs to wait.",  tier: "scenario", icon: "skull"    },
+
+  // male-dating, d13-november-call
+  { key: "clean-yes",                title: "The Clean Yes",            description: "Eight minutes on the phone with Yasmin. Six hours later you told Noor in the order Yasmin specified. The week is structurally in the year.", tier: "scenario", icon: "shield"   },
+  { key: "conditional-yes",          title: "The Routed Yes",           description: "You moved the ask through Noor. Noor named what you had done. The yes the next morning was structurally the same and texturally different.", tier: "scenario", icon: "sparkles" },
+  { key: "deferred",                 title: "The Friday Yes",           description: "You deferred. Friday morning you called and said yes. Yasmin accepted. The two-day gap is the data.",                                          tier: "scenario", icon: "skull"    },
 ];
 
 export const BADGE_BY_KEY: Record<string, SimulatorBadgeDef> =
@@ -829,6 +844,21 @@ export const V3_SCENARIO_ENDING_BADGES: V3EndingMap = {
     "ending-sat-and-stayed":        ["sat-and-stayed"],
     "ending-knocked-uncalled":      ["knocked-uncalled"],
     "ending-walked-away":           ["walked-away"],
+  },
+  "mission-16-1": {
+    "ending-the-door-built":        ["door-built"],
+    "ending-the-mixed-three":       ["mixed-three"],
+    "ending-the-mirror-failed":     ["mirror-failed"],
+  },
+  "b13-series-c": {
+    "ending-open-process":          ["open-process"],
+    "ending-shaped-list":           ["shaped-list"],
+    "ending-halberd-stack":         ["halberd-stack"],
+  },
+  "d13-november-call": {
+    "ending-clean-yes":             ["clean-yes"],
+    "ending-conditional-yes":       ["conditional-yes"],
+    "ending-deferred":              ["deferred"],
   },
 };
 
