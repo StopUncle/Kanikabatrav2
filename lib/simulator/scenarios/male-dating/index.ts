@@ -21,6 +21,7 @@ import datingMission7 from "./d7-work-crisis";
 import datingMission8 from "./d8-ex-in-trouble";
 import datingMission9 from "./d9-the-question";
 import datingMission10 from "./d10-the-mothers-lunch";
+import datingMission11 from "./d11-noors-birthday";
 
 export const MALE_DATING_SCENARIOS: Scenario[] = [
   datingMission1,
@@ -33,6 +34,7 @@ export const MALE_DATING_SCENARIOS: Scenario[] = [
   datingMission8,
   datingMission9,
   datingMission10,
+  datingMission11,
 ];
 
 export const MALE_DATING_LEVEL_TITLES: Record<
@@ -83,5 +85,10 @@ export const MALE_DATING_LEVEL_TITLES: Record<
     title: "The Trust",
     blurb:
       "Her mother brings you a piece of trust. The work is the receiving, not the plan.",
+  },
+  11: {
+    title: "The Ordinary",
+    blurb:
+      "Three people at the table. Two know the diagnosis. The discipline is being exactly who you were at the bench.",
   },
 };

@@ -266,6 +266,61 @@ export const ELANOR: Character = {
   silhouetteType: "female-elegant",
 };
 
+/**
+ * Hugh Carrey. Founding partner of Halberd Carrey. Mid-sixties,
+ * ex-Bain, twenty-two years at the firm, the name on the door. Speaks
+ * in two-sentence units. Verbal tic: opens partners' meetings with
+ * the same six-word phrase: "We have nine items. We start." Lennox
+ * recruited the protagonist with his blessing.
+ */
+export const HUGH: Character = {
+  id: "hugh",
+  name: "Hugh Carrey",
+  description:
+    "Founding partner of Halberd Carrey. Mid-sixties, ex-Bain, twenty-two years at the firm. Low-volume, long-view, named on the door. Knew about the L13 crisis floor before the protagonist accepted the seat.",
+  traits: ["seasoned", "low-noise", "structurally-aware"],
+  defaultEmotion: "knowing",
+  gender: "male",
+  personalityType: "mentor",
+  silhouetteType: "male-imposing",
+};
+
+/**
+ * Sara Min. Head of Platform at Halberd Carrey. Mid-forties, Korean
+ * American, ex-Goldman MD, six years at the firm. The second partner
+ * Lennox named the floor to. Runs the firm's portfolio operations
+ * function. Sympathetic but procedural.
+ */
+export const SARA_MIN: Character = {
+  id: "sara-min",
+  name: "Sara Min",
+  description:
+    "Head of Platform at Halberd Carrey. Mid-forties, ex-Goldman MD, six years at the firm. Runs portfolio operations. The second partner Lennox named the L13 floor to. Procedural in a register that reads as warm rather than cold.",
+  traits: ["procedural", "warm-by-evidence", "structural"],
+  defaultEmotion: "knowing",
+  gender: "female",
+  personalityType: "mentor",
+  silhouetteType: "female-elegant",
+};
+
+/**
+ * Adrian Vale. Partner at Halberd Carrey. Aria Vale's husband. The
+ * person on whose behalf Aria placed the Davis Karim podcast in L13.
+ * On-screen for the first time at L15-1. Patrician, slow-blinking,
+ * extremely well-read. Has not been told the L13 floor.
+ */
+export const ADRIAN_VALE: Character = {
+  id: "adrian-vale",
+  name: "Adrian Vale",
+  description:
+    "Partner at Halberd Carrey. Aria Vale's husband. Former McKinsey partner. The person on whose behalf the L13 podcast was placed. Has not been told the floor. Patrician, slow-blinking, polite in a way that does not buy you anything.",
+  traits: ["patient", "credentialled", "antagonist-by-proxy"],
+  defaultEmotion: "cold",
+  gender: "male",
+  personalityType: "covert-narcissist",
+  silhouetteType: "male-imposing",
+};
+
 // ===================================================================
 // ANXIETY TRACK, introduced in TRACK-anxiety
 // ===================================================================

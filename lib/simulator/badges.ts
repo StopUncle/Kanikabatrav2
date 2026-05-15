@@ -610,6 +610,21 @@ export const SIMULATOR_BADGES: SimulatorBadgeDef[] = [
   { key: "soup-eaten",               title: "The Soup Eaten",           description: "Ninety minutes at La Bonne Soupe. The diagnosis named. The ask received. The thirty-day frame agreed. The ordinary is the practice.",         tier: "scenario", icon: "shield"   },
   { key: "questions-redirected",     title: "The Questions That Did Not Land", description: "Twelve clinical questions. She redirected with grace. You recovered. The first ten minutes will be redeemed in August.",            tier: "scenario", icon: "sparkles" },
   { key: "distinction-collapsed",    title: "The Distinction Collapsed", description: "You insisted Noor should know tonight. Yasmin walked you to the corner. She told Noor that evening. The three months of ordinary are gone.", tier: "scenario", icon: "skull"    },
+
+  // female, mission-15-1 "The Partners' Table"
+  { key: "floor-held",               title: "The Floor Held",           description: "Four sentences. Sara routed the envelope. Adrian did not have a specific concern. The meeting moved on. The posture stayed the posture.",     tier: "scenario", icon: "shield"   },
+  { key: "preemption-spent",         title: "The Preemption",           description: "You named the floor at the partners' table. Hugh handled it cleanly. The eight weeks Lennox now spends managing the six partners are the cost.", tier: "scenario", icon: "sparkles" },
+  { key: "defense-surfaced",         title: "The Defense Surfaced",     description: "You converted Adrian's vague gesture into the agenda. The L4 register surfaced at the partners' table.",                                       tier: "scenario", icon: "skull"    },
+
+  // male-business, b11-first-board-meeting
+  { key: "work-led",                 title: "The Work Led",             description: "Two slides. Fourteen minutes on the deck. An hour of conversation the deck could not contain. Bridge stayed eight extra minutes.",            tier: "scenario", icon: "shield"   },
+  { key: "overpacked-deck",          title: "The Overpacked Deck",      description: "Forty-seven slides. Marisa stopped taking notes at slide twenty-three. The platform pipeline conversation did not happen.",                  tier: "scenario", icon: "sparkles" },
+  { key: "framing-apology",          title: "The Framing Apology",      description: "You opened with the 3 percent miss. The room spent forty minutes on a topic that needed eight. The pattern is now the 3 percent miss.",       tier: "scenario", icon: "skull"    },
+
+  // male-dating, d11-noors-birthday
+  { key: "ordinary-held",            title: "The Ordinary Held",        description: "Thirty seconds of toast. Yasmin's line stayed Yasmin's line. The Borges story got told. Yasmin walked to her hotel at 9:34 pm as planned.",   tier: "scenario", icon: "shield"   },
+  { key: "over-attended",            title: "The Over-Attention",       description: "You named Yasmin in the toast in a way she did not need. The bevel is the adjustment she makes in real time over the August dinners.",        tier: "scenario", icon: "sparkles" },
+  { key: "under-attended",           title: "The Under-Attention",      description: "You toasted only Noor. Noor filled the gap with a gracious line. Yasmin watched the compensation happen.",                                    tier: "scenario", icon: "skull"    },
 ];
 
 export const BADGE_BY_KEY: Record<string, SimulatorBadgeDef> =
@@ -769,6 +784,21 @@ export const V3_SCENARIO_ENDING_BADGES: V3EndingMap = {
     "ending-the-soup-eaten":        ["soup-eaten"],
     "ending-the-questions-redirected": ["questions-redirected"],
     "ending-the-planning-override": ["distinction-collapsed"],
+  },
+  "mission-15-1": {
+    "ending-the-floor-held":        ["floor-held"],
+    "ending-the-preemption":        ["preemption-spent"],
+    "ending-the-defense-surfaced":  ["defense-surfaced"],
+  },
+  "b11-first-board-meeting": {
+    "ending-the-work-led":          ["work-led"],
+    "ending-the-overpacked-deck":   ["overpacked-deck"],
+    "ending-the-framing-apology":   ["framing-apology"],
+  },
+  "d11-noors-birthday": {
+    "ending-be-ordinary":           ["ordinary-held"],
+    "ending-over-attended":         ["over-attended"],
+    "ending-under-attended":        ["under-attended"],
   },
 };
 
