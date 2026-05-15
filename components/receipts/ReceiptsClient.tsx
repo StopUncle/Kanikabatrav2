@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Send, Loader2, Trash2, Check } from "lucide-react";
+import { Send, Loader2, Trash2, Check, ImagePlus, X } from "lucide-react";
 import { AnimatePresence, m } from "framer-motion";
 
 interface ReceiptItem {
@@ -23,6 +23,54 @@ interface Props {
   initialQuota: Quota;
 }
 
+// Mirrors lib/receipts/anthropic.ts. Keep in sync.
+const MAX_IMAGES = 2;
+const MAX_IMAGE_BYTES = 4 * 1024 * 1024;
+const ACCEPTED_MIME = new Set([
+  "image/jpeg",
+  "image/png",
+  "image/webp",
+  "image/gif",
+]);
+
+type StagedImage = {
+  /** Stable id for React keys + remove. Generated client-side. */
+  id: string;
+  base64: string;
+  mediaType: "image/jpeg" | "image/png" | "image/webp" | "image/gif";
+  /** ObjectURL for thumbnail preview, revoked on unmount/remove. */
+  previewUrl: string;
+  /** File name when available (drag-drop / picker); blank for paste. */
+  name: string;
+};
+
+/**
+ * Read a File as a base64-encoded string (no `data:` URL prefix).
+ * Used to ship images in a JSON request body. Rejects on non-image
+ * MIME or oversize files; returns null on validation failure so the
+ * caller can surface a single combined error.
+ */
+async function fileToStagedImage(file: File): Promise<StagedImage | string> {
+  if (!ACCEPTED_MIME.has(file.type)) {
+    return "Only JPEG, PNG, WebP, or GIF screenshots.";
+  }
+  if (file.size > MAX_IMAGE_BYTES) {
+    return "Each screenshot must be under 4MB. Try a JPEG export.";
+  }
+  const buf = await file.arrayBuffer();
+  const bytes = new Uint8Array(buf);
+  let binary = "";
+  for (let i = 0; i < bytes.length; i++) binary += String.fromCharCode(bytes[i]);
+  const base64 = btoa(binary);
+  return {
+    id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+    base64,
+    mediaType: file.type as StagedImage["mediaType"],
+    previewUrl: URL.createObjectURL(file),
+    name: file.name || "",
+  };
+}
+
 export default function ReceiptsClient({
   initialItems,
   initialQuota,
@@ -30,16 +78,97 @@ export default function ReceiptsClient({
   const router = useRouter();
   const [input, setInput] = useState("");
   const [label, setLabel] = useState("");
+  const [images, setImages] = useState<StagedImage[]>([]);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [items, setItems] = useState<ReceiptItem[]>(initialItems);
   const [quota, setQuota] = useState<Quota>(initialQuota);
   const [latestId, setLatestId] = useState<string | null>(null);
+  const [dragOver, setDragOver] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Revoke any outstanding object URLs when the component unmounts so
+  // we don't leak blob: handles across navigations.
+  useEffect(() => {
+    return () => {
+      images.forEach((i) => URL.revokeObjectURL(i.previewUrl));
+    };
+    // We intentionally run cleanup only on unmount; per-image revocation
+    // happens at remove() time below.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  async function addFiles(files: FileList | File[]) {
+    setError(null);
+    const incoming = Array.from(files);
+    if (incoming.length === 0) return;
+
+    const remaining = MAX_IMAGES - images.length;
+    if (remaining <= 0) {
+      setError(`At most ${MAX_IMAGES} screenshots per receipt.`);
+      return;
+    }
+
+    const accepted: StagedImage[] = [];
+    const errors: string[] = [];
+    for (const file of incoming.slice(0, remaining)) {
+      const result = await fileToStagedImage(file);
+      if (typeof result === "string") {
+        errors.push(result);
+      } else {
+        accepted.push(result);
+      }
+    }
+    if (incoming.length > remaining) {
+      errors.push(`Only the first ${remaining} kept; max is ${MAX_IMAGES}.`);
+    }
+    if (errors.length > 0) setError(errors[0]);
+    if (accepted.length > 0) setImages((prev) => [...prev, ...accepted]);
+  }
+
+  function removeImage(id: string) {
+    setImages((prev) => {
+      const removed = prev.find((i) => i.id === id);
+      if (removed) URL.revokeObjectURL(removed.previewUrl);
+      return prev.filter((i) => i.id !== id);
+    });
+  }
+
+  function onPaste(e: React.ClipboardEvent<HTMLTextAreaElement>) {
+    const imageItems = Array.from(e.clipboardData.items).filter(
+      (item) => item.kind === "file" && item.type.startsWith("image/"),
+    );
+    if (imageItems.length === 0) return;
+    e.preventDefault();
+    const files = imageItems
+      .map((item) => item.getAsFile())
+      .filter((f): f is File => f !== null);
+    if (files.length > 0) void addFiles(files);
+  }
+
+  function onDrop(e: React.DragEvent) {
+    e.preventDefault();
+    setDragOver(false);
+    if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+      void addFiles(e.dataTransfer.files);
+    }
+  }
 
   async function submit() {
     setError(null);
-    if (input.trim().length < 30) {
-      setError("Paste the full message. Minimum 30 characters.");
+    const trimmedInput = input.trim();
+    if (trimmedInput.length === 0 && images.length === 0) {
+      setError("Paste a message or attach a screenshot.");
+      return;
+    }
+    if (
+      trimmedInput.length > 0 &&
+      trimmedInput.length < 30 &&
+      images.length === 0
+    ) {
+      setError(
+        "Paste the full exchange. Minimum 30 characters when there's no screenshot.",
+      );
       return;
     }
     setSubmitting(true);
@@ -48,8 +177,15 @@ export default function ReceiptsClient({
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          input: input.trim(),
+          input: trimmedInput,
           label: label.trim() || undefined,
+          images:
+            images.length > 0
+              ? images.map((i) => ({
+                  base64: i.base64,
+                  mediaType: i.mediaType,
+                }))
+              : undefined,
         }),
       });
       const data = await res.json();
@@ -72,6 +208,8 @@ export default function ReceiptsClient({
       setLatestId(r.id);
       setInput("");
       setLabel("");
+      images.forEach((i) => URL.revokeObjectURL(i.previewUrl));
+      setImages([]);
       setSubmitting(false);
       router.refresh();
     } catch {
@@ -90,11 +228,25 @@ export default function ReceiptsClient({
   }
 
   const overCap = quota.remaining === 0;
+  const canAddMoreImages = images.length < MAX_IMAGES;
 
   return (
     <div className="space-y-10">
-      {/* Composer */}
-      <div className="rounded-lg border border-gray-800 bg-deep-black/60 p-6 sm:p-8 space-y-5">
+      {/* Composer. Wrapped in onDrop so anywhere inside it accepts a
+          dropped screenshot. */}
+      <div
+        className={`rounded-lg border bg-deep-black/60 p-6 sm:p-8 space-y-5 transition-colors ${
+          dragOver
+            ? "border-accent-gold/60 bg-accent-gold/[0.04]"
+            : "border-gray-800"
+        }`}
+        onDragOver={(e) => {
+          e.preventDefault();
+          if (canAddMoreImages) setDragOver(true);
+        }}
+        onDragLeave={() => setDragOver(false)}
+        onDrop={onDrop}
+      >
         <div className="flex items-baseline justify-between">
           <p className="text-accent-gold/70 text-[10px] uppercase tracking-[0.4em]">
             Paste a message exchange
@@ -120,13 +272,71 @@ export default function ReceiptsClient({
         <textarea
           value={input}
           onChange={(e) => setInput(e.target.value)}
+          onPaste={onPaste}
           rows={8}
-          placeholder="Paste the message or exchange here. Quote both sides if it is a back-and-forth. The fuller the input, the cleaner the read."
+          placeholder="Paste the message or exchange here. Or drop a screenshot anywhere in this box, or paste one with Cmd/Ctrl+V."
           maxLength={12_000}
           className="w-full bg-deep-black/40 border border-gray-800 rounded px-4 py-3 text-sm text-text-light placeholder:text-text-gray/50 focus:outline-none focus:border-accent-gold/50 leading-relaxed"
           style={{ fontFamily: "Georgia, serif" }}
           disabled={submitting}
         />
+
+        {/* Image attachment row: thumbnail strip + add-button. Only
+            renders when there's at least one image or when adding is
+            still allowed, so the empty composer stays minimal. */}
+        {(images.length > 0 || canAddMoreImages) && (
+          <div className="flex items-center gap-3 flex-wrap">
+            {images.map((img) => (
+              <div
+                key={img.id}
+                className="relative group rounded-md overflow-hidden border border-gray-800"
+              >
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={img.previewUrl}
+                  alt={img.name || "Screenshot"}
+                  className="w-20 h-20 object-cover"
+                />
+                <button
+                  type="button"
+                  onClick={() => removeImage(img.id)}
+                  aria-label="Remove screenshot"
+                  className="absolute top-1 right-1 w-5 h-5 rounded-full bg-deep-black/80 text-text-light hover:bg-accent-burgundy flex items-center justify-center transition-colors"
+                >
+                  <X size={12} />
+                </button>
+              </div>
+            ))}
+            {canAddMoreImages && (
+              <>
+                <button
+                  type="button"
+                  onClick={() => fileInputRef.current?.click()}
+                  disabled={submitting}
+                  className="inline-flex items-center gap-2 px-3 py-2 rounded-md border border-dashed border-gray-700 hover:border-accent-gold/60 text-text-gray hover:text-accent-gold text-xs uppercase tracking-[0.2em] transition-colors disabled:opacity-50"
+                >
+                  <ImagePlus size={14} />
+                  Add screenshot
+                </button>
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  multiple
+                  accept="image/jpeg,image/png,image/webp,image/gif"
+                  className="hidden"
+                  onChange={(e) => {
+                    if (e.target.files) void addFiles(e.target.files);
+                    // Reset so re-picking the same file fires onChange.
+                    e.target.value = "";
+                  }}
+                />
+                <span className="text-text-gray/50 text-[10px] uppercase tracking-[0.25em]">
+                  up to {MAX_IMAGES} · 4MB each · jpeg/png/webp
+                </span>
+              </>
+            )}
+          </div>
+        )}
 
         {error && (
           <p className="text-accent-burgundy text-sm">{error}</p>

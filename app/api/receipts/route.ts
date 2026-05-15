@@ -34,8 +34,23 @@ import { enforceRateLimit, limits } from "@/lib/rate-limit";
 import { logger } from "@/lib/logger";
 
 const Body = z.object({
-  input: z.string().min(1).max(20_000),
+  // Text is now optional — receipts can be screenshot-only.
+  input: z.string().max(20_000).optional().default(""),
   label: z.string().max(120).optional(),
+  images: z
+    .array(
+      z.object({
+        base64: z.string().min(1),
+        mediaType: z.enum([
+          "image/jpeg",
+          "image/png",
+          "image/webp",
+          "image/gif",
+        ]),
+      }),
+    )
+    .max(2)
+    .optional(),
 });
 
 const TIER_WEEKLY_CAPS = { member: 12, inner: 60 } as const;
@@ -76,8 +91,13 @@ export async function POST(request: NextRequest) {
   const cap = TIER_WEEKLY_CAPS[tier];
 
   // 1. Replay short-circuit: same input within 7 days returns the
-  //    prior Receipt and does not consume from the cap.
-  const inputHash = hashInput(body.input);
+  //    prior Receipt and does not consume from the cap. We fold the
+  //    image bytes into the hash so an identical screenshot pair
+  //    short-circuits the same way a re-pasted text exchange does.
+  const imageHashSeed = (body.images ?? [])
+    .map((i) => `${i.mediaType}:${i.base64.length}:${i.base64.slice(0, 64)}`)
+    .join("|");
+  const inputHash = hashInput(`${body.input}\n${imageHashSeed}`);
   const prior = await findRecentSameInput(ctx.userId, inputHash);
   if (prior) {
     return NextResponse.json({
@@ -96,10 +116,12 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  // 3. LLM call.
+  // 3. LLM call. Images (when present) are discarded post-call — only
+  //    the text response is persisted, preserving the "your input is
+  //    not stored" promise.
   let result;
   try {
-    result = await callReceipts(body.input, body.label);
+    result = await callReceipts(body.input, body.label, body.images);
   } catch (err) {
     if (err instanceof ReceiptsInputError) {
       return NextResponse.json(

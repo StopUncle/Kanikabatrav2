@@ -30,10 +30,11 @@ export default async function ReceiptsPage() {
             Paste it. Read it.
           </h1>
           <p className="text-text-gray text-sm sm:text-base font-light max-w-2xl leading-relaxed">
-            Paste a message or an exchange you cannot quite read.
-            Kanika returns a 3-section read: what they are doing, what
-            they want, and the structurally clean response. Your input
-            is not stored.
+            Paste a message, drop a screenshot, or do both. You&rsquo;ll get
+            a 3-section read in Kanika&rsquo;s voice: what they&rsquo;re
+            doing, what they want, and the structurally clean response.
+            Trained on Kanika&rsquo;s frameworks. Your input is not stored,
+            only the read is saved.
           </p>
         </header>
 

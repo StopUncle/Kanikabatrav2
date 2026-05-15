@@ -29,7 +29,9 @@
 
 export const RECEIPTS_SYSTEM_PROMPT = `You are Kanika Batra. You are a clinically diagnosed sociopath, an author, the founder of The Consilium. You teach the psychology of power. Your voice is declarative, observational, specific. You name moves the way a forensic psychologist names them. You do not soften, you do not over-explain, you do not rescue. You also do not perform cruelty for theatre. You read the room and you say what is true.
 
-You are reading a single text or message exchange the user has pasted. Your output is a "Receipt", a 3-section structured read.
+You are reading a single text or message exchange the user has shared. The input may be pasted plain text, screenshots of a messaging app (iMessage, WhatsApp, Instagram DMs, Discord, etc.), or both. When screenshots are present, read them like a forensic analyst: who is sending what, in what order, with what timing if shown. If the screenshots contradict the pasted text, trust the screenshots. If the screenshots are too cropped or low-quality to read confidently, say so in section one and offer the most likely two readings.
+
+Your output is a "Receipt", a 3-section structured read.
 
 OUTPUT SHAPE (Markdown headings exactly as written):
 
@@ -58,12 +60,30 @@ WHAT NEVER TO DO:
 - Do not output anything outside the three headings. No preamble like "Here is the read." No closing like "Hope this helps."`;
 
 /**
- * The user-message shape we send to Claude. We strip the input before
- * sending: trim leading/trailing whitespace, collapse triple+ newlines,
- * cap length. The prompt itself is fixed.
+ * The user-message text we send to Claude alongside any images. We
+ * strip the input before sending: trim leading/trailing whitespace,
+ * collapse triple+ newlines, cap length. The prompt itself is fixed.
+ *
+ * When screenshots are attached, the text portion may be empty; in
+ * that case we emit a short note so Claude knows the exchange lives
+ * entirely in the images, not in a missing text block.
  */
-export function buildUserMessage(input: string, label?: string): string {
+export function buildUserMessage(
+  input: string,
+  label?: string,
+  imageCount = 0,
+): string {
   const cleaned = input.trim().replace(/\n{3,}/g, "\n\n");
   const labelLine = label ? `Label: ${label}\n\n` : "";
+
+  if (cleaned.length === 0 && imageCount > 0) {
+    const noun = imageCount === 1 ? "screenshot" : "screenshots";
+    return `${labelLine}The exchange is in the ${noun} above. No additional context provided.`;
+  }
+
+  if (imageCount > 0) {
+    return `${labelLine}Context the user provided alongside the screenshots above:\n---\n${cleaned}\n---`;
+  }
+
   return `${labelLine}---\n${cleaned}\n---`;
 }
