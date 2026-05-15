@@ -83,6 +83,12 @@ export async function requireServerAuth(redirectPath: string): Promise<string> {
 /**
  * Optionally get user ID from cookies (returns null if not logged in or
  * if the user is banned).
+ *
+ * Falls back to the admin_session cookie when no valid member access
+ * token is present, mirroring requireServerAuth. Without this fallback,
+ * member-side API routes (Receipts, resend-download, etc.) would reject
+ * admins who navigated into member surfaces via the admin pathway,
+ * even though those same admins can load the matching page just fine.
  */
 export async function optionalServerAuth(): Promise<string | null> {
   if (process.env.DEV_BYPASS_AUTH === "true") {
@@ -92,18 +98,22 @@ export async function optionalServerAuth(): Promise<string | null> {
   const cookieStore = await cookies();
   const accessToken = cookieStore.get("accessToken")?.value;
 
-  if (!accessToken) return null;
-
-  try {
-    const payload = verifyAccessToken(accessToken);
-    const user = await prisma.user.findUnique({
-      where: { id: payload.userId },
-      select: { isBanned: true, tokenVersion: true },
-    });
-    if (!user || user.isBanned) return null;
-    if (payload.v !== undefined && payload.v !== user.tokenVersion) return null;
-    return payload.userId;
-  } catch {
-    return null;
+  if (accessToken) {
+    try {
+      const payload = verifyAccessToken(accessToken);
+      const user = await prisma.user.findUnique({
+        where: { id: payload.userId },
+        select: { isBanned: true, tokenVersion: true },
+      });
+      if (user && !user.isBanned) {
+        if (payload.v === undefined || payload.v === user.tokenVersion) {
+          return payload.userId;
+        }
+      }
+    } catch {
+      // Token invalid — fall through to admin check
+    }
   }
+
+  return getAdminUserId();
 }

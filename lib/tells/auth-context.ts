@@ -13,6 +13,7 @@
 import { cookies } from "next/headers";
 import { randomUUID } from "crypto";
 import { verifyAccessToken } from "@/lib/auth/jwt";
+import { getAdminUserId } from "@/lib/auth/server-auth";
 
 export interface TellContext {
   userId: string | null;
@@ -37,6 +38,15 @@ export async function resolveTellContext(): Promise<TellContext> {
     } catch {
       userId = null;
     }
+  }
+
+  // Admin fallback: when an admin navigates a member surface (e.g.
+  // Kanika previewing /consilium/receipts), they may have only an
+  // admin_session cookie, no member accessToken. Treat the admin as
+  // the underlying ADMIN user so member-side API routes accept the
+  // request, matching the behavior of requireServerAuth on the page.
+  if (!userId) {
+    userId = await getAdminUserId();
   }
 
   let anonId = store.get(ANON_COOKIE)?.value;
