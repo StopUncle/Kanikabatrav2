@@ -2134,7 +2134,7 @@ export const sendQuestionAnswered = async (params: {
   answerType: "VOICE_NOTE" | "VIDEO" | "ANNOUNCEMENT";
 }): Promise<boolean> => {
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://kanikarose.com";
-  const answerUrl = `${baseUrl}/consilium/feed#post-${params.answerPostId}`;
+  const answerUrl = `${baseUrl}/consilium/feed/${params.answerPostId}`;
   const intro =
     params.answerType === "VIDEO"
       ? "Kanika answered your question in a new video on the Consilium feed."

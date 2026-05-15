@@ -312,7 +312,7 @@ export default function QuestionsClient({ initialQuestions, initialTabCounts }: 
                       )}
                       {q.answerPost && (
                         <a
-                          href={`/consilium/feed#post-${q.answerPost.id}`}
+                          href={`/consilium/feed/${q.answerPost.id}`}
                           className="inline-flex items-center gap-1 text-emerald-300 hover:text-emerald-200"
                         >
                           {q.answerPost.type === "VIDEO" ? (

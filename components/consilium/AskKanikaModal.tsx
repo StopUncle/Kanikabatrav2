@@ -281,7 +281,7 @@ export default function AskKanikaModal({ open, onClose }: Props) {
                     </p>
                     {q.answerPost && (
                       <a
-                        href={`/consilium/feed#post-${q.answerPost.id}`}
+                        href={`/consilium/feed/${q.answerPost.id}`}
                         onClick={onClose}
                         className="inline-flex items-center gap-2 text-emerald-300 hover:text-emerald-200 text-[12px] font-medium tracking-wider uppercase"
                       >

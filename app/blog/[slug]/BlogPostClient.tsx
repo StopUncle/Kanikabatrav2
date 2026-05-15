@@ -11,6 +11,7 @@ import RelatedPosts, {
 } from "@/components/RelatedPosts";
 import BookPromo from "@/components/blog/BookPromo";
 import InlineCoachingCTA from "@/components/blog/InlineCoachingCTA";
+import EndOfPostConsiliumCTA from "@/components/blog/EndOfPostConsiliumCTA";
 import TableOfContents from "@/components/blog/TableOfContents";
 import SocialShareButtons from "@/components/blog/SocialShareButtons";
 import NewsletterForm from "@/components/NewsletterForm";
@@ -167,6 +168,8 @@ export default function BlogPostClient({
                   </div>
 
                   <div className="space-y-16">
+                    <EndOfPostConsiliumCTA slug={post.slug} />
+
                     <AuthorBio variant="full" />
 
                     <div className="py-12 px-8 rounded-2xl bg-gradient-to-br from-deep-navy/50 to-accent-burgundy/20 border border-white/10 text-center">

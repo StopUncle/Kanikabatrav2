@@ -25,6 +25,18 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 1.0,
     },
     {
+      url: `${BASE_URL}/consilium`,
+      lastModified: new Date(),
+      changeFrequency: "weekly",
+      priority: 0.98,
+    },
+    {
+      url: `${BASE_URL}/tells`,
+      lastModified: new Date(),
+      changeFrequency: "weekly",
+      priority: 0.95,
+    },
+    {
       url: `${BASE_URL}/book`,
       lastModified: new Date(),
       changeFrequency: "weekly",

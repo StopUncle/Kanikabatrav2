@@ -82,7 +82,7 @@ export async function notifyAskerOfAnswer(params: {
       params.questionContent.length > 110
         ? params.questionContent.slice(0, 107) + "…"
         : params.questionContent,
-    url: `/consilium/feed#post-${params.answerPostId}`,
+    url: `/consilium/feed/${params.answerPostId}`,
     tag: `question-${params.questionId}`,
   }).catch((err) => {
     logger.warn("[questions/notify] push failed", {

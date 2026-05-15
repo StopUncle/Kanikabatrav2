@@ -1137,6 +1137,214 @@ export function buildNewsletterDrip(
   ];
 }
 
+// ============================================================
+// Book-buyer Consilium re-engagement push.
+//
+// Targets the cohort the audit on 2026-05-15 surfaced:
+// book buyers who have a site account but never joined Consilium,
+// and whose original book-buyer-welcome trial-offer either expired
+// or was ignored. Independent of book-buyer-welcome. Soft, no
+// pricing tricks, no fake urgency. The wedge is honesty: you read
+// the book, this is the place where the book gets practiced.
+//
+// Cadence: Day 1 / 5 / 12. Naming distinct from book-buyer-welcome
+// so the enroll script can skip-detect cleanly.
+// ============================================================
+
+function consiliumLink(stepLabel: string): string {
+  const params = new URLSearchParams({
+    utm_source: "email",
+    utm_medium: "email",
+    utm_campaign: "book-buyer-consilium-push",
+    utm_content: stepLabel,
+  });
+  return `${baseUrl}/consilium?${params.toString()}`;
+}
+
+function buildBookConsiliumPushStep1(name: string): string {
+  const body = `
+    <p style="color: #f5f0ed; font-size: 16px; margin: 0 0 8px 0; line-height: 1.7;">
+      Hey ${esc(name)},
+    </p>
+
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 20px 0; font-size: 15px;">
+      You bought the book a while back. I'm not writing to ask if you finished it, that part's your business. I'm writing because most readers hit the same wall at the same place, and almost no one names it out loud.
+    </p>
+
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 20px 0; font-size: 15px;">
+      The wall is this: <strong style="color: #d4af37;">recognition is not response.</strong>
+    </p>
+
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 20px 0; font-size: 15px;">
+      The book gives you the framework. Mirror-bonding, DARVO, the investment ladder, the predator's gaze, all of it. After two or three chapters you can <em>see</em> the moves being run on you. That's real. That's the first half of the work.
+    </p>
+
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 20px 0; font-size: 15px;">
+      The second half is this: when DARVO is being run on you in a conversation you can't walk out of, what do you actually <em>say</em>? When a mirror-bonder is two years in and you're still in love with the reflection, what does a clean exit look like? When your boss runs the same supply pattern your last partner ran, do you call it out or do you starve it?
+    </p>
+
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 0 0; font-size: 15px;">
+      Recognition is a book. Response is a practice. I'll tell you where the practice lives in a few days.
+    </p>`;
+
+  return emailShell(
+    "Recognition is not response",
+    "Book buyer, note 1",
+    body,
+  );
+}
+
+function buildBookConsiliumPushStep2(name: string): string {
+  const body = `
+    <p style="color: #f5f0ed; font-size: 16px; margin: 0 0 20px 0; line-height: 1.7;">
+      ${esc(name)},
+    </p>
+
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 20px 0; font-size: 15px;">
+      The scene most book readers replay first, when they get inside the simulator, is a workplace one. Not a relationship one. Almost everyone expects it to be the other way around.
+    </p>
+
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 20px 0; font-size: 15px;">
+      The reason: workplace covert-narcissism is what you live with five days a week. The boss who claims your win in front of the room. The peer who runs DARVO when you flag the missed deadline. The mentor who supplies you on the days you're useful and ghosts you on the days you aren't. The book named those patterns. The simulator drops you into them with a real conversation and asks you to pick the line.
+    </p>
+
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 25px 0; font-size: 15px;">
+      You make the call. The scene resolves on it. You see the move you ran without knowing you ran it. Then you replay it with a different call. Over 60 scenarios. That's how response gets built.
+    </p>
+
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 25px 0; font-size: 15px;">
+      The simulator is one piece of <strong style="color: #d4af37;">the Consilium</strong>. $29 a month, cancel any time. Voice notes weekly, daily psychology drops, Ask Kanika, the forum where members run their actual situations through each other before they make the move. Members buy the book at $9.99 instead of $24.99 if you ever want a spare or a gift copy.
+    </p>
+
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 0 0; font-size: 15px;">
+      One more note from me before I let it sit.
+    </p>`;
+
+  return emailShell(
+    "The scene readers replay first",
+    "Book buyer, note 2",
+    body,
+  );
+}
+
+function buildBookConsiliumPushStep3(name: string): string {
+  const body = `
+    <p style="color: #f5f0ed; font-size: 16px; margin: 0 0 20px 0; line-height: 1.7;">
+      ${esc(name)},
+    </p>
+
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 20px 0; font-size: 15px;">
+      Last one from me on this. Then I stop.
+    </p>
+
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 20px 0; font-size: 15px;">
+      You already did the hardest part. You bought a book whose cover most people will not touch, with a title most people will not Google in their work browser, written by a clinically diagnosed sociopath. You're past the polite-society version of this conversation.
+    </p>
+
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 25px 0; font-size: 15px;">
+      The Consilium is where the rest of the conversation happens. $29 a month. Cancel any time, one click on the billing page, no email, no friction. Inside:
+    </p>
+
+    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="margin: 0 0 25px 0;">
+      <tr>
+        <td bgcolor="#1a0d11" style="padding: 25px; border-radius: 10px; border: 1px solid #d4af37;">
+          <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0">
+            <tr>
+              <td style="padding: 10px 0; color: #f5f0ed; font-size: 14px; line-height: 1.6; border-bottom: 1px solid #3d2030;">
+                <strong style="color: #d4af37;">The Dark Mirror Simulator</strong>, 60+ branching scenarios. Recognition becomes response.
+              </td>
+            </tr>
+            <tr>
+              <td style="padding: 10px 0; color: #f5f0ed; font-size: 14px; line-height: 1.6; border-bottom: 1px solid #3d2030;">
+                <strong style="color: #d4af37;">Voice notes from me</strong>, weekly. The unfiltered version. Things I won't put on Instagram.
+              </td>
+            </tr>
+            <tr>
+              <td style="padding: 10px 0; color: #f5f0ed; font-size: 14px; line-height: 1.6; border-bottom: 1px solid #3d2030;">
+                <strong style="color: #d4af37;">Ask Kanika</strong>, one question per day, my answer in voice or video.
+              </td>
+            </tr>
+            <tr>
+              <td style="padding: 10px 0; color: #f5f0ed; font-size: 14px; line-height: 1.6; border-bottom: 1px solid #3d2030;">
+                <strong style="color: #d4af37;">The Council</strong>, the forum, the chat rooms, the women who think like this. Every comment human-reviewed.
+              </td>
+            </tr>
+            <tr>
+              <td style="padding: 10px 0; color: #f5f0ed; font-size: 14px; line-height: 1.6;">
+                <strong style="color: #d4af37;">Member-only book pricing</strong>, $9.99 for the Sociopathic Dating Bible (vs $24.99 standalone). For your spare or your gift copy.
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+
+    ${goldButton("Join the Consilium", consiliumLink("step-3-primary"))}
+
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 20px 0; font-size: 15px;">
+      Or don't. The book is yours. The framework is yours. If reading was enough, that's a real outcome. If it wasn't, the door is open.
+    </p>
+
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 0 0; font-size: 15px;">
+      Either way, thank you for picking it up.
+    </p>`;
+
+  return emailShell(
+    "The door, one last time",
+    "Book buyer, note 3",
+    body,
+  );
+}
+
+export function buildBookBuyerConsiliumPush(
+  recipientEmail: string,
+  recipientName: string,
+): EmailQueueEntry[] {
+  const now = new Date();
+
+  return [
+    {
+      recipientEmail,
+      recipientName,
+      sequence: "book-buyer-consilium-push",
+      step: 1,
+      subject: "Recognition is not response",
+      htmlBody: withMarketingFooter(
+        buildBookConsiliumPushStep1(recipientName),
+        recipientEmail,
+      ),
+      scheduledAt: addDays(now, 1),
+      metadata: { ...MARKETING_META },
+    },
+    {
+      recipientEmail,
+      recipientName,
+      sequence: "book-buyer-consilium-push",
+      step: 2,
+      subject: "The scene readers replay first",
+      htmlBody: withMarketingFooter(
+        buildBookConsiliumPushStep2(recipientName),
+        recipientEmail,
+      ),
+      scheduledAt: addDays(now, 5),
+      metadata: { ...MARKETING_META },
+    },
+    {
+      recipientEmail,
+      recipientName,
+      sequence: "book-buyer-consilium-push",
+      step: 3,
+      subject: "The door, one last time",
+      htmlBody: withMarketingFooter(
+        buildBookConsiliumPushStep3(recipientName),
+        recipientEmail,
+      ),
+      scheduledAt: addDays(now, 12),
+      metadata: { ...MARKETING_META },
+    },
+  ];
+}
+
 export function buildQuizBuyerSequence(
   recipientEmail: string,
   recipientName: string,
