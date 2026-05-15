@@ -11,7 +11,7 @@ import {
 import { catalogueStats } from "@/lib/simulator/stats";
 import { computeStarsFromJson } from "@/lib/simulator/stars";
 import type { ScenarioTrack, OutcomeType } from "@/lib/simulator/types";
-import { ArrowRight, Trophy, BarChart3, Sparkles } from "lucide-react";
+import { ArrowRight, Trophy, BarChart3, Sparkles, Check } from "lucide-react";
 import LevelJourney, {
   type LevelGroup,
   type ScenarioNode,
@@ -115,6 +115,37 @@ export default async function SimulatorIndex({
     (acc, p) => acc + (p.xpEarned ?? 0),
     0,
   );
+
+  // Cross-track summary, used by the track selector to label inactive
+  // cards. A track with no progress shows "Start"; one with progress
+  // shows "Resume · X / Y" so the user can see where they left off
+  // without switching first.
+  const completedByTrack = new Map<ScenarioTrack, number>();
+  const totalByTrack = new Map<ScenarioTrack, number>();
+  for (const s of ALL_SCENARIOS) {
+    const t = (s.track ?? "female") as ScenarioTrack;
+    totalByTrack.set(t, (totalByTrack.get(t) ?? 0) + 1);
+  }
+  for (const p of progress) {
+    if (!p.completedAt) continue;
+    const s = scenarioById.get(p.scenarioId);
+    if (!s) continue;
+    const t = (s.track ?? "female") as ScenarioTrack;
+    completedByTrack.set(t, (completedByTrack.get(t) ?? 0) + 1);
+  }
+  const startedTrackIds = new Set<ScenarioTrack>();
+  for (const p of progress) {
+    const s = scenarioById.get(p.scenarioId);
+    if (s) startedTrackIds.add((s.track ?? "female") as ScenarioTrack);
+  }
+
+  // First-visit detection. A user with zero SimulatorProgress rows and
+  // no explicit ?track= param hasn't picked a line yet, so the catalog
+  // shouldn't dump them onto the Feminine default with a "Resume" CTA
+  // (they have nothing to resume). The full-bleed chooser below is
+  // shown instead. Anyone with at least one row or an explicit track
+  // selection falls through to the normal catalog.
+  const isFirstVisit = progress.length === 0 && !params.track;
 
   // Translate (scenario, progress, prereqs) → ScenarioStatus + the
   // pretty name of any blocking prereq for the locked render.
@@ -221,7 +252,70 @@ export default async function SimulatorIndex({
     .flatMap((g) => g.scenarios)
     .filter((n) => n.status !== "locked").length;
 
-  const meta = TRACK_META[track];
+  // First-visit chooser. Zero progress + no explicit track means we
+  // strip the page down to the line-picker so the user makes a
+  // deliberate choice instead of being dropped onto the Feminine
+  // default. The "Just browsing" escape link preserves the
+  // one-click-to-start path for the impatient.
+  if (isFirstVisit) {
+    return (
+      <main className="min-h-screen px-4 sm:px-8 py-10 max-w-5xl mx-auto">
+        <header className="mb-10 text-center">
+          <p className="text-warm-gold/70 uppercase tracking-[0.3em] text-xs mb-3">
+            The Consilium · Simulator
+          </p>
+          <h1 className="text-4xl sm:text-5xl font-extralight text-white mb-4 tracking-wide">
+            The <span className="text-warm-gold">Dark Mirror</span>
+          </h1>
+          <p className="text-text-gray text-base sm:text-lg font-light max-w-2xl mx-auto leading-relaxed">
+            Nine lines. Pick the one that matches your life right now. You can
+            switch any time. Progress tracks independently.
+          </p>
+        </header>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+          {VALID_TRACKS.map((t) => {
+            const tMeta = TRACK_META[t];
+            const total = totalByTrack.get(t) ?? 0;
+            return (
+              <Link
+                key={t}
+                href={tMeta.href}
+                className="group flex flex-col p-5 rounded-xl border border-warm-gold/15 bg-deep-black/40 transition-all hover:border-warm-gold/50 hover:bg-warm-gold/[0.04] hover:-translate-y-0.5"
+              >
+                <div className="flex items-center justify-between mb-3">
+                  <span className="text-warm-gold/60 uppercase tracking-[0.3em] text-[10px]">
+                    {total} scenarios
+                  </span>
+                  <ArrowRight
+                    size={14}
+                    className="text-warm-gold/40 group-hover:text-warm-gold group-hover:translate-x-0.5 transition-all"
+                    strokeWidth={1.6}
+                  />
+                </div>
+                <p className="text-white text-lg font-light tracking-wide mb-2">
+                  {tMeta.label}
+                </p>
+                <p className="text-text-gray/70 text-xs font-light leading-relaxed">
+                  {tMeta.sublabel}
+                </p>
+              </Link>
+            );
+          })}
+        </div>
+
+        <div className="mt-10 text-center">
+          <Link
+            href="/consilium/simulator?track=female"
+            className="inline-flex items-center gap-2 text-text-gray/60 hover:text-warm-gold text-xs uppercase tracking-[0.25em] transition-colors"
+          >
+            Just browsing? Start with Feminine
+            <ArrowRight size={12} strokeWidth={1.6} />
+          </Link>
+        </div>
+      </main>
+    );
+  }
 
   return (
     <main className="min-h-screen px-4 sm:px-8 py-10 max-w-5xl mx-auto">
@@ -275,27 +369,31 @@ export default async function SimulatorIndex({
       </header>
 
       {/* Track selector.
-          Mobile (<sm): horizontal scroll row of compact pills. Seven
-          full-width tabs stacked vertically used to eat 700px of
-          mobile real estate, replaced with a scrollable row of
-          label-only pills. The active track's sublabel moves into
-          the "Current track" panel below (already present), so the
-          pills don't need to repeat it.
-          Desktop (≥sm): wrapping card grid with the full eyebrow +
-          label + sublabel layout. Basis-[220px] keeps each card's
-          sublabel readable, flex-wrap breaks to a second row when
-          the container can't hold all seven in a line. */}
+          Framed explicitly as a chooser ("Pick your line") so it doesn't
+          read as a passive label of where the user already is. Active
+          card has a stronger gold border + check chip; inactive cards
+          carry a chevron and either a "Resume X/Y" or "Start" eyebrow
+          so the user knows at a glance which lines they've touched.
+          Mobile (<sm): horizontal scroll row of compact pills.
+          Desktop (≥sm): wrapping card grid. */}
+      <div className="mb-3 flex items-baseline justify-between">
+        <p className="text-warm-gold/70 uppercase tracking-[0.3em] text-[10px]">
+          Pick your line · 9 tracks
+        </p>
+        <p className="text-text-gray/50 text-[10px] uppercase tracking-[0.25em] hidden sm:block">
+          Progress tracks independently
+        </p>
+      </div>
       <nav
         aria-label="Simulator track"
-        className="mb-8 p-1.5 rounded-xl border border-warm-gold/15 bg-deep-black/40"
+        className="mb-10 p-1.5 rounded-xl border border-warm-gold/15 bg-deep-black/40"
       >
-        {/* Mobile: scrollable pill row. Scrollbar-hide removes the
-            default bar so the row reads clean; snap keeps each pill
-            landing at the left edge when scrolled. */}
+        {/* Mobile: scrollable pill row. */}
         <div className="sm:hidden flex gap-1.5 overflow-x-auto snap-x snap-mandatory -mx-1.5 px-1.5 pb-0.5 scrollbar-hide">
           {VALID_TRACKS.map((t) => {
             const tMeta = TRACK_META[t];
             const active = t === track;
+            const started = startedTrackIds.has(t);
             return (
               <Link
                 key={t}
@@ -304,41 +402,70 @@ export default async function SimulatorIndex({
                 className={`shrink-0 snap-start px-4 py-2.5 rounded-lg text-xs font-light tracking-wide whitespace-nowrap transition-all ${
                   active
                     ? "bg-warm-gold/15 border border-warm-gold/50 text-white"
-                    : "border border-white/5 bg-white/[0.02] text-text-gray/80 active:bg-white/10"
+                    : "border border-warm-gold/15 bg-white/[0.02] text-text-gray/80 active:bg-white/10"
                 }`}
               >
                 {tMeta.label}
+                {!active && started && (
+                  <span className="ml-1.5 text-[9px] text-warm-gold/70">
+                    ·
+                  </span>
+                )}
               </Link>
             );
           })}
         </div>
 
-        {/* Desktop: wrapping card grid, unchanged layout, hidden on
-            small screens. */}
+        {/* Desktop: wrapping card grid. */}
         <div className="hidden sm:flex sm:flex-wrap gap-2">
           {VALID_TRACKS.map((t) => {
             const tMeta = TRACK_META[t];
             const active = t === track;
+            const done = completedByTrack.get(t) ?? 0;
+            const total = totalByTrack.get(t) ?? 0;
+            const started = startedTrackIds.has(t);
+            const eyebrow = active
+              ? "Current"
+              : started
+                ? `Resume · ${done} / ${total}`
+                : "Start";
             return (
               <Link
                 key={t}
                 href={tMeta.href}
-                className={`flex-1 basis-[220px] flex flex-col items-start px-4 py-3 rounded-lg transition-all ${
+                aria-current={active ? "page" : undefined}
+                className={`group relative flex-1 basis-[220px] flex flex-col items-start px-4 py-3 rounded-lg transition-all ${
                   active
-                    ? "bg-warm-gold/10 border border-warm-gold/40"
-                    : "border border-transparent hover:bg-white/5"
+                    ? "bg-warm-gold/10 border border-warm-gold/50 ring-1 ring-warm-gold/15"
+                    : "border border-warm-gold/10 bg-deep-black/30 hover:border-warm-gold/40 hover:bg-warm-gold/[0.04]"
                 }`}
               >
+                {!active && (
+                  <ArrowRight
+                    size={13}
+                    strokeWidth={1.6}
+                    className="absolute top-3 right-3 text-warm-gold/30 group-hover:text-warm-gold group-hover:translate-x-0.5 transition-all"
+                  />
+                )}
+                {active && (
+                  <span className="absolute top-3 right-3 inline-flex items-center justify-center w-4 h-4 rounded-full bg-warm-gold/20 border border-warm-gold/50">
+                    <Check
+                      size={9}
+                      strokeWidth={2.5}
+                      className="text-warm-gold"
+                    />
+                  </span>
+                )}
                 <span
-                  className={`uppercase tracking-[0.3em] text-[10px] mb-1 ${
-                    active ? "text-warm-gold" : "text-warm-gold/50"
+                  className={`uppercase tracking-[0.3em] text-[10px] mb-1 pr-6 ${
+                    active ? "text-warm-gold" : "text-warm-gold/55"
                   }`}
                 >
-                  {active ? "Playing" : "Switch to"}
+                  {eyebrow}
                 </span>
                 <span
-                  className={`text-base font-light tracking-wide ${
-                    active ? "text-white" : "text-text-gray"
+                  className={`text-base font-light tracking-wide pr-6 ${
+                    active ? "text-white" : "text-text-light"
                   }`}
                 >
                   {tMeta.label}
@@ -351,18 +478,6 @@ export default async function SimulatorIndex({
           })}
         </div>
       </nav>
-
-      <div className="mb-6 border-l-2 border-warm-gold/30 pl-4">
-        <p className="text-warm-gold/70 uppercase tracking-[0.3em] text-[10px] mb-1">
-          Current track
-        </p>
-        <p className="text-white text-xl font-extralight tracking-wide">
-          {meta.label}
-        </p>
-        <p className="text-text-gray/70 text-sm font-light mt-1">
-          {meta.sublabel}
-        </p>
-      </div>
 
       {/* The journey itself */}
       <LevelJourney
