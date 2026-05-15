@@ -1345,6 +1345,261 @@ export function buildBookBuyerConsiliumPush(
   ];
 }
 
+// ============================================================
+// Book-buyer Consilium push, account-less cohort.
+//
+// Targets the ~100 buyers (per 2026-05-15 audit) who paid for the
+// book but never registered a site account. They received the
+// original book-buyer-welcome series, which included a trial-offer
+// email. The legacy trial JWTs they were issued may now be expired
+// (90d TTL), and the welcome copy pre-dates the simulator, so the
+// value-prop has improved since they last looked.
+//
+// Mechanism: each email carries a fresh `consilium-gift` JWT that
+// links to /consilium/claim. The claim flow creates the account,
+// signs them in, and activates a 30-day gift membership in one
+// button press. No card required.
+//
+// Cadence: Day 1 / 5 / 12. The gift CTA appears in every step so
+// an early decider can act immediately.
+// ============================================================
+
+interface AccountlessGiftArgs {
+  /** A fresh `consilium-gift` JWT signed by the enroll script with
+   *  the recipient's email + name baked in. Must verify against
+   *  JWT_SECRET on the server. 90-day TTL. */
+  claimToken: string;
+}
+
+function claimLink(token: string): string {
+  return `${baseUrl}/consilium/claim?token=${token}`;
+}
+
+function giftClaimBlock(
+  name: string,
+  claimUrl: string,
+  blurb: string,
+): string {
+  return `
+    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="margin: 0 0 25px 0;">
+      <tr>
+        <td bgcolor="#1a0d11" style="padding: 28px; border-radius: 10px; border: 1px solid #d4af37;">
+          <p style="color: #d4af37; margin: 0 0 10px 0; font-size: 11px; text-transform: uppercase; letter-spacing: 2px; text-align: center; font-weight: 600;">
+            A gift from Kanika
+          </p>
+          <h3 style="color: #ffffff; margin: 0 0 14px 0; font-size: 22px; font-weight: 300; text-align: center; letter-spacing: 0.5px;">
+            30 days inside the Consilium
+          </h3>
+          <p style="color: #94a3b8; margin: 0 0 18px 0; font-size: 13px; line-height: 1.7; text-align: center;">
+            ${blurb}
+          </p>
+          <div style="text-align: center;">
+            <a href="${claimUrl}" style="display: inline-block; background: #d4af37; color: #0a0a0a; padding: 14px 32px; text-decoration: none; border-radius: 50px; font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;">
+              Claim My 30 Days
+            </a>
+          </div>
+          <p style="color: #666; margin: 14px 0 0 0; font-size: 11px; text-align: center;">
+            For ${esc(name)} &middot; one click &middot; no payment required
+          </p>
+        </td>
+      </tr>
+    </table>
+  `;
+}
+
+function buildNoAccountStep1(name: string, args: AccountlessGiftArgs): string {
+  const url = claimLink(args.claimToken);
+  const body = `
+    <p style="color: #f5f0ed; font-size: 16px; margin: 0 0 8px 0; line-height: 1.7;">
+      ${esc(name)},
+    </p>
+
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 20px 0; font-size: 15px;">
+      You bought the Sociopathic Dating Bible a while back. I'm writing because the world I was building when you bought it isn't the same world anymore, and you've been on the outside of all of it.
+    </p>
+
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 20px 0; font-size: 15px;">
+      Since you read the book, I built <strong style="color: #d4af37;">the Dark Mirror Simulator</strong>. 60+ branching scenarios on the same axes the book names. You make the call, the scene resolves on it, you see the move you ran without knowing you ran it. Then you replay it with a different call.
+    </p>
+
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 20px 0; font-size: 15px;">
+      I also started recording weekly voice notes, things I won't put on Instagram. Members ask me one question per day and I answer the best one on voice or video. There's a private forum where members run their actual situations through each other before they make the move.
+    </p>
+
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 25px 0; font-size: 15px;">
+      The whole thing is called <strong style="color: #d4af37;">the Consilium</strong>. I'm giving you 30 days, my treat, because you already paid for the framework. The 30 days don't require a card. They don't auto-charge. When they end, they lapse cleanly.
+    </p>
+
+    ${giftClaimBlock(name, url, "Creates your account, activates the gift, signs you in. About 30 seconds.")}
+
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 0 0; font-size: 15px;">
+      I'll send you a piece of what's inside in a few days. Even if you don't claim, the email will be worth reading.
+    </p>`;
+
+  return emailShell(
+    "What's been built since you bought the book",
+    "Book buyer, note 1",
+    body,
+  );
+}
+
+function buildNoAccountStep2(name: string, args: AccountlessGiftArgs): string {
+  const url = claimLink(args.claimToken);
+  const body = `
+    <p style="color: #f5f0ed; font-size: 16px; margin: 0 0 20px 0; line-height: 1.7;">
+      ${esc(name)},
+    </p>
+
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 20px 0; font-size: 15px;">
+      Here's one scene from the simulator. You don't need to be a member to read this. You'd need to be a member to play it.
+    </p>
+
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 20px 0; font-size: 15px; padding-left: 16px; border-left: 2px solid #d4af37;">
+      <em>You're in a one-on-one with your manager. A project you led got shipped. In the room with two senior people, your manager describes the work in the first person, "I", "my call", "I shipped it on the timeline I set." Your name doesn't come up. You feel the heat in your face. You have about three seconds to decide what you do.</em>
+    </p>
+
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 20px 0; font-size: 15px;">
+      The book gives you the framework for what's happening, supply-mining, the credit-claim move, the soft-narcissism playbook. The simulator gives you the four-choice fork. Each choice plays the scene forward to a different consequence. You see what you'd actually do, and you see the move you didn't see.
+    </p>
+
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 25px 0; font-size: 15px;">
+      That's one scene. There are 60+. They cover dating, workplace, family, friendship. The first time you play one is where it clicks that this isn't a book anymore, it's a practice.
+    </p>
+
+    ${giftClaimBlock(name, url, "30 days, all 60+ scenarios, the voice notes, the council. No card on file.")}
+
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 0 0; font-size: 15px;">
+      One more note from me before I stop.
+    </p>`;
+
+  return emailShell(
+    "The scene I'd play first",
+    "Book buyer, note 2",
+    body,
+  );
+}
+
+function buildNoAccountStep3(name: string, args: AccountlessGiftArgs): string {
+  const url = claimLink(args.claimToken);
+  const body = `
+    <p style="color: #f5f0ed; font-size: 16px; margin: 0 0 20px 0; line-height: 1.7;">
+      ${esc(name)},
+    </p>
+
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 20px 0; font-size: 15px;">
+      Last note. Then I stop, I promise.
+    </p>
+
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 20px 0; font-size: 15px;">
+      You bought a book whose cover most people will not touch, with a title most people will not Google in their work browser, written by a clinically diagnosed sociopath. That part already happened. The expensive part of the decision is behind you.
+    </p>
+
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 20px 0; font-size: 15px;">
+      The cheap part is on the other side of one button. The 30 days are real, they're a gift, no card, no auto-charge. The account-creation step is folded into the same click, you don't have to do a separate registration. The whole flow is about thirty seconds end to end.
+    </p>
+
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 25px 0; font-size: 15px;">
+      What you get for the 30 days:
+    </p>
+
+    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="margin: 0 0 25px 0;">
+      <tr>
+        <td bgcolor="#1a0d11" style="padding: 25px; border-radius: 10px; border: 1px solid #d4af37;">
+          <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0">
+            <tr>
+              <td style="padding: 10px 0; color: #f5f0ed; font-size: 14px; line-height: 1.6; border-bottom: 1px solid #3d2030;">
+                <strong style="color: #d4af37;">The Dark Mirror Simulator</strong>, 60+ scenes. Recognition becomes response.
+              </td>
+            </tr>
+            <tr>
+              <td style="padding: 10px 0; color: #f5f0ed; font-size: 14px; line-height: 1.6; border-bottom: 1px solid #3d2030;">
+                <strong style="color: #d4af37;">Voice notes from me</strong>, weekly. The unfiltered version.
+              </td>
+            </tr>
+            <tr>
+              <td style="padding: 10px 0; color: #f5f0ed; font-size: 14px; line-height: 1.6; border-bottom: 1px solid #3d2030;">
+                <strong style="color: #d4af37;">Ask Kanika</strong>, one question per day, my answer.
+              </td>
+            </tr>
+            <tr>
+              <td style="padding: 10px 0; color: #f5f0ed; font-size: 14px; line-height: 1.6;">
+                <strong style="color: #d4af37;">The Council</strong>, forum, chat, every comment human-reviewed.
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+
+    ${giftClaimBlock(name, url, "Last opportunity to claim from this thread. The gift link expires in the next few weeks.")}
+
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 20px 0; font-size: 15px;">
+      Or don't. The book is yours. The framework is yours. If reading was enough, that's a real outcome. If it wasn't, the door is open until it isn't.
+    </p>
+
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 0 0; font-size: 15px;">
+      Thank you for picking it up.
+    </p>`;
+
+  return emailShell(
+    "The door, one last time",
+    "Book buyer, note 3",
+    body,
+  );
+}
+
+export function buildBookBuyerNoAccountPush(
+  recipientEmail: string,
+  recipientName: string,
+  args: AccountlessGiftArgs,
+): EmailQueueEntry[] {
+  const now = new Date();
+
+  const sharedMeta = { claimToken: args.claimToken, isGiftWedge: true };
+
+  return [
+    {
+      recipientEmail,
+      recipientName,
+      sequence: "book-buyer-no-account-push",
+      step: 1,
+      subject: "What's been built since you bought the book",
+      htmlBody: withMarketingFooter(
+        buildNoAccountStep1(recipientName, args),
+        recipientEmail,
+      ),
+      scheduledAt: addDays(now, 1),
+      metadata: { ...MARKETING_META, ...sharedMeta, type: "novelty" },
+    },
+    {
+      recipientEmail,
+      recipientName,
+      sequence: "book-buyer-no-account-push",
+      step: 2,
+      subject: "The scene I'd play first",
+      htmlBody: withMarketingFooter(
+        buildNoAccountStep2(recipientName, args),
+        recipientEmail,
+      ),
+      scheduledAt: addDays(now, 5),
+      metadata: { ...MARKETING_META, ...sharedMeta, type: "specific-value" },
+    },
+    {
+      recipientEmail,
+      recipientName,
+      sequence: "book-buyer-no-account-push",
+      step: 3,
+      subject: "The door, one last time",
+      htmlBody: withMarketingFooter(
+        buildNoAccountStep3(recipientName, args),
+        recipientEmail,
+      ),
+      scheduledAt: addDays(now, 12),
+      metadata: { ...MARKETING_META, ...sharedMeta, type: "last-call" },
+    },
+  ];
+}
+
 export function buildQuizBuyerSequence(
   recipientEmail: string,
   recipientName: string,
