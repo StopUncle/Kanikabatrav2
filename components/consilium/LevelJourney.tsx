@@ -129,7 +129,7 @@ function statusVisual(status: ScenarioStatus) {
         ring:
           "border-warm-gold/30 bg-deep-black/55 hover:border-warm-gold/70 hover:shadow-[0_8px_40px_-8px_rgba(212,175,55,0.35)]",
         glow: "",
-        tag: "New",
+        tag: "Open",
         tagClass:
           "text-warm-gold bg-warm-gold/10 border-warm-gold/30",
         iconClass: "text-warm-gold",
@@ -191,6 +191,12 @@ function ScenarioCard({
   const v = statusVisual(node.status);
   const { scenario: s, status, prerequisiteTitles } = node;
 
+  // NEW pill renders for content-recency, distinct from the
+  // status-based "Open" tag. Suppressed once the player has started
+  // (in-progress) or completed the scenario — newness is a per-player
+  // signal, not a permanent catalog stamp.
+  const showNewPill = s.isNew === true && status === "available";
+
   const inner = (
     <div
       className={`relative rounded-2xl border p-5 transition-all duration-300 ${v.ring} ${v.glow} ${
@@ -199,6 +205,12 @@ function ScenarioCard({
           : ""
       }`}
     >
+      {showNewPill && (
+        <span className="absolute -top-2 -left-2 inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-deep-burgundy text-warm-gold text-[9px] uppercase tracking-[0.2em] font-medium border border-warm-gold/40 shadow-[0_4px_12px_-4px_rgba(212,175,55,0.4)]">
+          <Sparkles size={10} strokeWidth={2.5} />
+          New
+        </span>
+      )}
       {isNextUp && status !== "locked" && (
         <m.span
           initial={{ opacity: 0.6 }}

@@ -190,6 +190,29 @@ export const COLE: Character = {
 };
 
 // =====================================================================
+// BUSINESS LINE, L6+ characters
+// =====================================================================
+
+/**
+ * Cal Renner. Fourth hire of the protagonist's company. Senior engineer.
+ * Hired when the stack was Rails. Did not pick up Go when the migration
+ * happened. Likable, well-regarded internally, no longer technically
+ * central. Not a villain: the discipline in b6 is firing someone who
+ * is not a villain. Forty-one, married, six-year-old daughter.
+ */
+export const CAL: Character = {
+  id: "cal",
+  name: "Cal Renner",
+  description:
+    "Senior engineer. Fourth hire. The one who signed before the lawyer made you fix the option grant. The team has tolerated the technical drift because Cal is well-liked. You have tolerated it because he was the first person to bet on you. Forty-one. Wife. A daughter who starts first grade in September.",
+  traits: ["likable", "loyal", "technically-drifted"],
+  defaultEmotion: "neutral",
+  gender: "male",
+  personalityType: "long-tenure-employee",
+  silhouetteType: "male-average",
+};
+
+// =====================================================================
 // SHARED — inner voice (imported from female registry's pattern)
 // =====================================================================
 

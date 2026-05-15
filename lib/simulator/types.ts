@@ -218,6 +218,15 @@ export interface Scenario {
   tacticsLearned: string[];
   redFlagsTaught: string[];
   reward?: ScenarioReward;
+  /**
+   * Marks scenarios recently added to the catalogue. Surfaces a "NEW"
+   * pill on the journey card and a track-level NEW indicator on the
+   * catalog chooser, but only while the player hasn't completed it
+   * yet. Per-user staleness lives in the rendering layer; set this to
+   * `true` when authoring, clear it in the next content commit roughly
+   * 30 days later.
+   */
+  isNew?: boolean;
 }
 
 /** A player's choice recorded in a run. */

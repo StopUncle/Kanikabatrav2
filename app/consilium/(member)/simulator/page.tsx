@@ -134,9 +134,24 @@ export default async function SimulatorIndex({
     completedByTrack.set(t, (completedByTrack.get(t) ?? 0) + 1);
   }
   const startedTrackIds = new Set<ScenarioTrack>();
+  const seenScenarioIds = new Set<string>();
   for (const p of progress) {
+    seenScenarioIds.add(p.scenarioId);
     const s = scenarioById.get(p.scenarioId);
     if (s) startedTrackIds.add((s.track ?? "female") as ScenarioTrack);
+  }
+
+  // Per-track "new" counter — scenarios authored with `isNew: true`
+  // that the player has not opened yet. Drives the NEW chip on the
+  // track chooser cards. Drops to zero per-track the moment the
+  // player starts any of its new scenarios, so the indicator is a
+  // genuine signal of unseen content, not a permanent catalogue stamp.
+  const newByTrack = new Map<ScenarioTrack, number>();
+  for (const s of ALL_SCENARIOS) {
+    if (!s.isNew) continue;
+    if (seenScenarioIds.has(s.id)) continue;
+    const t = (s.track ?? "female") as ScenarioTrack;
+    newByTrack.set(t, (newByTrack.get(t) ?? 0) + 1);
   }
 
   // First-visit detection. A user with zero SimulatorProgress rows and
@@ -394,22 +409,26 @@ export default async function SimulatorIndex({
             const tMeta = TRACK_META[t];
             const active = t === track;
             const started = startedTrackIds.has(t);
+            const hasNew = (newByTrack.get(t) ?? 0) > 0;
             return (
               <Link
                 key={t}
                 href={tMeta.href}
                 aria-current={active ? "page" : undefined}
-                className={`shrink-0 snap-start px-4 py-2.5 rounded-lg text-xs font-light tracking-wide whitespace-nowrap transition-all ${
+                className={`shrink-0 snap-start px-4 py-2.5 rounded-lg text-xs font-light tracking-wide whitespace-nowrap transition-all inline-flex items-center gap-1.5 ${
                   active
                     ? "bg-warm-gold/15 border border-warm-gold/50 text-white"
                     : "border border-warm-gold/15 bg-white/[0.02] text-text-gray/80 active:bg-white/10"
                 }`}
               >
                 {tMeta.label}
-                {!active && started && (
-                  <span className="ml-1.5 text-[9px] text-warm-gold/70">
-                    ·
+                {hasNew && (
+                  <span className="text-[9px] uppercase tracking-[0.18em] px-1.5 py-0.5 rounded-full bg-deep-burgundy text-warm-gold border border-warm-gold/40">
+                    New
                   </span>
+                )}
+                {!active && started && !hasNew && (
+                  <span className="text-[9px] text-warm-gold/70">·</span>
                 )}
               </Link>
             );
@@ -424,6 +443,7 @@ export default async function SimulatorIndex({
             const done = completedByTrack.get(t) ?? 0;
             const total = totalByTrack.get(t) ?? 0;
             const started = startedTrackIds.has(t);
+            const newCount = newByTrack.get(t) ?? 0;
             const eyebrow = active
               ? "Current"
               : started
@@ -456,13 +476,21 @@ export default async function SimulatorIndex({
                     />
                   </span>
                 )}
-                <span
-                  className={`uppercase tracking-[0.3em] text-[10px] mb-1 pr-6 ${
-                    active ? "text-warm-gold" : "text-warm-gold/55"
-                  }`}
-                >
-                  {eyebrow}
-                </span>
+                <div className="flex items-center gap-2 mb-1 pr-6">
+                  <span
+                    className={`uppercase tracking-[0.3em] text-[10px] ${
+                      active ? "text-warm-gold" : "text-warm-gold/55"
+                    }`}
+                  >
+                    {eyebrow}
+                  </span>
+                  {newCount > 0 && (
+                    <span className="inline-flex items-center gap-1 text-[9px] uppercase tracking-[0.2em] px-1.5 py-0.5 rounded-full bg-deep-burgundy text-warm-gold border border-warm-gold/40">
+                      <Sparkles size={9} strokeWidth={2.4} />
+                      {newCount} New
+                    </span>
+                  )}
+                </div>
                 <span
                   className={`text-base font-light tracking-wide pr-6 ${
                     active ? "text-white" : "text-text-light"

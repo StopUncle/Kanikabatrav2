@@ -16,6 +16,7 @@ import datingMission2 from "./d2-exciting-one";
 import datingMission3 from "./d3-gaslighter";
 import datingMission4 from "./d4-hoover";
 import datingMission5 from "./d5-secure-one";
+import datingMission6 from "./d6-first-real-fight";
 
 export const MALE_DATING_SCENARIOS: Scenario[] = [
   datingMission1,
@@ -23,6 +24,7 @@ export const MALE_DATING_SCENARIOS: Scenario[] = [
   datingMission3,
   datingMission4,
   datingMission5,
+  datingMission6,
 ];
 
 export const MALE_DATING_LEVEL_TITLES: Record<
@@ -48,5 +50,10 @@ export const MALE_DATING_LEVEL_TITLES: Record<
   5: {
     title: "Mate Selection",
     blurb: "Calm, direct, secure. The part of you calling her boring is the part that decides your decade.",
+  },
+  6: {
+    title: "The Life Built",
+    blurb:
+      "Conflict without drama. The muscle you have never built because the last one taught you the wrong protocol.",
   },
 };

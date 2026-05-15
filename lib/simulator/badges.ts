@@ -528,10 +528,28 @@ export const SIMULATOR_BADGES: SimulatorBadgeDef[] = [
   // pc-child — pc-3-1 "The Triangulation"
   { key: "alliance-repaired",       title: "The Alliance Repaired",    description: "Quote-accurate / frame-wrong triangulation named and closed. The marriage held.",                    tier: "scenario", icon: "sparkles" },
 
-  // pc-child — pc-4-1 "The Marriage Question"
+  // pc-child, pc-4-1 "The Marriage Question"
   { key: "the-marriage-named",          title: "The Marriage Named",          description: "The 6:47 a.m. sentence received cleanly, specific cost named back, structural commitment made.", tier: "scenario", icon: "shield" },
   { key: "the-fifteen-year-thank-you",  title: "The Fifteen-Year Thank You",  description: "Both partners named one specific unnamed act of the other across the decade. The obsidian path of pc-4-1.", tier: "scenario", icon: "crown" },
   { key: "door-closed",                 title: "The Door Closed",             description: "Defended against the naming. The window at 6:47 a.m. closed by 7:02 a.m. The next one is harder.", tier: "scenario", icon: "skull" },
+
+  // female, mission-12-2 "The Friend Who Stayed"
+  { key: "the-tea-drunk",            title: "The Tea Drunk",            description: "Three weeks after a smear, you sat at Priya's kitchen table and did not turn it into a witness stand.",                                       tier: "scenario", icon: "shield"   },
+  { key: "the-update-given",         title: "The Update Given",         description: "Five calibrated sentences. A clean pivot. The friendship moved a notch off neutral. The cost is invisible, that is the point.",            tier: "scenario", icon: "sparkles" },
+  { key: "the-kitchen-held-late",    title: "The Kitchen Held (Late)",  description: "You spent the friendship and then you stopped. Priya named the rule on the landing. Next Sunday is yours to test.",                          tier: "scenario", icon: "eye"      },
+  { key: "the-friend-absorbed",      title: "The Friend Who Absorbed",  description: "Eighty minutes at the kitchen table. The friendship absorbed it. The cost will appear later as a Sunday that does not happen.",            tier: "scenario", icon: "skull"    },
+
+  // male-business, b6-first-firing
+  { key: "clean-cut",                title: "The Clean Cut",            description: "Thirty-four minutes. The decision named in the first ninety seconds. The reference offered without inflation. The first one done right.",   tier: "scenario", icon: "shield"   },
+  { key: "clean-cut-cold",           title: "The Clean Cut (Cold)",     description: "Procedurally right, generosity withheld. The packet was the package. The man did not get the reference.",                                   tier: "scenario", icon: "eye"      },
+  { key: "mutual-decision-lie",      title: "The Mutual Decision Lie",  description: "You did the firing twice. The first version was for your comfort. The second one was the real one.",                                       tier: "scenario", icon: "sparkles" },
+  { key: "the-hatchet",              title: "The Hatchet",              description: "Eight minutes. The script read. The reason withheld. The story Cal will tell for five years.",                                              tier: "scenario", icon: "skull"    },
+
+  // male-dating, d6-first-real-fight
+  { key: "the-naming",               title: "The Naming",               description: "Sixty-eight minutes at the counter. What was said vs what was heard, distinguished. The repair muscle built before the second crisis.",   tier: "scenario", icon: "shield"   },
+  { key: "the-half-build",           title: "The Half-Build",           description: "Diagnosis clean. Repair handed to her. The work was the redesign you stopped one move short of doing.",                                    tier: "scenario", icon: "eye"      },
+  { key: "apology-worked",           title: "The Apology Worked",       description: "You apologised. She accepted. The muscle was not built. The eight-week clock has started.",                                                 tier: "scenario", icon: "sparkles" },
+  { key: "liv-reflex",               title: "The Liv Reflex",           description: "The body's old protocol on a woman who did not ask for it. Two hours and eleven minutes on a bike. A flat that has been filed.",            tier: "scenario", icon: "skull"    },
 ];
 
 export const BADGE_BY_KEY: Record<string, SimulatorBadgeDef> =
@@ -613,6 +631,24 @@ export const V3_SCENARIO_ENDING_BADGES: V3EndingMap = {
     "ending-the-marriage-named":    ["the-marriage-named"],
     "ending-fifteen-year-thank-you": ["the-fifteen-year-thank-you"],
     "ending-door-closed":            ["door-closed"],
+  },
+  "mission-12-2": {
+    "ending-tea-drunk":             ["the-tea-drunk"],
+    "ending-update-given":          ["the-update-given"],
+    "ending-re-litigated-stopped":  ["the-kitchen-held-late"],
+    "ending-re-litigated-full":     ["the-friend-absorbed"],
+  },
+  "b6-first-firing": {
+    "ending-clean-cut":             ["clean-cut"],
+    "ending-clean-cut-cold":        ["clean-cut-cold"],
+    "ending-soft-landing":          ["mutual-decision-lie"],
+    "ending-hatchet":               ["the-hatchet"],
+  },
+  "d6-first-real-fight": {
+    "ending-conflict-built":        ["the-naming"],
+    "ending-conflict-half-built":   ["the-half-build"],
+    "ending-conflict-soothed":      ["apology-worked"],
+    "ending-conflict-avoided":      ["liv-reflex"],
   },
 };
 
