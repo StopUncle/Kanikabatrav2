@@ -22,6 +22,7 @@ import businessMission10 from "./b10-series-b";
 import businessMission11 from "./b11-first-board-meeting";
 import businessMission12 from "./b12-option-pool-refresh";
 import businessMission13 from "./b13-series-c";
+import businessMission14 from "./b14-post-c-board";
 
 export const MALE_BUSINESS_SCENARIOS: Scenario[] = [
   businessMission1,
@@ -37,6 +38,7 @@ export const MALE_BUSINESS_SCENARIOS: Scenario[] = [
   businessMission11,
   businessMission12,
   businessMission13,
+  businessMission14,
 ];
 
 /** Human labels for the Business Line levels, mirrors LEVEL_TITLES in the main registry. */
@@ -95,5 +97,10 @@ export const MALE_BUSINESS_LEVEL_TITLES: Record<
     title: "The Series C",
     blurb:
       "Who you let in at C is the board you have for five years. The process is the structural decision.",
+  },
+  14: {
+    title: "The New Board",
+    blurb:
+      "A new board composition produces a new operating mode only if the first meeting establishes the pattern.",
   },
 };

@@ -63,6 +63,7 @@ import mission142 from "./mission-14-2";
 import mission151 from "./mission-15-1";
 import mission152 from "./mission-15-2";
 import mission161 from "./mission-16-1";
+import mission162 from "./mission-16-2";
 
 /**
  * Female track, the original Maris-arc scenarios. `track` is implicit
@@ -100,6 +101,7 @@ export const FEMALE_SCENARIOS: Scenario[] = [
   mission151,
   mission152,
   mission161,
+  mission162,
 ];
 
 export {

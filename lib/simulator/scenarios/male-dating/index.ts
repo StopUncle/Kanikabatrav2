@@ -24,6 +24,7 @@ import datingMission10 from "./d10-the-mothers-lunch";
 import datingMission11 from "./d11-noors-birthday";
 import datingMission12 from "./d12-the-october-telling";
 import datingMission13 from "./d13-november-call";
+import datingMission14 from "./d14-the-marsden-week";
 
 export const MALE_DATING_SCENARIOS: Scenario[] = [
   datingMission1,
@@ -39,6 +40,7 @@ export const MALE_DATING_SCENARIOS: Scenario[] = [
   datingMission11,
   datingMission12,
   datingMission13,
+  datingMission14,
 ];
 
 export const MALE_DATING_LEVEL_TITLES: Record<
@@ -104,5 +106,10 @@ export const MALE_DATING_LEVEL_TITLES: Record<
     title: "The Call",
     blurb:
       "Tuesday 7:42 pm. Yasmin calls you directly. The ask is yours to answer.",
+  },
+  14: {
+    title: "The Marsden Week",
+    blurb:
+      "Seven days at Maida Vale. The question Yasmin has been holding since July 5.",
   },
 };

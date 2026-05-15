@@ -254,6 +254,47 @@ export const ANIKA: Character = {
 };
 
 // =====================================================================
+// BUSINESS LINE, L13+ characters
+// =====================================================================
+
+/**
+ * Anna Petrov. Partner at Verge. Mid-forties, ex-operator at a
+ * vertical Bridge would not have introduced. Joined the board at the
+ * Series C close. The strategic voice that did not exist on the
+ * board before b13. Verbal tic: she takes notes in fountain pen
+ * and asks her question after writing the question down.
+ */
+export const ANNA_PETROV: Character = {
+  id: "anna-petrov",
+  name: "Anna Petrov",
+  description:
+    "Partner at Verge. Joined the board at the Series C. Ex-operator at a vertical adjacent to yours. Takes notes in fountain pen. Asks her question after writing the question down. The strategic voice that did not exist on the board before b13.",
+  traits: ["operating-experience", "structural", "fountain-pen"],
+  defaultEmotion: "knowing",
+  gender: "female",
+  personalityType: "strategic-ally",
+  silhouetteType: "female-elegant",
+};
+
+/**
+ * Iris Donaldson. Partner at the fund Marisa used to be at. Mid-50s,
+ * deep-tech specialist, low-volume. The fourth investor at the
+ * Series C. Verbal tic: speaks once per agenda item maximum, never
+ * twice. When she speaks twice, the room has changed shape.
+ */
+export const IRIS_DONALDSON: Character = {
+  id: "iris-donaldson",
+  name: "Iris Donaldson",
+  description:
+    "Partner at Marisa Khoury's old fund. Deep-tech specialist, low-volume. Joined the board at the Series C. Speaks once per agenda item. When she speaks twice, the room has changed shape.",
+  traits: ["technical", "low-volume", "structural"],
+  defaultEmotion: "knowing",
+  gender: "female",
+  personalityType: "mentor",
+  silhouetteType: "female-elegant",
+};
+
+// =====================================================================
 // SHARED, inner voice (imported from female registry's pattern)
 // =====================================================================
 

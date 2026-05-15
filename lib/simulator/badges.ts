@@ -655,6 +655,21 @@ export const SIMULATOR_BADGES: SimulatorBadgeDef[] = [
   { key: "clean-yes",                title: "The Clean Yes",            description: "Eight minutes on the phone with Yasmin. Six hours later you told Noor in the order Yasmin specified. The week is structurally in the year.", tier: "scenario", icon: "shield"   },
   { key: "conditional-yes",          title: "The Routed Yes",           description: "You moved the ask through Noor. Noor named what you had done. The yes the next morning was structurally the same and texturally different.", tier: "scenario", icon: "sparkles" },
   { key: "deferred",                 title: "The Friday Yes",           description: "You deferred. Friday morning you called and said yes. Yasmin accepted. The two-day gap is the data.",                                          tier: "scenario", icon: "skull"    },
+
+  // female, mission-16-2 "The Reference"
+  { key: "specific-reference",       title: "The Specific Reference",   description: "Three paragraphs. The third routed Cardiff Reede to do the diligence without doing it for them. The letter is the letter you could defend.", tier: "scenario", icon: "shield"   },
+  { key: "polite-letter",            title: "The Polite Letter",        description: "Three sentences. Technically correct. Structurally a signal. Cardiff Reede read the signal in eight seconds.",                                tier: "scenario", icon: "sparkles" },
+  { key: "declined-the-letter",      title: "The Decline",              description: "Declined on operating-context grounds. Lennox wrote the letter without the L4 context. The deferrals are stacking.",                          tier: "scenario", icon: "skull"    },
+
+  // male-business, b14-post-c-board
+  { key: "board-converged",          title: "The Board Converged",      description: "Four directors, four lanes, nineteen minutes to a structured vote. The Series C decided who decides, and the first board meeting confirmed it.", tier: "scenario", icon: "shield"   },
+  { key: "anna-as-platform-director", title: "Anna As Platform Director", description: "You routed through Anna on day one. The decision is good. The lane was assigned by default.",                                              tier: "scenario", icon: "sparkles" },
+  { key: "bridge-as-platform-director", title: "The Nominal Board",     description: "Bridge ran the platform conversation. Anna made one note. The Series C decided who decides only nominally.",                                  tier: "scenario", icon: "skull"    },
+
+  // male-dating, d14-the-marsden-week
+  { key: "the-ashes-yes",            title: "The Cleanest Yes",         description: "Four sentences at the small table by the window. The Wallace Collection on Thursday. The Borges paperback with page 47 marked in pencil. The chair held.", tier: "scenario", icon: "shield"   },
+  { key: "the-deflection",           title: "The Other Version",        description: "You deflected under hope. The Borges paperback stayed on the shelf. The version of Yasmin you spent the week with was the version the deflection produced.", tier: "scenario", icon: "sparkles" },
+  { key: "the-redirect",             title: "The Redirect",             description: "You redirected to Reza, the person Yasmin named as too close. Layla said yes. The choice is the wrong choice for the day.",                   tier: "scenario", icon: "skull"    },
 ];
 
 export const BADGE_BY_KEY: Record<string, SimulatorBadgeDef> =
@@ -859,6 +874,21 @@ export const V3_SCENARIO_ENDING_BADGES: V3EndingMap = {
     "ending-clean-yes":             ["clean-yes"],
     "ending-conditional-yes":       ["conditional-yes"],
     "ending-deferred":              ["deferred"],
+  },
+  "mission-16-2": {
+    "ending-the-specific-reference": ["specific-reference"],
+    "ending-the-polite-letter":     ["polite-letter"],
+    "ending-the-decline":           ["declined-the-letter"],
+  },
+  "b14-post-c-board": {
+    "ending-the-board-converged":   ["board-converged"],
+    "ending-anna-as-platform-director": ["anna-as-platform-director"],
+    "ending-bridge-as-platform-director": ["bridge-as-platform-director"],
+  },
+  "d14-the-marsden-week": {
+    "ending-the-cleanest-yes":      ["the-ashes-yes"],
+    "ending-the-it-will-be-fine":   ["the-deflection"],
+    "ending-the-better-person":     ["the-redirect"],
   },
 };
 
