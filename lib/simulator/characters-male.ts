@@ -213,7 +213,48 @@ export const CAL: Character = {
 };
 
 // =====================================================================
-// SHARED — inner voice (imported from female registry's pattern)
+// BUSINESS LINE, L9+ characters
+// =====================================================================
+
+/**
+ * Renat Ivanov. CEO of Forge Labs, $400M ARR, Series C. Russian-born,
+ * Stanford MBA, ten years operating. Calm, deliberate, slow blinker.
+ * Speaks in three-sentence units. Verbal tic: opens with "tell me
+ * where you are" before any pitch. The acquihire-dressed-as-acquisition
+ * antagonist in b9. Not malicious. Just optimised for Forge.
+ */
+export const RENAT: Character = {
+  id: "renat",
+  name: "Renat Ivanov",
+  description:
+    "CEO of Forge Labs, Series C, $400M ARR. Speaks in three-sentence units. Opens every pitch with tell me where you are. The acquihire-dressed-as-acquisition antagonist. Optimised for Forge, not malicious about it.",
+  traits: ["deliberate", "patient", "structurally-aware"],
+  defaultEmotion: "knowing",
+  gender: "male",
+  personalityType: "predator-capital",
+  silhouetteType: "male-imposing",
+};
+
+/**
+ * Anika Patel. Theo's replacement CFO from b8's GOOD ending. South-
+ * Asian, mid-thirties, ex-Stripe finance. The CFO who flags the
+ * structure before you do. Direct, fast, structural. Verbal tic:
+ * texts complete sentences with periods.
+ */
+export const ANIKA: Character = {
+  id: "anika",
+  name: "Anika Patel",
+  description:
+    "Your CFO. Theo's referral, came in on the ninety-day transition. Ex-Stripe finance, mid-thirties, direct in a register that reads as procedural rather than blunt. Flags structural anomalies before they are obvious. Texts complete sentences with periods.",
+  traits: ["structural", "fast", "loyal-by-evidence"],
+  defaultEmotion: "knowing",
+  gender: "female",
+  personalityType: "strategic-ally",
+  silhouetteType: "female-elegant",
+};
+
+// =====================================================================
+// SHARED, inner voice (imported from female registry's pattern)
 // =====================================================================
 
 export const INNER_VOICE_M: Character = {

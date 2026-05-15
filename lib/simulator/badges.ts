@@ -580,6 +580,21 @@ export const SIMULATOR_BADGES: SimulatorBadgeDef[] = [
   { key: "rule-held",                title: "The Rule Held",            description: "You told Noor before you decided anything. Fourteen minutes. The rule was made out of trust, not silence.",                                  tier: "scenario", icon: "shield"   },
   { key: "wednesday-salad",          title: "The Wednesday Salad",      description: "Noor heard about it from Maya at the gym. The recovery was two days late. She will remember the two days.",                                  tier: "scenario", icon: "sparkles" },
   { key: "channel-open",             title: "The Channel Open",         description: "You texted the sister. You sent flowers. The credit card statement arrives in fourteen days. The channel is now warm.",                      tier: "scenario", icon: "skull"    },
+
+  // female, mission-14-1 "The Episode"
+  { key: "frame-filled",             title: "The Frame Filled",         description: "Three days of news cycle. Two outlets. Neither led with the audio. The deck was approved at 10:52. Routine, not commentary.",               tier: "scenario", icon: "shield"   },
+  { key: "response-drafted",         title: "The Response That Stayed Drafted", description: "Two paragraphs. Thirty-eight minutes. The cost was the two re-reads of the episode in your own head.",                              tier: "scenario", icon: "sparkles" },
+  { key: "the-weather",              title: "The Weather",              description: "Forty-three minutes on Twitter. Four hostile replies retained. The morning under weather instead of in routine.",                            tier: "scenario", icon: "skull"    },
+
+  // male-business, b9-acquisition-lure
+  { key: "comparison-table",         title: "The Comparison Table",     description: "Three columns. The full-acquisition column was empty. The acquihire column had every row. The strategic-partnership column was the meeting you named.", tier: "scenario", icon: "shield"   },
+  { key: "small-term-won",           title: "The Small Term Won",       description: "The Q4 inclusion moved the multiple from 11 to 12. The structure stayed the same. The acquihire happened in seven weeks.",                  tier: "scenario", icon: "sparkles" },
+  { key: "inertia-you-created",      title: "The Inertia You Created",  description: "Your team was bought in by Wednesday. Renat did not need to push. He needed to wait. The Q4 inclusion question was never asked.",            tier: "scenario", icon: "skull"    },
+
+  // male-dating, d9-the-question
+  { key: "the-named-future",         title: "The Naming",               description: "The bench at 21st. The chain in your pocket. You asked for the name on a thing that already existed. Yes to the naming.",                   tier: "scenario", icon: "shield"   },
+  { key: "the-bench-story",          title: "The Bench Story",          description: "Standard worked. The yes was real. The story is the bench. The cost is the named version of the question you did not ask.",                 tier: "scenario", icon: "sparkles" },
+  { key: "the-ambush-story",         title: "The Story You Do Not Tell", description: "The kitchen. Barefoot. Before the coffee. The yes was yes. The frame was the nervous system's, not the morning's.",                          tier: "scenario", icon: "skull"    },
 ];
 
 export const BADGE_BY_KEY: Record<string, SimulatorBadgeDef> =
@@ -709,6 +724,21 @@ export const V3_SCENARIO_ENDING_BADGES: V3EndingMap = {
     "ending-the-rule-held":         ["rule-held"],
     "ending-the-omission":          ["wednesday-salad"],
     "ending-the-channel-open":      ["channel-open"],
+  },
+  "mission-14-1": {
+    "ending-the-frame-filled":      ["frame-filled"],
+    "ending-the-response":          ["response-drafted"],
+    "ending-the-comments":          ["the-weather"],
+  },
+  "b9-acquisition-lure": {
+    "ending-the-comparison-table":  ["comparison-table"],
+    "ending-the-small-negotiation": ["small-term-won"],
+    "ending-the-champions-meeting": ["inertia-you-created"],
+  },
+  "d9-the-question": {
+    "ending-the-named-future":      ["the-named-future"],
+    "ending-the-standard-proposal": ["the-bench-story"],
+    "ending-the-ambush":            ["the-ambush-story"],
   },
 };
 

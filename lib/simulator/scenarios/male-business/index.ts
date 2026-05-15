@@ -17,6 +17,7 @@ import businessMission5 from "./b5-predatory-term-sheet";
 import businessMission6 from "./b6-first-firing";
 import businessMission7 from "./b7-board-seat";
 import businessMission8 from "./b8-cofounder-offer";
+import businessMission9 from "./b9-acquisition-lure";
 
 export const MALE_BUSINESS_SCENARIOS: Scenario[] = [
   businessMission1,
@@ -27,6 +28,7 @@ export const MALE_BUSINESS_SCENARIOS: Scenario[] = [
   businessMission6,
   businessMission7,
   businessMission8,
+  businessMission9,
 ];
 
 /** Human labels for the Business Line levels, mirrors LEVEL_TITLES in the main registry. */
@@ -60,5 +62,10 @@ export const MALE_BUSINESS_LEVEL_TITLES: Record<
     title: "The Cofounder Offer",
     blurb:
       "Your CFO has a competitor offer. The right retention is upstream of the package, and some right retentions are clean goodbyes.",
+  },
+  9: {
+    title: "The Acquisition Lure",
+    blurb:
+      "Acquihire, acquisition, or strategic partnership. The math is rich. The structure is poor. Read what is actually being offered.",
   },
 };
