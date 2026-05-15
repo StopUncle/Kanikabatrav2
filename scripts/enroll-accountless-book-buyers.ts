@@ -52,8 +52,15 @@ async function main() {
     throw new Error("JWT_SECRET env var required.");
   }
 
+  // productVariant=null = the standalone $24.99 book purchase.
+  // Filters out bundle SKUs (BOOK_CONSILIUM_*), Ask-Kanika packs,
+  // and historical mistyped QUIZ rows (cleaned 2026-05-15).
   const buyers = await prisma.purchase.findMany({
-    where: { type: "BOOK", status: "COMPLETED" },
+    where: {
+      type: "BOOK",
+      status: "COMPLETED",
+      productVariant: null,
+    },
     select: { customerEmail: true, customerName: true },
     distinct: ["customerEmail"],
   });

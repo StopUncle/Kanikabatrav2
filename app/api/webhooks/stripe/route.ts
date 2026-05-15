@@ -180,7 +180,7 @@ export async function POST(request: NextRequest) {
 
           await prisma.purchase.create({
             data: {
-              type: "BOOK",
+              type: "QUIZ",
               productVariant: productKey,
               customerEmail: email,
               customerName: name || "Customer",

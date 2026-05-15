@@ -24,9 +24,17 @@ async function main() {
   });
   const consiliumUserIds = new Set(activeMembers.map((m) => m.userId));
 
-  // Distinct book buyers (by lowercased email).
+  // Distinct standalone-book buyers (by lowercased email).
+  // productVariant=null filters out bundles (BOOK_CONSILIUM_*),
+  // Ask-Kanika packs (productVariant=ASK_KANIKA), and historical
+  // mistyped quiz rows (cleaned by the 2026-05-15 backfill, but
+  // keeping the filter as a defense against future product types).
   const buyers = await prisma.purchase.findMany({
-    where: { type: "BOOK", status: "COMPLETED" },
+    where: {
+      type: "BOOK",
+      status: "COMPLETED",
+      productVariant: null,
+    },
     select: { customerEmail: true, customerName: true, userId: true },
     distinct: ["customerEmail"],
   });
