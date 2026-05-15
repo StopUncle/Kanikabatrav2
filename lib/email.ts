@@ -1879,51 +1879,39 @@ export const sendTrialExpiringSoon = async (
  *
  * One upgrade CTA → Stripe checkout for the standard $29/mo subscription.
  */
+/**
+ * Gift-expiry reminder. Fired by /api/cron/trial-expiry for ACTIVE
+ * memberships on the `gift` billingCycle that lapse in the next 7d.
+ *
+ * The body asserts "no card on file, no auto-charge" — that is only
+ * true for genuine gift members (no Stripe subscription was ever
+ * created for them). Bundle holders ARE Stripe subscribers inside a
+ * trial period and DO auto-renew; they are excluded from the caller
+ * cron so this email never reaches them.
+ *
+ * `billingCycle` is kept as a parameter for API stability with the
+ * call site but is no longer branched on — the cron now only ever
+ * passes "gift".
+ */
 export const sendMembershipEndingSoon = async (
   memberEmail: string,
   memberName: string,
   daysLeft: number,
-  billingCycle: string,
-  /**
-   * Optional one-click resubscribe link (e.g. /api/consilium/bundle-resubscribe?token=...)
-   * For bundle holders we mint a JWT-tokened URL so they go straight to
-   * Stripe Checkout without re-applying. For trial/gift cycles the
-   * default upgrade page (which has the apply flow) is still right.
-   */
-  resubLink?: string,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  _billingCycle: string,
 ): Promise<boolean> => {
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://kanikarose.com";
-  const upgradeUrl = resubLink || `${baseUrl}/consilium?upgrade=1`;
-
-  const cycleLabel =
-    billingCycle === "gift"
-      ? "free month"
-      : billingCycle === "bundle-1mo"
-        ? "Book + 1 month bundle"
-        : billingCycle === "bundle-3mo"
-          ? "Book + 3 month bundle"
-          : billingCycle === "trial"
-            ? "trial"
-            : "access";
-
-  const headerKicker =
-    billingCycle === "gift"
-      ? "Your free month"
-      : billingCycle === "bundle-3mo"
-        ? "Your 3 months"
-        : billingCycle === "bundle-1mo"
-          ? "Your month"
-          : "Your trial";
+  const upgradeUrl = `${baseUrl}/consilium?upgrade=1`;
 
   const inner = `
     <p style="color: #f5f0ed; font-size: 18px; margin: 0 0 20px 0; line-height: 1.6;">
       ${esc(memberName)},
     </p>
     <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 25px 0; font-size: 15px;">
-      Heads-up, your ${esc(cycleLabel)} inside The Consilium ends in <strong style="color: #d4af37;">${daysLeft} day${daysLeft === 1 ? "" : "s"}</strong>. No auto-charge. No surprises. Access just lapses unless you decide to keep it.
+      Your free month inside The Consilium ends in <strong style="color: #d4af37;">${daysLeft} day${daysLeft === 1 ? "" : "s"}</strong>. There's no card on file, so nothing happens when the clock hits zero, access just lapses.
     </p>
     <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 25px 0; font-size: 15px;">
-      If you've been using it, keep it. The feed, voice notes, classroom, and community carry on at <strong style="color: #d4af37;">$29/month</strong>, cancel anytime.
+      If the month inside has been useful, you can keep going at <strong style="color: #d4af37;">$29/month</strong>. Cancel any time, one click on the billing page, no email, no friction.
     </p>
     <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="margin: 0 0 25px 0;">
       <tr>
@@ -1939,14 +1927,14 @@ export const sendMembershipEndingSoon = async (
       </tr>
     </table>
     <p style="color: #94a3b8; line-height: 1.6; margin: 0 0 15px 0; font-size: 13px; text-align: center; font-style: italic;">
-      You won't be billed unless you choose to subscribe. Just letting you know the clock.
+      Just letting you know the clock. No charge unless you subscribe.
     </p>
     ${marketingFooterByEmailHtml(memberEmail.toLowerCase(), "marketing")}
   `;
 
   return await sendEmail({
     to: memberEmail,
-    subject: `${headerKicker} inside The Consilium ends in ${daysLeft} day${daysLeft === 1 ? "" : "s"}`,
+    subject: `Your free month inside The Consilium ends in ${daysLeft} day${daysLeft === 1 ? "" : "s"}`,
     html: luxuryEmailShell(inner, "Your access is ending", "The Consilium"),
   });
 };
