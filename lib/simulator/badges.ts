@@ -565,6 +565,21 @@ export const SIMULATOR_BADGES: SimulatorBadgeDef[] = [
   { key: "steady-in-the-room",       title: "Steady In The Room",       description: "Twenty minutes of listening at 4:02 pm. No deck. No fixing. The afternoon was the room you did not author.",                                tier: "scenario", icon: "shield"   },
   { key: "the-deck",                 title: "The Deck",                 description: "You made a deck she did not ask for. The deck contains love. So does the cost.",                                                            tier: "scenario", icon: "sparkles" },
   { key: "door-closed-quietly",      title: "The Door Closed Quietly",  description: "The phrases were correct. The size was wrong. The bedroom door closed at 3:48 pm.",                                                         tier: "scenario", icon: "skull"    },
+
+  // female, mission-13-2 "The Thing You Did Not Want To Name"
+  { key: "honest-accounting",        title: "Honest Accounting",        description: "You lowered the floor. Elanor knew the worst thing by 1:14 pm Tuesday. The hit became a clarification.",                                    tier: "scenario", icon: "shield"   },
+  { key: "curated-truth",            title: "The Curated Truth",        description: "Ninety percent. The ten percent you held back became the foothold. Four weeks of news cycle. Two contacts lost.",                          tier: "scenario", icon: "sparkles" },
+  { key: "defended-the-version",     title: "Defended The Version",     description: "Three minutes is fast. Forty-one seconds of audio you did not tell your lawyer existed. Building on sand.",                                  tier: "scenario", icon: "skull"    },
+
+  // male-business, b8-cofounder-offer
+  { key: "picture-not-pitch",        title: "The Picture, Not The Pitch", description: "Friday 10:14 am. Theo brought two referrals. The picture you offered Wednesday matched the picture he built. The relationship is clean.", tier: "scenario", icon: "shield"   },
+  { key: "counter-priced-it",        title: "The Counter Read As The Price", description: "Your inflated counter became the reading. He chose the new picture because the package told him the old picture was not available.",   tier: "scenario", icon: "sparkles" },
+  { key: "loyalty-tax",              title: "The Loyalty Tax",          description: "You weaponised eight months of shorthand. He filed it. Friday's email was signed with his initials, not his name.",                          tier: "scenario", icon: "skull"    },
+
+  // male-dating, d8-ex-in-trouble
+  { key: "rule-held",                title: "The Rule Held",            description: "You told Noor before you decided anything. Fourteen minutes. The rule was made out of trust, not silence.",                                  tier: "scenario", icon: "shield"   },
+  { key: "wednesday-salad",          title: "The Wednesday Salad",      description: "Noor heard about it from Maya at the gym. The recovery was two days late. She will remember the two days.",                                  tier: "scenario", icon: "sparkles" },
+  { key: "channel-open",             title: "The Channel Open",         description: "You texted the sister. You sent flowers. The credit card statement arrives in fourteen days. The channel is now warm.",                      tier: "scenario", icon: "skull"    },
 ];
 
 export const BADGE_BY_KEY: Record<string, SimulatorBadgeDef> =
@@ -679,6 +694,21 @@ export const V3_SCENARIO_ENDING_BADGES: V3EndingMap = {
     "ending-steady-in-the-room":    ["steady-in-the-room"],
     "ending-project-manager":       ["the-deck"],
     "ending-went-small":            ["door-closed-quietly"],
+  },
+  "mission-13-2": {
+    "ending-honest-accounting":     ["honest-accounting"],
+    "ending-the-curated-truth":     ["curated-truth"],
+    "ending-defended-the-version":  ["defended-the-version"],
+  },
+  "b8-cofounder-offer": {
+    "ending-clean-conversation":    ["picture-not-pitch"],
+    "ending-matched-and-held":      ["counter-priced-it"],
+    "ending-loyalty-tax":           ["loyalty-tax"],
+  },
+  "d8-ex-in-trouble": {
+    "ending-the-rule-held":         ["rule-held"],
+    "ending-the-omission":          ["wednesday-salad"],
+    "ending-the-channel-open":      ["channel-open"],
   },
 };
 

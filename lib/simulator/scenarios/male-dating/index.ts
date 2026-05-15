@@ -18,6 +18,7 @@ import datingMission4 from "./d4-hoover";
 import datingMission5 from "./d5-secure-one";
 import datingMission6 from "./d6-first-real-fight";
 import datingMission7 from "./d7-work-crisis";
+import datingMission8 from "./d8-ex-in-trouble";
 
 export const MALE_DATING_SCENARIOS: Scenario[] = [
   datingMission1,
@@ -27,6 +28,7 @@ export const MALE_DATING_SCENARIOS: Scenario[] = [
   datingMission5,
   datingMission6,
   datingMission7,
+  datingMission8,
 ];
 
 export const MALE_DATING_LEVEL_TITLES: Record<
@@ -62,5 +64,10 @@ export const MALE_DATING_LEVEL_TITLES: Record<
     title: "The Test",
     blurb:
       "Her crisis lands in your kitchen. The room you build for her is more useful than the work you do for her.",
+  },
+  8: {
+    title: "The Old Channel",
+    blurb:
+      "The ex you left cleanly is in the hospital. The no-contact rule was made out of trust, not silence.",
   },
 };
