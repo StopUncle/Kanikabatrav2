@@ -7,6 +7,7 @@ import BackgroundEffects from "@/components/BackgroundEffects";
 import { ArrowRight, Check, ShieldCheck } from "lucide-react";
 import ConsiliumSimulatorTeaser from "@/components/consilium/ConsiliumSimulatorTeaser";
 import FloatingConsiliumSeal from "@/components/consilium/FloatingConsiliumSeal";
+import ConsiliumFAQ from "@/components/consilium/ConsiliumFAQ";
 import { catalogueStats } from "@/lib/simulator/stats";
 
 export const metadata = {
@@ -380,6 +381,14 @@ export default async function InnerCircleLanding({
               </div>
             </div>
           </div>
+
+          {/* FAQ. Lives between the value-stack reveal and the price
+              comparison anchor: prospects who hesitate on price almost
+              always have one of these eight objections sitting between
+              them and the CTA. Emits FAQPage JSON-LD so Google can
+              pull featured snippets for queries like "is the Consilium
+              for men" or "cancel consilium subscription". */}
+          <ConsiliumFAQ />
 
           {/* Price comparison anchor.
               Kept the 3-tier bar as a secondary anchor: the value

@@ -207,7 +207,6 @@ https://kanikarose.com/<path>?utm_source=<platform>&utm_medium=<how>&utm_campaig
 - [ ] **Rate limiting** — none on `/api/auth/login`, `/api/auth/forgot-password`, `/api/admin/auth`, `/api/inner-circle/feed/[postId]/comments`. (Register IS rate-limited.)
 
 ### Engagement (surfaced 2026-04-25)
-- [ ] **Mission-1-1 50% bounce** — half of simulator starters quit on entry scenario. Content/UX issue.
 - [ ] **Feed 4% lifetime participation** (1 of 25 active members has commented). Seed Kanika's first comment on each prompt to remove "who goes first" friction.
 - [ ] **Forum + Chat + Classroom dormant** — 0 posts/messages/enrollments in 7d. Either light a fire under one or hide them. Empty rooms erode premium feel.
 - [ ] **Gift conversion unmeasured** — 14 of 25 active memberships are gifts. Re-run `scripts/engagement-deep-dive.ts` once first batch hits `expiresAt`.
