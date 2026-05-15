@@ -148,7 +148,7 @@ export default async function BlogPostPage({ params }: PageProps) {
         previousPost={previousPost}
         nextPost={nextPost}
       >
-        <PostContent source={post.content} />
+        <PostContent source={post.content} slug={post.slug} />
       </BlogPostClient>
     </>
   );

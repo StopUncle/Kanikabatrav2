@@ -167,7 +167,7 @@ export default async function GuidePage({ params }: PageProps) {
 
             {/* Content */}
             <div className="mb-16">
-              <PostContent source={pillar.content} />
+              <PostContent source={pillar.content} slug={pillar.slug} />
             </div>
 
             {/* Related Articles */}

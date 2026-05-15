@@ -256,6 +256,23 @@ function addDays(date: Date, days: number): Date {
   return result;
 }
 
+/**
+ * Build a UTM-tagged /consilium link for use inside drip emails.
+ * Source + medium are pinned to `email` so admin/traffic groups all
+ * email-driven Consilium signups cleanly; campaign + content are
+ * passed in per-sequence so we can tell which drip and which step
+ * actually drove the click.
+ */
+function dripConsiliumUrl(campaign: string, content: string): string {
+  const params = new URLSearchParams({
+    utm_source: "email",
+    utm_medium: "email",
+    utm_campaign: campaign,
+    utm_content: content,
+  });
+  return `${baseUrl}/consilium?${params.toString()}`;
+}
+
 // ============================================================
 // Mini Dark Mirror + Starter Pack drip sequences.
 //
@@ -424,7 +441,7 @@ function buildMiniDripStep3(name: string): string {
 }
 
 function buildMiniDripStep4(name: string): string {
-  const consiliumUrl = `${baseUrl}/consilium`;
+  const consiliumUrl = dripConsiliumUrl("mini-dark-mirror-drip", "step-4-invite");
 
   const body = `
     <p style="color: #f5f0ed; font-size: 16px; margin: 0 0 20px 0; line-height: 1.7;">
@@ -648,7 +665,7 @@ function buildStarterDripStep3(name: string): string {
 }
 
 function buildStarterDripStep4(name: string): string {
-  const consiliumUrl = `${baseUrl}/consilium`;
+  const consiliumUrl = dripConsiliumUrl("starter-pack-drip", "step-4-invite");
 
   const body = `
     <p style="color: #f5f0ed; font-size: 16px; margin: 0 0 20px 0; line-height: 1.7;">
@@ -826,8 +843,11 @@ function formatCreditExpiry(d: Date): string {
   });
 }
 
-function creditCodeBlock(args: QuizBuyerCreditArgs): string {
-  const consiliumUrl = `${baseUrl}/consilium`;
+function creditCodeBlock(
+  args: QuizBuyerCreditArgs,
+  stepLabel: string,
+): string {
+  const consiliumUrl = dripConsiliumUrl("quiz-buyer-welcome", stepLabel);
   const expiry = formatCreditExpiry(args.creditExpiresAt);
   return `
     <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="margin: 0 0 25px 0;">
@@ -883,7 +903,7 @@ function buildQuizDripStep1(name: string, args: QuizBuyerCreditArgs): string {
       One more thing. Because you paid for the unlock, your $${args.creditAmount.toFixed(2)} comes back to you as a credit toward The Consilium, the place where the patterns you just scored on get drilled into instinct.
     </p>
 
-    ${creditCodeBlock(args)}
+    ${creditCodeBlock(args, "step-1-recap")}
 
     <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 0 0; font-size: 15px;">
       The code expires in two weeks. I'll remind you once before then. After that, results are still yours, but the credit isn't.
@@ -918,7 +938,7 @@ function buildQuizDripStep2(name: string, args: QuizBuyerCreditArgs): string {
       Your credit still works. Roughly nine days left.
     </p>
 
-    ${creditCodeBlock(args)}`;
+    ${creditCodeBlock(args, "step-2-midpoint")}`;
 
   return emailShell(
     "What the quiz can't tell you",
@@ -941,7 +961,7 @@ function buildQuizDripStep3(name: string, args: QuizBuyerCreditArgs): string {
       If you're going to use it, this is the window. Apply it on your first month and you're in for $${(29 - args.creditAmount).toFixed(2)}. Cancel any time, one click on the billing page.
     </p>
 
-    ${creditCodeBlock(args)}
+    ${creditCodeBlock(args, "step-3-last-call")}
 
     <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 0 0; font-size: 15px;">
       Either way, thank you for taking the quiz. Your results stay unlocked regardless.
@@ -1031,7 +1051,7 @@ function buildNewsletterStep2(name: string): string {
 }
 
 function buildNewsletterStep3(name: string): string {
-  const consiliumUrl = `${baseUrl}/consilium`;
+  const consiliumUrl = dripConsiliumUrl("newsletter-drip", "step-3-invite");
 
   const body = `
     <p style="color: #f5f0ed; font-size: 16px; margin: 0 0 20px 0; line-height: 1.7;">
