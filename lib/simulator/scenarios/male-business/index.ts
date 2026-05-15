@@ -20,6 +20,7 @@ import businessMission8 from "./b8-cofounder-offer";
 import businessMission9 from "./b9-acquisition-lure";
 import businessMission10 from "./b10-series-b";
 import businessMission11 from "./b11-first-board-meeting";
+import businessMission12 from "./b12-option-pool-refresh";
 
 export const MALE_BUSINESS_SCENARIOS: Scenario[] = [
   businessMission1,
@@ -33,6 +34,7 @@ export const MALE_BUSINESS_SCENARIOS: Scenario[] = [
   businessMission9,
   businessMission10,
   businessMission11,
+  businessMission12,
 ];
 
 /** Human labels for the Business Line levels, mirrors LEVEL_TITLES in the main registry. */
@@ -81,5 +83,10 @@ export const MALE_BUSINESS_LEVEL_TITLES: Record<
     title: "The Board",
     blurb:
       "The deck is the floor. The conversation is the work. Bring the work, not the preparation.",
+  },
+  12: {
+    title: "The Refresh",
+    blurb:
+      "Quick read overnight. The size is the door. The source is the cage.",
   },
 };

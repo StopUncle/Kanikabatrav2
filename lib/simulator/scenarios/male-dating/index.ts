@@ -22,6 +22,7 @@ import datingMission8 from "./d8-ex-in-trouble";
 import datingMission9 from "./d9-the-question";
 import datingMission10 from "./d10-the-mothers-lunch";
 import datingMission11 from "./d11-noors-birthday";
+import datingMission12 from "./d12-the-october-telling";
 
 export const MALE_DATING_SCENARIOS: Scenario[] = [
   datingMission1,
@@ -35,6 +36,7 @@ export const MALE_DATING_SCENARIOS: Scenario[] = [
   datingMission9,
   datingMission10,
   datingMission11,
+  datingMission12,
 ];
 
 export const MALE_DATING_LEVEL_TITLES: Record<
@@ -90,5 +92,10 @@ export const MALE_DATING_LEVEL_TITLES: Record<
     title: "The Ordinary",
     blurb:
       "Three people at the table. Two know the diagnosis. The discipline is being exactly who you were at the bench.",
+  },
+  12: {
+    title: "The Telling",
+    blurb:
+      "Yasmin tells Noor. You are in the next room. The discipline is the not-doing.",
   },
 };

@@ -625,6 +625,21 @@ export const SIMULATOR_BADGES: SimulatorBadgeDef[] = [
   { key: "ordinary-held",            title: "The Ordinary Held",        description: "Thirty seconds of toast. Yasmin's line stayed Yasmin's line. The Borges story got told. Yasmin walked to her hotel at 9:34 pm as planned.",   tier: "scenario", icon: "shield"   },
   { key: "over-attended",            title: "The Over-Attention",       description: "You named Yasmin in the toast in a way she did not need. The bevel is the adjustment she makes in real time over the August dinners.",        tier: "scenario", icon: "sparkles" },
   { key: "under-attended",           title: "The Under-Attention",      description: "You toasted only Noor. Noor filled the gap with a gracious line. Yasmin watched the compensation happen.",                                    tier: "scenario", icon: "skull"    },
+
+  // female, mission-15-2 "The 1:1 With Adrian"
+  { key: "clean-refusal",            title: "The Clean Refusal",        description: "Thirteen minutes in the Halberd library. The seat is the seat. The events are the events. Adrian did not raise it again.",                    tier: "scenario", icon: "shield"   },
+  { key: "small-accommodation",      title: "The Small Accommodation",  description: "You gave Adrian the third event. He took it. The precedent will return in Q1 against the calendar he just framed.",                          tier: "scenario", icon: "sparkles" },
+  { key: "the-consideration",        title: "The Consideration",        description: "You agreed to think about it. By Thursday you had given him two of the three. The room is now a room he knows can be moved.",                tier: "scenario", icon: "skull"    },
+
+  // male-business, b12-option-pool-refresh
+  { key: "source-split",             title: "The Source Split",         description: "Four plus four reserved with a four-fifths board vote. The dilution math is symmetric. The trust calibrated up.",                            tier: "scenario", icon: "shield"   },
+  { key: "percent-cut",              title: "The Percent Cut",          description: "Six percent from common. Bridge agreed in ninety seconds because six was the floor he was prepared to land at.",                              tier: "scenario", icon: "sparkles" },
+  { key: "pool-accepted",            title: "The Pool Accepted",        description: "Eight percent from common, signed by Tuesday. The quick-read posture is now the pattern.",                                                    tier: "scenario", icon: "skull"    },
+
+  // male-dating, d12-the-october-telling
+  { key: "sat-and-stayed",           title: "Sat And Stayed",           description: "The 2:14 call-in. Forty-three seconds of silence. The chair you sat in for ninety more minutes without making the room about you.",          tier: "scenario", icon: "shield"   },
+  { key: "knocked-uncalled",         title: "The Knock Uncalled",       description: "You knocked at 2:08. Yasmin said please go back. Noor noticed. The bevel is small. The August practice will need two more dinners.",         tier: "scenario", icon: "sparkles" },
+  { key: "walked-away",              title: "The Cafe On Atlantic",     description: "You left at 2:01. You returned at 2:47, after the moment. Noor named the leaving as a decision to know better than the structure.",         tier: "scenario", icon: "skull"    },
 ];
 
 export const BADGE_BY_KEY: Record<string, SimulatorBadgeDef> =
@@ -799,6 +814,21 @@ export const V3_SCENARIO_ENDING_BADGES: V3EndingMap = {
     "ending-be-ordinary":           ["ordinary-held"],
     "ending-over-attended":         ["over-attended"],
     "ending-under-attended":        ["under-attended"],
+  },
+  "mission-15-2": {
+    "ending-the-clean-refusal":     ["clean-refusal"],
+    "ending-the-small-accommodation": ["small-accommodation"],
+    "ending-the-consideration":     ["the-consideration"],
+  },
+  "b12-option-pool-refresh": {
+    "ending-source-split":          ["source-split"],
+    "ending-percent-cut":           ["percent-cut"],
+    "ending-pool-accepted":         ["pool-accepted"],
+  },
+  "d12-the-october-telling": {
+    "ending-sat-and-stayed":        ["sat-and-stayed"],
+    "ending-knocked-uncalled":      ["knocked-uncalled"],
+    "ending-walked-away":           ["walked-away"],
   },
 };
 
