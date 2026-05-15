@@ -39,7 +39,7 @@ export async function POST(request: NextRequest) {
     // signal. Most quiz takers aren't registered yet, so this row
     // captures source for visitors who would otherwise be invisible
     // until they convert.
-    const attrRecord = buildAttributionRecord(attribution, request);
+    const attrRecord = buildAttributionRecord(attribution, request.headers);
 
     const quizResult = await prisma.quizResult.create({
       data: {

@@ -133,7 +133,7 @@ export async function POST(req: NextRequest) {
     if (attribution) {
       const attribRecord = buildAttributionRecord(
         attribution as AttributionPayload,
-        req,
+        req.headers,
       );
       logger.info("mini-quiz capture", {
         email: normalised,

@@ -226,11 +226,15 @@ export function extractIpCountry(headers: Headers): string | null {
  * knows (UTMs, referrer, navigator), but always derive ipCountry +
  * userAgent server-side as the source of truth (clients can spoof).
  *
+ * Accepts a `Headers` object directly so this is usable from API
+ * routes (pass `request.headers`) and server actions (pass `await
+ * headers()` from `next/headers`).
+ *
  * Returns a sanitized object suitable for direct Prisma write.
  */
 export function buildAttributionRecord(
   payload: AttributionPayload | null | undefined,
-  request: Request,
+  headers: Headers,
 ): Record<string, string | null> {
   const safe = (v: unknown, max = 500): string | null => {
     if (typeof v !== "string") return null;
@@ -252,8 +256,8 @@ export function buildAttributionRecord(
     referrer: safe(p.referrer, 500),
     landingPage: safe(p.landingPage, 500),
     // Server-derived: trust headers over client-supplied
-    userAgent: safe(request.headers.get("user-agent"), 500),
-    ipCountry: extractIpCountry(request.headers),
+    userAgent: safe(headers.get("user-agent"), 500),
+    ipCountry: extractIpCountry(headers),
     language: safe(p.language, 20),
     timezone: safe(p.timezone, 60),
   };

@@ -1371,8 +1371,20 @@ interface AccountlessGiftArgs {
   claimToken: string;
 }
 
-function claimLink(token: string): string {
-  return `${baseUrl}/consilium/claim?token=${token}`;
+function claimLink(token: string, stepLabel: string): string {
+  // UTMs ride alongside the gift JWT so the localStorage capture on
+  // /consilium/claim picks them up; the server action then stamps the
+  // new User row with the source (email) + the specific drip step
+  // that landed the click. Without this, every gift-claim member shows
+  // (direct) in admin/traffic regardless of which campaign drove them.
+  const params = new URLSearchParams({
+    token,
+    utm_source: "email",
+    utm_medium: "email",
+    utm_campaign: "book-buyer-no-account-push",
+    utm_content: stepLabel,
+  });
+  return `${baseUrl}/consilium/claim?${params.toString()}`;
 }
 
 function giftClaimBlock(
@@ -1408,7 +1420,7 @@ function giftClaimBlock(
 }
 
 function buildNoAccountStep1(name: string, args: AccountlessGiftArgs): string {
-  const url = claimLink(args.claimToken);
+  const url = claimLink(args.claimToken, "step-1-intro");
   const body = `
     <p style="color: #f5f0ed; font-size: 16px; margin: 0 0 8px 0; line-height: 1.7;">
       ${esc(name)},
@@ -1444,7 +1456,7 @@ function buildNoAccountStep1(name: string, args: AccountlessGiftArgs): string {
 }
 
 function buildNoAccountStep2(name: string, args: AccountlessGiftArgs): string {
-  const url = claimLink(args.claimToken);
+  const url = claimLink(args.claimToken, "step-2-scene");
   const body = `
     <p style="color: #f5f0ed; font-size: 16px; margin: 0 0 20px 0; line-height: 1.7;">
       ${esc(name)},
@@ -1480,7 +1492,7 @@ function buildNoAccountStep2(name: string, args: AccountlessGiftArgs): string {
 }
 
 function buildNoAccountStep3(name: string, args: AccountlessGiftArgs): string {
-  const url = claimLink(args.claimToken);
+  const url = claimLink(args.claimToken, "step-3-last-call");
   const body = `
     <p style="color: #f5f0ed; font-size: 16px; margin: 0 0 20px 0; line-height: 1.7;">
       ${esc(name)},

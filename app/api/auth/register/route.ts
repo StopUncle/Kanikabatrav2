@@ -55,7 +55,7 @@ export async function POST(request: NextRequest) {
     // non-fatal, the registration itself succeeded; missing attribution
     // is a recoverable data-quality issue, not a user-facing failure.
     try {
-      const attribution = buildAttributionRecord(body.attribution, request);
+      const attribution = buildAttributionRecord(body.attribution, request.headers);
       const hasSignal = Object.values(attribution).some((v) => v !== null);
       if (hasSignal) {
         await prisma.user.update({

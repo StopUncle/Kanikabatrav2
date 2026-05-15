@@ -38,7 +38,7 @@ export async function POST(request: NextRequest) {
         data: { scores, primaryType, secondaryType, answers, email: user.email },
       });
     } else {
-      const attrRecord = buildAttributionRecord(attribution, request);
+      const attrRecord = buildAttributionRecord(attribution, request.headers);
       quizResult = await prisma.quizResult.create({
         data: {
           userId: user.id,

@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
-import { cookies } from "next/headers";
+import { cookies, headers } from "next/headers";
 import Link from "next/link";
 import jwt from "jsonwebtoken";
 import crypto from "crypto";
@@ -8,10 +8,14 @@ import { prisma } from "@/lib/prisma";
 import { hashPassword } from "@/lib/auth/password";
 import { generateTokenPair } from "@/lib/auth/jwt";
 import { sendInnerCircleWelcomeNewUser } from "@/lib/email";
+import {
+  buildAttributionRecord,
+  type AttributionPayload,
+} from "@/lib/attribution";
 import Header from "@/components/Header";
 import BackgroundEffects from "@/components/BackgroundEffects";
-import ConsiliumSeal from "@/components/ConsiliumSeal";
-import { ArrowRight, AlertTriangle, CheckCircle2, Gift } from "lucide-react";
+import ClaimButton from "./ClaimButton";
+import { AlertTriangle, CheckCircle2, ArrowRight } from "lucide-react";
 
 export const metadata = {
   title: "Claim Your Free Month. The Consilium",
@@ -98,11 +102,31 @@ async function claimAction(formData: FormData): Promise<void> {
   if (!user) {
     const tempPassword = crypto.randomBytes(24).toString("hex");
     const hashed = await hashPassword(tempPassword);
+
+    // Decode client-supplied attribution snapshot (first-touch from
+    // localStorage, or fresh page context). Folded into the user.create
+    // so gift-claim accounts inherit the campaign that drove them
+    // instead of showing up as (direct) in admin/traffic forever.
+    let attributionData: Record<string, string | null> = {};
+    try {
+      const raw = String(formData.get("attribution") ?? "");
+      const parsed = (raw ? JSON.parse(raw) : null) as
+        | AttributionPayload
+        | null;
+      const requestHeaders = await headers();
+      const candidate = buildAttributionRecord(parsed, requestHeaders);
+      const hasSignal = Object.values(candidate).some((v) => v !== null);
+      if (hasSignal) attributionData = candidate;
+    } catch (err) {
+      console.error("[claim] attribution parse failed:", err);
+    }
+
     user = await prisma.user.create({
       data: {
         email: normalizedEmail,
         password: hashed,
         name: payload.name || "Reader",
+        ...attributionData,
       },
       select: { id: true, email: true, name: true, tokenVersion: true },
     });
@@ -243,7 +267,16 @@ export default async function ClaimPage({
   }
 
   // Show the claim button for everyone else, including guest buyers.
-  return <ClaimButton token={token} name={payload.name} email={payload.email} />;
+  return (
+    <Shell>
+      <ClaimButton
+        token={token}
+        name={payload.name}
+        email={payload.email}
+        action={claimAction}
+      />
+    </Shell>
+  );
 }
 
 // ---------------------------------------------------------------------------
@@ -259,63 +292,6 @@ function Shell({ children }: { children: React.ReactNode }) {
         <div className="max-w-lg w-full px-4 text-center">{children}</div>
       </main>
     </>
-  );
-}
-
-function ClaimButton({
-  token,
-  name,
-  email,
-}: {
-  token: string;
-  name: string;
-  email: string;
-}) {
-  return (
-    <Shell>
-      <div className="rounded-3xl border border-warm-gold/30 bg-gradient-to-br from-deep-black/80 via-deep-burgundy/10 to-deep-black/80 p-10 sm:p-12">
-        <div className="flex justify-center mb-6">
-          <ConsiliumSeal size="xl" haloed />
-        </div>
-        <p className="text-warm-gold/90 uppercase tracking-[0.3em] text-xs mb-3 flex items-center justify-center gap-2">
-          <Gift size={12} />
-          A gift from Kanika
-        </p>
-        <h1
-          className="text-3xl sm:text-4xl font-extralight tracking-wider uppercase mb-4"
-          style={{
-            background:
-              "linear-gradient(135deg, #f3d98a 0%, #d4af37 50%, #9c7a1f 100%)",
-            WebkitBackgroundClip: "text",
-            WebkitTextFillColor: "transparent",
-            backgroundClip: "text",
-          }}
-        >
-          30 Days Inside
-        </h1>
-        <p className="text-text-gray font-light leading-relaxed mb-2">
-          {name},
-        </p>
-        <p className="text-text-gray font-light leading-relaxed mb-8">
-          Your 30 days begin the moment you claim. No card required. No
-          auto-charge when it ends. We&apos;ll email you a week before, then just
-          lapse cleanly.
-        </p>
-        <form action={claimAction}>
-          <input type="hidden" name="token" value={token} />
-          <button
-            type="submit"
-            className="inline-flex items-center gap-2 px-10 py-4 bg-warm-gold text-deep-black rounded-full font-medium tracking-wider uppercase hover:bg-warm-gold/90 transition-all"
-          >
-            Claim My Free Month
-            <ArrowRight size={16} />
-          </button>
-        </form>
-        <p className="text-text-gray/60 text-xs mt-6">
-          Claim for <span className="text-text-gray">{email}</span>
-        </p>
-      </div>
-    </Shell>
   );
 }
 
