@@ -23,7 +23,6 @@ import {
   ANIKA,
   ANNA_PETROV,
   IRIS_DONALDSON,
-  THEO,
   INNER_VOICE_M,
 } from "../../characters-male";
 import type { Character } from "../../types";
