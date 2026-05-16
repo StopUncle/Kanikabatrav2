@@ -55,6 +55,44 @@ export async function POST(request: NextRequest) {
       });
     }
 
+    // Quiz-unlock abandonment drip. Save endpoint runs for logged-in
+    // takers whose email is always present. Skip if the user already
+    // unlocked this (or a prior) result; the drip is purely for
+    // unpaid quizzes. Idempotent on PENDING entries.
+    if (!quizResult.paid) {
+      try {
+        const recipientEmail = user.email.toLowerCase();
+        const existing = await prisma.emailQueue.findFirst({
+          where: {
+            recipientEmail,
+            sequence: "quiz-unlock-abandonment",
+            status: "PENDING",
+          },
+          select: { id: true },
+        });
+        if (!existing) {
+          // UserSession from requireAuth doesn't carry name; look it
+          // up so the drip greeting isn't a generic "there" for every
+          // logged-in quiz taker.
+          const dbUser = await prisma.user.findUnique({
+            where: { id: user.id },
+            select: { name: true },
+          });
+          const { buildQuizUnlockAbandonmentDrip } = await import(
+            "@/lib/email-sequences"
+          );
+          const entries = buildQuizUnlockAbandonmentDrip(
+            recipientEmail,
+            dbUser?.name || "there",
+            quizResult.id,
+          );
+          await prisma.emailQueue.createMany({ data: entries });
+        }
+      } catch (err) {
+        console.error("[quiz/save] abandonment enqueue failed:", err);
+      }
+    }
+
     return NextResponse.json({ success: true, quizResultId: quizResult.id });
   });
 }

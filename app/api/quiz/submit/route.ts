@@ -55,6 +55,36 @@ export async function POST(request: NextRequest) {
       },
     });
 
+    // Quiz-unlock abandonment drip. Only fires when the taker
+    // provided an email; anonymous takes are unreachable. Idempotent
+    // per email: a re-take within the drip window won't double-enqueue.
+    if (email) {
+      try {
+        const recipientEmail = email.toLowerCase();
+        const existing = await prisma.emailQueue.findFirst({
+          where: {
+            recipientEmail,
+            sequence: "quiz-unlock-abandonment",
+            status: "PENDING",
+          },
+          select: { id: true },
+        });
+        if (!existing) {
+          const { buildQuizUnlockAbandonmentDrip } = await import(
+            "@/lib/email-sequences"
+          );
+          const entries = buildQuizUnlockAbandonmentDrip(
+            recipientEmail,
+            "there",
+            quizResult.id,
+          );
+          await prisma.emailQueue.createMany({ data: entries });
+        }
+      } catch (err) {
+        console.error("[quiz/submit] abandonment enqueue failed:", err);
+      }
+    }
+
     return NextResponse.json({
       resultId: quizResult.id,
       primaryType: types.primary,

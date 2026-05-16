@@ -133,6 +133,24 @@ export async function POST(request: NextRequest) {
             console.error("Failed to auto-unlock quiz for book buyer:", err);
           }
 
+          // Cancel quiz-unlock abandonment if pending; the book auto-
+          // unlocks any quiz so the $9.99 ask is now moot.
+          try {
+            await prisma.emailQueue.updateMany({
+              where: {
+                recipientEmail: email.toLowerCase(),
+                sequence: "quiz-unlock-abandonment",
+                status: "PENDING",
+              },
+              data: { status: "CANCELLED" },
+            });
+          } catch (err) {
+            console.error(
+              "[stripe-webhook] quiz-unlock cancel (book) failed:",
+              err,
+            );
+          }
+
           // Auto-enroll in email sequence (idempotent, checks the queue
           // first; the outer Purchase guard above already prevents repeat
           // processing on retry, but this stays as a belt-and-braces check).
@@ -234,6 +252,25 @@ export async function POST(request: NextRequest) {
                 amount: amount,
               };
             }
+          }
+
+          // Cancel quiz-unlock abandonment if pending. The buyer just
+          // paid for the unlock, so the recovery emails would now be
+          // wrong. Idempotent on empty set.
+          try {
+            await prisma.emailQueue.updateMany({
+              where: {
+                recipientEmail: email.toLowerCase(),
+                sequence: "quiz-unlock-abandonment",
+                status: "PENDING",
+              },
+              data: { status: "CANCELLED" },
+            });
+          } catch (err) {
+            console.error(
+              "[stripe-webhook] quiz-unlock cancel (quiz) failed:",
+              err,
+            );
           }
 
           // Auto-enroll the quiz buyer in the 3-email drip that
@@ -596,20 +633,26 @@ export async function POST(request: NextRequest) {
             }
           }
 
-          // Cancel any pending cart-abandonment for this address; the
-          // bundle's checkout completion is also a Consilium join.
+          // Cancel any pending abandonment drips; bundle checkout is
+          // also a Consilium join and auto-unlocks any pending quiz.
           try {
             await prisma.emailQueue.updateMany({
               where: {
                 recipientEmail: user.email.toLowerCase(),
-                sequence: "consilium-cart-abandonment",
+                sequence: {
+                  in: [
+                    "consilium-cart-abandonment",
+                    "quiz-unlock-abandonment",
+                    "consilium-winback",
+                  ],
+                },
                 status: "PENDING",
               },
               data: { status: "CANCELLED" },
             });
           } catch (err) {
             console.error(
-              "[stripe-webhook] cart-abandonment cancel (bundle) failed:",
+              "[stripe-webhook] abandonment cancel (bundle) failed:",
               err,
             );
           }
@@ -888,22 +931,29 @@ export async function POST(request: NextRequest) {
             }
           }
 
-          // Cancel any pending cart-abandonment recovery emails for this
-          // address. The user completed checkout, so the "you almost
-          // joined" pitch would now be wrong and obnoxious. Idempotent:
-          // updateMany on empty set is a no-op.
+          // Cancel any pending abandonment drips for this address. The
+          // user just completed checkout for Consilium, which makes
+          // both the cart-abandonment pitch AND the quiz-unlock pitch
+          // wrong and obnoxious. Idempotent: updateMany on empty set
+          // is a no-op.
           try {
             await prisma.emailQueue.updateMany({
               where: {
                 recipientEmail: user.email.toLowerCase(),
-                sequence: "consilium-cart-abandonment",
+                sequence: {
+                  in: [
+                    "consilium-cart-abandonment",
+                    "quiz-unlock-abandonment",
+                    "consilium-winback",
+                  ],
+                },
                 status: "PENDING",
               },
               data: { status: "CANCELLED" },
             });
           } catch (err) {
             console.error(
-              "[stripe-webhook] cart-abandonment cancel failed:",
+              "[stripe-webhook] abandonment cancel failed:",
               err,
             );
           }
@@ -1068,6 +1118,44 @@ export async function POST(request: NextRequest) {
                 : undefined;
               sendMembershipCancelled(user.email, user.name || "Member", accessUntil)
                 .catch((err) => console.error("[stripe-webhook] cancellation email failed:", err));
+
+              // Winback drip. Day 1 ack, Day 7 soft door, Day 30
+              // direct ask. Skipped for suspended / banned members
+              // because those weren't voluntary cancellations and
+              // the winback copy would be wrong. Idempotent per
+              // recipient + sequence so a re-cancel within a 30-day
+              // window doesn't stack a second drip.
+              const isVoluntary =
+                !membership.suspendedAt &&
+                !membership.suspendReason;
+              if (isVoluntary) {
+                try {
+                  const recipientEmail = user.email.toLowerCase();
+                  const existingWinback = await prisma.emailQueue.findFirst({
+                    where: {
+                      recipientEmail,
+                      sequence: "consilium-winback",
+                      status: "PENDING",
+                    },
+                    select: { id: true },
+                  });
+                  if (!existingWinback) {
+                    const { buildConsiliumWinbackDrip } = await import(
+                      "@/lib/email-sequences"
+                    );
+                    const entries = buildConsiliumWinbackDrip(
+                      recipientEmail,
+                      user.name || "Member",
+                    );
+                    await prisma.emailQueue.createMany({ data: entries });
+                  }
+                } catch (err) {
+                  console.error(
+                    "[stripe-webhook] winback enqueue failed:",
+                    err,
+                  );
+                }
+              }
             }
           } catch { /* non-blocking */ }
         }

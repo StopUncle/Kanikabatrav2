@@ -195,6 +195,28 @@ async function claimAction(formData: FormData): Promise<void> {
     }
   }
 
+  // Cancel any pending abandonment / winback drips. Activating a
+  // gift counts as a Consilium join even though no money changed
+  // hands, so leaving these queued would land obsolete pitches.
+  try {
+    await prisma.emailQueue.updateMany({
+      where: {
+        recipientEmail: user.email.toLowerCase(),
+        sequence: {
+          in: [
+            "consilium-cart-abandonment",
+            "quiz-unlock-abandonment",
+            "consilium-winback",
+          ],
+        },
+        status: "PENDING",
+      },
+      data: { status: "CANCELLED" },
+    });
+  } catch (err) {
+    console.error("[claim] abandonment cancel failed:", err);
+  }
+
   // Onboarding drip. Fires for everyone activating a gift membership,
   // new account or existing. Mirrors the INNER_CIRCLE checkout flow,
   // gift claimers are inside Consilium for 30 days and benefit from

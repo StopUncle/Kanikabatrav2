@@ -195,7 +195,7 @@ https://kanikarose.com/<path>?utm_source=<platform>&utm_medium=<how>&utm_campaig
 - [ ] **Cosmetic.** `replayXp`'s return field is named `endedAt` but it's actually the final `SimulatorState`. Rename to `state` or `finalState`. Nothing currently depends on the name.
 
 ### Infrastructure
-- [ ] **Add `prisma migrate deploy` to nixpacks build.** Railway runs `npx prisma db push --skip-generate`, which no-ops on Railway V2 Postgres. New schema must be applied manually with `DATABASE_URL=<prod> npx prisma migrate deploy` BEFORE pushing referencing code. Outstanding migrations to apply manually as of 2026-04-25: `20260425000000_add_simulator_completion_count`, `20260425120000_add_quiz_consilium_credit`, `20260425130000_add_attribution_capture`.
+- [ ] **Add `prisma migrate deploy` to nixpacks build.** Railway runs `npx prisma db push --skip-generate`, which no-ops on Railway V2 Postgres. New schema must be applied manually with `DATABASE_URL=<prod> npx prisma migrate deploy` BEFORE pushing referencing code. Outstanding migrations to apply manually as of 2026-05-16: `20260425000000_add_simulator_completion_count`, `20260425120000_add_quiz_consilium_credit`, `20260425130000_add_attribution_capture`, `20260516000000_add_user_last_seen_at` (powers the dormant-member cron; without it, `/api/auth/refresh`, `/api/auth/login`, and `/api/cron/dormant-member` will throw on the missing column).
 
 ### Bugs
 - [ ] **Token refresh race** in `components/dashboard/DashboardClient.tsx:112-131` — concurrent 401s spawn multiple `/api/auth/refresh`. Add singleton refresh promise.

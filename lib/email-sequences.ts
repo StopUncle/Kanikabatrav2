@@ -2361,3 +2361,421 @@ export function buildConsiliumWelcomeSeries(
     },
   ];
 }
+
+// ============================================================
+// Quiz-unlock abandonment drip.
+//
+// Fires when a quiz taker submits answers WITH an email but does
+// not pay $9.99 to unlock the full results. Cancelled when:
+//   - The QuizResult.paid flag flips to true (Stripe QUIZ webhook)
+//   - The user joins Consilium via any path (the $9.99 ask becomes
+//     moot because they have access via membership)
+//
+// Cadence is tight, the unlock decision tends to be impulsive:
+//   +3h  - "you stopped one click short"
+//   +24h - what the unlock actually contains
+//   +3d  - last call
+//
+// Anonymous (no-email) quiz takes get no drip. They show up in the
+// admin/traffic dashboard but we have no way to reach them.
+// ============================================================
+
+function buildQuizUnlockStep1(name: string, quizResultId: string): string {
+  const params = new URLSearchParams({
+    utm_source: "email",
+    utm_medium: "email",
+    utm_campaign: "quiz-unlock-abandonment",
+    utm_content: "step-1-3h",
+  });
+  const resultsUrl = `${baseUrl}/quiz/results/${quizResultId}?${params.toString()}`;
+
+  const body = `
+    <p style="color: #f5f0ed; font-size: 16px; margin: 0 0 20px 0; line-height: 1.7;">
+      Hey ${esc(name)},
+    </p>
+
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 20px 0; font-size: 15px;">
+      You took the Dark Mirror and stopped one click short of the full read. No pressure, just flagging it in case it slipped, the unlock is $9.99 and gives you the radar chart, the trait stack, the blind-spot list, and the full diagnosis.
+    </p>
+
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 25px 0; font-size: 15px;">
+      Most takers report the second read (a couple of days after the first) is when the pattern actually clicks. Worth having it sit in your inbox.
+    </p>
+
+    ${goldButton("Unlock my full results", resultsUrl)}
+
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 0 0; font-size: 15px;">
+      The $9.99 also comes back to you as a credit toward Consilium membership, if you ever decide to go further with this.
+    </p>`;
+
+  return emailShell(
+    "You stopped one click short",
+    "Dark Mirror, +3h",
+    body,
+  );
+}
+
+function buildQuizUnlockStep2(name: string, quizResultId: string): string {
+  const params = new URLSearchParams({
+    utm_source: "email",
+    utm_medium: "email",
+    utm_campaign: "quiz-unlock-abandonment",
+    utm_content: "step-2-24h",
+  });
+  const resultsUrl = `${baseUrl}/quiz/results/${quizResultId}?${params.toString()}`;
+
+  const body = `
+    <p style="color: #f5f0ed; font-size: 16px; margin: 0 0 20px 0; line-height: 1.7;">
+      ${esc(name)},
+    </p>
+
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 20px 0; font-size: 15px;">
+      Quick note on what&rsquo;s behind the unlock, in case that&rsquo;s the missing piece.
+    </p>
+
+    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="margin: 0 0 25px 0;">
+      <tr>
+        <td bgcolor="#1a0d11" style="padding: 22px; border-radius: 10px; border: 1px solid #d4af37;">
+          <p style="color: #f5f0ed; margin: 0 0 10px 0; font-size: 14px; line-height: 1.6;">
+            <strong style="color: #d4af37;">Radar chart</strong>, six axes, your score against each.
+          </p>
+          <p style="color: #f5f0ed; margin: 0 0 10px 0; font-size: 14px; line-height: 1.6;">
+            <strong style="color: #d4af37;">Trait stack</strong>, the rank-ordered list of which traits are loudest in your profile.
+          </p>
+          <p style="color: #f5f0ed; margin: 0 0 10px 0; font-size: 14px; line-height: 1.6;">
+            <strong style="color: #d4af37;">Blind spots</strong>, the patterns you&rsquo;re most likely to miss in others because they don&rsquo;t resemble you.
+          </p>
+          <p style="color: #f5f0ed; margin: 0; font-size: 14px; line-height: 1.6;">
+            <strong style="color: #d4af37;">Diagnosis</strong>, a written read on what your axis combination tends to look like under pressure.
+          </p>
+        </td>
+      </tr>
+    </table>
+
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 20px 0; font-size: 15px;">
+      The quiz is one of the more honest mirrors most people have looked into. The free preview gives you the headline. The unlock gives you the read.
+    </p>
+
+    ${goldButton("Unlock my full results", resultsUrl)}`;
+
+  return emailShell(
+    "What's actually behind the unlock",
+    "Dark Mirror, +24h",
+    body,
+  );
+}
+
+function buildQuizUnlockStep3(name: string, quizResultId: string): string {
+  const params = new URLSearchParams({
+    utm_source: "email",
+    utm_medium: "email",
+    utm_campaign: "quiz-unlock-abandonment",
+    utm_content: "step-3-3d",
+  });
+  const resultsUrl = `${baseUrl}/quiz/results/${quizResultId}?${params.toString()}`;
+
+  const body = `
+    <p style="color: #f5f0ed; font-size: 16px; margin: 0 0 20px 0; line-height: 1.7;">
+      ${esc(name)},
+    </p>
+
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 25px 0; font-size: 15px;">
+      Last note on the unlock. $9.99, single payment, results stay yours, $9.99 credit toward Consilium membership if you ever join. After this, no more reminders.
+    </p>
+
+    ${goldButton("Unlock my full results", resultsUrl)}
+
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 0 0; font-size: 15px;">
+      Either way, thanks for taking the quiz.
+    </p>`;
+
+  return emailShell(
+    "Last note on your Dark Mirror",
+    "Dark Mirror, +3d",
+    body,
+  );
+}
+
+export function buildQuizUnlockAbandonmentDrip(
+  recipientEmail: string,
+  recipientName: string,
+  quizResultId: string,
+): EmailQueueEntry[] {
+  const now = new Date();
+
+  return [
+    {
+      recipientEmail,
+      recipientName,
+      sequence: "quiz-unlock-abandonment",
+      step: 1,
+      subject: "You stopped one click short",
+      htmlBody: withMarketingFooter(
+        buildQuizUnlockStep1(recipientName, quizResultId),
+        recipientEmail,
+      ),
+      scheduledAt: addHours(now, 3),
+      metadata: { ...MARKETING_META, quizResultId, type: "3h-touch" },
+    },
+    {
+      recipientEmail,
+      recipientName,
+      sequence: "quiz-unlock-abandonment",
+      step: 2,
+      subject: "What's actually behind the unlock",
+      htmlBody: withMarketingFooter(
+        buildQuizUnlockStep2(recipientName, quizResultId),
+        recipientEmail,
+      ),
+      scheduledAt: addHours(now, 24),
+      metadata: { ...MARKETING_META, quizResultId, type: "24h-detail" },
+    },
+    {
+      recipientEmail,
+      recipientName,
+      sequence: "quiz-unlock-abandonment",
+      step: 3,
+      subject: "Last note on your Dark Mirror",
+      htmlBody: withMarketingFooter(
+        buildQuizUnlockStep3(recipientName, quizResultId),
+        recipientEmail,
+      ),
+      scheduledAt: addDays(now, 3),
+      metadata: { ...MARKETING_META, quizResultId, type: "last-call" },
+    },
+  ];
+}
+
+// ============================================================
+// Post-cancellation winback drip.
+//
+// Fires when a Stripe subscription is deleted (member-initiated
+// cancel or terminal billing failure). Three touches across 30
+// days, the standard SaaS recovery shape. Cancelled if the user
+// re-joins.
+//
+// Cadence:
+//   Day 1  - clean acknowledgement, no pressure
+//   Day 7  - what they're missing, soft door
+//   Day 30 - explicit re-join ask
+//
+// Strict rule: do NOT enrol members whose cancellation reason is
+// abuse / refund-for-fraud. Those get suppressed at enqueue time
+// by checking for membership.suspendReason or refund metadata.
+// ============================================================
+
+function buildWinbackStep1(name: string): string {
+  const body = `
+    <p style="color: #f5f0ed; font-size: 16px; margin: 0 0 20px 0; line-height: 1.7;">
+      ${esc(name)},
+    </p>
+
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 20px 0; font-size: 15px;">
+      Confirming your Consilium membership is cancelled. No further charges, your card&rsquo;s clean, you keep access until the end of your current billing period.
+    </p>
+
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 20px 0; font-size: 15px;">
+      No pitch in this one. If there&rsquo;s a specific reason you left, reply and tell me, I read everything and I take the patterns from this kind of feedback more seriously than almost anything else.
+    </p>
+
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 0 0; font-size: 15px;">
+      Thanks for the time you spent inside.
+    </p>`;
+
+  return emailShell(
+    "Cancellation confirmed",
+    "The Consilium",
+    body,
+  );
+}
+
+function buildWinbackStep2(name: string): string {
+  const consiliumUrl = dripConsiliumUrl(
+    "consilium-winback",
+    "step-2-soft-door",
+  );
+
+  const body = `
+    <p style="color: #f5f0ed; font-size: 16px; margin: 0 0 20px 0; line-height: 1.7;">
+      ${esc(name)},
+    </p>
+
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 20px 0; font-size: 15px;">
+      Week one without the feed. Not a check-in, just a flag, here&rsquo;s what dropped in the council since you left.
+    </p>
+
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 20px 0; font-size: 15px;">
+      Seven psychology cards, six discussion prompts, one voice note covering the thing I would not normally put on Instagram. The simulator added two new scenes this week.
+    </p>
+
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 25px 0; font-size: 15px;">
+      No re-join ask in this email. Door is below if it matters; if not, ignore it. One more from me at the four-week mark, then I stop.
+    </p>
+
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 0 0; font-size: 15px;">
+      <a href="${consiliumUrl}" style="color: #d4af37; text-decoration: underline;">If you want back in.</a>
+    </p>`;
+
+  return emailShell(
+    "What dropped this week",
+    "The Consilium, week one out",
+    body,
+  );
+}
+
+function buildWinbackStep3(name: string): string {
+  const consiliumUrl = dripConsiliumUrl(
+    "consilium-winback",
+    "step-3-direct",
+  );
+
+  const body = `
+    <p style="color: #f5f0ed; font-size: 16px; margin: 0 0 20px 0; line-height: 1.7;">
+      ${esc(name)},
+    </p>
+
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 20px 0; font-size: 15px;">
+      Last note. A month out.
+    </p>
+
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 25px 0; font-size: 15px;">
+      Members who come back tend to come back at the four-week mark. There&rsquo;s usually a specific moment, a conversation that made them realise they missed the pattern, a relationship they want to read more cleanly, a thing they would have said differently if they had named the move. If that&rsquo;s where you are, the door&rsquo;s open. Same $29, cancel any time.
+    </p>
+
+    ${goldButton("Rejoin The Consilium", consiliumUrl)}
+
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 0 0; font-size: 15px;">
+      If not, no more from me on this. You&rsquo;ll still get the regular newsletter unless you unsubscribe.
+    </p>`;
+
+  return emailShell(
+    "A month out",
+    "The Consilium, last note",
+    body,
+  );
+}
+
+export function buildConsiliumWinbackDrip(
+  recipientEmail: string,
+  recipientName: string,
+): EmailQueueEntry[] {
+  const now = new Date();
+
+  return [
+    {
+      recipientEmail,
+      recipientName,
+      sequence: "consilium-winback",
+      step: 1,
+      subject: "Cancellation confirmed",
+      htmlBody: withMarketingFooter(
+        buildWinbackStep1(recipientName),
+        recipientEmail,
+      ),
+      scheduledAt: addDays(now, 1),
+      metadata: { ...MARKETING_META, type: "ack" },
+    },
+    {
+      recipientEmail,
+      recipientName,
+      sequence: "consilium-winback",
+      step: 2,
+      subject: "What dropped this week",
+      htmlBody: withMarketingFooter(
+        buildWinbackStep2(recipientName),
+        recipientEmail,
+      ),
+      scheduledAt: addDays(now, 7),
+      metadata: { ...MARKETING_META, type: "soft-door" },
+    },
+    {
+      recipientEmail,
+      recipientName,
+      sequence: "consilium-winback",
+      step: 3,
+      subject: "A month out",
+      htmlBody: withMarketingFooter(
+        buildWinbackStep3(recipientName),
+        recipientEmail,
+      ),
+      scheduledAt: addDays(now, 30),
+      metadata: { ...MARKETING_META, type: "direct-ask" },
+    },
+  ];
+}
+
+// ============================================================
+// Dormant-member re-engagement, single-shot.
+//
+// Triggered by /api/cron/dormant-member when a member's
+// User.lastSeenAt is older than 14 days (or null + activated >14d
+// ago). Sends one "what you've missed" email. Idempotent per
+// member per 30 days via applicationData.dormantReminderSentAt.
+//
+// Goal: prevent silent churn. Members who go dark for 14+ days
+// tend to cancel without warning. A single re-engagement email
+// catches the recoverable ones before they hit the cancel button.
+// ============================================================
+
+function buildDormantReengagementEmail(name: string): string {
+  const feedUrl = memberUrl("/consilium/feed", "dormant-feed");
+  const simulatorUrl = memberUrl(
+    "/consilium/simulator",
+    "dormant-simulator",
+  );
+
+  const body = `
+    <p style="color: #f5f0ed; font-size: 16px; margin: 0 0 20px 0; line-height: 1.7;">
+      ${esc(name)},
+    </p>
+
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 20px 0; font-size: 15px;">
+      Haven&rsquo;t seen you inside in a bit. No guilt-trip, life has rhythms; just a flag in case the council has slipped off your radar.
+    </p>
+
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 20px 0; font-size: 15px;">
+      The shortest path back in is one of these:
+    </p>
+
+    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="margin: 0 0 25px 0;">
+      <tr>
+        <td bgcolor="#1a0d11" style="padding: 22px; border-radius: 10px; border: 1px solid #d4af37;">
+          <p style="color: #f5f0ed; margin: 0 0 12px 0; font-size: 14px; line-height: 1.7;">
+            <strong style="color: #d4af37;"><a href="${feedUrl}" style="color: #d4af37; text-decoration: none;">Today&rsquo;s prompt &rarr;</a></strong> Three-minute read, drop one sentence of your read in the comments.
+          </p>
+          <p style="color: #f5f0ed; margin: 0; font-size: 14px; line-height: 1.7;">
+            <strong style="color: #d4af37;"><a href="${simulatorUrl}" style="color: #d4af37; text-decoration: none;">One scene &rarr;</a></strong> Whichever one&rsquo;s top of the catalog. Three minutes.
+          </p>
+        </td>
+      </tr>
+    </table>
+
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 0 0; font-size: 15px;">
+      Either one drops you straight back into the rhythm. If the timing&rsquo;s just bad, that&rsquo;s a real answer too, the membership keeps holding the door.
+    </p>`;
+
+  return emailShell(
+    "The council noticed you stepped out",
+    "The Consilium",
+    body,
+  );
+}
+
+export function buildDormantReengagementEmailEntry(
+  recipientEmail: string,
+  recipientName: string,
+): EmailQueueEntry {
+  return {
+    recipientEmail,
+    recipientName,
+    sequence: "dormant-member-reengagement",
+    step: 1,
+    subject: "The council noticed you stepped out",
+    htmlBody: withMarketingFooter(
+      buildDormantReengagementEmail(recipientName),
+      recipientEmail,
+    ),
+    scheduledAt: new Date(),
+    metadata: { ...MARKETING_META, type: "dormant-reengage" },
+  };
+}

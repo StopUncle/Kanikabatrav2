@@ -3,6 +3,7 @@ import { PrismaUserDatabase } from "@/lib/auth/prisma-database";
 import { generateTokenPair } from "@/lib/auth/jwt";
 import { LoginCredentials } from "@/lib/auth/types";
 import { enforceRateLimit, getClientIp, limits } from "@/lib/rate-limit";
+import { prisma } from "@/lib/prisma";
 
 export async function POST(request: NextRequest) {
   try {
@@ -71,6 +72,17 @@ export async function POST(request: NextRequest) {
       maxAge: 7 * 24 * 60 * 60, // 7 days
       path: "/",
     });
+
+    // Stamp lastSeenAt at login. The refresh route keeps it fresh
+    // every ~15min while a session is active; login covers the
+    // long-dormancy case where refresh tokens have expired and the
+    // user is signing in cold. Non-blocking.
+    prisma.user
+      .update({
+        where: { id: user.id },
+        data: { lastSeenAt: new Date() },
+      })
+      .catch((err) => console.error("[auth/login] lastSeenAt update failed:", err));
 
     return response;
   } catch (error: unknown) {

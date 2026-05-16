@@ -24,6 +24,12 @@ model User {
   // they haven't seen it yet — the feed renders the welcome modal on
   // their first visit after activation.
   onboardingSeenAt          DateTime?
+  // Best-effort "last seen" stamp. Written by /api/auth/refresh
+  // (fires roughly every 15min for any active session) and by
+  // /api/auth/login. Read only by /api/cron/dormant-member to
+  // identify members who have gone dark for 14+ days. Never on the
+  // auth path — auth uses the JWT exclusively.
+  lastSeenAt                DateTime?
   emailPreferences          Json?
   role                      UserRole             @default(MEMBER)
   createdAt                 DateTime             @default(now())
@@ -139,6 +145,7 @@ model User {
   @@index([utmCampaign])
   @@index([isBot])
   @@index([isTrainingBot])
+  @@index([lastSeenAt])
 }
 
 enum UserRole {
@@ -1368,22 +1375,22 @@ model InstinctScore {
 // league is "live" and weeklyScore on each LeagueMembership accrues
 // with every scored response.
 model League {
-  id          String    @id @default(cuid())
+  id         String    @id @default(cuid())
   // ISO week the league represents, e.g. "2026-W19".
-  weekKey     String
+  weekKey    String
   // Tier name from the static TIERS list. Stored as a string rather
   // than an enum so renaming a tier is a one-line copy change, not a
   // schema migration.
-  tierName    String
+  tierName   String
   // 0 = bottom tier, increasing. Used for promotion/demotion math
   // (next tier up = tierOrder + 1).
-  tierOrder   Int
+  tierOrder  Int
   // Frozen Elo bounds at creation so changing the TIERS table later
   // doesn't retroactively shift bounds on already-resolved leagues.
-  eloMin      Int
-  eloMax      Int
-  resolvedAt  DateTime?
-  createdAt   DateTime  @default(now())
+  eloMin     Int
+  eloMax     Int
+  resolvedAt DateTime?
+  createdAt  DateTime  @default(now())
 
   memberships LeagueMembership[]
 
@@ -1459,13 +1466,13 @@ model TellStreak {
 // "history view"), add an inputText field then; do not add it lazily
 // because it raises the bar on backups + GDPR + threat model.
 model Receipt {
-  id             String   @id @default(cuid())
+  id             String  @id @default(cuid())
   userId         String
   // User-provided label for their own organisation, e.g. "ex Tuesday".
   // Optional, defaults to "Untitled" on display.
   label          String?
   // Kanika-voice response, the read.
-  response       String   @db.Text
+  response       String  @db.Text
   // Length of the input the user pasted, in characters, for cost
   // analytics and to detect "the user pasted a novel" abuse.
   inputCharCount Int
@@ -1475,11 +1482,11 @@ model Receipt {
   // Model ID actually called, so cost analytics can split by model.
   model          String
   // Cost in USD * 10000, rounded. Stored as int to avoid float weirdness.
-  costMicros     Int      @default(0)
+  costMicros     Int     @default(0)
 
-  createdAt      DateTime @default(now())
+  createdAt DateTime @default(now())
 
-  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId, createdAt])
   @@index([inputHash])

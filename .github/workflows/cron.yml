@@ -49,6 +49,10 @@ on:
     # Monday 00:00 UTC, so this catches the just-ending week before the
     # new week's first answers create new memberships.
     - cron: '59 23 * * 0'
+    # Dormant-member re-engagement — daily at 10:30 UTC, after the
+    # daily-insight + discussion-prompt drops so any reactivated
+    # members land in a feed that already has fresh content for the day.
+    - cron: '30 10 * * *'
   workflow_dispatch:
     # Allow manual triggering from the GitHub Actions UI. Useful for
     # testing or firing a cron out-of-band without waiting for the next
@@ -72,6 +76,7 @@ on:
           - publish-tells
           - training-bots-tick
           - resolve-leagues
+          - dormant-member
 
 env:
   BASE_URL: https://kanikarose.com
@@ -167,6 +172,24 @@ jobs:
       - name: Hit /api/cron/trial-expiry
         run: |
           curl -fsS -X POST "$BASE_URL/api/cron/trial-expiry" \
+            -H "x-cron-secret: ${{ secrets.CRON_SECRET }}" \
+            -H "Content-Type: application/json" \
+            --max-time 60
+
+  dormant-member:
+    # Daily at 10:30 UTC, right after the daily-insight + discussion-prompt
+    # drops. Scans ACTIVE memberships for User.lastSeenAt older than 14d
+    # and queues a single re-engagement email per dormant member, with a
+    # 30-day cooldown tracked in applicationData.
+    if: >-
+      github.event.schedule == '30 10 * * *' ||
+      (github.event_name == 'workflow_dispatch' &&
+       (github.event.inputs.target == 'all' || github.event.inputs.target == 'dormant-member'))
+    runs-on: ubuntu-latest
+    steps:
+      - name: Hit /api/cron/dormant-member
+        run: |
+          curl -fsS -X POST "$BASE_URL/api/cron/dormant-member" \
             -H "x-cron-secret: ${{ secrets.CRON_SECRET }}" \
             -H "Content-Type: application/json" \
             --max-time 60
