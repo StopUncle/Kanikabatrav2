@@ -473,6 +473,97 @@ function buildMiniDripStep4(name: string): string {
   );
 }
 
+function buildMiniDripStep5(name: string): string {
+  const body = `
+    <p style="color: #f5f0ed; font-size: 16px; margin: 0 0 20px 0; line-height: 1.7;">
+      ${esc(name)},
+    </p>
+
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 20px 0; font-size: 15px;">
+      A practice for this week. Pick one conversation, doesn&rsquo;t have to be a hard one, and watch for <strong style="color: #d4af37;">sandbagging</strong>.
+    </p>
+
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 20px 0; font-size: 15px;">
+      Sandbagging is when someone agrees with you on the surface, then quietly stockpiles the disagreement to use later. The tell is the shape of the agreement: too quick, too smooth, no follow-up question. Real agreement asks something. Sandbag agreement closes the topic.
+    </p>
+
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 0 0; font-size: 15px;">
+      Once you can see it once, you can see it everywhere. That&rsquo;s the actual upgrade, naming the move so you stop being surprised by it three weeks later.
+    </p>`;
+
+  return emailShell(
+    "Sandbagging, the agreement that isn't",
+    "Mini Dark Mirror, Day 10",
+    body,
+  );
+}
+
+function buildMiniDripStep6(name: string): string {
+  const consiliumUrl = dripConsiliumUrl(
+    "mini-dark-mirror-drip",
+    "step-6-soft-mention",
+  );
+
+  const body = `
+    <p style="color: #f5f0ed; font-size: 16px; margin: 0 0 20px 0; line-height: 1.7;">
+      ${esc(name)},
+    </p>
+
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 20px 0; font-size: 15px;">
+      One more reframe. The thing that separates the people who get good at reading dynamics from the people who stay stuck is not raw intelligence. It&rsquo;s reps.
+    </p>
+
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 20px 0; font-size: 15px;">
+      Most readers of psychology content know more than they apply. The bottleneck isn&rsquo;t information, it&rsquo;s the absence of a place to practice what you read on something other than your own life, which is the worst possible training ground.
+    </p>
+
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 25px 0; font-size: 15px;">
+      That&rsquo;s the whole reason the <a href="${consiliumUrl}" style="color: #d4af37; text-decoration: underline;">simulator</a> exists. 60+ low-stakes scenes, every one structured around a named pattern. You make the call, the scene resolves on it, you keep the lesson and lose nothing.
+    </p>
+
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 0 0; font-size: 15px;">
+      One more from me. Then back to the regular rhythm.
+    </p>`;
+
+  return emailShell(
+    "Why reading isn't the bottleneck",
+    "Mini Dark Mirror, Day 14",
+    body,
+  );
+}
+
+function buildMiniDripStep7(name: string): string {
+  const consiliumUrl = dripConsiliumUrl(
+    "mini-dark-mirror-drip",
+    "step-7-final",
+  );
+
+  const body = `
+    <p style="color: #f5f0ed; font-size: 16px; margin: 0 0 20px 0; line-height: 1.7;">
+      ${esc(name)},
+    </p>
+
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 20px 0; font-size: 15px;">
+      Last note. Three weeks since you took the mini-quiz.
+    </p>
+
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 25px 0; font-size: 15px;">
+      If the framework is something you want to keep developing, The Consilium is the room where the work happens. $29 a month, cancel any time. The reason I&rsquo;m sending one more is because the people who join two or three weeks after the quiz tend to be the ones who get the most out of it, they&rsquo;ve had time to notice the patterns showing up in their own life first.
+    </p>
+
+    ${goldButton("Step inside", consiliumUrl)}
+
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 0 0; font-size: 15px;">
+      If not, no follow-up after this one. You&rsquo;ll still get the regular newsletter unless you unsubscribe.
+    </p>`;
+
+  return emailShell(
+    "Three weeks on",
+    "Mini Dark Mirror, Day 21",
+    body,
+  );
+}
+
 export function buildMiniDarkMirrorDrip(
   recipientEmail: string,
   recipientName: string,
@@ -531,6 +622,45 @@ export function buildMiniDarkMirrorDrip(
         recipientEmail,
       ),
       scheduledAt: addDays(now, 7),
+      metadata: { ...MARKETING_META, dominantType },
+    },
+    {
+      recipientEmail,
+      recipientName,
+      sequence: "mini-dark-mirror-drip",
+      step: 5,
+      subject: "Sandbagging, the agreement that isn't",
+      htmlBody: withMarketingFooter(
+        buildMiniDripStep5(recipientName),
+        recipientEmail,
+      ),
+      scheduledAt: addDays(now, 10),
+      metadata: { ...MARKETING_META, dominantType },
+    },
+    {
+      recipientEmail,
+      recipientName,
+      sequence: "mini-dark-mirror-drip",
+      step: 6,
+      subject: "Why reading isn't the bottleneck",
+      htmlBody: withMarketingFooter(
+        buildMiniDripStep6(recipientName),
+        recipientEmail,
+      ),
+      scheduledAt: addDays(now, 14),
+      metadata: { ...MARKETING_META, dominantType },
+    },
+    {
+      recipientEmail,
+      recipientName,
+      sequence: "mini-dark-mirror-drip",
+      step: 7,
+      subject: "Three weeks on",
+      htmlBody: withMarketingFooter(
+        buildMiniDripStep7(recipientName),
+        recipientEmail,
+      ),
+      scheduledAt: addDays(now, 21),
       metadata: { ...MARKETING_META, dominantType },
     },
   ];
@@ -697,6 +827,93 @@ function buildStarterDripStep4(name: string): string {
   );
 }
 
+function buildStarterDripStep5(name: string): string {
+  const body = `
+    <p style="color: #f5f0ed; font-size: 16px; margin: 0 0 20px 0; line-height: 1.7;">
+      ${esc(name)},
+    </p>
+
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 20px 0; font-size: 15px;">
+      A sixth pattern for the pack, the one I held back because it&rsquo;s the most uncomfortable: <strong style="color: #d4af37;">future-faking</strong>.
+    </p>
+
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 20px 0; font-size: 15px;">
+      Future-faking is when someone paints a vivid, detailed picture of a future with you, the house, the trip, the names of children, then never moves toward any of it. The vivid detail is the tell. Real plans have edges, friction, dates. Future-fakes are smooth, untouchable, and always six months away.
+    </p>
+
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 0 0; font-size: 15px;">
+      The defense is one question, asked early and lightly: <em>what&rsquo;s the next concrete step on that?</em> Real planners answer. Future-fakers reframe the question.
+    </p>`;
+
+  return emailShell(
+    "The sixth pattern",
+    "Starter Pack, Day 10",
+    body,
+  );
+}
+
+function buildStarterDripStep6(name: string): string {
+  const consiliumUrl = dripConsiliumUrl(
+    "starter-pack-drip",
+    "step-6-soft-mention",
+  );
+
+  const body = `
+    <p style="color: #f5f0ed; font-size: 16px; margin: 0 0 20px 0; line-height: 1.7;">
+      ${esc(name)},
+    </p>
+
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 20px 0; font-size: 15px;">
+      Here&rsquo;s the thing about patterns. Once you have five of them named, you start seeing every dynamic in your life through that lens, which is half-helpful and half-dangerous. The dangerous half is mistaking pattern-matching for diagnosis. The helpful half is the speed of recognition.
+    </p>
+
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 25px 0; font-size: 15px;">
+      The next move, if you&rsquo;re going to keep going, is to practice the patterns against scenes you didn&rsquo;t write yourself. That&rsquo;s what the <a href="${consiliumUrl}" style="color: #d4af37; text-decoration: underline;">simulator</a> inside The Consilium is for. 60+ scenes, each one structured around one of the named tactics, all with branching outcomes you can&rsquo;t pre-solve from the title.
+    </p>
+
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 0 0; font-size: 15px;">
+      One more from me at the three-week mark. Then back to the standard rhythm.
+    </p>`;
+
+  return emailShell(
+    "Pattern recognition has a failure mode",
+    "Starter Pack, Day 14",
+    body,
+  );
+}
+
+function buildStarterDripStep7(name: string): string {
+  const consiliumUrl = dripConsiliumUrl(
+    "starter-pack-drip",
+    "step-7-final",
+  );
+
+  const body = `
+    <p style="color: #f5f0ed; font-size: 16px; margin: 0 0 20px 0; line-height: 1.7;">
+      ${esc(name)},
+    </p>
+
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 20px 0; font-size: 15px;">
+      Last note in this thread. Three weeks since the pack.
+    </p>
+
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 25px 0; font-size: 15px;">
+      The Consilium is where this work lives at depth. $29 a month, cancel one click. Members who got the most out of it tended to join two to three weeks after the pack, after the patterns had started showing up in their own life and the question shifted from <em>is this useful</em> to <em>where do I practice this</em>.
+    </p>
+
+    ${goldButton("Step inside", consiliumUrl)}
+
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 0 0; font-size: 15px;">
+      If not, no follow-up after this one. You&rsquo;ll still get the regular newsletter unless you unsubscribe.
+    </p>`;
+
+  return emailShell(
+    "Three weeks on",
+    "Starter Pack, Day 21",
+    body,
+  );
+}
+
 export function buildStarterPackDrip(
   recipientEmail: string,
   recipientName: string,
@@ -754,6 +971,45 @@ export function buildStarterPackDrip(
         recipientEmail,
       ),
       scheduledAt: addDays(now, 7),
+      metadata: { ...MARKETING_META },
+    },
+    {
+      recipientEmail,
+      recipientName,
+      sequence: "starter-pack-drip",
+      step: 5,
+      subject: "The sixth pattern",
+      htmlBody: withMarketingFooter(
+        buildStarterDripStep5(recipientName),
+        recipientEmail,
+      ),
+      scheduledAt: addDays(now, 10),
+      metadata: { ...MARKETING_META },
+    },
+    {
+      recipientEmail,
+      recipientName,
+      sequence: "starter-pack-drip",
+      step: 6,
+      subject: "Pattern recognition has a failure mode",
+      htmlBody: withMarketingFooter(
+        buildStarterDripStep6(recipientName),
+        recipientEmail,
+      ),
+      scheduledAt: addDays(now, 14),
+      metadata: { ...MARKETING_META },
+    },
+    {
+      recipientEmail,
+      recipientName,
+      sequence: "starter-pack-drip",
+      step: 7,
+      subject: "Three weeks on",
+      htmlBody: withMarketingFooter(
+        buildStarterDripStep7(recipientName),
+        recipientEmail,
+      ),
+      scheduledAt: addDays(now, 21),
       metadata: { ...MARKETING_META },
     },
   ];
@@ -1683,6 +1939,425 @@ export function buildQuizBuyerSequence(
       ),
       scheduledAt: addDays(now, 12),
       metadata: { ...MARKETING_META, ...sharedMeta, type: "last-call" },
+    },
+  ];
+}
+
+// ============================================================
+// Consilium cart-abandonment drip.
+//
+// Triggered when a logged-in user POSTs to
+// /api/consilium/subscription/create and is redirected to Stripe
+// Checkout. Two recovery emails:
+//   +1h: light touch, "saw you almost joined"
+//   +24h: clean ask, with the join link
+//
+// Cancelled in the Stripe webhook when checkout.session.completed
+// fires for INNER_CIRCLE, so completers never get the recovery
+// emails. Idempotent at enqueue time: skipped if a PENDING entry
+// already exists for the same email + sequence.
+// ============================================================
+
+function addHours(date: Date, hours: number): Date {
+  return new Date(date.getTime() + hours * 60 * 60 * 1000);
+}
+
+function buildCartAbandonStep1(name: string): string {
+  const consiliumUrl = dripConsiliumUrl(
+    "consilium-cart-abandonment",
+    "step-1-soft",
+  );
+
+  const body = `
+    <p style="color: #f5f0ed; font-size: 16px; margin: 0 0 20px 0; line-height: 1.7;">
+      Hey ${esc(name)},
+    </p>
+
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 20px 0; font-size: 15px;">
+      Saw you opened the door to The Consilium and didn&rsquo;t finish. No pitch, just a quick check, was something missing?
+    </p>
+
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 20px 0; font-size: 15px;">
+      The most common reason people stall on join is a totally fair one: they want to know what they&rsquo;re actually walking into. So here&rsquo;s the honest answer.
+    </p>
+
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 20px 0; font-size: 15px;">
+      <strong style="color: #d4af37;">Inside</strong>, the feed runs daily with one psychology card and one discussion prompt I write or hand-pick. The simulator has 60+ branching scenarios, you make the call, the scene resolves on it. Ask Kanika gives you one question per day, my answer back in voice or video.
+    </p>
+
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 20px 0; font-size: 15px;">
+      It&rsquo;s $29 a month. Cancel any time from the billing page, no email, no friction.
+    </p>
+
+    ${goldButton("Pick up where you left off", consiliumUrl)}
+
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 0 0; font-size: 15px;">
+      If something else is in the way, hit reply and tell me. I read everything.
+    </p>`;
+
+  return emailShell(
+    "You almost stepped inside",
+    "The Consilium",
+    body,
+  );
+}
+
+function buildCartAbandonStep2(name: string): string {
+  const consiliumUrl = dripConsiliumUrl(
+    "consilium-cart-abandonment",
+    "step-2-close",
+  );
+
+  const body = `
+    <p style="color: #f5f0ed; font-size: 16px; margin: 0 0 20px 0; line-height: 1.7;">
+      ${esc(name)},
+    </p>
+
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 20px 0; font-size: 15px;">
+      One more, then I&rsquo;ll stop.
+    </p>
+
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 20px 0; font-size: 15px;">
+      The single highest-leverage thing inside The Consilium isn&rsquo;t the cards or the simulator. It&rsquo;s the daily reps. Three minutes a day reading one card, two minutes running one scene, and within a month the pattern recognition starts firing in real conversations without you asking it to.
+    </p>
+
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 25px 0; font-size: 15px;">
+      That&rsquo;s the whole pitch. If five minutes a day for $29 a month is the right ratio, the door is below.
+    </p>
+
+    ${goldButton("Join The Consilium", consiliumUrl)}
+
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 0 0; font-size: 15px;">
+      Or don&rsquo;t. Either way is a clean answer.
+    </p>`;
+
+  return emailShell(
+    "Last note on this",
+    "The Consilium",
+    body,
+  );
+}
+
+export function buildConsiliumAbandonmentDrip(
+  recipientEmail: string,
+  recipientName: string,
+): EmailQueueEntry[] {
+  const now = new Date();
+
+  return [
+    {
+      recipientEmail,
+      recipientName,
+      sequence: "consilium-cart-abandonment",
+      step: 1,
+      subject: "You almost stepped inside",
+      htmlBody: withMarketingFooter(
+        buildCartAbandonStep1(recipientName),
+        recipientEmail,
+      ),
+      scheduledAt: addHours(now, 1),
+      metadata: { ...MARKETING_META, type: "soft-touch" },
+    },
+    {
+      recipientEmail,
+      recipientName,
+      sequence: "consilium-cart-abandonment",
+      step: 2,
+      subject: "Last note on this",
+      htmlBody: withMarketingFooter(
+        buildCartAbandonStep2(recipientName),
+        recipientEmail,
+      ),
+      scheduledAt: addHours(now, 24),
+      metadata: { ...MARKETING_META, type: "close" },
+    },
+  ];
+}
+
+// ============================================================
+// Consilium post-join welcome series.
+//
+// Triggered when a Stripe INNER_CIRCLE checkout completes. Runs
+// alongside (not instead of) the immediate sendInnerCircleWelcomeNewUser
+// credentials email for auto-created accounts. Goal: turn paying
+// members into engaged members during the first 14 days, where most
+// SaaS churn happens.
+//
+// Cadence:
+//   Day 0  - first scene to run today
+//   Day 1  - your council is filling up
+//   Day 3  - voice notes, the unfiltered version
+//   Day 7  - first-week check-in
+//   Day 14 - two-week marker, retention prompt
+//
+// Voice: assumes they're already inside. Every link points to a
+// specific surface, never back to /consilium itself.
+// ============================================================
+
+function memberUrl(path: string, content: string): string {
+  const params = new URLSearchParams({
+    utm_source: "email",
+    utm_medium: "email",
+    utm_campaign: "inner-circle-welcome",
+    utm_content: content,
+  });
+  return `${baseUrl}${path}?${params.toString()}`;
+}
+
+function buildWelcomeSeriesStep1(name: string): string {
+  const simulatorUrl = memberUrl(
+    "/consilium/simulator",
+    "step-1-first-scene",
+  );
+
+  const body = `
+    <p style="color: #f5f0ed; font-size: 16px; margin: 0 0 20px 0; line-height: 1.7;">
+      ${esc(name)}, welcome inside.
+    </p>
+
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 20px 0; font-size: 15px;">
+      Skip the orientation. The fastest way to see why The Consilium exists is to run one scene in the simulator. Three minutes, one call you make, one scene that resolves on it.
+    </p>
+
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 25px 0; font-size: 15px;">
+      Pick anything from the catalog. The popular ones on the leaderboard are popular because they&rsquo;re the ones that catch people clean.
+    </p>
+
+    ${goldButton("Run your first scene", simulatorUrl)}
+
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 0 0; font-size: 15px;">
+      That&rsquo;s it for today. Tomorrow I&rsquo;ll point you at the council.
+    </p>`;
+
+  return emailShell(
+    "Run one scene",
+    "Day 1 inside The Consilium",
+    body,
+  );
+}
+
+function buildWelcomeSeriesStep2(name: string): string {
+  const feedUrl = memberUrl("/consilium/feed", "step-2-council");
+
+  const body = `
+    <p style="color: #f5f0ed; font-size: 16px; margin: 0 0 20px 0; line-height: 1.7;">
+      ${esc(name)},
+    </p>
+
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 20px 0; font-size: 15px;">
+      The feed is where the daily reps happen. One psychology card lands at 9am, one discussion prompt at 10am, and member-only conversations build under both.
+    </p>
+
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 25px 0; font-size: 15px;">
+      The members who get the most out of this place do one small thing: they leave a comment on the prompt before they read other comments. Even one sentence. That&rsquo;s the move that flips you from reader to council.
+    </p>
+
+    ${goldButton("Open today's prompt", feedUrl)}
+
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 0 0; font-size: 15px;">
+      Friday: voice notes. The version of me I won&rsquo;t put on Instagram.
+    </p>`;
+
+  return emailShell(
+    "Your council is filling up",
+    "Day 2 inside The Consilium",
+    body,
+  );
+}
+
+function buildWelcomeSeriesStep3(name: string): string {
+  const voiceUrl = memberUrl(
+    "/consilium/voice-notes",
+    "step-3-voice-notes",
+  );
+
+  const body = `
+    <p style="color: #f5f0ed; font-size: 16px; margin: 0 0 20px 0; line-height: 1.7;">
+      ${esc(name)},
+    </p>
+
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 20px 0; font-size: 15px;">
+      Voice notes are the surface where I say the things I won&rsquo;t put on a public feed. The reasoning behind a take, not just the take. The case study with the name filed off, not the redacted screenshot.
+    </p>
+
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 25px 0; font-size: 15px;">
+      Most members listen while they walk or drive. Three to seven minutes each, drop in mid-week.
+    </p>
+
+    ${goldButton("Listen to the latest", voiceUrl)}
+
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 0 0; font-size: 15px;">
+      Next week: Ask Kanika, the daily lever most members forget exists.
+    </p>`;
+
+  return emailShell(
+    "Where the unfiltered version lives",
+    "Day 4 inside The Consilium",
+    body,
+  );
+}
+
+function buildWelcomeSeriesStep4(name: string): string {
+  const feedUrl = memberUrl(
+    "/consilium/feed",
+    "step-4-ask-kanika",
+  );
+
+  const body = `
+    <p style="color: #f5f0ed; font-size: 16px; margin: 0 0 20px 0; line-height: 1.7;">
+      ${esc(name)},
+    </p>
+
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 20px 0; font-size: 15px;">
+      One week in. The single most-underused thing inside The Consilium is the Ask Kanika pill at the top of the feed.
+    </p>
+
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 20px 0; font-size: 15px;">
+      One question per 24 hours, anything you want. When I answer it, I do it in a voice note or video and the asker gets a green dot in their nav. The questions that get the most upvotes from other members are the ones I answer first.
+    </p>
+
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 25px 0; font-size: 15px;">
+      If you&rsquo;ve been carrying a question that doesn&rsquo;t have a clean answer anywhere else, this is the place to drop it.
+    </p>
+
+    ${goldButton("Ask your question", feedUrl)}
+
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 0 0; font-size: 15px;">
+      One more from me at the two-week mark. After that, you&rsquo;re on the regular feed-and-prompt cadence with everyone else.
+    </p>`;
+
+  return emailShell(
+    "The lever most members forget",
+    "Day 7 inside The Consilium",
+    body,
+  );
+}
+
+function buildWelcomeSeriesStep5(name: string): string {
+  const simulatorUrl = memberUrl(
+    "/consilium/simulator",
+    "step-5-two-week",
+  );
+  const feedUrl = memberUrl(
+    "/consilium/feed",
+    "step-5-two-week-feed",
+  );
+
+  const body = `
+    <p style="color: #f5f0ed; font-size: 16px; margin: 0 0 20px 0; line-height: 1.7;">
+      ${esc(name)},
+    </p>
+
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 20px 0; font-size: 15px;">
+      Two weeks in. Quick read on what high-engagement looks like, in case you want to know what the members getting the most out of this place actually do.
+    </p>
+
+    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="margin: 0 0 25px 0;">
+      <tr>
+        <td bgcolor="#1a0d11" style="padding: 22px; border-radius: 10px; border: 1px solid #d4af37;">
+          <p style="color: #f5f0ed; margin: 0 0 12px 0; font-size: 14px; line-height: 1.7;">
+            <strong style="color: #d4af37;">Daily:</strong> one card read, one prompt commented on. Three to five minutes total.
+          </p>
+          <p style="color: #f5f0ed; margin: 0 0 12px 0; font-size: 14px; line-height: 1.7;">
+            <strong style="color: #d4af37;">Weekly:</strong> one or two simulator scenes, one voice note listened to.
+          </p>
+          <p style="color: #f5f0ed; margin: 0; font-size: 14px; line-height: 1.7;">
+            <strong style="color: #d4af37;">Whenever it&rsquo;s relevant:</strong> drop your question in Ask Kanika.
+          </p>
+        </td>
+      </tr>
+    </table>
+
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 20px 0; font-size: 15px;">
+      That ratio is what turns pattern reading from a thing you study into a thing you do without thinking.
+    </p>
+
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 20px 0; font-size: 15px;">
+      <a href="${simulatorUrl}" style="color: #d4af37; text-decoration: underline;">The simulator catalog</a> is here when you want it. <a href="${feedUrl}" style="color: #d4af37; text-decoration: underline;">Today&rsquo;s prompt</a> is here.
+    </p>
+
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 0 0; font-size: 15px;">
+      That&rsquo;s the last of these onboarding notes. Glad you&rsquo;re inside.
+    </p>`;
+
+  return emailShell(
+    "Two weeks in",
+    "Day 14 inside The Consilium",
+    body,
+  );
+}
+
+export function buildConsiliumWelcomeSeries(
+  recipientEmail: string,
+  recipientName: string,
+): EmailQueueEntry[] {
+  const now = new Date();
+
+  return [
+    {
+      recipientEmail,
+      recipientName,
+      sequence: "inner-circle-welcome",
+      step: 1,
+      subject: "Run one scene",
+      htmlBody: withMarketingFooter(
+        buildWelcomeSeriesStep1(recipientName),
+        recipientEmail,
+      ),
+      scheduledAt: now,
+      metadata: { ...MARKETING_META, type: "first-scene" },
+    },
+    {
+      recipientEmail,
+      recipientName,
+      sequence: "inner-circle-welcome",
+      step: 2,
+      subject: "Your council is filling up",
+      htmlBody: withMarketingFooter(
+        buildWelcomeSeriesStep2(recipientName),
+        recipientEmail,
+      ),
+      scheduledAt: addDays(now, 1),
+      metadata: { ...MARKETING_META, type: "council" },
+    },
+    {
+      recipientEmail,
+      recipientName,
+      sequence: "inner-circle-welcome",
+      step: 3,
+      subject: "Where the unfiltered version lives",
+      htmlBody: withMarketingFooter(
+        buildWelcomeSeriesStep3(recipientName),
+        recipientEmail,
+      ),
+      scheduledAt: addDays(now, 3),
+      metadata: { ...MARKETING_META, type: "voice-notes" },
+    },
+    {
+      recipientEmail,
+      recipientName,
+      sequence: "inner-circle-welcome",
+      step: 4,
+      subject: "The lever most members forget",
+      htmlBody: withMarketingFooter(
+        buildWelcomeSeriesStep4(recipientName),
+        recipientEmail,
+      ),
+      scheduledAt: addDays(now, 7),
+      metadata: { ...MARKETING_META, type: "ask-kanika" },
+    },
+    {
+      recipientEmail,
+      recipientName,
+      sequence: "inner-circle-welcome",
+      step: 5,
+      subject: "Two weeks in",
+      htmlBody: withMarketingFooter(
+        buildWelcomeSeriesStep5(recipientName),
+        recipientEmail,
+      ),
+      scheduledAt: addDays(now, 14),
+      metadata: { ...MARKETING_META, type: "two-week-marker" },
     },
   ];
 }

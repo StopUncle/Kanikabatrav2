@@ -195,6 +195,32 @@ async function claimAction(formData: FormData): Promise<void> {
     }
   }
 
+  // Onboarding drip. Fires for everyone activating a gift membership,
+  // new account or existing. Mirrors the INNER_CIRCLE checkout flow,
+  // gift claimers are inside Consilium for 30 days and benefit from
+  // the same first-week orientation. Idempotent on email + sequence.
+  try {
+    const { buildConsiliumWelcomeSeries } = await import(
+      "@/lib/email-sequences"
+    );
+    const existingSeq = await prisma.emailQueue.findFirst({
+      where: {
+        recipientEmail: user.email.toLowerCase(),
+        sequence: "inner-circle-welcome",
+      },
+      select: { id: true },
+    });
+    if (!existingSeq) {
+      const entries = buildConsiliumWelcomeSeries(
+        user.email.toLowerCase(),
+        user.name || "Reader",
+      );
+      await prisma.emailQueue.createMany({ data: entries });
+    }
+  } catch (err) {
+    console.error("[claim] welcome series enqueue failed:", err);
+  }
+
   redirect("/consilium/feed?claimed=1");
 }
 

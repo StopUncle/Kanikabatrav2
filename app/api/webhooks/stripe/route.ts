@@ -595,6 +595,52 @@ export async function POST(request: NextRequest) {
               );
             }
           }
+
+          // Cancel any pending cart-abandonment for this address; the
+          // bundle's checkout completion is also a Consilium join.
+          try {
+            await prisma.emailQueue.updateMany({
+              where: {
+                recipientEmail: user.email.toLowerCase(),
+                sequence: "consilium-cart-abandonment",
+                status: "PENDING",
+              },
+              data: { status: "CANCELLED" },
+            });
+          } catch (err) {
+            console.error(
+              "[stripe-webhook] cart-abandonment cancel (bundle) failed:",
+              err,
+            );
+          }
+
+          // Enqueue the Consilium onboarding drip. Same 5-step series
+          // INNER_CIRCLE buyers get, since bundle holders have the same
+          // Consilium access during their trial window.
+          try {
+            const { buildConsiliumWelcomeSeries } = await import(
+              "@/lib/email-sequences"
+            );
+            const existingSeq = await prisma.emailQueue.findFirst({
+              where: {
+                recipientEmail: user.email.toLowerCase(),
+                sequence: "inner-circle-welcome",
+              },
+              select: { id: true },
+            });
+            if (!existingSeq) {
+              const entries = buildConsiliumWelcomeSeries(
+                user.email.toLowerCase(),
+                user.name || "Counselor",
+              );
+              await prisma.emailQueue.createMany({ data: entries });
+            }
+          } catch (err) {
+            console.error(
+              "[stripe-webhook] welcome series enqueue (bundle) failed:",
+              err,
+            );
+          }
         } else if (productKey === "DONATION") {
           // Pay-what-you-want donation. The amount is captured at the
           // Stripe Checkout step (custom_unit_amount price), webhook
@@ -841,6 +887,58 @@ export async function POST(request: NextRequest) {
               );
             }
           }
+
+          // Cancel any pending cart-abandonment recovery emails for this
+          // address. The user completed checkout, so the "you almost
+          // joined" pitch would now be wrong and obnoxious. Idempotent:
+          // updateMany on empty set is a no-op.
+          try {
+            await prisma.emailQueue.updateMany({
+              where: {
+                recipientEmail: user.email.toLowerCase(),
+                sequence: "consilium-cart-abandonment",
+                status: "PENDING",
+              },
+              data: { status: "CANCELLED" },
+            });
+          } catch (err) {
+            console.error(
+              "[stripe-webhook] cart-abandonment cancel failed:",
+              err,
+            );
+          }
+
+          // Onboarding drip. Fires for everyone joining INNER_CIRCLE
+          // (new account or existing user). The Day 0 step goes out
+          // immediately and points at the simulator; subsequent steps
+          // walk through feed, voice notes, Ask Kanika, and a two-week
+          // engagement marker. Idempotent: skipped if a queue row
+          // already exists for this email + sequence.
+          try {
+            const { buildConsiliumWelcomeSeries } = await import(
+              "@/lib/email-sequences"
+            );
+            const existingSeq = await prisma.emailQueue.findFirst({
+              where: {
+                recipientEmail: user.email.toLowerCase(),
+                sequence: "inner-circle-welcome",
+              },
+              select: { id: true },
+            });
+            if (!existingSeq) {
+              const entries = buildConsiliumWelcomeSeries(
+                user.email.toLowerCase(),
+                user.name || "there",
+              );
+              await prisma.emailQueue.createMany({ data: entries });
+            }
+          } catch (err) {
+            console.error(
+              "[stripe-webhook] welcome series enqueue failed:",
+              err,
+            );
+          }
+
           // Suppress unused-var warning when we don't end up using tempPassword
           void tempPassword;
         }

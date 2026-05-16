@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { requireAuth } from "@/lib/auth/middleware";
 import { prisma } from "@/lib/prisma";
 import { createCheckoutSession, STRIPE_PRICES } from "@/lib/stripe";
+import { buildConsiliumAbandonmentDrip } from "@/lib/email-sequences";
 
 export async function POST(request: NextRequest) {
   return requireAuth(request, async (_req, user) => {
@@ -67,6 +68,38 @@ export async function POST(request: NextRequest) {
         return NextResponse.json(
           { error: "Failed to create checkout" },
           { status: 500 },
+        );
+      }
+
+      // Cart-abandonment drip. We've handed the user to Stripe; if they
+      // complete checkout, the webhook cancels these queued entries. If
+      // they bail, two recovery emails fire at +1h and +24h.
+      //
+      // Idempotent: a member who clicks "Join" repeatedly within a few
+      // hours only ever queues one set. Skipped entirely for already-
+      // active subscribers (the guard above returned early). Failures
+      // here MUST NOT block checkout, the user is already mid-flow.
+      try {
+        const recipientEmail = (dbUser?.email || user.email).toLowerCase();
+        const existing = await prisma.emailQueue.findFirst({
+          where: {
+            recipientEmail,
+            sequence: "consilium-cart-abandonment",
+            status: "PENDING",
+          },
+          select: { id: true },
+        });
+        if (!existing) {
+          const entries = buildConsiliumAbandonmentDrip(
+            recipientEmail,
+            dbUser?.name || "there",
+          );
+          await prisma.emailQueue.createMany({ data: entries });
+        }
+      } catch (err) {
+        console.error(
+          "[consilium/subscription/create] abandonment enqueue failed:",
+          err,
         );
       }
 
