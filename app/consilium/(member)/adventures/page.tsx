@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { requireServerAuth } from "@/lib/auth/server-auth";
 import { prisma } from "@/lib/prisma";
-import { ArrowRight, Check, Clock, Sparkles } from "lucide-react";
+import { ArrowRight, Check, Clock } from "lucide-react";
 
 export const metadata = {
   title: "Adventures. The Dark Mirror | Kanika Batra",
@@ -71,8 +71,11 @@ export default async function AdventuresIndex() {
                   </span>
                   <div className="flex items-center gap-2">
                     {adv.isNew && !progress && (
-                      <span className="inline-flex items-center gap-1 text-[9px] uppercase tracking-[0.2em] px-1.5 py-0.5 rounded-full bg-deep-burgundy text-warm-gold border border-warm-gold/40">
-                        <Sparkles size={9} strokeWidth={2.4} />
+                      <span className="inline-flex items-center gap-1.5 text-[9px] uppercase tracking-[0.2em] px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-300 border border-emerald-400/30">
+                        <span aria-hidden className="relative inline-flex w-1.5 h-1.5">
+                          <span className="absolute inset-0 rounded-full bg-emerald-400/40 animate-ping" />
+                          <span className="relative inline-block w-1.5 h-1.5 rounded-full bg-emerald-400" />
+                        </span>
                         New
                       </span>
                     )}

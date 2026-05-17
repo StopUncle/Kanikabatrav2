@@ -65,28 +65,52 @@ export default async function SimulatorIndex({
   const params = await searchParams;
   const track = resolveTrack(params.track);
 
-  const [progress, badgeCount, streak] = await Promise.all([
-    prisma.simulatorProgress.findMany({
-      where: { userId },
-      select: {
-        scenarioId: true,
-        currentSceneId: true,
-        completedAt: true,
-        outcome: true,
-        xpEarned: true,
-        startedAt: true,
-        // choicesMade powers the 3-star rating per scenario card.
-        // Stored as Json on SimulatorProgress; computeStarsFromJson
-        // tolerates the unknown shape and returns 0 if malformed.
-        choicesMade: true,
-        // Length vs scenes.filter(isEnding).length renders the
-        // "X / Y endings" counter on each completed scenario card.
-        endingsReached: true,
-      },
-    }),
-    prisma.simulatorBadge.count({ where: { userId } }),
-    readSimulatorStreak(prisma, userId),
-  ]);
+  const [progress, badgeCount, streak, adventures, adventureProgress] =
+    await Promise.all([
+      prisma.simulatorProgress.findMany({
+        where: { userId },
+        select: {
+          scenarioId: true,
+          currentSceneId: true,
+          completedAt: true,
+          outcome: true,
+          xpEarned: true,
+          startedAt: true,
+          // choicesMade powers the 3-star rating per scenario card.
+          // Stored as Json on SimulatorProgress; computeStarsFromJson
+          // tolerates the unknown shape and returns 0 if malformed.
+          choicesMade: true,
+          // Length vs scenes.filter(isEnding).length renders the
+          // "X / Y endings" counter on each completed scenario card.
+          endingsReached: true,
+        },
+      }),
+      prisma.simulatorBadge.count({ where: { userId } }),
+      readSimulatorStreak(prisma, userId),
+      // Adventures entry card data. Cheap counts only, no full row reads.
+      prisma.adventure.findMany({
+        where: { publishedAt: { not: null } },
+        select: { id: true },
+      }),
+      prisma.adventureProgress.findMany({
+        where: { userId },
+        select: { adventureId: true, completedAt: true },
+      }),
+    ]);
+
+  // Adventures entry card stats. "Unseen" = published arcs the user has
+  // never opened. Drives the emerald NEW pill on the entry card so the
+  // chip is a real signal of unseen content, not a permanent stamp.
+  const totalAdventures = adventures.length;
+  const startedAdventureIds = new Set(
+    adventureProgress.map((p) => p.adventureId),
+  );
+  const unseenAdventures = adventures.filter(
+    (a) => !startedAdventureIds.has(a.id),
+  ).length;
+  const inProgressAdventures = adventureProgress.filter(
+    (p) => !p.completedAt,
+  ).length;
 
   const progressByScenario = new Map(progress.map((p) => [p.scenarioId, p]));
   const totalXp = progress.reduce((acc, p) => acc + (p.xpEarned ?? 0), 0);
@@ -423,7 +447,11 @@ export default async function SimulatorIndex({
               >
                 {tMeta.label}
                 {hasNew && (
-                  <span className="text-[9px] uppercase tracking-[0.18em] px-1.5 py-0.5 rounded-full bg-deep-burgundy text-warm-gold border border-warm-gold/40">
+                  <span className="inline-flex items-center gap-1 text-[9px] uppercase tracking-[0.18em] px-1.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-300 border border-emerald-400/30">
+                    <span aria-hidden className="relative inline-flex w-1 h-1">
+                      <span className="absolute inset-0 rounded-full bg-emerald-400/40 animate-ping" />
+                      <span className="relative inline-block w-1 h-1 rounded-full bg-emerald-400" />
+                    </span>
                     New
                   </span>
                 )}
@@ -485,8 +513,11 @@ export default async function SimulatorIndex({
                     {eyebrow}
                   </span>
                   {newCount > 0 && (
-                    <span className="inline-flex items-center gap-1 text-[9px] uppercase tracking-[0.2em] px-1.5 py-0.5 rounded-full bg-deep-burgundy text-warm-gold border border-warm-gold/40">
-                      <Sparkles size={9} strokeWidth={2.4} />
+                    <span className="inline-flex items-center gap-1.5 text-[9px] uppercase tracking-[0.2em] px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-300 border border-emerald-400/30">
+                      <span aria-hidden className="relative inline-flex w-1.5 h-1.5">
+                        <span className="absolute inset-0 rounded-full bg-emerald-400/40 animate-ping" />
+                        <span className="relative inline-block w-1.5 h-1.5 rounded-full bg-emerald-400" />
+                      </span>
                       {newCount} New
                     </span>
                   )}
@@ -506,6 +537,55 @@ export default async function SimulatorIndex({
           })}
         </div>
       </nav>
+
+      {/* Adventures entry. A different MODE of consuming the same
+          scenarios: curated multi-scenario arcs played as one journey.
+          Lives here, between the track picker and the per-track ladder,
+          so the player meets it after choosing a line but before diving
+          into individual chapters. Emerald NEW pill is the single
+          non-gold accent on the page, drawing the eye without
+          competing with the journey's gold-tinted scenario cards.
+          totalAdventures===0 hides the row entirely (e.g. fresh DB). */}
+      {totalAdventures > 0 && (
+        <Link
+          href="/consilium/adventures"
+          className="group block mb-10 p-5 rounded-xl border border-warm-gold/15 bg-deep-black/40 transition-all hover:border-warm-gold/40 hover:bg-warm-gold/[0.03]"
+        >
+          <div className="flex items-start gap-4">
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-2 mb-1.5">
+                <p className="text-warm-gold/70 uppercase tracking-[0.3em] text-[10px]">
+                  Adventures
+                </p>
+                {unseenAdventures > 0 && (
+                  <span className="inline-flex items-center gap-1.5 text-[9px] uppercase tracking-[0.2em] px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-300 border border-emerald-400/30">
+                    <span aria-hidden className="relative inline-flex w-1.5 h-1.5">
+                      <span className="absolute inset-0 rounded-full bg-emerald-400/40 animate-ping" />
+                      <span className="relative inline-block w-1.5 h-1.5 rounded-full bg-emerald-400" />
+                    </span>
+                    {unseenAdventures} New
+                  </span>
+                )}
+              </div>
+              <p className="text-white text-lg font-light tracking-wide mb-1">
+                Play scenarios as one continuous journey
+              </p>
+              <p className="text-text-gray/70 text-sm font-light leading-relaxed">
+                {totalAdventures} {totalAdventures === 1 ? "arc" : "arcs"} live
+                {inProgressAdventures > 0
+                  ? ` . ${inProgressAdventures} in progress`
+                  : ""}
+                . 40 to 95 minutes each. Progress saves between chapters.
+              </p>
+            </div>
+            <ArrowRight
+              size={18}
+              strokeWidth={1.6}
+              className="shrink-0 mt-1 text-warm-gold/50 group-hover:text-warm-gold group-hover:translate-x-0.5 transition-all"
+            />
+          </div>
+        </Link>
+      )}
 
       {/* The journey itself */}
       <LevelJourney

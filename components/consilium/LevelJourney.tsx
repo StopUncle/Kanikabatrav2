@@ -206,8 +206,11 @@ function ScenarioCard({
       }`}
     >
       {showNewPill && (
-        <span className="absolute -top-2 -left-2 inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-deep-burgundy text-warm-gold text-[9px] uppercase tracking-[0.2em] font-medium border border-warm-gold/40 shadow-[0_4px_12px_-4px_rgba(212,175,55,0.4)]">
-          <Sparkles size={10} strokeWidth={2.5} />
+        <span className="absolute -top-2 -left-2 inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-300 text-[9px] uppercase tracking-[0.2em] font-medium border border-emerald-400/30 backdrop-blur-sm">
+          <span aria-hidden className="relative inline-flex w-1.5 h-1.5">
+            <span className="absolute inset-0 rounded-full bg-emerald-400/40 animate-ping" />
+            <span className="relative inline-block w-1.5 h-1.5 rounded-full bg-emerald-400" />
+          </span>
           New
         </span>
       )}
