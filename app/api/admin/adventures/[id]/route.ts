@@ -58,11 +58,29 @@ export async function PATCH(
         { status: 400 },
       );
     }
+    const seen = new Set<string>();
+    const dupes: string[] = [];
+    for (const sid of body.scenarioIds) {
+      if (seen.has(sid)) dupes.push(sid);
+      seen.add(sid);
+    }
+    if (dupes.length > 0) {
+      return NextResponse.json(
+        { error: "Duplicate scenario ids in arc", dupes },
+        { status: 400 },
+      );
+    }
   }
 
-  // Build the update payload. `publish: true` stamps publishedAt now,
-  // `publish: false` clears it (un-publishes). Touching `publish` is the
-  // only way to flip the visibility of an adventure.
+  // Load the existing row so a re-save of an already-published adventure
+  // preserves the original publishedAt (catalog ordering depends on it).
+  // Without this guard, every "Save" click would rewrite publishedAt to
+  // now and silently bump the arc to the top of the list.
+  const existing = await prisma.adventure.findUnique({ where: { id } });
+  if (!existing) {
+    return NextResponse.json({ error: "Adventure not found" }, { status: 404 });
+  }
+
   const data: Record<string, unknown> = {};
   if (body.slug !== undefined) data.slug = body.slug;
   if (body.title !== undefined) data.title = body.title;
@@ -76,8 +94,15 @@ export async function PATCH(
   if (body.coverArt !== undefined) data.coverArt = body.coverArt;
   if (body.endingRecap !== undefined) data.endingRecap = body.endingRecap;
   if (body.isNew !== undefined) data.isNew = body.isNew;
-  if (body.publish !== undefined)
-    data.publishedAt = body.publish ? new Date() : null;
+  if (body.publish !== undefined) {
+    // publish=true on an already-published row keeps the original date;
+    // only fresh publish flips a null to now. publish=false always clears.
+    if (body.publish) {
+      data.publishedAt = existing.publishedAt ?? new Date();
+    } else {
+      data.publishedAt = null;
+    }
+  }
 
   try {
     const updated = await prisma.adventure.update({

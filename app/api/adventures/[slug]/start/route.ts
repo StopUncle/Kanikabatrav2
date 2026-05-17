@@ -38,16 +38,29 @@ export async function POST(
       update: {},
     });
 
-    const cursor = Math.min(progress.currentStep, adventure.scenarioIds.length - 1);
-    const scenarioId = adventure.scenarioIds[cursor];
-    const scenario = getScenario(scenarioId);
+    // Completed arcs return a clean signal so clients can route to the
+    // recap rather than re-render the final chapter. Without this guard
+    // the cursor was clamped to scenarioIds.length-1 and the response
+    // looked indistinguishable from an in-progress run on the last step.
+    if (progress.completedAt) {
+      return NextResponse.json({
+        progress,
+        scenarioId: null,
+        scenarioExists: false,
+        totalSteps: adventure.scenarioIds.length,
+        completed: true,
+      });
+    }
+
+    const scenarioId = adventure.scenarioIds[progress.currentStep] ?? null;
+    const scenario = scenarioId ? getScenario(scenarioId) : null;
 
     return NextResponse.json({
       progress,
       scenarioId,
       scenarioExists: !!scenario,
       totalSteps: adventure.scenarioIds.length,
-      completed: !!progress.completedAt,
+      completed: false,
     });
   });
 }

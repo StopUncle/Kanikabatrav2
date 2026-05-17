@@ -398,22 +398,45 @@ export default function AdventureForm({ mode, initial, scenarios }: Props) {
       </fieldset>
 
       <div className="flex flex-wrap items-center gap-3 pt-4 border-t border-gray-800">
-        <button
-          type="button"
-          disabled={submitting || form.scenarioIds.length === 0}
-          onClick={() => submit(false)}
-          className="px-5 py-2.5 rounded-full border border-gray-700 text-text-light font-medium tracking-wider uppercase text-xs hover:border-accent-gold/40 disabled:opacity-40"
-        >
-          Save as draft
-        </button>
-        <button
-          type="button"
-          disabled={submitting || form.scenarioIds.length === 0}
-          onClick={() => submit(true)}
-          className="px-5 py-2.5 rounded-full bg-accent-gold text-deep-black font-medium tracking-wider uppercase text-xs hover:bg-accent-gold/90 disabled:opacity-40"
-        >
-          {isPublished ? "Save (published)" : "Publish"}
-        </button>
+        {isPublished ? (
+          <>
+            <button
+              type="button"
+              disabled={submitting || form.scenarioIds.length === 0}
+              onClick={() => submit(true)}
+              className="px-5 py-2.5 rounded-full bg-accent-gold text-deep-black font-medium tracking-wider uppercase text-xs hover:bg-accent-gold/90 disabled:opacity-40"
+            >
+              Save
+            </button>
+            <button
+              type="button"
+              disabled={submitting}
+              onClick={() => submit(false)}
+              className="px-5 py-2.5 rounded-full border border-gray-700 text-text-light font-medium tracking-wider uppercase text-xs hover:border-accent-gold/40 disabled:opacity-40"
+            >
+              Unpublish
+            </button>
+          </>
+        ) : (
+          <>
+            <button
+              type="button"
+              disabled={submitting || form.scenarioIds.length === 0}
+              onClick={() => submit(false)}
+              className="px-5 py-2.5 rounded-full border border-gray-700 text-text-light font-medium tracking-wider uppercase text-xs hover:border-accent-gold/40 disabled:opacity-40"
+            >
+              Save as draft
+            </button>
+            <button
+              type="button"
+              disabled={submitting || form.scenarioIds.length === 0}
+              onClick={() => submit(true)}
+              className="px-5 py-2.5 rounded-full bg-accent-gold text-deep-black font-medium tracking-wider uppercase text-xs hover:bg-accent-gold/90 disabled:opacity-40"
+            >
+              Publish
+            </button>
+          </>
+        )}
         {mode === "edit" && initial.id && (
           <button
             type="button"

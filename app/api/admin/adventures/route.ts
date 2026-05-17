@@ -65,6 +65,22 @@ export async function POST(request: NextRequest) {
     );
   }
 
+  // Duplicate scenario ids in the same arc cause the self-healing cursor
+  // on the run page to silently skip the repeat, which is surprising and
+  // wastes the admin's authoring intent. Reject loudly at create time.
+  const seen = new Set<string>();
+  const dupes: string[] = [];
+  for (const id of body.scenarioIds) {
+    if (seen.has(id)) dupes.push(id);
+    seen.add(id);
+  }
+  if (dupes.length > 0) {
+    return NextResponse.json(
+      { error: "Duplicate scenario ids in arc", dupes },
+      { status: 400 },
+    );
+  }
+
   try {
     const adv = await prisma.adventure.create({
       data: {

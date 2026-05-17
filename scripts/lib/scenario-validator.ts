@@ -14,6 +14,7 @@
 
 import { spawnSync } from "node:child_process";
 import path from "node:path";
+import { pathToFileURL } from "node:url";
 import type {
   Scenario,
   Scene,
@@ -199,7 +200,11 @@ export async function lintGeneratedFile(
 ): Promise<{ scenario: Scenario | null; errors: string[] }> {
   let mod: { default?: unknown };
   try {
-    mod = (await import(path.resolve(filePath))) as { default?: unknown };
+    // pathToFileURL is the cross-platform safe way to feed an absolute
+    // path into a dynamic import. On Windows a bare `C:\...` path is
+    // misinterpreted as a bare specifier and fails with ERR_INVALID_URL.
+    const url = pathToFileURL(path.resolve(filePath)).href;
+    mod = (await import(url)) as { default?: unknown };
   } catch (err) {
     return {
       scenario: null,
