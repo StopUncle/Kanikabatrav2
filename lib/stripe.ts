@@ -33,6 +33,14 @@ export const STRIPE_PRICES: Record<string, string> = {
   BOOK_MEMBER: "price_1TNS57Jv9vx5CHTw3Miq2KmS",
   QUIZ: "price_1TJug0Jv9vx5CHTwa9tjzDlu",
   INNER_CIRCLE: "price_1TJug1Jv9vx5CHTwjPYeSm7E",
+  /**
+   * Annual Consilium plan. $290/year = "2 months free" vs $29/mo (which is
+   * $348/yr). Surfaced as the second option on the join page and as a
+   * one-click upgrade for existing monthly subscribers. Same Stripe product
+   * as INNER_CIRCLE so members are billed under the same brand line.
+   * Annual subscribers churn ~51% less than monthly (Recurly benchmark).
+   */
+  INNER_CIRCLE_ANNUAL: "price_1TY0ggJv9vx5CHTw87YoIcZn",
   COACHING_SINGLE: "price_1TJug1Jv9vx5CHTw6FT0vzoW",
   COACHING_CLARITY: "price_1TN3uWJv9vx5CHTwUELJJn5E",
   COACHING_INTENSIVE: "price_1TJug2Jv9vx5CHTwiikiPESt",

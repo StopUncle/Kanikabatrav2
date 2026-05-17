@@ -56,6 +56,9 @@ export default function InnerCircleDashboardCard({ membership }: Props) {
   );
   const [resumeLoading, setResumeLoading] = useState(false);
   const [resumeError, setResumeError] = useState<string | null>(null);
+  const [upgradeLoading, setUpgradeLoading] = useState(false);
+  const [upgradeError, setUpgradeError] = useState<string | null>(null);
+  const [upgradeSuccess, setUpgradeSuccess] = useState(false);
 
   const hasStripeSubscription =
     membership?.paypalSubscriptionId?.startsWith("ST-") ?? false;
@@ -81,6 +84,30 @@ export default function InnerCircleDashboardCard({ membership }: Props) {
   function openCancelOrPauseModal() {
     setCancelError(null);
     setModalOpen(true);
+  }
+
+  async function upgradeToAnnual() {
+    if (!confirm(
+      "Upgrade to annual? You'll get a prorated credit for the rest of this month and your next renewal will be a year out. Same $29/month price effectively, two months free per year.",
+    )) {
+      return;
+    }
+    setUpgradeLoading(true);
+    setUpgradeError(null);
+    try {
+      const res = await fetch("/api/consilium/subscription/upgrade-to-annual", {
+        method: "POST",
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Could not upgrade to annual");
+      setUpgradeSuccess(true);
+      // Reload after a beat so the dashboard re-derives billingCycle from
+      // the server (the upgrade-to-annual endpoint updates it).
+      setTimeout(() => window.location.reload(), 1500);
+    } catch (err) {
+      setUpgradeError(err instanceof Error ? err.message : "Could not upgrade to annual");
+      setUpgradeLoading(false);
+    }
   }
 
   async function resumeFromPause() {
@@ -261,6 +288,39 @@ export default function InnerCircleDashboardCard({ membership }: Props) {
             </Link>
           )}
         </div>
+
+        {/* Upgrade-to-annual nudge for monthly Stripe subscribers who haven't
+            already cancelled. Hidden once upgraded (billingCycle becomes annual)
+            and after the success state during the brief reload window. */}
+        {hasStripeSubscription &&
+          membership.billingCycle === "monthly" &&
+          !isCancelPending && (
+            <div className="mt-4 p-3 bg-warm-gold/5 border border-warm-gold/20 rounded-lg">
+              <p className="text-xs text-text-light/90 mb-2 font-light">
+                <span className="text-warm-gold">Save $58/year</span> with annual billing.
+                Two months free, locked in.
+              </p>
+              <button
+                onClick={upgradeToAnnual}
+                disabled={upgradeLoading || upgradeSuccess}
+                className="text-xs uppercase tracking-[0.15em] text-warm-gold/90 hover:text-warm-gold transition-colors disabled:opacity-50"
+              >
+                {upgradeSuccess ? (
+                  <>Upgraded, refreshing…</>
+                ) : upgradeLoading ? (
+                  <>
+                    <Loader2 size={11} className="inline animate-spin mr-1" />
+                    Upgrading…
+                  </>
+                ) : (
+                  <>Switch to annual →</>
+                )}
+              </button>
+              {upgradeError && (
+                <p className="text-xs text-red-400 mt-2">{upgradeError}</p>
+              )}
+            </div>
+          )}
 
         {/* Secondary: payment method / invoices (Stripe-subscribers only). */}
         {hasStripeSubscription && (

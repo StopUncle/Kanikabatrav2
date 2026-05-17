@@ -5,7 +5,17 @@ import { createCheckoutSession, STRIPE_PRICES } from "@/lib/stripe";
 import { buildConsiliumAbandonmentDrip } from "@/lib/email-sequences";
 
 export async function POST(request: NextRequest) {
-  return requireAuth(request, async (_req, user) => {
+  return requireAuth(request, async (req, user) => {
+    // Body is optional. Defaults to monthly so unchanged callers (legacy
+    // pre-annual-plan JS) keep working without code changes.
+    let billingCycle: "monthly" | "annual" = "monthly";
+    try {
+      const body = (await req.json()) as { billingCycle?: unknown };
+      if (body.billingCycle === "annual") billingCycle = "annual";
+    } catch {
+      // Empty body, fine.
+    }
+
     const membership = await prisma.communityMembership.findUnique({
       where: { userId: user.id },
     });
@@ -54,14 +64,25 @@ export async function POST(request: NextRequest) {
 
     const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://kanikarose.com";
 
+    const priceId =
+      billingCycle === "annual"
+        ? STRIPE_PRICES.INNER_CIRCLE_ANNUAL
+        : STRIPE_PRICES.INNER_CIRCLE;
+    const productKey =
+      billingCycle === "annual" ? "INNER_CIRCLE_ANNUAL" : "INNER_CIRCLE";
+
     try {
       const session = await createCheckoutSession({
-        priceId: STRIPE_PRICES.INNER_CIRCLE,
+        priceId,
         mode: "subscription",
         successUrl: `${baseUrl}/consilium/success?session_id={CHECKOUT_SESSION_ID}`,
         cancelUrl: `${baseUrl}/consilium`,
         customerEmail: dbUser?.email || user.email,
-        metadata: { userId: user.id, product_key: "INNER_CIRCLE" },
+        metadata: {
+          userId: user.id,
+          product_key: productKey,
+          billing_cycle: billingCycle,
+        },
       });
 
       if (!session.url) {

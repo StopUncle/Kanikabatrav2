@@ -11,7 +11,11 @@ interface FaqItem {
 export const CONSILIUM_FAQ: FaqItem[] = [
   {
     q: "Can I cancel?",
-    a: "Yes. One click on the billing page. No email, no survey, no retention call. Your membership stops at the end of your current cycle and we don't touch your card again. We'll email you a week before each renewal so the charge never surprises you.",
+    a: "Yes. One click on the billing page. No email, no survey, no retention call. Your membership stops at the end of your current cycle and we don't touch your card again. We'll email you a week before each renewal so the charge never surprises you. You can also pause for 30, 60, or 90 days if life gets busy and you want to come back later without losing your seat.",
+  },
+  {
+    q: "Monthly or annual?",
+    a: "Both. $29 a month, cancel anytime. Or $290 a year, which is two months free and locks the price for twelve. Members who pick annual stay longer on average and don't have to think about renewal again until next year. You can switch from monthly to annual at any point from your dashboard with one click; we prorate the credit so you're never charged twice.",
   },
   {
     q: "What if it's not for me?",

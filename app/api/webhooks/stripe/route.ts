@@ -759,15 +759,23 @@ export async function POST(request: NextRequest) {
                 err,
               ),
             );
-        } else if (productKey === "INNER_CIRCLE") {
+        } else if (
+          productKey === "INNER_CIRCLE" ||
+          productKey === "INNER_CIRCLE_ANNUAL"
+        ) {
           // Subscription. Stripe webhook gives us the subscription id; we
           // upsert membership here for immediate access. Renewals are then
-          // handled by invoice.payment_succeeded above.
+          // handled by invoice.payment_succeeded above. Annual + monthly
+          // share this branch; the billing cycle is derived from productKey
+          // (annual checkouts pass product_key=INNER_CIRCLE_ANNUAL +
+          // billing_cycle=annual in session metadata).
+          const billingCycle =
+            productKey === "INNER_CIRCLE_ANNUAL" ? "annual" : "monthly";
           const subscriptionId = session.subscription as string;
           if (!subscriptionId) {
             console.error(
               "[stripe-webhook] INNER_CIRCLE checkout has no subscription id",
-              { sessionId },
+              { sessionId, productKey },
             );
             break;
           }
@@ -782,7 +790,7 @@ export async function POST(request: NextRequest) {
           });
           if (existingPurchase) {
             console.log(
-              `[stripe-webhook] INNER_CIRCLE purchase ${idempotencyKey} already processed, skipping`,
+              `[stripe-webhook] ${productKey} purchase ${idempotencyKey} already processed, skipping`,
             );
             break;
           }
@@ -804,22 +812,31 @@ export async function POST(request: NextRequest) {
           }
 
           // Read the actual subscription period from Stripe rather than
-          // assuming +1 month.
+          // assuming a fixed length. Falls back to +1 month for monthly
+          // and +1 year for annual when the retrieve fails (e.g. network).
           let expiresAt: Date;
           try {
             const sub = await stripe.subscriptions.retrieve(subscriptionId);
             const periodEnd = (sub as { current_period_end?: number })
               .current_period_end;
-            expiresAt = periodEnd
-              ? new Date(periodEnd * 1000)
-              : (() => {
-                  const d = new Date();
-                  d.setMonth(d.getMonth() + 1);
-                  return d;
-                })();
+            if (periodEnd) {
+              expiresAt = new Date(periodEnd * 1000);
+            } else {
+              const d = new Date();
+              if (billingCycle === "annual") {
+                d.setFullYear(d.getFullYear() + 1);
+              } else {
+                d.setMonth(d.getMonth() + 1);
+              }
+              expiresAt = d;
+            }
           } catch {
             expiresAt = new Date();
-            expiresAt.setMonth(expiresAt.getMonth() + 1);
+            if (billingCycle === "annual") {
+              expiresAt.setFullYear(expiresAt.getFullYear() + 1);
+            } else {
+              expiresAt.setMonth(expiresAt.getMonth() + 1);
+            }
           }
 
           await prisma.communityMembership.upsert({
@@ -828,13 +845,14 @@ export async function POST(request: NextRequest) {
               userId: user.id,
               status: "ACTIVE",
               paypalSubscriptionId: `ST-${subscriptionId}`,
-              billingCycle: "monthly",
+              billingCycle,
               activatedAt: new Date(),
               expiresAt,
             },
             update: {
               status: "ACTIVE",
               paypalSubscriptionId: `ST-${subscriptionId}`,
+              billingCycle,
               activatedAt: new Date(),
               expiresAt,
             },
@@ -850,7 +868,7 @@ export async function POST(request: NextRequest) {
           await prisma.purchase.create({
             data: {
               type: "BOOK",
-              productVariant: "INNER_CIRCLE",
+              productVariant: productKey,
               userId: user.id,
               customerEmail: email,
               customerName: name || "Member",
@@ -860,7 +878,8 @@ export async function POST(request: NextRequest) {
               metadata: {
                 source: "stripe",
                 sessionId,
-                productKey: "INNER_CIRCLE",
+                productKey,
+                billingCycle,
                 subscriptionId,
               },
             },
@@ -916,7 +935,8 @@ export async function POST(request: NextRequest) {
                   metadata: {
                     source: "stripe",
                     sessionId,
-                    productKey: "INNER_CIRCLE",
+                    productKey,
+                    billingCycle,
                     subscriptionId,
                     emailDeliveryFailed: true,
                     welcomeEmailRecipient: user.email,
@@ -926,7 +946,7 @@ export async function POST(request: NextRequest) {
                 },
               });
               console.error(
-                `[stripe-webhook] INNER_CIRCLE welcome email failed for ${user.email} (session ${sessionId}), flagged for retry`,
+                `[stripe-webhook] ${productKey} welcome email failed for ${user.email} (session ${sessionId}), flagged for retry`,
               );
             }
           }
@@ -1277,6 +1297,7 @@ export async function POST(request: NextRequest) {
         const meta = purchase.metadata as Record<string, string> | null;
         const grantsConsilium =
           meta?.productKey === "INNER_CIRCLE" ||
+          meta?.productKey === "INNER_CIRCLE_ANNUAL" ||
           meta?.productKey === "BOOK_CONSILIUM_1MO" ||
           meta?.productKey === "BOOK_CONSILIUM_3MO";
         if (grantsConsilium) {

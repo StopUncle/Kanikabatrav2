@@ -344,6 +344,9 @@ export default async function InnerCircleLanding({
                   <p className="text-text-gray/75 text-xs sm:text-sm font-light">
                     Cancel any time.
                   </p>
+                  <p className="text-text-gray/60 text-[11px] mt-3 tracking-wider uppercase">
+                    Or $290/year, two months free
+                  </p>
                 </div>
               </div>
 
