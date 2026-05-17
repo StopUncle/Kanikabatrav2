@@ -10,7 +10,12 @@ export const metadata = {
     "What members of The Consilium say, in their own words. Voice notes and quotes from people running the work.",
 };
 
-export const revalidate = 300;
+// Render on demand rather than at build time. Railway's build environment
+// cannot reach the prod DB, so any page that hits Prisma during prerender
+// fails the build. The page is still cheap, getPublishedTestimonials is
+// wrapped in unstable_cache with a 5-minute TTL so we hit the DB at most
+// once per 5 minutes per process even under heavy traffic.
+export const dynamic = "force-dynamic";
 
 export default async function VoicesPage() {
   const testimonials = await getPublishedTestimonials();
