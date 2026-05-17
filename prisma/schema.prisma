@@ -108,6 +108,11 @@ model User {
   tellStreak                TellStreak?
   leagueMemberships         LeagueMembership[]
   receipts                  Receipt[]
+  // Adventure mode: a member's progress through a curated multi-scenario
+  // arc. One row per (user, adventure). currentStep is a 0-indexed cursor
+  // into Adventure.scenarioIds. Completed runs keep the row so the catalog
+  // can dim completed arcs and the recap page stays reachable.
+  adventureProgresses       AdventureProgress[]
   // Public-profile slug for /u/[handle]. Optional (member opts in by
   // claiming a handle). Lowercase a-z, 0-9, hyphens. 3-30 chars.
   // Unique only when set; null users do not collide.
@@ -1490,4 +1495,56 @@ model Receipt {
 
   @@index([userId, createdAt])
   @@index([inputHash])
+}
+
+// ============================================================================
+// ADVENTURES — curated multi-scenario arcs stitched together from existing
+// simulator content. Scenarios live in code (lib/simulator/scenarios/**);
+// adventures live in the DB. scenarioIds is a String[] of scenario.id values,
+// NOT a relational FK, because scenarios are not DB rows.
+// ============================================================================
+model Adventure {
+  id               String              @id @default(cuid())
+  slug             String              @unique
+  title            String
+  tagline          String
+  description      String              @db.Text
+  // Ordered list of scenario.id values resolved against SCENARIO_BY_ID at
+  // read time. An entry that no longer resolves means a scenario was deleted
+  // from code without updating the arc; the runner falls back to skipping it.
+  scenarioIds      String[]
+  tier             String              @default("free") // "free" | "premium" | "vip"
+  estimatedMinutes Int
+  difficulty       String // "beginner" | "intermediate" | "advanced"
+  coverArt         String?
+  // Prose shown on /consilium/adventures/[slug]/complete after the final
+  // scenario in the arc finishes. The single editorial flourish that makes
+  // an arc feel like one journey instead of a playlist.
+  endingRecap      String              @db.Text
+  isNew            Boolean             @default(false)
+  publishedAt      DateTime?
+  createdAt        DateTime            @default(now())
+  updatedAt        DateTime            @updatedAt
+  progresses       AdventureProgress[]
+
+  @@index([publishedAt])
+}
+
+model AdventureProgress {
+  id          String    @id @default(cuid())
+  userId      String
+  adventureId String
+  // 0-indexed cursor into Adventure.scenarioIds. Advances by 1 each time
+  // /api/adventures/[slug]/advance confirms the player completed
+  // scenarioIds[currentStep] in the underlying simulator.
+  currentStep Int       @default(0)
+  completedAt DateTime?
+  startedAt   DateTime  @default(now())
+
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  adventure Adventure @relation(fields: [adventureId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, adventureId])
+  @@index([userId])
+  @@index([adventureId])
 }
