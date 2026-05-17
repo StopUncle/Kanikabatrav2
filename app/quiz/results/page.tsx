@@ -26,6 +26,7 @@ import {
   QUIZ_INFO,
 } from "@/lib/quiz-data";
 import RadarChart from "@/components/quiz/RadarChart";
+import SocialProofTickerClient from "@/components/consilium/SocialProofTickerClient";
 import { getAttributionForSubmit } from "@/lib/attribution";
 
 interface QuizResultsData {
@@ -585,6 +586,7 @@ export default function QuizResultsPage() {
                   >
                     Apply My Credit
                   </Link>
+                  <SocialProofTickerClient className="mt-4" />
                 </div>
               ) : (
                 <div className="p-6 rounded-xl border border-accent-gold/30 bg-accent-gold/[0.04] text-center">
@@ -603,6 +605,7 @@ export default function QuizResultsPage() {
                   >
                     Step Inside
                   </Link>
+                  <SocialProofTickerClient className="mt-4" />
                 </div>
               )}
 

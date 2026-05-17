@@ -8,6 +8,7 @@ import { ArrowRight, Check, ShieldCheck } from "lucide-react";
 import ConsiliumSimulatorTeaser from "@/components/consilium/ConsiliumSimulatorTeaser";
 import FloatingConsiliumSeal from "@/components/consilium/FloatingConsiliumSeal";
 import ConsiliumFAQ from "@/components/consilium/ConsiliumFAQ";
+import SocialProofTicker from "@/components/consilium/SocialProofTicker";
 import { catalogueStats } from "@/lib/simulator/stats";
 
 export const metadata = {
@@ -371,6 +372,7 @@ export default async function InnerCircleLanding({
               </div>
 
               <div className="mt-7 text-center">
+                <SocialProofTicker className="mb-5" />
                 <Link
                   href="/consilium/apply"
                   className="inline-flex items-center justify-center gap-2 py-4 px-10 rounded-full bg-warm-gold text-deep-black font-medium text-base tracking-wider uppercase transition-all hover:bg-warm-gold/90 hover:shadow-[0_8px_24px_-4px_rgba(212,175,55,0.45)]"

@@ -3,6 +3,7 @@ import { optionalServerAuth } from "@/lib/auth/server-auth";
 import { prisma } from "@/lib/prisma";
 import BackgroundEffects from "@/components/BackgroundEffects";
 import JoinPanel from "@/components/consilium/JoinPanel";
+import SocialProofTicker from "@/components/consilium/SocialProofTicker";
 import { XCircle } from "lucide-react";
 
 export const metadata = {
@@ -89,6 +90,8 @@ export default async function JoinPage() {
             notes, the classroom, and the council.
           </p>
         </div>
+
+        <SocialProofTicker className="mb-6" />
 
         <JoinPanel />
       </div>
