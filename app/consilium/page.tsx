@@ -9,6 +9,8 @@ import ConsiliumSimulatorTeaser from "@/components/consilium/ConsiliumSimulatorT
 import FloatingConsiliumSeal from "@/components/consilium/FloatingConsiliumSeal";
 import ConsiliumFAQ from "@/components/consilium/ConsiliumFAQ";
 import SocialProofTicker from "@/components/consilium/SocialProofTicker";
+import TestimonialCard from "@/components/consilium/TestimonialCard";
+import { getFeaturedTestimonials } from "@/lib/testimonials";
 import { catalogueStats } from "@/lib/simulator/stats";
 
 export const metadata = {
@@ -34,6 +36,8 @@ export default async function InnerCircleLanding({
       redirect("/consilium/feed");
     }
   }
+
+  const featuredTestimonials = await getFeaturedTestimonials(3);
 
   // Benefits grouped into three clusters so the card reads as a
   // three-beat promise (practice / access / people) rather than a
@@ -386,6 +390,39 @@ export default async function InnerCircleLanding({
               </div>
             </div>
           </div>
+
+          {/* Featured testimonials. Lives between the value-stack reveal
+              and the FAQ so social proof catches prospects mid-objection.
+              Hidden entirely until at least one testimonial is published,
+              so the page doesn't render a "Voices from inside" section
+              with empty cards on a fresh install. */}
+          {featuredTestimonials.length > 0 && (
+            <div className="mb-20">
+              <div className="text-center mb-8">
+                <span className="text-warm-gold text-xs tracking-[0.3em] uppercase font-medium">
+                  Voices from inside
+                </span>
+                <div className="w-12 h-px bg-warm-gold/30 mx-auto mt-4" />
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 max-w-5xl mx-auto">
+                {featuredTestimonials.map((t) => (
+                  <TestimonialCard
+                    key={t.id}
+                    testimonial={t}
+                    variant="compact"
+                  />
+                ))}
+              </div>
+              <div className="text-center mt-6">
+                <Link
+                  href="/consilium/voices"
+                  className="text-warm-gold/80 hover:text-warm-gold text-xs uppercase tracking-[0.2em] transition-colors"
+                >
+                  Read more voices →
+                </Link>
+              </div>
+            </div>
+          )}
 
           {/* FAQ. Lives between the value-stack reveal and the price
               comparison anchor: prospects who hesitate on price almost

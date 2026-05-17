@@ -1599,3 +1599,36 @@ enum ReferralStatus {
   CANCELLED
 }
 
+// ============================================================================
+// TESTIMONIALS, the social-proof wall at /consilium/voices.
+//
+// Supports both video and text-only testimonials. Video carries an
+// R2-hosted file URL + optional poster image + a transcript (which doubles
+// as a fallback when JS is disabled and as on-page text for SEO). Text-
+// only testimonials have just the quoteText + author and render as
+// quote cards. Either shape is acceptable, the public page and embed
+// render both.
+//
+// authorRole is optional and shown as a quiet line under the name
+// (e.g. "Member since March 2026" or "Joined after the Dark Mirror quiz").
+// Never the member's real name unless they explicitly authorised it.
+// ============================================================================
+model Testimonial {
+  id           String   @id @default(cuid())
+  videoUrl     String?
+  posterUrl    String?
+  durationSeconds Int?
+  quoteText    String?  @db.Text
+  transcript   String?  @db.Text
+  authorName   String
+  authorRole   String?
+  // Lower numbers sort first on the public wall. Negative is allowed so
+  // a freshly-added testimonial can jump to the top without renumbering.
+  displayOrder Int      @default(0)
+  published    Boolean  @default(false)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([published, displayOrder])
+}
+

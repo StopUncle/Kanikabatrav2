@@ -26,6 +26,7 @@ import {
   Megaphone,
   MessageCircle,
   Target,
+  Quote,
 } from "lucide-react";
 
 const NAV_ITEMS = [
@@ -44,6 +45,7 @@ const NAV_ITEMS = [
   { href: "/admin/bots", label: "Bots", icon: Bot },
   { href: "/admin/questions", label: "Questions", icon: MessageCircle },
   { href: "/admin/tells", label: "Tells", icon: Target },
+  { href: "/admin/testimonials", label: "Testimonials", icon: Quote },
 ];
 
 export default function AdminSidebar() {
