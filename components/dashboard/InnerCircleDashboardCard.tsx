@@ -289,6 +289,18 @@ export default function InnerCircleDashboardCard({ membership }: Props) {
           )}
         </div>
 
+        {/* Invite + earn CTA for any ACTIVE member. Universally applicable
+            and small enough that it does not crowd the primary actions. */}
+        <div className="mt-3">
+          <Link
+            href="/consilium/invite"
+            className="inline-flex items-center gap-1.5 text-xs text-warm-gold/90 hover:text-warm-gold transition-colors"
+          >
+            <Gift size={12} strokeWidth={1.5} />
+            Invite a friend, earn a free month
+          </Link>
+        </div>
+
         {/* Upgrade-to-annual nudge for monthly Stripe subscribers who haven't
             already cancelled. Hidden once upgraded (billingCycle becomes annual)
             and after the success state during the brief reload window. */}

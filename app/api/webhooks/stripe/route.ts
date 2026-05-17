@@ -978,6 +978,36 @@ export async function POST(request: NextRequest) {
             );
           }
 
+          // Member-gets-member referral conversion. session.metadata.
+          // referral_code is set by the subscription-create route when
+          // the inbound visitor had the kb-ref-v1 cookie. Credits the
+          // referrer's Stripe customer balance by $29 and stamps the
+          // Referral row as CONVERTED.
+          const referralCode = session.metadata?.referral_code;
+          if (referralCode) {
+            try {
+              const { recordReferralConversion } = await import(
+                "@/lib/referrals/conversion"
+              );
+              const result = await recordReferralConversion({
+                referralCode,
+                refereeUserId: user.id,
+                refereeEmail: user.email,
+              });
+              if (!result.ok) {
+                console.log(
+                  `[stripe-webhook] referral conversion skipped: ${result.reason}`,
+                  { referralCode, refereeUserId: user.id },
+                );
+              }
+            } catch (err) {
+              console.error(
+                "[stripe-webhook] referral conversion threw:",
+                err,
+              );
+            }
+          }
+
           // Onboarding drip. Fires for everyone joining INNER_CIRCLE
           // (new account or existing user). The Day 0 step goes out
           // immediately and points at the simulator; subsequent steps

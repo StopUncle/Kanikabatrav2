@@ -44,6 +44,7 @@ export interface MockUser {
   pushPreferences: Prisma.JsonValue;
   handle: string | null;
   profilePublic: boolean;
+  referralCode: string | null;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -93,6 +94,7 @@ export function createMockUser(overrides: Partial<MockUser> = {}): MockUser {
     pushPreferences: null,
     handle: null,
     profilePublic: false,
+    referralCode: null,
     createdAt: new Date(),
     updatedAt: new Date(),
     ...overrides,

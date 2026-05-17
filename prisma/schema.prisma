@@ -120,6 +120,14 @@ model User {
   // Whether the user has chosen to make their hex public on /u/[handle].
   // Default false: claiming a handle does not auto-publish the hex.
   profilePublic             Boolean              @default(false)
+  // Member-gets-member referrals. referralCode is lazy-generated the
+  // first time a member visits /consilium/invite, lowercase 8-char
+  // alphanumeric. Two sides: referralsSent are referrals where this
+  // user is the referrer, referralReceived is the (at most one) row
+  // where this user joined via someone else's link.
+  referralCode              String?              @unique
+  referralsSent             Referral[]           @relation("ReferralsSent")
+  referralReceived          Referral?            @relation("ReferralReceived")
   // Acquisition attribution — captured from URL params + headers on
   // the visit that ended in registration. Joinable against revenue
   // (Purchase), retention (CommunityMembership), and quiz outcomes
@@ -1548,3 +1556,46 @@ model AdventureProgress {
   @@index([userId])
   @@index([adventureId])
 }
+
+// ============================================================================
+// REFERRALS, member-gets-member growth.
+//
+// Each row is one referral event: a specific referrer's link was used by a
+// specific person. The referee may already be a User (refereeUserId set) or
+// only an email address pre-conversion (refereeEmail set). The row flips to
+// CONVERTED when that referee completes a Consilium-granting checkout, and
+// the referrer's Stripe customer balance is credited $29 by the webhook.
+//
+// One referee can only be credited to one referrer (first-touch wins). The
+// @@unique on refereeUserId enforces that at the DB level.
+// ============================================================================
+model Referral {
+  id              String         @id @default(cuid())
+  referrerId      String
+  refereeUserId   String?        @unique
+  refereeEmail    String?
+  status          ReferralStatus @default(PENDING)
+  // The Stripe customer-balance transaction id that credited the referrer
+  // on conversion. Stored so we never double-credit and support can trace
+  // a credit back to its referral.
+  rewardTxnId     String?
+  // Same idea if we end up offering a referee-side discount in a future
+  // iteration. Null on V1.
+  refereeRewardId String?
+  createdAt       DateTime       @default(now())
+  convertedAt     DateTime?
+
+  referrer User  @relation("ReferralsSent", fields: [referrerId], references: [id], onDelete: Cascade)
+  referee  User? @relation("ReferralReceived", fields: [refereeUserId], references: [id], onDelete: SetNull)
+
+  @@index([referrerId])
+  @@index([refereeEmail])
+  @@index([status])
+}
+
+enum ReferralStatus {
+  PENDING
+  CONVERTED
+  CANCELLED
+}
+

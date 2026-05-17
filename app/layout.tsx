@@ -6,6 +6,7 @@ import LazySpeedInsights from "@/components/LazySpeedInsights";
 import MotionProvider from "@/components/providers/MotionProvider";
 import JsonLd from "@/components/JsonLd";
 import AttributionTracker from "@/components/AttributionTracker";
+import ReferralCookieCapture from "@/components/referrals/ReferralCookieCapture";
 import {
   generateOrganizationSchema,
   generateWebsiteSchema,
@@ -88,6 +89,7 @@ export default function RootLayout({
       </head>
       <body className={inter.className}>
         <AttributionTracker />
+        <ReferralCookieCapture />
         <MotionProvider>
           <main>{children}</main>
           <Footer />

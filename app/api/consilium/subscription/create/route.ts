@@ -3,6 +3,7 @@ import { requireAuth } from "@/lib/auth/middleware";
 import { prisma } from "@/lib/prisma";
 import { createCheckoutSession, STRIPE_PRICES } from "@/lib/stripe";
 import { buildConsiliumAbandonmentDrip } from "@/lib/email-sequences";
+import { REFERRAL_COOKIE_NAME } from "@/lib/referrals";
 
 export async function POST(request: NextRequest) {
   return requireAuth(request, async (req, user) => {
@@ -71,6 +72,13 @@ export async function POST(request: NextRequest) {
     const productKey =
       billingCycle === "annual" ? "INNER_CIRCLE_ANNUAL" : "INNER_CIRCLE";
 
+    // Read the referral cookie (set by /api/community/referral/track on
+    // ?ref=<code> visits). Pipe through to Stripe metadata so the
+    // webhook can credit the referrer on conversion. Self-referral
+    // (cookie was set on the same user's browser) is filtered later in
+    // recordReferralConversion.
+    const referralCode = request.cookies.get(REFERRAL_COOKIE_NAME)?.value || "";
+
     try {
       const session = await createCheckoutSession({
         priceId,
@@ -82,6 +90,7 @@ export async function POST(request: NextRequest) {
           userId: user.id,
           product_key: productKey,
           billing_cycle: billingCycle,
+          ...(referralCode ? { referral_code: referralCode } : {}),
         },
       });
 
