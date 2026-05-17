@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { ArrowRight, CreditCard, CheckCircle, AlertTriangle, Loader2, Gift, RotateCcw } from "lucide-react";
+import { ArrowRight, CreditCard, CheckCircle, AlertTriangle, Loader2, Gift, RotateCcw, Play } from "lucide-react";
+import CancelOrPauseModal from "@/components/consilium/CancelOrPauseModal";
 
 interface Membership {
   id: string;
@@ -46,12 +47,15 @@ export default function InnerCircleDashboardCard({ membership }: Props) {
   const [portalError, setPortalError] = useState<string | null>(null);
   const [cancelLoading, setCancelLoading] = useState(false);
   const [cancelError, setCancelError] = useState<string | null>(null);
+  const [modalOpen, setModalOpen] = useState(false);
   // Optimistic local copy of cancelledAt so the UI flips immediately
   // after the cancel/reactivate POST resolves. Server-rendered initial
   // value comes from props; user actions update this without a refetch.
   const [cancelledAtLocal, setCancelledAtLocal] = useState<string | null>(
     membership?.cancelledAt ?? null,
   );
+  const [resumeLoading, setResumeLoading] = useState(false);
+  const [resumeError, setResumeError] = useState<string | null>(null);
 
   const hasStripeSubscription =
     membership?.paypalSubscriptionId?.startsWith("ST-") ?? false;
@@ -74,25 +78,27 @@ export default function InnerCircleDashboardCard({ membership }: Props) {
     }
   };
 
-  async function cancelAutoRenewal() {
-    if (!confirm(
-      "Cancel auto-renewal? You'll keep access until the end of your current billing period, then your membership ends.",
-    )) {
-      return;
-    }
-    setCancelLoading(true);
+  function openCancelOrPauseModal() {
     setCancelError(null);
+    setModalOpen(true);
+  }
+
+  async function resumeFromPause() {
+    setResumeLoading(true);
+    setResumeError(null);
     try {
-      const res = await fetch("/api/consilium/subscription/cancel", {
+      const res = await fetch("/api/consilium/subscription/resume", {
         method: "POST",
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Failed to cancel auto-renewal");
-      setCancelledAtLocal(new Date().toISOString());
+      if (!res.ok) throw new Error(data.error || "Could not resume membership");
+      // Hard refresh so server-rendered membership status flips to ACTIVE
+      // and the dashboard re-derives every gated surface from the new
+      // status in one go.
+      window.location.reload();
     } catch (err) {
-      setCancelError(err instanceof Error ? err.message : "Failed to cancel");
-    } finally {
-      setCancelLoading(false);
+      setResumeError(err instanceof Error ? err.message : "Could not resume membership");
+      setResumeLoading(false);
     }
   }
 
@@ -164,7 +170,8 @@ export default function InnerCircleDashboardCard({ membership }: Props) {
       : null;
 
     return (
-      <div className="py-2">
+      <>
+        <div className="py-2">
         <div className="flex items-center gap-2 mb-4">
           <div className={`w-2 h-2 rounded-full ${isCancelPending ? "bg-amber-400" : "bg-emerald-400"}`} />
           <span className={`text-xs uppercase tracking-wider ${isCancelPending ? "text-amber-400" : "text-emerald-400"}`}>
@@ -237,15 +244,11 @@ export default function InnerCircleDashboardCard({ membership }: Props) {
               </button>
             ) : (
               <button
-                onClick={cancelAutoRenewal}
+                onClick={openCancelOrPauseModal}
                 disabled={cancelLoading}
                 className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2 bg-deep-black/40 text-text-gray border border-text-gray/30 rounded-full text-sm hover:bg-deep-black/60 hover:text-text-light transition-all disabled:opacity-50"
               >
-                {cancelLoading ? (
-                  <><Loader2 size={14} className="animate-spin" />Cancelling…</>
-                ) : (
-                  <>Cancel Auto-Renewal</>
-                )}
+                Cancel or Pause
               </button>
             )
           ) : (
@@ -282,44 +285,98 @@ export default function InnerCircleDashboardCard({ membership }: Props) {
         {portalError && (
           <p className="text-xs text-red-400 mt-2">{portalError}</p>
         )}
-      </div>
+        </div>
+        <CancelOrPauseModal
+          open={modalOpen}
+          onClose={() => setModalOpen(false)}
+          onPaused={() => {
+            // The pause endpoint sets status SUSPENDED + suspendReason
+            // member-requested-pause on the server. The dashboard is
+            // server-rendered, so reload to re-derive the SUSPENDED
+            // branch from authoritative state.
+            window.location.reload();
+          }}
+          onCancelled={() => {
+            setCancelledAtLocal(new Date().toISOString());
+          }}
+        />
+      </>
     );
   }
 
   // Suspended, show reason + contact guidance
   if (membership.status === "SUSPENDED") {
+    const isSelfPause = membership.suspendReason === "member-requested-pause";
+    const pauseEndsAt = membership.expiresAt
+      ? new Date(membership.expiresAt)
+      : null;
+    const formattedPauseEnd = pauseEndsAt
+      ? pauseEndsAt.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })
+      : null;
+
     return (
       <div className="py-4">
         <div className="flex items-center gap-2 mb-3">
           <AlertTriangle className="w-4 h-4 text-amber-400" />
-          <span className="text-xs uppercase tracking-wider text-amber-400">Suspended</span>
+          <span className="text-xs uppercase tracking-wider text-amber-400">
+            {isSelfPause ? "Paused" : "Suspended"}
+          </span>
         </div>
         <p className="text-text-gray text-sm mb-4">
           {membership.suspendReason === "payment-failed"
             ? "Your last payment failed. Update your card to reactivate."
-            : membership.suspendReason === "member-requested-pause"
-              ? "Your membership is paused."
+            : isSelfPause
+              ? formattedPauseEnd
+                ? `Your membership is paused. Billing resumes on ${formattedPauseEnd}, or you can pick it back up now.`
+                : "Your membership is paused. You can pick it back up anytime."
               : "Your membership is suspended. Contact support for details."}
         </p>
-        <button
-          onClick={openPortal}
-          disabled={portalLoading}
-          className="inline-flex items-center gap-2 px-4 py-2 bg-accent-gold/10 text-accent-gold border border-accent-gold/30 rounded-full text-sm hover:bg-accent-gold/20 transition-all disabled:opacity-50"
-        >
-          {portalLoading ? (
-            <>
-              <Loader2 size={14} className="animate-spin" />
-              Opening…
-            </>
-          ) : (
-            <>
-              <CreditCard size={14} />
-              Update Payment
-            </>
-          )}
-        </button>
-        {portalError && (
-          <p className="text-xs text-red-400 mt-2">{portalError}</p>
+        {isSelfPause ? (
+          <>
+            <button
+              onClick={resumeFromPause}
+              disabled={resumeLoading}
+              className="inline-flex items-center gap-2 px-4 py-2 bg-accent-gold text-deep-black rounded-full text-sm font-medium hover:bg-accent-gold/90 transition-all disabled:opacity-50"
+            >
+              {resumeLoading ? (
+                <>
+                  <Loader2 size={14} className="animate-spin" />
+                  Resuming…
+                </>
+              ) : (
+                <>
+                  <Play size={14} strokeWidth={2} />
+                  Resume now
+                </>
+              )}
+            </button>
+            {resumeError && (
+              <p className="text-xs text-red-400 mt-2">{resumeError}</p>
+            )}
+          </>
+        ) : (
+          <>
+            <button
+              onClick={openPortal}
+              disabled={portalLoading}
+              className="inline-flex items-center gap-2 px-4 py-2 bg-accent-gold/10 text-accent-gold border border-accent-gold/30 rounded-full text-sm hover:bg-accent-gold/20 transition-all disabled:opacity-50"
+            >
+              {portalLoading ? (
+                <>
+                  <Loader2 size={14} className="animate-spin" />
+                  Opening…
+                </>
+              ) : (
+                <>
+                  <CreditCard size={14} />
+                  Update Payment
+                </>
+              )}
+            </button>
+            {portalError && (
+              <p className="text-xs text-red-400 mt-2">{portalError}</p>
+            )}
+          </>
         )}
       </div>
     );

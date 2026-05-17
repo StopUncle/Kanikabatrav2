@@ -3,8 +3,20 @@ import { prisma } from "@/lib/prisma";
 import { requireAuth } from "@/lib/auth/middleware";
 import { stripe } from "@/lib/stripe";
 
+const ALLOWED_PAUSE_DAYS = new Set([30, 60, 90]);
+
 export async function POST(request: NextRequest) {
-  return requireAuth(request, async (_req, user) => {
+  return requireAuth(request, async (req, user) => {
+    let days = 30;
+    try {
+      const body = (await req.json()) as { days?: unknown };
+      if (typeof body.days === "number" && ALLOWED_PAUSE_DAYS.has(body.days)) {
+        days = body.days;
+      }
+    } catch {
+      // Empty body is fine, falls back to 30.
+    }
+
     const membership = await prisma.communityMembership.findUnique({
       where: { userId: user.id },
     });
@@ -34,7 +46,7 @@ export async function POST(request: NextRequest) {
     }
 
     const pauseUntil = new Date();
-    pauseUntil.setDate(pauseUntil.getDate() + 30);
+    pauseUntil.setDate(pauseUntil.getDate() + days);
 
     await prisma.communityMembership.update({
       where: { userId: user.id },
@@ -49,7 +61,8 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       success: true,
       pausedUntil: pauseUntil.toISOString(),
-      message: "Your membership has been paused for 30 days. You can resume anytime.",
+      days,
+      message: `Your membership has been paused for ${days} days. You can resume anytime.`,
     });
   });
 }
