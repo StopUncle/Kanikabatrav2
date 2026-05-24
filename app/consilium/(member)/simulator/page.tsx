@@ -21,7 +21,6 @@ import StreakBanner from "@/components/simulator/StreakBanner";
 import { readSimulatorStreak } from "@/lib/simulator/streak";
 import DailyCheckInCard from "@/components/consilium/DailyCheckInCard";
 import { readTodayCheckIn } from "@/lib/checkin/db";
-import type { SituationKey } from "@/lib/checkin/situations";
 
 export const metadata = {
   title: "The Dark Mirror. Simulator | Kanika Batra",
