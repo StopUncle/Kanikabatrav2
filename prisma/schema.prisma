@@ -81,6 +81,7 @@ model User {
   gamesStreakCurrent        Int                  @default(0)
   gamesStreakLongest        Int                  @default(0)
   gamesLastSession          DateTime?
+  dailyCheckIns             DailyCheckIn[]
   simulatorBadges           SimulatorBadge[]
   isBot                     Boolean              @default(false)
   botActive                 Boolean              @default(true)
@@ -1657,6 +1658,38 @@ model Testimonial {
 // subsequent same-day plays are practice (score/maxCombo still recorded
 // for personal-best tracking and the leaderboard).
 // ============================================================================
+// ============================================================================
+// Daily Check-In — "Where are you today?" → track recommendation.
+//
+// Once per UTC calendar day, the member picks a situation from a fixed list
+// and the simulator catalog routes them to the matching track. Stored so
+// repeat answers over time become a useful signal (member-X has logged
+// "After Him" three weeks running → outreach trigger). Also keeps the
+// catalog from re-prompting the same day.
+//
+// `situation` is the slug (see lib/checkin/situations.ts). The recommended
+// track is derived at write-time and stored so the recommendation surface
+// can read it without re-running the mapping (and so changing the mapping
+// later doesn't retroactively change a member's logged history).
+//
+// `checkedDate` is the UTC calendar date as YYYY-MM-DD. Pairing it with
+// userId in a unique constraint gives us "one check-in per day" by
+// construction.
+// ============================================================================
+model DailyCheckIn {
+  id               String   @id @default(cuid())
+  userId           String
+  user             User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  checkedDate      String   // YYYY-MM-DD UTC
+  situation        String   // slug; see lib/checkin/situations.ts
+  recommendedTrack String   // ScenarioTrack slug; "" for "exploring" no-op
+  createdAt        DateTime @default(now())
+
+  @@unique([userId, checkedDate])
+  @@index([userId, createdAt])
+  @@index([situation, createdAt])
+}
+
 model GameSession {
   id          String   @id @default(cuid())
   userId      String

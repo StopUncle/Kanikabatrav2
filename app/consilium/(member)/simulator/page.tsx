@@ -19,6 +19,9 @@ import LevelJourney, {
 } from "@/components/consilium/LevelJourney";
 import StreakBanner from "@/components/simulator/StreakBanner";
 import { readSimulatorStreak } from "@/lib/simulator/streak";
+import DailyCheckInCard from "@/components/consilium/DailyCheckInCard";
+import { readTodayCheckIn } from "@/lib/checkin/db";
+import type { SituationKey } from "@/lib/checkin/situations";
 
 export const metadata = {
   title: "The Dark Mirror. Simulator | Kanika Batra",
@@ -67,7 +70,7 @@ export default async function SimulatorIndex({
   const params = await searchParams;
   const track = resolveTrack(params.track);
 
-  const [progress, badgeCount, streak, adventures, adventureProgress] =
+  const [progress, badgeCount, streak, adventures, adventureProgress, todayCheckIn, currentUser] =
     await Promise.all([
       prisma.simulatorProgress.findMany({
         where: { userId },
@@ -97,6 +100,13 @@ export default async function SimulatorIndex({
       prisma.adventureProgress.findMany({
         where: { userId },
         select: { adventureId: true, completedAt: true },
+      }),
+      // Today's daily check-in (null if not yet answered).
+      readTodayCheckIn(prisma, userId),
+      // User gender for the gender-aware situation buckets.
+      prisma.user.findUnique({
+        where: { id: userId },
+        select: { gender: true },
       }),
     ]);
 
@@ -408,6 +418,25 @@ export default async function SimulatorIndex({
           </Link>
         </div>
       </header>
+
+      {/* Daily check-in.
+          Sits between the page header and the track selector. When
+          unanswered, asks "Where are you today?" and offers the eight
+          situation buckets plus an explore option. When answered, shows
+          the recommended track with a Start CTA. Reads from the
+          DailyCheckIn table; one row per (user, UTC calendar day),
+          enforced by a unique constraint. */}
+      <DailyCheckInCard
+        gender={currentUser?.gender ?? null}
+        initial={
+          todayCheckIn
+            ? {
+                situation: todayCheckIn.situation,
+                recommendedTrack: todayCheckIn.recommendedTrack,
+              }
+            : null
+        }
+      />
 
       {/* Track selector.
           Framed explicitly as a chooser ("Pick your line") so it doesn't
