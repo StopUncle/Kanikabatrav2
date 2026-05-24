@@ -913,6 +913,18 @@ model EmailQueue {
   status         String    @default("PENDING") // PENDING, SENT, FAILED, CANCELLED
   metadata       Json? // trial tokens, context
   createdAt      DateTime  @default(now())
+  // Per-row retry counter. Bumped each time the processor fails to send
+  // (network blip, transient Resend 5xx, rate-limit 429, etc). Status
+  // only flips to FAILED when this exceeds MAX_ATTEMPTS (currently 5);
+  // until then the row stays PENDING and scheduledAt is pushed forward
+  // by an exponential backoff (5min, 10min, 20min, 40min, 80min). This
+  // is what prevents a single 12-second hiccup from silently losing a
+  // revenue-critical email (book delivery, coaching intake, etc).
+  attempts       Int       @default(0)
+  // Last send error, persisted so /admin/email-queue can show why a
+  // row keeps deferring or has hit FAILED. Cleared on success.
+  lastErrorAt    DateTime?
+  lastError      String?   @db.Text
 
   @@index([status, scheduledAt])
   @@index([recipientEmail])

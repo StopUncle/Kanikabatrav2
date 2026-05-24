@@ -279,7 +279,19 @@ export const sendEmail = async (
         error as Error,
       );
       if (attempt < maxRetries) {
-        const delay = 2000 * attempt;
+        // Rate-limit responses (429, or Resend's "Too many requests"
+        // / "rate_limit_exceeded" error strings) want a much longer
+        // backoff than a network blip. Resend typically asks for ~30s.
+        // Burning the next two retries inside 12s on a 429 is exactly
+        // the pattern that caused silent losses on the free tier; on
+        // Pro it's still a real failure mode during bursts.
+        const message = (error as Error).message?.toLowerCase() ?? "";
+        const isRateLimited =
+          message.includes("429") ||
+          message.includes("rate limit") ||
+          message.includes("rate_limit") ||
+          message.includes("too many requests");
+        const delay = isRateLimited ? 30000 : 2000 * attempt;
         await new Promise((resolve) => setTimeout(resolve, delay));
       }
     }
