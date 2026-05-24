@@ -101,6 +101,19 @@ export default function SpeedDrillClient() {
     };
   }, []);
 
+  // Lock body scroll while the full-screen phases are active so the
+  // sticky member nav (z-30) can't bleed in over the game. Intro,
+  // countdown, and play all run as fixed inset-0 overlays; results
+  // is a normal scrollable page that needs the body scroll back.
+  useEffect(() => {
+    const lock = phase === "intro" || phase === "countdown" || phase === "play";
+    const prev = document.body.style.overflow;
+    if (lock) document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = prev;
+    };
+  }, [phase]);
+
   // Countdown: 3, 2, 1, GO.
   useEffect(() => {
     if (phase !== "countdown") return;
@@ -254,7 +267,7 @@ export default function SpeedDrillClient() {
   const timerProgress = Math.max(0, Math.min(1, clock / DRILL_SECONDS));
 
   return (
-    <div className="fixed inset-0 bg-deep-black flex flex-col text-white">
+    <div className="fixed inset-0 z-50 bg-deep-black flex flex-col text-white">
       {/* Timer bar */}
       <div className="h-1 bg-white/5">
         <div
@@ -339,7 +352,7 @@ export default function SpeedDrillClient() {
       {/* Flash overlay */}
       <div
         aria-hidden
-        className={`pointer-events-none fixed inset-0 transition-opacity duration-300 ${
+        className={`pointer-events-none fixed inset-0 z-[60] transition-opacity duration-300 ${
           flash ? "opacity-40" : "opacity-0"
         } ${flash === "gold" ? "bg-warm-gold" : flash === "burgundy" ? "bg-burgundy" : ""}`}
       />
@@ -367,7 +380,7 @@ export default function SpeedDrillClient() {
 
 function Intro({ tier, onBegin }: { tier: number; onBegin: () => void }) {
   return (
-    <div className="fixed inset-0 bg-deep-black flex flex-col text-white">
+    <div className="fixed inset-0 z-50 bg-deep-black flex flex-col text-white">
       <div className="flex items-center justify-between px-4 sm:px-6 py-3">
         <Link
           href="/consilium/games"
@@ -426,7 +439,7 @@ function Intro({ tier, onBegin }: { tier: number; onBegin: () => void }) {
 
 function Countdown({ count, tick }: { count: number; tick: number }) {
   return (
-    <div className="fixed inset-0 bg-deep-black flex items-center justify-center">
+    <div className="fixed inset-0 z-50 bg-deep-black flex items-center justify-center">
       <span
         key={tick}
         className="text-warm-gold text-[140px] tracking-wider font-light leading-none animate-[countPop_460ms_ease-out]"
