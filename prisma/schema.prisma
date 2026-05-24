@@ -1654,6 +1654,54 @@ model Testimonial {
 }
 
 // ============================================================================
+// MembershipReconciliation — drift detector between local CommunityMembership
+// rows and the underlying Stripe subscriptions. Written to by the hourly
+// /api/cron/reconcile-memberships job.
+//
+// Why: webhook delivery can fail (Stripe retries for 3 days then gives up).
+// If we miss a customer.subscription.deleted, the local row stays ACTIVE
+// while Stripe has cancelled, meaning the member retains Consilium access
+// without paying. If we miss a customer.subscription.updated where
+// cancel_at_period_end=true, the dashboard tells the member they're
+// renewing when they're actually about to lapse. Either drift erodes trust.
+//
+// The cron compares state and writes a row here whenever local !== Stripe.
+// Admins triage and `resolvedAt`-stamp once handled. No automatic
+// mutation — visibility first, until we have enough data to know which
+// mismatches are safe to auto-heal.
+// ============================================================================
+model MembershipReconciliation {
+  id             String    @id @default(cuid())
+  membershipId   String
+  userId         String
+  stripeSubId    String
+  // The mismatch shape, one of:
+  //   status-drift           local status != derived Stripe status
+  //   cancel-flag-drift      local cancelledAt presence != Stripe cancel_at_period_end
+  //   expires-drift          local expiresAt diverged > 24h from Stripe current_period_end
+  //   stripe-missing         Stripe couldn't find the subscription at all
+  //   stripe-unreachable     Stripe API call errored, transient
+  mismatch       String
+  // Human-readable detail. Includes the actual values on both sides
+  // so an admin can read this row alone and understand what to do.
+  detail         String    @db.Text
+  // Snapshot of the values at detection time, kept structured for
+  // future analytics dashboards (drift-rate by week, etc).
+  localStatus    String
+  stripeStatus   String?
+  // Mark with reviewer admin id once handled. Unresolved rows are the
+  // queue; resolved rows are history.
+  resolvedAt     DateTime?
+  resolvedBy     String?
+  resolvedNotes  String?   @db.Text
+  createdAt      DateTime  @default(now())
+
+  @@index([resolvedAt, createdAt])
+  @@index([membershipId])
+  @@index([userId])
+}
+
+// ============================================================================
 // Games — daily training sessions (Lumosity-style).
 //
 // Each completed session of a Consilium game writes one row here. Drives:

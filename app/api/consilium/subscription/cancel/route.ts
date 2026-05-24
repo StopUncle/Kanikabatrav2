@@ -3,6 +3,7 @@ import { requireAuth } from "@/lib/auth/middleware";
 import { prisma } from "@/lib/prisma";
 import { getStripe } from "@/lib/stripe";
 import { logger } from "@/lib/logger";
+import { sendCancellationScheduled } from "@/lib/email";
 
 /**
  * Cancel auto-renewal on a Consilium membership.
@@ -113,6 +114,37 @@ export async function POST(request: NextRequest) {
         ...(updatedExpiresAt ? { expiresAt: updatedExpiresAt } : {}),
       },
     });
+
+    // Confirmation email — inbox proof the cancel went through, with
+    // the access-until date. Non-blocking: a send failure doesn't 500
+    // the user's cancel action. The previous behaviour was no email at
+    // all until period end (see sendMembershipCancelled on
+    // customer.subscription.deleted), which is what produced the
+    // "I thought I cancelled" support tickets.
+    if (updatedExpiresAt) {
+      const userRow = await prisma.user.findUnique({
+        where: { id: user.id },
+        select: { email: true, name: true, displayName: true },
+      });
+      if (userRow?.email) {
+        const accessUntil = updatedExpiresAt.toLocaleDateString("en-US", {
+          month: "long",
+          day: "numeric",
+          year: "numeric",
+        });
+        sendCancellationScheduled(
+          userRow.email,
+          userRow.displayName || userRow.name || "Member",
+          accessUntil,
+        ).catch((err) =>
+          logger.error(
+            "[subscription-cancel] confirmation email failed",
+            err as Error,
+            { userId: user.id },
+          ),
+        );
+      }
+    }
 
     return NextResponse.json({
       success: true,

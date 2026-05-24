@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import { X, Loader2, Pause, Calendar } from "lucide-react";
+import { X, Loader2, Pause, Calendar, Check, Mail } from "lucide-react";
 
 interface Props {
   open: boolean;
@@ -59,6 +59,16 @@ export default function CancelOrPauseModal({
   const [busyDays, setBusyDays] = useState<number | null>(null);
   const [cancelling, setCancelling] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  // Success view shown immediately after the server confirms the action.
+  // Keeps the modal open with a positive confirmation (date + "email
+  // sent" line) for ~3.5s before auto-closing, so the user has visible
+  // proof the click did something — the previous behaviour of closing
+  // silently produced "I thought I cancelled" support tickets.
+  const [success, setSuccess] = useState<
+    | { kind: "paused"; until: string }
+    | { kind: "cancelled"; accessUntil: string }
+    | null
+  >(null);
   const dialogRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -79,8 +89,34 @@ export default function CancelOrPauseModal({
       setError(null);
       setBusyDays(null);
       setCancelling(false);
+      setSuccess(null);
     }
   }, [open]);
+
+  // After a successful action, the success view shows for 3.5s, then
+  // we notify the parent and close. This is the timed beat that
+  // replaces the silent close.
+  useEffect(() => {
+    if (!success) return;
+    const t = setTimeout(() => {
+      if (success.kind === "paused") onPaused(success.until);
+      else onCancelled();
+      onClose();
+    }, 3500);
+    return () => clearTimeout(t);
+  }, [success, onPaused, onCancelled, onClose]);
+
+  function formatDate(iso: string): string {
+    try {
+      return new Date(iso).toLocaleDateString("en-US", {
+        month: "long",
+        day: "numeric",
+        year: "numeric",
+      });
+    } catch {
+      return iso;
+    }
+  }
 
   async function handlePause(days: 30 | 60 | 90) {
     setBusyDays(days);
@@ -93,8 +129,9 @@ export default function CancelOrPauseModal({
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Could not pause membership");
-      onPaused(data.pausedUntil);
-      onClose();
+      // Show the success view; the useEffect above will notify the
+      // parent + close the modal after 3.5s.
+      setSuccess({ kind: "paused", until: data.pausedUntil as string });
     } catch (err) {
       setError(err instanceof Error ? err.message : "Could not pause membership");
     } finally {
@@ -111,8 +148,10 @@ export default function CancelOrPauseModal({
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Could not cancel auto-renewal");
-      onCancelled();
-      onClose();
+      setSuccess({
+        kind: "cancelled",
+        accessUntil: (data.expiresAt as string) ?? "",
+      });
     } catch (err) {
       setError(err instanceof Error ? err.message : "Could not cancel auto-renewal");
     } finally {
@@ -127,7 +166,7 @@ export default function CancelOrPauseModal({
   return createPortal(
     <div
       className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center p-0 sm:p-4 bg-deep-black/80 backdrop-blur-sm"
-      onClick={onClose}
+      onClick={success ? undefined : onClose}
       role="dialog"
       aria-modal="true"
       aria-labelledby="cancel-pause-title"
@@ -137,16 +176,55 @@ export default function CancelOrPauseModal({
         onClick={(e) => e.stopPropagation()}
         className="relative w-full sm:max-w-lg bg-deep-black border border-accent-gold/20 rounded-t-2xl sm:rounded-2xl shadow-2xl overflow-hidden"
       >
-        <button
-          onClick={onClose}
-          disabled={anyBusy}
-          className="absolute top-3 right-3 p-1.5 text-text-gray/60 hover:text-text-light transition-colors disabled:opacity-40"
-          aria-label="Close"
-        >
-          <X size={18} />
-        </button>
+        {!success && (
+          <button
+            onClick={onClose}
+            disabled={anyBusy}
+            className="absolute top-3 right-3 p-1.5 text-text-gray/60 hover:text-text-light transition-colors disabled:opacity-40"
+            aria-label="Close"
+          >
+            <X size={18} />
+          </button>
+        )}
 
-        <div className="p-6 sm:p-8">
+        {success ? (
+          <div className="p-8 sm:p-10 text-center">
+            <div className="mx-auto mb-5 w-14 h-14 rounded-full bg-emerald-500/15 border border-emerald-400/40 flex items-center justify-center">
+              <Check size={26} className="text-emerald-400" strokeWidth={2} />
+            </div>
+            <h2 className="text-xl sm:text-2xl font-light text-text-light tracking-wide mb-2">
+              {success.kind === "paused"
+                ? "Paused."
+                : "Auto-renewal cancelled."}
+            </h2>
+            <p className="text-sm text-text-gray leading-relaxed mb-5">
+              {success.kind === "paused" ? (
+                <>
+                  Your billing is on hold. Your seat reopens on{" "}
+                  <span className="text-accent-gold">
+                    {formatDate(success.until)}
+                  </span>
+                  .
+                </>
+              ) : success.accessUntil ? (
+                <>
+                  You will not be billed again. You keep access until{" "}
+                  <span className="text-accent-gold">
+                    {formatDate(success.accessUntil)}
+                  </span>
+                  .
+                </>
+              ) : (
+                <>You will not be billed again.</>
+              )}
+            </p>
+            <div className="inline-flex items-center gap-2 text-xs text-text-gray/70 mb-2">
+              <Mail size={12} strokeWidth={1.6} />
+              Confirmation email sent
+            </div>
+          </div>
+        ) : (
+          <div className="p-6 sm:p-8">
           <div className="flex items-center gap-2 mb-1">
             <Pause size={14} className="text-accent-gold" strokeWidth={1.5} />
             <span className="text-xs uppercase tracking-[0.2em] text-accent-gold/80">
@@ -220,6 +298,7 @@ export default function CancelOrPauseModal({
             </button>
           </div>
         </div>
+        )}
       </div>
     </div>,
     document.body,

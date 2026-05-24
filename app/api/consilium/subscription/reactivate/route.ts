@@ -3,6 +3,7 @@ import { requireAuth } from "@/lib/auth/middleware";
 import { prisma } from "@/lib/prisma";
 import { getStripe } from "@/lib/stripe";
 import { logger } from "@/lib/logger";
+import { sendMembershipReactivated } from "@/lib/email";
 
 /**
  * Reactivate auto-renewal on a Consilium membership that was previously
@@ -79,6 +80,31 @@ export async function POST(request: NextRequest) {
         ...(updatedExpiresAt ? { expiresAt: updatedExpiresAt } : {}),
       },
     });
+
+    if (updatedExpiresAt) {
+      const userRow = await prisma.user.findUnique({
+        where: { id: user.id },
+        select: { email: true, name: true, displayName: true },
+      });
+      if (userRow?.email) {
+        const nextRenewal = updatedExpiresAt.toLocaleDateString("en-US", {
+          month: "long",
+          day: "numeric",
+          year: "numeric",
+        });
+        sendMembershipReactivated(
+          userRow.email,
+          userRow.displayName || userRow.name || "Member",
+          nextRenewal,
+        ).catch((err) =>
+          logger.error(
+            "[subscription-reactivate] confirmation email failed",
+            err as Error,
+            { userId: user.id },
+          ),
+        );
+      }
+    }
 
     return NextResponse.json({
       success: true,

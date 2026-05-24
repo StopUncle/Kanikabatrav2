@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { requireAuth } from "@/lib/auth/middleware";
 import { stripe } from "@/lib/stripe";
+import { sendMembershipPaused } from "@/lib/email";
+import { logger } from "@/lib/logger";
 
 const ALLOWED_PAUSE_DAYS = new Set([30, 60, 90]);
 
@@ -57,6 +59,33 @@ export async function POST(request: NextRequest) {
         expiresAt: pauseUntil,
       },
     });
+
+    // Confirmation email — inbox proof the pause went through. Pause
+    // previously fired zero emails, leaving members to remember "did I
+    // pause or did I cancel?" days later. Non-blocking.
+    const userRow = await prisma.user.findUnique({
+      where: { id: user.id },
+      select: { email: true, name: true, displayName: true },
+    });
+    if (userRow?.email) {
+      const pausedUntilLabel = pauseUntil.toLocaleDateString("en-US", {
+        month: "long",
+        day: "numeric",
+        year: "numeric",
+      });
+      sendMembershipPaused(
+        userRow.email,
+        userRow.displayName || userRow.name || "Member",
+        pausedUntilLabel,
+        days,
+      ).catch((err) =>
+        logger.error(
+          "[subscription-pause] confirmation email failed",
+          err as Error,
+          { userId: user.id },
+        ),
+      );
+    }
 
     return NextResponse.json({
       success: true,

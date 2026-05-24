@@ -199,32 +199,71 @@ export default function InnerCircleDashboardCard({ membership }: Props) {
     return (
       <>
         <div className="py-2">
-        <div className="flex items-center gap-2 mb-4">
-          <div className={`w-2 h-2 rounded-full ${isCancelPending ? "bg-amber-400" : "bg-emerald-400"}`} />
-          <span className={`text-xs uppercase tracking-wider ${isCancelPending ? "text-amber-400" : "text-emerald-400"}`}>
-            {isCancelPending ? "Active, Auto-Renewal Off" : "Active"}
-          </span>
-        </div>
-
-        {/* Stripe-subscriber branch: shows renewal date + cancel/reactivate toggle. */}
+        {/* State banner. Unmissable, full-width, colour-coded.
+            Replaces the previous 2-pixel dot + tiny tracking-wider text
+            which technically reflected state but was easy to miss.
+            Cancel-pending especially needs to scream so a returning
+            member doesn't have to wonder whether their previous click
+            actually took effect — they see "Auto-renewal is OFF" plus
+            the access-until date immediately. */}
         {hasStripeSubscription && (
-          <>
-            {expiresAt && (
-              <p className="text-text-gray text-sm mb-1">
-                {isCancelPending ? "Access until " : "Renews "}
-                <span className="text-text-light">{formattedExpiry}</span>
-                {daysUntilExpiry !== null && daysUntilExpiry > 0 && daysUntilExpiry <= 7 && (
-                  <span className="text-amber-400 ml-2">({daysUntilExpiry} days)</span>
-                )}
+          <div
+            className={`mb-5 flex items-start gap-3 px-4 py-3 rounded-xl border ${
+              isCancelPending
+                ? "border-amber-400/40 bg-amber-400/[0.06]"
+                : "border-emerald-400/30 bg-emerald-400/[0.04]"
+            }`}
+          >
+            <div
+              className={`relative inline-flex w-2.5 h-2.5 mt-1.5 shrink-0 ${
+                isCancelPending ? "" : ""
+              }`}
+              aria-hidden
+            >
+              {!isCancelPending && (
+                <span className="absolute inset-0 rounded-full bg-emerald-400/40 animate-ping" />
+              )}
+              <span
+                className={`relative inline-block w-2.5 h-2.5 rounded-full ${
+                  isCancelPending ? "bg-amber-400" : "bg-emerald-400"
+                }`}
+              />
+            </div>
+            <div className="flex-1 min-w-0">
+              <p
+                className={`text-sm font-medium tracking-wide ${
+                  isCancelPending ? "text-amber-300" : "text-emerald-300"
+                }`}
+              >
+                {isCancelPending
+                  ? "Auto-renewal is OFF"
+                  : "Active membership"}
               </p>
-            )}
-            <p className="text-text-gray/70 text-xs mb-5 capitalize">
-              {membership.billingCycle} billing
-            </p>
-          </>
+              {expiresAt && (
+                <p className="text-text-gray/80 text-xs mt-1 leading-relaxed">
+                  {isCancelPending ? "You will not be billed again. " : ""}
+                  {isCancelPending ? "Access until " : "Renews "}
+                  <span className="text-text-light">{formattedExpiry}</span>
+                  {daysUntilExpiry !== null &&
+                    daysUntilExpiry > 0 &&
+                    daysUntilExpiry <= 7 && (
+                      <span className="text-amber-400 ml-2">
+                        ({daysUntilExpiry} days)
+                      </span>
+                    )}
+                  <span className="text-text-gray/50 capitalize">
+                    {" · "}
+                    {membership.billingCycle} billing
+                  </span>
+                </p>
+              )}
+            </div>
+          </div>
         )}
 
-        {/* Gift / trial / bundled branch: no auto-renewal, lapses naturally. */}
+        {/* Gift / trial / bundled branch: no Stripe subscription, lapses
+            naturally at expiresAt. Kept compact; the no-auto-renewal
+            messaging is the signal these members need. */}
         {!hasStripeSubscription && (
           <>
             <div className="flex items-center gap-2 mb-2">

@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { requireAuth } from "@/lib/auth/middleware";
 import { stripe } from "@/lib/stripe";
+import { sendMembershipResumed } from "@/lib/email";
+import { logger } from "@/lib/logger";
 
 export async function POST(request: NextRequest) {
   return requireAuth(request, async (_req, user) => {
@@ -42,6 +44,23 @@ export async function POST(request: NextRequest) {
         activatedAt: new Date(),
       },
     });
+
+    const userRow = await prisma.user.findUnique({
+      where: { id: user.id },
+      select: { email: true, name: true, displayName: true },
+    });
+    if (userRow?.email) {
+      sendMembershipResumed(
+        userRow.email,
+        userRow.displayName || userRow.name || "Member",
+      ).catch((err) =>
+        logger.error(
+          "[subscription-resume] confirmation email failed",
+          err as Error,
+          { userId: user.id },
+        ),
+      );
+    }
 
     return NextResponse.json({ success: true, message: "Welcome back! Your membership is active again." });
   });

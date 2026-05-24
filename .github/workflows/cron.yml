@@ -58,6 +58,11 @@ on:
     # members land in the feed for the day's content. Cheap query bounded
     # by SUSPENDED + member-requested-pause + expiresAt < now.
     - cron: '0 6 * * *'
+    # Reconcile local CommunityMembership rows against Stripe subscriptions.
+    # Hourly at :23 (avoids :00/:15/:30/:45 email-queue and :03 daily-tell
+    # collisions). Drift detector: writes mismatches to
+    # MembershipReconciliation for admin review. No automatic remediation.
+    - cron: '23 * * * *'
   workflow_dispatch:
     # Allow manual triggering from the GitHub Actions UI. Useful for
     # testing or firing a cron out-of-band without waiting for the next
@@ -83,6 +88,7 @@ on:
           - resolve-leagues
           - dormant-member
           - auto-resume-pauses
+          - reconcile-memberships
 
 env:
   BASE_URL: https://kanikarose.com
@@ -199,6 +205,25 @@ jobs:
             -H "x-cron-secret: ${{ secrets.CRON_SECRET }}" \
             -H "Content-Type: application/json" \
             --max-time 60
+
+  reconcile-memberships:
+    # Hourly at :23. Pulls a batch of Stripe-backed memberships, fetches
+    # their Stripe subscriptions, writes any mismatch
+    # (status / cancel-flag / expires drift, missing sub, unreachable) to
+    # the MembershipReconciliation table for admin triage. No automatic
+    # remediation — visibility first.
+    if: >-
+      github.event.schedule == '23 * * * *' ||
+      (github.event_name == 'workflow_dispatch' &&
+       (github.event.inputs.target == 'all' || github.event.inputs.target == 'reconcile-memberships'))
+    runs-on: ubuntu-latest
+    steps:
+      - name: Hit /api/cron/reconcile-memberships
+        run: |
+          curl -fsS -X POST "$BASE_URL/api/cron/reconcile-memberships" \
+            -H "x-cron-secret: ${{ secrets.CRON_SECRET }}" \
+            -H "Content-Type: application/json" \
+            --max-time 180
 
   auto-resume-pauses:
     # Daily at 06:00 UTC. Finds SUSPENDED memberships with

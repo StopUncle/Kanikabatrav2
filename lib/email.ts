@@ -1842,6 +1842,175 @@ export const sendMembershipCancelled = async (
   });
 };
 
+/**
+ * Cancel-scheduled confirmation. Fires immediately when a member sets
+ * cancel_at_period_end on their subscription (either through our in-app
+ * modal or the Stripe Customer Portal). Different from
+ * sendMembershipCancelled which fires when the subscription is actually
+ * deleted at period end. This is the email that prevents "I thought I
+ * cancelled" stories — inbox proof that the action was registered.
+ */
+export const sendCancellationScheduled = async (
+  memberEmail: string,
+  memberName: string,
+  accessUntil: string,
+): Promise<boolean> => {
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://kanikarose.com";
+
+  const inner = `
+    <p style="color: #f5f0ed; font-size: 18px; margin: 0 0 20px 0; line-height: 1.6;">
+      ${esc(memberName)},
+    </p>
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 25px 0; font-size: 15px;">
+      Your Consilium auto-renewal has been turned off. You&rsquo;ll keep access until <strong style="color: #d4af37;">${esc(accessUntil)}</strong>, and then the subscription will end. You will not be billed again.
+    </p>
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 25px 0; font-size: 15px;">
+      If this wasn&rsquo;t you, or you change your mind, you can reactivate auto-renewal anytime from your dashboard before the access date above.
+    </p>
+    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="margin: 0 0 25px 0;">
+      <tr>
+        <td align="center">
+          <table role="presentation" cellspacing="0" cellpadding="0" border="0">
+            <tr>
+              <td bgcolor="#d4af37" style="border-radius: 50px;" align="center">
+                <a href="${baseUrl}/dashboard" target="_blank" style="display: inline-block; color: #050511; padding: 14px 36px; text-decoration: none; font-weight: 600; font-size: 14px; letter-spacing: 1px; text-transform: uppercase; border-radius: 50px;">Reactivate</a>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0; font-size: 13px; font-style: italic;">
+      Until ${esc(accessUntil)}, the door is still open.
+    </p>
+  `;
+
+  return await sendEmail({
+    to: memberEmail,
+    subject: "Your Consilium auto-renewal has been turned off",
+    html: luxuryEmailShell(inner, "Auto-Renewal Cancelled", "The Consilium"),
+  });
+};
+
+/**
+ * Pause confirmation. Fires when a member chooses Pause for 30/60/90 days
+ * via the modal. Reassures them that billing is paused and tells them the
+ * exact date their seat reopens.
+ */
+export const sendMembershipPaused = async (
+  memberEmail: string,
+  memberName: string,
+  pausedUntil: string,
+  days: number,
+): Promise<boolean> => {
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://kanikarose.com";
+
+  const inner = `
+    <p style="color: #f5f0ed; font-size: 18px; margin: 0 0 20px 0; line-height: 1.6;">
+      ${esc(memberName)},
+    </p>
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 25px 0; font-size: 15px;">
+      Your Consilium membership is paused for <strong style="color: #d4af37;">${days} days</strong>. Billing is on hold. You will not be charged.
+    </p>
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 25px 0; font-size: 15px;">
+      Your seat reopens on <strong style="color: #d4af37;">${esc(pausedUntil)}</strong>. You can resume earlier from your dashboard whenever you&rsquo;re ready.
+    </p>
+    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="margin: 0 0 25px 0;">
+      <tr>
+        <td align="center">
+          <table role="presentation" cellspacing="0" cellpadding="0" border="0">
+            <tr>
+              <td bgcolor="#d4af37" style="border-radius: 50px;" align="center">
+                <a href="${baseUrl}/dashboard" target="_blank" style="display: inline-block; color: #050511; padding: 14px 36px; text-decoration: none; font-weight: 600; font-size: 14px; letter-spacing: 1px; text-transform: uppercase; border-radius: 50px;">Open Dashboard</a>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0; font-size: 13px; font-style: italic;">
+      The work will be here when you come back.
+    </p>
+  `;
+
+  return await sendEmail({
+    to: memberEmail,
+    subject: `Your Consilium membership is paused for ${days} days`,
+    html: luxuryEmailShell(inner, "Membership Paused", "The Consilium"),
+  });
+};
+
+/**
+ * Reactivate confirmation. Fires when a member who had set
+ * cancel_at_period_end flips it back off (auto-renewal restored).
+ */
+export const sendMembershipReactivated = async (
+  memberEmail: string,
+  memberName: string,
+  nextRenewalDate: string,
+): Promise<boolean> => {
+  const inner = `
+    <p style="color: #f5f0ed; font-size: 18px; margin: 0 0 20px 0; line-height: 1.6;">
+      ${esc(memberName)},
+    </p>
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 25px 0; font-size: 15px;">
+      Your Consilium auto-renewal is back on. Your subscription will renew as normal on <strong style="color: #d4af37;">${esc(nextRenewalDate)}</strong>.
+    </p>
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0; font-size: 13px; font-style: italic;">
+      Welcome back.
+    </p>
+  `;
+
+  return await sendEmail({
+    to: memberEmail,
+    subject: "Your Consilium auto-renewal is back on",
+    html: luxuryEmailShell(inner, "Auto-Renewal Restored", "The Consilium"),
+  });
+};
+
+/**
+ * Resume confirmation. Fires when a paused member resumes their
+ * membership early (or when the auto-resume cron fires at the end of
+ * the pause window).
+ */
+export const sendMembershipResumed = async (
+  memberEmail: string,
+  memberName: string,
+): Promise<boolean> => {
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://kanikarose.com";
+
+  const inner = `
+    <p style="color: #f5f0ed; font-size: 18px; margin: 0 0 20px 0; line-height: 1.6;">
+      ${esc(memberName)},
+    </p>
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 25px 0; font-size: 15px;">
+      Your Consilium membership is active again. Billing resumes on the next natural cycle.
+    </p>
+    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="margin: 0 0 25px 0;">
+      <tr>
+        <td align="center">
+          <table role="presentation" cellspacing="0" cellpadding="0" border="0">
+            <tr>
+              <td bgcolor="#d4af37" style="border-radius: 50px;" align="center">
+                <a href="${baseUrl}/consilium/feed" target="_blank" style="display: inline-block; color: #050511; padding: 14px 36px; text-decoration: none; font-weight: 600; font-size: 14px; letter-spacing: 1px; text-transform: uppercase; border-radius: 50px;">Go to Feed</a>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0; font-size: 13px; font-style: italic;">
+      Glad to have you back.
+    </p>
+  `;
+
+  return await sendEmail({
+    to: memberEmail,
+    subject: "Welcome back to The Consilium",
+    html: luxuryEmailShell(inner, "Membership Resumed", "The Consilium"),
+  });
+};
+
 export const sendTrialExpiringSoon = async (
   memberEmail: string,
   memberName: string,
