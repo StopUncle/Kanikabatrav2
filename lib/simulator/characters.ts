@@ -74,6 +74,42 @@ export const INNER_VOICE: Character = {
 };
 
 /**
+ * After-Him cast. The man who left her. Avoidant attachment, deniability
+ * as register. Goes quiet for two weeks then ends it with a twelve-minute
+ * coffee. Hoovers months later in lowercase, with kisses, in vague warmth.
+ * Never delivers a reason. The absence of reason is the wound.
+ */
+export const THE_EX_HIM: Character = {
+  id: "the-ex-him",
+  name: "The Ex",
+  description:
+    "The man who left. Avoidant. Speaks in vagueness and plausible deniability. The reason was never given because there was never going to be one. Months later, the lowercase text from a new number.",
+  traits: ["avoidant", "vague", "deniable", "warm-when-cheap"],
+  defaultEmotion: "cold",
+  gender: "male",
+  personalityType: "avoidant",
+  silhouetteType: "male-lean",
+};
+
+/**
+ * After-Him supporting cast. The Girlfriend Council is one composite
+ * character voiced by NAOMI, the loudest of the three. Well-meaning,
+ * story-fossilising, the friend who accidentally helps you build the
+ * shrine you have to take down.
+ */
+export const NAOMI: Character = {
+  id: "naomi",
+  name: "Naomi",
+  description:
+    "Closest girlfriend. Loyal, articulate, dangerously good at narrating your life back to you. Every retelling sharpens his villainy and softens your role. She is not the enemy. She is the friend whose love metabolises into the wrong story.",
+  traits: ["loyal", "articulate", "story-builder", "well-meaning"],
+  defaultEmotion: "concerned",
+  gender: "female",
+  personalityType: "friend",
+  silhouetteType: "female-elegant",
+};
+
+/**
  * Level-specific characters (not recurring). Exported so scenarios in
  * later levels can reference them if needed without duplicating.
  */

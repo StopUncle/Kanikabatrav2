@@ -36,6 +36,8 @@ const VALID_TRACKS: ScenarioTrack[] = [
   "cluster-b-lab",
   "divorce-arc",
   "loving-mira",
+  "after-him",
+  "after-her",
 ];
 
 function resolveTrack(value?: string): ScenarioTrack {
@@ -307,8 +309,8 @@ export default async function SimulatorIndex({
             The <span className="text-warm-gold">Dark Mirror</span>
           </h1>
           <p className="text-text-gray text-base sm:text-lg font-light max-w-2xl mx-auto leading-relaxed">
-            Nine lines. Pick the one that matches your life right now. You can
-            switch any time. Progress tracks independently.
+            Eleven lines. Pick the one that matches your life right now. You
+            can switch any time. Progress tracks independently.
           </p>
         </header>
 
@@ -417,7 +419,7 @@ export default async function SimulatorIndex({
           Desktop (≥sm): wrapping card grid. */}
       <div className="mb-3 flex items-baseline justify-between">
         <p className="text-warm-gold/70 uppercase tracking-[0.3em] text-[10px]">
-          Pick your line · 9 tracks
+          Pick your line · 11 tracks
         </p>
         <p className="text-text-gray/50 text-[10px] uppercase tracking-[0.25em] hidden sm:block">
           Progress tracks independently

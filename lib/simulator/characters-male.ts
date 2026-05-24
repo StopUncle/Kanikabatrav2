@@ -305,3 +305,76 @@ export const INNER_VOICE_M: Character = {
   traits: ["intuitive"],
   defaultEmotion: "neutral",
 };
+
+// =====================================================================
+// AFTER HER (post-breakup, female ex)
+// =====================================================================
+
+/**
+ * The woman who left him. Direct. She had a list. She had been planning
+ * it for four months. He did not know. The candor is the wound, and
+ * later, the candor is the tactic. Hoovers months on via voice memo,
+ * via her sister, via the dog. Never lowercase, never deniable.
+ */
+export const THE_EX_HER: Character = {
+  id: "the-ex-her",
+  name: "The Ex",
+  description:
+    "The woman who left. Direct, articulate, organised. Delivered the breakup as a prepared brief he did not see coming. Months on, hoovers candidly: voice memos at 1am, her sister as a vehicle, a photo of the dog. The candor was always a tactic.",
+  traits: ["direct", "prepared", "candid", "tactical"],
+  defaultEmotion: "serious",
+  gender: "female",
+  personalityType: "avoidant-organised",
+  silhouetteType: "female-elegant",
+};
+
+/**
+ * His father. Generationally silent on his son's love life. When asked,
+ * redirects to work. The redirect is not coldness; it is the lesson.
+ * Showing what to do with the energy without naming it.
+ */
+export const JAMES_FATHER: Character = {
+  id: "james-father",
+  name: "James",
+  description:
+    "His father. Sixty-two, a builder. Will not ask about the breakup. Will ask about work, the truck, the project at the back of the house. The not-asking is the teaching, energy redirected into things that hold their shape under weight.",
+  traits: ["stoic", "redirective", "structural"],
+  defaultEmotion: "neutral",
+  gender: "male",
+  personalityType: "elder-stoic",
+  silhouetteType: "male-imposing",
+};
+
+/**
+ * The boys. Voiced by MARCUS, the loudest of three. Means well. Wrong
+ * about the solution. The Friday bar, the stranger, the "get your dick
+ * wet" plan. The discipline is declining the plan without lecturing them.
+ */
+export const MARCUS_BOY: Character = {
+  id: "marcus-boy",
+  name: "Marcus",
+  description:
+    "Closest friend since college. Loyal, loud, generous, wrong about how this gets solved. Has a plan for you that involves three drinks and a stranger. Will not understand if you decline it; will respect you anyway if you decline it cleanly.",
+  traits: ["loyal", "loud", "generous", "wrong-but-real"],
+  defaultEmotion: "happy",
+  gender: "male",
+  personalityType: "friend",
+  silhouetteType: "male-athletic",
+};
+
+/**
+ * The female friend who knew. Quiet, observant, did not warn him. Her
+ * not-warning was its own kind of loyalty, to her, not to him. Surfaces
+ * in L5 as the laundered channel after the sister fails.
+ */
+export const KAI_FRIEND: Character = {
+  id: "kai-friend",
+  name: "Kai",
+  description:
+    "Mutual friend, closer to her. Saw the four months of planning. Did not warn him; that was not her job. Surfaces months after the breakup as a careful, well-phrased message. The carefulness is the tell.",
+  traits: ["observant", "careful", "loyal-to-her"],
+  defaultEmotion: "knowing",
+  gender: "female",
+  personalityType: "ally-of-the-ex",
+  silhouetteType: "female-athletic",
+};

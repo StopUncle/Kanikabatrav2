@@ -32,6 +32,14 @@ import {
   LOVING_MIRA_SCENARIOS,
   LOVING_MIRA_LEVEL_TITLES,
 } from "./loving-mira";
+import {
+  AFTER_HIM_SCENARIOS,
+  AFTER_HIM_LEVEL_TITLES,
+} from "./after-him";
+import {
+  AFTER_HER_SCENARIOS,
+  AFTER_HER_LEVEL_TITLES,
+} from "./after-her";
 import mission11 from "./mission-1-1";
 import mission12 from "./mission-1-2";
 import mission21 from "./mission-2-1";
@@ -113,6 +121,8 @@ export {
   CLUSTER_B_LAB_SCENARIOS,
   DIVORCE_ARC_SCENARIOS,
   LOVING_MIRA_SCENARIOS,
+  AFTER_HIM_SCENARIOS,
+  AFTER_HER_SCENARIOS,
 };
 
 export const ALL_SCENARIOS: Scenario[] = [
@@ -125,6 +135,8 @@ export const ALL_SCENARIOS: Scenario[] = [
   ...CLUSTER_B_LAB_SCENARIOS,
   ...DIVORCE_ARC_SCENARIOS,
   ...LOVING_MIRA_SCENARIOS,
+  ...AFTER_HIM_SCENARIOS,
+  ...AFTER_HER_SCENARIOS,
 ];
 
 /**
@@ -194,6 +206,8 @@ export function levelTitlesForTrack(
   if (track === "cluster-b-lab") return CLUSTER_B_LAB_LEVEL_TITLES;
   if (track === "divorce-arc") return DIVORCE_ARC_LEVEL_TITLES;
   if (track === "loving-mira") return LOVING_MIRA_LEVEL_TITLES;
+  if (track === "after-him") return AFTER_HIM_LEVEL_TITLES;
+  if (track === "after-her") return AFTER_HER_LEVEL_TITLES;
   return LEVEL_TITLES;
 }
 
@@ -247,6 +261,18 @@ export const TRACK_META: Record<
     sublabel:
       "Long-form BPD narrative · the friend you can't save · learn to stay in love without losing yourself",
     href: "/consilium/simulator?track=loving-mira",
+  },
+  "after-him": {
+    label: "After Him",
+    sublabel:
+      "He left. Reclamation, not grief · no contact, costly signal, the hoover refused, the photo with no charge",
+    href: "/consilium/simulator?track=after-him",
+  },
+  "after-her": {
+    label: "After Her",
+    sublabel:
+      "She left. Sovereignty, not vengeance · rage is the seductive feeling · become the man, not the message",
+    href: "/consilium/simulator?track=after-her",
   },
 };
 

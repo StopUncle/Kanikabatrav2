@@ -28,7 +28,9 @@ export type ScenarioTrack =
   | "pc-child"
   | "cluster-b-lab"
   | "divorce-arc"
-  | "loving-mira";
+  | "loving-mira"
+  | "after-him"
+  | "after-her";
 
 export type EmotionType =
   | "neutral"

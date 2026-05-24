@@ -64,4 +64,6 @@ export const PUBLIC_TRACK_CHIPS: ReadonlyArray<{
   { title: "Cluster-B Lab", blurb: "Short drills · BPD / NPD / ASPD / HPD" },
   { title: "Divorce Arc", blurb: "The speaking, the lawyer, the kids, the year after" },
   { title: "Loving Mira", blurb: "Long-form BPD narrative · the friend you can't save" },
+  { title: "After Him", blurb: "He left · reclamation, not grief · the hoover refused" },
+  { title: "After Her", blurb: "She left · sovereignty, not vengeance · become the man, not the message" },
 ];
