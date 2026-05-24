@@ -41,6 +41,9 @@ export interface MockUser {
   simulatorStreakCurrent: number;
   simulatorStreakLongest: number;
   simulatorLastSession: Date | null;
+  gamesStreakCurrent: number;
+  gamesStreakLongest: number;
+  gamesLastSession: Date | null;
   pushPreferences: Prisma.JsonValue;
   handle: string | null;
   profilePublic: boolean;
@@ -91,6 +94,9 @@ export function createMockUser(overrides: Partial<MockUser> = {}): MockUser {
     simulatorStreakCurrent: 0,
     simulatorStreakLongest: 0,
     simulatorLastSession: null,
+    gamesStreakCurrent: 0,
+    gamesStreakLongest: 0,
+    gamesLastSession: null,
     pushPreferences: null,
     handle: null,
     profilePublic: false,

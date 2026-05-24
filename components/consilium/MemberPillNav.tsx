@@ -10,6 +10,7 @@ import {
   AudioLines,
   Newspaper,
   Target,
+  Gamepad2,
   type LucideIcon,
 } from "lucide-react";
 import AskKanikaPill from "./AskKanikaPill";
@@ -58,6 +59,7 @@ const PILLS: PillItem[] = [
   { href: "/consilium/feed", label: "Feed", icon: Scroll, matchPrefix: "/consilium/feed", countKey: "feed" },
   { href: "/consilium/instincts/today", label: "Instincts", icon: Target, matchPrefix: "/consilium/instincts" },
   { href: "/consilium/simulator", label: "Simulator", icon: Film, matchPrefix: "/consilium/simulator" },
+  { href: "/consilium/games", label: "Games", icon: Gamepad2, matchPrefix: "/consilium/games" },
   {
     href: "/consilium/simulator/leaderboard",
     label: "Leaderboard",

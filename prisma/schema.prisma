@@ -73,6 +73,14 @@ model User {
   simulatorStreakCurrent    Int                  @default(0)
   simulatorStreakLongest    Int                  @default(0)
   simulatorLastSession      DateTime?
+  // Games daily-training streak. Separate from simulator streak so each
+  // becomes its own habit (Lumosity model: one daily training session per
+  // game counts; replays don't). Updated server-side when a GameSession
+  // is recorded for the first time on a given UTC calendar day.
+  gameSessions              GameSession[]
+  gamesStreakCurrent        Int                  @default(0)
+  gamesStreakLongest        Int                  @default(0)
+  gamesLastSession          DateTime?
   simulatorBadges           SimulatorBadge[]
   isBot                     Boolean              @default(false)
   botActive                 Boolean              @default(true)
@@ -1630,5 +1638,39 @@ model Testimonial {
   updatedAt    DateTime @updatedAt
 
   @@index([published, displayOrder])
+}
+
+// ============================================================================
+// Games — daily training sessions (Lumosity-style).
+//
+// Each completed session of a Consilium game writes one row here. Drives:
+//   - Daily-training status (did the user train today, per game)
+//   - Streak math (rolls up to User.gamesStreakCurrent / Longest)
+//   - Per-game leaderboards (future)
+//   - Per-user history / personal best
+//
+// `gameKey` is the stable slug of the game. Speed Drill is "speed-drill";
+// future games (Daily Tell, Read the Room, Screenshot Decoder, Simulator-
+// outside-the-campaign drills) add their own keys without schema changes.
+//
+// The first session of a given UTC calendar day counts for the streak;
+// subsequent same-day plays are practice (score/maxCombo still recorded
+// for personal-best tracking and the leaderboard).
+// ============================================================================
+model GameSession {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  gameKey     String   // "speed-drill" for v1; future-proof for more games
+  score       Int      // correct calls
+  totalCards  Int      // total cards in the run (10 for Speed Drill)
+  accuracy    Int      // 0-100, denormalised for cheap leaderboard reads
+  maxCombo    Int      @default(0)
+  durationSec Int      // total session length including countdown
+  tier        Int      @default(2) // 1=warm-up, 2=sharp, 3=ruthless
+  playedAt    DateTime @default(now())
+
+  @@index([userId, gameKey, playedAt])
+  @@index([gameKey, playedAt])
 }
 
