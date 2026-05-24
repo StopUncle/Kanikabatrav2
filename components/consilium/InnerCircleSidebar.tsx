@@ -79,7 +79,11 @@ interface SidebarProps {
 }
 
 export default function InnerCircleSidebar({
-  onlineCount,
+  // Online count is no longer rendered in the sidebar (2026-05-24). The
+  // prop is kept on the interface so the parent layout's existing call
+  // site doesn't need to change; underscored here to satisfy ESLint's
+  // no-unused-vars without removing the contract.
+  onlineCount: _onlineCount,
   currentTier,
   displayName,
   totalXp = 0,
@@ -160,14 +164,11 @@ export default function InnerCircleSidebar({
             </h1>
           </div>
         </div>
-        {onlineCount !== undefined && onlineCount > 0 && (
-          <div className="flex items-center gap-1.5 mt-3">
-            <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
-            <span className="text-xs text-text-gray">
-              {onlineCount} online
-            </span>
-          </div>
-        )}
+        {/* Online count removed from the sidebar header on user request
+            (2026-05-24). The same signal is still rendered on the
+            feed-pill in MemberPillNav (dot + count next to the Feed
+            link). Single visible counter avoids fighting with itself
+            when the two numbers briefly diverge between renders. */}
       </div>
 
       {/* Identity tile, rank badge + handle + 3 live stats. Stats give
