@@ -8,6 +8,7 @@ import {
   Trophy,
   Award,
   AudioLines,
+  Video,
   Newspaper,
   Target,
   Gamepad2,
@@ -66,6 +67,7 @@ const PILLS: PillItem[] = [
     icon: Trophy,
   },
   { href: "/consilium/badges", label: "Badges", icon: Award, matchPrefix: "/consilium/badges" },
+  { href: "/consilium/videos", label: "Videos", icon: Video, matchPrefix: "/consilium/videos" },
   { href: "/consilium/voice-notes", label: "Voice Notes", icon: AudioLines, matchPrefix: "/consilium/voice-notes" },
   { href: "/blog", label: "Blog", icon: Newspaper, matchPrefix: "/blog" },
 ];
