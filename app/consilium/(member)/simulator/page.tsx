@@ -42,11 +42,25 @@ const VALID_TRACKS: ScenarioTrack[] = [
   "after-her",
 ];
 
-function resolveTrack(value?: string): ScenarioTrack {
+function resolveTrackFromParam(value?: string): ScenarioTrack | null {
   if (value && (VALID_TRACKS as string[]).includes(value)) {
     return value as ScenarioTrack;
   }
-  return "female";
+  return null;
+}
+
+// When no explicit ?track= param is present, default to the track of the
+// scenario the user most recently STARTED. startedAt captures intent
+// (the moment a player opened a scenario) better than completedAt, so a
+// player mid-arc on Business Line keeps landing there even before they
+// finish anything. Falls back to "female" only when the user has zero
+// progress, matching the existing first-visit-chooser intent.
+function trackForScenarioId(id: string): ScenarioTrack | null {
+  const s = ALL_SCENARIOS.find((x) => x.id === id);
+  if (!s?.track) return null;
+  return (VALID_TRACKS as string[]).includes(s.track)
+    ? (s.track as ScenarioTrack)
+    : null;
 }
 
 /**
@@ -67,12 +81,17 @@ export default async function SimulatorIndex({
 }) {
   const userId = await requireServerAuth("/consilium/simulator");
   const params = await searchParams;
-  const track = resolveTrack(params.track);
+  const paramTrack = resolveTrackFromParam(params.track);
 
   const [progress, badgeCount, streak, adventures, adventureProgress, todayCheckIn, currentUser] =
     await Promise.all([
       prisma.simulatorProgress.findMany({
         where: { userId },
+        // Ordered DESC so progress[0] is the most-recently-started row,
+        // used below to default the active track when no ?track= param.
+        // Downstream consumers (Map/filter/reduce/length) don't depend
+        // on order, so adding this is free.
+        orderBy: { startedAt: "desc" },
         select: {
           scenarioId: true,
           currentSceneId: true,
@@ -108,6 +127,15 @@ export default async function SimulatorIndex({
         select: { gender: true },
       }),
     ]);
+
+  // Resolve the active track. URL param wins; otherwise default to the
+  // track of the player's most-recently-started scenario; otherwise
+  // "female". Fixes the bug where players on Business Line kept landing
+  // back on Feminine whenever they hit /consilium/simulator without a
+  // query param (pill nav, sidebar, dashboard links).
+  const track: ScenarioTrack =
+    paramTrack ??
+    (progress[0] ? trackForScenarioId(progress[0].scenarioId) ?? "female" : "female");
 
   // Adventures entry card stats. "Unseen" = published arcs the user has
   // never opened. Drives the emerald NEW pill on the entry card so the
