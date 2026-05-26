@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useEffect, useRef } from "react";
 import {
   Scroll,
   Film,
@@ -82,6 +83,29 @@ interface Props {
 
 export default function MemberPillNav({ onlineCount }: Props) {
   const pathname = usePathname();
+  const scrollRef = useRef<HTMLDivElement | null>(null);
+
+  // Convert vertical wheel into horizontal scroll on PC when the pill row
+  // actually overflows. Only swallows the event when there is room to move
+  // in the requested direction, so when the user hits either end the wheel
+  // falls through and scrolls the page normally. Trackpad horizontal swipes
+  // (deltaX) are left alone — the browser already handles them. Attached via
+  // useEffect with passive:false because React's onWheel is passive.
+  useEffect(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+    const handler = (e: WheelEvent) => {
+      if (e.deltaY === 0 || e.shiftKey) return;
+      const canScrollRight = el.scrollLeft + el.clientWidth < el.scrollWidth - 1;
+      const canScrollLeft = el.scrollLeft > 0;
+      if ((e.deltaY > 0 && canScrollRight) || (e.deltaY < 0 && canScrollLeft)) {
+        e.preventDefault();
+        el.scrollLeft += e.deltaY;
+      }
+    };
+    el.addEventListener("wheel", handler, { passive: false });
+    return () => el.removeEventListener("wheel", handler);
+  }, []);
 
   // Determine the active pill. Leaderboard is a special case, it's nested
   // under /consilium/simulator/leaderboard, but should NOT light up the
@@ -132,9 +156,21 @@ export default function MemberPillNav({ onlineCount }: Props) {
           className="pointer-events-none absolute right-0 top-0 bottom-0 z-10 w-10 bg-gradient-to-l from-deep-black to-transparent lg:hidden"
         />
 
+        {/* Outer is the scroll viewport: full width, hidden scrollbar.
+            Inner uses w-max + mx-auto so it auto-centers when narrower
+            than the viewport (wide desktop) and scrolls cleanly from
+            the left edge when wider (mobile, narrow desktop, sidebar
+            open). The old `lg:justify-center` on a flex with
+            overflow-x-auto traps the leftmost children when content
+            overflows: scrollLeft can't go negative, so center-justified
+            overflow becomes unreachable. This pattern avoids that. */}
         <div
-          className="flex items-center gap-2.5 sm:gap-3 overflow-x-auto snap-x snap-proximity scroll-px-4 sm:scroll-px-6 px-4 sm:px-6 lg:px-8 py-2.5 lg:py-3 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden lg:justify-center"
+          ref={scrollRef}
+          className="overflow-x-auto [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
         >
+          <div
+            className="flex items-center gap-2.5 sm:gap-3 snap-x snap-proximity scroll-px-4 sm:scroll-px-6 px-4 sm:px-6 lg:px-8 py-2.5 lg:py-3 w-max mx-auto"
+          >
           {/* Ask Kanika sits FIRST in the pill row, it's the highest-
               return interaction we can put on the feed (daily engagement
               loop) and we want it visible before the swipe happens on
@@ -194,6 +230,7 @@ export default function MemberPillNav({ onlineCount }: Props) {
               </Link>
             );
           })}
+          </div>
         </div>
       </div>
     </nav>
