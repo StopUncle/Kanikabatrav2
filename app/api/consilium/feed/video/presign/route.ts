@@ -34,7 +34,13 @@ import crypto from "crypto";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-const MAX_BYTES = 500 * 1024 * 1024;
+// 2GB cap — raised from 500MB on 2026-05-26. R2 single-PUT supports up
+// to 5GB; 2GB is the sweet spot before single-PUT becomes a UX problem
+// on home internet (no resume if the upload drops mid-stream). If we
+// hit "I need bigger," the answer is multipart upload, not raising
+// this further.
+const MAX_BYTES = 2 * 1024 * 1024 * 1024;
+const MAX_LABEL = "2GB";
 const ALLOWED_EXTENSIONS = new Set(["mp4", "mov", "m4v", "webm"]);
 
 const EXT_TO_MIME: Record<string, string> = {
@@ -87,7 +93,7 @@ export async function POST(request: NextRequest) {
     }
     if (size > MAX_BYTES) {
       return NextResponse.json(
-        { error: `File too large (max ${MAX_BYTES / (1024 * 1024)}MB)` },
+        { error: `File too large (max ${MAX_LABEL})` },
         { status: 400 },
       );
     }

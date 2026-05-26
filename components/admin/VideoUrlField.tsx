@@ -17,7 +17,9 @@ interface VideoUrlFieldProps {
 }
 
 const ACCEPTED = "video/*,.mp4,.mov,.m4v,.webm";
-const MAX_BYTES = 500 * 1024 * 1024;
+// Keep in sync with /api/consilium/feed/video/presign + /verify.
+const MAX_BYTES = 2 * 1024 * 1024 * 1024;
+const MAX_LABEL = "2GB";
 
 function isValidVideo(f: File): boolean {
   const validExts = ["mp4", "mov", "m4v", "webm"];
@@ -55,7 +57,7 @@ export default function VideoUrlField({
     }
     if (f.size > MAX_BYTES) {
       setError(
-        `File too large (max ${MAX_BYTES / (1024 * 1024)}MB). Encode it down before uploading.`,
+        `File too large (max ${MAX_LABEL}). Encode it down before uploading.`,
       );
       return;
     }

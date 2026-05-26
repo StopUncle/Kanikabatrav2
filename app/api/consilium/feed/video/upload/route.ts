@@ -6,27 +6,30 @@ import { logger } from "@/lib/logger";
 import crypto from "crypto";
 
 /**
- * Admin-only video upload to R2. Mirrors the voice-notes upload route
- * (same R2 bucket, same magic-byte sniff philosophy) so the feed can
- * carry Kanika-on-camera posts alongside audio and essays.
+ * Admin-only video upload to R2. LEGACY direct-upload route, kept for
+ * back-compat. The active flow is presign + verify (the browser PUTs
+ * the bytes straight to R2; Node never sees them). Both VideoUrlField
+ * and the /admin/videos page use the presign path.
+ *
+ * If this route is ever called with a 2GB file, Node WILL buffer all
+ * 2GB into RAM at `Buffer.from(await file.arrayBuffer())`. Cap is kept
+ * in sync with presign for parity, but if you find yourself relying on
+ * this route, switch the caller to presign.
  *
  * Sniffing is the source of truth, phone cameras / share-sheets
  * regularly arrive with empty MIME, codec-suffixed MIME, or wrong
  * extension. We trust the bytes first, the extension/MIME second.
- *
- * Cap is 500MB. The 50MB voice-note cap doesn't fit a 60-90s 1080p clip.
- * Beyond 500MB the right answer is to encode before upload, not to bump
- * the cap further. Next.js body parsing memory will become the bottleneck.
  */
 
 // Force the Node runtime, the Edge runtime can't buffer multi-hundred-MB
 // uploads through formData(). Long timeout for slow connections pushing
-// 500MB clips.
+// large clips.
 export const runtime = "nodejs";
 export const maxDuration = 300;
 export const dynamic = "force-dynamic";
 
-const MAX_BYTES = 500 * 1024 * 1024;
+const MAX_BYTES = 2 * 1024 * 1024 * 1024;
+const MAX_LABEL = "2GB";
 
 const ALLOWED_EXTENSIONS = new Set(["mp4", "mov", "m4v", "webm"]);
 
@@ -104,7 +107,7 @@ export async function POST(request: NextRequest) {
 
     if (file.size > MAX_BYTES) {
       return NextResponse.json(
-        { error: `File too large (max ${MAX_BYTES / (1024 * 1024)}MB)` },
+        { error: `File too large (max ${MAX_LABEL})` },
         { status: 400 },
       );
     }

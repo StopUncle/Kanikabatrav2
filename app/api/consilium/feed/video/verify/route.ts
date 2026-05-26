@@ -21,7 +21,9 @@ import { logger } from "@/lib/logger";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-const MAX_BYTES = 500 * 1024 * 1024;
+// Keep in sync with presign route.
+const MAX_BYTES = 2 * 1024 * 1024 * 1024;
+const MAX_LABEL = "2GB";
 const KEY_PREFIX = "feed-videos/";
 
 interface VerifyRequest {
@@ -71,7 +73,7 @@ export async function POST(request: NextRequest) {
         // junk if someone manually PUT a huge file to a presigned URL.
         logger.warn("[feed-video-verify] object exceeds max size", { key, size });
         return NextResponse.json(
-          { error: `Uploaded file exceeds ${MAX_BYTES / (1024 * 1024)}MB limit` },
+          { error: `Uploaded file exceeds ${MAX_LABEL} limit` },
           { status: 413 },
         );
       }

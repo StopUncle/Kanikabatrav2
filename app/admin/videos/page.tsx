@@ -31,7 +31,9 @@ interface VideoPost {
 }
 
 const ACCEPTED = "video/*,.mp4,.mov,.m4v,.webm";
-const MAX_BYTES = 500 * 1024 * 1024;
+// Keep in sync with /api/consilium/feed/video/presign + /verify.
+const MAX_BYTES = 2 * 1024 * 1024 * 1024;
+const MAX_LABEL = "2GB";
 
 function isValidVideo(f: File): boolean {
   const validExts = ["mp4", "mov", "m4v", "webm"];
@@ -175,7 +177,7 @@ export default function VideosPage() {
     if (f.size > MAX_BYTES) {
       setUploadStatus("error");
       setStatusMessage(
-        `File too large (max ${MAX_BYTES / (1024 * 1024)}MB). Encode it down before uploading.`,
+        `File too large (max ${MAX_LABEL}). Encode it down before uploading.`,
       );
       return;
     }
@@ -438,10 +440,10 @@ export default function VideosPage() {
                     Drag and drop or click to browse
                   </p>
                   <p className="text-text-gray/50 text-xs">
-                    MP4, MOV, M4V, WEBM &middot; Max 500MB
+                    MP4, MOV, M4V, WEBM &middot; Max {MAX_LABEL}
                   </p>
                   <p className="text-text-gray/40 text-[10px] mt-2">
-                    Tip: encode 1080p H.264 mp4 at ~4–6 Mbps for smooth playback on mobile.
+                    Tip: encode 1080p H.264 mp4 at ~6 Mbps for smooth playback on mobile. Files above ~500MB upload slowly on home internet and can&apos;t resume if the connection drops.
                   </p>
                 </div>
               )}
