@@ -94,8 +94,14 @@ export async function GET(request: NextRequest) {
       { expiresIn: "90d" },
     );
 
+    // Build the absolute URL from NEXT_PUBLIC_BASE_URL, not request.url.
+    // Behind Railway's proxy, `request.url` resolves to the internal
+    // listening URL (https://localhost:8080) and the resulting redirect
+    // breaks for every clicker.
+    const baseUrl =
+      process.env.NEXT_PUBLIC_BASE_URL || "https://kanikarose.com";
     return NextResponse.redirect(
-      new URL(`/consilium/claim?token=${magicToken}`, request.url),
+      `${baseUrl}/consilium/claim?token=${magicToken}`,
     );
   } catch {
     return errorPage("Something went wrong. Please try again or contact support.");

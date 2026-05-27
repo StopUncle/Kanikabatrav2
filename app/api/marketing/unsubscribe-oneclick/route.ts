@@ -89,5 +89,10 @@ export async function GET(req: NextRequest) {
   const dest = token
     ? `/unsubscribe?token=${encodeURIComponent(token)}`
     : "/unsubscribe";
-  return NextResponse.redirect(new URL(dest, req.url), 302);
+  // Build absolute URL from NEXT_PUBLIC_BASE_URL, not req.url. Behind
+  // Railway's proxy, `req.url` resolves to https://localhost:8080 and
+  // the redirect Location would be unreachable for the recipient.
+  const baseUrl =
+    process.env.NEXT_PUBLIC_BASE_URL || "https://kanikarose.com";
+  return NextResponse.redirect(`${baseUrl}${dest}`, 302);
 }
