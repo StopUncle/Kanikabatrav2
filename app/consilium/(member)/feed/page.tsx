@@ -8,9 +8,15 @@ import OnboardingModal from "@/components/consilium/OnboardingModal";
 import FirstMovesChecklist from "@/components/consilium/FirstMovesChecklist";
 import FirstSevenDays from "@/components/consilium/FirstSevenDays";
 import InstinctsFeedCard from "@/components/consilium/InstinctsFeedCard";
+import DailyMissionCard from "@/components/consilium/DailyMissionCard";
 import { MessageCircle, Mail } from "lucide-react";
 import { tierForMember } from "@/components/consilium/badge-tiers";
 import { getInstinctScore, getTellStreak } from "@/lib/tells/db";
+import { readDailyStreak } from "@/lib/streak/daily";
+import {
+  getDailyMission,
+  isDailyMissionDoneToday,
+} from "@/lib/streak/daily-mission";
 import { utcDateKey } from "@/lib/tells/streak";
 
 export const metadata = {
@@ -83,10 +89,12 @@ export default async function FeedPage({
   const genderWhere = feedPostGenderWhere(viewerGender);
 
   const PAGE_SIZE = 20;
-  // Score, streak, and the feed query are mutually independent — run them in
-  // one parallel round-trip instead of three serial awaits. The redirect
-  // guard above only depends on viewerRecord, which is already resolved.
-  const [instinctScore, tellStreak, rows] = await Promise.all([
+  // Today's mission is a pure function of the UTC date — no query needed.
+  const dailyMission = getDailyMission();
+  // Score, streak, feed, mission-done, and unified streak are mutually
+  // independent — run them in one parallel round-trip. The redirect guard
+  // above only depends on viewerRecord, which is already resolved.
+  const [instinctScore, tellStreak, rows, missionDone, dailyStreak] = await Promise.all([
     getInstinctScore(userId),
     getTellStreak(userId),
     prisma.feedPost.findMany({
@@ -114,6 +122,8 @@ export default async function FeedPage({
         },
       },
     }),
+    isDailyMissionDoneToday(prisma, userId),
+    readDailyStreak(prisma, userId),
   ]);
   const today = utcDateKey();
   const doneToday = tellStreak?.lastTellDate === today;
@@ -212,6 +222,17 @@ export default async function FeedPage({
             Posts, insights, and discussions from the council.
           </p>
         </div>
+
+        {dailyMission && (
+          <div className="mb-6">
+            <DailyMissionCard
+              mission={dailyMission}
+              doneToday={missionDone}
+              streakCurrent={dailyStreak.current}
+              atRisk={dailyStreak.isAtRisk}
+            />
+          </div>
+        )}
 
         <FirstSevenDays
           activatedAt={
