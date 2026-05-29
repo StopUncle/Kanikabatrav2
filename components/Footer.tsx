@@ -21,7 +21,6 @@ const Footer = () => {
       { name: "Courses", href: "/courses" },
       { name: "Coaching", href: "/coaching" },
       { name: "The Consilium", href: "/consilium" },
-      { name: "Ask Kanika", href: "/ask" },
       { name: "Content", href: "/content" },
       { name: "Blog", href: "/blog" },
       { name: "Contact", href: "/contact" },

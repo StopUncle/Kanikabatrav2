@@ -384,21 +384,6 @@ export default function LinksPage() {
             </svg>
           </button>
 
-          {/* AMA */}
-          <a
-            href={withUtm("/ask", "ama")}
-            onClick={() => trackEvent("qa_click")}
-            className="group flex items-center justify-between p-4 rounded-xl border border-[#1e1915] hover:border-[#d4af37]/20 active:scale-[0.98] transition-all"
-          >
-            <div>
-              <p className="text-[#f5f0ed] text-sm font-medium group-hover:text-[#d4af37] transition-colors">Ask Me Anything</p>
-              <p className="text-[#6b7280] text-[11px] mt-0.5">Written or voice answer &middot; From $39.99</p>
-            </div>
-            <svg className="w-4 h-4 text-[#6b7280]/40 shrink-0 group-hover:text-[#d4af37]/60 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
-            </svg>
-          </a>
-
           {/* Full Site */}
           <a
             href={withUtm("/", "homepage")}
