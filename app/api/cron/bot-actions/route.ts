@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { verifyCronSecret } from "@/lib/cron-auth";
 import { prisma } from "@/lib/prisma";
 import { getAnthropic, ANTHROPIC_MODEL } from "@/lib/anthropic";
 import { getBotSettings } from "@/lib/bots/settings";
@@ -13,8 +14,7 @@ const MAX_ATTEMPTS = 5;
 const ANTHROPIC_TIMEOUT_MS = 15_000;
 
 export async function POST(request: NextRequest) {
-  const secret = request.headers.get("x-cron-secret");
-  if (secret !== process.env.CRON_SECRET && secret !== process.env.ADMIN_SECRET) {
+  if (!verifyCronSecret(request)) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 

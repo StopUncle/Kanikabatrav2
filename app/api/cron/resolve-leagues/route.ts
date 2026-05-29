@@ -13,16 +13,13 @@
  */
 
 import { NextRequest, NextResponse } from "next/server";
+import { verifyCronSecret } from "@/lib/cron-auth";
 import { logger } from "@/lib/logger";
 import { resolveLeagues } from "@/lib/tells/leagues/resolve";
 import { isoWeekKey } from "@/lib/tells/streak";
 
 function authorize(request: NextRequest): boolean {
-  const secret = request.headers.get("x-cron-secret");
-  return (
-    secret === process.env.CRON_SECRET ||
-    secret === process.env.ADMIN_SECRET
-  );
+  return verifyCronSecret(request);
 }
 
 export async function POST(request: NextRequest) {

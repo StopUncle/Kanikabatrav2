@@ -15,15 +15,12 @@
  */
 
 import { NextRequest, NextResponse } from "next/server";
+import { verifyCronSecret } from "@/lib/cron-auth";
 import { prisma } from "@/lib/prisma";
 import { logger } from "@/lib/logger";
 
 function authorize(request: NextRequest): boolean {
-  const secret = request.headers.get("x-cron-secret");
-  return (
-    secret === process.env.CRON_SECRET ||
-    secret === process.env.ADMIN_SECRET
-  );
+  return verifyCronSecret(request);
 }
 
 export async function POST(request: NextRequest) {

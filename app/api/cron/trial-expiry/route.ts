@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { verifyCronSecret } from "@/lib/cron-auth";
 import { prisma } from "@/lib/prisma";
 import { sendMembershipEndingSoon } from "@/lib/email";
 
@@ -31,8 +32,7 @@ import { sendMembershipEndingSoon } from "@/lib/email";
 const NON_RENEWING_CYCLES = ["gift"] as const;
 
 export async function POST(request: NextRequest) {
-  const secret = request.headers.get("x-cron-secret");
-  if (secret !== process.env.CRON_SECRET && secret !== process.env.ADMIN_SECRET) {
+  if (!verifyCronSecret(request)) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 

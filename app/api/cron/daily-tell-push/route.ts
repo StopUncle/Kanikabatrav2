@@ -18,6 +18,7 @@
  */
 
 import { NextRequest, NextResponse } from "next/server";
+import { verifyCronSecret } from "@/lib/cron-auth";
 import { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import { sendPushToUser } from "@/lib/push";
@@ -55,11 +56,7 @@ function readDailyTellPrefs(raw: Prisma.JsonValue | null): DailyTellPrefs {
 }
 
 function authorize(request: NextRequest): boolean {
-  const secret = request.headers.get("x-cron-secret");
-  return (
-    secret === process.env.CRON_SECRET ||
-    secret === process.env.ADMIN_SECRET
-  );
+  return verifyCronSecret(request);
 }
 
 export async function POST(request: NextRequest) {

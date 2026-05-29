@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { verifyCronSecret } from "@/lib/cron-auth";
 import jwt from "jsonwebtoken";
 import { prisma } from "@/lib/prisma";
 import {
@@ -17,11 +18,9 @@ function getJwtSecretForReset(): string {
 }
 
 export async function POST(request: NextRequest) {
-  // Verify cron secret to prevent unauthorized access
-  const authHeader = request.headers.get("authorization");
-  const cronSecret = process.env.CRON_SECRET || process.env.ADMIN_SECRET;
-
-  if (!cronSecret || authHeader !== `Bearer ${cronSecret}`) {
+  // Constant-time cron auth (CRON_SECRET only). verifyCronSecret accepts the
+  // `Authorization: Bearer` header this route has always used.
+  if (!verifyCronSecret(request)) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
