@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 import { requireServerAuth } from "@/lib/auth/server-auth";
-import { getViewerGender, feedPostGenderWhere } from "@/lib/community/gender-filter";
+import { feedPostGenderWhere } from "@/lib/community/gender-filter";
 import { prisma } from "@/lib/prisma";
 import { memberSafeName } from "@/lib/community/privacy";
 import FeedList from "@/components/consilium/FeedList";
@@ -76,47 +76,47 @@ export default async function FeedPage({
     hasComment: (viewerRecord?._count.feedComments ?? 0) > 0,
   };
 
-  const viewerGender = await getViewerGender(userId);
+  // viewerRecord already selected `gender`, so reuse it instead of firing a
+  // second full User lookup (getViewerGender did exactly that). genderWhere
+  // is pure once we have the gender.
+  const viewerGender = viewerRecord?.gender ?? null;
   const genderWhere = feedPostGenderWhere(viewerGender);
 
-  // Pull score + streak so the InstinctsFeedCard above the feed can
-  // render the user's hex + streak. doneToday is true if the user
-  // has any TellResponse on today's UTC date — reused as the
-  // copy-switch between "Today's Tell is waiting" and "Composite ###".
-  const [instinctScore, tellStreak] = await Promise.all([
+  const PAGE_SIZE = 20;
+  // Score, streak, and the feed query are mutually independent — run them in
+  // one parallel round-trip instead of three serial awaits. The redirect
+  // guard above only depends on viewerRecord, which is already resolved.
+  const [instinctScore, tellStreak, rows] = await Promise.all([
     getInstinctScore(userId),
     getTellStreak(userId),
+    prisma.feedPost.findMany({
+      where: genderWhere,
+      take: PAGE_SIZE + 1,
+      orderBy: [{ isPinned: "desc" }, { createdAt: "desc" }],
+      include: {
+        author: {
+          select: {
+            id: true,
+            name: true,
+            displayName: true,
+            role: true,
+            communityMembership: { select: { activatedAt: true } },
+          },
+        },
+        _count: {
+          select: {
+            comments: { where: { status: "APPROVED" } },
+          },
+        },
+        likes: {
+          where: { userId },
+          select: { id: true },
+        },
+      },
+    }),
   ]);
   const today = utcDateKey();
   const doneToday = tellStreak?.lastTellDate === today;
-
-  const PAGE_SIZE = 20;
-  const rows = await prisma.feedPost.findMany({
-    where: genderWhere,
-    take: PAGE_SIZE + 1,
-    orderBy: [{ isPinned: "desc" }, { createdAt: "desc" }],
-    include: {
-      author: {
-        select: {
-          id: true,
-          name: true,
-          displayName: true,
-          role: true,
-          communityMembership: { select: { activatedAt: true } },
-        },
-      },
-      _count: {
-        select: {
-          comments: { where: { status: "APPROVED" } },
-          likes: true,
-        },
-      },
-      likes: {
-        where: { userId },
-        select: { id: true },
-      },
-    },
-  });
 
   // Drop unpinned posts whose title matches an already-pinned post.
   // Re-pinning a fresh copy of an evergreen welcome/rules post used to

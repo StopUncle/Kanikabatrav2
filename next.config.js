@@ -3,6 +3,13 @@ const { withSentryConfig } = require("@sentry/nextjs");
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   trailingSlash: false,
+  // Lock in barrel-import tree-shaking regardless of Next's shifting defaults.
+  // lucide-react is imported as named icons in ~220 files; without this a
+  // change to Next's built-in default list could silently pull the whole
+  // icon set into client bundles.
+  experimental: {
+    optimizePackageImports: ["framer-motion", "lucide-react"],
+  },
   images: {
     remotePatterns: [
       {
