@@ -29,7 +29,8 @@ export type PushCategory =
   | "forumReply"
   | "mention"
   | "broadcast"
-  | "dailyTell";
+  | "dailyTell"
+  | "dailyStreak";
 
 export interface PushPayload {
   title: string;
@@ -61,6 +62,11 @@ const DEFAULT_OPT_IN: Record<PushCategory, boolean> = {
   mention: true,
   broadcast: false, // Broadcast pushes are admin-initiated; default off.
   dailyTell: false, // Daily-Tell push is opt-in; the user picks an hour.
+  // Daily streak-save / mission nudge. Default-ON: this is the retention
+  // mechanic against dormancy, so members get it unless they opt out. The
+  // cron decides WHO (at-risk streak vs gentle mission ping); this gate only
+  // honours an explicit opt-out.
+  dailyStreak: true,
 };
 
 let configured = false;

@@ -63,6 +63,10 @@ on:
     # collisions). Drift detector: writes mismatches to
     # MembershipReconciliation for admin review. No automatic remediation.
     - cron: '23 * * * *'
+    # Daily streak-save / mission nudge — 20:00 UTC, a few hours before the
+    # UTC-midnight rollover that breaks streaks, so members have the evening
+    # to act. Pushes active members who haven't played today.
+    - cron: '0 20 * * *'
   workflow_dispatch:
     # Allow manual triggering from the GitHub Actions UI. Useful for
     # testing or firing a cron out-of-band without waiting for the next
@@ -89,6 +93,7 @@ on:
           - dormant-member
           - auto-resume-pauses
           - reconcile-memberships
+          - daily-streak-nudge
 
 env:
   BASE_URL: https://kanikarose.com
@@ -323,6 +328,23 @@ jobs:
       - name: Hit /api/cron/resolve-leagues
         run: |
           curl -fsS -X POST "$BASE_URL/api/cron/resolve-leagues" \
+            -H "x-cron-secret: ${{ secrets.CRON_SECRET }}" \
+            -H "Content-Type: application/json" \
+            --max-time 120
+
+  daily-streak-nudge:
+    # Daily at 20:00 UTC — a few hours before the UTC-midnight rollover that
+    # breaks streaks. Pushes active members who haven't played today: at-risk
+    # streak holders get a save reminder, everyone else a gentle mission ping.
+    if: >-
+      github.event.schedule == '0 20 * * *' ||
+      (github.event_name == 'workflow_dispatch' &&
+       (github.event.inputs.target == 'all' || github.event.inputs.target == 'daily-streak-nudge'))
+    runs-on: ubuntu-latest
+    steps:
+      - name: Hit /api/cron/daily-streak-nudge
+        run: |
+          curl -fsS -X POST "$BASE_URL/api/cron/daily-streak-nudge" \
             -H "x-cron-secret: ${{ secrets.CRON_SECRET }}" \
             -H "Content-Type: application/json" \
             --max-time 120
