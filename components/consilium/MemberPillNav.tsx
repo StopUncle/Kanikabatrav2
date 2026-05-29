@@ -11,7 +11,6 @@ import {
   AudioLines,
   Video,
   Newspaper,
-  Target,
   Gamepad2,
   type LucideIcon,
 } from "lucide-react";
@@ -57,9 +56,13 @@ type PillItem = {
 // section 3). Empty surfaces erode the premium feel of the live ones; the
 // route still exists for revival but is hidden from member nav until the
 // certification curriculum (Phase 3-4) gives it real content.
+// Instincts pill demoted from the top strip 2026-05-29: Tells/Instincts
+// is cooling (≈20 responses / 7d) while the Simulator carries engagement
+// (271 runs / 30d). The top strip is for the surfaces members actually
+// return to; Instincts stays reachable from the sidebar, folded under the
+// Simulator. To revive, re-add the pill with icon Target (and its import).
 const PILLS: PillItem[] = [
   { href: "/consilium/feed", label: "Feed", icon: Scroll, matchPrefix: "/consilium/feed", countKey: "feed" },
-  { href: "/consilium/instincts/today", label: "Instincts", icon: Target, matchPrefix: "/consilium/instincts" },
   { href: "/consilium/simulator", label: "Simulator", icon: Film, matchPrefix: "/consilium/simulator" },
   { href: "/consilium/games", label: "Games", icon: Gamepad2, matchPrefix: "/consilium/games" },
   {

@@ -39,13 +39,16 @@ import type { ActivityItem, ActivityKind } from "@/lib/community/activity";
 // `git log` this file and put back the ForumCategory / ChatRoom types,
 // the useEffect at line ~140 that called /api/community/categories +
 // /api/community/chat/rooms, and the JSX blocks they fed.
+// Instincts demoted below Simulator 2026-05-29: Tells/Instincts is cooling
+// while the Simulator carries engagement, so it's folded into the
+// Simulator's orbit rather than holding the #2 slot.
 const MAIN_NAV = [
   { href: "/consilium/feed", label: "Feed", icon: Scroll },
-  { href: "/consilium/instincts/today", label: "Instincts", icon: Target },
   { href: "/consilium/receipts", label: "Receipts", icon: ScrollText },
   { href: "/consilium/voice-notes", label: "Voice Notes", icon: AudioLines },
   { href: "/consilium/previews", label: "Previews", icon: Clock },
   { href: "/consilium/simulator", label: "Simulator", icon: Film },
+  { href: "/consilium/instincts/today", label: "Instincts", icon: Target },
   { href: "/consilium/book", label: "The Book", icon: BookOpen },
   { href: "/consilium/badges", label: "Badges", icon: Award },
   { href: "/consilium/quiz", label: "Dark Mirror", icon: Eye },
