@@ -111,12 +111,32 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Store questionnaire data in DB as backup (so it's never lost even if email fails)
+    // Store questionnaire data in DB (so it's never lost even if email fails).
+    // Match strategy, most precise first:
+    //   1. Stripe orders store paypalOrderId as `ST-${sessionId}`; the client
+    //      sends the raw sessionId, so try both the raw value and the prefixed
+    //      form. (Legacy PayPal orders used the raw id directly.)
+    //   2. Fall back to the buyer's most recent coaching purchase by email, so
+    //      a mismatched/empty order id still lands the answers on the right
+    //      session instead of dropping them.
     try {
-      const purchase = await prisma.purchase.findFirst({
-        where: { paypalOrderId: body.orderId },
+      let purchase = await prisma.purchase.findFirst({
+        where: {
+          paypalOrderId: { in: [body.orderId, `ST-${body.orderId}`] },
+        },
         include: { sessions: true },
       });
+
+      if (!purchase?.sessions?.length) {
+        purchase = await prisma.purchase.findFirst({
+          where: {
+            type: "COACHING",
+            customerEmail: { equals: body.customerEmail, mode: "insensitive" },
+          },
+          include: { sessions: true },
+          orderBy: { createdAt: "desc" },
+        });
+      }
 
       if (purchase?.sessions?.length) {
         await prisma.coachingSession.update({
@@ -125,7 +145,12 @@ export async function POST(request: NextRequest) {
         });
         console.log("Questionnaire data saved to DB for session:", purchase.sessions[0].id);
       } else {
-        console.warn("No coaching session found for order:", body.orderId);
+        console.warn(
+          "No coaching session found for order:",
+          body.orderId,
+          "email:",
+          body.customerEmail,
+        );
       }
     } catch (dbError) {
       console.error("Failed to save questionnaire to DB (email will still be attempted):", dbError);

@@ -58,6 +58,29 @@ const timeSlots = [
   "Night (8-11 PM)",
 ];
 
+// Fields the questionnaire API rejects when blank, grouped by the step that
+// collects them. Validating client-side (instead of letting the server 400
+// with a message the old modal swallowed) is what makes the form actually
+// submittable — a single missing field used to fail silently and forever.
+const REQUIRED_BY_STEP: Record<number, { field: keyof FormData; label: string }[]> = {
+  1: [
+    { field: "preferredName", label: "Preferred Name" },
+    { field: "age", label: "Age Range" },
+    { field: "timezone", label: "Timezone" },
+    { field: "urgency", label: "Session Urgency" },
+  ],
+  2: [
+    { field: "currentSituation", label: "Current Life Situation" },
+    { field: "primaryChallenges", label: "Primary Challenges" },
+  ],
+  3: [
+    { field: "mentalHealthHistory", label: "Mental Health History" },
+    { field: "suicidalThoughts", label: "Suicidal or Self-Harm Thoughts" },
+  ],
+  4: [{ field: "specificGoals", label: "Specific Goals" }],
+  5: [{ field: "timeCommitment", label: "Time Commitment" }],
+};
+
 export default function BookingModal({
   isOpen,
   onClose,
@@ -71,6 +94,7 @@ export default function BookingModal({
   const [submitStatus, setSubmitStatus] = useState<
     "idle" | "success" | "error"
   >("idle");
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const [formData, setFormData] = useState<FormData>({
     preferredName: customerName,
@@ -119,9 +143,29 @@ export default function BookingModal({
     }
   };
 
+  // Returns the human labels of any required fields still blank on a step.
+  const missingForStep = (step: number): string[] =>
+    (REQUIRED_BY_STEP[step] || [])
+      .filter(({ field }) => {
+        const v = formData[field];
+        return typeof v === "string" ? v.trim() === "" : !v;
+      })
+      .map(({ label }) => label);
+
   const handleSubmit = async () => {
+    const missing = missingForStep(5);
+    if (missing.length) {
+      setErrorMessage(`Please complete: ${missing.join(", ")}`);
+      return;
+    }
+    if (!formData.consentAgreement || !formData.understandingConfirmation) {
+      setErrorMessage("Please accept both agreements to continue.");
+      return;
+    }
+
     setIsSubmitting(true);
     setSubmitStatus("idle");
+    setErrorMessage(null);
 
     try {
       const response = await fetch("/api/booking/questionnaire", {
@@ -144,17 +188,39 @@ export default function BookingModal({
           onClose();
         }, 3000);
       } else {
+        // Surface the API's specific reason (e.g. a missing field or the
+        // mental-health-crisis gate) instead of a generic failure the user
+        // can't act on.
+        const data = await response.json().catch(() => null);
+        setErrorMessage(
+          data?.error ||
+            "Failed to submit questionnaire. Please try again or contact support.",
+        );
         setSubmitStatus("error");
       }
     } catch (_error) {
+      setErrorMessage(
+        "Network error. Please check your connection and try again.",
+      );
       setSubmitStatus("error");
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  const nextStep = () => setCurrentStep((prev) => Math.min(prev + 1, 5));
-  const prevStep = () => setCurrentStep((prev) => Math.max(prev - 1, 1));
+  const nextStep = () => {
+    const missing = missingForStep(currentStep);
+    if (missing.length) {
+      setErrorMessage(`Please complete: ${missing.join(", ")}`);
+      return;
+    }
+    setErrorMessage(null);
+    setCurrentStep((prev) => Math.min(prev + 1, 5));
+  };
+  const prevStep = () => {
+    setErrorMessage(null);
+    setCurrentStep((prev) => Math.max(prev - 1, 1));
+  };
 
   const renderStep = () => {
     switch (currentStep) {
@@ -748,11 +814,7 @@ export default function BookingModal({
               ) : (
                 <button
                   onClick={handleSubmit}
-                  disabled={
-                    isSubmitting ||
-                    !formData.consentAgreement ||
-                    !formData.understandingConfirmation
-                  }
+                  disabled={isSubmitting}
                   className="px-6 py-2 bg-gradient-to-r from-accent-gold to-accent-gold/80 text-deep-black rounded-lg hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed transition-all"
                 >
                   {isSubmitting ? "Submitting..." : "Submit Questionnaire"}
@@ -760,12 +822,9 @@ export default function BookingModal({
               )}
             </div>
 
-            {submitStatus === "error" && (
+            {errorMessage && (
               <div className="px-6 py-4 bg-deep-burgundy/20 border-t border-deep-burgundy/30 text-center">
-                <p className="text-deep-burgundy">
-                  Failed to submit questionnaire. Please try again or contact
-                  support.
-                </p>
+                <p className="text-deep-burgundy">{errorMessage}</p>
               </div>
             )}
           </m.div>

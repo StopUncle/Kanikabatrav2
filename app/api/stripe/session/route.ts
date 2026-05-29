@@ -83,7 +83,11 @@ export async function GET(request: NextRequest) {
       success: true,
       type: isBook ? "book" : isCoaching ? "coaching" : "purchase",
       amount,
-      orderId: sessionId.slice(0, 20),
+      // Full session id (not truncated). The coaching questionnaire endpoint
+      // matches this against Purchase.paypalOrderId (stored as `ST-${sessionId}`
+      // by the Stripe webhook); a truncated id silently broke that lookup and
+      // dropped every coaching questionnaire submission.
+      orderId: sessionId,
       customerName: name,
       customerEmail: email,
       packageName,
