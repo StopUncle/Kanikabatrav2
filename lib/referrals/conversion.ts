@@ -78,6 +78,11 @@ export async function recordReferralConversion(args: {
                 referrerId: referrer.id,
               },
             },
+            // Idempotency key keyed on the (UNIQUE) referee: if the Stripe
+            // credit succeeds but the Referral upsert below throws, a webhook
+            // retry would re-enter here — without this, the referrer would be
+            // credited twice. Stripe collapses the retry to the same txn.
+            { idempotencyKey: `referral-credit-${refereeUserId}` },
           );
           rewardTxnId = txn.id;
         }

@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import { resolveActiveUserId } from "@/lib/auth/resolve-user";
 import { getAdminUserId } from "@/lib/auth/server-auth";
@@ -51,29 +52,57 @@ export async function POST(
     return NextResponse.json({ error: "Question closed" }, { status: 409 });
   }
 
-  const result = await prisma.$transaction(async (tx) => {
-    const existing = await tx.questionUpvote.findUnique({
-      where: { questionId_userId: { questionId: id, userId } },
-      select: { id: true },
+  try {
+    const result = await prisma.$transaction(async (tx) => {
+      const existing = await tx.questionUpvote.findUnique({
+        where: { questionId_userId: { questionId: id, userId } },
+        select: { id: true },
+      });
+      if (existing) {
+        await tx.questionUpvote.delete({ where: { id: existing.id } });
+        const updated = await tx.memberQuestion.update({
+          where: { id },
+          data: { upvoteCount: { decrement: 1 } },
+          select: { upvoteCount: true },
+        });
+        return { upvoted: false, upvoteCount: updated.upvoteCount };
+      } else {
+        await tx.questionUpvote.create({ data: { questionId: id, userId } });
+        const updated = await tx.memberQuestion.update({
+          where: { id },
+          data: { upvoteCount: { increment: 1 } },
+          select: { upvoteCount: true },
+        });
+        return { upvoted: true, upvoteCount: updated.upvoteCount };
+      }
     });
-    if (existing) {
-      await tx.questionUpvote.delete({ where: { id: existing.id } });
-      const updated = await tx.memberQuestion.update({
-        where: { id },
-        data: { upvoteCount: { decrement: 1 } },
-        select: { upvoteCount: true },
-      });
-      return { upvoted: false, upvoteCount: updated.upvoteCount };
-    } else {
-      await tx.questionUpvote.create({ data: { questionId: id, userId } });
-      const updated = await tx.memberQuestion.update({
-        where: { id },
-        data: { upvoteCount: { increment: 1 } },
-        select: { upvoteCount: true },
-      });
-      return { upvoted: true, upvoteCount: updated.upvoteCount };
-    }
-  });
 
-  return NextResponse.json(result);
+    return NextResponse.json(result);
+  } catch (err) {
+    // Concurrent double-tap: a unique-constraint violation (P2002, two
+    // creates) or a missing-row delete (P2025, two deletes) means another
+    // in-flight request already applied the toggle. The winning transaction
+    // kept upvoteCount correct, so reconcile by returning the authoritative
+    // state instead of 500-ing.
+    if (
+      err instanceof Prisma.PrismaClientKnownRequestError &&
+      (err.code === "P2002" || err.code === "P2025")
+    ) {
+      const [exists, current] = await Promise.all([
+        prisma.questionUpvote.findUnique({
+          where: { questionId_userId: { questionId: id, userId } },
+          select: { id: true },
+        }),
+        prisma.memberQuestion.findUnique({
+          where: { id },
+          select: { upvoteCount: true },
+        }),
+      ]);
+      return NextResponse.json({
+        upvoted: !!exists,
+        upvoteCount: current?.upvoteCount ?? 0,
+      });
+    }
+    throw err;
+  }
 }
