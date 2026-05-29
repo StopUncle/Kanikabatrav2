@@ -1117,13 +1117,24 @@ export async function POST(request: NextRequest) {
           membership.status === "ACTIVE" ||
           membership.suspendReason === "payment-failed";
 
+        // Only extend paid-through for an ACTIVE member (normal renewal) or a
+        // payment-failed member whose card just recovered. A member-requested
+        // pause (or any other non-payment suspension) must NOT have its expiry
+        // pushed past the pause by a late or stray invoice event.
+        if (!shouldReactivate) {
+          console.log(
+            `[stripe-webhook] invoice for non-reactivatable membership ${membership.id} (reason: ${membership.suspendReason}), not extending expiry`,
+          );
+          break;
+        }
+
         await prisma.communityMembership.update({
           where: { id: membership.id },
           data: {
             expiresAt: newExpiresAt,
-            ...(shouldReactivate
-              ? { status: "ACTIVE", suspendReason: null, suspendedAt: null }
-              : {}),
+            status: "ACTIVE",
+            suspendReason: null,
+            suspendedAt: null,
           },
         });
 
@@ -1223,7 +1234,14 @@ export async function POST(request: NextRequest) {
             data: {
               status: "SUSPENDED",
               suspendedAt: new Date(),
-              suspendReason: "payment-paused",
+              // Don't clobber a member-requested pause: the auto-resume cron
+              // only resumes rows whose reason is exactly that, so overwriting
+              // it with "payment-paused" would strand the member SUSPENDED
+              // forever.
+              suspendReason:
+                membership.suspendReason === "member-requested-pause"
+                  ? "member-requested-pause"
+                  : "payment-paused",
             },
           });
         }
@@ -1256,13 +1274,23 @@ export async function POST(request: NextRequest) {
             subAny.items?.data?.[0]?.current_period_end;
           const periodEndMs =
             typeof periodEndSec === "number" ? periodEndSec * 1000 : null;
+          // Only advance expiry. `.updated` fires for many mutations and can
+          // arrive out of order; without this guard a stale event could
+          // shorten a member's paid-through date (the renewal handler has the
+          // same guard).
+          const shouldAdvanceExpiry =
+            periodEndMs !== null &&
+            (!membership.expiresAt ||
+              new Date(periodEndMs) > membership.expiresAt);
           await prisma.communityMembership.update({
             where: { id: membership.id },
             data: {
               cancelledAt: willCancel
                 ? membership.cancelledAt ?? new Date()
                 : null,
-              ...(periodEndMs ? { expiresAt: new Date(periodEndMs) } : {}),
+              ...(shouldAdvanceExpiry
+                ? { expiresAt: new Date(periodEndMs as number) }
+                : {}),
             },
           });
         }
@@ -1308,6 +1336,30 @@ export async function POST(request: NextRequest) {
         if (!purchase) {
           console.error(
             `[stripe-webhook] no purchase found for refunded session ST-${sessionId}`,
+          );
+          break;
+        }
+
+        // Idempotent: a duplicate charge.refunded delivery shouldn't re-cancel.
+        if (purchase.status === "REFUNDED") {
+          console.log(
+            `[stripe-webhook] purchase ${purchase.id} already REFUNDED, skipping`,
+          );
+          break;
+        }
+
+        // Only act on a FULL refund. Stripe sets charge.refunded=true only when
+        // the entire charge is refunded; a partial refund leaves it false with
+        // amount_refunded < amount. A $1 partial refund must not mark the
+        // purchase REFUNDED or cancel a $29 membership.
+        const fullyRefunded =
+          charge.refunded === true ||
+          (typeof charge.amount === "number" &&
+            typeof charge.amount_refunded === "number" &&
+            charge.amount_refunded >= charge.amount);
+        if (!fullyRefunded) {
+          console.log(
+            `[stripe-webhook] partial refund on purchase ${purchase.id} (${charge.amount_refunded}/${charge.amount}), leaving purchase + membership intact`,
           );
           break;
         }
