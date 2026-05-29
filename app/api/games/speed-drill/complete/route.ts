@@ -16,6 +16,7 @@ import { requireAuth } from "@/lib/auth/middleware";
 import { prisma } from "@/lib/prisma";
 import { z } from "zod";
 import { bumpGamesStreak } from "@/lib/games/status";
+import { bumpDailyStreak } from "@/lib/streak/daily";
 import { DRILL_CARDS } from "@/lib/games/speed-drill/content";
 import { logger } from "@/lib/logger";
 
@@ -84,6 +85,14 @@ export async function POST(request: NextRequest) {
           err instanceof Error ? err : undefined,
         );
         return null;
+      });
+
+      // Unified Consilium daily streak — any game session counts toward it.
+      bumpDailyStreak(prisma, user.id).catch((err) => {
+        logger.error(
+          "daily streak bump failed",
+          err instanceof Error ? err : undefined,
+        );
       });
 
       return NextResponse.json({ session, streak });

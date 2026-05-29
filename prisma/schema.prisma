@@ -81,6 +81,14 @@ model User {
   gamesStreakCurrent        Int                  @default(0)
   gamesStreakLongest        Int                  @default(0)
   gamesLastSession          DateTime?
+  // Unified Consilium daily streak: the headline "played today" habit that
+  // ANY qualifying action feeds (simulator run, game session, Tell, daily
+  // mission, check-in). Additive over the per-surface streaks above — each of
+  // those keeps its own number; this is the single streak members chase.
+  // UTC day boundaries, same math as lib/simulator/streak.ts.
+  dailyStreakCurrent        Int                  @default(0)
+  dailyStreakLongest        Int                  @default(0)
+  dailyStreakLastDate       String? // YYYY-MM-DD UTC of last qualifying action
   dailyCheckIns             DailyCheckIn[]
   simulatorBadges           SimulatorBadge[]
   isBot                     Boolean              @default(false)

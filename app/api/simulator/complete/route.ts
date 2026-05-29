@@ -34,6 +34,7 @@ import type {
 import { replayXp } from "@/lib/simulator/engine";
 import { mergeProgress } from "@/lib/simulator/progress-merge";
 import { bumpSimulatorStreak } from "@/lib/simulator/streak";
+import { bumpDailyStreak } from "@/lib/streak/daily";
 import { logger } from "@/lib/logger";
 
 const CompleteBody = z.object({
@@ -339,6 +340,12 @@ export async function POST(request: NextRequest) {
       // contract: a streak-bump failure must never 500 the completion.
       bumpSimulatorStreak(prisma, user.id).catch((err) => {
         logger.error("[simulator-complete] streak bump failed", err as Error, {
+          userId: user.id,
+        });
+      });
+      // Unified Consilium daily streak — any simulator action counts toward it.
+      bumpDailyStreak(prisma, user.id).catch((err) => {
+        logger.error("[simulator-complete] daily streak bump failed", err as Error, {
           userId: user.id,
         });
       });

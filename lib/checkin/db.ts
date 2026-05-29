@@ -8,6 +8,7 @@
  */
 
 import type { PrismaClient } from "@prisma/client";
+import { bumpDailyStreak } from "@/lib/streak/daily";
 import {
   resolveTrack,
   type SituationKey,
@@ -71,6 +72,10 @@ export async function recordTodayCheckIn(
     },
     select: { situation: true, recommendedTrack: true, createdAt: true },
   });
+
+  // Unified Consilium daily streak — completing the daily check-in counts.
+  // Self-protecting (never throws), so it's safe to await inline.
+  await bumpDailyStreak(prisma, userId, now);
 
   return {
     situation: row.situation as SituationKey,

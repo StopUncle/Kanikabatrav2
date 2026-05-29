@@ -18,6 +18,7 @@ import { getScenario } from "@/lib/simulator/scenarios";
 import { replayXp } from "@/lib/simulator/engine";
 import { mergeProgress } from "@/lib/simulator/progress-merge";
 import { bumpSimulatorStreak } from "@/lib/simulator/streak";
+import { bumpDailyStreak } from "@/lib/streak/daily";
 import { logger } from "@/lib/logger";
 
 const ProgressBody = z.object({
@@ -138,6 +139,12 @@ export async function POST(request: NextRequest) {
       // UTC-day rollover logic.
       bumpSimulatorStreak(prisma, user.id).catch((err) => {
         logger.error("[simulator-progress] streak bump failed", err as Error, {
+          userId: user.id,
+        });
+      });
+      // Unified Consilium daily streak — any simulator action counts toward it.
+      bumpDailyStreak(prisma, user.id).catch((err) => {
+        logger.error("[simulator-progress] daily streak bump failed", err as Error, {
           userId: user.id,
         });
       });

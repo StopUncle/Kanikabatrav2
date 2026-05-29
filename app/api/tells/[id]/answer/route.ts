@@ -15,6 +15,8 @@ import {
   setAnonCookie,
 } from "@/lib/tells/auth-context";
 import { recordAnswer, RecordAnswerInputError } from "@/lib/tells/db";
+import { prisma } from "@/lib/prisma";
+import { bumpDailyStreak } from "@/lib/streak/daily";
 import { logger } from "@/lib/logger";
 
 const Body = z.object({
@@ -54,6 +56,19 @@ export async function POST(
       anonId: ctx.userId ? null : ctx.anonId,
       answerMs: body.answerMs,
     });
+
+    // Unified Consilium daily streak — a logged-in Tell answer counts toward
+    // it. Idempotent per UTC day, so replays the same day are silent no-ops.
+    if (ctx.userId) {
+      const uid = ctx.userId;
+      bumpDailyStreak(prisma, uid).catch((err) => {
+        logger.error(
+          "[tells.answer] daily streak bump failed",
+          err instanceof Error ? err : new Error(String(err)),
+          { tellId: id, userId: uid },
+        );
+      });
+    }
 
     const res = NextResponse.json(result);
     if (ctx.anonIdMinted) setAnonCookie(res, ctx.anonId);
