@@ -14,14 +14,14 @@ export const metadata: Metadata = {
       "The first dating guide written by a clinically diagnosed sociopath. Learn the cold, strategic methods that create irresistible attraction.",
     type: "website",
     url: "https://kanikarose.com/book",
-    images: [{ url: "https://kanikarose.com/og-image.jpg" }],
+    images: [{ url: "https://kanikarose.com/api/og?title=Sociopathic%20Dating%20Bible&subtitle=A%20Cure%20For%20Empathy" }],
   },
   twitter: {
     card: "summary_large_image",
     title: "Sociopathic Dating Bible - A Cure For Empathy",
     description:
       "The first dating guide written by a clinically diagnosed sociopath.",
-    images: ["https://kanikarose.com/og-image.jpg"],
+    images: ["https://kanikarose.com/api/og?title=Sociopathic%20Dating%20Bible&subtitle=A%20Cure%20For%20Empathy"],
   },
   alternates: {
     canonical: "https://kanikarose.com/book",

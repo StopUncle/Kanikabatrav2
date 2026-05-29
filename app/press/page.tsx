@@ -14,7 +14,7 @@ export const metadata: Metadata = {
       "Bios, key facts, quotes, and press contact for Kanika Batra.",
     type: "profile",
     url: "https://kanikarose.com/press",
-    images: [{ url: "https://kanikarose.com/og-image.jpg" }],
+    images: [{ url: "https://kanikarose.com/api/og?title=Press%20Kit" }],
   },
   twitter: {
     card: "summary_large_image",

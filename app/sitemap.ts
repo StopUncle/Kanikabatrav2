@@ -4,6 +4,11 @@ import { getAllPillars } from "@/lib/pillars";
 
 const BASE_URL = "https://kanikarose.com";
 
+// Stable lastmod for static + archive pages. Bump when the static page
+// content meaningfully changes. Using build time here would tell crawlers
+// every page changed on every deploy, which erodes lastmod trust.
+const LAST_UPDATED = new Date("2026-05-30");
+
 function slugify(text: string): string {
   return text
     .toLowerCase()
@@ -20,121 +25,121 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const staticPages: MetadataRoute.Sitemap = [
     {
       url: BASE_URL,
-      lastModified: new Date(),
+      lastModified: LAST_UPDATED,
       changeFrequency: "weekly",
       priority: 1.0,
     },
     {
       url: `${BASE_URL}/consilium`,
-      lastModified: new Date(),
+      lastModified: LAST_UPDATED,
       changeFrequency: "weekly",
       priority: 0.98,
     },
     {
       url: `${BASE_URL}/tells`,
-      lastModified: new Date(),
+      lastModified: LAST_UPDATED,
       changeFrequency: "weekly",
       priority: 0.95,
     },
     {
       url: `${BASE_URL}/book`,
-      lastModified: new Date(),
+      lastModified: LAST_UPDATED,
       changeFrequency: "weekly",
       priority: 0.95,
     },
     {
       url: `${BASE_URL}/coaching`,
-      lastModified: new Date(),
+      lastModified: LAST_UPDATED,
       changeFrequency: "weekly",
       priority: 0.9,
     },
     {
       url: `${BASE_URL}/about`,
-      lastModified: new Date(),
+      lastModified: LAST_UPDATED,
       changeFrequency: "monthly",
       priority: 0.85,
     },
     {
       url: `${BASE_URL}/contact`,
-      lastModified: new Date(),
+      lastModified: LAST_UPDATED,
       changeFrequency: "monthly",
       priority: 0.8,
     },
     {
       url: `${BASE_URL}/quizzes`,
-      lastModified: new Date(),
+      lastModified: LAST_UPDATED,
       changeFrequency: "monthly",
       priority: 0.92,
     },
     {
       url: `${BASE_URL}/quiz`,
-      lastModified: new Date(),
+      lastModified: LAST_UPDATED,
       changeFrequency: "monthly",
       priority: 0.85,
     },
     {
       url: `${BASE_URL}/quiz/daughter`,
-      lastModified: new Date(),
+      lastModified: LAST_UPDATED,
       changeFrequency: "monthly",
       priority: 0.85,
     },
     {
       url: `${BASE_URL}/quiz/sociopath`,
-      lastModified: new Date(),
+      lastModified: LAST_UPDATED,
       changeFrequency: "monthly",
       priority: 0.9,
     },
     {
       url: `${BASE_URL}/quiz/narcissist`,
-      lastModified: new Date(),
+      lastModified: LAST_UPDATED,
       changeFrequency: "monthly",
       priority: 0.92,
     },
     {
       url: `${BASE_URL}/quiz/covert-narcissist`,
-      lastModified: new Date(),
+      lastModified: LAST_UPDATED,
       changeFrequency: "monthly",
       priority: 0.85,
     },
     {
       url: `${BASE_URL}/quiz/dark-triad`,
-      lastModified: new Date(),
+      lastModified: LAST_UPDATED,
       changeFrequency: "monthly",
       priority: 0.88,
     },
     {
       url: `${BASE_URL}/quiz/bpd`,
-      lastModified: new Date(),
+      lastModified: LAST_UPDATED,
       changeFrequency: "monthly",
       priority: 0.88,
     },
     {
       url: `${BASE_URL}/quiz/dating-sociopath`,
-      lastModified: new Date(),
+      lastModified: LAST_UPDATED,
       changeFrequency: "monthly",
       priority: 0.93,
     },
     {
       url: `${BASE_URL}/blog`,
-      lastModified: new Date(),
+      lastModified: LAST_UPDATED,
       changeFrequency: "weekly",
       priority: 0.9,
     },
     {
       url: `${BASE_URL}/terms`,
-      lastModified: new Date(),
+      lastModified: LAST_UPDATED,
       changeFrequency: "yearly",
       priority: 0.5,
     },
     {
       url: `${BASE_URL}/links`,
-      lastModified: new Date(),
+      lastModified: LAST_UPDATED,
       changeFrequency: "weekly",
       priority: 0.8,
     },
     {
       url: `${BASE_URL}/content`,
-      lastModified: new Date(),
+      lastModified: LAST_UPDATED,
       changeFrequency: "weekly",
       priority: 0.85,
     },
@@ -156,14 +161,14 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
   const categoryPages: MetadataRoute.Sitemap = categories.map((cat) => ({
     url: `${BASE_URL}/blog/category/${slugify(cat)}`,
-    lastModified: new Date(),
+    lastModified: LAST_UPDATED,
     changeFrequency: "weekly" as const,
     priority: 0.7,
   }));
 
   const tagPages: MetadataRoute.Sitemap = tags.map((tag) => ({
     url: `${BASE_URL}/blog/tag/${slugify(tag)}`,
-    lastModified: new Date(),
+    lastModified: LAST_UPDATED,
     changeFrequency: "weekly" as const,
     priority: 0.6,
   }));

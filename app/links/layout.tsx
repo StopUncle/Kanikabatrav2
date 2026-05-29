@@ -17,7 +17,7 @@ export const metadata: Metadata = {
     type: "website",
     images: [
       {
-        url: `${SITE_CONFIG.url}/og-image.jpg`,
+        url: `${SITE_CONFIG.url}/api/og`,
         width: 1200,
         height: 630,
         alt: "Kanika Batra",
@@ -28,7 +28,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Kanika Batra",
     description: "I see what you can't.",
-    images: [`${SITE_CONFIG.url}/og-image.jpg`],
+    images: [`${SITE_CONFIG.url}/api/og`],
   },
 };
 

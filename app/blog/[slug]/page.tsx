@@ -9,6 +9,7 @@ import type { FaqEntry } from "@/lib/mdx";
 import BlogPostClient from "./BlogPostClient";
 import PostContent from "@/components/blog/PostContent";
 import JsonLd from "@/components/JsonLd";
+import { generateArticleSchema } from "@/lib/schema";
 import { SITE_CONFIG } from "@/lib/constants";
 
 function buildFaqSchema(faq: FaqEntry[]) {
@@ -134,9 +135,19 @@ export default async function BlogPostPage({ params }: PageProps) {
       ? buildFaqSchema(post.frontmatter.faq)
       : null;
 
+  const articleSchema = generateArticleSchema({
+    title: post.frontmatter.title,
+    description: post.frontmatter.excerpt,
+    publishedAt: post.frontmatter.publishedAt,
+    updatedAt: post.frontmatter.updatedAt,
+    author: post.frontmatter.author,
+    slug: post.slug,
+    coverImage: post.frontmatter.coverImage,
+  });
+
   return (
     <>
-      {faqSchema && <JsonLd data={faqSchema} />}
+      <JsonLd data={faqSchema ? [articleSchema, faqSchema] : articleSchema} />
       <BlogPostClient
         post={{
           slug: post.slug,

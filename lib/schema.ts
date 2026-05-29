@@ -7,6 +7,11 @@ import {
 
 const BASE_URL = "https://kanikarose.com";
 
+// Brand logo for schema.org logo fields (needs a real, square-ish logo image).
+const LOGO_URL = `${BASE_URL}/images/kanikarose-logo.png`;
+// Dynamic 1200x630 social card, reused as the image fallback across schemas.
+const OG_IMAGE_URL = `${BASE_URL}/api/og`;
+
 export interface BreadcrumbItem {
   name: string;
   url: string;
@@ -18,7 +23,7 @@ export function generateOrganizationSchema() {
     "@type": "Organization",
     name: SITE_CONFIG.name,
     url: BASE_URL,
-    logo: `${BASE_URL}/og-image.jpg`,
+    logo: LOGO_URL,
     description: SITE_CONFIG.description,
     sameAs: [SOCIAL_LINKS.instagram, SOCIAL_LINKS.youtube, SOCIAL_LINKS.tiktok],
     contactPoint: {
@@ -51,7 +56,7 @@ export function generatePersonSchema() {
     alternateName: "The Psychology of Power",
     description: SITE_CONFIG.description,
     url: `${BASE_URL}/about`,
-    image: `${BASE_URL}/og-image.jpg`,
+    image: OG_IMAGE_URL,
     jobTitle: "Psychology of Power Expert & Author",
     sameAs: [SOCIAL_LINKS.instagram, SOCIAL_LINKS.youtube, SOCIAL_LINKS.tiktok],
     knowsAbout: [
@@ -111,7 +116,7 @@ export function generateProductSchema(
       "@type": "Product",
       name: BOOK_INFO.title,
       description: BOOK_INFO.description,
-      image: `${BASE_URL}/og-image.jpg`,
+      image: OG_IMAGE_URL,
       brand: {
         "@type": "Brand",
         name: SITE_CONFIG.name,
@@ -133,7 +138,7 @@ export function generateProductSchema(
     "@type": "Product",
     name: coaching.name,
     description: coaching.description,
-    image: `${BASE_URL}/og-image.jpg`,
+    image: OG_IMAGE_URL,
     brand: {
       "@type": "Brand",
       name: SITE_CONFIG.name,
@@ -193,10 +198,17 @@ export function generateArticleSchema(article: {
   title: string;
   description: string;
   publishedAt: string;
+  updatedAt?: string;
   author?: string;
   slug: string;
   coverImage?: string;
 }) {
+  const coverImage = article.coverImage
+    ? article.coverImage.startsWith("http")
+      ? article.coverImage
+      : `${BASE_URL}${article.coverImage}`
+    : OG_IMAGE_URL;
+
   return {
     "@context": "https://schema.org",
     "@type": "Article",
@@ -211,15 +223,15 @@ export function generateArticleSchema(article: {
       name: SITE_CONFIG.name,
       logo: {
         "@type": "ImageObject",
-        url: `${BASE_URL}/og-image.jpg`,
+        url: LOGO_URL,
       },
     },
     datePublished: article.publishedAt,
-    dateModified: article.publishedAt,
+    dateModified: article.updatedAt || article.publishedAt,
     mainEntityOfPage: {
       "@type": "WebPage",
       "@id": `${BASE_URL}/blog/${article.slug}`,
     },
-    image: article.coverImage || `${BASE_URL}/og-image.jpg`,
+    image: coverImage,
   };
 }

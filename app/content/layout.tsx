@@ -22,7 +22,7 @@ export const metadata: Metadata = {
     type: "website",
     images: [
       {
-        url: `${SITE_CONFIG.url}/og-image.jpg`,
+        url: `${SITE_CONFIG.url}/api/og?title=Dark%20Psychology%20Content`,
         width: 1200,
         height: 630,
         alt: "Kanika Batra Dark Psychology Content",
@@ -33,7 +33,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Dark Psychology Content | Kanika Batra",
     description: `${SOCIAL_METRICS.youtube.totalViews} views of dark psychology content from a diagnosed sociopath.`,
-    images: [`${SITE_CONFIG.url}/og-image.jpg`],
+    images: [`${SITE_CONFIG.url}/api/og?title=Dark%20Psychology%20Content`],
   },
 };
 

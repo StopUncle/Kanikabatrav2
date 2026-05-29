@@ -18,7 +18,7 @@ export const metadata: Metadata = {
       "Diagnosed sociopath and dark psychology expert. Teaching strategic psychology to 670K+ followers.",
     type: "profile",
     url: "https://kanikarose.com/about",
-    images: [{ url: "https://kanikarose.com/og-image.jpg" }],
+    images: [{ url: "https://kanikarose.com/api/og" }],
   },
   twitter: {
     card: "summary_large_image",

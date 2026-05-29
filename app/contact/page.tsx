@@ -19,7 +19,7 @@ export const metadata: Metadata = {
     type: "website",
     images: [
       {
-        url: `${SITE_CONFIG.url}/og-image.jpg`,
+        url: `${SITE_CONFIG.url}/api/og?title=Contact%20Kanika%20Batra`,
         width: 1200,
         height: 630,
         alt: "Contact Kanika Batra",
@@ -31,7 +31,7 @@ export const metadata: Metadata = {
     title: "Contact Kanika Batra",
     description:
       "Get in touch for coaching inquiries, media requests, or business collaborations.",
-    images: [`${SITE_CONFIG.url}/og-image.jpg`],
+    images: [`${SITE_CONFIG.url}/api/og?title=Contact%20Kanika%20Batra`],
   },
 };
 
