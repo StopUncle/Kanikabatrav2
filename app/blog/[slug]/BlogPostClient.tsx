@@ -9,9 +9,11 @@ import RelatedPosts, {
   Breadcrumbs,
   PostNavigation,
 } from "@/components/RelatedPosts";
+import type { ContextualLinks } from "@/lib/internal-links";
 import BookPromo from "@/components/blog/BookPromo";
 import InlineCoachingCTA from "@/components/blog/InlineCoachingCTA";
 import EndOfPostConsiliumCTA from "@/components/blog/EndOfPostConsiliumCTA";
+import GoDeeper from "@/components/blog/GoDeeper";
 import TableOfContents from "@/components/blog/TableOfContents";
 import SocialShareButtons from "@/components/blog/SocialShareButtons";
 import NewsletterForm from "@/components/NewsletterForm";
@@ -32,6 +34,7 @@ interface BlogPostClientProps {
   rawContent: string;
   children: React.ReactNode;
   relatedPosts?: RelatedPost[];
+  contextualLinks?: ContextualLinks;
   previousPost?: { slug: string; title: string } | null;
   nextPost?: { slug: string; title: string } | null;
 }
@@ -41,46 +44,14 @@ export default function BlogPostClient({
   rawContent,
   children,
   relatedPosts,
+  contextualLinks,
   previousPost,
   nextPost,
 }: BlogPostClientProps) {
   const postUrl = `${SITE_CONFIG.url}/blog/${post.slug}`;
-  const wordCount = rawContent.split(/\s+/).length;
-
-  const articleSchema = {
-    "@context": "https://schema.org",
-    "@type": "Article",
-    headline: post.frontmatter.title,
-    description: post.frontmatter.excerpt,
-    image: post.frontmatter.coverImage,
-    datePublished: post.frontmatter.publishedAt,
-    dateModified: post.frontmatter.updatedAt || post.frontmatter.publishedAt,
-    wordCount,
-    articleSection: post.frontmatter.category,
-    keywords: post.frontmatter.tags?.join(", "),
-    thumbnailUrl: post.frontmatter.coverImage,
-    author: {
-      "@type": "Person",
-      name: post.frontmatter.author || SITE_CONFIG.name,
-      url: `${SITE_CONFIG.url}/about`,
-    },
-    publisher: {
-      "@type": "Organization",
-      name: SITE_CONFIG.name,
-      url: SITE_CONFIG.url,
-    },
-    mainEntityOfPage: {
-      "@type": "WebPage",
-      "@id": postUrl,
-    },
-  };
 
   return (
     <div className="min-h-screen bg-deep-black">
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(articleSchema) }}
-      />
       <Header />
 
       <article className="pt-24 pb-24">
@@ -195,6 +166,8 @@ export default function BlogPostClient({
                     ) : (
                       <BookPromo variant="full" />
                     )}
+
+                    {contextualLinks && <GoDeeper links={contextualLinks} />}
 
                     <PostNavigation
                       previousPost={previousPost}

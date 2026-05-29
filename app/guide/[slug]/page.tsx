@@ -3,8 +3,10 @@ import { notFound } from "next/navigation";
 import { getPillarBySlug, getAllPillars } from "@/lib/pillars";
 import { getPostsByCategory } from "@/lib/mdx";
 import PostContent from "@/components/blog/PostContent";
+import GoDeeper from "@/components/blog/GoDeeper";
 import JsonLd from "@/components/JsonLd";
 import Header from "@/components/Header";
+import { getContextualLinks } from "@/lib/internal-links";
 import Link from "next/link";
 import { SITE_CONFIG } from "@/lib/constants";
 
@@ -77,6 +79,17 @@ export default async function GuidePage({ params }: PageProps) {
   const relatedPosts = getPostsByCategory(pillar.frontmatter.category)
     .filter((p) => !p.frontmatter.isPillar)
     .slice(0, 6);
+
+  // Quizzes only here (no pillar list passed) so the guide funnels down to the
+  // test landing pages without linking to itself.
+  const contextualLinks = getContextualLinks(
+    {
+      category: pillar.frontmatter.category,
+      tags: pillar.frontmatter.tags,
+      title: pillar.frontmatter.title,
+    },
+    [],
+  );
 
   const baseUrl = SITE_CONFIG.url;
 
@@ -169,6 +182,13 @@ export default async function GuidePage({ params }: PageProps) {
             <div className="mb-16">
               <PostContent source={pillar.content} slug={pillar.slug} />
             </div>
+
+            {/* Go Deeper: funnel into the relevant quizzes */}
+            {contextualLinks.quizzes.length > 0 && (
+              <div className="pt-12 border-t border-white/10 mb-16">
+                <GoDeeper links={contextualLinks} />
+              </div>
+            )}
 
             {/* Related Articles */}
             {relatedPosts.length > 0 && (

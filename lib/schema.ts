@@ -202,6 +202,9 @@ export function generateArticleSchema(article: {
   author?: string;
   slug: string;
   coverImage?: string;
+  category?: string;
+  tags?: string[];
+  wordCount?: number;
 }) {
   const coverImage = article.coverImage
     ? article.coverImage.startsWith("http")
@@ -214,24 +217,32 @@ export function generateArticleSchema(article: {
     "@type": "Article",
     headline: article.title,
     description: article.description,
+    image: coverImage,
+    thumbnailUrl: coverImage,
+    datePublished: article.publishedAt,
+    dateModified: article.updatedAt || article.publishedAt,
+    ...(article.wordCount ? { wordCount: article.wordCount } : {}),
+    ...(article.category ? { articleSection: article.category } : {}),
+    ...(article.tags && article.tags.length > 0
+      ? { keywords: article.tags.join(", ") }
+      : {}),
     author: {
       "@type": "Person",
       name: article.author || SITE_CONFIG.name,
+      url: `${BASE_URL}/about`,
     },
     publisher: {
       "@type": "Organization",
       name: SITE_CONFIG.name,
+      url: BASE_URL,
       logo: {
         "@type": "ImageObject",
         url: LOGO_URL,
       },
     },
-    datePublished: article.publishedAt,
-    dateModified: article.updatedAt || article.publishedAt,
     mainEntityOfPage: {
       "@type": "WebPage",
       "@id": `${BASE_URL}/blog/${article.slug}`,
     },
-    image: coverImage,
   };
 }

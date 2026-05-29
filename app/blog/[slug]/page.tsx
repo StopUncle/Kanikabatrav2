@@ -10,6 +10,8 @@ import BlogPostClient from "./BlogPostClient";
 import PostContent from "@/components/blog/PostContent";
 import JsonLd from "@/components/JsonLd";
 import { generateArticleSchema } from "@/lib/schema";
+import { getContextualLinks } from "@/lib/internal-links";
+import { getAllPillars } from "@/lib/pillars";
 import { SITE_CONFIG } from "@/lib/constants";
 
 function buildFaqSchema(faq: FaqEntry[]) {
@@ -143,7 +145,19 @@ export default async function BlogPostPage({ params }: PageProps) {
     author: post.frontmatter.author,
     slug: post.slug,
     coverImage: post.frontmatter.coverImage,
+    category: post.frontmatter.category,
+    tags: post.frontmatter.tags,
+    wordCount: post.content.split(/\s+/).length,
   });
+
+  const contextualLinks = getContextualLinks(
+    {
+      category: post.frontmatter.category,
+      tags: post.frontmatter.tags,
+      title: post.frontmatter.title,
+    },
+    getAllPillars(),
+  );
 
   return (
     <>
@@ -156,6 +170,7 @@ export default async function BlogPostPage({ params }: PageProps) {
         }}
         rawContent={post.content}
         relatedPosts={relatedPosts}
+        contextualLinks={contextualLinks}
         previousPost={previousPost}
         nextPost={nextPost}
       >
