@@ -12,6 +12,7 @@ import { prisma } from "@/lib/prisma";
 import { tierForMember, daysToNextTier } from "@/components/consilium/badge-tiers";
 import { computeFingerprint } from "@/lib/community/fingerprint";
 import { getRecentActivity } from "@/lib/community/activity";
+import { readDailyStreak } from "@/lib/streak/daily";
 
 export default async function MemberLayout({
   children,
@@ -29,7 +30,7 @@ export default async function MemberLayout({
   // online count, simulator stats, recent activity. Bundling in
   // Promise.all keeps TTFB tight as the sidebar gets richer.
   const fiveMinAgo = new Date(Date.now() - 5 * 60 * 1000);
-  const [onlineCount, me, simStats, recentActivity] = await Promise.all([
+  const [onlineCount, me, simStats, recentActivity, dailyStreak] = await Promise.all([
     prisma.user.count({
       where: {
         communityMembership: { status: "ACTIVE" },
@@ -53,6 +54,7 @@ export default async function MemberLayout({
       _count: { _all: true },
     }),
     getRecentActivity(5),
+    readDailyStreak(prisma, userId),
   ]);
 
   // Current tier is pure function of (role, activatedAt), no DB
@@ -88,6 +90,8 @@ export default async function MemberLayout({
           totalXp={totalXp}
           completedRuns={completedRuns}
           daysToNext={daysToNext}
+          dailyStreak={dailyStreak.current}
+          streakAtRisk={dailyStreak.isAtRisk}
           recentActivity={recentActivity}
         />
         <main className="flex-1 min-w-0 pt-14 lg:pt-0">

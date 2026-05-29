@@ -84,7 +84,7 @@ export async function POST(request: NextRequest) {
         ? {
             title: `Your ${m.dailyStreakCurrent}-day streak breaks tonight`,
             body: mission
-              ? `Keep it alive — today's mission: ${mission.title}`
+              ? `Keep it alive. Today's mission: ${mission.title}`
               : "Play today before midnight to keep it alive.",
             url: mission?.href ?? "/consilium/simulator",
             tag: "daily-streak",

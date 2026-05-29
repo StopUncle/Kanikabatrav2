@@ -31,6 +31,7 @@ const VALID_CATEGORIES = [
   "mention",
   "broadcast",
   "dailyTell",
+  "dailyStreak",
 ] as const;
 type Category = (typeof VALID_CATEGORIES)[number];
 
@@ -41,6 +42,7 @@ const DEFAULTS: Record<Category, boolean> = {
   mention: true,
   broadcast: false,
   dailyTell: false,
+  dailyStreak: true,
 };
 
 const DEFAULT_DAILY_TELL_HOUR = 8; // 8am local default if user enables without picking
@@ -158,6 +160,11 @@ export async function PATCH(req: NextRequest) {
     select: { pushPreferences: true },
   });
   const merged = {
+    // Preserve any non-category keys already stored (e.g. the nudge cron's
+    // dailyStreakNudgeLastSent send-state) so a pref toggle never wipes them.
+    ...(current?.pushPreferences && typeof current.pushPreferences === "object"
+      ? (current.pushPreferences as Record<string, unknown>)
+      : {}),
     ...resolveDefaults(current?.pushPreferences),
     ...parsed.categoryUpdates,
     dailyTellHour:

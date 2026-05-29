@@ -8,13 +8,20 @@ type Category =
   | "forumReply"
   | "mention"
   | "broadcast"
-  | "dailyTell";
+  | "dailyTell"
+  | "dailyStreak";
 
 const CATEGORIES: Array<{
   id: Category;
   label: string;
   blurb: string;
 }> = [
+  {
+    id: "dailyStreak",
+    label: "Daily streak reminder",
+    blurb:
+      "A nudge in the evening if you haven't played yet, so your streak survives the day. Includes today's mission.",
+  },
   {
     id: "dailyTell",
     label: "Daily Tell reminder",

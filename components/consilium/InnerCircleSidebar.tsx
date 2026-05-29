@@ -19,6 +19,7 @@ import {
   Heart,
   MessageCircle,
   Sparkles,
+  Flame,
   UserPlus,
   LogOut,
   Loader2,
@@ -78,6 +79,8 @@ interface SidebarProps {
   totalXp?: number;
   completedRuns?: number;
   daysToNext?: number | null;
+  dailyStreak?: number;
+  streakAtRisk?: boolean;
   recentActivity?: ActivityItem[];
 }
 
@@ -92,6 +95,8 @@ export default function InnerCircleSidebar({
   totalXp = 0,
   completedRuns = 0,
   daysToNext = null,
+  dailyStreak = 0,
+  streakAtRisk = false,
   recentActivity = [],
 }: SidebarProps) {
   const badge = currentTier ? getBadge(currentTier) : null;
@@ -200,6 +205,28 @@ export default function InnerCircleSidebar({
               {badge.numeral}
             </span>
           </div>
+          {dailyStreak > 0 && (
+            <div
+              className={`mt-3 flex items-center justify-center gap-1.5 rounded-lg border py-1.5 ${
+                streakAtRisk
+                  ? "border-amber-400/40 bg-amber-400/10"
+                  : "border-warm-gold/15 bg-warm-gold/[0.04]"
+              }`}
+            >
+              <Flame
+                size={12}
+                strokeWidth={1.6}
+                className={streakAtRisk ? "text-amber-400" : "text-warm-gold"}
+              />
+              <span
+                className={`text-xs tabular-nums tracking-wide ${
+                  streakAtRisk ? "text-amber-200" : "text-text-light"
+                }`}
+              >
+                {dailyStreak} day streak{streakAtRisk ? " · play today" : ""}
+              </span>
+            </div>
+          )}
           <div className="grid grid-cols-3 gap-2 mt-3 pt-3 border-t border-warm-gold/10">
             <div className="text-center">
               <p className="text-sm font-light tabular-nums text-text-light">
