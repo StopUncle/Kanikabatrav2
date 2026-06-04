@@ -133,6 +133,26 @@ export async function PATCH(
     },
   });
 
+  // Pin the answer to the top of the feed so the 2-way is visible to the
+  // whole room, not just the asker. Seeing Kanika answer someone else is
+  // the social proof that pulls the other members into asking. Pinning is
+  // reversible from the feed admin (PATCH /api/consilium/feed/[postId]),
+  // so this is a sensible default, not a lock-in. Non-fatal.
+  if (body.answerPostId && before.answerPostId !== body.answerPostId) {
+    try {
+      await prisma.feedPost.update({
+        where: { id: body.answerPostId },
+        data: { isPinned: true },
+      });
+    } catch (err) {
+      logger.warn("[questions] failed to pin answer post", {
+        questionId: id,
+        answerPostId: body.answerPostId,
+        err: err instanceof Error ? err.message : String(err),
+      });
+    }
+  }
+
   // Trigger asker notification only when an answer is freshly linked
   // (not on every re-link or status edit). Fire-and-forget.
   if (body.answerPostId && before.answerPostId !== body.answerPostId) {

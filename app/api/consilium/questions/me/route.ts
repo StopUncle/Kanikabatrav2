@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { resolveActiveUserId } from "@/lib/auth/resolve-user";
 import { getAdminUserId } from "@/lib/auth/server-auth";
 import { checkAskCooldown } from "@/lib/questions/cooldown";
+import { MAX_FOLLOWUP_DEPTH } from "@/lib/questions/followup";
 
 // Same dual-session resolver as the submit + upvote endpoints.
 async function resolveActor(): Promise<string | null> {
@@ -48,6 +49,8 @@ export async function GET() {
         status: true,
         answeredAt: true,
         createdAt: true,
+        parentQuestionId: true,
+        _count: { select: { followUps: true } },
         answerPost: {
           select: {
             id: true,
@@ -73,9 +76,36 @@ export async function GET() {
     (q) => q.status === "ANSWERED" && q.answeredAt && q.answeredAt > fourteenDaysAgo,
   );
 
+  // Cheap in-memory depth walk over the member's own recent questions, so
+  // the modal can decide whether to show the "Reply to Kanika" box without
+  // an extra round-trip. The write endpoint re-checks authoritatively.
+  const parentById = new Map(mine.map((q) => [q.id, q.parentQuestionId]));
+  const depthOf = (id: string): number => {
+    let depth = 0;
+    let current = parentById.get(id) ?? null;
+    while (current && depth <= MAX_FOLLOWUP_DEPTH + 1) {
+      depth += 1;
+      current = parentById.get(current) ?? null;
+    }
+    return depth;
+  };
+
+  const questions = mine.map((q) => ({
+    id: q.id,
+    content: q.content,
+    status: q.status,
+    answeredAt: q.answeredAt,
+    createdAt: q.createdAt,
+    answerPost: q.answerPost,
+    canFollowUp:
+      q.status === "ANSWERED" &&
+      q._count.followUps === 0 &&
+      depthOf(q.id) < MAX_FOLLOWUP_DEPTH,
+  }));
+
   return NextResponse.json({
     cooldown,
-    questions: mine,
+    questions,
     hasUnreadAnswer,
     isAdmin,
   });

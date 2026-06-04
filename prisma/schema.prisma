@@ -821,9 +821,19 @@ model MemberQuestion {
   updatedAt       DateTime         @updatedAt
   upvotes         QuestionUpvote[]
 
+  // Bounded follow-up thread. When Kanika's answer asks for more, the
+  // member can reply once (the "bakery counter" model, not a DM inbox).
+  // A follow-up is itself a MemberQuestion pointing at the question it
+  // continues. Follow-ups bypass the 24h cooldown and do not count toward
+  // it; depth is capped server-side so a thread cannot become a chat.
+  parentQuestionId String?
+  parent           MemberQuestion?  @relation("QuestionFollowUps", fields: [parentQuestionId], references: [id], onDelete: Cascade)
+  followUps        MemberQuestion[] @relation("QuestionFollowUps")
+
   @@index([userId, createdAt])
   @@index([status, upvoteCount(sort: Desc)])
   @@index([status, createdAt])
+  @@index([parentQuestionId])
 }
 
 model QuestionUpvote {

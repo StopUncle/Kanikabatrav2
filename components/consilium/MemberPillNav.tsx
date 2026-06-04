@@ -8,7 +8,6 @@ import {
   Film,
   Trophy,
   Award,
-  AudioLines,
   Video,
   Newspaper,
   Gamepad2,
@@ -61,6 +60,12 @@ type PillItem = {
 // (271 runs / 30d). The top strip is for the surfaces members actually
 // return to; Instincts stays reachable from the sidebar, folded under the
 // Simulator. To revive, re-add the pill with icon Target (and its import).
+// Voice Notes pill demoted from the top strip 2026-06-04: voice notes are
+// FeedPost rows and already appear in the Feed, so a second co-equal
+// surface just split a small audience across two timelines. Answer voice
+// notes now pin to the top of the Feed (the 2-way is the draw). The
+// dedicated /consilium/voice-notes page survives as an archive, reachable
+// from the sidebar. To revive, re-add the pill with icon AudioLines.
 const PILLS: PillItem[] = [
   { href: "/consilium/feed", label: "Feed", icon: Scroll, matchPrefix: "/consilium/feed", countKey: "feed" },
   { href: "/consilium/simulator", label: "Simulator", icon: Film, matchPrefix: "/consilium/simulator" },
@@ -72,7 +77,6 @@ const PILLS: PillItem[] = [
   },
   { href: "/consilium/badges", label: "Badges", icon: Award, matchPrefix: "/consilium/badges" },
   { href: "/consilium/videos", label: "Videos", icon: Video, matchPrefix: "/consilium/videos" },
-  { href: "/consilium/voice-notes", label: "Voice Notes", icon: AudioLines, matchPrefix: "/consilium/voice-notes" },
   { href: "/blog", label: "Blog", icon: Newspaper, matchPrefix: "/blog" },
 ];
 

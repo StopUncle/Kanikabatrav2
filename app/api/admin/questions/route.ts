@@ -49,6 +49,10 @@ export async function GET(req: NextRequest) {
       rejectionReason: true,
       userId: true,
       answerPost: { select: { id: true, title: true, type: true } },
+      // Follow-up context: if this is a reply in a thread, surface the
+      // question it continues so Kanika has the back-and-forth in view.
+      parentQuestionId: true,
+      parent: { select: { id: true, content: true } },
     },
   });
 

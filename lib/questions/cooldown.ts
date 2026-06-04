@@ -27,8 +27,11 @@ export async function checkAskCooldown(userId: string): Promise<CooldownState> {
   const settings = await getQuestionSettings();
   const since = new Date(Date.now() - WINDOW_MS);
 
+  // Follow-up replies (parentQuestionId set) are invited continuations,
+  // not fresh asks, so they neither consume nor are blocked by the daily
+  // slot. Only top-level questions count toward the window.
   const recent = await prisma.memberQuestion.findMany({
-    where: { userId, createdAt: { gte: since } },
+    where: { userId, createdAt: { gte: since }, parentQuestionId: null },
     orderBy: { createdAt: "asc" },
     select: { createdAt: true },
   });
