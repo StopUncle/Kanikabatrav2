@@ -11,6 +11,7 @@ import {
   ChevronUp,
   Sparkles,
   MessagesSquare,
+  Reply,
 } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import Link from "next/link";
@@ -44,6 +45,10 @@ export interface FeedPostData {
   isLiked: boolean;
   createdAt: string;
   author: FeedPostAuthor | null;
+  /** True when this post is linked as the answer to a member's Ask Kanika
+   *  question. Drives the "Answered a member" badge so the whole room sees
+   *  the 2-way, not just the asker. */
+  answersMemberQuestion?: boolean;
 }
 
 interface FeedPostProps {
@@ -196,6 +201,15 @@ export default function FeedPost({ post, isDetail = false, isNew = false }: Feed
             >
               <MessagesSquare className="w-2.5 h-2.5" />
               Discussion
+            </span>
+          )}
+          {post.answersMemberQuestion && (
+            <span
+              className="inline-flex items-center gap-1 text-[10px] text-emerald-300/90 uppercase tracking-[0.18em] font-medium border border-emerald-400/30 bg-emerald-400/[0.06] px-1.5 py-0.5 rounded-full shrink-0"
+              aria-label="Kanika answered a member question"
+            >
+              <Reply className="w-2.5 h-2.5" />
+              Answered a member
             </span>
           )}
           <span

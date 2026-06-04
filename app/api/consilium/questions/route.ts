@@ -6,6 +6,7 @@ import { getAdminUserId } from "@/lib/auth/server-auth";
 import { checkMembership } from "@/lib/community/membership";
 import { checkAskCooldown } from "@/lib/questions/cooldown";
 import { getQuestionSettings } from "@/lib/questions/settings";
+import { checkFollowUpEligibility } from "@/lib/questions/followup";
 import { logger } from "@/lib/logger";
 
 // Resolve the acting user across BOTH session types:
@@ -75,6 +76,9 @@ export async function GET() {
 const submitSchema = z.object({
   content: z.string().trim().min(10, "Question is too short").max(500, "500 char max"),
   isAnonymous: z.boolean().default(false),
+  // When set, this submission is a follow-up reply to an already-answered
+  // question of the member's own. Follow-ups bypass the daily cooldown.
+  parentQuestionId: z.string().optional(),
 });
 
 /**
@@ -121,23 +125,46 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Invalid request body" }, { status: 400 });
   }
 
-  const cooldown = await checkAskCooldown(userId);
-  if (!cooldown.allowed) {
-    return NextResponse.json(
-      {
-        error: "Daily limit reached",
-        nextAvailableAt: cooldown.nextAvailableAt,
-        dailyCap: cooldown.dailyCap,
-      },
-      { status: 429 },
+  // Follow-up replies skip the cooldown (invited continuation) but must
+  // pass the eligibility gate. Top-level asks are cooldown-limited.
+  let inheritedAnonymous = payload.isAnonymous;
+  if (payload.parentQuestionId) {
+    const eligibility = await checkFollowUpEligibility(
+      userId,
+      payload.parentQuestionId,
     );
+    if (!eligibility.ok) {
+      return NextResponse.json(
+        { error: eligibility.error },
+        { status: eligibility.status },
+      );
+    }
+    // Carry the parent's anonymity forward so a thread keeps one identity.
+    const parent = await prisma.memberQuestion.findUnique({
+      where: { id: payload.parentQuestionId },
+      select: { isAnonymous: true },
+    });
+    inheritedAnonymous = parent?.isAnonymous ?? payload.isAnonymous;
+  } else {
+    const cooldown = await checkAskCooldown(userId);
+    if (!cooldown.allowed) {
+      return NextResponse.json(
+        {
+          error: "Daily limit reached",
+          nextAvailableAt: cooldown.nextAvailableAt,
+          dailyCap: cooldown.dailyCap,
+        },
+        { status: 429 },
+      );
+    }
   }
 
   const question = await prisma.memberQuestion.create({
     data: {
       userId,
       content: payload.content,
-      isAnonymous: payload.isAnonymous,
+      isAnonymous: inheritedAnonymous,
+      parentQuestionId: payload.parentQuestionId ?? null,
     },
     select: { id: true, createdAt: true },
   });
@@ -145,7 +172,8 @@ export async function POST(req: NextRequest) {
   logger.info("[questions] submitted", {
     questionId: question.id,
     userId,
-    anonymous: payload.isAnonymous,
+    anonymous: inheritedAnonymous,
+    isFollowUp: Boolean(payload.parentQuestionId),
   });
 
   // Fresh cooldown state for the client to drive the countdown.

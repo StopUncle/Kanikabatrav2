@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useCallback, useRef } from "react";
 import { createPortal } from "react-dom";
-import { X, ChevronUp, Mic, Film, MessageSquare, ArrowUpRight } from "lucide-react";
+import { X, ChevronUp, Mic, Film, MessageSquare, ArrowUpRight, Reply, Send, Check } from "lucide-react";
 
 type AnswerPost = {
   id: string;
@@ -19,6 +19,8 @@ type MyQuestion = {
   answeredAt: string | null;
   createdAt: string;
   answerPost: AnswerPost | null;
+  /** Kanika's answer invites one reply; show the follow-up box. */
+  canFollowUp?: boolean;
 };
 
 type CooldownState = {
@@ -73,6 +75,13 @@ export default function AskKanikaModal({ open, onClose }: Props) {
   const [submitSuccess, setSubmitSuccess] = useState(false);
   const [now, setNow] = useState(() => Date.now());
 
+  // Follow-up reply state, keyed by the answered question being replied to.
+  const [followUpOpenId, setFollowUpOpenId] = useState<string | null>(null);
+  const [followUpText, setFollowUpText] = useState("");
+  const [followUpBusy, setFollowUpBusy] = useState(false);
+  const [followUpError, setFollowUpError] = useState<string | null>(null);
+  const [followUpDoneIds, setFollowUpDoneIds] = useState<string[]>([]);
+
   const dialogRef = useRef<HTMLDivElement>(null);
 
   // Single fetch on open. /me + /list run in parallel.
@@ -111,6 +120,10 @@ export default function AskKanikaModal({ open, onClose }: Props) {
       setIsAnonymous(false);
       setSubmitError(null);
       setSubmitSuccess(false);
+      setFollowUpOpenId(null);
+      setFollowUpText("");
+      setFollowUpError(null);
+      setFollowUpDoneIds([]);
     }
   }, [open]);
 
@@ -149,6 +162,39 @@ export default function AskKanikaModal({ open, onClose }: Props) {
       setSubmitting(false);
     }
   }, [content, isAnonymous, submitting]);
+
+  const submitFollowUp = useCallback(
+    async (parentQuestionId: string) => {
+      if (followUpBusy) return;
+      const text = followUpText.trim();
+      if (text.length < 10) {
+        setFollowUpError("A little more detail helps Kanika reply.");
+        return;
+      }
+      setFollowUpBusy(true);
+      setFollowUpError(null);
+      try {
+        const r = await fetch("/api/consilium/questions", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ content: text, parentQuestionId }),
+        });
+        const body = await r.json();
+        if (!r.ok) {
+          setFollowUpError(body.error ?? "Couldn't send your reply.");
+        } else {
+          setFollowUpDoneIds((prev) => [...prev, parentQuestionId]);
+          setFollowUpOpenId(null);
+          setFollowUpText("");
+        }
+      } catch {
+        setFollowUpError("Couldn't reach the server.");
+      } finally {
+        setFollowUpBusy(false);
+      }
+    },
+    [followUpBusy, followUpText],
+  );
 
   const toggleVote = useCallback(async (questionId: string) => {
     // Optimistic flip, reverted on failure.
@@ -303,6 +349,68 @@ export default function AskKanikaModal({ open, onClose }: Props) {
                         )}
                       </a>
                     )}
+
+                    {/* Bounded follow-up. Lets the member reply once when
+                        Kanika's answer asks for more, without burning their
+                        daily question. Hidden once a reply is sent. */}
+                    {followUpDoneIds.includes(q.id) ? (
+                      <p className="mt-3 inline-flex items-center gap-1.5 text-emerald-300/80 text-[11px] tracking-wider uppercase">
+                        <Check size={12} />
+                        Reply sent. Kanika will see it.
+                      </p>
+                    ) : q.canFollowUp ? (
+                      followUpOpenId === q.id ? (
+                        <div className="mt-3">
+                          <textarea
+                            value={followUpText}
+                            onChange={(e) => setFollowUpText(e.target.value.slice(0, 500))}
+                            placeholder="Reply to Kanika…"
+                            rows={3}
+                            autoFocus
+                            disabled={followUpBusy}
+                            className="w-full rounded-lg border border-emerald-400/25 bg-deep-black/60 px-3 py-2 text-text-light text-[13px] placeholder:text-text-gray/40 focus:outline-none focus:border-emerald-400/50 resize-none"
+                          />
+                          {followUpError && (
+                            <p className="mt-1.5 text-[11px] text-rose-400/90">{followUpError}</p>
+                          )}
+                          <div className="mt-2 flex items-center gap-2">
+                            <button
+                              onClick={() => submitFollowUp(q.id)}
+                              disabled={followUpBusy || followUpText.trim().length < 10}
+                              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-emerald-400/15 hover:bg-emerald-400/25 text-emerald-300 text-[11px] tracking-[0.18em] uppercase font-semibold border border-emerald-400/40 transition disabled:opacity-40 disabled:cursor-not-allowed"
+                            >
+                              <Send size={12} />
+                              {followUpBusy ? "Sending…" : "Send reply"}
+                            </button>
+                            <button
+                              onClick={() => {
+                                setFollowUpOpenId(null);
+                                setFollowUpText("");
+                                setFollowUpError(null);
+                              }}
+                              disabled={followUpBusy}
+                              className="text-text-gray/60 hover:text-warm-gold text-[11px] underline"
+                            >
+                              Cancel
+                            </button>
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="mt-3">
+                          <button
+                            onClick={() => {
+                              setFollowUpOpenId(q.id);
+                              setFollowUpText("");
+                              setFollowUpError(null);
+                            }}
+                            className="inline-flex items-center gap-1.5 text-emerald-300/80 hover:text-emerald-200 text-[11px] tracking-wider uppercase font-medium"
+                          >
+                            <Reply size={12} />
+                            Reply to Kanika
+                          </button>
+                        </div>
+                      )
+                    ) : null}
                   </div>
                 ))}
               </div>

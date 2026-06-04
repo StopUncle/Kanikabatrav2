@@ -21,6 +21,8 @@ export default async function QuestionsAdminPage() {
       rejectionReason: true,
       userId: true,
       answerPost: { select: { id: true, title: true, type: true } },
+      parentQuestionId: true,
+      parent: { select: { id: true, content: true } },
     },
   });
 

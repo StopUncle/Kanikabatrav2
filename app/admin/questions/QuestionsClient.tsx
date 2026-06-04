@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useCallback } from "react";
-import { Eye, ChevronUp, Mic, Film, Check, X, Pause, MessageSquare, Reply, Send, Loader2 } from "lucide-react";
+import { Eye, ChevronUp, Mic, Film, Check, X, Pause, MessageSquare, Reply, Send, Loader2, CornerDownRight } from "lucide-react";
 
 type Question = {
   id: string;
@@ -14,6 +14,8 @@ type Question = {
   rejectionReason: string | null;
   userId: string;
   answerPost: { id: string; title: string; type: string } | null;
+  parentQuestionId: string | null;
+  parent: { id: string; content: string } | null;
 };
 
 type Identity = {
@@ -268,6 +270,17 @@ export default function QuestionsClient({ initialQuestions, initialTabCounts }: 
                   </div>
 
                   <div className="flex-1 min-w-0">
+                    {q.parent && (
+                      <div className="mb-2 rounded-md border-l-2 border-emerald-400/40 bg-emerald-400/[0.04] pl-3 py-1.5">
+                        <p className="inline-flex items-center gap-1.5 text-emerald-300/80 text-[9px] font-semibold tracking-[0.22em] uppercase mb-0.5">
+                          <CornerDownRight size={11} />
+                          Follow-up to
+                        </p>
+                        <p className="text-text-gray/70 text-[12px] italic line-clamp-2">
+                          &ldquo;{q.parent.content}&rdquo;
+                        </p>
+                      </div>
+                    )}
                     <p className="text-text-light text-[14px] leading-relaxed">
                       {q.content}
                     </p>

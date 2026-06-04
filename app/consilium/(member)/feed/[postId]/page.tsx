@@ -49,6 +49,7 @@ export default async function PostDetailPage({ params }: { params: Promise<{ pos
           likes: true,
         },
       },
+      answersQuestions: { select: { id: true }, take: 1 },
     },
   });
 
@@ -71,6 +72,7 @@ export default async function PostDetailPage({ params }: { params: Promise<{ pos
     commentCount: post._count.comments,
     isLiked: post.likes.length > 0,
     createdAt: post.createdAt.toISOString(),
+    answersMemberQuestion: post.answersQuestions.length > 0,
     author: post.author
       ? {
           id: post.author.id,
