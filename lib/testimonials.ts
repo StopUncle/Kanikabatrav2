@@ -19,20 +19,31 @@ export interface PublicTestimonial {
  */
 export const getPublishedTestimonials = unstable_cache(
   async (): Promise<PublicTestimonial[]> => {
-    return prisma.testimonial.findMany({
-      where: { published: true },
-      orderBy: [{ displayOrder: "asc" }, { createdAt: "desc" }],
-      select: {
-        id: true,
-        videoUrl: true,
-        posterUrl: true,
-        durationSeconds: true,
-        quoteText: true,
-        transcript: true,
-        authorName: true,
-        authorRole: true,
-      },
-    });
+    // Degrade gracefully. The testimonials grid is supporting social
+    // proof, not load-bearing: a DB hiccup or a not-yet-migrated table
+    // (common in a fresh local/dev database) must not take down the whole
+    // sales page. On any error we return an empty list and the consuming
+    // sections render nothing rather than throwing into the error
+    // boundary.
+    try {
+      return await prisma.testimonial.findMany({
+        where: { published: true },
+        orderBy: [{ displayOrder: "asc" }, { createdAt: "desc" }],
+        select: {
+          id: true,
+          videoUrl: true,
+          posterUrl: true,
+          durationSeconds: true,
+          quoteText: true,
+          transcript: true,
+          authorName: true,
+          authorRole: true,
+        },
+      });
+    } catch (err) {
+      console.error("[testimonials] fetch failed, returning empty list", err);
+      return [];
+    }
   },
   ["testimonials-published-v1"],
   { revalidate: 300, tags: ["testimonials"] },

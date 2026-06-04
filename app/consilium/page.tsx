@@ -10,6 +10,8 @@ import FloatingConsiliumSeal from "@/components/consilium/FloatingConsiliumSeal"
 import ConsiliumFAQ from "@/components/consilium/ConsiliumFAQ";
 import SocialProofTicker from "@/components/consilium/SocialProofTicker";
 import TestimonialCard from "@/components/consilium/TestimonialCard";
+import GrainOverlay from "@/components/motion/GrainOverlay";
+import GoldDivider from "@/components/motion/GoldDivider";
 import { getFeaturedTestimonials } from "@/lib/testimonials";
 import { catalogueStats } from "@/lib/simulator/stats";
 
@@ -71,6 +73,7 @@ export default async function InnerCircleLanding({
   return (
     <>
       <BackgroundEffects />
+      <GrainOverlay />
       <Header />
       {/* div, not main, the root layout already wraps children in a
           single <main>; a nested <main> here creates two "main content"
@@ -191,6 +194,8 @@ export default async function InnerCircleLanding({
             ))}
           </div>
 
+          <GoldDivider className="mb-16" />
+
           {/* Dedicated simulator section, the Consilium's strongest
               differentiator. Shared with the homepage via the teaser
               component; "landing" variant gives a single Step-Inside
@@ -210,7 +215,7 @@ export default async function InnerCircleLanding({
                 &ldquo;Life changing.&rdquo;
               </p>
               <p className="text-warm-gold text-sm mt-3 uppercase tracking-[0.3em] font-light">
-               . Inner Circle member
+                Inner Circle member
               </p>
             </div>
           </div>
@@ -236,7 +241,7 @@ export default async function InnerCircleLanding({
               </h2>
             </div>
             <div className="max-w-2xl mx-auto">
-              <div className="p-8 sm:p-10 bg-gradient-to-br from-deep-navy/60 to-deep-burgundy/60 backdrop-blur-sm border border-warm-gold/20 rounded-2xl">
+              <div className="sheen relative p-8 sm:p-10 bg-gradient-to-br from-deep-navy/60 to-deep-burgundy/60 backdrop-blur-sm border border-warm-gold/20 rounded-2xl">
                 <div className="space-y-7 sm:space-y-8">
                   {benefitGroups.map((group) => (
                     <div key={group.heading} className="pl-4 border-l border-warm-gold/30">
@@ -278,7 +283,7 @@ export default async function InnerCircleLanding({
                 </h2>
               </div>
 
-              <div className="bg-gradient-to-br from-deep-navy/60 to-deep-burgundy/40 backdrop-blur-sm border border-warm-gold/25 rounded-2xl overflow-hidden">
+              <div className="sheen bg-gradient-to-br from-deep-navy/60 to-deep-burgundy/40 backdrop-blur-sm border border-warm-gold/25 rounded-2xl overflow-hidden">
                 {[
                   {
                     name: "Weekly voice-note debriefs from Kanika",
@@ -439,7 +444,7 @@ export default async function InnerCircleLanding({
               single coaching session"). Two different anchor moves
               targeting two different price-shopping mental models. */}
           <div className="mb-20">
-            <div className="max-w-2xl mx-auto text-center p-10 bg-deep-black/50 border border-warm-gold/25 rounded-2xl">
+            <div className="sheen relative max-w-2xl mx-auto text-center p-10 bg-deep-black/50 border border-warm-gold/25 rounded-2xl">
               <p className="text-text-gray text-sm uppercase tracking-[0.25em] mb-4">For comparison</p>
               <div className="flex items-baseline justify-center gap-2 mb-2">
                 <span className="text-5xl font-extralight text-warm-gold">$29</span>

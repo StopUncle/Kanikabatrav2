@@ -2,12 +2,28 @@
 
 import { useState } from "react";
 import { m } from "framer-motion";
-import { Check, ShieldCheck, Bell } from "lucide-react";
+import { Check, ShieldCheck, Bell, ArrowDown } from "lucide-react";
 import StripeButton from "./StripeButton";
 import PresaleModal from "./PresaleModal";
 import CountdownTimer from "./CountdownTimer";
+import Reveal from "@/components/motion/Reveal";
 import { BOOK_INFO } from "@/lib/constants";
 
+/**
+ * Pillar One, the book. v2 keeps the signature 3D levitating cover and
+ * the full commerce path (Stripe checkout, the two book + Consilium
+ * bundles, presale fallback) untouched, and tightens everything around
+ * them:
+ *   - a bracketed "Pillar One" header so it reads as a clear act, in
+ *     symmetry with the Consilium's "Pillar Two" header below;
+ *   - the repeated "field guide / practice ground" sentence (which also
+ *     appears in the hero and the Consilium block) is reduced to a single
+ *     quiet cross-link down to the membership;
+ *   - the offer card's background and border are restored. The previous
+ *     build referenced `burgundy`, `sapphire`, and `gold`, none of which
+ *     exist in the theme (the tokens are accent-burgundy / accent-sapphire
+ *     / warm-gold), so the card rendered flat with no surface at all.
+ */
 export default function BookShowcase() {
   const [showPresaleModal, setShowPresaleModal] = useState(false);
 
@@ -34,18 +50,32 @@ export default function BookShowcase() {
     day: "numeric",
   });
 
-  const totalValue = BOOK_INFO.premiumBonuses.reduce((sum, b) => sum + b.value, 0);
+  const totalValue = BOOK_INFO.premiumBonuses.reduce(
+    (sum, b) => sum + b.value,
+    0,
+  );
 
   return (
     <section
       id="book"
-      className="py-16 sm:py-24 lg:py-32 px-4 sm:px-6 lg:px-8 overflow-hidden"
+      className="relative overflow-hidden px-4 py-16 sm:px-6 sm:py-24 lg:px-8 lg:py-28"
     >
-      <div className="max-w-7xl mx-auto">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 sm:gap-12 lg:gap-16 items-center">
-          {/* Book 3D Display, transform removed (was x: -50 → 0), SSR now
-              matches final layout so Lighthouse stops counting the slide-in
-              animation as a layout shift. */}
+      <div className="mx-auto max-w-7xl">
+        {/* Pillar One header. Rose accent (the book palette) to set it
+            apart from the warm-gold Consilium pillar that follows. */}
+        <Reveal className="mb-12 text-center sm:mb-16">
+          <div className="flex items-center justify-center gap-4">
+            <span className="h-px w-16 bg-gradient-to-r from-transparent to-accent-gold/50 sm:w-24" />
+            <span className="whitespace-nowrap text-[10px] font-light uppercase tracking-[0.4em] text-accent-gold/80 sm:text-xs">
+              Pillar One · The Field Guide
+            </span>
+            <span className="h-px w-16 bg-gradient-to-l from-transparent to-accent-gold/50 sm:w-24" />
+          </div>
+        </Reveal>
+
+        <div className="grid grid-cols-1 items-center gap-8 sm:gap-12 lg:grid-cols-2 lg:gap-16">
+          {/* 3D levitating cover. Opacity-only entrance so SSR matches the
+              final layout and the slide is never counted as a shift. */}
           <m.div
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
@@ -53,92 +83,87 @@ export default function BookShowcase() {
             viewport={{ once: true }}
             className="flex justify-center"
           >
-            <div className="relative w-64 sm:w-72 md:w-80 max-w-full h-[360px] sm:h-[400px] md:h-[450px] animate-levitate mx-auto">
+            <div className="relative mx-auto h-[360px] w-64 max-w-full animate-levitate sm:h-[400px] sm:w-72 md:h-[450px] md:w-80">
               <div className="absolute inset-0 book-3d">
-                <div className="absolute inset-0 book-cover-gradient rounded-r-2xl shadow-2xl flex flex-col justify-center items-center p-4 sm:p-6 md:p-8 transform translateZ-20">
-                  <h3 className="text-lg sm:text-xl md:text-2xl font-light text-center text-text-light mb-2 sm:mb-4 leading-tight">
+                <div className="translateZ-20 absolute inset-0 flex transform flex-col items-center justify-center rounded-r-2xl book-cover-gradient p-4 shadow-2xl sm:p-6 md:p-8">
+                  <h3 className="mb-2 text-center text-lg font-light leading-tight text-text-light sm:mb-4 sm:text-xl md:text-2xl">
                     SOCIOPATHIC
                     <br />
                     DATING
                     <br />
                     BIBLE
                   </h3>
-                  <div className="w-12 sm:w-16 md:w-20 h-0.5 bg-gradient-to-r from-transparent via-warm-gold to-transparent mb-2 sm:mb-4" />
-                  <p className="text-text-gray text-[10px] sm:text-xs tracking-[0.15em] sm:tracking-[0.2em] mb-2 sm:mb-4 italic">
+                  <div className="mb-2 h-0.5 w-12 bg-gradient-to-r from-transparent via-warm-gold to-transparent sm:mb-4 sm:w-16 md:w-20" />
+                  <p className="mb-2 text-[10px] italic tracking-[0.15em] text-text-gray sm:mb-4 sm:text-xs sm:tracking-[0.2em]">
                     A Cure For Empathy
                   </p>
-                  <p className="gradient-text-gold text-sm sm:text-base md:text-lg tracking-[0.2em] sm:tracking-[0.3em] md:tracking-[0.4em] uppercase">
+                  <p className="gradient-text-gold text-sm uppercase tracking-[0.2em] sm:text-base sm:tracking-[0.3em] md:text-lg md:tracking-[0.4em]">
                     Kanika Batra
                   </p>
                 </div>
 
-                <div className="absolute left-0 top-0 w-8 sm:w-10 md:w-12 h-full bg-gradient-to-r from-deep-black to-deep-burgundy transform rotateY-90 translateZ-24 rounded-l-md">
-                  <div className="h-full flex items-center justify-center">
-                    <span className="text-warm-gold text-[10px] sm:text-xs tracking-[0.1em] sm:tracking-[0.2em] transform rotate-90 whitespace-nowrap">
+                <div className="translateZ-24 rotateY-90 absolute left-0 top-0 h-full w-8 transform rounded-l-md bg-gradient-to-r from-deep-black to-deep-burgundy sm:w-10 md:w-12">
+                  <div className="flex h-full items-center justify-center">
+                    <span className="rotate-90 transform whitespace-nowrap text-[10px] tracking-[0.1em] text-warm-gold sm:text-xs sm:tracking-[0.2em]">
                       SOCIOPATHIC DATING BIBLE
                     </span>
                   </div>
                 </div>
 
-                <div className="absolute inset-0 bg-black/50 transform translateZ-10 rounded-r-2xl blur-xl" />
+                <div className="translateZ-10 absolute inset-0 transform rounded-r-2xl bg-black/50 blur-xl" />
               </div>
             </div>
           </m.div>
 
-          {/* Book Information */}
-          <m.div
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            transition={{ duration: 0.8 }}
-            viewport={{ once: true }}
-            className="space-y-8"
-          >
+          {/* Pitch column. */}
+          <Reveal delay={0.1} className="space-y-8">
             <div>
-              <p className="text-accent-burgundy uppercase tracking-[0.2em] text-xs sm:text-sm mb-3">
+              <p className="mb-3 text-xs uppercase tracking-[0.2em] text-accent-burgundy sm:text-sm">
                 As featured on LADbible, Unilad &amp; Yahoo
               </p>
-              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-light mb-4 sm:mb-6">
-                <span className="gradient-text">
-                  The Dating Playbook
-                </span>
+              <h2 className="mb-4 text-3xl font-light sm:mb-6 sm:text-4xl lg:text-5xl">
+                <span className="gradient-text">The Dating Playbook</span>
                 <br />
-                <span className="text-text-light">You Were Never Meant to See</span>
+                <span className="text-text-light">
+                  You Were Never Meant to See
+                </span>
               </h2>
-              <p className="text-text-gray text-base sm:text-lg leading-relaxed">
+              <p className="text-base leading-relaxed text-text-gray sm:text-lg">
                 {BOOK_INFO.description}
               </p>
             </div>
 
             <div className="space-y-3">
               {BOOK_INFO.features.slice(0, 4).map((feature, index) => (
-                <m.div
+                <div
                   key={index}
-                  initial={{ opacity: 0 }}
-                  whileInView={{ opacity: 1 }}
-                  transition={{ duration: 0.5, delay: index * 0.1 }}
-                  viewport={{ once: true }}
-                  className="flex items-start gap-3 sm:gap-4 p-3 sm:p-4 bg-gradient-to-r from-accent-burgundy/10 to-accent-sapphire/5 border-l-2 sm:border-l-4 border-warm-gold hover:translate-x-1 sm:hover:translate-x-2 transition-transform"
+                  className="flex items-start gap-3 border-l-2 bg-gradient-to-r from-accent-burgundy/10 to-accent-sapphire/5 p-3 transition-transform hover:translate-x-1 sm:gap-4 sm:border-l-4 sm:p-4 sm:hover:translate-x-2"
+                  style={{ borderColor: "rgba(212,175,55,0.8)" }}
                 >
-                  <Check className="text-accent-gold mt-0.5 shrink-0" size={20} />
+                  <Check className="mt-0.5 shrink-0 text-accent-gold" size={20} />
                   <span className="text-text-light">{feature}</span>
-                </m.div>
+                </div>
               ))}
             </div>
 
             {/* Social proof snippet */}
-            <div className="glass-card p-4 border-l-4 border-warm-gold">
-              <p className="text-text-light italic text-sm sm:text-base">
-                &ldquo;This book decoded the game I didn&apos;t even know I was losing. Within 3 weeks I went from being overlooked to being pursued.&rdquo;
+            <div className="glass-card border-l-4 border-warm-gold p-4">
+              <p className="text-sm italic text-text-light sm:text-base">
+                &ldquo;This book decoded the game I didn&apos;t even know I was
+                losing. Within 3 weeks I went from being overlooked to being
+                pursued.&rdquo;
               </p>
-              <p className="text-accent-gold text-sm mt-2">— Sarah K., Investment Banker</p>
+              <p className="mt-2 text-sm text-accent-gold">
+                Sarah K., Investment Banker
+              </p>
             </div>
 
-            {/* Offer Card */}
-            <div className="bg-gradient-to-r from-burgundy/20 to-sapphire/10 p-4 sm:p-6 lg:p-8 rounded-lg border border-gold/20">
+            {/* Offer card. Surface restored with real theme tokens. */}
+            <div className="sheen relative rounded-2xl border border-warm-gold/25 bg-gradient-to-br from-accent-burgundy/20 via-deep-black/60 to-accent-sapphire/10 p-4 sm:p-6 lg:p-8">
               {BOOK_INFO.isPresale && (
                 <div className="mb-6 space-y-4">
-                  <div className="p-3 bg-accent-gold/10 rounded-lg border border-accent-gold/30">
-                    <div className="flex items-center gap-2 text-accent-gold mb-2">
+                  <div className="rounded-lg border border-accent-gold/30 bg-accent-gold/10 p-3">
+                    <div className="mb-2 flex items-center gap-2 text-accent-gold">
                       <Bell size={20} />
                       <span className="font-semibold">
                         Presale - Launching {formattedDate}
@@ -151,33 +176,48 @@ export default function BookShowcase() {
                 </div>
               )}
 
-              <p className="text-warm-gold uppercase tracking-[0.2em] text-xs mb-4">
+              <p className="mb-4 text-xs uppercase tracking-[0.2em] text-warm-gold">
                 Premium Edition. What You Get
               </p>
 
-              {/* Value Stack */}
-              <div className="space-y-3 mb-6">
+              <div className="mb-6 space-y-3">
                 {BOOK_INFO.premiumBonuses.map((bonus, i) => (
-                  <div key={i} className="flex items-start justify-between gap-3 p-3 rounded-lg bg-white/[0.03] border border-white/[0.06]">
+                  <div
+                    key={i}
+                    className="flex items-start justify-between gap-3 rounded-lg border border-white/[0.06] bg-white/[0.03] p-3"
+                  >
                     <div className="flex items-start gap-3">
-                      <Check className="text-accent-gold mt-0.5 shrink-0" size={16} />
+                      <Check
+                        className="mt-0.5 shrink-0 text-accent-gold"
+                        size={16}
+                      />
                       <div>
-                        <p className="text-text-light text-sm font-medium">{bonus.name}</p>
-                        <p className="text-text-gray text-xs mt-0.5">{bonus.desc}</p>
+                        <p className="text-sm font-medium text-text-light">
+                          {bonus.name}
+                        </p>
+                        <p className="mt-0.5 text-xs text-text-gray">
+                          {bonus.desc}
+                        </p>
                       </div>
                     </div>
-                    <span className="text-text-gray text-sm whitespace-nowrap">${bonus.value}</span>
+                    <span className="whitespace-nowrap text-sm text-text-gray">
+                      ${bonus.value}
+                    </span>
                   </div>
                 ))}
               </div>
 
-              <div className="flex items-baseline justify-between mb-6 pt-4 border-t border-white/10">
+              <div className="mb-6 flex items-baseline justify-between border-t border-white/10 pt-4">
                 <div>
-                  <span className="text-text-gray text-sm">Total value: </span>
-                  <span className="text-text-gray text-sm line-through">${totalValue.toFixed(2)}</span>
+                  <span className="text-sm text-text-gray">Total value: </span>
+                  <span className="text-sm text-text-gray line-through">
+                    ${totalValue.toFixed(2)}
+                  </span>
                 </div>
                 <div className="text-right">
-                  <span className="text-3xl font-light gradient-text-gold">${BOOK_INFO.price}</span>
+                  <span className="gradient-text-gold text-3xl font-light tabular-nums">
+                    ${BOOK_INFO.price}
+                  </span>
                 </div>
               </div>
 
@@ -185,12 +225,13 @@ export default function BookShowcase() {
                 <div className="space-y-4">
                   <button
                     onClick={() => setShowPresaleModal(true)}
-                    className="w-full btn-primary rounded-full text-white text-center py-3 sm:py-4 font-semibold tracking-wide text-sm sm:text-base"
+                    className="btn-primary w-full rounded-full py-3 text-center text-sm font-semibold tracking-wide text-white sm:py-4 sm:text-base"
                   >
                     Join Presale List
                   </button>
-                  <p className="text-xs text-center text-text-muted">
-                    Get notified when the book launches + exclusive presale pricing
+                  <p className="text-center text-xs text-text-gray/70">
+                    Get notified when the book launches + exclusive presale
+                    pricing
                   </p>
                 </div>
               ) : (
@@ -203,72 +244,68 @@ export default function BookShowcase() {
                   />
 
                   {/* Book + Consilium bundles, matched to the book page so
-                      the landing page captures the same upsell. Only shown
-                      post-launch. */}
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      the landing page captures the same upsell. */}
+                  <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                     <StripeButton
                       priceKey="BOOK_CONSILIUM_1MO"
                       label="+ 1 month membership"
                       price="$39"
                       icon="none"
-                      className="w-full py-3 px-5 rounded-full border border-warm-gold/40 bg-warm-gold/[0.04] text-warm-gold text-sm font-medium tracking-wider transition-all duration-300 hover:bg-warm-gold/[0.08] hover:border-warm-gold/70 disabled:opacity-50 flex items-center justify-center gap-2 whitespace-nowrap"
+                      className="flex w-full items-center justify-center gap-2 whitespace-nowrap rounded-full border border-warm-gold/40 bg-warm-gold/[0.04] px-5 py-3 text-sm font-medium tracking-wider text-warm-gold transition-all duration-300 hover:border-warm-gold/70 hover:bg-warm-gold/[0.08] disabled:opacity-50"
                     />
                     <StripeButton
                       priceKey="BOOK_CONSILIUM_3MO"
                       label="+ 3 months · save $33"
                       price="$79"
                       icon="none"
-                      className="w-full py-3 px-5 rounded-full border border-warm-gold/70 bg-warm-gold/10 text-warm-gold text-sm font-semibold tracking-wider transition-all duration-300 hover:bg-warm-gold/20 hover:border-warm-gold disabled:opacity-50 flex items-center justify-center gap-2 whitespace-nowrap shadow-[0_0_20px_-8px_rgba(212,175,55,0.4)]"
+                      className="flex w-full items-center justify-center gap-2 whitespace-nowrap rounded-full border border-warm-gold/70 bg-warm-gold/10 px-5 py-3 text-sm font-semibold tracking-wider text-warm-gold shadow-[0_0_20px_-8px_rgba(212,175,55,0.4)] transition-all duration-300 hover:border-warm-gold hover:bg-warm-gold/20 disabled:opacity-50"
                     />
                   </div>
 
-                  <p className="text-[11px] text-text-gray/70 text-center leading-relaxed -mt-1">
-                    Bundle covers your first month or three. Then $29/mo · cancel anytime.
+                  <p className="-mt-1 text-center text-[11px] leading-relaxed text-text-gray/70">
+                    Bundle covers your first month or three. Then $29/mo · cancel
+                    anytime.
                   </p>
 
-                  {/* Breadcrumb to the Consilium pitch, pulls book-only
-                      readers one section down so they see what the
-                      community actually delivers, not just the bundle
-                      price tag. */}
-                  <div className="text-center py-3 border-y border-warm-gold/10 my-1">
+                  {/* Single quiet cross-link to the membership pillar. */}
+                  <div className="border-y border-warm-gold/10 py-3 text-center">
                     <a
                       href="#consilium"
-                      className="inline-flex items-center gap-2 text-warm-gold/90 hover:text-warm-gold text-xs sm:text-sm font-light tracking-wide transition-colors group"
+                      className="group inline-flex items-center gap-2 text-xs font-light tracking-wide text-warm-gold/90 transition-colors hover:text-warm-gold sm:text-sm"
                     >
-                      <span>
-                        The book is the field guide. The community is where members{" "}
-                        <span className="text-warm-gold font-medium">use it daily</span>.
-                      </span>
-                      <span className="transition-transform group-hover:translate-y-0.5">
-                        ↓
-                      </span>
+                      See what members do with it inside the Consilium
+                      <ArrowDown
+                        size={13}
+                        className="transition-transform group-hover:translate-y-0.5"
+                      />
                     </a>
-                    <p className="text-[10px] text-text-gray/50 mt-1 font-light">
-                      Voice notes · live discussion · daily insights · simulator
-                    </p>
                   </div>
 
                   {/* Guarantee */}
-                  <div className="flex items-center justify-center gap-2 text-text-gray text-xs">
+                  <div className="flex items-center justify-center gap-2 text-xs text-text-gray">
                     <ShieldCheck size={14} className="text-accent-gold" />
-                    <span>Read 3 chapters. If it doesn&apos;t change how you see dating, full refund.</span>
+                    <span>
+                      Read 3 chapters. If it doesn&apos;t change how you see
+                      dating, full refund.
+                    </span>
                   </div>
 
                   {/* Amazon secondary */}
-                  <div className="text-center pt-2 border-t border-white/5">
+                  <div className="border-t border-white/5 pt-2 text-center">
                     <a
                       href={BOOK_INFO.kdpLink}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-text-gray hover:text-text-light text-xs transition-colors"
+                      className="text-xs text-text-gray transition-colors hover:text-text-light"
                     >
-                      Prefer Kindle? Get it on Amazon for ${BOOK_INFO.kdpPrice} &rarr;
+                      Prefer Kindle? Get it on Amazon for ${BOOK_INFO.kdpPrice}{" "}
+                      &rarr;
                     </a>
                   </div>
                 </div>
               )}
             </div>
-          </m.div>
+          </Reveal>
         </div>
       </div>
 

@@ -1,68 +1,87 @@
-"use client";
-
 import Link from "next/link";
-import { m } from "framer-motion";
-import { Check, ShieldCheck, ArrowRight } from "lucide-react";
+import {
+  Check,
+  ShieldCheck,
+  ArrowRight,
+  Brain,
+  HelpCircle,
+  Sparkles,
+  Mic,
+  Users,
+  BookOpen,
+} from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 import FloatingConsiliumSeal from "@/components/consilium/FloatingConsiliumSeal";
+import Reveal from "@/components/motion/Reveal";
+import Magnetic from "@/components/motion/Magnetic";
+import { catalogueStats } from "@/lib/simulator/stats";
 
 /**
- * Homepage section that pitches The Consilium with the same energy the
- * book gets sold with: pre-headline credential, sharp headline, concrete
- * features in a value stack, real testimonial, anchor pricing, and a
- * matching guarantee.
+ * Pillar Two, the Consilium. The homepage's recurring-revenue sell.
  *
- * Visual structure mirrors BookShowcase exactly:
- *   - LEFT column: a large floating animated brand object, for the
- *     book that's the 3D levitating cover. For the Consilium it's the
- *     ConsiliumSeal medallion, scaled up, with a slow rotation, a
- *     pulsing halo, and four cardinal-point orbiting particles. Same
- *     "this section has its own object" treatment so visitors know
- *     they've crossed into a new pillar at a glance.
- *   - RIGHT column: entire pitch + offer card (credential, headline,
- *     body, feature blocks, testimonial, value stack, CTA, guarantee).
+ * v2 is a server component on purpose. It reads catalogueStats straight
+ * from the single source of truth (no more hardcoded numbers, and no
+ * prop drilling), and it can render the live SocialProofTicker, which is
+ * itself an async server component and therefore cannot live inside a
+ * client component. The only client pieces are the animated seal and the
+ * Reveal / Magnetic wrappers, all rendered as islands.
  *
- * Words "community" and "membership" appear front-and-centre so the
- * brand name "The Consilium" doesn't have to do the explaining alone.
+ * Structure: a bracketed Pillar Two header, an intro pairing the animated
+ * seal with the transformation headline, a full-width six-card "what's
+ * inside" grid (each feature with its own icon and a live count where one
+ * exists), and a focused offer card with anchor pricing, the live member
+ * ticker, the guarantee, and one strong Join CTA straight to checkout.
  */
+interface InsideItem {
+  icon: LucideIcon;
+  title: string;
+  detail: string;
+  value: string;
+}
+
 export default function ConsiliumOverview() {
-  // What's inside, with concrete numbers and dollar anchors. Book is
-  // not bundled, that's a separate purchase. Member-only pricing on
-  // it is listed last as the discount benefit, not as inclusion.
-  const inside = [
+  const { scenarios, scenes, tacticsTaught, redFlagsTaught } = catalogueStats;
+
+  const inside: InsideItem[] = [
     {
+      icon: Brain,
       title: "The Dark Mirror Simulator",
-      detail:
-        "20 branching scenarios · 342 scenes · 129 endings · 83 manipulation tactics · 79 red flags catalogued",
+      detail: `${scenarios} branching scenarios · ${scenes} scenes · ${tacticsTaught} manipulation tactics · ${redFlagsTaught} red flags catalogued`,
       value: "Members only",
     },
     {
+      icon: HelpCircle,
       title: "Ask Kanika",
       detail:
-        "Submit one question per day. Top-voted get answered by Kanika, by voice or video, in your feed",
+        "Submit one question a day. Top-voted get answered by Kanika, by voice or video, in your feed.",
       value: "Members only",
     },
     {
+      icon: Sparkles,
       title: "Daily Psychology Drops",
       detail:
-        "60-card rotating bank, fresh insight every morning. New tactics, power dynamics, real patterns",
+        "A 60-card rotating bank. Fresh insight every morning: new tactics, power dynamics, real patterns.",
       value: "$19/mo elsewhere",
     },
     {
+      icon: Mic,
       title: "Voice Notes from Kanika",
       detail:
-        "Raw, unfiltered audio dropped when something needs to be said. Not on a schedule, when it matters",
+        "Raw, unfiltered audio dropped when something needs to be said. Not on a schedule, when it matters.",
       value: "Members only",
     },
     {
-      title: "Discussion Threads, Forum & Chat",
+      icon: Users,
+      title: "Discussion, Forum & Chat",
       detail:
-        "28 themed weekday prompts · 6 forum categories · live chat with members navigating the same patterns",
+        "28 themed weekday prompts, 6 forum categories, live chat with members reading the same patterns.",
       value: "Community access",
     },
     {
+      icon: BookOpen,
       title: "Member-Only Book Pricing",
       detail:
-        "Want the book too? Members get the Sociopathic Dating Bible at $9.99 (normally $24.99)",
+        "Want the book too? Members get the Sociopathic Dating Bible at $9.99 (normally $24.99).",
       value: "Save 60%",
     },
   ];
@@ -70,91 +89,37 @@ export default function ConsiliumOverview() {
   return (
     <section
       id="consilium"
-      className="py-16 sm:py-24 lg:py-32 px-4 sm:px-6 lg:px-8 overflow-hidden relative"
+      className="relative overflow-hidden px-4 py-16 sm:px-6 sm:py-24 lg:px-8 lg:py-28"
     >
-      <div className="max-w-7xl mx-auto">
-        {/* Section break header, explicitly separates this pillar from
-            BookShowcase above so the floating-seal-on-left layout doesn't
-            read as a continuation of the floating-book-on-left layout
-            on desktop. Centered, gold-bracketed, with a thin gradient
-            divider above and below. Stays understated on mobile where
-            the sections naturally separate by stacking. */}
-        <div className="text-center mb-12 sm:mb-16 lg:mb-20">
-          {/* Top divider, short gold gradient line */}
-          <div className="flex items-center justify-center gap-4 mb-6">
-            <span className="h-px w-16 sm:w-24 bg-gradient-to-r from-transparent to-warm-gold/50" />
-            <span className="text-warm-gold/70 text-[10px] sm:text-xs uppercase tracking-[0.4em] font-light whitespace-nowrap">
+      <div className="mx-auto max-w-7xl">
+        {/* Pillar Two header. Warm-gold, no repeat of the field-guide line. */}
+        <Reveal className="mb-12 text-center sm:mb-16">
+          <div className="mb-5 flex items-center justify-center gap-4">
+            <span className="h-px w-16 bg-gradient-to-r from-transparent to-warm-gold/50 sm:w-24" />
+            <span className="whitespace-nowrap text-[10px] font-light uppercase tracking-[0.4em] text-warm-gold/80 sm:text-xs">
               Pillar Two · The Membership
             </span>
-            <span className="h-px w-16 sm:w-24 bg-gradient-to-l from-transparent to-warm-gold/50" />
+            <span className="h-px w-16 bg-gradient-to-l from-transparent to-warm-gold/50 sm:w-24" />
           </div>
-
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extralight tracking-wide leading-tight">
-            <span className="text-text-light">Where the </span>
-            <span
-              style={{
-                background:
-                  "linear-gradient(135deg, #f3d98a 0%, #d4af37 50%, #9c7a1f 100%)",
-                WebkitBackgroundClip: "text",
-                WebkitTextFillColor: "transparent",
-                backgroundClip: "text",
-              }}
-            >
-              field guide
-            </span>
-            <span className="text-text-light"> meets the </span>
-            <span
-              style={{
-                background:
-                  "linear-gradient(135deg, #f3d98a 0%, #d4af37 50%, #9c7a1f 100%)",
-                WebkitBackgroundClip: "text",
-                WebkitTextFillColor: "transparent",
-                backgroundClip: "text",
-              }}
-            >
-              practice ground
-            </span>
-          </h2>
-          <p className="text-text-gray/80 text-sm sm:text-base font-light italic mt-4 max-w-2xl mx-auto">
-            The book stays the book. This is the private community where
-            members go to use it.
+          <p className="mx-auto max-w-2xl text-sm font-light italic text-text-gray/80 sm:text-base">
+            The private room where the book gets used. Every day, with members
+            reading the same situations you are.
           </p>
-        </div>
+        </Reveal>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 sm:gap-12 lg:gap-16 items-center">
-          {/* LEFT, the section's brand object. Mirrors the floating
-              book on BookShowcase: large, animated, gives the section a
-              clear visual anchor a visitor can recognise from a thumb-
-              flick scroll. */}
-          <m.div
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            transition={{ duration: 0.8 }}
-            viewport={{ once: true }}
-            className="flex justify-center"
-          >
+        {/* Intro: animated seal + transformation headline. */}
+        <div className="mb-14 grid grid-cols-1 items-center gap-8 sm:gap-12 lg:grid-cols-2 lg:gap-16">
+          <Reveal noScale className="flex justify-center">
             <FloatingConsiliumSeal label="Private Membership" />
-          </m.div>
+          </Reveal>
 
-          {/* RIGHT, full pitch column. Single column containing every
-              pitch beat (credential → headline → body → features →
-              testimonial → value stack → CTA → guarantee), mirroring
-              BookShowcase's right column. */}
-          <m.div
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            transition={{ duration: 0.8 }}
-            viewport={{ once: true }}
-            className="space-y-8"
-          >
+          <Reveal delay={0.1} className="space-y-6">
             <div>
-              <p className="text-warm-gold uppercase tracking-[0.2em] text-xs sm:text-sm mb-3">
-                The Consilium · Private Community + Membership
+              <p className="mb-3 text-xs uppercase tracking-[0.2em] text-warm-gold sm:text-sm">
+                The Consilium · Private Community
               </p>
-              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-light mb-4 sm:mb-6 leading-tight">
-                <span className="text-text-light">
-                  Where Dark Psychology
-                </span>
+              <h2 className="text-3xl font-light leading-tight sm:text-4xl lg:text-5xl">
+                <span className="text-text-light">Where Dark Psychology</span>
                 <br />
                 <span
                   style={{
@@ -168,139 +133,131 @@ export default function ConsiliumOverview() {
                   Stops Being Theory
                 </span>
               </h2>
-              <p className="text-text-gray text-base sm:text-lg leading-relaxed">
-                The book teaches you the patterns. The Consilium is where
-                you <strong className="text-text-light">practice them</strong>{" "}
-               . Every day, with members navigating the same situations
-                you are. Private. Moderated. Built for women done being
-                the ones who get played.
-              </p>
             </div>
-
-            {/* Feature blocks */}
-            <div className="space-y-3">
-              {[
-                "342 branching scenes inside the Dark Mirror Simulator. Every choice has a consequence",
-                "Ask Kanika, one question a day, answered by voice or video in your feed",
-                "60 daily psychology drops + 28 themed discussion prompts",
-                "Voice notes from Kanika, raw insights you won't hear anywhere else",
-              ].map((feature, index) => (
-                <m.div
-                  key={index}
-                  initial={{ opacity: 0 }}
-                  whileInView={{ opacity: 1 }}
-                  transition={{ duration: 0.5, delay: index * 0.1 }}
-                  viewport={{ once: true }}
-                  className="flex items-start gap-3 sm:gap-4 p-3 sm:p-4 bg-gradient-to-r from-deep-burgundy/20 to-deep-navy/10 border-l-2 sm:border-l-4 border-warm-gold hover:translate-x-1 sm:hover:translate-x-2 transition-transform"
-                >
-                  <Check
-                    className="text-warm-gold mt-0.5 shrink-0"
-                    size={20}
-                  />
-                  <span className="text-text-light">{feature}</span>
-                </m.div>
-              ))}
-            </div>
-
-            {/* Testimonial */}
-            <div className="glass-card p-4 border-l-4 border-warm-gold">
-              <p className="text-text-light italic text-base sm:text-lg leading-relaxed">
+            <p className="text-base leading-relaxed text-text-gray sm:text-lg">
+              The book teaches you the patterns. The Consilium is where you{" "}
+              <strong className="text-text-light">practice them</strong>.
+              Private. Moderated. Built for women done being the ones who get
+              played.
+            </p>
+            <div className="glass-card border-l-4 border-warm-gold p-4">
+              <p className="text-base italic leading-relaxed text-text-light sm:text-lg">
                 &ldquo;Life changing.&rdquo;
               </p>
-              <p className="text-warm-gold text-sm mt-2">
-               . Inner Circle member
-              </p>
+              <p className="mt-2 text-sm text-warm-gold">Inner Circle member</p>
+            </div>
+          </Reveal>
+        </div>
+
+        {/* What's inside, full-width six-card grid. */}
+        <Reveal className="mb-8 text-center">
+          <p className="text-xs uppercase tracking-[0.3em] text-warm-gold/80">
+            What&apos;s inside the membership
+          </p>
+        </Reveal>
+
+        <div className="mb-14 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {inside.map((item, index) => {
+            const Icon = item.icon;
+            return (
+              <Reveal
+                key={item.title}
+                index={index}
+                className="sheen group relative flex h-full flex-col rounded-2xl border border-warm-gold/15 bg-gradient-to-br from-deep-burgundy/25 to-deep-navy/15 p-5 transition-colors hover:border-warm-gold/35"
+              >
+                <div className="mb-3 flex items-center justify-between">
+                  <span className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-warm-gold/30 bg-warm-gold/10">
+                    <Icon size={16} strokeWidth={1.6} className="text-warm-gold" />
+                  </span>
+                  <span className="text-[10px] uppercase tracking-[0.2em] text-text-gray/70">
+                    {item.value}
+                  </span>
+                </div>
+                <h3 className="mb-1.5 text-base font-medium text-text-light">
+                  {item.title}
+                </h3>
+                <p className="text-xs leading-relaxed text-text-gray">
+                  {item.detail}
+                </p>
+              </Reveal>
+            );
+          })}
+        </div>
+
+        {/* Offer card. Anchor price, live ticker, guarantee, Join CTA. */}
+        <Reveal>
+          <div className="sheen relative mx-auto max-w-2xl rounded-2xl border border-warm-gold/30 bg-gradient-to-br from-deep-burgundy/30 via-deep-black/70 to-deep-navy/40 p-6 sm:p-8">
+            <div className="mb-6 flex flex-col items-center gap-3 sm:flex-row sm:items-baseline sm:justify-between">
+              <div className="text-center sm:text-left">
+                <p className="text-xs uppercase tracking-[0.2em] text-warm-gold">
+                  Full membership
+                </p>
+                <p className="mt-1 text-sm text-text-gray">
+                  Everything above. One price.
+                </p>
+              </div>
+              <div className="text-center sm:text-right">
+                <span className="gradient-text-gold text-4xl font-light tabular-nums">
+                  $29
+                </span>
+                <span className="ml-1 text-sm font-light text-text-gray/70">
+                  /mo
+                </span>
+                <p className="mt-1 text-[11px] text-text-gray/70">
+                  or $290/year · 2 months free
+                </p>
+              </div>
             </div>
 
-            {/* Offer card, value stack with anchor pricing */}
-            <div className="bg-gradient-to-r from-deep-burgundy/30 via-deep-black/70 to-deep-navy/40 p-4 sm:p-6 lg:p-8 rounded-lg border border-warm-gold/30">
-              <p className="text-warm-gold uppercase tracking-[0.2em] text-xs mb-4">
-                What&apos;s Inside the Membership
-              </p>
-
-              <div className="space-y-3 mb-6">
-                {inside.map((item) => (
-                  <div
-                    key={item.title}
-                    className="flex items-start justify-between gap-3 p-3 rounded-lg bg-white/[0.03] border border-white/[0.06]"
-                  >
-                    <div className="flex items-start gap-3 min-w-0">
-                      <Check
-                        className="text-warm-gold mt-0.5 shrink-0"
-                        size={16}
-                      />
-                      <div className="min-w-0">
-                        <p className="text-text-light text-sm font-medium">
-                          {item.title}
-                        </p>
-                        <p className="text-text-gray text-xs mt-0.5 leading-relaxed">
-                          {item.detail}
-                        </p>
-                      </div>
-                    </div>
-                    <span className="text-text-gray text-xs whitespace-nowrap shrink-0">
-                      {item.value}
-                    </span>
-                  </div>
-                ))}
-              </div>
-
-              <div className="flex items-baseline justify-between mb-6 pt-4 border-t border-white/10">
-                <div>
-                  <span className="text-text-gray text-sm">
-                    Premium edition value:{" "}
-                  </span>
-                  <span className="text-text-gray text-sm">
-                    $24.99 + community
-                  </span>
-                </div>
-                <div className="text-right">
-                  <span className="text-3xl font-light gradient-text-gold tabular-nums">
-                    $29
-                  </span>
-                  <span className="text-text-gray/70 text-sm font-light ml-1">
-                    /mo
-                  </span>
-                </div>
-              </div>
-
-              <div className="space-y-4">
+            <div className="space-y-4">
+              <Magnetic className="block">
                 <Link
-                  href="/consilium"
-                  className="w-full inline-flex items-center justify-center gap-2 py-3 sm:py-4 px-6 rounded-full bg-warm-gold text-deep-black text-sm sm:text-base font-semibold tracking-wide transition-all hover:bg-warm-gold/90 hover:shadow-[0_12px_40px_-12px_rgba(212,175,55,0.55)]"
+                  href="/consilium/apply"
+                  className="flex w-full items-center justify-center gap-2 rounded-full bg-warm-gold px-6 py-4 text-sm font-semibold tracking-wide text-deep-black transition-all hover:bg-warm-gold/90 hover:shadow-[0_14px_44px_-12px_rgba(212,175,55,0.6)] sm:text-base"
                 >
-                  Join the Community, $29/mo
+                  Join the Consilium, $29/mo
                   <ArrowRight size={16} />
                 </Link>
+              </Magnetic>
 
-                <p className="text-[11px] text-text-gray/70 text-center leading-relaxed">
-                  Instant access · cancel anytime · no application required
+              <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-1 text-[11px] text-text-gray/70">
+                <span>Instant access</span>
+                <span className="text-warm-gold/40">·</span>
+                <span>Cancel anytime</span>
+                <span className="text-warm-gold/40">·</span>
+                <span>No application</span>
+              </div>
+
+              <div className="flex items-center justify-center gap-2 text-xs text-text-gray">
+                <ShieldCheck size={14} className="shrink-0 text-warm-gold" />
+                <span>
+                  Spend 7 days inside. If it&apos;s not the most useful $29
+                  you&apos;ve spent, full refund.
+                </span>
+              </div>
+
+              <div className="flex flex-col items-center gap-2 border-t border-white/5 pt-4 text-center sm:flex-row sm:justify-between">
+                <Link
+                  href="/consilium"
+                  className="inline-flex items-center gap-1.5 text-xs font-medium uppercase tracking-wider text-warm-gold transition-colors hover:text-warm-gold/80"
+                >
+                  See everything inside
+                  <ArrowRight size={13} />
+                </Link>
+                <p className="text-[11px] text-text-gray/60">
+                  Or start with the{" "}
+                  <Link
+                    href="/book"
+                    className="text-warm-gold/90 underline-offset-2 transition-colors hover:text-warm-gold hover:underline"
+                  >
+                    book + 1 month for $39
+                  </Link>
+                  .
                 </p>
-
-                <div className="flex items-center justify-center gap-2 text-text-gray text-xs">
-                  <ShieldCheck size={14} className="text-warm-gold" />
-                  <span>
-                    Spend 7 days inside. If it&apos;s not the most useful
-                    $29 you&apos;ve spent, full refund.
-                  </span>
-                </div>
-
-                <div className="text-center pt-2 border-t border-white/5">
-                  <p className="text-[11px] text-text-gray/60">
-                    Or grab the{" "}
-                    <Link
-                      href="/book"
-                      className="text-warm-gold/90 hover:text-warm-gold transition-colors underline-offset-2 hover:underline"
-                    >
-                      book + 1 month bundle for $39
-                    </Link>
-                    .
-                  </p>
-                </div>
               </div>
             </div>
-          </m.div>
-        </div>
+          </div>
+        </Reveal>
       </div>
     </section>
   );
