@@ -124,6 +124,11 @@ model User {
   instinctScore             InstinctScore?
   tellStreak                TellStreak?
   leagueMemberships         LeagueMembership[]
+  // The Board: a member's own /100 crowd score per figure, and the
+  // re-score petitions they have signed. Both gated behind a free
+  // account (the JWT cookie pair), one row per (figure, user).
+  boardVotes                CrowdVote[]
+  boardPetitions            RescorePetition[]
   receipts                  Receipt[]
   // Adventure mode: a member's progress through a curated multi-scenario
   // arc. One row per (user, adventure). currentStep is a 0-indexed cursor
@@ -1773,5 +1778,181 @@ model GameSession {
 
   @@index([userId, gameKey, playedAt])
   @@index([gameKey, playedAt])
+}
+
+// ========================================
+// THE BOARD
+// A ranked instrument scoring public figures against a PCL-R-anchored
+// trait scale, delivered as Kanika's lived-experience read. Free to
+// browse (SEO), account-gated to vote (conversion), funnels into the
+// Consilium. Calibration anchors (Keanu floor, Kemper ceiling) live in
+// the same table but carry isCalibration=true so they sit on the ruler
+// rather than inside the ranking.
+// ========================================
+
+model Figure {
+  id        String       @id @default(cuid())
+  // URL-safe deep-link key for /board/[slug]. Set in the admin UI.
+  slug      String       @unique
+  name      String
+  // One-line role context shown under the name ("Tech founder",
+  // "Daytime host"). Keeps the row readable without opening the dossier.
+  descriptor String?
+  // Uniform editorial portrait. Treatment (duotone + accent) is applied
+  // in CSS, so this can stay a plain source image on R2 / a static path.
+  photoUrl  String?
+  archetype Archetype?
+  status    FigureStatus @default(ON_BOARD)
+  // Calibration anchors (Keanu, Kemper) are true. Excluded from the
+  // ranked board and from sort/rank math; rendered only on /board/scale
+  // and the fixed reference rail.
+  isCalibration Boolean  @default(false)
+  // Pin to the top of the Most Requested rail regardless of activity.
+  // Editorial control over the "how is X not on here?!" surface.
+  featuredRequest Boolean @default(false)
+  // Denormalised pointer to the latest Score row, so the board and
+  // scorecard read the current numbers without aggregating the history
+  // every render. Written whenever a new Score is added. Null until the
+  // figure has been scored at least once (e.g. a MOST_REQUESTED stub).
+  currentScoreId String?  @unique
+  currentScore   Score?   @relation("CurrentScore", fields: [currentScoreId], references: [id], onDelete: SetNull)
+
+  // Full re-score history. Each row is one (re)scoring event; the
+  // timeline on the dossier is just this list ordered by scoredAt.
+  scores    Score[]      @relation("ScoreHistory")
+  sources   Source[]
+  votes     CrowdVote[]
+  petitions RescorePetition[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([status])
+  @@index([isCalibration])
+}
+
+// One row per (re)scoring event. The append-only history IS the "living
+// record" — three rows here already make the dossier feel alive. The
+// figure's headline numbers come from whichever Score is referenced by
+// Figure.currentScoreId.
+model Score {
+  id        String  @id @default(cuid())
+  figureId  String
+  figure    Figure  @relation("ScoreHistory", fields: [figureId], references: [id], onDelete: Cascade)
+  // 0-100. composite is the headline; factor1 (interpersonal-affective)
+  // and factor2 (lifestyle-antisocial) are the two mini-bars.
+  composite Int
+  factor1   Int
+  factor2   Int
+  tier      Tier
+  // Kanika's written read. The payoff section of the dossier.
+  verdict   String  @db.Text
+  // The ~6 scored observations: [{ name, score, note }]. JSON because
+  // the sector list is editorial and varies per figure.
+  sectors   Json
+  // What news prompted this re-score ("after [event]"). Null on the
+  // first/debut score.
+  triggerEvent String?
+  scoredAt  DateTime @default(now())
+
+  // Back-relation for the denormalised currentScore pointer above.
+  currentFor Figure? @relation("CurrentScore")
+
+  @@index([figureId, scoredAt])
+}
+
+// Public material a read is grounded in: interviews, filings,
+// documentaries. Rendered on the dossier as credibility + legal hygiene.
+model Source {
+  id       String @id @default(cuid())
+  figureId String
+  figure   Figure @relation(fields: [figureId], references: [id], onDelete: Cascade)
+  label    String // "2019 BBC interview", "SEC filing, Mar 2024"
+  url      String
+  sortOrder Int   @default(0)
+
+  @@index([figureId])
+}
+
+// A member's own /100 read on a figure. The aggregate of these is the
+// "crowd score" shown next to Kanika's official; the gap is the content.
+// One vote per (figure, user); re-voting updates the existing row.
+model CrowdVote {
+  id        String   @id @default(cuid())
+  figureId  String
+  figure    Figure   @relation(fields: [figureId], references: [id], onDelete: Cascade)
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  composite Int      // 0-100
+  // Vote weight. Longer-standing Consilium members count heavier — also
+  // the anti-brigade defense. Default 1.0 for free accounts; set higher
+  // for members at write time based on membership tenure.
+  weight    Float    @default(1.0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([figureId, userId])
+  @@index([figureId])
+}
+
+// A signed petition to re-examine a figure. A petition, not a mandate:
+// it decides who gets re-scored, Kanika still assigns the number. A
+// citation is required — every signature must point at a real event.
+model RescorePetition {
+  id        String   @id @default(cuid())
+  figureId  String
+  figure    Figure   @relation(fields: [figureId], references: [id], onDelete: Cascade)
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  sourceUrl String   // citation REQUIRED
+  createdAt DateTime @default(now())
+
+  @@unique([figureId, userId])
+  @@index([figureId])
+}
+
+// Powers the live activity ticker. Every row is a real event from real
+// user action (no fabricated liveness — the brand is anti-manipulation).
+// Actor handle and figure name/slug are denormalised at write time so
+// the ticker is a single cheap query with no joins.
+model BoardActivityEvent {
+  id          String   @id @default(cuid())
+  type        BoardEventType
+  figureId    String?
+  figureName  String?
+  figureSlug  String?
+  // Public @handle of the actor, when there is one and it is public.
+  // Null for anonymized or system events (DEBUT, RESCORE_REVEALED).
+  actorHandle String?
+  metadata    Json?
+  createdAt   DateTime @default(now())
+
+  @@index([createdAt])
+}
+
+enum Archetype {
+  OPERATOR
+  TRAINWRECK
+}
+
+enum FigureStatus {
+  ON_BOARD
+  RESCORE_PENDING
+  MOST_REQUESTED
+}
+
+enum Tier {
+  NEGLIGIBLE // 0-19
+  LOW        // 20-39
+  MODERATE   // 40-59
+  ELEVATED   // 60-79 (clinical-threshold range)
+  HIGH       // 80-100 (armchair)
+}
+
+enum BoardEventType {
+  VOTE
+  PETITION
+  DEBUT
+  RESCORE_REVEALED
 }
 
