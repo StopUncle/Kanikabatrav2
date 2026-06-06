@@ -49,7 +49,6 @@ const Header = () => {
   // on the right side.
   const navLinks: { href: string; label: string }[] = [
     { href: "/book", label: "Book" },
-    { href: "/board", label: "The Board" },
     { href: "/quiz", label: "Quiz" },
     { href: "/courses", label: "Courses" },
     { href: "/coaching", label: "Coaching" },
