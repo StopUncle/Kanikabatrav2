@@ -83,7 +83,7 @@ export default function MessagesClient({
   initialTabCounts,
   initialMemberId,
 }: Props) {
-  const [tab, setTab] = useState<TabKey>("needs_reply");
+  const [tab, setTab] = useState<TabKey>("all");
   const [conversations, setConversations] =
     useState<ConversationListItem[]>(initialConversations);
   const [tabCounts, setTabCounts] =
@@ -129,6 +129,11 @@ export default function MessagesClient({
     setComposing(false);
     setLoadingThread(true);
     setThread(null);
+    // Keep the open thread in the URL so a refresh re-opens it instead of
+    // dropping back to the list.
+    if (typeof window !== "undefined") {
+      window.history.replaceState(null, "", `/admin/messages?to=${memberId}`);
+    }
     try {
       const r = await fetch(`/api/admin/messages/${memberId}`, {
         cache: "no-store",
@@ -471,6 +476,9 @@ export default function MessagesClient({
               onBack={() => {
                 setActiveMemberId(null);
                 setThread(null);
+                if (typeof window !== "undefined") {
+                  window.history.replaceState(null, "", "/admin/messages");
+                }
               }}
               onStatus={setStatus}
               messagesEndRef={messagesEndRef}

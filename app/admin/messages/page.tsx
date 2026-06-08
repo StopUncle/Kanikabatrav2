@@ -19,8 +19,9 @@ export default async function AdminMessagesPage({
   const { to } = await searchParams;
 
   const [conversations, needsReply, open, done, all] = await Promise.all([
+    // Default view is "All" so a thread is never hidden after a refresh — a
+    // conversation Kanika just sent to (adminUnread 0) must still be visible.
     prisma.conversation.findMany({
-      where: { adminUnread: { gt: 0 } },
       orderBy: { lastMessageAt: "desc" },
       take: 200,
       select: {
