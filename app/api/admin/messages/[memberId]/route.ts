@@ -109,7 +109,7 @@ export async function POST(
 
   const { memberId } = await params;
 
-  let body: { content?: unknown };
+  let body: { content?: unknown; voiceNoteUrl?: unknown };
   try {
     body = await req.json();
   } catch {
@@ -117,7 +117,14 @@ export async function POST(
   }
 
   const content = typeof body.content === "string" ? body.content.trim() : "";
-  if (!content) {
+  // A voice message arrives as an already-uploaded R2 URL (the client uploads
+  // via the shared voice-note endpoint first). It may carry no text.
+  const voiceNoteUrl =
+    typeof body.voiceNoteUrl === "string" && body.voiceNoteUrl.startsWith("http")
+      ? body.voiceNoteUrl
+      : null;
+
+  if (!content && !voiceNoteUrl) {
     return NextResponse.json({ error: "Message is empty" }, { status: 400 });
   }
   if (content.length > DM_MAX_LENGTH) {
@@ -162,6 +169,7 @@ export async function POST(
         fromAdmin: true,
         senderId: "admin",
         content,
+        voiceNoteUrl,
       },
     });
     return { conversationId: convo.id, message: created };
@@ -179,7 +187,7 @@ export async function POST(
       displayName: member.displayName,
       name: member.name,
     },
-    content,
+    voiceNoteUrl ? "🎤 Voice message" : content,
   );
 
   return NextResponse.json({ message: dto, conversationId });

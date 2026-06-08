@@ -6,12 +6,14 @@ import {
   subscribeToDirectMessages,
   type DirectMessageWireEvent,
 } from "@/lib/pusher/client";
+import VoiceNotePlayer from "@/components/consilium/VoiceNotePlayer";
 
 interface DM {
   id: string;
   conversationId: string;
   fromAdmin: boolean;
   content: string;
+  voiceNoteUrl: string | null;
   createdAt: string;
   readAt: string | null;
 }
@@ -182,23 +184,32 @@ function Header() {
 function Bubble({ message }: { message: DM }) {
   // On the member side, "mine" is a member message (fromAdmin === false).
   const mine = !message.fromAdmin;
+  const isVoice = !!message.voiceNoteUrl;
   return (
     <div className={`flex ${mine ? "justify-end" : "justify-start"}`}>
       <div
-        className={`max-w-[80%] rounded-2xl px-3.5 py-2.5 ${
-          mine
-            ? "bg-white/[0.04] border border-white/10 text-text-light rounded-br-sm"
-            : "bg-warm-gold/15 border border-warm-gold/25 text-text-light rounded-bl-sm"
-        }`}
+        className={
+          isVoice
+            ? "w-[min(20rem,85%)]"
+            : `max-w-[80%] rounded-2xl px-3.5 py-2.5 ${
+                mine
+                  ? "bg-white/[0.04] border border-white/10 text-text-light rounded-br-sm"
+                  : "bg-warm-gold/15 border border-warm-gold/25 text-text-light rounded-bl-sm"
+              }`
+        }
       >
         {!mine && (
           <span className="block text-[10px] uppercase tracking-wider text-warm-gold/70 mb-1">
             Kanika
           </span>
         )}
-        <p className="text-sm font-light whitespace-pre-wrap break-words leading-relaxed">
-          {message.content}
-        </p>
+        {isVoice ? (
+          <VoiceNotePlayer src={message.voiceNoteUrl as string} />
+        ) : (
+          <p className="text-sm font-light whitespace-pre-wrap break-words leading-relaxed">
+            {message.content}
+          </p>
+        )}
         <div
           className={`mt-1 text-[10px] tabular-nums ${
             mine ? "text-text-gray/40 text-right" : "text-warm-gold/50"

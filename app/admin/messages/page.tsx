@@ -35,7 +35,12 @@ export default async function AdminMessagesPage({
         messages: {
           orderBy: { createdAt: "desc" },
           take: 1,
-          select: { content: true, fromAdmin: true, createdAt: true },
+          select: {
+            content: true,
+            voiceNoteUrl: true,
+            fromAdmin: true,
+            createdAt: true,
+          },
         },
       },
     }),
@@ -61,7 +66,9 @@ export default async function AdminMessagesPage({
           },
           lastMessage: last
             ? {
-                preview: last.content.slice(0, 140),
+                preview: last.voiceNoteUrl
+                  ? "🎤 Voice message"
+                  : last.content.slice(0, 140),
                 fromAdmin: last.fromAdmin,
                 createdAt: last.createdAt.toISOString(),
               }

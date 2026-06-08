@@ -12,11 +12,14 @@ import {
   X,
   Inbox,
   ShieldAlert,
+  Mic,
 } from "lucide-react";
 import {
   subscribeToDirectMessages,
   type DirectMessageWireEvent,
 } from "@/lib/pusher/client";
+import VoiceRecorder from "@/components/admin/VoiceRecorder";
+import VoiceNotePlayer from "@/components/consilium/VoiceNotePlayer";
 
 type ConversationStatus = "OPEN" | "DONE" | "ARCHIVED";
 
@@ -34,6 +37,7 @@ interface DM {
   conversationId: string;
   fromAdmin: boolean;
   content: string;
+  voiceNoteUrl: string | null;
   createdAt: string;
   readAt: string | null;
 }
@@ -102,7 +106,18 @@ export default function MessagesClient({
   const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
   const [searching, setSearching] = useState(false);
 
-  const messagesEndRef = useRef<HTMLDivElement | null>(null);
+  const messagesScrollRef = useRef<HTMLDivElement | null>(null);
+  // Whether Kanika is scrolled to (near) the bottom of the thread. We only
+  // auto-follow new messages when she already is, and we scroll the LIST, never
+  // the document, so sending never jumps the whole page on mobile.
+  const nearBottomRef = useRef(true);
+
+  const handleMessagesScroll = useCallback(() => {
+    const el = messagesScrollRef.current;
+    if (!el) return;
+    nearBottomRef.current =
+      el.scrollHeight - el.scrollTop - el.clientHeight < 120;
+  }, []);
 
   const loadList = useCallback(async (which: TabKey) => {
     setLoadingList(true);
@@ -185,10 +200,68 @@ export default function MessagesClient({
     return () => sub?.unsubscribe();
   }, [thread?.conversation?.id]);
 
-  // Keep the thread pinned to the newest message.
+  // On opening a thread, jump straight to the newest message (instant, list-only).
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    const el = messagesScrollRef.current;
+    if (el) el.scrollTop = el.scrollHeight;
+    nearBottomRef.current = true;
+  }, [thread?.conversation?.id]);
+
+  // Follow new messages only when already at the bottom. Scrolls the list, not
+  // the page, so sending or a new reply never yanks the whole screen.
+  useEffect(() => {
+    if (!nearBottomRef.current) return;
+    const el = messagesScrollRef.current;
+    if (el) el.scrollTop = el.scrollHeight;
   }, [thread?.messages.length]);
+
+  // Append a just-sent message to the open thread and float its conversation
+  // to the top of the list (creating the row if this was a first contact).
+  // Shared by text and voice sends.
+  function applySent(message: DM, conversationId: string) {
+    setThread((prev) => {
+      if (!prev) return prev;
+      if (prev.messages.some((m) => m.id === message.id)) return prev;
+      return {
+        ...prev,
+        conversation: prev.conversation ?? { id: conversationId, status: "OPEN" },
+        messages: [...prev.messages, message],
+      };
+    });
+    const preview = message.voiceNoteUrl
+      ? "🎤 Voice message"
+      : message.content.slice(0, 140);
+    setConversations((prev) => {
+      const existing = prev.find((c) => c.member.id === activeMemberId);
+      if (existing) {
+        return [
+          {
+            ...existing,
+            status: "OPEN",
+            lastMessageAt: message.createdAt,
+            lastMessage: { preview, fromAdmin: true, createdAt: message.createdAt },
+          },
+          ...prev.filter((c) => c.member.id !== activeMemberId),
+        ];
+      }
+      if (!thread) return prev;
+      return [
+        {
+          id: conversationId,
+          status: "OPEN",
+          adminUnread: 0,
+          lastMessageAt: message.createdAt,
+          member: {
+            id: thread.member.id,
+            name: thread.member.name,
+            avatarUrl: thread.member.avatarUrl,
+          },
+          lastMessage: { preview, fromAdmin: true, createdAt: message.createdAt },
+        },
+        ...prev,
+      ];
+    });
+  }
 
   async function send() {
     const content = draft.trim();
@@ -207,57 +280,45 @@ export default function MessagesClient({
       }
       const body: { message: DM; conversationId: string } = await r.json();
       setDraft("");
-      setThread((prev) => {
-        if (!prev) return prev;
-        if (prev.messages.some((m) => m.id === body.message.id)) return prev;
-        return {
-          ...prev,
-          conversation: prev.conversation ?? {
-            id: body.conversationId,
-            status: "OPEN",
-          },
-          messages: [...prev.messages, body.message],
-        };
-      });
-      // Reflect the new last-message in the list (and create the row if this
-      // was a first-ever message to this member).
-      setConversations((prev) => {
-        const existing = prev.find((c) => c.member.id === activeMemberId);
-        const preview = content.slice(0, 140);
-        if (existing) {
-          return [
-            {
-              ...existing,
-              status: "OPEN",
-              lastMessageAt: body.message.createdAt,
-              lastMessage: {
-                preview,
-                fromAdmin: true,
-                createdAt: body.message.createdAt,
-              },
-            },
-            ...prev.filter((c) => c.member.id !== activeMemberId),
-          ];
-        }
-        if (!thread) return prev;
-        return [
-          {
-            id: body.conversationId,
-            status: "OPEN",
-            adminUnread: 0,
-            lastMessageAt: body.message.createdAt,
-            member: {
-              id: thread.member.id,
-              name: thread.member.name,
-              avatarUrl: thread.member.avatarUrl,
-            },
-            lastMessage: { preview, fromAdmin: true, createdAt: body.message.createdAt },
-          },
-          ...prev,
-        ];
-      });
+      applySent(body.message, body.conversationId);
     } finally {
       setSending(false);
+    }
+  }
+
+  // Record -> upload to the shared voice-note endpoint -> send as a voice
+  // message. Returns true on success so the composer can close itself.
+  async function sendVoice(file: File): Promise<boolean> {
+    if (!activeMemberId) return false;
+    try {
+      const fd = new FormData();
+      fd.append("audio", file);
+      const up = await fetch("/api/consilium/voice-notes/upload", {
+        method: "POST",
+        body: fd,
+      });
+      if (!up.ok) {
+        const b = await up.json().catch(() => ({}));
+        alert(b.error || "Voice upload failed. Try again.");
+        return false;
+      }
+      const { url } = await up.json();
+      const r = await fetch(`/api/admin/messages/${activeMemberId}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ voiceNoteUrl: url }),
+      });
+      if (!r.ok) {
+        const b = await r.json().catch(() => ({}));
+        alert(b.error || "Could not send the voice message.");
+        return false;
+      }
+      const body: { message: DM; conversationId: string } = await r.json();
+      applySent(body.message, body.conversationId);
+      return true;
+    } catch {
+      alert("Could not send the voice message. Check your connection.");
+      return false;
     }
   }
 
@@ -308,12 +369,12 @@ export default function MessagesClient({
 
   return (
     <div className="max-w-6xl">
-      <div className="flex items-start justify-between gap-4 mb-6">
+      <div className="flex items-start justify-between gap-4 mb-4 lg:mb-6">
         <div>
-          <h1 className="text-2xl font-light uppercase tracking-[0.15em] text-text-light mb-1">
+          <h1 className="text-xl lg:text-2xl font-light uppercase tracking-[0.15em] text-text-light mb-1">
             Messages
           </h1>
-          <p className="text-text-gray/70 text-sm">
+          <p className="text-text-gray/70 text-sm hidden sm:block">
             Your private, one-to-one line to members. You start the thread; they
             reply. Nothing here is public.
           </p>
@@ -333,7 +394,7 @@ export default function MessagesClient({
         </button>
       </div>
 
-      <div className="flex gap-4 h-[calc(100vh-220px)] min-h-[420px]">
+      <div className="flex gap-4 h-[calc(100dvh-170px)] lg:h-[calc(100vh-220px)] min-h-[420px]">
         {/* LEFT: conversation list (or the new-message search) */}
         <div
           className={`${
@@ -473,6 +534,7 @@ export default function MessagesClient({
               setDraft={setDraft}
               sending={sending}
               onSend={send}
+              onSendVoice={sendVoice}
               onBack={() => {
                 setActiveMemberId(null);
                 setThread(null);
@@ -481,7 +543,8 @@ export default function MessagesClient({
                 }
               }}
               onStatus={setStatus}
-              messagesEndRef={messagesEndRef}
+              scrollRef={messagesScrollRef}
+              onScroll={handleMessagesScroll}
             />
           )}
         </div>
@@ -496,21 +559,51 @@ function ThreadPanel({
   setDraft,
   sending,
   onSend,
+  onSendVoice,
   onBack,
   onStatus,
-  messagesEndRef,
+  scrollRef,
+  onScroll,
 }: {
   thread: Thread;
   draft: string;
   setDraft: (v: string) => void;
   sending: boolean;
   onSend: () => void;
+  onSendVoice: (file: File) => Promise<boolean>;
   onBack: () => void;
   onStatus: (s: ConversationStatus) => void;
-  messagesEndRef: React.Ref<HTMLDivElement>;
+  scrollRef: React.Ref<HTMLDivElement>;
+  onScroll: () => void;
 }) {
   const { member, conversation, messages } = thread;
   const restricted = member.isBanned || member.messagingRestricted;
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+  // Voice composer state: null = text mode; a File once recorded and ready
+  // to send. `recording` tracks the in-progress recorder so the text input
+  // hides while she's talking.
+  const [voiceMode, setVoiceMode] = useState(false);
+  const [recordedVoice, setRecordedVoice] = useState<File | null>(null);
+  const [uploadingVoice, setUploadingVoice] = useState(false);
+
+  async function handleSendVoice() {
+    if (!recordedVoice || uploadingVoice) return;
+    setUploadingVoice(true);
+    const ok = await onSendVoice(recordedVoice);
+    setUploadingVoice(false);
+    if (ok) {
+      setRecordedVoice(null);
+      setVoiceMode(false);
+    }
+  }
+
+  // Auto-grow the composer up to a cap, and snap back to one line after send.
+  useEffect(() => {
+    const el = textareaRef.current;
+    if (!el) return;
+    el.style.height = "auto";
+    el.style.height = `${Math.min(el.scrollHeight, 160)}px`;
+  }, [draft]);
 
   return (
     <>
@@ -518,10 +611,10 @@ function ThreadPanel({
       <div className="shrink-0 flex items-center gap-3 px-4 py-3 border-b border-warm-gold/10">
         <button
           onClick={onBack}
-          className="lg:hidden p-1 -ml-1 text-text-gray hover:text-text-light"
-          aria-label="Back"
+          className="lg:hidden p-2 -ml-2 text-text-gray hover:text-text-light active:text-warm-gold"
+          aria-label="Back to conversations"
         >
-          <ArrowLeft size={18} />
+          <ArrowLeft size={20} />
         </button>
         <Avatar name={member.name} url={member.avatarUrl} />
         <div className="min-w-0 flex-1">
@@ -564,7 +657,11 @@ function ThreadPanel({
       </div>
 
       {/* Messages */}
-      <div className="flex-1 overflow-y-auto px-4 py-5 space-y-3">
+      <div
+        ref={scrollRef}
+        onScroll={onScroll}
+        className="flex-1 overflow-y-auto overscroll-contain px-4 py-5 space-y-3"
+      >
         {messages.length === 0 ? (
           <div className="flex flex-col items-center justify-center h-full text-center text-text-gray/40 px-6">
             <p className="text-sm">
@@ -575,7 +672,6 @@ function ThreadPanel({
         ) : (
           messages.map((m) => <Bubble key={m.id} message={m} />)
         )}
-        <div ref={messagesEndRef} />
       </div>
 
       {/* Composer */}
@@ -588,37 +684,87 @@ function ThreadPanel({
               : "This member is messaging-restricted. They can read but not reply."}
           </div>
         )}
-        <div className="flex items-end gap-2">
-          <textarea
-            value={draft}
-            onChange={(e) => setDraft(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) {
-                e.preventDefault();
-                onSend();
-              }
-            }}
-            rows={1}
-            placeholder={`Message ${member.name}...`}
-            className="flex-1 resize-none max-h-40 bg-white/[0.03] border border-white/10 rounded-lg px-3 py-2.5 text-text-light text-sm font-light focus:border-warm-gold/40 focus:outline-none transition-colors"
-          />
-          <button
-            onClick={onSend}
-            disabled={sending || !draft.trim()}
-            className="shrink-0 inline-flex items-center justify-center w-10 h-10 rounded-lg bg-warm-gold/15 hover:bg-warm-gold/25 text-warm-gold border border-warm-gold/30 transition disabled:opacity-40 disabled:cursor-not-allowed"
-            aria-label="Send"
-          >
-            {sending ? (
-              <Loader2 size={16} className="animate-spin" />
-            ) : (
-              <Send size={16} />
-            )}
-          </button>
-        </div>
-        <p className="mt-1.5 text-[10px] text-text-gray/40">
-          {/* Cmd/Ctrl+Enter to send */}
-          Press &#8984;/Ctrl + Enter to send
-        </p>
+        {voiceMode ? (
+          <div className="space-y-2">
+            <VoiceRecorder
+              onRecorded={(f) => setRecordedVoice(f)}
+              disabled={uploadingVoice}
+            />
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => {
+                  setVoiceMode(false);
+                  setRecordedVoice(null);
+                }}
+                disabled={uploadingVoice}
+                className="px-3 py-2 rounded-lg text-[11px] tracking-wider uppercase text-text-gray/70 border border-white/10 hover:text-text-light transition disabled:opacity-50"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleSendVoice}
+                disabled={!recordedVoice || uploadingVoice}
+                className="ml-auto inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-warm-gold/15 hover:bg-warm-gold/25 text-warm-gold border border-warm-gold/30 text-[11px] tracking-wider uppercase transition disabled:opacity-40 disabled:cursor-not-allowed"
+              >
+                {uploadingVoice ? (
+                  <Loader2 size={14} className="animate-spin" />
+                ) : (
+                  <Send size={14} />
+                )}
+                Send voice
+              </button>
+            </div>
+          </div>
+        ) : (
+          <>
+            <div className="flex items-end gap-2">
+              <button
+                onClick={() => setVoiceMode(true)}
+                aria-label="Record a voice message"
+                className="shrink-0 inline-flex items-center justify-center w-10 h-10 rounded-lg bg-white/[0.03] hover:bg-warm-gold/15 text-text-gray hover:text-warm-gold border border-white/10 hover:border-warm-gold/30 transition"
+              >
+                <Mic size={16} />
+              </button>
+              <textarea
+                ref={textareaRef}
+                value={draft}
+                onChange={(e) => setDraft(e.target.value)}
+                onKeyDown={(e) => {
+                  // Enter sends; Shift+Enter inserts a new line. Skip while the
+                  // IME is composing (so picking a suggestion doesn't send).
+                  if (
+                    e.key === "Enter" &&
+                    !e.shiftKey &&
+                    !e.nativeEvent.isComposing
+                  ) {
+                    e.preventDefault();
+                    onSend();
+                  }
+                }}
+                rows={1}
+                enterKeyHint="send"
+                placeholder={`Message ${member.name}...`}
+                className="flex-1 resize-none max-h-40 bg-white/[0.03] border border-white/10 rounded-lg px-3 py-2.5 text-text-light text-base sm:text-sm font-light focus:border-warm-gold/40 focus:outline-none transition-colors"
+              />
+              <button
+                onClick={onSend}
+                disabled={sending || !draft.trim()}
+                className="shrink-0 inline-flex items-center justify-center w-10 h-10 rounded-lg bg-warm-gold/15 hover:bg-warm-gold/25 text-warm-gold border border-warm-gold/30 transition disabled:opacity-40 disabled:cursor-not-allowed"
+                aria-label="Send"
+              >
+                {sending ? (
+                  <Loader2 size={16} className="animate-spin" />
+                ) : (
+                  <Send size={16} />
+                )}
+              </button>
+            </div>
+            <p className="mt-1.5 text-[10px] text-text-gray/40 hidden sm:block">
+              Enter to send &middot; Shift + Enter for a new line &middot; tap the
+              mic for a voice message
+            </p>
+          </>
+        )}
       </div>
     </>
   );
@@ -626,18 +772,27 @@ function ThreadPanel({
 
 function Bubble({ message }: { message: DM }) {
   const mine = message.fromAdmin;
+  const isVoice = !!message.voiceNoteUrl;
   return (
     <div className={`flex ${mine ? "justify-end" : "justify-start"}`}>
       <div
-        className={`max-w-[78%] rounded-2xl px-3.5 py-2.5 ${
-          mine
-            ? "bg-warm-gold/15 border border-warm-gold/25 text-text-light rounded-br-sm"
-            : "bg-white/[0.04] border border-white/10 text-text-light rounded-bl-sm"
-        }`}
+        className={
+          isVoice
+            ? "w-[min(20rem,82%)]"
+            : `max-w-[78%] rounded-2xl px-3.5 py-2.5 ${
+                mine
+                  ? "bg-warm-gold/15 border border-warm-gold/25 text-text-light rounded-br-sm"
+                  : "bg-white/[0.04] border border-white/10 text-text-light rounded-bl-sm"
+              }`
+        }
       >
-        <p className="text-sm font-light whitespace-pre-wrap break-words leading-relaxed">
-          {message.content}
-        </p>
+        {isVoice ? (
+          <VoiceNotePlayer src={message.voiceNoteUrl as string} />
+        ) : (
+          <p className="text-sm font-light whitespace-pre-wrap break-words leading-relaxed">
+            {message.content}
+          </p>
+        )}
         <div
           className={`mt-1 flex items-center gap-1 text-[10px] ${
             mine ? "text-warm-gold/50 justify-end" : "text-text-gray/40"

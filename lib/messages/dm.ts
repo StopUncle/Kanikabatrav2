@@ -26,6 +26,8 @@ export interface DirectMessageDTO {
   conversationId: string;
   fromAdmin: boolean;
   content: string;
+  /** R2 URL when this is a voice message, else null. */
+  voiceNoteUrl: string | null;
   createdAt: string;
   readAt: string | null;
 }
@@ -36,6 +38,7 @@ export function serializeMessage(m: DirectMessage): DirectMessageDTO {
     conversationId: m.conversationId,
     fromAdmin: m.fromAdmin,
     content: m.content,
+    voiceNoteUrl: m.voiceNoteUrl ?? null,
     createdAt: m.createdAt.toISOString(),
     readAt: m.readAt ? m.readAt.toISOString() : null,
   };

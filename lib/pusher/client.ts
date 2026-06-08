@@ -117,6 +117,7 @@ export interface DirectMessageWireEvent {
   conversationId: string;
   fromAdmin: boolean;
   content: string;
+  voiceNoteUrl: string | null;
   createdAt: string;
   readAt: string | null;
 }

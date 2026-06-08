@@ -612,6 +612,10 @@ model DirectMessage {
   senderId       String
   content        String       @db.Text
   type           MessageType  @default(TEXT)
+  // Voice message: R2 URL of the recording. Null for a plain text message.
+  // A message is "voice" when this is set; content may be empty. Reuses the
+  // same upload pipeline + player as admin voice notes.
+  voiceNoteUrl   String?
   // Stamped when the OTHER side reads this message. Null = unread.
   readAt         DateTime?
   createdAt      DateTime     @default(now())
