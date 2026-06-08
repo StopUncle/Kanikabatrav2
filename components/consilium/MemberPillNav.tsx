@@ -15,6 +15,7 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import AskKanikaPill from "./AskKanikaPill";
+import MessagesPill from "./MessagesPill";
 
 /**
  * Member-area secondary nav. Sits at the top of <main> in the
@@ -179,6 +180,9 @@ export default function MemberPillNav({ onlineCount }: Props) {
               loop) and we want it visible before the swipe happens on
               mobile, even at 360px. */}
           <AskKanikaPill />
+          {/* Messages from Kanika. Self-hides until she opens a thread, so it
+              only appears for members she's actually written to. */}
+          <MessagesPill />
           {PILLS.map((pill, index) => {
             const isActive = activeHref === pill.href;
             const Icon = pill.icon;

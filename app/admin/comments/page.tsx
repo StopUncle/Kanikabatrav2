@@ -1,7 +1,17 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { Loader2, Check, X, EyeOff, Clock, CheckCircle, MessageSquare } from "lucide-react";
+import Link from "next/link";
+import {
+  Loader2,
+  Check,
+  X,
+  EyeOff,
+  Clock,
+  CheckCircle,
+  MessageSquare,
+  Send,
+} from "lucide-react";
 
 interface Comment {
   id: string;
@@ -188,6 +198,19 @@ export default function CommentsPage() {
                 <p className="text-text-light/90 text-sm font-light leading-relaxed whitespace-pre-wrap">
                   {comment.content}
                 </p>
+              </div>
+
+              {/* Take it private. A public comment thread can't be a real
+                  back-and-forth — this lifts the conversation into a 1-on-1
+                  thread with the commenter so the reply never gets lost. */}
+              <div className="mb-4">
+                <Link
+                  href={`/admin/messages?to=${comment.author.id}`}
+                  className="inline-flex items-center gap-2 px-4 py-2 text-sm font-light tracking-wide bg-accent-gold/10 text-accent-gold border border-accent-gold/30 rounded hover:bg-accent-gold/20 transition-all duration-200"
+                >
+                  <Send size={14} strokeWidth={1.6} />
+                  Message privately
+                </Link>
               </div>
 
               {comment.status === "PENDING_REVIEW" && (

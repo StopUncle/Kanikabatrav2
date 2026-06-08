@@ -86,6 +86,41 @@ export function subscribeToUserNotifications(
   };
 }
 
+/**
+ * Subscribe to a 1-on-1 direct-message thread. Used by both the admin inbox
+ * and the member messages page. The "message" event carries { message } with
+ * the same DTO the initial fetch returns, so a new message can be appended
+ * without a refetch. Authorisation (owning member OR admin) is enforced
+ * server-side in the pusher auth route.
+ */
+export function subscribeToDirectMessages(
+  conversationId: string,
+  onMessage: (data: { message: DirectMessageWireEvent }) => void,
+) {
+  const client = getPusherClient();
+  if (!client) return null;
+
+  const channelName = `private-dm-${conversationId}`;
+  const channel = client.subscribe(channelName);
+  channel.bind("message", onMessage);
+
+  return {
+    channel,
+    unsubscribe: () => {
+      client.unsubscribe(channelName);
+    },
+  };
+}
+
+export interface DirectMessageWireEvent {
+  id: string;
+  conversationId: string;
+  fromAdmin: boolean;
+  content: string;
+  createdAt: string;
+  readAt: string | null;
+}
+
 export interface ChatMessageEvent {
   id: string;
   content: string;

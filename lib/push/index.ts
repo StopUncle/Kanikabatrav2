@@ -30,7 +30,8 @@ export type PushCategory =
   | "mention"
   | "broadcast"
   | "dailyTell"
-  | "dailyStreak";
+  | "dailyStreak"
+  | "directMessage";
 
 export interface PushPayload {
   title: string;
@@ -67,6 +68,10 @@ const DEFAULT_OPT_IN: Record<PushCategory, boolean> = {
   // cron decides WHO (at-risk streak vs gentle mission ping); this gate only
   // honours an explicit opt-out.
   dailyStreak: true,
+  // A private message from Kanika. Default-ON: a 1-on-1 from the founder is
+  // the highest-signal notification a member can get; the whole point is they
+  // hear about it. They can still opt out per-category.
+  directMessage: true,
 };
 
 let configured = false;
