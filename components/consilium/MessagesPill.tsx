@@ -45,17 +45,16 @@ export default function MessagesPill() {
     if (isActive) fetchState();
   }, [isActive, fetchState]);
 
-  // Hidden until Kanika opens a thread — never show a channel members can't
-  // start (unless they're already viewing it).
-  if (!hasConversation && !isActive) return null;
-
+  // Always visible: members can now start a thread, so this is a standing
+  // invitation. Reads "Message Kanika" until a thread exists, then "Messages".
   const answered = unread > 0;
+  const label = hasConversation ? "Messages" : "Message Kanika";
 
   return (
     <Link
       href="/consilium/messages"
       aria-label={
-        answered ? `Messages, ${unread} unread from Kanika` : "Messages"
+        answered ? `Messages, ${unread} unread from Kanika` : label
       }
       className={`group shrink-0 snap-start inline-flex items-center gap-1.5 px-3.5 py-2 rounded-full border text-[11px] tracking-[0.18em] uppercase transition-all duration-200 ${
         answered
@@ -70,7 +69,7 @@ export default function MessagesPill() {
         strokeWidth={1.6}
         className={`shrink-0 ${answered ? "text-emerald-300" : isActive ? "text-warm-gold" : "text-text-gray/60 group-hover:text-warm-gold"}`}
       />
-      <span className="whitespace-nowrap leading-none">Messages</span>
+      <span className="whitespace-nowrap leading-none">{label}</span>
       {answered && (
         <span
           className="ml-0.5 inline-flex items-center pl-2 border-l border-emerald-400/25"

@@ -3,6 +3,8 @@ import { prisma } from "@/lib/prisma";
 import { resolveActiveUserId } from "@/lib/auth/resolve-user";
 import { enforceMessagingGuard } from "@/lib/community/messaging-guard";
 import { triggerDirectMessage } from "@/lib/pusher/server";
+import { checkDmCooldown } from "@/lib/messages/cooldown";
+import { notifyAdminOfNewThread } from "@/lib/messages/notify";
 import {
   DM_MESSAGE_EVENT,
   DM_MAX_LENGTH,
@@ -12,10 +14,10 @@ import {
 /**
  * GET /api/consilium/messages
  *
- * The member's single thread with Kanika. Opening it marks Kanika's messages
- * read (memberUnread -> 0 + readAt stamp). Returns a null conversation when
- * Kanika has never messaged them — members can't start a thread, so the UI
- * shows a quiet empty state rather than a composer.
+ * The member's single thread with Kanika. Opening it marks her messages read.
+ * Members can now START a thread, so this also returns the send-cooldown state
+ * for the composer; a null conversation just means "no thread yet", which the
+ * UI renders as an invitation to write the first message.
  */
 export async function GET() {
   const userId = await resolveActiveUserId();
@@ -28,10 +30,7 @@ export async function GET() {
     select: {
       id: true,
       status: true,
-      messages: {
-        orderBy: { createdAt: "asc" },
-        take: 300,
-      },
+      messages: { orderBy: { createdAt: "asc" }, take: 300 },
     },
   });
 
@@ -52,20 +51,27 @@ export async function GET() {
     ]);
   }
 
+  const cooldown = await checkDmCooldown(userId);
+
   return NextResponse.json({
     conversation: conversation
       ? { id: conversation.id, status: conversation.status }
       : null,
     messages: (conversation?.messages ?? []).map(serializeMessage),
+    cooldown: {
+      allowed: cooldown.allowed,
+      nextAvailableAt: cooldown.nextAvailableAt?.toISOString() ?? null,
+    },
   });
 }
 
 /**
  * POST /api/consilium/messages  { content }
  *
- * A member replies. Allowed ONLY when Kanika has already opened the thread —
- * this is the burnout guardrail: members reply, they don't cold-open. Bumps
- * Kanika's unread and reopens the thread if she'd marked it Done.
+ * A member sends Kanika a message. Members may now open a thread themselves
+ * (first contact creates the conversation). A cooldown stops pile-on: one
+ * unanswered message at a time, auto-unlocking 24h later or the moment Kanika
+ * replies. Bumps her unread and reopens the thread if she'd marked it Done.
  */
 export async function POST(req: NextRequest) {
   const userId = await resolveActiveUserId();
@@ -75,6 +81,18 @@ export async function POST(req: NextRequest) {
 
   const guard = await enforceMessagingGuard(userId);
   if (guard) return guard;
+
+  const cooldown = await checkDmCooldown(userId);
+  if (!cooldown.allowed) {
+    return NextResponse.json(
+      {
+        error:
+          "Your last message is still with Kanika. You can send another once she replies.",
+        nextAvailableAt: cooldown.nextAvailableAt?.toISOString() ?? null,
+      },
+      { status: 429 },
+    );
+  }
 
   let body: { content?: unknown };
   try {
@@ -94,41 +112,52 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  const conversation = await prisma.conversation.findUnique({
+  const existing = await prisma.conversation.findUnique({
     where: { memberId: userId },
     select: { id: true },
   });
-  if (!conversation) {
-    return NextResponse.json(
-      { error: "Kanika hasn't started a conversation with you yet." },
-      { status: 403 },
-    );
-  }
+  const isFirstContact = !existing;
 
-  const message = await prisma.$transaction(async (tx) => {
-    const created = await tx.directMessage.create({
-      data: {
-        conversationId: conversation.id,
-        fromAdmin: false,
-        senderId: userId,
-        content,
+  const { message, conversationId } = await prisma.$transaction(async (tx) => {
+    const convo = await tx.conversation.upsert({
+      where: { memberId: userId },
+      create: {
+        memberId: userId,
+        status: "OPEN",
+        adminUnread: 1,
+        lastMessageAt: new Date(),
       },
-    });
-    await tx.conversation.update({
-      where: { id: conversation.id },
-      data: {
+      update: {
         adminUnread: { increment: 1 },
         lastMessageAt: new Date(),
         status: "OPEN",
       },
     });
-    return created;
+    const created = await tx.directMessage.create({
+      data: {
+        conversationId: convo.id,
+        fromAdmin: false,
+        senderId: userId,
+        content,
+      },
+    });
+    return { message: created, conversationId: convo.id };
   });
 
   const dto = serializeMessage(message);
-  await triggerDirectMessage(conversation.id, DM_MESSAGE_EVENT, {
-    message: dto,
-  });
+  await triggerDirectMessage(conversationId, DM_MESSAGE_EVENT, { message: dto });
 
-  return NextResponse.json({ message: dto });
+  // First contact: email Kanika so a brand-new thread never sits unseen.
+  if (isFirstContact) {
+    const member = await prisma.user.findUnique({
+      where: { id: userId },
+      select: { displayName: true, name: true },
+    });
+    await notifyAdminOfNewThread(
+      member?.displayName || member?.name || "A member",
+      content,
+    );
+  }
+
+  return NextResponse.json({ message: dto, conversationId });
 }

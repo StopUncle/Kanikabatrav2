@@ -25,8 +25,20 @@ export default function MemberMessagesClient() {
   const [draft, setDraft] = useState("");
   const [sending, setSending] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  // null = may send now; an ISO string = on cooldown until then. The cooldown
+  // also clears the instant Kanika replies (handled in the realtime handler).
+  const [cooldownUntil, setCooldownUntil] = useState<string | null>(null);
 
-  const endRef = useRef<HTMLDivElement | null>(null);
+  const scrollRef = useRef<HTMLDivElement | null>(null);
+  const nearBottomRef = useRef(true);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  const onScroll = useCallback(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+    nearBottomRef.current =
+      el.scrollHeight - el.scrollTop - el.clientHeight < 120;
+  }, []);
 
   const load = useCallback(async () => {
     try {
@@ -35,9 +47,13 @@ export default function MemberMessagesClient() {
       const body: {
         conversation: { id: string; status: string } | null;
         messages: DM[];
+        cooldown: { allowed: boolean; nextAvailableAt: string | null };
       } = await r.json();
       setConversationId(body.conversation?.id ?? null);
       setMessages(body.messages);
+      setCooldownUntil(
+        body.cooldown.allowed ? null : body.cooldown.nextAvailableAt,
+      );
     } finally {
       setLoading(false);
     }
@@ -47,7 +63,7 @@ export default function MemberMessagesClient() {
     load();
   }, [load]);
 
-  // Realtime: append Kanika's incoming messages (and the echo of our own).
+  // Realtime: append incoming messages. Kanika replying clears the cooldown.
   useEffect(() => {
     if (!conversationId) return;
     const sub = subscribeToDirectMessages(
@@ -56,18 +72,39 @@ export default function MemberMessagesClient() {
         setMessages((prev) =>
           prev.some((m) => m.id === message.id) ? prev : [...prev, message],
         );
+        if (message.fromAdmin) setCooldownUntil(null);
       },
     );
     return () => sub?.unsubscribe();
   }, [conversationId]);
 
+  // Jump to newest when the thread first loads (list-contained, no page jump).
   useEffect(() => {
-    endRef.current?.scrollIntoView({ behavior: "smooth" });
+    const el = scrollRef.current;
+    if (el) el.scrollTop = el.scrollHeight;
+    nearBottomRef.current = true;
+  }, [conversationId]);
+
+  // Follow new messages only when already at the bottom.
+  useEffect(() => {
+    if (!nearBottomRef.current) return;
+    const el = scrollRef.current;
+    if (el) el.scrollTop = el.scrollHeight;
   }, [messages.length]);
+
+  // Auto-grow the composer.
+  useEffect(() => {
+    const el = textareaRef.current;
+    if (!el) return;
+    el.style.height = "auto";
+    el.style.height = `${Math.min(el.scrollHeight, 160)}px`;
+  }, [draft]);
+
+  const onCooldown = cooldownUntil !== null;
 
   async function send() {
     const content = draft.trim();
-    if (!content || sending || !conversationId) return;
+    if (!content || sending || onCooldown) return;
     setSending(true);
     setError(null);
     try {
@@ -78,16 +115,23 @@ export default function MemberMessagesClient() {
       });
       if (!r.ok) {
         const body = await r.json().catch(() => ({}));
+        if (r.status === 429 && body.nextAvailableAt) {
+          setCooldownUntil(body.nextAvailableAt);
+        }
         setError(body.error || "Could not send. Try again.");
         return;
       }
-      const body: { message: DM } = await r.json();
+      const body: { message: DM; conversationId: string } = await r.json();
       setDraft("");
+      setConversationId((prev) => prev ?? body.conversationId);
       setMessages((prev) =>
         prev.some((m) => m.id === body.message.id)
           ? prev
           : [...prev, body.message],
       );
+      // Member now has a message in flight: on cooldown until Kanika replies
+      // (or 24h). Server is the source of truth; this mirrors it client-side.
+      setCooldownUntil(new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString());
     } finally {
       setSending(false);
     }
@@ -101,67 +145,80 @@ export default function MemberMessagesClient() {
     );
   }
 
-  // No thread yet — members can't start one, so this is a quiet placeholder.
-  if (!conversationId) {
-    return (
-      <div className="max-w-2xl mx-auto">
-        <Header />
-        <div className="flex flex-col items-center justify-center text-center py-20 px-6 rounded-2xl border border-warm-gold/15 bg-deep-black/40">
-          <div className="w-14 h-14 rounded-full bg-warm-gold/10 border border-warm-gold/25 flex items-center justify-center mb-4">
-            <MessageCircle size={24} className="text-warm-gold/70" />
-          </div>
-          <p className="text-text-light text-sm mb-1">No messages yet</p>
-          <p className="text-text-gray/60 text-sm max-w-xs">
-            If Kanika reaches out to you directly, her message will appear here,
-            just between the two of you.
-          </p>
-        </div>
-      </div>
-    );
-  }
+  const hasMessages = messages.length > 0;
 
   return (
     <div className="max-w-2xl mx-auto">
       <Header />
-      <div className="rounded-2xl border border-warm-gold/15 bg-deep-black/40 overflow-hidden flex flex-col h-[calc(100vh-220px)] min-h-[420px]">
-        <div className="flex-1 overflow-y-auto px-4 py-5 space-y-3">
-          {messages.map((m) => (
-            <Bubble key={m.id} message={m} />
-          ))}
-          <div ref={endRef} />
+      <div className="rounded-2xl border border-warm-gold/15 bg-deep-black/40 overflow-hidden flex flex-col h-[calc(100dvh-200px)] lg:h-[calc(100vh-220px)] min-h-[420px]">
+        <div
+          ref={scrollRef}
+          onScroll={onScroll}
+          className="flex-1 overflow-y-auto overscroll-contain px-4 py-5 space-y-3"
+        >
+          {hasMessages ? (
+            messages.map((m) => <Bubble key={m.id} message={m} />)
+          ) : (
+            <div className="flex flex-col items-center justify-center h-full text-center px-6">
+              <div className="w-14 h-14 rounded-full bg-warm-gold/10 border border-warm-gold/25 flex items-center justify-center mb-4">
+                <MessageCircle size={24} className="text-warm-gold/70" />
+              </div>
+              <p className="text-text-light text-sm mb-1">
+                Message Kanika privately
+              </p>
+              <p className="text-text-gray/60 text-sm max-w-xs">
+                Write to her directly below. She reads everything, though a
+                reply may take a little time.
+              </p>
+            </div>
+          )}
         </div>
 
         <div className="shrink-0 border-t border-warm-gold/10 p-3">
-          {error && (
-            <p className="mb-2 text-[11px] text-rose-300/80">{error}</p>
+          {error && <p className="mb-2 text-[11px] text-rose-300/80">{error}</p>}
+          {onCooldown ? (
+            <div className="flex items-center gap-2 px-1 py-2 text-[12px] text-text-gray/70">
+              <MessageCircle size={14} className="text-warm-gold/60 shrink-0" />
+              <span>
+                Your message is with Kanika. You can send another once she
+                replies.
+              </span>
+            </div>
+          ) : (
+            <div className="flex items-end gap-2">
+              <textarea
+                ref={textareaRef}
+                value={draft}
+                onChange={(e) => setDraft(e.target.value)}
+                onKeyDown={(e) => {
+                  if (
+                    e.key === "Enter" &&
+                    !e.shiftKey &&
+                    !e.nativeEvent.isComposing
+                  ) {
+                    e.preventDefault();
+                    send();
+                  }
+                }}
+                rows={1}
+                enterKeyHint="send"
+                placeholder={hasMessages ? "Reply to Kanika..." : "Write your message..."}
+                className="flex-1 resize-none max-h-40 bg-white/[0.03] border border-white/10 rounded-lg px-3 py-2.5 text-text-light text-base sm:text-sm font-light focus:border-warm-gold/40 focus:outline-none transition-colors"
+              />
+              <button
+                onClick={send}
+                disabled={sending || !draft.trim()}
+                className="shrink-0 inline-flex items-center justify-center w-10 h-10 rounded-lg bg-warm-gold/15 hover:bg-warm-gold/25 text-warm-gold border border-warm-gold/30 transition disabled:opacity-40 disabled:cursor-not-allowed"
+                aria-label="Send"
+              >
+                {sending ? (
+                  <Loader2 size={16} className="animate-spin" />
+                ) : (
+                  <Send size={16} />
+                )}
+              </button>
+            </div>
           )}
-          <div className="flex items-end gap-2">
-            <textarea
-              value={draft}
-              onChange={(e) => setDraft(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) {
-                  e.preventDefault();
-                  send();
-                }
-              }}
-              rows={1}
-              placeholder="Reply to Kanika..."
-              className="flex-1 resize-none max-h-40 bg-white/[0.03] border border-white/10 rounded-lg px-3 py-2.5 text-text-light text-sm font-light focus:border-warm-gold/40 focus:outline-none transition-colors"
-            />
-            <button
-              onClick={send}
-              disabled={sending || !draft.trim()}
-              className="shrink-0 inline-flex items-center justify-center w-10 h-10 rounded-lg bg-warm-gold/15 hover:bg-warm-gold/25 text-warm-gold border border-warm-gold/30 transition disabled:opacity-40 disabled:cursor-not-allowed"
-              aria-label="Send"
-            >
-              {sending ? (
-                <Loader2 size={16} className="animate-spin" />
-              ) : (
-                <Send size={16} />
-              )}
-            </button>
-          </div>
         </div>
       </div>
     </div>

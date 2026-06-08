@@ -76,6 +76,43 @@ export async function notifyMemberOfDirectMessage(
   });
 }
 
+/**
+ * Tell Kanika a member has opened a NEW private thread (first contact). Only
+ * fires on conversation creation, not on every member reply, so her inbox
+ * email doesn't get noisy. Best-effort. Sends to ADMIN_EMAIL.
+ */
+export async function notifyAdminOfNewThread(
+  memberName: string,
+  preview: string,
+): Promise<void> {
+  const to = process.env.ADMIN_EMAIL;
+  if (!to) return;
+  const snippet = preview.length > 140 ? `${preview.slice(0, 137)}...` : preview;
+  const link = `${baseUrl()}/admin/messages`;
+
+  await sendEmail({
+    to,
+    subject: `New message from ${memberName} in the Inner Circle`,
+    html: `
+      <div style="font-family: -apple-system, Segoe UI, Roboto, sans-serif; max-width: 480px; margin: 0 auto; color: #1a1a1a;">
+        <p style="font-size: 16px; line-height: 1.6;">
+          <strong>${escapeHtml(memberName)}</strong> just started a private conversation with you.
+        </p>
+        <p style="font-size: 16px; line-height: 1.6; padding: 16px; background: #f5f3ee; border-left: 3px solid #d4af37; border-radius: 4px; color: #333;">
+          ${escapeHtml(snippet)}
+        </p>
+        <p style="margin: 28px 0;">
+          <a href="${link}" style="display: inline-block; background: #0a0a0a; color: #d4af37; text-decoration: none; padding: 12px 28px; border-radius: 999px; font-size: 14px; letter-spacing: 0.05em;">
+            Open your inbox
+          </a>
+        </p>
+      </div>
+    `,
+  }).catch(() => {
+    /* best-effort */
+  });
+}
+
 /** Minimal HTML-escape so a member display value or message preview can't
  *  break out of the email markup. */
 function escapeHtml(s: string): string {
