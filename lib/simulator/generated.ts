@@ -402,18 +402,30 @@ export async function generateDailyScenario(): Promise<GenerationOutcome> {
 
   const { scenario, failures } = validateScenarioGraph(raw);
 
-  // Id collisions with the static catalog or a prior generation are a
-  // validation failure too: the play route resolves static-first, so a
-  // colliding id would be shadowed or rejected by the unique index.
+  // Id collisions with the static catalog or a prior generation would let
+  // resolveScenario (static-first) shadow this row, or trip the unique
+  // index. The prose is fine, only the id clashes, so suffix to make it
+  // unique rather than discarding a whole valid Opus generation. The
+  // small brief pool (8 LRU seeds) means the model regularly re-emits the
+  // same kebab id across cycles, so without this the drip would stall on
+  // every repeat.
   if (scenario) {
-    if (getScenario(scenario.id)) {
-      failures.push(`id "${scenario.id}" collides with a static scenario`);
+    let candidateId = scenario.id;
+    let suffix = 1;
+    while (
+      getScenario(candidateId) ||
+      (await prisma.generatedScenario.findUnique({
+        where: { scenarioId: candidateId },
+        select: { id: true },
+      }))
+    ) {
+      suffix += 1;
+      candidateId = `${scenario.id}-${suffix}`;
     }
-    const existing = await prisma.generatedScenario.findUnique({
-      where: { scenarioId: scenario.id },
-      select: { id: true },
-    });
-    if (existing) failures.push(`id "${scenario.id}" already generated`);
+    if (candidateId !== scenario.id) {
+      scenario.id = candidateId;
+      (raw as { id?: string }).id = candidateId;
+    }
   }
 
   const valid = scenario !== null && failures.length === 0;
@@ -460,9 +472,13 @@ export async function getGeneratedScenario(
 export async function listPublishedGenerated(): Promise<
   { scenarioId: string; title: string; tagline: string; publishedAt: Date | null }[]
 > {
+  // Bounded: the table grows by one published row per day forever, and
+  // this renders on the hot member catalog page. Newest 30 is the shelf;
+  // older drops stay playable by direct link but don't bloat the page.
   return prisma.generatedScenario.findMany({
     where: { status: "PUBLISHED" },
     orderBy: { publishedAt: "desc" },
+    take: 30,
     select: {
       scenarioId: true,
       title: true,

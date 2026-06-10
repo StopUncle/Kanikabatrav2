@@ -409,6 +409,16 @@ export default function SimulatorRunner({
 
   const pickChoice = useCallback(
     (choice: Choice) => {
+      // Guard the two parallel pick sources (authored ChoiceCards and the
+      // FreeformMove confirm button) against a double-fire: once a choice
+      // advances the scene, a second stale pick whose id isn't on the new
+      // current scene would throw in applyChoice and crash the runner. If
+      // the choice doesn't belong to the scene we're on, ignore it.
+      const liveScene = scenario.scenes.find(
+        (s) => s.id === state.currentSceneId,
+      );
+      if (!liveScene?.choices?.some((c) => c.id === choice.id)) return;
+
       // Show XP floater. Tone maps to the optimality signal used by
       // the engine for XP calculation so the floater matches reality.
       const tone: "optimal" | "neutral" | "bad" =

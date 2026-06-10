@@ -27,15 +27,31 @@ export async function POST(request: NextRequest) {
   const todayStart = new Date(
     Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()),
   );
-  const already = await prisma.generatedScenario.findFirst({
+  const todayRows = await prisma.generatedScenario.findMany({
     where: { createdAt: { gte: todayStart } },
-    select: { id: true },
+    select: { status: true },
   });
-  if (already) {
+  // Skip only when today already produced a reviewable draft (or one was
+  // published). A REJECTED-only day means the generation failed, so a
+  // GitHub Actions retry should be allowed to try again, not silently
+  // report success. The attempt cap bounds Opus spend on a pathological
+  // day where every generation keeps failing.
+  const hasReviewable = todayRows.some(
+    (r) => r.status === "DRAFT" || r.status === "PUBLISHED",
+  );
+  if (hasReviewable) {
     return NextResponse.json({
       success: true,
       skipped: true,
       message: "Already generated today",
+    });
+  }
+  const MAX_ATTEMPTS_PER_DAY = 3;
+  if (todayRows.length >= MAX_ATTEMPTS_PER_DAY) {
+    return NextResponse.json({
+      success: false,
+      skipped: true,
+      message: "Daily generation attempts exhausted",
     });
   }
 

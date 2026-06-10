@@ -136,9 +136,17 @@ export default async function SimulatorIndex({
   // "female". Fixes the bug where players on Business Line kept landing
   // back on Feminine whenever they hit /consilium/simulator without a
   // query param (pill nav, sidebar, dashboard links).
-  const track: ScenarioTrack =
-    paramTrack ??
-    (progress[0] ? trackForScenarioId(progress[0].scenarioId) ?? "female" : "female");
+  // Walk the progress list (already DESC by startedAt) for the first row
+  // that resolves to a real catalog track. Generated "Fresh Files"
+  // scenarios are not in ALL_SCENARIOS and carry no track, so a member
+  // who just played one would otherwise have progress[0] resolve to null
+  // and get dumped back onto the Feminine track, the exact regression
+  // this default logic exists to prevent.
+  const mostRecentTrack = progress.reduce<ScenarioTrack | null>(
+    (found, row) => found ?? trackForScenarioId(row.scenarioId),
+    null,
+  );
+  const track: ScenarioTrack = paramTrack ?? mostRecentTrack ?? "female";
 
   // Adventures entry card stats. "Unseen" = published arcs the user has
   // never opened. Drives the emerald NEW pill on the entry card so the

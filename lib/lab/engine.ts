@@ -60,13 +60,29 @@ function costMicros(
   );
 }
 
-function toModelMessages(
-  transcript: TranscriptMessage[],
-): { role: "user" | "assistant"; content: string }[] {
-  return transcript.map((m) => ({
-    role: m.role === "persona" ? ("assistant" as const) : ("user" as const),
-    content: m.text,
-  }));
+/**
+ * Build the model-facing messages array.
+ *
+ * The persona's scripted opening is transcript[0] with role "persona",
+ * which would map to an assistant-first array. The Messages API requires
+ * the first message to be role "user", so the opening is folded into the
+ * system prompt instead and dropped from the array. Every later persona
+ * message is a real model turn and stays in place.
+ */
+function buildModelMessages(transcript: TranscriptMessage[]): {
+  messages: { role: "user" | "assistant"; content: string }[];
+  openingNote: string | null;
+} {
+  const opening =
+    transcript[0]?.role === "persona" ? transcript[0].text : null;
+  const rest = opening ? transcript.slice(1) : transcript;
+  return {
+    messages: rest.map((m) => ({
+      role: m.role === "persona" ? ("assistant" as const) : ("user" as const),
+      content: m.text,
+    })),
+    openingNote: opening,
+  };
 }
 
 export async function labReply(
@@ -74,12 +90,27 @@ export async function labReply(
   transcript: TranscriptMessage[],
 ): Promise<{ text: string; costMicros: number }> {
   const client = getAnthropic();
+  const { messages, openingNote } = buildModelMessages(transcript);
+
+  // Prompt caching: the persona system block is identical across every
+  // turn of a session, so cache it and pay ~0.1x on the prefix instead
+  // of re-billing the full instructions on each Sonnet call.
+  const systemText = openingNote
+    ? `${persona.systemPrompt}\n\nYou have already opened the conversation with: "${openingNote}". Continue naturally from the member's reply.`
+    : persona.systemPrompt;
+
   const response = await client.messages.create({
     model: LAB_MODEL,
     max_tokens: 220,
     temperature: 0.8,
-    system: persona.systemPrompt,
-    messages: toModelMessages(transcript),
+    system: [
+      {
+        type: "text" as const,
+        text: systemText,
+        cache_control: { type: "ephemeral" as const },
+      },
+    ],
+    messages,
   });
 
   const text = response.content

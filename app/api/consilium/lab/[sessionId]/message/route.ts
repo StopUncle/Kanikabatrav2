@@ -106,19 +106,35 @@ export async function POST(
       { role: "persona", text: reply.text, at: new Date().toISOString() },
     ];
 
-    const updated = await prisma.labSession.update({
-      where: { id: session.id },
+    // Optimistic-concurrency guard: only write if the row is still ACTIVE
+    // and sitting at the turnCount we read. A concurrent send (double Enter)
+    // or a send racing /end will fail this match instead of clobbering the
+    // transcript, double-spending the turn cap, or resurrecting a scored
+    // session. costMicros uses an atomic increment so the losing request's
+    // spend is still accounted even though its transcript is discarded.
+    const guarded = await prisma.labSession.updateMany({
+      where: { id: session.id, status: "ACTIVE", turnCount: session.turnCount },
       data: {
         transcript: finalTranscript as unknown as object[],
-        turnCount: session.turnCount + 1,
-        costMicros: session.costMicros + reply.costMicros,
+        turnCount: { increment: 1 },
+        costMicros: { increment: reply.costMicros },
       },
-      select: { turnCount: true },
     });
+    if (guarded.count === 0) {
+      // Someone else advanced this session between our read and write.
+      await prisma.labSession.update({
+        where: { id: session.id },
+        data: { costMicros: { increment: reply.costMicros } },
+      });
+      return NextResponse.json(
+        { error: "That session moved on. Refresh and continue." },
+        { status: 409 },
+      );
+    }
 
     return NextResponse.json({
       reply: reply.text,
-      turnCount: updated.turnCount,
+      turnCount: session.turnCount + 1,
       maxTurns: LAB_MAX_TURNS,
     });
   });

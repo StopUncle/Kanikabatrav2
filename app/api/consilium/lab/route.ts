@@ -22,8 +22,11 @@ const DAY_MS = 24 * 60 * 60 * 1000;
 
 async function labQuota(userId: string) {
   const since = new Date(Date.now() - DAY_MS);
+  // ABANDONED sessions (ended before they were scoreable) do not burn the
+  // daily slot, matching the end-route contract: an accidental tap should
+  // not cost a member their one session for the day.
   const used = await prisma.labSession.count({
-    where: { userId, createdAt: { gte: since } },
+    where: { userId, createdAt: { gte: since }, status: { not: "ABANDONED" } },
   });
   return { used, cap: LAB_DAILY_CAP, remaining: Math.max(0, LAB_DAILY_CAP - used) };
 }
@@ -127,7 +130,11 @@ export async function POST(request: NextRequest) {
       const session = await prisma.$transaction(
         async (tx) => {
           const used = await tx.labSession.count({
-            where: { userId: user.id, createdAt: { gte: since } },
+            where: {
+              userId: user.id,
+              createdAt: { gte: since },
+              status: { not: "ABANDONED" },
+            },
           });
           if (used >= LAB_DAILY_CAP) {
             throw new QuotaExceededError();
@@ -173,9 +180,12 @@ export async function POST(request: NextRequest) {
         err instanceof Prisma.PrismaClientKnownRequestError &&
         err.code === "P2034"
       ) {
+        // Serialization conflict, not a cap hit: a real cap hit throws
+        // QuotaExceededError above. This is transient and retryable, so
+        // do not tell a member with quota left that their day is spent.
         return NextResponse.json(
-          { error: "One session per day. The cap is part of the training." },
-          { status: 429 },
+          { error: "Could not start the session. Try again." },
+          { status: 409 },
         );
       }
       logger.error(
