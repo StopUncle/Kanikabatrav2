@@ -35,6 +35,7 @@ import SceneProgress from "./SceneProgress";
 import ScenarioIntro from "./ScenarioIntro";
 import ChoiceTimer from "./ChoiceTimer";
 import ChoicePopularityReveal from "./ChoicePopularityReveal";
+import FreeformMove from "./FreeformMove";
 import DialogTranscript from "./DialogTranscript";
 
 /**
@@ -1148,6 +1149,16 @@ export default function SimulatorRunner({
                 choices={scene.choices}
                 onPick={pickChoice}
                 scenario={scenario}
+              />
+              {/* Keyed per scene: an in-flight judge from a previous
+                  scene unmounts with its confirm button, so a stale
+                  choice can never be applied to the wrong scene. */}
+              <FreeformMove
+                key={`freeform-${scene.id}`}
+                scenarioId={scenario.id}
+                sceneId={scene.id}
+                choices={scene.choices}
+                onResolve={pickChoice}
               />
             </m.div>
           ) : currentLine ? (
