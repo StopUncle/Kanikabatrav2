@@ -27,6 +27,48 @@ netstat -ano | findstr ":3000"
 taskkill //F //PID [PID]
 ```
 
+## 💸 Don't Burn the Usage Budget (token discipline)
+
+Hard-won lesson (2026-06-10): a high-effort `/code-review` fanned out **7 parallel
+subagents at once**, each independently re-reading the same large files. That single
+review burned ~1M tokens (roughly half a session's budget) in one shot. Avoid it.
+
+Rules for this repo specifically:
+- **Do NOT spawn many parallel review/explore subagents on this codebase.** It is large
+  (1000+ files, huge scenario prose). Fan-out multiplies reading cost: 7 agents = 7x the
+  same files read. For a review, do it inline in the main thread, or cap at 1-2 focused
+  subagents with tight file scopes, not a 6-angle sweep.
+- **Loading big skills is expensive for the rest of the session.** The `claude-api` skill
+  dumps a very large reference into context that inflates every subsequent turn. Only load
+  it when actually writing Anthropic SDK calls, and prefer to finish that work before moving
+  on. The model IDs you need are usually: Haiku `claude-haiku-4-5`, Sonnet `claude-sonnet-4-6`,
+  Opus `claude-opus-4-8` (current).
+- **Verify cheaply.** `npm run type-check` + scoped `eslint` catch most issues for ~nothing.
+  A single small `tsx` smoke script (a few LLM calls) beats driving a browser or fanning out
+  agents. Reach for multi-agent orchestration only when the user explicitly asks for it.
+- When unsure whether something is expensive, it probably is if it (a) reads many files,
+  (b) runs agents in parallel, or (c) loads a large skill/doc. Ask before doing it at scale.
+
+## 🧪 Ultimate Simulator: deferred review findings (feat/ultimate-simulator)
+
+The LLM-feature branch (`feat/ultimate-simulator`: freeform judge + The Lab + generated
+scenarios) passed review; 9 correctness bugs were fixed in commit `02d2788`. These lower-
+priority cleanups were deliberately deferred (non-blocking, some need a migration):
+- **Shared LLM helpers.** Markdown-fence stripping (4 copies), response-text extraction
+  (5 copies), and cost-micros math (3 copies) are duplicated across `lib/simulator/judge.ts`,
+  `lib/lab/engine.ts`, `lib/simulator/generated.ts`, and `lib/receipts/anthropic.ts`. Extract
+  `extractText()`, `stripCodeFences()`, and `costMicros(model, usage)` into `lib/anthropic.ts`.
+- **Validator duplication.** `validateScenarioGraph` in `lib/simulator/generated.ts` reimplements
+  `scripts/validate-scenarios.ts`. Make one the source of truth.
+- **Admin list over-fetch.** `GET /api/admin/generated-scenarios` selects the full `json` blob
+  for up to 60 rows to derive 4 scalars. Persist sceneCount/difficulty/etc. as columns (needs a
+  migration) and drop `json` from the list select.
+- **Rolling-window quota.** `labQuota` hand-rolls the 24h count that `lib/questions/cooldown.ts`
+  already does (and drops `nextAvailableAt`). Generalize one helper.
+- **Mid-run unpublish.** Admin rejecting a PUBLISHED generated scenario while a member is mid-run
+  makes their `/complete` 404 and silently lose XP. Consider keeping rejected-but-in-progress rows
+  resolvable, or block reject when active progress rows exist.
+
 ## 🎯 Project Context
 
 Next.js 15 (App Router) + React 19 + TypeScript. Personal brand site for Kanika Batra: dark psychology theme, paid book, paid Inner Circle (Consilium) community, paid 1:1 coaching, paid quiz funnel, dark luxury admin panel.
