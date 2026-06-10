@@ -15,6 +15,8 @@ import ConsiliumOverview from "@/components/consilium/ConsiliumOverview";
 import { getAllPosts } from "@/lib/mdx";
 import { SITE_CONFIG } from "@/lib/constants";
 import { catalogueStats } from "@/lib/simulator/stats";
+import JsonLd from "@/components/JsonLd";
+import { generatePersonSchema } from "@/lib/schema";
 
 export const metadata: Metadata = {
   title: `${SITE_CONFIG.name} - ${SITE_CONFIG.title}`,
@@ -64,6 +66,9 @@ export default function Home() {
 
   return (
     <>
+      {/* Person entity for the "Kanika Batra" knowledge panel. Organization
+          + Website schema are already emitted globally in the root layout. */}
+      <JsonLd data={generatePersonSchema()} />
       <BackgroundEffects />
       <Header />
 

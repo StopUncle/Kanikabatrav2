@@ -4,6 +4,7 @@ import Link from "next/link";
 import { m } from "framer-motion";
 import { Check, ShieldCheck, ArrowRight } from "lucide-react";
 import FloatingConsiliumSeal from "@/components/consilium/FloatingConsiliumSeal";
+import { catalogueStats } from "@/lib/simulator/stats";
 
 /**
  * Homepage section that pitches The Consilium with the same energy the
@@ -31,8 +32,7 @@ export default function ConsiliumOverview() {
   const inside = [
     {
       title: "The Dark Mirror Simulator",
-      detail:
-        "20 branching scenarios · 342 scenes · 129 endings · 83 manipulation tactics · 79 red flags catalogued",
+      detail: `${catalogueStats.scenarios} branching scenarios · ${catalogueStats.scenes} scenes · ${catalogueStats.tacticsTaught} manipulation tactics · ${catalogueStats.redFlagsTaught} red flags catalogued`,
       value: "Members only",
     },
     {
@@ -170,17 +170,18 @@ export default function ConsiliumOverview() {
               </h2>
               <p className="text-text-gray text-base sm:text-lg leading-relaxed">
                 The book teaches you the patterns. The Consilium is where
-                you <strong className="text-text-light">practice them</strong>{" "}
-               . Every day, with members navigating the same situations
-                you are. Private. Moderated. Built for women done being
-                the ones who get played.
+                you{" "}
+                <strong className="text-text-light">practice them</strong>.
+                Every day, with members navigating the same situations you
+                are. Private. Moderated. Built for women done being the ones
+                who get played.
               </p>
             </div>
 
             {/* Feature blocks */}
             <div className="space-y-3">
               {[
-                "342 branching scenes inside the Dark Mirror Simulator. Every choice has a consequence",
+                `${catalogueStats.scenes} branching scenes inside the Dark Mirror Simulator. Every choice has a consequence`,
                 "Ask Kanika, one question a day, answered by voice or video in your feed",
                 "60 daily psychology drops + 28 themed discussion prompts",
                 "Voice notes from Kanika, raw insights you won't hear anywhere else",
@@ -207,8 +208,8 @@ export default function ConsiliumOverview() {
               <p className="text-text-light italic text-base sm:text-lg leading-relaxed">
                 &ldquo;Life changing.&rdquo;
               </p>
-              <p className="text-warm-gold text-sm mt-2">
-               . Inner Circle member
+              <p className="text-warm-gold text-sm mt-2 uppercase tracking-[0.2em]">
+                Inner Circle member
               </p>
             </div>
 

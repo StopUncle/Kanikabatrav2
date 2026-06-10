@@ -113,6 +113,20 @@
   }
 }
 
+/* Respect the OS reduced-motion setting site-wide. Kills the perpetual
+   aurora/float/gradient animations and framer transitions for users who
+   ask for it, which also trims above-the-fold paint work. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
 @layer components {
   .aurora-bg {
     background: linear-gradient(
@@ -126,7 +140,13 @@
   }
 
   .gradient-text {
-    background: linear-gradient(135deg, #720921, #6366f1);
+    /* Solid fallback first: the LCP headline must paint immediately and
+       never render invisible if the gradient/background-clip resolves
+       late. Also gives the text real contrast on the near-black bg
+       (the old dark-burgundy stop failed WCAG). Dark stop shifted to the
+       brand rose-gold for the same reason. */
+    color: #e8c4b8;
+    background: linear-gradient(135deg, #b76e79, #6366f1);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;

@@ -26,7 +26,7 @@ export default function Testimonial() {
             in every aspect of my life.
           </p>
           <footer className="text-accent-gold tracking-[0.2em] sm:tracking-[0.3em] uppercase text-xs sm:text-sm">
-           . Verified Reader
+            Verified Reader
           </footer>
         </blockquote>
       </m.div>
