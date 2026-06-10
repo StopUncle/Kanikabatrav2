@@ -1,37 +1,36 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { m } from "framer-motion";
-import { PenLine } from "lucide-react";
+import { m, AnimatePresence } from "framer-motion";
+import { ArrowRight, LayoutGrid } from "lucide-react";
 import type { Choice } from "@/lib/simulator/types";
+import ChoiceCards from "./ChoiceCards";
 
 type Props = {
   scenarioId: string;
   sceneId: string;
   choices: Choice[];
-  /** Called with the resolved authored choice when the player confirms. */
+  /** Plays a resolved authored choice (freeform-mapped or tapped card). */
   onResolve: (choice: Choice) => void;
 };
 
 type Phase =
-  | { kind: "collapsed" }
-  | { kind: "input" }
+  | { kind: "compose" }
   | { kind: "judging" }
   | { kind: "read"; choice: Choice | null; read: string };
 
 const MAX_CHARS = 300;
 
 /**
- * "Type your own move" affordance under the authored choice cards.
- *
- * The typed move goes to the freeform judge, which maps it onto one of
- * the scene's authored choices and returns a Kanika-voice read. The
- * player sees the read, then confirms; confirmation calls onResolve
- * with a real Choice so the engine path is identical to a card tap.
+ * The move composer. Writing your own move is the hero input; the
+ * authored choices are demoted to an optional "see the options" reveal
+ * for players who want the scaffold. Both paths resolve to a real
+ * authored Choice and flow through the same engine path (onResolve),
+ * so XP, streaks, replays, and server validation are identical.
  *
  * Keyed per scene by the parent, so an in-flight judge from a previous
- * scene can never apply a stale choice: the component unmounts and the
- * confirm button disappears with it.
+ * scene unmounts with its confirm button and can never apply a stale
+ * choice to the wrong scene.
  */
 export default function FreeformMove({
   scenarioId,
@@ -39,11 +38,11 @@ export default function FreeformMove({
   choices,
   onResolve,
 }: Props) {
-  const [phase, setPhase] = useState<Phase>({ kind: "collapsed" });
+  const [phase, setPhase] = useState<Phase>({ kind: "compose" });
   const [text, setText] = useState("");
   const [error, setError] = useState<string | null>(null);
+  const [showOptions, setShowOptions] = useState(false);
   const mountedRef = useRef(true);
-  const textareaRef = useRef<HTMLTextAreaElement | null>(null);
 
   useEffect(() => {
     mountedRef.current = true;
@@ -51,10 +50,6 @@ export default function FreeformMove({
       mountedRef.current = false;
     };
   }, []);
-
-  useEffect(() => {
-    if (phase.kind === "input") textareaRef.current?.focus();
-  }, [phase.kind]);
 
   const submit = useCallback(async () => {
     const move = text.trim();
@@ -71,7 +66,7 @@ export default function FreeformMove({
       if (!mountedRef.current) return;
       if (!res.ok) {
         setError(data.error ?? "Could not read your move. Try again.");
-        setPhase({ kind: "input" });
+        setPhase({ kind: "compose" });
         return;
       }
       const choice = data.matched
@@ -80,57 +75,51 @@ export default function FreeformMove({
       setPhase({ kind: "read", choice, read: data.read });
     } catch {
       if (!mountedRef.current) return;
-      setError("Connection dropped. Try again or tap a choice.");
-      setPhase({ kind: "input" });
+      setError("Connection dropped. Try again, or see the options.");
+      setPhase({ kind: "compose" });
     }
   }, [text, scenarioId, sceneId, choices]);
 
-  if (phase.kind === "collapsed") {
-    return (
-      <div className="max-w-4xl mx-auto w-full px-4 mt-3 flex justify-center">
-        <button
-          onClick={() => setPhase({ kind: "input" })}
-          className="inline-flex items-center gap-2 text-text-gray/70 hover:text-accent-gold text-xs uppercase tracking-[0.25em] font-light transition-colors py-2 px-4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-gold rounded"
-        >
-          <PenLine size={12} strokeWidth={1.5} aria-hidden />
-          Or type your own move
-        </button>
-      </div>
-    );
-  }
-
+  // The read: Kanika's voice on what the move just did.
   if (phase.kind === "read") {
     return (
       <m.div
-        initial={{ opacity: 0, y: 8 }}
+        initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
-        className="max-w-xl mx-auto w-full px-4 mt-4"
+        className="max-w-xl mx-auto w-full px-4"
       >
-        <div className="relative pl-5 mb-4">
+        <div className="relative pl-5 mb-5">
           <span
             aria-hidden
-            className="absolute left-0 top-1 bottom-1 w-[3px] rounded-full bg-accent-gold/60"
+            className="absolute left-0 top-1 bottom-1 w-[3px] rounded-full bg-accent-gold"
           />
-          <p className="text-accent-gold/70 text-[10px] uppercase tracking-[0.35em] mb-1.5 font-light">
+          <p className="text-accent-gold/70 text-[10px] uppercase tracking-[0.35em] mb-2 font-light">
             The read
           </p>
-          <p className="text-white/85 font-light leading-relaxed text-sm sm:text-base">
+          <p className="text-white/90 font-light leading-relaxed text-base sm:text-lg">
             {phase.read}
           </p>
         </div>
         {phase.choice ? (
           <button
             onClick={() => onResolve(phase.choice as Choice)}
-            className="w-full p-4 rounded-xl border border-accent-gold/40 bg-deep-black/70 text-white font-light hover:border-accent-gold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-gold"
+            className="group w-full flex items-center justify-center gap-2 p-4 rounded-xl border border-accent-gold/50 bg-accent-gold/[0.06] text-white font-light tracking-wide hover:border-accent-gold hover:bg-accent-gold/[0.1] transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-gold"
           >
             Make the move
+            <ArrowRight
+              size={16}
+              className="group-hover:translate-x-0.5 transition-transform"
+            />
           </button>
         ) : (
           <button
-            onClick={() => setPhase({ kind: "input" })}
-            className="w-full p-3 rounded-xl border border-white/15 bg-deep-black/70 text-text-gray font-light hover:border-white/40 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-gold"
+            onClick={() => {
+              setText("");
+              setPhase({ kind: "compose" });
+            }}
+            className="w-full p-3.5 rounded-xl border border-white/15 bg-deep-black/70 text-text-gray font-light hover:border-white/40 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-gold"
           >
-            Try again
+            Rewrite your move
           </button>
         )}
       </m.div>
@@ -140,18 +129,19 @@ export default function FreeformMove({
   const judging = phase.kind === "judging";
 
   return (
-    <m.div
-      initial={{ opacity: 0, y: 8 }}
-      animate={{ opacity: 1, y: 0 }}
-      className="max-w-xl mx-auto w-full px-4 mt-4"
-    >
+    <div className="max-w-xl mx-auto w-full px-4">
+      {/* Hero input: writing your own move is the headline interaction. */}
+      <p className="text-accent-gold/70 text-[10px] uppercase tracking-[0.35em] mb-2 font-light text-center">
+        Your move
+      </p>
       <div
-        className={`rounded-xl border bg-deep-black/70 backdrop-blur-sm p-3 transition-colors ${
-          judging ? "border-accent-gold/60" : "border-accent-gold/25 focus-within:border-accent-gold/70"
+        className={`rounded-2xl border bg-deep-black/70 transition-colors ${
+          judging
+            ? "border-accent-gold/70"
+            : "border-accent-gold/30 focus-within:border-accent-gold/70"
         }`}
       >
         <textarea
-          ref={textareaRef}
           value={text}
           onChange={(e) => setText(e.target.value.slice(0, MAX_CHARS))}
           onKeyDown={(e) => {
@@ -161,46 +151,74 @@ export default function FreeformMove({
             }
           }}
           disabled={judging}
-          rows={2}
-          placeholder="What do you say or do?"
-          className="w-full bg-transparent text-white font-light text-sm sm:text-base placeholder:text-text-gray/40 resize-none focus:outline-none disabled:opacity-60"
-          aria-label="Type your own move"
+          rows={3}
+          placeholder="What do you say or do? Type it the way you would mean it."
+          className="w-full bg-transparent text-white font-light text-base sm:text-lg leading-relaxed placeholder:text-text-gray/40 resize-none focus:outline-none disabled:opacity-60 px-4 pt-4 pb-2"
+          aria-label="Write your own move"
         />
-        <div className="flex items-center justify-between mt-2">
-          <span className="text-text-gray/40 text-[10px] tracking-wider">
+        <div className="flex items-center justify-between px-4 pb-3">
+          <span className="text-text-gray/40 text-[10px] tracking-wider tabular-nums">
             {text.length}/{MAX_CHARS}
           </span>
-          <div className="flex items-center gap-3">
-            <button
-              onClick={() => {
-                setError(null);
-                setPhase({ kind: "collapsed" });
-              }}
-              disabled={judging}
-              className="text-text-gray/60 hover:text-white text-xs font-light transition-colors disabled:opacity-50"
-            >
-              Cancel
-            </button>
-            <button
-              onClick={() => void submit()}
-              disabled={judging || text.trim().length < 2}
-              className="text-accent-gold text-xs uppercase tracking-[0.2em] font-light hover:text-white transition-colors disabled:opacity-40 py-1.5 px-3 border border-accent-gold/40 rounded-lg hover:border-accent-gold"
-            >
-              {judging ? "Reading..." : "Read my move"}
-            </button>
-          </div>
+          <button
+            onClick={() => void submit()}
+            disabled={judging || text.trim().length < 2}
+            className="group inline-flex items-center gap-2 text-deep-black bg-accent-gold hover:bg-accent-gold/90 text-xs uppercase tracking-[0.2em] font-medium rounded-lg px-4 py-2.5 transition-all disabled:opacity-30 disabled:cursor-not-allowed"
+          >
+            {judging ? "Reading..." : "Make your move"}
+            {!judging && (
+              <ArrowRight
+                size={13}
+                className="group-hover:translate-x-0.5 transition-transform"
+              />
+            )}
+          </button>
         </div>
       </div>
+
       {judging && (
-        <p className="text-accent-gold/60 text-xs font-light mt-2 text-center animate-pulse">
+        <p className="text-accent-gold/60 text-xs font-light mt-3 text-center animate-pulse">
           Kanika is reading your move
         </p>
       )}
       {error && (
-        <p className="text-red-400/80 text-xs font-light mt-2 text-center">
+        <p className="text-red-400/80 text-xs font-light mt-3 text-center">
           {error}
         </p>
       )}
-    </m.div>
+
+      {/* The authored options, demoted to an opt-in scaffold. Confident
+          players never open it; a stuck player taps once to see the
+          shape of the available moves and can play one directly. */}
+      <div className="mt-4 text-center">
+        <button
+          onClick={() => setShowOptions((v) => !v)}
+          className="inline-flex items-center gap-1.5 text-text-gray/55 hover:text-accent-gold/90 text-[11px] uppercase tracking-[0.25em] font-light transition-colors py-1.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-gold rounded"
+          aria-expanded={showOptions}
+        >
+          <LayoutGrid size={11} strokeWidth={1.5} aria-hidden />
+          {showOptions ? "Hide the options" : "Stuck? See the options"}
+        </button>
+      </div>
+      <AnimatePresence initial={false}>
+        {showOptions && (
+          <m.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.28 }}
+            className="overflow-hidden"
+          >
+            <div className="pt-4">
+              <ChoiceCards
+                key={`cards-${sceneId}`}
+                choices={choices}
+                onPick={onResolve}
+              />
+            </div>
+          </m.div>
+        )}
+      </AnimatePresence>
+    </div>
   );
 }

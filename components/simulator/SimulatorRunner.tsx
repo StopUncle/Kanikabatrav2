@@ -25,7 +25,6 @@ import MoodBackground from "./MoodBackground";
 import Letterbox from "./Letterbox";
 import CharacterSilhouette from "./CharacterSilhouette";
 import DialogBox from "./DialogBox";
-import ChoiceCards from "./ChoiceCards";
 import EndingScreen from "./EndingScreen";
 import ImmersionOverlay from "./ImmersionOverlay";
 import SceneShake from "./SceneShake";
@@ -1154,13 +1153,11 @@ export default function SimulatorRunner({
               {scene.mood === "danger" && (
                 <ChoiceTimer resetKey={scene.id} />
               )}
-              <ChoiceCards
-                key={`choices-${scene.id}`}
-                choices={scene.choices}
-                onPick={pickChoice}
-                scenario={scenario}
-              />
-              {/* Keyed per scene: an in-flight judge from a previous
+              {/* Writing your own move is the hero interaction; the
+                  authored choices live inside the composer as an opt-in
+                  "see the options" scaffold. Both resolve to a real
+                  Choice via pickChoice, so the engine path is identical.
+                  Keyed per scene: an in-flight judge from a previous
                   scene unmounts with its confirm button, so a stale
                   choice can never be applied to the wrong scene. */}
               <FreeformMove
