@@ -9,6 +9,7 @@ import {
   TRACK_META,
 } from "@/lib/simulator/scenarios";
 import { catalogueStats } from "@/lib/simulator/stats";
+import { listPublishedGenerated } from "@/lib/simulator/generated";
 import { computeStarsFromJson } from "@/lib/simulator/stars";
 import type { ScenarioTrack, OutcomeType } from "@/lib/simulator/types";
 import { ArrowRight, Trophy, BarChart3, Sparkles, Check } from "lucide-react";
@@ -83,7 +84,7 @@ export default async function SimulatorIndex({
   const params = await searchParams;
   const paramTrack = resolveTrackFromParam(params.track);
 
-  const [progress, badgeCount, streak, adventures, adventureProgress, todayCheckIn, currentUser] =
+  const [progress, badgeCount, streak, adventures, adventureProgress, todayCheckIn, currentUser, freshFiles] =
     await Promise.all([
       prisma.simulatorProgress.findMany({
         where: { userId },
@@ -126,6 +127,8 @@ export default async function SimulatorIndex({
         where: { id: userId },
         select: { gender: true },
       }),
+      // Fresh Files shelf: published LLM-generated scenarios.
+      listPublishedGenerated(),
     ]);
 
   // Resolve the active track. URL param wins; otherwise default to the
@@ -654,6 +657,61 @@ export default async function SimulatorIndex({
         completedCount={trackCompleted}
         trackXp={trackXp}
       />
+
+      {/* Fresh Files: the daily drip of generated scenarios. Sits after
+          the curriculum ladder because these are bonus reps, not the
+          spine. Hidden entirely until something is published. */}
+      {freshFiles.length > 0 && (
+        <div className="mt-12">
+          <p className="text-warm-gold/60 uppercase tracking-[0.3em] text-[10px] mb-1.5">
+            Fresh Files
+          </p>
+          <p className="text-text-gray/70 text-sm font-light mb-4">
+            New standalone scenarios, dropped between curriculum updates.
+            One-shots: no prerequisites, no track.
+          </p>
+          <div className="space-y-3">
+            {freshFiles.map((f) => {
+              const row = progressByScenario.get(f.scenarioId);
+              const done = !!row?.completedAt;
+              const isNew = !row;
+              return (
+                <Link
+                  key={f.scenarioId}
+                  href={`/consilium/simulator/${f.scenarioId}`}
+                  className="group flex items-start justify-between gap-4 p-4 rounded-xl border border-warm-gold/15 bg-deep-black/40 transition-all hover:border-warm-gold/40 hover:bg-warm-gold/[0.03]"
+                >
+                  <div className="min-w-0">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <p className="text-white font-light tracking-wide truncate">
+                        {f.title}
+                      </p>
+                      {isNew && (
+                        <span className="inline-flex items-center gap-1.5 text-[9px] uppercase tracking-[0.2em] px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-300 border border-emerald-400/30">
+                          New
+                        </span>
+                      )}
+                      {done && (
+                        <span className="text-[9px] uppercase tracking-[0.2em] px-2 py-0.5 rounded-full text-warm-gold/80 border border-warm-gold/30">
+                          Completed
+                        </span>
+                      )}
+                    </div>
+                    <p className="text-text-gray/70 text-sm font-light mt-1 leading-relaxed">
+                      {f.tagline}
+                    </p>
+                  </div>
+                  <ArrowRight
+                    size={16}
+                    strokeWidth={1.6}
+                    className="shrink-0 mt-1 text-warm-gold/50 group-hover:text-warm-gold group-hover:translate-x-0.5 transition-all"
+                  />
+                </Link>
+              );
+            })}
+          </div>
+        </div>
+      )}
 
       {/* Library footer */}
       <div className="mt-12 p-5 rounded-xl border border-dashed border-warm-gold/15 bg-deep-black/30 text-center">

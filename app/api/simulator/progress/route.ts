@@ -14,7 +14,7 @@ import { requireAuth } from "@/lib/auth/middleware";
 import { prisma } from "@/lib/prisma";
 import { z } from "zod";
 import type { SimulatorState } from "@/lib/simulator/types";
-import { getScenario } from "@/lib/simulator/scenarios";
+import { resolveScenario } from "@/lib/simulator/resolve";
 import { replayXp } from "@/lib/simulator/engine";
 import { mergeProgress } from "@/lib/simulator/progress-merge";
 import { bumpSimulatorStreak } from "@/lib/simulator/streak";
@@ -73,7 +73,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const scenario = getScenario(body.scenarioId);
+    const scenario = await resolveScenario(body.scenarioId);
     if (!scenario) {
       return NextResponse.json(
         { error: `Unknown scenario: ${body.scenarioId}` },

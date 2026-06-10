@@ -2052,3 +2052,36 @@ model LabSession {
   @@index([userId, createdAt])
   @@index([status, createdAt])
 }
+
+// ============================================================================
+// GENERATED SCENARIOS — the daily drip. LLM-written Scenario objects stored
+// as JSON, reviewed in admin, and served alongside the static catalog once
+// PUBLISHED. The play surface resolves ids static-first, then here.
+// ============================================================================
+
+enum GeneratedScenarioStatus {
+  DRAFT
+  PUBLISHED
+  REJECTED
+}
+
+model GeneratedScenario {
+  id          String                  @id @default(cuid())
+  // The Scenario.id inside `json`; what members play at /simulator/[id].
+  scenarioId  String                  @unique
+  title       String
+  tagline     String
+  status      GeneratedScenarioStatus @default(DRAFT)
+  // Full Scenario object, validated structurally before the row is written.
+  json        Json
+  // Editorial brief seed the generator used; lets admin see the angle.
+  briefKey    String
+  model       String
+  costMicros  Int                     @default(0)
+  // Validator or reviewer notes (failure reasons land here on REJECTED).
+  notes       String?                 @db.Text
+  createdAt   DateTime                @default(now())
+  publishedAt DateTime?
+
+  @@index([status, createdAt])
+}

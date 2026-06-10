@@ -35,7 +35,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { requireAuth } from "@/lib/auth/middleware";
 import { prisma } from "@/lib/prisma";
 import { z } from "zod";
-import { getScenario } from "@/lib/simulator/scenarios";
+import { resolveScenario } from "@/lib/simulator/resolve";
 import { logger } from "@/lib/logger";
 
 const ReplayBody = z.object({
@@ -54,7 +54,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const scenario = getScenario(body.scenarioId);
+    const scenario = await resolveScenario(body.scenarioId);
     if (!scenario) {
       return NextResponse.json(
         { error: `Unknown scenario: ${body.scenarioId}` },

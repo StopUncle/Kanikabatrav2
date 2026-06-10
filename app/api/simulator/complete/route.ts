@@ -17,6 +17,7 @@ import { requireAuth } from "@/lib/auth/middleware";
 import { prisma } from "@/lib/prisma";
 import { z } from "zod";
 import { getScenario, ALL_SCENARIOS } from "@/lib/simulator/scenarios";
+import { resolveScenario } from "@/lib/simulator/resolve";
 import {
   badgesEarnedFromState,
   levelCompleteBadgeFor,
@@ -72,7 +73,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const scenario = getScenario(body.scenarioId);
+    const scenario = await resolveScenario(body.scenarioId);
     if (!scenario) {
       return NextResponse.json(
         { error: `Unknown scenario: ${body.scenarioId}` },

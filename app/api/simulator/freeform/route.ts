@@ -15,7 +15,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { requireAuth } from "@/lib/auth/middleware";
-import { getScenario } from "@/lib/simulator/scenarios";
+import { resolveScenario } from "@/lib/simulator/resolve";
 import { judgeFreeformMove, JudgeInputError } from "@/lib/simulator/judge";
 import { enforceRateLimit, limits } from "@/lib/rate-limit";
 import { logger } from "@/lib/logger";
@@ -49,7 +49,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const scenario = getScenario(body.scenarioId);
+    const scenario = await resolveScenario(body.scenarioId);
     if (!scenario) {
       return NextResponse.json({ error: "Unknown scenario" }, { status: 404 });
     }

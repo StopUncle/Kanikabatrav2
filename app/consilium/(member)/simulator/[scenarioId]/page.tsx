@@ -1,7 +1,8 @@
 import { notFound } from "next/navigation";
 import { requireServerAuth } from "@/lib/auth/server-auth";
 import { prisma } from "@/lib/prisma";
-import { getScenario, ALL_SCENARIOS } from "@/lib/simulator/scenarios";
+import { ALL_SCENARIOS } from "@/lib/simulator/scenarios";
+import { resolveScenario } from "@/lib/simulator/resolve";
 import type { SimulatorState, ChoiceRecord, OutcomeType } from "@/lib/simulator/types";
 import SimulatorPageClient from "@/components/simulator/SimulatorPageClient";
 
@@ -18,7 +19,7 @@ export async function generateMetadata({
   params: Promise<{ scenarioId: string }>;
 }) {
   const { scenarioId } = await params;
-  const scenario = getScenario(scenarioId);
+  const scenario = await resolveScenario(scenarioId);
   if (!scenario) return { title: "Simulator | Kanika Batra" };
   return {
     title: `${scenario.title}. The Dark Mirror | Kanika Batra`,
@@ -32,7 +33,7 @@ export default async function SimulatorPlay({
   params: Promise<{ scenarioId: string }>;
 }) {
   const { scenarioId } = await params;
-  const scenario = getScenario(scenarioId);
+  const scenario = await resolveScenario(scenarioId);
   if (!scenario) notFound();
 
   const userId = await requireServerAuth(
