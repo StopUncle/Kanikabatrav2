@@ -12,6 +12,7 @@ import {
   Video,
   Newspaper,
   Gamepad2,
+  FlaskConical,
   type LucideIcon,
 } from "lucide-react";
 import AskKanikaPill from "./AskKanikaPill";
@@ -65,6 +66,7 @@ type PillItem = {
 const PILLS: PillItem[] = [
   { href: "/consilium/feed", label: "Feed", icon: Scroll, matchPrefix: "/consilium/feed", countKey: "feed" },
   { href: "/consilium/simulator", label: "Simulator", icon: Film, matchPrefix: "/consilium/simulator" },
+  { href: "/consilium/lab", label: "The Lab", icon: FlaskConical, matchPrefix: "/consilium/lab" },
   { href: "/consilium/games", label: "Games", icon: Gamepad2, matchPrefix: "/consilium/games" },
   {
     href: "/consilium/simulator/leaderboard",

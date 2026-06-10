@@ -81,6 +81,7 @@ model User {
   // game counts; replays don't). Updated server-side when a GameSession
   // is recorded for the first time on a given UTC calendar day.
   gameSessions              GameSession[]
+  labSessions               LabSession[]
   gamesStreakCurrent        Int                  @default(0)
   gamesStreakLongest        Int                  @default(0)
   gamesLastSession          DateTime?
@@ -2016,3 +2017,38 @@ enum BoardEventType {
   RESCORE_REVEALED
 }
 
+// ============================================================================
+// THE LAB — live roleplay training sessions against LLM-driven manipulator
+// archetypes. One row per session; the transcript lives as JSON because we
+// never query across messages, only load whole sessions. Scored post-hoc by
+// a judge model; score is null while ACTIVE.
+// ============================================================================
+
+enum LabSessionStatus {
+  ACTIVE
+  ENDED
+  ABANDONED
+}
+
+model LabSession {
+  id         String           @id @default(cuid())
+  userId     String
+  user       User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  personaKey String
+  status     LabSessionStatus @default(ACTIVE)
+  // JSON array of { role: "user" | "persona", text, at }. Persona's
+  // scripted opening line is row zero.
+  transcript Json             @default("[]")
+  // Player messages sent. Server-enforced ceiling per session.
+  turnCount  Int              @default(0)
+  // Judge output after end: { axes, outcome, verdict }. Null while ACTIVE
+  // and for ABANDONED sessions ended before enough turns to score.
+  score      Json?
+  // Accumulated LLM spend across the session, micros of USD.
+  costMicros Int              @default(0)
+  createdAt  DateTime         @default(now())
+  endedAt    DateTime?
+
+  @@index([userId, createdAt])
+  @@index([status, createdAt])
+}
