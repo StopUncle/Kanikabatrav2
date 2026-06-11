@@ -106,6 +106,22 @@ export default async function SimulatorAchievementsPage() {
 
   const earnedCount = ACHIEVEMENTS.filter((a) => a.isEarned(snapshot)).length;
 
+  // The single unearned achievement the player is closest to. Turns a wall
+  // of locked badges into one concrete next goal ("4 / 5"), which is what
+  // pulls a replay. Only achievements with real progress qualify.
+  const closest = ACHIEVEMENTS.filter((a) => !a.isEarned(snapshot) && a.progress)
+    .map((a) => {
+      const p = a.progress!(snapshot);
+      return {
+        ach: a,
+        current: p.current,
+        total: p.total,
+        pct: Math.min(100, Math.round((p.current / p.total) * 100)),
+      };
+    })
+    .filter((x) => x.current > 0 && x.pct < 100)
+    .sort((a, b) => b.pct - a.pct)[0];
+
   return (
     <div className="max-w-5xl mx-auto px-3 sm:px-4 py-6 sm:py-10 lg:py-14">
       <Link
@@ -141,6 +157,26 @@ export default async function SimulatorAchievementsPage() {
           {earnedCount} of {ACHIEVEMENTS.length} earned
         </p>
       </header>
+
+      {closest && (
+        <div className="mb-10 mx-auto max-w-md rounded-2xl border border-warm-gold/40 bg-warm-gold/[0.05] p-5 text-center">
+          <p className="text-warm-gold/70 text-[10px] uppercase tracking-[0.3em] mb-2">
+            Closest unlock
+          </p>
+          <h2 className="text-lg font-light text-text-light tracking-wide">
+            {closest.ach.title}
+          </h2>
+          <p className="text-text-gray text-sm mt-1 tabular-nums">
+            {closest.current} / {closest.total}
+          </p>
+          <div className="mt-3 h-1.5 rounded-full bg-white/[0.06] overflow-hidden">
+            <div
+              className="h-full rounded-full bg-gradient-to-r from-warm-gold/60 to-warm-gold"
+              style={{ width: `${closest.pct}%` }}
+            />
+          </div>
+        </div>
+      )}
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5">
         {ACHIEVEMENTS.map((ach) => {

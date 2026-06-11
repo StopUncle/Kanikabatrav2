@@ -5,7 +5,7 @@ import {
   X,
   Scroll,
   AudioLines,
-  Library,
+  MessageCircle,
   Users,
   ArrowRight,
   Gamepad2,
@@ -238,9 +238,9 @@ export default function OnboardingModal({
                 body="Raw audio from Kanika, nothing she posts publicly. New drops appear without notice."
               />
               <OnboardingItem
-                icon={Library}
-                title="The Classroom"
-                body="Structured courses on dark psychology, pattern recognition, and career strategy. Work top-down."
+                icon={MessageCircle}
+                title="Ask Kanika"
+                body="Submit one question a day. The top-voted ones get answered by Kanika, by voice or video, in your feed. Bring the situation you can't read."
               />
               <OnboardingItem
                 icon={Users}
