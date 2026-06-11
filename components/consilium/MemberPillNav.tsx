@@ -12,7 +12,6 @@ import {
   Video,
   Newspaper,
   Gamepad2,
-  Crown,
   Receipt,
   FlaskConical,
   type LucideIcon,
@@ -70,10 +69,9 @@ const PILLS: PillItem[] = [
   { href: "/consilium/simulator", label: "Simulator", icon: Film, matchPrefix: "/consilium/simulator" },
   { href: "/consilium/lab", label: "The Lab", icon: FlaskConical, matchPrefix: "/consilium/lab" },
   { href: "/consilium/games", label: "Games", icon: Gamepad2, matchPrefix: "/consilium/games" },
-  // Receipts + The Board were fully built but invisible in the member top
-  // nav, so they sat out of the daily loop. Surface them here.
+  // Receipts was fully built but invisible in the member top nav, so it sat
+  // out of the daily loop. Surface it here.
   { href: "/consilium/receipts", label: "Receipts", icon: Receipt, matchPrefix: "/consilium/receipts" },
-  { href: "/board", label: "The Board", icon: Crown, matchPrefix: "/board" },
   {
     href: "/consilium/simulator/leaderboard",
     label: "Leaderboard",

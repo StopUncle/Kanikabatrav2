@@ -76,32 +76,54 @@ function buildModelMessages(transcript: TranscriptMessage[]): {
   const opening =
     transcript[0]?.role === "persona" ? transcript[0].text : null;
   const rest = opening ? transcript.slice(1) : transcript;
-  return {
-    messages: rest.map((m) => ({
-      role: m.role === "persona" ? ("assistant" as const) : ("user" as const),
-      content: m.text,
-    })),
-    openingNote: opening,
-  };
+
+  // Coalesce consecutive same-role messages. A persona barrage is stored as
+  // several persona rows, which would map to consecutive assistant messages,
+  // and the Messages API requires roles to alternate. Merge them back into
+  // one turn (joined by newlines) so the array stays valid.
+  const messages: { role: "user" | "assistant"; content: string }[] = [];
+  for (const m of rest) {
+    const role = m.role === "persona" ? ("assistant" as const) : ("user" as const);
+    const last = messages[messages.length - 1];
+    if (last && last.role === role) {
+      last.content = `${last.content}\n${m.text}`;
+    } else {
+      messages.push({ role, content: m.text });
+    }
+  }
+  return { messages, openingNote: opening };
 }
+
+/** Separator the persona uses between back-to-back messages. */
+const BARRAGE_SENTINEL = "[NEXT]";
+
+/** Behaviour + format rules appended to every persona system prompt. */
+const PRESSURE_AND_FORMAT = [
+  "",
+  "",
+  "PRESSURE: Apply real pressure. Do not fold on the member's first refusal. If they push back, push again, guilt, reframe, bargain, act hurt, whatever fits your character. Only ease off once they have been firm and consistent across more than one message. Stay fully in character and never break the fourth wall.",
+  "",
+  `FORMAT: Most turns are a single short message. But when you are pushing, pleading, guilt-tripping, or refusing to let something go, fire 2 or 3 short messages back to back, the way a real person double-texts when they want something. Separate each message with a line containing only ${BARRAGE_SENTINEL}. Keep every message short and human; never a wall of text.`,
+].join("\n");
 
 export async function labReply(
   persona: LabPersona,
   transcript: TranscriptMessage[],
-): Promise<{ text: string; costMicros: number }> {
+): Promise<{ texts: string[]; costMicros: number }> {
   const client = getAnthropic();
   const { messages, openingNote } = buildModelMessages(transcript);
 
   // Prompt caching: the persona system block is identical across every
   // turn of a session, so cache it and pay ~0.1x on the prefix instead
   // of re-billing the full instructions on each Sonnet call.
-  const systemText = openingNote
+  const base = openingNote
     ? `${persona.systemPrompt}\n\nYou have already opened the conversation with: "${openingNote}". Continue naturally from the member's reply.`
     : persona.systemPrompt;
+  const systemText = `${base}${PRESSURE_AND_FORMAT}`;
 
   const response = await client.messages.create({
     model: LAB_MODEL,
-    max_tokens: 220,
+    max_tokens: 320,
     temperature: 0.8,
     system: [
       {
@@ -113,14 +135,23 @@ export async function labReply(
     messages,
   });
 
-  const text = response.content
+  const raw = response.content
     .flatMap((block) => (block.type === "text" ? [block.text] : []))
     .join("\n")
     .trim();
-  if (!text) throw new Error("Lab persona returned no text.");
+  if (!raw) throw new Error("Lab persona returned no text.");
+
+  // Split a barrage into separate messages; cap at 3 so a runaway reply
+  // can't flood the thread. Falls back to the whole reply as one message.
+  const texts = raw
+    .split(BARRAGE_SENTINEL)
+    .map((t) => t.trim())
+    .filter(Boolean)
+    .slice(0, 3);
+  if (texts.length === 0) texts.push(raw);
 
   return {
-    text,
+    texts,
     costMicros: costMicros(
       response.usage.input_tokens,
       response.usage.output_tokens,

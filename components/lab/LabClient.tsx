@@ -110,9 +110,18 @@ export default function LabClient() {
     };
   }, []);
 
+  // Defer one frame so the newly-rendered message is laid out before we
+  // measure the scroll target; otherwise smooth-scroll computes its
+  // destination too early and stops short of the bottom.
+  const scrollToBottom = useCallback(() => {
+    requestAnimationFrame(() => {
+      bottomRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
+    });
+  }, []);
+
   useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [session?.transcript.length, sending]);
+    scrollToBottom();
+  }, [session?.transcript.length, sending, scrollToBottom]);
 
   const personaFor = useCallback(
     (key: string): PersonaCard | undefined =>
@@ -162,6 +171,7 @@ export default function LabClient() {
       ],
     };
     setSession(optimistic);
+    scrollToBottom();
     try {
       const res = await fetch(`/api/consilium/lab/${session.id}/message`, {
         method: "POST",
@@ -175,15 +185,33 @@ export default function LabClient() {
         setChatError(data.error ?? "Message failed. Try again.");
         return;
       }
-      setSession({
-        ...optimistic,
-        turnCount: data.turnCount,
-        maxTurns: data.maxTurns,
-        transcript: [
-          ...optimistic.transcript,
-          { role: "persona", text: data.reply, at: new Date().toISOString() },
-        ],
-      });
+      // The persona may answer with a barrage of 2 to 3 messages. Land them
+      // one at a time, with the typing indicator pulsing between, so it
+      // reads like a real person firing off back-to-back texts.
+      const replies: string[] = Array.isArray(data.replies)
+        ? data.replies
+        : data.reply
+          ? [data.reply]
+          : [];
+      let acc = optimistic;
+      for (let i = 0; i < replies.length; i++) {
+        if (i > 0) {
+          await new Promise((resolve) =>
+            setTimeout(resolve, Math.min(1400, 500 + replies[i].length * 16)),
+          );
+        }
+        acc = {
+          ...acc,
+          turnCount: data.turnCount,
+          maxTurns: data.maxTurns,
+          transcript: [
+            ...acc.transcript,
+            { role: "persona", text: replies[i], at: new Date().toISOString() },
+          ],
+        };
+        setSession(acc);
+        scrollToBottom();
+      }
     } catch {
       setSession(session);
       setInput(text);
@@ -191,7 +219,7 @@ export default function LabClient() {
     } finally {
       setSending(false);
     }
-  }, [session, sending, input]);
+  }, [session, sending, input, scrollToBottom]);
 
   const end = useCallback(async () => {
     if (!session || ending) return;
@@ -311,19 +339,36 @@ export default function LabClient() {
             aria-label="Your message"
           />
           <div className="flex items-center justify-between mt-2">
-            <span className="text-text-gray/40 text-[10px] tracking-wider">
-              {turnsLeft} {turnsLeft === 1 ? "move" : "moves"} left
-            </span>
             <button
-              onClick={() => void send()}
-              disabled={sending || !input.trim() || turnsLeft <= 0}
-              className="inline-flex items-center gap-1.5 text-accent-gold text-xs uppercase tracking-[0.2em] font-light hover:text-white transition-colors disabled:opacity-40 py-1.5 px-3 border border-accent-gold/40 rounded-lg hover:border-accent-gold"
+              onClick={() => void end()}
+              disabled={ending}
+              className="inline-flex items-center gap-1.5 text-text-gray/55 hover:text-accent-gold text-[11px] uppercase tracking-[0.2em] font-light transition-colors disabled:opacity-50"
             >
-              <Send size={12} aria-hidden />
-              Send
+              <Flag size={11} aria-hidden />
+              {ending ? "Scoring..." : "End & score"}
             </button>
+            <div className="flex items-center gap-3">
+              <span className="text-text-gray/40 text-[10px] tracking-wider">
+                {turnsLeft} {turnsLeft === 1 ? "move" : "moves"} left
+              </span>
+              <button
+                onClick={() => void send()}
+                disabled={sending || !input.trim() || turnsLeft <= 0}
+                className="inline-flex items-center gap-1.5 text-accent-gold text-xs uppercase tracking-[0.2em] font-light hover:text-white transition-colors disabled:opacity-40 py-1.5 px-3 border border-accent-gold/40 rounded-lg hover:border-accent-gold"
+              >
+                <Send size={12} aria-hidden />
+                Send
+              </button>
+            </div>
           </div>
         </div>
+
+        {turnsLeft > 0 && session.turnCount >= 3 && (
+          <p className="text-center text-text-gray/40 text-[11px] font-light mt-3">
+            Made your point? End the session any time for your scored read. You
+            don&apos;t have to use every move.
+          </p>
+        )}
       </div>
     );
   }
@@ -411,9 +456,39 @@ export default function LabClient() {
           {p.difficulty}
         </span>
         <p className="text-white/80 font-light leading-relaxed mt-5">{p.brief}</p>
+
+        <div className="mt-6 rounded-xl border border-white/10 bg-deep-black/50 p-4">
+          <p className="text-accent-gold/70 text-[10px] uppercase tracking-[0.3em] font-light mb-3">
+            How you&apos;re scored
+          </p>
+          <ul className="space-y-1.5 text-text-gray/75 text-sm font-light">
+            <li>
+              <strong className="text-white/90 font-normal">Recognition</strong>{" "}
+              &mdash; you spot the tactic for what it is, early.
+            </li>
+            <li>
+              <strong className="text-white/90 font-normal">Boundaries</strong>{" "}
+              &mdash; you set a limit and hold it under pressure.
+            </li>
+            <li>
+              <strong className="text-white/90 font-normal">Composure</strong>{" "}
+              &mdash; you stay regulated. Appeasing and over-explaining cost you.
+            </li>
+            <li>
+              <strong className="text-white/90 font-normal">Exit control</strong>{" "}
+              &mdash; you decide how it ends, not them.
+            </li>
+          </ul>
+          <p className="text-text-gray/60 font-light text-xs mt-3 leading-relaxed">
+            Hold the line and they back down: you win. Give ground and you get
+            played. End the session whenever you&apos;ve made your point for your
+            read.
+          </p>
+        </div>
+
         <p className="text-text-gray/60 font-light text-sm mt-4">
-          One session per day. {`You get a scored read when it ends.`} Type to
-          {" "}{p.name} the way you would type to a real person.
+          One session per day. Type to {p.name} the way you would type to a real
+          person.
         </p>
         <div className="flex gap-3 mt-8">
           <button

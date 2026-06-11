@@ -86,7 +86,7 @@ export async function POST(
       { role: "user", text: body.text.trim(), at: now },
     ];
 
-    let reply: { text: string; costMicros: number };
+    let reply: { texts: string[]; costMicros: number };
     try {
       reply = await labReply(persona, withUserMove);
     } catch (err) {
@@ -101,9 +101,16 @@ export async function POST(
       );
     }
 
+    // A barrage is stored as one persona row per message so the thread and
+    // the scorer both see the back-to-back pressure exactly as the member did.
+    const personaMessages: TranscriptMessage[] = reply.texts.map((text) => ({
+      role: "persona",
+      text,
+      at: new Date().toISOString(),
+    }));
     const finalTranscript: TranscriptMessage[] = [
       ...withUserMove,
-      { role: "persona", text: reply.text, at: new Date().toISOString() },
+      ...personaMessages,
     ];
 
     // Optimistic-concurrency guard: only write if the row is still ACTIVE
@@ -133,7 +140,7 @@ export async function POST(
     }
 
     return NextResponse.json({
-      reply: reply.text,
+      replies: reply.texts,
       turnCount: session.turnCount + 1,
       maxTurns: LAB_MAX_TURNS,
     });
