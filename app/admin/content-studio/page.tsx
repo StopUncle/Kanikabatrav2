@@ -19,6 +19,7 @@ type Result = {
  * depending on net-new daily creativity.
  */
 export default function ContentStudio() {
+  const [mode, setMode] = useState<"repurpose" | "seo">("repurpose");
   const [hook, setHook] = useState("");
   const [generating, setGenerating] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -63,11 +64,68 @@ export default function ContentStudio() {
           Content Studio
         </h1>
         <p className="text-text-gray/60 font-light text-sm mt-1">
-          One hook in. A feed insight, a discussion prompt, a quiz angle, and a
-          simulator seed out. Paste a reel script, a tactic, or a raw thought.
+          Turn one hook into Consilium content, or a full SEO blog post. The
+          content engine, off the experience only you have.
         </p>
       </div>
 
+      <div className="flex gap-1 p-1 mb-6 bg-deep-black/60 border border-white/10 rounded-full w-fit">
+        {(
+          [
+            ["repurpose", "Repurpose to feed"],
+            ["seo", "SEO blog post"],
+          ] as const
+        ).map(([key, label]) => (
+          <button
+            key={key}
+            onClick={() => setMode(key)}
+            className={`px-4 py-2 rounded-full text-xs uppercase tracking-[0.15em] font-light transition-colors ${
+              mode === key
+                ? "bg-accent-gold/20 text-white"
+                : "text-text-gray/60 hover:text-text-light"
+            }`}
+          >
+            {label}
+          </button>
+        ))}
+      </div>
+
+      {mode === "seo" ? (
+        <SeoPanel />
+      ) : (
+        <RepurposeBody
+          hook={hook}
+          setHook={setHook}
+          generating={generating}
+          generate={generate}
+          error={error}
+          result={result}
+          update={update}
+        />
+      )}
+    </div>
+  );
+}
+
+function RepurposeBody({
+  hook,
+  setHook,
+  generating,
+  generate,
+  error,
+  result,
+  update,
+}: {
+  hook: string;
+  setHook: (v: string) => void;
+  generating: boolean;
+  generate: () => void;
+  error: string | null;
+  result: Result | null;
+  update: (k: "insight" | "prompt", f: "title" | "body", v: string) => void;
+}) {
+  return (
+    <>
       <div className="rounded-xl border border-accent-gold/25 bg-deep-black/60 p-4 focus-within:border-accent-gold/50 transition-colors">
         <textarea
           value={hook}
@@ -119,7 +177,7 @@ export default function ContentStudio() {
           <CopyCard label="Simulator seed" text={result.scenarioSeed} />
         </div>
       )}
-    </div>
+    </>
   );
 }
 
@@ -225,5 +283,100 @@ function CopyCard({ label, text }: { label: string; text: string }) {
       </div>
       <p className="text-white/80 font-light text-sm leading-relaxed">{text}</p>
     </div>
+  );
+}
+
+function SeoPanel() {
+  const [topic, setTopic] = useState("");
+  const [generating, setGenerating] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [out, setOut] = useState<{ mdx: string; slug: string } | null>(null);
+  const [copied, setCopied] = useState(false);
+
+  const generate = useCallback(async () => {
+    if (topic.trim().length < 4) return;
+    setGenerating(true);
+    setError(null);
+    try {
+      const res = await fetch("/api/admin/content/seo-post", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ topic }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setError(data.error ?? "Generation failed.");
+        return;
+      }
+      setOut(data);
+    } catch {
+      setError("Network error. Try again.");
+    } finally {
+      setGenerating(false);
+    }
+  }, [topic]);
+
+  return (
+    <>
+      <p className="text-text-gray/60 font-light text-sm mb-3">
+        Target a keyword or query. Out comes a complete, publish-ready MDX
+        post in your voice, written from first-hand experience (the E-E-A-T
+        edge). Finish it, then save it to{" "}
+        <code className="text-accent-gold/80">content/posts/&lt;slug&gt;.mdx</code>.
+      </p>
+      <div className="rounded-xl border border-accent-gold/25 bg-deep-black/60 p-4 focus-within:border-accent-gold/50 transition-colors">
+        <input
+          value={topic}
+          onChange={(e) => setTopic(e.target.value.slice(0, 400))}
+          placeholder="e.g. how to spot a covert narcissist"
+          className="w-full bg-transparent text-white font-light text-base placeholder:text-text-gray/40 focus:outline-none"
+        />
+        <div className="flex items-center justify-end mt-3">
+          <button
+            onClick={() => void generate()}
+            disabled={generating || topic.trim().length < 4}
+            className="inline-flex items-center gap-2 text-accent-gold text-xs uppercase tracking-[0.2em] font-light border border-accent-gold/40 rounded-lg px-4 py-2.5 hover:border-accent-gold transition-colors disabled:opacity-40"
+          >
+            {generating ? (
+              <RefreshCw size={13} className="animate-spin" aria-hidden />
+            ) : (
+              <Sparkles size={13} aria-hidden />
+            )}
+            {generating ? "Writing the post..." : "Generate SEO post"}
+          </button>
+        </div>
+      </div>
+
+      {error && (
+        <p className="text-red-400/90 text-sm font-light mt-4">{error}</p>
+      )}
+
+      {out && (
+        <div className="mt-6 rounded-xl border border-white/10 bg-deep-black/50 p-5">
+          <div className="flex items-center justify-between mb-3">
+            <p className="text-text-gray/70 text-xs font-light">
+              Save as{" "}
+              <code className="text-accent-gold/80">
+                content/posts/{out.slug}.mdx
+              </code>
+            </p>
+            <button
+              onClick={() => {
+                void navigator.clipboard?.writeText(out.mdx);
+                setCopied(true);
+                setTimeout(() => setCopied(false), 1500);
+              }}
+              className="inline-flex items-center gap-1.5 text-warm-gold text-xs uppercase tracking-[0.15em] font-light border border-warm-gold/40 rounded-lg px-3 py-1.5 hover:border-warm-gold transition-colors"
+            >
+              {copied ? <Check size={12} /> : <Copy size={12} />}
+              {copied ? "Copied" : "Copy MDX"}
+            </button>
+          </div>
+          <pre className="max-h-[60vh] overflow-auto rounded-lg bg-black/40 p-4 text-text-gray/90 text-xs leading-relaxed whitespace-pre-wrap font-mono">
+            {out.mdx}
+          </pre>
+        </div>
+      )}
+    </>
   );
 }
