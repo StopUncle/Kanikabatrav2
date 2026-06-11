@@ -26,6 +26,9 @@ export default async function VoiceNotesPage() {
   const voiceNotes = await prisma.feedPost.findMany({
     where: { type: "VOICE_NOTE", ...genderWhere },
     orderBy: { createdAt: "desc" },
+    // Bound the query: was an unbounded findMany. Covers the current
+    // archive; add load-more pagination if the catalogue outgrows this.
+    take: 50,
     include: {
       author: {
         select: {

@@ -22,6 +22,9 @@ export default async function VideosPage() {
   const videos = await prisma.feedPost.findMany({
     where: { type: "VIDEO", ...genderWhere },
     orderBy: { createdAt: "desc" },
+    // Bound the query: was an unbounded findMany. Covers the current
+    // archive; add load-more pagination if the catalogue outgrows this.
+    take: 50,
     include: {
       author: {
         select: {
