@@ -154,10 +154,19 @@ export default async function InnerCircleLanding({
                   Join the Community, $29/month
                   <ArrowRight size={18} />
                 </Link>
+                {/* Free taste before the paywall: a full playable scenario,
+                    no signup. The strongest differentiator should be felt,
+                    not just described. */}
+                <Link
+                  href="/try"
+                  className="inline-flex items-center justify-center gap-2 py-4 px-10 rounded-full border border-warm-gold/40 text-warm-gold font-medium text-base tracking-wider uppercase transition-all hover:bg-warm-gold/10 hover:border-warm-gold/70"
+                >
+                  Play a scene free
+                </Link>
               </div>
 
               <p className="text-text-gray/75 text-sm mt-4">
-                Instant access · cancel anytime · no application required
+                Instant access · cancel anytime · no signup to try a scene
               </p>
             </div>
           </div>
