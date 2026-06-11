@@ -67,6 +67,10 @@ on:
     # UTC-midnight rollover that breaks streaks, so members have the evening
     # to act. Pushes active members who haven't played today.
     - cron: '0 20 * * *'
+    # Generate the daily scenario draft for admin review. 11:00 UTC, after
+    # the morning content drops. The draft only goes live when published
+    # from /admin/scenarios.
+    - cron: '0 11 * * *'
   workflow_dispatch:
     # Allow manual triggering from the GitHub Actions UI. Useful for
     # testing or firing a cron out-of-band without waiting for the next
@@ -94,6 +98,7 @@ on:
           - auto-resume-pauses
           - reconcile-memberships
           - daily-streak-nudge
+          - generate-scenario
 
 env:
   BASE_URL: https://kanikarose.com
@@ -348,3 +353,17 @@ jobs:
             -H "x-cron-secret: ${{ secrets.CRON_SECRET }}" \
             -H "Content-Type: application/json" \
             --max-time 120
+
+  generate-scenario:
+    if: >-
+      github.event.schedule == '0 11 * * *' ||
+      (github.event_name == 'workflow_dispatch' &&
+       (github.event.inputs.target == 'all' || github.event.inputs.target == 'generate-scenario'))
+    runs-on: ubuntu-latest
+    steps:
+      - name: Hit /api/cron/generate-scenario
+        run: |
+          curl -fsS -X POST "$BASE_URL/api/cron/generate-scenario" \
+            -H "x-cron-secret: ${{ secrets.CRON_SECRET }}" \
+            -H "Content-Type: application/json" \
+            --max-time 290

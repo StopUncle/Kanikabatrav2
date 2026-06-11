@@ -19,7 +19,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { requireAuth } from "@/lib/auth/middleware";
 import { prisma } from "@/lib/prisma";
-import { getScenario } from "@/lib/simulator/scenarios";
+import { resolveScenario } from "@/lib/simulator/resolve";
 
 type ChoicesJsonShape = Array<{
   sceneId: string;
@@ -92,7 +92,7 @@ export async function GET(request: NextRequest) {
         { status: 400 },
       );
     }
-    const scenario = getScenario(scenarioId);
+    const scenario = await resolveScenario(scenarioId);
     if (!scenario) {
       return NextResponse.json(
         { error: `Unknown scenario: ${scenarioId}` },

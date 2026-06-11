@@ -26,13 +26,15 @@ import {
   Bot,
   Megaphone,
   MessageCircle,
+  MessagesSquare,
   Target,
   Quote,
-  ListOrdered,
+  Clapperboard,
 } from "lucide-react";
 
 const NAV_ITEMS = [
   { href: "/admin", label: "Dashboard", icon: LayoutDashboard },
+  { href: "/admin/messages", label: "Messages", icon: MessagesSquare },
   { href: "/admin/metrics", label: "Metrics", icon: BarChart3 },
   { href: "/admin/content", label: "Content", icon: Lightbulb },
   { href: "/admin/content-studio", label: "Content Studio", icon: Sparkles },
@@ -48,7 +50,7 @@ const NAV_ITEMS = [
   { href: "/admin/bots", label: "Bots", icon: Bot },
   { href: "/admin/questions", label: "Questions", icon: MessageCircle },
   { href: "/admin/tells", label: "Tells", icon: Target },
-  { href: "/admin/board", label: "The Board", icon: ListOrdered },
+  { href: "/admin/scenarios", label: "Scenarios", icon: Clapperboard },
   { href: "/admin/testimonials", label: "Testimonials", icon: Quote },
 ];
 
@@ -57,6 +59,9 @@ export default function AdminSidebar() {
   const router = useRouter();
   const [loggingOut, setLoggingOut] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  // Unread direct-message threads (members waiting on a reply). Polled on a
+  // slow interval so the Messages nav item badges without a page refresh.
+  const [unreadMessages, setUnreadMessages] = useState(0);
 
   // Close mobile menu on route change
   useEffect(() => {
@@ -74,6 +79,29 @@ export default function AdminSidebar() {
       document.body.style.overflow = "";
     };
   }, [mobileOpen]);
+
+  // Poll the unread-message badge count. Cheap indexed count; 30s cadence.
+  useEffect(() => {
+    let alive = true;
+    async function load() {
+      try {
+        const r = await fetch("/api/admin/messages/unread-count", {
+          cache: "no-store",
+        });
+        if (!r.ok) return;
+        const body = await r.json();
+        if (alive) setUnreadMessages(body.needsReply ?? 0);
+      } catch {
+        /* silent — badge just stays at its last value */
+      }
+    }
+    load();
+    const id = setInterval(load, 30_000);
+    return () => {
+      alive = false;
+      clearInterval(id);
+    };
+  }, [pathname]);
 
   function isActive(href: string) {
     if (href === "/admin") return pathname === "/admin";
@@ -98,20 +126,28 @@ export default function AdminSidebar() {
           bottom of the viewport with no way to scroll to the
           remaining items or the bottom actions. */}
       <nav className="flex-1 min-h-0 overflow-y-auto py-4">
-        {NAV_ITEMS.map(({ href, label, icon: Icon }) => (
-          <Link
-            key={href}
-            href={href}
-            className={`flex items-center gap-3 px-6 py-3 text-sm font-light tracking-wide transition-all duration-200 ${
-              isActive(href)
-                ? "text-accent-gold bg-accent-gold/5 border-r-2 border-accent-gold"
-                : "text-text-gray hover:text-text-light hover:bg-white/[0.02]"
-            }`}
-          >
-            <Icon size={18} strokeWidth={1.5} />
-            {label}
-          </Link>
-        ))}
+        {NAV_ITEMS.map(({ href, label, icon: Icon }) => {
+          const showBadge = href === "/admin/messages" && unreadMessages > 0;
+          return (
+            <Link
+              key={href}
+              href={href}
+              className={`flex items-center gap-3 px-6 py-3 text-sm font-light tracking-wide transition-all duration-200 ${
+                isActive(href)
+                  ? "text-accent-gold bg-accent-gold/5 border-r-2 border-accent-gold"
+                  : "text-text-gray hover:text-text-light hover:bg-white/[0.02]"
+              }`}
+            >
+              <Icon size={18} strokeWidth={1.5} />
+              <span className="flex-1">{label}</span>
+              {showBadge && (
+                <span className="inline-flex items-center justify-center min-w-[18px] h-[18px] px-1 rounded-full bg-accent-gold text-deep-black text-[10px] font-semibold tabular-nums">
+                  {unreadMessages}
+                </span>
+              )}
+            </Link>
+          );
+        })}
       </nav>
 
       <div className="shrink-0 px-6 py-4 border-t border-accent-gold/10 space-y-3">

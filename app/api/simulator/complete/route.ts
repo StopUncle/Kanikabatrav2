@@ -17,6 +17,7 @@ import { requireAuth } from "@/lib/auth/middleware";
 import { prisma } from "@/lib/prisma";
 import { z } from "zod";
 import { getScenario, ALL_SCENARIOS } from "@/lib/simulator/scenarios";
+import { resolveScenario } from "@/lib/simulator/resolve";
 import {
   badgesEarnedFromState,
   levelCompleteBadgeFor,
@@ -72,7 +73,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const scenario = getScenario(body.scenarioId);
+    const scenario = await resolveScenario(body.scenarioId);
     if (!scenario) {
       return NextResponse.json(
         { error: `Unknown scenario: ${body.scenarioId}` },
@@ -112,7 +113,17 @@ export async function POST(request: NextRequest) {
       endedAt: body.endedAt,
     };
 
-    const earnedKeys = badgesEarnedFromState(scenario, state);
+    // Generated "Fresh Files" scenarios are bonus reps, not curriculum.
+    // They still earn XP, streak, and endings tracking (the progress
+    // upsert below), but must not touch the badge economy: their ids
+    // aren't in the badge registry, and their level:1 + no-track shape
+    // would otherwise be graded against the static female level-1 pool
+    // and could mint a false "level 1 clear" for a player holding the
+    // real female level-1 badges.
+    const isStaticScenario = getScenario(body.scenarioId) !== null;
+    const earnedKeys = isStaticScenario
+      ? badgesEarnedFromState(scenario, state)
+      : [];
 
     try {
       // Best-of merge, shared with /api/simulator/progress so a replay
@@ -221,7 +232,7 @@ export async function POST(request: NextRequest) {
         heldNowSet,
       );
 
-      if (levelKey) {
+      if (isStaticScenario && levelKey) {
         try {
           await prisma.simulatorBadge.create({
             data: { userId: user.id, badgeKey: levelKey },
@@ -248,7 +259,7 @@ export async function POST(request: NextRequest) {
         body.choicesMade.every((c) => c.wasOptimal);
       const isGoodOutcome =
         safeOutcome === "good" || safeOutcome === "passed";
-      if (wasFirstCompletion && allOptimalThisRun && isGoodOutcome) {
+      if (isStaticScenario && wasFirstCompletion && allOptimalThisRun && isGoodOutcome) {
         const firstTryKey = "ach-all-optimal-first-try";
         if (!heldNowSet.has(firstTryKey)) {
           try {

@@ -52,3 +52,17 @@ export async function triggerUserNotification(
     console.error("Pusher notification error:", error);
   }
 }
+
+export async function triggerDirectMessage(
+  conversationId: string,
+  event: string,
+  data: Record<string, unknown>,
+) {
+  if (!process.env.PUSHER_APP_ID) return;
+
+  try {
+    await pusherServer.trigger(`private-dm-${conversationId}`, event, data);
+  } catch (error) {
+    console.error("Pusher DM trigger error:", error);
+  }
+}

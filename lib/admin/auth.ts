@@ -40,30 +40,29 @@ function getJwtSecret(): string {
   return secret;
 }
 
-export async function requireAdminSession(): Promise<NextResponse | null> {
+/**
+ * Boolean form of the admin check. Returns true when a valid `admin_session`
+ * cookie is present and carries the admin role. Use this where a 401
+ * NextResponse is the wrong return shape — e.g. inside a branch that must
+ * fall through to another auth path (the Pusher DM channel, which accepts
+ * EITHER the owning member OR an admin).
+ */
+export async function verifyAdminSession(): Promise<boolean> {
   const cookieStore = await cookies();
   const token = cookieStore.get("admin_session")?.value;
-
-  if (!token) {
-    return NextResponse.json(
-      { error: "Unauthorized — admin session required" },
-      { status: 401 },
-    );
-  }
-
+  if (!token) return false;
   try {
     const payload = jwt.verify(token, getJwtSecret()) as AdminSessionPayload;
-    if (payload.role !== "admin") {
-      return NextResponse.json(
-        { error: "Unauthorized — admin role required" },
-        { status: 401 },
-      );
-    }
-    return null;
+    return payload.role === "admin";
   } catch {
-    return NextResponse.json(
-      { error: "Unauthorized — invalid or expired session" },
-      { status: 401 },
-    );
+    return false;
   }
+}
+
+export async function requireAdminSession(): Promise<NextResponse | null> {
+  if (await verifyAdminSession()) return null;
+  return NextResponse.json(
+    { error: "Unauthorized — admin session required" },
+    { status: 401 },
+  );
 }

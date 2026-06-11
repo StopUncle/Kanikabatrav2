@@ -31,7 +31,8 @@ export type PushCategory =
   | "broadcast"
   | "dailyTell"
   | "dailyStreak"
-  | "leagueResult";
+  | "leagueResult"
+  | "directMessage";
 
 export interface PushPayload {
   title: string;
@@ -71,6 +72,10 @@ const DEFAULT_OPT_IN: Record<PushCategory, boolean> = {
   // Weekly Instincts league result. Default-ON: once a week, high
   // relevance, the strongest weekly return loop.
   leagueResult: true,
+  // A private message from Kanika. Default-ON: a 1-on-1 from the founder is
+  // the highest-signal notification a member can get; the whole point is they
+  // hear about it. They can still opt out per-category.
+  directMessage: true,
 };
 
 let configured = false;

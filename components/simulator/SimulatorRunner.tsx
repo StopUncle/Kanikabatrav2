@@ -25,7 +25,6 @@ import MoodBackground from "./MoodBackground";
 import Letterbox from "./Letterbox";
 import CharacterSilhouette from "./CharacterSilhouette";
 import DialogBox from "./DialogBox";
-import ChoiceCards from "./ChoiceCards";
 import EndingScreen from "./EndingScreen";
 import ImmersionOverlay from "./ImmersionOverlay";
 import SceneShake from "./SceneShake";
@@ -35,6 +34,7 @@ import SceneProgress from "./SceneProgress";
 import ScenarioIntro from "./ScenarioIntro";
 import ChoiceTimer from "./ChoiceTimer";
 import ChoicePopularityReveal from "./ChoicePopularityReveal";
+import FreeformMove from "./FreeformMove";
 import DialogTranscript from "./DialogTranscript";
 
 /**
@@ -306,6 +306,13 @@ export default function SimulatorRunner({
   const choicesScrollRef = useRef<HTMLDivElement>(null);
   const [isChoicesOverflowing, setIsChoicesOverflowing] = useState(false);
   const [isAtChoicesBottom, setIsAtChoicesBottom] = useState(false);
+  // "Settled" = an AnimatePresence exit just completed and the choices
+  // phase is now the live child. The column's vertical alignment is
+  // driven off this flag (set to `showChoices` in onExitComplete), never
+  // off the synchronous showChoices, so the column can't realign while a
+  // dialog line OR the composer is still mid-fade. That kills the
+  // bottom<->top jump when the prompt appears and when it leaves.
+  const [choicesSettled, setChoicesSettled] = useState(false);
 
   const scene = currentScene(scenario, state);
   const totalLines = scene?.dialog?.length ?? 0;
@@ -408,6 +415,16 @@ export default function SimulatorRunner({
 
   const pickChoice = useCallback(
     (choice: Choice) => {
+      // Guard the two parallel pick sources (authored ChoiceCards and the
+      // FreeformMove confirm button) against a double-fire: once a choice
+      // advances the scene, a second stale pick whose id isn't on the new
+      // current scene would throw in applyChoice and crash the runner. If
+      // the choice doesn't belong to the scene we're on, ignore it.
+      const liveScene = scenario.scenes.find(
+        (s) => s.id === state.currentSceneId,
+      );
+      if (!liveScene?.choices?.some((c) => c.id === choice.id)) return;
+
       // Show XP floater. Tone maps to the optimality signal used by
       // the engine for XP calculation so the floater matches reality.
       const tone: "optimal" | "neutral" | "bad" =
@@ -647,6 +664,7 @@ export default function SimulatorRunner({
     ro.observe(el);
     return () => ro.disconnect();
   }, [scene?.id, showChoices]);
+
 
   // Reset tap counter + scene-entered timestamp whenever the scene changes.
   // This is the heartbeat for the stuck-detector: every fresh scene starts
@@ -1082,13 +1100,25 @@ export default function SimulatorRunner({
         // to see what they were replying to. justify-end is kept for
         // the dialog phase so a single dialog line reads cinematically
         // near the bottom of the screen.
+        // Alignment is driven purely by the settle flag, which only
+        // changes after an exit completes (see onExitComplete). So the
+        // column stays bottom-anchored while a dialog line is exiting AND
+        // while the composer is exiting, killing the bottom<->top jump in
+        // both directions. Settled composer centers when it fits, and
+        // top-anchors (scroll-safe) only when expanded options overflow.
         className={`absolute inset-x-0 bottom-16 sm:bottom-20 z-[35] flex flex-col items-center ${
-          showChoices ? "justify-start" : "justify-end"
+          !choicesSettled
+            ? "justify-end"
+            : isChoicesOverflowing
+              ? "justify-start"
+              : "justify-center"
         } gap-3 sm:gap-5 px-4 h-[calc(100dvh-180px)] overflow-y-auto [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden`}
       >
         {/* One AnimatePresence with mode="wait" so the dialog→choices
             swap is sequential (dialog exits, then choices enter) instead
-            of overlapping in the same vertical zone.
+            of overlapping in the same vertical zone. onExitComplete flips
+            the column alignment only AFTER the dialog line has fully left,
+            so the exiting line never jumps from bottom to top mid-fade.
 
             Echo is bundled INSIDE the choices wrapper now (was a sibling
             of AnimatePresence prior to this fix). The mid-transition pop
@@ -1096,7 +1126,10 @@ export default function SimulatorRunner({
             slammed to the bottom by `justify-end`, then jumped back up
             once the choices entered — is gone. Echo + cards mount as
             one cohesive unit. */}
-        <AnimatePresence mode="wait">
+        <AnimatePresence
+          mode="wait"
+          onExitComplete={() => setChoicesSettled(showChoices)}
+        >
           {/* Suppress the dialog + choices column while the intro
               overlay is showing. Otherwise the typewriter races to
               completion behind the intro and the player hits Begin
@@ -1143,11 +1176,19 @@ export default function SimulatorRunner({
               {scene.mood === "danger" && (
                 <ChoiceTimer resetKey={scene.id} />
               )}
-              <ChoiceCards
-                key={`choices-${scene.id}`}
+              {/* Writing your own move is the hero interaction; the
+                  authored choices live inside the composer as an opt-in
+                  "see the options" scaffold. Both resolve to a real
+                  Choice via pickChoice, so the engine path is identical.
+                  Keyed per scene: an in-flight judge from a previous
+                  scene unmounts with its confirm button, so a stale
+                  choice can never be applied to the wrong scene. */}
+              <FreeformMove
+                key={`freeform-${scene.id}`}
+                scenarioId={scenario.id}
+                sceneId={scene.id}
                 choices={scene.choices}
-                onPick={pickChoice}
-                scenario={scenario}
+                onResolve={pickChoice}
               />
             </m.div>
           ) : currentLine ? (

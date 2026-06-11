@@ -1,14 +1,16 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import {
   X,
   Scroll,
   AudioLines,
+  Film,
   MessageCircle,
-  Users,
+  Flame,
+  ShieldAlert,
   ArrowRight,
-  Gamepad2,
   Loader2,
 } from "lucide-react";
 import ConsiliumSeal from "@/components/ConsiliumSeal";
@@ -39,6 +41,7 @@ export default function OnboardingModal({
   needsDisplayName = false,
   needsGender = false,
 }: OnboardingModalProps) {
+  const router = useRouter();
   const requiresProfileStep = needsDisplayName || needsGender;
   const [phase, setPhase] = useState<"profile" | "tour">(
     requiresProfileStep ? "profile" : "tour",
@@ -97,6 +100,15 @@ export default function OnboardingModal({
     } catch {
       // Modal already closed locally, non-critical.
     }
+  };
+
+  // Primary action: drop them straight into the highest-value first thing
+  // (a Simulator scenario) rather than leaving them on the feed to bounce.
+  // Show, don't tell.
+  const startSimulator = () => {
+    setVisible(false);
+    void fetch("/api/user/onboarding", { method: "POST" }).catch(() => {});
+    router.push("/consilium/simulator");
   };
 
   if (!visible) return null;
@@ -216,21 +228,46 @@ export default function OnboardingModal({
           </>
         ) : (
           <>
-            <p className="text-text-gray text-sm leading-relaxed mb-6 text-center">
-              You&apos;re in. Here&apos;s what this space offers, take a
-              minute to explore each before diving in.
+            <p className="text-text-gray text-sm leading-relaxed mb-5 text-center">
+              You&apos;re in. The quickest way to get what this place is about:
+              play one scenario. Everything else can wait.
             </p>
 
-            <ul className="space-y-3 mb-8">
+            {/* Primary action — drop them into the highest-value first thing
+                rather than reading a list of chambers. */}
+            <button
+              onClick={startSimulator}
+              className="group w-full flex items-center gap-3 p-4 mb-5 rounded-xl border border-accent-gold/40 bg-accent-gold/[0.07] hover:bg-accent-gold/[0.12] hover:border-accent-gold/60 transition-all text-left"
+            >
+              <div className="w-10 h-10 rounded-full bg-accent-gold/15 flex items-center justify-center shrink-0">
+                <Film className="w-5 h-5 text-accent-gold" />
+              </div>
+              <div className="min-w-0 flex-1">
+                <p className="text-text-light text-sm font-medium">
+                  Run your first scenario
+                </p>
+                <p className="text-text-gray/70 text-xs leading-relaxed">
+                  {catalogueStats.scenarios} interactive scenarios across{" "}
+                  {catalogueStats.tracks} tracks. Learn manipulation and defence
+                  by playing, not reading.
+                </p>
+              </div>
+              <ArrowRight className="w-4 h-4 text-accent-gold/70 shrink-0 transition-transform group-hover:translate-x-0.5" />
+            </button>
+
+            <p className="text-text-gray/50 text-[10px] uppercase tracking-[0.2em] mb-3">
+              Also inside
+            </p>
+            <ul className="space-y-3 mb-5">
               <OnboardingItem
                 icon={Scroll}
                 title="The Feed"
-                body="Posts, discussions, and announcements from Kanika. The pinned post at the top has the house rules, read it."
+                body="Kanika's posts, daily prompts, and the pinned house rules. Comment, react, keep showing up."
               />
               <OnboardingItem
-                icon={Gamepad2}
-                title="The Dark Mirror Simulator"
-                body={`Interactive scenarios that teach manipulation + defence through play. ${catalogueStats.scenarios} scenarios across ${catalogueStats.tracks} tracks, narcissist family, anxiety self-regulation, Cluster-B drills, and more. Pick the track that fits the week you're having.`}
+                icon={MessageCircle}
+                title="Message Kanika"
+                body="A private, one-to-one line to Kanika, right from the top nav. She reads everything; a reply may take a little time."
               />
               <OnboardingItem
                 icon={AudioLines}
@@ -243,18 +280,26 @@ export default function OnboardingModal({
                 body="Submit one question a day. The top-voted ones get answered by Kanika, by voice or video, in your feed. Bring the situation you can't read."
               />
               <OnboardingItem
-                icon={Users}
-                title="House Rules"
-                body="Every comment is reviewed. Every page is watermarked. Leaking content or attacking members = permanent ban."
+                icon={Flame}
+                title="Show up daily"
+                body="The Simulator, Games, and Tells all build one daily streak. Returning each day is the whole game."
               />
             </ul>
 
+            {/* House rules — a warning, not a chamber to visit. */}
+            <div className="flex gap-2.5 mb-6 p-3 rounded-lg border border-rose-500/20 bg-rose-500/[0.04]">
+              <ShieldAlert className="w-4 h-4 text-rose-300/80 shrink-0 mt-0.5" />
+              <p className="text-text-gray/70 text-xs leading-relaxed">
+                Every comment is reviewed and every page is watermarked. Leaking
+                content or attacking members means a permanent ban.
+              </p>
+            </div>
+
             <button
               onClick={dismiss}
-              className="w-full inline-flex items-center justify-center gap-2 py-3 bg-accent-gold text-deep-black rounded-full font-medium hover:bg-accent-gold/90 transition-all"
+              className="w-full text-center py-2 text-text-gray/60 hover:text-text-light text-xs tracking-wide transition-colors"
             >
-              Got it, let me in
-              <ArrowRight size={16} />
+              I&apos;ll explore on my own
             </button>
           </>
         )}

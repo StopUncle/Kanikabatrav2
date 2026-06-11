@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { checkAccessTier } from "@/lib/community/access";
 import { memberSafeName } from "@/lib/community/privacy";
 import { resolveActiveUserIdFromRequest } from "@/lib/auth/resolve-user";
+import { verifyAdminSession } from "@/lib/admin/auth";
 
 /**
  * Pusher channel authentication.
@@ -16,11 +17,6 @@ import { resolveActiveUserIdFromRequest } from "@/lib/auth/resolve-user";
  */
 export async function POST(request: NextRequest) {
   try {
-    const userId = await resolveActiveUserIdFromRequest(request);
-    if (!userId) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
     const formData = await request.formData();
     const socketId = formData.get("socket_id") as string;
     const channelName = formData.get("channel_name") as string;
@@ -30,6 +26,41 @@ export async function POST(request: NextRequest) {
         { error: "Missing socket_id or channel_name" },
         { status: 400 },
       );
+    }
+
+    // Direct-message channels accept EITHER the owning member or an admin
+    // (Kanika), so they're resolved before the member-only gate below.
+    if (channelName.startsWith("private-dm-")) {
+      const conversationId = channelName.replace("private-dm-", "");
+      const conversation = await prisma.conversation.findUnique({
+        where: { id: conversationId },
+        select: { memberId: true },
+      });
+      if (!conversation) {
+        return NextResponse.json(
+          { error: "Conversation not found" },
+          { status: 404 },
+        );
+      }
+
+      const callerId = await resolveActiveUserIdFromRequest(request);
+      const isOwningMember = callerId === conversation.memberId;
+      const isAdmin = isOwningMember ? false : await verifyAdminSession();
+      if (!isOwningMember && !isAdmin) {
+        return NextResponse.json(
+          { error: "Cannot subscribe to this conversation" },
+          { status: 403 },
+        );
+      }
+
+      const authResponse = pusherServer.authorizeChannel(socketId, channelName);
+      return NextResponse.json(authResponse);
+    }
+
+    // All other channel types are member-only.
+    const userId = await resolveActiveUserIdFromRequest(request);
+    if (!userId) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const user = await prisma.user.findUnique({

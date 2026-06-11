@@ -205,4 +205,24 @@ export const limits = {
    * 60 depending on tier) still bounds the long tail.
    */
   receiptsCreate: { action: "receipts:create", max: 4, windowMs: 60_000 },
+  /**
+   * Freeform simulator moves: burst gate per user. Haiku is cheap but a
+   * stuck client retry loop would still fire real LLM calls.
+   */
+  simFreeformBurst: { action: "sim:freeform:burst", max: 8, windowMs: 60_000 },
+  /**
+   * Freeform simulator moves: daily ceiling per user. Generous enough
+   * to type every move of two full scenario runs.
+   */
+  simFreeformDaily: {
+    action: "sim:freeform:daily",
+    max: 80,
+    windowMs: 24 * 60 * 60_000,
+  },
+  /**
+   * Lab messages: burst gate per user. The Lab runs on Sonnet, which is
+   * the expensive model, so the per-minute gate is tight. The session
+   * turn cap and daily session cap bound the long tail.
+   */
+  labMessage: { action: "lab:message", max: 6, windowMs: 60_000 },
 } satisfies Record<string, RateLimitConfig>;
