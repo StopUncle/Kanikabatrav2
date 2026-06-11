@@ -30,7 +30,8 @@ export type PushCategory =
   | "mention"
   | "broadcast"
   | "dailyTell"
-  | "dailyStreak";
+  | "dailyStreak"
+  | "leagueResult";
 
 export interface PushPayload {
   title: string;
@@ -67,6 +68,9 @@ const DEFAULT_OPT_IN: Record<PushCategory, boolean> = {
   // cron decides WHO (at-risk streak vs gentle mission ping); this gate only
   // honours an explicit opt-out.
   dailyStreak: true,
+  // Weekly Instincts league result. Default-ON: once a week, high
+  // relevance, the strongest weekly return loop.
+  leagueResult: true,
 };
 
 let configured = false;

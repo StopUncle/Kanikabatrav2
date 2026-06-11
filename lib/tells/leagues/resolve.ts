@@ -23,6 +23,7 @@
  */
 
 import { prisma } from "@/lib/prisma";
+import { sendPushToUser } from "@/lib/push";
 
 interface ResolveResult {
   leaguesResolved: number;
@@ -141,6 +142,10 @@ async function resolveOne(leagueId: string): Promise<OneResult> {
   let demoted = 0;
   let held = 0;
 
+  // Collected during the transaction, notified after it commits (never
+  // send push inside a DB transaction). Training bots are skipped.
+  const notify: { userId: string; outcome: string; rank: number }[] = [];
+
   // Stamp ranks + outcomes in order. Done as a single transaction so
   // partial failures don't leave half a league finalised.
   await prisma.$transaction(async (tx) => {
@@ -162,11 +167,35 @@ async function resolveOne(leagueId: string): Promise<OneResult> {
         where: { id: m.id },
         data: { finalRank: rank, outcome },
       });
+      if (!m.user.isTrainingBot) {
+        notify.push({ userId: m.userId, outcome, rank });
+      }
     }
     await tx.league.update({
       where: { id: leagueId },
       data: { resolvedAt: new Date() },
     });
+  });
+
+  // Weekly return trigger: tell each member how they finished. The
+  // strongest recurring loop in Instincts, silent until now. Fire-and-
+  // forget; per-member so the copy matches their outcome.
+  void Promise.all(
+    notify.map((n) => {
+      const copy =
+        n.outcome === "PROMOTED"
+          ? { title: "You were promoted", body: `You finished #${n.rank} and moved up a league.` }
+          : n.outcome === "DEMOTED"
+            ? { title: "This week's league result", body: `You finished #${n.rank}. New week, fresh bracket, climb back up.` }
+            : { title: "You held your league", body: `You finished #${n.rank}. Hold the line again this week.` };
+      return sendPushToUser(n.userId, "leagueResult", {
+        ...copy,
+        url: "/consilium/instincts/score",
+        tag: "league-result",
+      }).catch(() => 0);
+    }),
+  ).catch(() => {
+    /* best-effort */
   });
 
   return { ranked: total, promoted, demoted, held, botSwap };

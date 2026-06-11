@@ -9,6 +9,7 @@ import { enforceMessagingGuard } from "@/lib/community/messaging-guard";
 import { prisma } from "@/lib/prisma";
 import { memberSafeName } from "@/lib/community/privacy";
 import { tierForMember } from "@/components/consilium/badge-tiers";
+import { sendPushToUser } from "@/lib/push";
 
 type CommentAuthorRow = {
   id: string;
@@ -201,15 +202,19 @@ export async function POST(
   // it shows up in the thread instead of vanishing into a depth the
   // UI never renders. Also validates the parent exists + is approved.
   let effectiveParentId: string | null = null;
+  // Author of the comment being replied to (the direct parent, before
+  // depth flattening), so we can notify them when the reply goes live.
+  let replyToAuthorId: string | null = null;
   if (body.parentId) {
     const parentComment = await prisma.feedComment.findFirst({
       where: { id: body.parentId, postId, status: "APPROVED" },
-      select: { id: true, parentId: true },
+      select: { id: true, parentId: true, authorId: true },
     });
     if (!parentComment) {
       return NextResponse.json({ error: "Parent comment not found" }, { status: 404 });
     }
     effectiveParentId = parentComment.parentId ?? parentComment.id;
+    replyToAuthorId = parentComment.authorId;
   }
 
   if (status === "APPROVED") {
@@ -231,6 +236,20 @@ export async function POST(
         data: { commentCount: { increment: 1 } },
       }),
     ]);
+
+    // Notify the person being replied to (not yourself) so a reply pulls
+    // them back. Only fires for visible (APPROVED) replies; fire-and-
+    // forget, opt-out honoured in the push helper.
+    if (replyToAuthorId && replyToAuthorId !== userId) {
+      void sendPushToUser(replyToAuthorId, "forumReply", {
+        title: "New reply",
+        body: "Someone replied to your comment in the Consilium.",
+        url: `/consilium/feed/${postId}`,
+        tag: `reply-${postId}`,
+      }).catch(() => {
+        /* best-effort */
+      });
+    }
 
     return NextResponse.json({
       comment: {
