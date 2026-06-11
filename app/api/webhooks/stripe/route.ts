@@ -1388,9 +1388,18 @@ export async function POST(request: NextRequest) {
             : await prisma.user.findUnique({ where: { email: purchase.customerEmail } });
 
           if (user) {
+            // Guard on prior status so a duplicate/out-of-order refund event
+            // no-ops instead of re-stamping cancelledAt. Stamp
+            // suspendReason="refunded" so the subscription.deleted handler's
+            // isVoluntary gate (above) suppresses the winback drip: we must
+            // never email a winback sequence to someone who charged back.
             await prisma.communityMembership.updateMany({
-              where: { userId: user.id },
-              data: { status: "CANCELLED", cancelledAt: new Date() },
+              where: { userId: user.id, status: { not: "CANCELLED" } },
+              data: {
+                status: "CANCELLED",
+                cancelledAt: new Date(),
+                suspendReason: "refunded",
+              },
             });
             console.log(
               `[stripe-webhook] cancelled membership for refunded ${meta?.productKey} user ${user.email}`,

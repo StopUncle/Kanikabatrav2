@@ -20,12 +20,21 @@ export async function POST(request: NextRequest) {
     }
 
     // Unpause the Stripe subscription so billing resumes on the next cycle.
+    let resumedExpiresAt: Date | null = null;
     if (membership.paypalSubscriptionId?.startsWith("ST-")) {
       const subscriptionId = membership.paypalSubscriptionId.slice(3);
       try {
         await stripe.subscriptions.update(subscriptionId, {
           pause_collection: null,
         });
+        // Re-read the live period end so the resumed row gets a future
+        // expiresAt. Without this, a stale/past expiresAt left over from
+        // the pause makes the lazy-expiry check in lib/community/
+        // membership.ts immediately flip the row back to EXPIRED.
+        const sub = await stripe.subscriptions.retrieve(subscriptionId);
+        const periodEnd = (sub as { current_period_end?: number })
+          .current_period_end;
+        if (periodEnd) resumedExpiresAt = new Date(periodEnd * 1000);
       } catch (err) {
         console.error("[resume] failed to unpause Stripe subscription:", err);
         return NextResponse.json(
@@ -42,6 +51,7 @@ export async function POST(request: NextRequest) {
         suspendedAt: null,
         suspendReason: null,
         activatedAt: new Date(),
+        ...(resumedExpiresAt ? { expiresAt: resumedExpiresAt } : {}),
       },
     });
 

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
+import { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import { resolveActiveUserId } from "@/lib/auth/resolve-user";
 import { getAdminUserId } from "@/lib/auth/server-auth";
@@ -7,6 +8,9 @@ import { checkMembership } from "@/lib/community/membership";
 import { checkAskCooldown } from "@/lib/questions/cooldown";
 import { getQuestionSettings } from "@/lib/questions/settings";
 import { logger } from "@/lib/logger";
+
+/** Thrown inside the submit transaction when the daily cap is hit. */
+class CapReachedError extends Error {}
 
 // Resolve the acting user across BOTH session types:
 //   - member session (accessToken cookie), normal member submitting a question
@@ -121,6 +125,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Invalid request body" }, { status: 400 });
   }
 
+  // Friendly pre-check: drives the client countdown on the 429.
   const cooldown = await checkAskCooldown(userId);
   if (!cooldown.allowed) {
     return NextResponse.json(
@@ -133,14 +138,52 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  const question = await prisma.memberQuestion.create({
-    data: {
-      userId,
-      content: payload.content,
-      isAnonymous: payload.isAnonymous,
-    },
-    select: { id: true, createdAt: true },
-  });
+  // Authoritative atomic gate: the pre-check above can be passed by two
+  // concurrent submits (count < cap on both), letting a member exceed the
+  // daily cap. Re-count and create inside a serializable transaction so
+  // exactly one wins; the loser hits the cap and is rejected.
+  const settings = await getQuestionSettings();
+  const since = new Date(Date.now() - 24 * 60 * 60 * 1000);
+  let question: { id: string; createdAt: Date };
+  try {
+    question = await prisma.$transaction(
+      async (tx) => {
+        const used = await tx.memberQuestion.count({
+          where: { userId, createdAt: { gte: since } },
+        });
+        if (used >= settings.dailyCap) {
+          throw new CapReachedError();
+        }
+        return tx.memberQuestion.create({
+          data: {
+            userId,
+            content: payload.content,
+            isAnonymous: payload.isAnonymous,
+          },
+          select: { id: true, createdAt: true },
+        });
+      },
+      { isolationLevel: Prisma.TransactionIsolationLevel.Serializable },
+    );
+  } catch (err) {
+    // Cap reached, or a serialization conflict under contention (P2034):
+    // either way the caller lost the race, so report the same 429.
+    if (
+      err instanceof CapReachedError ||
+      (err instanceof Prisma.PrismaClientKnownRequestError && err.code === "P2034")
+    ) {
+      const fresh = await checkAskCooldown(userId);
+      return NextResponse.json(
+        {
+          error: "Daily limit reached",
+          nextAvailableAt: fresh.nextAvailableAt,
+          dailyCap: fresh.dailyCap,
+        },
+        { status: 429 },
+      );
+    }
+    throw err;
+  }
 
   logger.info("[questions] submitted", {
     questionId: question.id,
