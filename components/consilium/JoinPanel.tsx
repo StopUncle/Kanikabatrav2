@@ -159,6 +159,14 @@ export default function JoinPanel() {
           {error}
         </p>
       )}
+
+      {/* Risk-reversal + payment trust at the exact moment recurring-charge
+          anxiety peaks. The guarantee already exists on the sell page; it
+          belongs here too, right under the button. */}
+      <p className="text-text-gray/55 text-[11px] text-center mt-4 font-light leading-relaxed">
+        7-day money-back guarantee · Cancel anytime · Secure checkout via
+        Stripe
+      </p>
     </div>
   );
 }

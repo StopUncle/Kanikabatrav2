@@ -12,6 +12,8 @@ import {
   Video,
   Newspaper,
   Gamepad2,
+  Crown,
+  Receipt,
   type LucideIcon,
 } from "lucide-react";
 import AskKanikaPill from "./AskKanikaPill";
@@ -65,6 +67,10 @@ const PILLS: PillItem[] = [
   { href: "/consilium/feed", label: "Feed", icon: Scroll, matchPrefix: "/consilium/feed", countKey: "feed" },
   { href: "/consilium/simulator", label: "Simulator", icon: Film, matchPrefix: "/consilium/simulator" },
   { href: "/consilium/games", label: "Games", icon: Gamepad2, matchPrefix: "/consilium/games" },
+  // Receipts + The Board were fully built but invisible in the member top
+  // nav, so they sat out of the daily loop. Surface them here.
+  { href: "/consilium/receipts", label: "Receipts", icon: Receipt, matchPrefix: "/consilium/receipts" },
+  { href: "/board", label: "The Board", icon: Crown, matchPrefix: "/board" },
   {
     href: "/consilium/simulator/leaderboard",
     label: "Leaderboard",

@@ -210,7 +210,7 @@ export default async function InnerCircleLanding({
                 &ldquo;Life changing.&rdquo;
               </p>
               <p className="text-warm-gold text-sm mt-3 uppercase tracking-[0.3em] font-light">
-               . Inner Circle member
+                Inner Circle member
               </p>
             </div>
           </div>

@@ -12,6 +12,18 @@ import { memberSafeName } from "@/lib/community/privacy";
 import { tierForMember } from "@/components/consilium/badge-tiers";
 import { z } from "zod";
 import { logger } from "@/lib/logger";
+import { sendPushToUsers, type PushCategory } from "@/lib/push";
+
+// Which admin post types warrant a "Kanika just dropped something" push,
+// and the notification title for each. VOICE_NOTE/VIDEO use the default-on
+// "voiceNote" (new-media) channel; ANNOUNCEMENT uses the "broadcast"
+// channel. DISCUSSION_PROMPT / AUTOMATED are cron daily-content with their
+// own nudges, so they are intentionally absent (no double-pinging).
+const POST_PUSH: Record<string, { category: PushCategory; title: string }> = {
+  VOICE_NOTE: { category: "voiceNote", title: "New voice note from Kanika" },
+  VIDEO: { category: "voiceNote", title: "New video from Kanika" },
+  ANNOUNCEMENT: { category: "broadcast", title: "From Kanika" },
+};
 
 async function resolveUserId(): Promise<string | null> {
   const active = await resolveActiveUserId();
@@ -227,6 +239,41 @@ export async function POST(request: NextRequest) {
       .catch((err) =>
         logger.error("[bots] schedule failed", err as Error, { postId: post.id }),
       );
+
+    // Break the silence: notify active members so a fresh voice note,
+    // video, or announcement doesn't land unseen (today 24 of 25 members
+    // are never told). Fire-and-forget; push failure must never break
+    // post creation. Each member's per-category opt-out is honoured in
+    // the push helper.
+    const plan = POST_PUSH[post.type];
+    if (plan) {
+      void (async () => {
+        const members = await prisma.user.findMany({
+          where: { isBot: false, communityMembership: { status: "ACTIVE" } },
+          select: { id: true },
+        });
+        const res = await sendPushToUsers(
+          members.map((m) => m.id),
+          plan.category,
+          {
+            title: plan.title,
+            body: post.title,
+            url: `/consilium/feed/${post.id}`,
+            tag: "feed-drop",
+          },
+        );
+        logger.info("[feed-push] fanned out", {
+          postId: post.id,
+          type: post.type,
+          ...res,
+        });
+      })().catch((err) =>
+        logger.error("[feed-push] fan-out failed", err as Error, {
+          postId: post.id,
+        }),
+      );
+    }
+
     return NextResponse.json({ success: true, post }, { status: 201 });
   } catch (err) {
     logger.error("[admin/feed-create] failed", err as Error, {
