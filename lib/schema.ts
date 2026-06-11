@@ -48,24 +48,63 @@ export function generateWebsiteSchema() {
   };
 }
 
+// Canonical "Kanika Batra" entity reference, reused by Person, Book, and
+// Article schema so Google resolves every mention to ONE author entity.
+// This is the E-E-A-T spine: a consistent, richly-described, real-person
+// author whose first-hand experience (clinically diagnosed with ASPD) is
+// the differentiator search now rewards. The `@id` anchors the node so
+// other schema can reference it instead of duplicating a thin copy.
+const KANIKA_ID = `${BASE_URL}/about#kanika`;
+
+// Sub-set of credentials suitable for schema.org `award` (the pageant
+// honours). The ASPD diagnosis is the experience anchor and lives in the
+// description, not as an "award".
+const KANIKA_AWARDS = SITE_CONFIG.credentials.filter(
+  (c) => !/diagnos/i.test(c),
+);
+
+const KANIKA_SAME_AS = [
+  SOCIAL_LINKS.instagram,
+  SOCIAL_LINKS.youtube,
+  SOCIAL_LINKS.tiktok,
+  BOOK_INFO.kdpLink, // Amazon author/book page ties her to a published work
+];
+
+/** Thin author reference for embedding in Book/Article schema. */
+export const KANIKA_AUTHOR_REF = {
+  "@type": "Person",
+  "@id": KANIKA_ID,
+  name: SITE_CONFIG.name,
+  url: `${BASE_URL}/about`,
+  sameAs: KANIKA_SAME_AS,
+};
+
 export function generatePersonSchema() {
   return {
     "@context": "https://schema.org",
     "@type": "Person",
+    "@id": KANIKA_ID,
     name: SITE_CONFIG.name,
-    alternateName: "The Psychology of Power",
+    alternateName: ["The Psychology of Power", SITE_CONFIG.fullName],
     description: SITE_CONFIG.description,
     url: `${BASE_URL}/about`,
+    mainEntityOfPage: `${BASE_URL}/about`,
     image: OG_IMAGE_URL,
-    jobTitle: "Psychology of Power Expert & Author",
-    sameAs: [SOCIAL_LINKS.instagram, SOCIAL_LINKS.youtube, SOCIAL_LINKS.tiktok],
+    jobTitle: "Author & Psychology of Power Expert",
+    nationality: { "@type": "Country", name: "Australia" },
+    homeLocation: { "@type": "Place", name: SITE_CONFIG.location },
     knowsAbout: [
       "Dark Psychology",
-      "Dating Strategy",
-      "Personal Branding",
-      "Power Dynamics",
+      "Antisocial Personality Disorder",
+      "Narcissism",
       "Manipulation Psychology",
+      "Dating Strategy",
+      "Power Dynamics",
+      "Reading People",
+      "Personal Branding",
     ],
+    award: KANIKA_AWARDS,
+    sameAs: KANIKA_SAME_AS,
   };
 }
 
@@ -76,10 +115,9 @@ export function generateBookSchema() {
     name: BOOK_INFO.title,
     alternateName: BOOK_INFO.subtitle,
     description: BOOK_INFO.description,
-    author: {
-      "@type": "Person",
-      name: SITE_CONFIG.name,
-    },
+    // Reference the canonical Kanika entity so Google links the book to
+    // its author's full credential/experience graph (authoritativeness).
+    author: KANIKA_AUTHOR_REF,
     url: `${BASE_URL}/book`,
     bookFormat: "https://schema.org/EBook",
     numberOfPages: 250,
@@ -226,11 +264,16 @@ export function generateArticleSchema(article: {
     ...(article.tags && article.tags.length > 0
       ? { keywords: article.tags.join(", ") }
       : {}),
-    author: {
-      "@type": "Person",
-      name: article.author || SITE_CONFIG.name,
-      url: `${BASE_URL}/about`,
-    },
+    // Tie posts authored by Kanika to her canonical entity (E-E-A-T:
+    // every article inherits the author's experience + authority). A
+    // guest byline falls back to a plain Person.
+    author:
+      !article.author || article.author === SITE_CONFIG.name
+        ? KANIKA_AUTHOR_REF
+        : {
+            "@type": "Person",
+            name: article.author,
+          },
     publisher: {
       "@type": "Organization",
       name: SITE_CONFIG.name,
