@@ -41,6 +41,12 @@ const QUIZ_RULES: { test: RegExp; slug: string }[] = [
 // cluster's posts funnelling up to their OWN hub even when several pillars
 // share a category (e.g. multiple "Dark Psychology" pillars).
 const PILLAR_RULES: { test: RegExp; slug: string }[] = [
+  // Cluster B first: its overview post is also tagged npd/narcissism, so it
+  // must beat the narciss rule to land on its own umbrella hub. We match the
+  // specific disorder tokens (borderline/bpd/histrionic/hpd) NOT a bare
+  // "cluster b", because narcissism posts carry "cluster b" as a comorbidity
+  // tag and would otherwise be hijacked off their own hub.
+  { test: /borderline|histrionic|\bbpd\b|\bhpd\b/, slug: "cluster-b-complete-guide" },
   { test: /dark triad|machiavellian|dark tetrad/, slug: "dark-triad-complete-guide" },
   { test: /narciss|\bnpd\b|hoover/, slug: "narcissism-complete-guide" },
   {
@@ -50,7 +56,11 @@ const PILLAR_RULES: { test: RegExp; slug: string }[] = [
     slug: "manipulation-tactics-complete-guide",
   },
   {
-    test: /sociopath|\baspd\b|antisocial|psychopath|cluster b/,
+    test: /attachment|avoidant|anxiously attached|secure attach|disorganised attach|disorganized attach/,
+    slug: "attachment-styles-complete-guide",
+  },
+  {
+    test: /sociopath|\baspd\b|antisocial|psychopath/,
     slug: "aspd-sociopathy-complete-guide",
   },
 ];
