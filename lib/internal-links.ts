@@ -44,6 +44,12 @@ const PILLAR_RULES: { test: RegExp; slug: string }[] = [
   { test: /dark triad|machiavellian|dark tetrad/, slug: "dark-triad-complete-guide" },
   { test: /narciss|\bnpd\b|hoover/, slug: "narcissism-complete-guide" },
   {
+    // Distinctly-named dating tactics (offensive + defensive). Tokens are
+    // specific so this never steals narciss / sociopath posts above it.
+    test: /ghostlight|quiet.?dump|sledging|the rotation|doctrine of cold|beige protocol|breadcrumb|future.?fak/,
+    slug: "manipulation-tactics-complete-guide",
+  },
+  {
     test: /sociopath|\baspd\b|antisocial|psychopath|cluster b/,
     slug: "aspd-sociopathy-complete-guide",
   },
@@ -72,10 +78,13 @@ export function getContextualLinks(
     .filter(Boolean)
     .map((q) => ({ href: q.href, title: q.title, caption: q.caption }));
 
-  // Most relevant pillar: explicit topical rule first (so each cluster's posts
-  // funnel up to their own hub even when several pillars share a category),
-  // then fall back to same-category, then any tag overlap.
-  const postTags = post.tags.map((t) => t.toLowerCase());
+  // Most relevant pillar: resolved purely by explicit PILLAR_RULES so each
+  // cluster's posts funnel up to their own hub. There is deliberately NO
+  // category/tag fallback: with several pillars sharing the "Dark Psychology"
+  // category (and a generic "dark psychology" tag), a fallback would collapse
+  // every unmatched post onto whichever pillar sorts first, which is worse than
+  // showing none. A post that matches no rule simply surfaces its quizzes; add
+  // a PILLAR_RULE when a new cluster earns a hub.
   let pillar: PillarMeta | null = null;
   for (const rule of PILLAR_RULES) {
     if (rule.test.test(haystack)) {
@@ -85,17 +94,6 @@ export function getContextualLinks(
         break;
       }
     }
-  }
-  if (!pillar) {
-    pillar =
-      pillars.find(
-        (p) =>
-          p.frontmatter.category.toLowerCase() === post.category.toLowerCase(),
-      ) ||
-      pillars.find((p) =>
-        p.frontmatter.tags.some((t) => postTags.includes(t.toLowerCase())),
-      ) ||
-      null;
   }
 
   return {
