@@ -34,6 +34,20 @@ const QUIZ_RULES: { test: RegExp; slug: string }[] = [
   { test: /sociopath|\baspd\b|antisocial/, slug: "sociopath" },
 ];
 
+// Ordered most-specific first. Maps a post's topic to the pillar guide that
+// should be its hub. Mirrors QUIZ_RULES so adding a cluster is one line. The
+// resolved slug must exist in the passed `pillars` list, otherwise we fall
+// through to the category / tag-overlap heuristic below. This keeps each
+// cluster's posts funnelling up to their OWN hub even when several pillars
+// share a category (e.g. multiple "Dark Psychology" pillars).
+const PILLAR_RULES: { test: RegExp; slug: string }[] = [
+  { test: /narciss|\bnpd\b|hoover/, slug: "narcissism-complete-guide" },
+  {
+    test: /sociopath|\baspd\b|antisocial|psychopath|dark triad|cluster b/,
+    slug: "aspd-sociopathy-complete-guide",
+  },
+];
+
 export function getContextualLinks(
   post: { category: string; tags: string[]; title: string },
   pillars: PillarMeta[],
@@ -57,19 +71,31 @@ export function getContextualLinks(
     .filter(Boolean)
     .map((q) => ({ href: q.href, title: q.title, caption: q.caption }));
 
-  // Most relevant pillar: same category first, else any tag overlap. With a
-  // single ASPD pillar today this resolves sociopath-adjacent posts up to it
-  // even when they live in the Relationships / Dark Psychology clusters.
+  // Most relevant pillar: explicit topical rule first (so each cluster's posts
+  // funnel up to their own hub even when several pillars share a category),
+  // then fall back to same-category, then any tag overlap.
   const postTags = post.tags.map((t) => t.toLowerCase());
-  const pillar =
-    pillars.find(
-      (p) =>
-        p.frontmatter.category.toLowerCase() === post.category.toLowerCase(),
-    ) ||
-    pillars.find((p) =>
-      p.frontmatter.tags.some((t) => postTags.includes(t.toLowerCase())),
-    ) ||
-    null;
+  let pillar: PillarMeta | null = null;
+  for (const rule of PILLAR_RULES) {
+    if (rule.test.test(haystack)) {
+      const match = pillars.find((p) => p.slug === rule.slug);
+      if (match) {
+        pillar = match;
+        break;
+      }
+    }
+  }
+  if (!pillar) {
+    pillar =
+      pillars.find(
+        (p) =>
+          p.frontmatter.category.toLowerCase() === post.category.toLowerCase(),
+      ) ||
+      pillars.find((p) =>
+        p.frontmatter.tags.some((t) => postTags.includes(t.toLowerCase())),
+      ) ||
+      null;
+  }
 
   return {
     pillar: pillar
