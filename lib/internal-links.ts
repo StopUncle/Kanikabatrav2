@@ -41,9 +41,10 @@ const QUIZ_RULES: { test: RegExp; slug: string }[] = [
 // cluster's posts funnelling up to their OWN hub even when several pillars
 // share a category (e.g. multiple "Dark Psychology" pillars).
 const PILLAR_RULES: { test: RegExp; slug: string }[] = [
+  { test: /dark triad|machiavellian|dark tetrad/, slug: "dark-triad-complete-guide" },
   { test: /narciss|\bnpd\b|hoover/, slug: "narcissism-complete-guide" },
   {
-    test: /sociopath|\baspd\b|antisocial|psychopath|dark triad|cluster b/,
+    test: /sociopath|\baspd\b|antisocial|psychopath|cluster b/,
     slug: "aspd-sociopathy-complete-guide",
   },
 ];
