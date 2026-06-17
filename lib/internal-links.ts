@@ -50,6 +50,15 @@ const PILLAR_RULES: { test: RegExp; slug: string }[] = [
   { test: /dark triad|machiavellian|dark tetrad/, slug: "dark-triad-complete-guide" },
   { test: /narciss|\bnpd\b|hoover/, slug: "narcissism-complete-guide" },
   {
+    // Dark feminine / high-value-woman dating strategy. Placed before the
+    // manipulation + aspd rules so it claims empress + good-girl (tagged
+    // "doctrine of cold") and family-colonisation (tagged "sociopathic
+    // dating") for their own hub. Tokens are specific to the female-strategy
+    // cluster, so it does not touch the disorder hubs above it.
+    test: /dark feminine|high value woman|empress|good girl|holy grail|sex as currency|sexual market|oxytocin|casual sex|family colonisation|matriarch|won his family|thanksgiving takeover|investment ladder|target the omega/,
+    slug: "high-value-woman-complete-guide",
+  },
+  {
     // Distinctly-named dating tactics (offensive + defensive). Tokens are
     // specific so this never steals narciss / sociopath posts above it.
     test: /ghostlight|quiet.?dump|sledging|the rotation|doctrine of cold|beige protocol|breadcrumb|future.?fak/,
