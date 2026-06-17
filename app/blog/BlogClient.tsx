@@ -8,12 +8,48 @@ import PostCard from "@/components/blog/PostCard";
 import CategoryFilter from "@/components/blog/CategoryFilter";
 import NewsletterForm from "@/components/NewsletterForm";
 import type { PostMeta } from "@/lib/mdx";
+import type { PillarMeta } from "@/lib/pillars";
 
 const POSTS_PER_PAGE = 12;
 
 interface BlogClientProps {
   initialPosts: PostMeta[];
   categories: string[];
+  pillars: PillarMeta[];
+}
+
+function CompleteGuides({ pillars }: { pillars: PillarMeta[] }) {
+  if (pillars.length === 0) return null;
+  return (
+    <section className="mb-16">
+      <h2 className="text-2xl md:text-3xl font-extralight uppercase tracking-[0.15em] text-white mb-3">
+        Complete <span className="text-accent-gold">Guides</span>
+      </h2>
+      <p className="text-text-gray mb-8 max-w-2xl leading-relaxed">
+        The cornerstone deep-dives. Start here to understand a whole topic from
+        the inside, then follow the links into the detail.
+      </p>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {pillars.map((p) => (
+          <Link
+            key={p.slug}
+            href={`/guide/${p.slug}`}
+            className="group block p-6 rounded-xl bg-white/[0.03] border border-white/10 hover:border-accent-gold/30 transition-all duration-300"
+          >
+            <span className="text-xs text-accent-gold/70 uppercase tracking-wider">
+              Complete Guide
+            </span>
+            <h3 className="text-white font-light text-lg mt-2 mb-2 leading-snug group-hover:text-accent-gold transition-colors duration-300">
+              {p.frontmatter.title}
+            </h3>
+            <p className="text-text-gray/70 text-sm line-clamp-2">
+              {p.frontmatter.excerpt}
+            </p>
+          </Link>
+        ))}
+      </div>
+    </section>
+  );
 }
 
 function FeaturedPost({ post }: { post: PostMeta }) {
@@ -92,6 +128,7 @@ function FeaturedPost({ post }: { post: PostMeta }) {
 export default function BlogClient({
   initialPosts,
   categories,
+  pillars,
 }: BlogClientProps) {
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
   const [visibleCount, setVisibleCount] = useState(POSTS_PER_PAGE);
@@ -136,6 +173,8 @@ export default function BlogClient({
               the art of strategic influence.
             </p>
           </m.div>
+
+          <CompleteGuides pillars={pillars} />
 
           <m.div
             initial={{ opacity: 0, y: 10 }}
