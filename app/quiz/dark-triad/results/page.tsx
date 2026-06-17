@@ -6,7 +6,7 @@ import { m } from "framer-motion";
 import Link from "next/link";
 import Header from "@/components/Header";
 import BackgroundEffects from "@/components/BackgroundEffects";
-import QuizEmailCapture from "@/components/quiz/QuizEmailCapture";
+import QuizResultGate from "@/components/quiz/QuizResultGate";
 import {
   DarkTriadDiagnosis,
   DarkTriadScores,
@@ -161,6 +161,12 @@ export default function DarkTriadResultsPage() {
             </p>
           </m.div>
 
+          <QuizResultGate
+            quizSlug="dark-triad"
+            source="dark-triad-quiz"
+            tags={[`archetype:${diagnosis.archetype}`]}
+            resultLabel={diagnosis.headline}
+          >
           {/* Three axis cards */}
           <m.div
             initial={{ opacity: 0, y: 20 }}
@@ -269,12 +275,7 @@ export default function DarkTriadResultsPage() {
               </div>
             </div>
           </m.div>
-
-          <QuizEmailCapture
-            source="dark-triad-quiz"
-            tags={[`archetype:${diagnosis.archetype}`]}
-            resultLabel={diagnosis.headline}
-          />
+          </QuizResultGate>
 
           {/* Related */}
           <m.div

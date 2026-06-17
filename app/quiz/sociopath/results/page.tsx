@@ -6,7 +6,7 @@ import { m } from "framer-motion";
 import Link from "next/link";
 import Header from "@/components/Header";
 import BackgroundEffects from "@/components/BackgroundEffects";
-import QuizEmailCapture from "@/components/quiz/QuizEmailCapture";
+import QuizResultGate from "@/components/quiz/QuizResultGate";
 import {
   SociopathDiagnosis,
   SociopathScores,
@@ -158,6 +158,16 @@ export default function SociopathResultsPage() {
             </p>
           </m.div>
 
+          <QuizResultGate
+            quizSlug="sociopath"
+            source="sociopath-quiz"
+            tags={[
+              `quadrant:${diagnosis.quadrant}`,
+              `primary:${diagnosis.primary.tier}`,
+              `secondary:${diagnosis.secondary.tier}`,
+            ]}
+            resultLabel={profile.name}
+          >
           {/* Two subscale bars, side by side on desktop, stacked on mobile.
               Bar widths reflect raw score within the theoretical range
               (16-64 for Primary, 10-40 for Secondary), so the visual is
@@ -307,16 +317,7 @@ export default function SociopathResultsPage() {
               </div>
             </m.div>
           )}
-
-          <QuizEmailCapture
-            source="sociopath-quiz"
-            tags={[
-              `quadrant:${diagnosis.quadrant}`,
-              `primary:${diagnosis.primary.tier}`,
-              `secondary:${diagnosis.secondary.tier}`,
-            ]}
-            resultLabel={profile.name}
-          />
+          </QuizResultGate>
 
           {/* Related reading + book pitch */}
           <m.div

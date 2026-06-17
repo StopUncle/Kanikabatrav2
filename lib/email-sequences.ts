@@ -814,10 +814,6 @@ function buildStarterDripStep4(name: string): string {
 
     <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 20px 0; font-size: 15px;">
       If you&rsquo;re going to keep working on pattern recognition, this is where the practice happens. If you&rsquo;ve got what you needed from the pack, honestly, that&rsquo;s a real outcome too. Either way I&rsquo;m glad you&rsquo;re reading.
-    </p>
-
-    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 0 0; font-size: 15px;">
-     , Kanika
     </p>`;
 
   return emailShell(
@@ -2778,4 +2774,664 @@ export function buildDormantReengagementEmailEntry(
     scheduledAt: new Date(),
     metadata: { ...MARKETING_META, type: "dormant-reengage" },
   };
+}
+
+// ============================================================
+// Free clinical quiz result drips (Priority 1, conversion).
+//
+// The seven free quizzes gate their result reveal behind email
+// (QuizResultGate) and enroll the taker in a short, result-aware
+// nurture that ends on the money page the result implies:
+//   sociopath / dating-sociopath  -> the book
+//   narcissist / covert / triad   -> Consilium
+//   bpd / daughter                -> gentler, support-first
+//
+// Cadence: Day 1 (the deeper read) / Day 3 (name a move) /
+// Day 5 (the ask). Enrolled by /api/newsletter when the POST body
+// carries a quizSlug this map knows. Idempotent on the sequence.
+//
+// Adding a quiz means adding one entry to QUIZ_DRIP_COPY. The result
+// itself is shown on screen once the gate unlocks, so these emails
+// carry forward-looking value, not a copy of the on-screen breakdown.
+// ============================================================
+
+function dripBookUrl(campaign: string, content: string): string {
+  const params = new URLSearchParams({
+    utm_source: "email",
+    utm_medium: "email",
+    utm_campaign: campaign,
+    utm_content: content,
+  });
+  return `${baseUrl}/book?${params.toString()}`;
+}
+
+interface QuizDripStep {
+  subject: string;
+  render: (name: string) => string;
+}
+
+interface QuizDripCopy {
+  sequence: string;
+  step1: QuizDripStep;
+  step2: QuizDripStep;
+  step3: QuizDripStep;
+}
+
+const QUIZ_DRIP_COPY: Record<string, QuizDripCopy> = {
+  sociopath: {
+    sequence: "quiz-sociopath-drip",
+    step1: {
+      subject: "Your Sociopath Test read, the part the score can't show",
+      render: (name) =>
+        emailShell(
+          "What the two scales actually mean",
+          "The Sociopath Test, Day 1",
+          `
+    <p style="color: #f5f0ed; font-size: 16px; margin: 0 0 8px 0; line-height: 1.7;">
+      Hey ${esc(name)},
+    </p>
+
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 24px 0; font-size: 14px; font-style: italic;">
+      Quick favor first, if this landed in spam or promotions, drag it to your inbox so I can keep reaching you.
+    </p>
+
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 20px 0; font-size: 15px;">
+      Your result is unlocked on screen. Before you move on, sit with the one thing a number can&rsquo;t tell you: the LSRP measures two different machines, and your relationships are decided by which one runs you.
+    </p>
+
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 25px 0; font-size: 15px; padding-left: 16px; border-left: 2px solid #d4af37;">
+      <strong style="color: #d4af37;">Primary</strong> is the cold core, the part that stays calm when it should be afraid. <strong style="color: #d4af37;">Secondary</strong> is the hot wire, the part that acts before the consequence finishes loading. Most people run high on one and low on the other.
+    </p>
+
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 0 0; font-size: 15px;">
+      On Friday I&rsquo;ll send you the part almost nobody gets right: what a <em>high-functioning</em> version of your configuration looks like, versus the version that quietly burns everything down.
+    </p>`,
+        ),
+    },
+    step2: {
+      subject: "Cold core, hot wire, and the version you're running",
+      render: (name) =>
+        emailShell(
+          "High-functioning, or the kind that costs you",
+          "The Sociopath Test, Day 3",
+          `
+    <p style="color: #f5f0ed; font-size: 16px; margin: 0 0 20px 0; line-height: 1.7;">
+      ${esc(name)},
+    </p>
+
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 20px 0; font-size: 15px;">
+      The score tells you how high you sit on each scale. It can&rsquo;t tell you whether you run that wiring well, and that is the whole game.
+    </p>
+
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 20px 0; font-size: 15px;">
+      A high <strong style="color: #d4af37;">primary</strong> score, run well, is the person who stays level in a room full of panic and makes the clean decision while everyone else is flooding. Run badly, it&rsquo;s the person who feels nothing for the people they&rsquo;re supposed to feel something for, and slowly empties every relationship they&rsquo;re in.
+    </p>
+
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 25px 0; font-size: 15px;">
+      A high <strong style="color: #d4af37;">secondary</strong> score, run well, is decisiveness and nerve. Run badly, it&rsquo;s the impulse that wins the argument tonight and torches the bridge by next week. Same wiring. Different operator.
+    </p>
+
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 0 0; font-size: 15px;">
+      The work is not changing the score. It&rsquo;s learning to run the configuration you already have. Sit with which version you&rsquo;ve been running. On Sunday I&rsquo;ll point you at where the full playbook lives.
+    </p>`,
+        ),
+    },
+    step3: {
+      subject: "The book written from inside the pattern",
+      render: (name) => {
+        const bookUrl = dripBookUrl("quiz-sociopath-drip", "step-3-book");
+        return emailShell(
+          "Where this goes deep",
+          "The Sociopath Test, Day 5",
+          `
+    <p style="color: #f5f0ed; font-size: 16px; margin: 0 0 20px 0; line-height: 1.7;">
+      ${esc(name)},
+    </p>
+
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 20px 0; font-size: 15px;">
+      Almost everything written about this configuration is written from the outside, by people studying it through glass. The <strong style="color: #d4af37;">Sociopathic Dating Bible</strong> is written from inside it. 70,000 words on how this wiring actually moves through attraction, attachment, and the slow work of not destroying the people who get close.
+    </p>
+
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 25px 0; font-size: 15px;">
+      If your result read as either familiar or accusatory, that is exactly the audience the book was written for. It will not flatter you. It will hand you the operating manual no one gave you.
+    </p>
+
+    ${goldButton("Read the first chapters", bookUrl)}
+
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 0 0; font-size: 15px;">
+      $24.99, yours to keep. If you&rsquo;d rather sit with the result a while longer, that&rsquo;s a real answer too. Either way, thanks for taking the test.
+    </p>`,
+        );
+      },
+    },
+  },
+
+  narcissist: {
+    sequence: "quiz-narcissist-drip",
+    step1: {
+      subject: "Your NPI read, and the two ways it runs",
+      render: (name) =>
+        emailShell(
+          "Confidence, or the version that needs the room",
+          "The Narcissist Test, Day 1",
+          `
+    <p style="color: #f5f0ed; font-size: 16px; margin: 0 0 8px 0; line-height: 1.7;">
+      Hey ${esc(name)},
+    </p>
+
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 24px 0; font-size: 14px; font-style: italic;">
+      Quick favor first, if this landed in spam or promotions, drag it to your inbox so I can keep reaching you.
+    </p>
+
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 20px 0; font-size: 15px;">
+      Your result is unlocked on screen. The NPI measures grandiose narcissism, the loud, visible kind. The number is a starting line, not a verdict. A score can&rsquo;t tell you &ldquo;am I a narcissist.&rdquo; The useful question is quieter: where does this trait serve you, and where does it cost the people closest to you?
+    </p>
+
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 0 0; font-size: 15px;">
+      On Friday I&rsquo;ll send you the distinction that runs underneath the whole scale: the difference between confidence and supply-seeking. From the outside they look identical. They are not the same thing.
+    </p>`,
+        ),
+    },
+    step2: {
+      subject: "Confidence vs supply (they look the same)",
+      render: (name) =>
+        emailShell(
+          "The tell is what happens when the applause stops",
+          "The Narcissist Test, Day 3",
+          `
+    <p style="color: #f5f0ed; font-size: 16px; margin: 0 0 20px 0; line-height: 1.7;">
+      ${esc(name)},
+    </p>
+
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 20px 0; font-size: 15px;">
+      Confidence is self-referential. It does not need the room to react. <strong style="color: #d4af37;">Supply-seeking</strong> needs the room, the look, the credit, the proof that you landed. In the moment they wear the same face.
+    </p>
+
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 25px 0; font-size: 15px;">
+      The tell shows up when the applause stops. Confidence is fine in the quiet. Supply-seeking starts hunting for the next hit, a new room, a new audience, a manufactured slight to react to. Watch yourself in the quiet for a week. That is where the honest read lives.
+    </p>
+
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 0 0; font-size: 15px;">
+      Sunday I&rsquo;ll point you at where you can drill this in real time, on other people, before it&rsquo;s your own relationship on the line.
+    </p>`,
+        ),
+    },
+    step3: {
+      subject: "Where you learn to read this in real time",
+      render: (name) => {
+        const consiliumUrl = dripConsiliumUrl(
+          "quiz-narcissist-drip",
+          "step-3-consilium",
+        );
+        return emailShell(
+          "Reading it live, not in a quiz",
+          "The Narcissist Test, Day 5",
+          `
+    <p style="color: #f5f0ed; font-size: 16px; margin: 0 0 20px 0; line-height: 1.7;">
+      ${esc(name)},
+    </p>
+
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 20px 0; font-size: 15px;">
+      Spotting grandiose narcissism in a quiz is easy. Reading it live, in a date, a boss, a parent, while it is happening to you and your own feelings are in the mix, is the hard skill. That is the one worth building.
+    </p>
+
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 25px 0; font-size: 15px;">
+      <strong style="color: #d4af37;">The Consilium</strong> is where you drill it. 60+ branching scenes built on exactly these patterns, you make the call, the scene resolves on it, and you keep the lesson without it costing you a real relationship. Plus voice notes, daily reads, and a human-reviewed room with no trolls by design.
+    </p>
+
+    ${goldButton("Step inside The Consilium", consiliumUrl)}
+
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 0 0; font-size: 15px;">
+      $29/month, cancel any time in one click. Or sit with your result a while longer, that&rsquo;s a real answer too.
+    </p>`,
+        );
+      },
+    },
+  },
+
+  "covert-narcissist": {
+    sequence: "quiz-covert-narcissist-drip",
+    step1: {
+      subject: "The narcissism the NPI misses",
+      render: (name) =>
+        emailShell(
+          "The quiet version",
+          "The Covert Narcissist Test, Day 1",
+          `
+    <p style="color: #f5f0ed; font-size: 16px; margin: 0 0 8px 0; line-height: 1.7;">
+      Hey ${esc(name)},
+    </p>
+
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 24px 0; font-size: 14px; font-style: italic;">
+      Quick favor first, if this landed in spam or promotions, drag it to your inbox so I can keep reaching you.
+    </p>
+
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 20px 0; font-size: 15px;">
+      Your result is unlocked on screen. The HSNS reads the pattern the standard narcissism test underreads: <strong style="color: #d4af37;">vulnerable, covert narcissism</strong>. Not the loud grandiosity, the quiet kind, hypersensitivity to slight, shame underneath, grandiosity that hides inside victimhood.
+    </p>
+
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 0 0; font-size: 15px;">
+      It is harder to see because it does not announce itself. On Friday I&rsquo;ll send you why the covert pattern is the harder one to leave, whether you carry it or you&rsquo;re close to someone who does.
+    </p>`,
+        ),
+    },
+    step2: {
+      subject: "Why the quiet version is harder to leave",
+      render: (name) =>
+        emailShell(
+          "No obvious villain",
+          "The Covert Narcissist Test, Day 3",
+          `
+    <p style="color: #f5f0ed; font-size: 16px; margin: 0 0 20px 0; line-height: 1.7;">
+      ${esc(name)},
+    </p>
+
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 20px 0; font-size: 15px;">
+      The grandiose pattern gives you something to point at. The covert one doesn&rsquo;t. There is no obvious villain, just a slow accumulation of injuries collected and quietly held, a guilt you can never quite locate the source of, a sense that you are always somehow in the wrong.
+    </p>
+
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 25px 0; font-size: 15px;">
+      That is the trap. Without a name for the move, you keep trying to fix a thing that was never about you. <strong style="color: #d4af37;">Injury-collecting</strong> is the name. Once you see it, the guilt loses its grip, because you can finally tell whose it actually is.
+    </p>
+
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 0 0; font-size: 15px;">
+      Sunday I&rsquo;ll show you where this gets practiced, not just read.
+    </p>`,
+        ),
+    },
+    step3: {
+      subject: "Where you learn to read this in real time",
+      render: (name) => {
+        const consiliumUrl = dripConsiliumUrl(
+          "quiz-covert-narcissist-drip",
+          "step-3-consilium",
+        );
+        return emailShell(
+          "Naming the quiet move",
+          "The Covert Narcissist Test, Day 5",
+          `
+    <p style="color: #f5f0ed; font-size: 16px; margin: 0 0 20px 0; line-height: 1.7;">
+      ${esc(name)},
+    </p>
+
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 25px 0; font-size: 15px;">
+      The covert pattern is built to stay unnamed, which is exactly why a place to practice naming it matters. <strong style="color: #d4af37;">The Consilium</strong> runs 60+ scenes on patterns like this one, the quiet, deniable moves, so you learn to see them in the half-second they happen instead of three weeks later. Voice notes, daily reads, a room that is read rather than loud.
+    </p>
+
+    ${goldButton("Step inside The Consilium", consiliumUrl)}
+
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 0 0; font-size: 15px;">
+      $29/month, cancel any time. No pressure either way, your result is yours to keep.
+    </p>`,
+        );
+      },
+    },
+  },
+
+  "dark-triad": {
+    sequence: "quiz-dark-triad-drip",
+    step1: {
+      subject: "Your three dials, not a label",
+      render: (name) =>
+        emailShell(
+          "Mach, Narc, Psych",
+          "The Dark Triad Test, Day 1",
+          `
+    <p style="color: #f5f0ed; font-size: 16px; margin: 0 0 8px 0; line-height: 1.7;">
+      Hey ${esc(name)},
+    </p>
+
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 24px 0; font-size: 14px; font-style: italic;">
+      Quick favor first, if this landed in spam or promotions, drag it to your inbox so I can keep reaching you.
+    </p>
+
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 20px 0; font-size: 15px;">
+      Your result is unlocked on screen. The Dark Triad is not one thing, it is three dials: <strong style="color: #d4af37;">Machiavellianism</strong> (strategy), <strong style="color: #d4af37;">Narcissism</strong> (supply), and <strong style="color: #d4af37;">Psychopathy</strong> (low fear, low empathy). Your archetype is the specific way yours are set.
+    </p>
+
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 0 0; font-size: 15px;">
+      The configuration matters far more than any single score. On Friday I&rsquo;ll send you the dial that does the most damage when it is high and unmanaged, and the one that, run well, is closer to a strength than a flaw.
+    </p>`,
+        ),
+    },
+    step2: {
+      subject: "The configuration, not the score",
+      render: (name) =>
+        emailShell(
+          "Which dials, set how",
+          "The Dark Triad Test, Day 3",
+          `
+    <p style="color: #f5f0ed; font-size: 16px; margin: 0 0 20px 0; line-height: 1.7;">
+      ${esc(name)},
+    </p>
+
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 20px 0; font-size: 15px;">
+      High strategy with low fear and low supply-need is the cold operator, effective, hard to rattle, easy to mistake for calm. Add high supply-need and the same wiring turns volatile: now the strategy is in service of the ego instead of the goal, and it shows.
+    </p>
+
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 25px 0; font-size: 15px;">
+      That is the whole point of reading the configuration instead of the headline. Same three traits, completely different person depending on how the dials sit together. Look at yours that way and the result stops being a label and starts being a map.
+    </p>
+
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 0 0; font-size: 15px;">
+      Sunday, where to practice reading other people&rsquo;s dials before it matters.
+    </p>`,
+        ),
+    },
+    step3: {
+      subject: "Where you learn to read this in real time",
+      render: (name) => {
+        const consiliumUrl = dripConsiliumUrl(
+          "quiz-dark-triad-drip",
+          "step-3-consilium",
+        );
+        return emailShell(
+          "Reading the dials live",
+          "The Dark Triad Test, Day 5",
+          `
+    <p style="color: #f5f0ed; font-size: 16px; margin: 0 0 25px 0; line-height: 1.7;">
+      ${esc(name)},
+    </p>
+
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 25px 0; font-size: 15px;">
+      Reading your own dials in a quiz is one thing. Reading a stranger&rsquo;s across a table, in real time, is the skill that protects you. <strong style="color: #d4af37;">The Consilium</strong> is where you build it: 60+ branching scenes on exactly these configurations, plus voice notes, daily reads, and a human-reviewed room.
+    </p>
+
+    ${goldButton("Step inside The Consilium", consiliumUrl)}
+
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 0 0; font-size: 15px;">
+      $29/month, cancel any time in one click. Either way, thanks for taking the test.
+    </p>`,
+        );
+      },
+    },
+  },
+
+  "dating-sociopath": {
+    sequence: "quiz-dating-sociopath-drip",
+    step1: {
+      subject: "What your body already registered",
+      render: (name) =>
+        emailShell(
+          "The gap between what you saw and what you felt",
+          "Are You Dating a Sociopath, Day 1",
+          `
+    <p style="color: #f5f0ed; font-size: 16px; margin: 0 0 8px 0; line-height: 1.7;">
+      Hey ${esc(name)},
+    </p>
+
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 24px 0; font-size: 14px; font-style: italic;">
+      Quick favor first, if this landed in spam or promotions, drag it to your inbox so I can keep reaching you.
+    </p>
+
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 20px 0; font-size: 15px;">
+      Your result is unlocked on screen. This one reads two axes: what you have actually <em>seen</em>, and what your body has <em>registered</em>. The gap between them is the most important number on the page.
+    </p>
+
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 0 0; font-size: 15px;">
+      If your internal score ran ahead of the behavioural one, your gut is already holding evidence your conscious mind hasn&rsquo;t catalogued yet. That is not paranoia. That is data arriving early. On Friday I&rsquo;ll give you the named moves to watch for, so the evidence stops being a feeling and starts being a list.
+    </p>`,
+        ),
+    },
+    step2: {
+      subject: "The moves, named",
+      render: (name) =>
+        emailShell(
+          "A name beats a feeling",
+          "Are You Dating a Sociopath, Day 3",
+          `
+    <p style="color: #f5f0ed; font-size: 16px; margin: 0 0 20px 0; line-height: 1.7;">
+      ${esc(name)},
+    </p>
+
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 20px 0; font-size: 15px;">
+      The single biggest predictor of leaving a manipulative relationship cleanly is whether you have a <strong style="color: #d4af37;">name</strong> for the move being run on you. Three to start:
+    </p>
+
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 12px 0; font-size: 15px;">
+      <strong style="color: #d4af37;">Mirror-bonding:</strong> they study you, perform you back, and let you fall for the reflection. The tell is the absence of friction, real people have edges.
+    </p>
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 12px 0; font-size: 15px;">
+      <strong style="color: #d4af37;">Future-faking:</strong> vivid, detailed plans that never take a concrete next step. Ask &ldquo;what&rsquo;s the next step?&rdquo; and watch them reframe.
+    </p>
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 25px 0; font-size: 15px;">
+      <strong style="color: #d4af37;">DARVO:</strong> Deny, Attack, Reverse Victim and Offender. Once you see it as one move, you can answer it as one move, calmly, which is the only thing that breaks it.
+    </p>
+
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 0 0; font-size: 15px;">
+      Sunday I&rsquo;ll send you the field guide that covers the rest.
+    </p>`,
+        ),
+    },
+    step3: {
+      subject: "The field guide for exactly this",
+      render: (name) => {
+        const bookUrl = dripBookUrl("quiz-dating-sociopath-drip", "step-3-book");
+        return emailShell(
+          "Written from inside the pattern",
+          "Are You Dating a Sociopath, Day 5",
+          `
+    <p style="color: #f5f0ed; font-size: 16px; margin: 0 0 20px 0; line-height: 1.7;">
+      ${esc(name)},
+    </p>
+
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 20px 0; font-size: 15px;">
+      Most advice on this comes from people studying the pattern through glass. The <strong style="color: #d4af37;">Sociopathic Dating Bible</strong> is written from inside it. 70,000 words on how this wiring actually runs an attraction, what the early signs really look like, and how to leave without being talked back in.
+    </p>
+
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 25px 0; font-size: 15px;">
+      If the result confirmed something you already half-knew, this is the book that turns the half-knowing into a plan.
+    </p>
+
+    ${goldButton("Read the first chapters", bookUrl)}
+
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 0 0; font-size: 15px;">
+      $24.99, yours to keep. And if you need to talk to someone you trust before anything else, do that first. The book will keep.
+    </p>`,
+        );
+      },
+    },
+  },
+
+  bpd: {
+    sequence: "quiz-bpd-drip",
+    step1: {
+      subject: "First, breathe. A score is not a diagnosis.",
+      render: (name) =>
+        emailShell(
+          "A screen, not a verdict",
+          "The BPD Test, Day 1",
+          `
+    <p style="color: #f5f0ed; font-size: 16px; margin: 0 0 8px 0; line-height: 1.7;">
+      Hi ${esc(name)},
+    </p>
+
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 24px 0; font-size: 14px; font-style: italic;">
+      Quick favor first, if this landed in spam or promotions, drag it to your inbox so I can reach you.
+    </p>
+
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 20px 0; font-size: 15px;">
+      Before anything else: the MSI-BPD is a screen, not a verdict. A high score means the pattern is worth taking seriously with a real clinician. That is all it means. It is not a diagnosis, and it is not a sentence.
+    </p>
+
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 0 0; font-size: 15px;">
+      The traits it measures are not a character flaw. They are pain with a shape, usually one that made sense given where it came from. You are not broken. On Friday I&rsquo;ll send you one idea that tends to help, gently.
+    </p>`,
+        ),
+    },
+    step2: {
+      subject: "The abandonment lens",
+      render: (name) =>
+        emailShell(
+          "Naming the lens makes a little space",
+          "The BPD Test, Day 3",
+          `
+    <p style="color: #f5f0ed; font-size: 16px; margin: 0 0 20px 0; line-height: 1.7;">
+      ${esc(name)},
+    </p>
+
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 20px 0; font-size: 15px;">
+      A lot of the hardest moments run through a single lens: the fear that connection is about to be withdrawn. A delayed text becomes a verdict. A flat tone becomes proof. You feel the verdict before you can audit it, and the feeling is real even when the verdict isn&rsquo;t.
+    </p>
+
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 25px 0; font-size: 15px;">
+      The small, repeatable move is to name it in the moment: <em>this is the abandonment lens, not necessarily the truth.</em> That sentence does not fix anything on its own. It buys you a half-second of space, and recovery is built out of those half-seconds. If you&rsquo;re working with someone, DBT skills are the gold standard here, and they help.
+    </p>
+
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 0 0; font-size: 15px;">
+      Take it gently. You&rsquo;re doing harder work than most people ever attempt.
+    </p>`,
+        ),
+    },
+    step3: {
+      subject: "A calmer room, if you want it",
+      render: (name) => {
+        const consiliumUrl = dripConsiliumUrl("quiz-bpd-drip", "step-3-consilium");
+        return emailShell(
+          "No pressure, just an open door",
+          "The BPD Test, Day 5",
+          `
+    <p style="color: #f5f0ed; font-size: 16px; margin: 0 0 20px 0; line-height: 1.7;">
+      ${esc(name)},
+    </p>
+
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 20px 0; font-size: 15px;">
+      One gentle note to close. If the result left you wanting a calmer place to keep making sense of this, <strong style="color: #d4af37;">The Consilium</strong> is a small, human-reviewed community where self-understanding is the normal register and there are no trolls by design.
+    </p>
+
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 25px 0; font-size: 15px;">
+      It is not therapy, and it is not a replacement for it. If you are struggling, a clinician comes first, always. But if you&rsquo;d like company while you learn, the door is here.
+    </p>
+
+    ${goldButton("See the Consilium", consiliumUrl)}
+
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 0 0; font-size: 15px;">
+      And if now isn&rsquo;t the time, that&rsquo;s completely okay. Take care of yourself first.
+    </p>`,
+        );
+      },
+    },
+  },
+
+  daughter: {
+    sequence: "quiz-daughter-drip",
+    step1: {
+      subject: "The pattern was never your fault",
+      render: (name) =>
+        emailShell(
+          "What the result is naming",
+          "The Daughter Pattern, Day 1",
+          `
+    <p style="color: #f5f0ed; font-size: 16px; margin: 0 0 8px 0; line-height: 1.7;">
+      Hi ${esc(name)},
+    </p>
+
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 24px 0; font-size: 14px; font-style: italic;">
+      Quick favor first, if this landed in spam or promotions, drag it to your inbox so I can reach you.
+    </p>
+
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 20px 0; font-size: 15px;">
+      Your result is unlocked on screen, the daughter profile and the Mother Signal alongside it. Before anything else: the profile describes a shape you adapted into, not a flaw you were born with. If the Mother Signal ran high, the thing you have quietly wondered about for years probably had a real basis.
+    </p>
+
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 0 0; font-size: 15px;">
+      None of it was your fault, and reading it clearly is not betrayal, it is the first honest map you may have been allowed. On Friday I&rsquo;ll send you the part that tends to land hardest, and help most.
+    </p>`,
+        ),
+    },
+    step2: {
+      subject: "The role you learned to play",
+      render: (name) =>
+        emailShell(
+          "Survival, not personality",
+          "The Daughter Pattern, Day 3",
+          `
+    <p style="color: #f5f0ed; font-size: 16px; margin: 0 0 20px 0; line-height: 1.7;">
+      ${esc(name)},
+    </p>
+
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 20px 0; font-size: 15px;">
+      The role your profile names, the fixer, the peacemaker, the scapegoat, the invisible one, was a survival strategy, not your personality. It was the version of you that kept the household survivable. It worked. That is why it is so hard to set down.
+    </p>
+
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 25px 0; font-size: 15px;">
+      Here is the quiet freedom in it: a role you <em>learned</em> is a role you are allowed to <em>retire</em>. Not overnight, and not by force. But naming it as a role, rather than as who you are, is the move that lets you start choosing differently.
+    </p>
+
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 0 0; font-size: 15px;">
+      Be patient with yourself this week. This is deep water.
+    </p>`,
+        ),
+    },
+    step3: {
+      subject: "A room of people who get it",
+      render: (name) => {
+        const consiliumUrl = dripConsiliumUrl(
+          "quiz-daughter-drip",
+          "step-3-consilium",
+        );
+        return emailShell(
+          "No pressure, just company",
+          "The Daughter Pattern, Day 5",
+          `
+    <p style="color: #f5f0ed; font-size: 16px; margin: 0 0 20px 0; line-height: 1.7;">
+      ${esc(name)},
+    </p>
+
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 20px 0; font-size: 15px;">
+      One gentle note to close. The loneliest part of this work is the sense that no one around you quite understands it. <strong style="color: #d4af37;">The Consilium</strong> is a small, human-reviewed room where this kind of self-understanding is the normal language, and you would not have to explain the basics.
+    </p>
+
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 25px 0; font-size: 15px;">
+      It is not therapy, and a good therapist who understands family systems is worth more than anything I can offer. But if you&rsquo;d like company while you do the work, the door is open.
+    </p>
+
+    ${goldButton("See the Consilium", consiliumUrl)}
+
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 0 0; font-size: 15px;">
+      And if now isn&rsquo;t the time, that is completely okay. You set the pace here.
+    </p>`,
+        );
+      },
+    },
+  },
+};
+
+/** Quiz slugs that have a result-specific drip. Used by /api/newsletter
+ *  to decide whether to enroll the per-quiz nurture or the generic one. */
+export const QUIZ_DRIP_SLUGS: ReadonlySet<string> = new Set(
+  Object.keys(QUIZ_DRIP_COPY),
+);
+
+/**
+ * Build the result-specific drip for a free quiz taker. Returns null
+ * when the slug has no configured drip (caller falls back to the
+ * generic newsletter drip). Day 1 / 3 / 5 after capture.
+ */
+export function buildQuizResultDrip(
+  recipientEmail: string,
+  recipientName: string,
+  quizSlug: string,
+): EmailQueueEntry[] | null {
+  const copy = QUIZ_DRIP_COPY[quizSlug];
+  if (!copy) return null;
+
+  const now = new Date();
+  const meta = { ...MARKETING_META, quizSlug };
+  const plan: Array<{ step: number; day: number; entry: QuizDripStep }> = [
+    { step: 1, day: 1, entry: copy.step1 },
+    { step: 2, day: 3, entry: copy.step2 },
+    { step: 3, day: 5, entry: copy.step3 },
+  ];
+
+  return plan.map(({ step, day, entry }) => ({
+    recipientEmail,
+    recipientName,
+    sequence: copy.sequence,
+    step,
+    subject: entry.subject,
+    htmlBody: withMarketingFooter(entry.render(recipientName), recipientEmail),
+    scheduledAt: addDays(now, day),
+    metadata: meta,
+  }));
 }

@@ -6,7 +6,7 @@ import { m } from "framer-motion";
 import Link from "next/link";
 import Header from "@/components/Header";
 import BackgroundEffects from "@/components/BackgroundEffects";
-import QuizEmailCapture from "@/components/quiz/QuizEmailCapture";
+import QuizResultGate from "@/components/quiz/QuizResultGate";
 import {
   NarcissistDiagnosis,
   NarcissistScores,
@@ -191,6 +191,13 @@ export default function NarcissistResultsPage() {
               </span>
             </p>
           </m.div>
+
+          <QuizResultGate
+            quizSlug="narcissist"
+            source="narcissist-quiz"
+            tags={[`quadrant:${diagnosis.quadrant}`]}
+            resultLabel={profile.name}
+          >
 
           {/* Two subscale bars */}
           <m.div
@@ -385,12 +392,7 @@ export default function NarcissistResultsPage() {
               </p>
             </m.div>
           )}
-
-          <QuizEmailCapture
-            source="narcissist-quiz"
-            tags={[`quadrant:${diagnosis.quadrant}`]}
-            resultLabel={profile.name}
-          />
+          </QuizResultGate>
 
           {/* Related */}
           <m.div

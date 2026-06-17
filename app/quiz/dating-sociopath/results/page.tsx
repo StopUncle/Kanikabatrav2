@@ -6,7 +6,7 @@ import { m } from "framer-motion";
 import Link from "next/link";
 import Header from "@/components/Header";
 import BackgroundEffects from "@/components/BackgroundEffects";
-import QuizEmailCapture from "@/components/quiz/QuizEmailCapture";
+import QuizResultGate from "@/components/quiz/QuizResultGate";
 import {
   DatingDiagnosis,
   DatingScores,
@@ -151,6 +151,16 @@ export default function DatingSociopathResultsPage() {
             </p>
           </m.div>
 
+          <QuizResultGate
+            quizSlug="dating-sociopath"
+            source="dating-sociopath-quiz"
+            tags={[
+              `quadrant:${diagnosis.quadrant}`,
+              `behavioural:${diagnosis.behavioural.tier}`,
+              `internal:${diagnosis.internal.tier}`,
+            ]}
+            resultLabel={profile.name}
+          >
           {/* Two axis bars */}
           <m.div
             initial={{ opacity: 0, y: 20 }}
@@ -360,16 +370,7 @@ export default function DatingSociopathResultsPage() {
               </div>
             </div>
           </m.div>
-
-          <QuizEmailCapture
-            source="dating-sociopath-quiz"
-            tags={[
-              `quadrant:${diagnosis.quadrant}`,
-              `behavioural:${diagnosis.behavioural.tier}`,
-              `internal:${diagnosis.internal.tier}`,
-            ]}
-            resultLabel={profile.name}
-          />
+          </QuizResultGate>
 
           {/* Related */}
           <m.div

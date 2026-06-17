@@ -1,7 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { sendEmail } from "@/lib/email";
-import { buildNewsletterDrip } from "@/lib/email-sequences";
+import {
+  buildNewsletterDrip,
+  buildQuizResultDrip,
+  QUIZ_DRIP_SLUGS,
+} from "@/lib/email-sequences";
 import { logger } from "@/lib/logger";
 
 export async function POST(request: NextRequest) {
@@ -11,6 +15,7 @@ export async function POST(request: NextRequest) {
       name,
       source = "newsletter",
       quizResultId,
+      quizSlug,
       tags = [],
     } = await request.json();
 
@@ -26,71 +31,86 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    const normalized = email.toLowerCase();
     const existingSubscriber = await prisma.subscriber.findUnique({
-      where: { email: email.toLowerCase() },
+      where: { email: normalized },
     });
+    const isNew = !existingSubscriber;
 
     if (existingSubscriber) {
-      const existingTags = existingSubscriber.tags || [];
-      const newTags = Array.from(new Set([...existingTags, ...tags]));
-
+      const newTags = Array.from(
+        new Set([...(existingSubscriber.tags || []), ...tags]),
+      );
       await prisma.subscriber.update({
-        where: { email: email.toLowerCase() },
+        where: { email: normalized },
         data: {
           tags: newTags,
           ...(quizResultId && { quizResultId }),
         },
       });
-
-      return NextResponse.json({
-        success: true,
-        message: "Subscription updated",
-        isNew: false,
+    } else {
+      await prisma.subscriber.create({
+        data: {
+          email: normalized,
+          name: name || null,
+          source,
+          quizResultId: quizResultId || null,
+          tags,
+          verified: true,
+        },
       });
     }
 
-    await prisma.subscriber.create({
-      data: {
-        email: email.toLowerCase(),
-        name: name || null,
-        source,
-        quizResultId: quizResultId || null,
-        tags,
-        verified: true,
-      },
-    });
-
-    // Enqueue the 3-email newsletter drip (Day 2 / 4 / 7). Idempotent
-    // on the recipient + sequence pair so re-subscribes (caught above
-    // by the existingSubscriber branch) don't double-enqueue. Failure
-    // here doesn't break the capture.
+    // Enroll the right drip. A known quizSlug gets the result-specific
+    // nurture (for new AND returning subscribers, since a returning
+    // visitor may be finishing this quiz for the first time). Everyone
+    // else gets the generic newsletter drip, new subscribers only.
+    // Idempotent on the (recipient, sequence) pair. Failure here must
+    // not break the capture.
+    const dripDisplayName = name || normalized.split("@")[0] || "you";
+    const hasQuizDrip =
+      typeof quizSlug === "string" && QUIZ_DRIP_SLUGS.has(quizSlug);
     try {
-      const existingDrip = await prisma.emailQueue.findFirst({
-        where: {
-          recipientEmail: email.toLowerCase(),
-          sequence: "newsletter-drip",
-        },
-        select: { id: true },
-      });
-      if (!existingDrip) {
-        const dripDisplayName = name || email.split("@")[0] || "you";
-        const entries = buildNewsletterDrip(
-          email.toLowerCase(),
+      if (hasQuizDrip) {
+        const entries = buildQuizResultDrip(
+          normalized,
           dripDisplayName,
+          quizSlug,
         );
-        await prisma.emailQueue.createMany({ data: entries });
+        if (entries && entries.length > 0) {
+          const existingDrip = await prisma.emailQueue.findFirst({
+            where: {
+              recipientEmail: normalized,
+              sequence: entries[0]!.sequence,
+            },
+            select: { id: true },
+          });
+          if (!existingDrip) {
+            await prisma.emailQueue.createMany({ data: entries });
+          }
+        }
+      } else if (isNew) {
+        const existingDrip = await prisma.emailQueue.findFirst({
+          where: { recipientEmail: normalized, sequence: "newsletter-drip" },
+          select: { id: true },
+        });
+        if (!existingDrip) {
+          const entries = buildNewsletterDrip(normalized, dripDisplayName);
+          await prisma.emailQueue.createMany({ data: entries });
+        }
       }
     } catch (dripErr) {
       logger.error("[newsletter] drip enqueue failed", dripErr as Error, {
-        email,
+        email: normalized,
       });
     }
 
-    // Send welcome email (fire and forget, don't block the response)
-    sendEmail({
-      to: email.toLowerCase(),
-      subject: "Welcome to The Psychology of Power. Kanika Batra",
-      html: `
+    // Welcome email for brand-new subscribers only (fire and forget).
+    if (isNew) {
+      sendEmail({
+        to: normalized,
+        subject: "Welcome to The Psychology of Power",
+        html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
           <div style="background: linear-gradient(135deg, #1a0d11 0%, #0a1628 100%); padding: 30px; border-radius: 10px 10px 0 0;">
             <h1 style="color: #d4af37; margin: 0; font-size: 24px;">Welcome</h1>
@@ -109,20 +129,23 @@ export async function POST(request: NextRequest) {
               No fluff. No filler. Just the stuff that actually moves the needle.
             </p>
             <p style="color: #d4af37; font-style: italic; margin-top: 30px;">
-             . Kanika Batra<br>
+              Kanika Batra<br>
               <span style="color: #666; font-size: 12px;">The Psychology of Power</span>
             </p>
           </div>
         </div>
       `,
-    }).catch((err) =>
-      logger.error("[newsletter] welcome email failed", err as Error, { email }),
-    );
+      }).catch((err) =>
+        logger.error("[newsletter] welcome email failed", err as Error, {
+          email: normalized,
+        }),
+      );
+    }
 
     return NextResponse.json({
       success: true,
-      message: "Successfully subscribed",
-      isNew: true,
+      message: isNew ? "Successfully subscribed" : "Subscription updated",
+      isNew,
     });
   } catch (error) {
     logger.error("[newsletter] subscription error", error as Error);
