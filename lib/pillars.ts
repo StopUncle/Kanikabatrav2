@@ -52,6 +52,9 @@ export function getPillarBySlug(slug: string): Pillar | null {
     author: data.author || "Kanika Batra",
     isPillar: true,
     faq: Array.isArray(data.faq) ? data.faq : undefined,
+    youtubeId: typeof data.youtubeId === "string" ? data.youtubeId : undefined,
+    youtubeTitle:
+      typeof data.youtubeTitle === "string" ? data.youtubeTitle : undefined,
   };
 
   return {

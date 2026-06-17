@@ -68,6 +68,7 @@ const KANIKA_SAME_AS = [
   SOCIAL_LINKS.youtube,
   SOCIAL_LINKS.tiktok,
   BOOK_INFO.kdpLink, // Amazon author/book page ties her to a published work
+  "https://www.goodreads.com/author/show/4197833.Kanika_Batra", // Goodreads author profile (E-E-A-T: published author)
 ];
 
 /** Thin author reference for embedding in Book/Article schema. */
