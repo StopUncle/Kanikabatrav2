@@ -4,12 +4,16 @@ import {
   getPublicPostBySlug,
   getAllPosts,
   getPostsByCategory,
+  slugify,
 } from "@/lib/mdx";
 import type { FaqEntry } from "@/lib/mdx";
 import BlogPostClient from "./BlogPostClient";
 import PostContent from "@/components/blog/PostContent";
 import JsonLd from "@/components/JsonLd";
-import { generateArticleSchema } from "@/lib/schema";
+import {
+  generateArticleSchema,
+  generateBreadcrumbSchema,
+} from "@/lib/schema";
 import { getContextualLinks } from "@/lib/internal-links";
 import { getAllPillars } from "@/lib/pillars";
 import { SITE_CONFIG } from "@/lib/constants";
@@ -150,6 +154,18 @@ export default async function BlogPostPage({ params }: PageProps) {
     wordCount: post.content.split(/\s+/).length,
   });
 
+  // Breadcrumb mirrors the visible Home / Blog / Category / Title trail in
+  // BlogPostClient, so the schema matches what the reader sees.
+  const breadcrumbSchema = generateBreadcrumbSchema([
+    { name: "Home", url: SITE_CONFIG.url },
+    { name: "Blog", url: `${SITE_CONFIG.url}/blog` },
+    {
+      name: post.frontmatter.category,
+      url: `${SITE_CONFIG.url}/blog/category/${slugify(post.frontmatter.category)}`,
+    },
+    { name: post.frontmatter.title, url: `${SITE_CONFIG.url}/blog/${slug}` },
+  ]);
+
   const contextualLinks = getContextualLinks(
     {
       category: post.frontmatter.category,
@@ -161,7 +177,13 @@ export default async function BlogPostPage({ params }: PageProps) {
 
   return (
     <>
-      <JsonLd data={faqSchema ? [articleSchema, faqSchema] : articleSchema} />
+      <JsonLd
+        data={[
+          articleSchema,
+          breadcrumbSchema,
+          ...(faqSchema ? [faqSchema] : []),
+        ]}
+      />
       <BlogPostClient
         post={{
           slug: post.slug,
