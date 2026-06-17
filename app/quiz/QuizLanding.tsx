@@ -360,6 +360,64 @@ export default function QuizLanding() {
             </div>
           </m.div>
 
+          {/* Free lead magnets. Two no-cost entry points for browsers and
+              finishers who aren't ready to pay, both email-gated so they
+              still capture. Sits between the suite and How It Works. */}
+          <m.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.35 }}
+            className="mb-16"
+          >
+            <h2 className="text-2xl font-light text-white text-center mb-3 tracking-wide">
+              Start Free
+            </h2>
+            <p className="text-text-gray text-center max-w-2xl mx-auto mb-8 text-sm leading-relaxed">
+              Not ready to go deep? Two free reads, about three minutes each, no
+              payment to see your result.
+            </p>
+            <div className="grid sm:grid-cols-2 gap-3">
+              <Link
+                href="/dark-mirror/mini"
+                className="group block p-4 rounded-xl border border-accent-gold/15 bg-deep-black/40 hover:border-accent-gold/40 hover:bg-deep-black/60 transition-all duration-300"
+              >
+                <div className="flex items-start justify-between gap-3 mb-2">
+                  <h3 className="text-white text-sm font-light group-hover:text-accent-gold transition-colors leading-snug">
+                    The Mini Dark Mirror
+                  </h3>
+                  <ArrowRight
+                    size={14}
+                    strokeWidth={1.5}
+                    className="text-text-gray/40 group-hover:text-accent-gold group-hover:translate-x-0.5 transition-all shrink-0 mt-1"
+                  />
+                </div>
+                <p className="text-text-gray text-[12px] leading-relaxed">
+                  Twelve scenarios, your six-axis read and the animated radar.
+                  The fast way to see which pattern you sit closest to.
+                </p>
+              </Link>
+              <Link
+                href="/dark-mirror/starter-pack"
+                className="group block p-4 rounded-xl border border-accent-gold/15 bg-deep-black/40 hover:border-accent-gold/40 hover:bg-deep-black/60 transition-all duration-300"
+              >
+                <div className="flex items-start justify-between gap-3 mb-2">
+                  <h3 className="text-white text-sm font-light group-hover:text-accent-gold transition-colors leading-snug">
+                    The Pattern Starter Pack
+                  </h3>
+                  <ArrowRight
+                    size={14}
+                    strokeWidth={1.5}
+                    className="text-text-gray/40 group-hover:text-accent-gold group-hover:translate-x-0.5 transition-all shrink-0 mt-1"
+                  />
+                </div>
+                <p className="text-text-gray text-[12px] leading-relaxed">
+                  The five manipulation patterns to recognise on sight, named
+                  and explained. A reference you can keep.
+                </p>
+              </Link>
+            </div>
+          </m.div>
+
           {/* How It Works */}
           <m.div
             initial={{ opacity: 0, y: 30 }}
