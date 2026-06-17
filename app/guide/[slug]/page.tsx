@@ -7,6 +7,7 @@ import GoDeeper from "@/components/blog/GoDeeper";
 import JsonLd from "@/components/JsonLd";
 import Header from "@/components/Header";
 import { getContextualLinks } from "@/lib/internal-links";
+import { generateBreadcrumbSchema } from "@/lib/schema";
 import type { FaqEntry } from "@/lib/mdx";
 import Link from "next/link";
 import { SITE_CONFIG } from "@/lib/constants";
@@ -137,9 +138,22 @@ export default async function GuidePage({ params }: PageProps) {
       ? buildFaqSchema(pillar.frontmatter.faq)
       : null;
 
+  // Mirrors the visible Home / Blog / Guide trail above.
+  const breadcrumbSchema = generateBreadcrumbSchema([
+    { name: "Home", url: baseUrl },
+    { name: "Blog", url: `${baseUrl}/blog` },
+    { name: "Guide", url: `${baseUrl}/guide/${slug}` },
+  ]);
+
   return (
     <>
-      <JsonLd data={faqSchema ? [articleSchema, faqSchema] : articleSchema} />
+      <JsonLd
+        data={[
+          articleSchema,
+          breadcrumbSchema,
+          ...(faqSchema ? [faqSchema] : []),
+        ]}
+      />
       <div className="min-h-screen bg-deep-black">
         <Header />
 
