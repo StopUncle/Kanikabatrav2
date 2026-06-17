@@ -30,6 +30,16 @@ export const metadata = {
       "A full scenario of the Dark Mirror Simulator, free. No signup. Ten minutes, real branching choices, real consequences.",
     url: "https://kanikarose.com/try",
     type: "website",
+    images: [
+      { url: "https://kanikarose.com/api/og/try", width: 1200, height: 630 },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Try the Dark Mirror. Free",
+    description:
+      "A full scenario of the Dark Mirror Simulator, free. No signup. Real branching choices, real consequences.",
+    images: ["https://kanikarose.com/api/og/try"],
   },
 };
 
