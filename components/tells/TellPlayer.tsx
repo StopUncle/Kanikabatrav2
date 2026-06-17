@@ -20,6 +20,7 @@ import {
   type StreakState,
 } from "@/lib/tells/streak";
 import StreakBadge from "./StreakBadge";
+import TellEmailCapture from "./TellEmailCapture";
 
 interface ServerAnswerResult {
   correct: boolean;
@@ -133,7 +134,7 @@ export default function TellPlayer({
     submittingRef.current = true;
     setPickedId(choiceId);
 
-    // Optimistic local streak update — works offline, works for
+    // Optimistic local streak update: works offline, works for
     // anonymous visitors. The reveal stays gated on the server response
     // because we don't have the answer key on the client yet.
     const result = complete(streak, tell.id);
@@ -509,19 +510,22 @@ function TellRevealView({
           substitute for professional evaluation.
         </p>
         {surface === "public" ? (
-          <div className="flex flex-col sm:flex-row gap-3">
-            <a
-              href="/consilium/apply?src=tell"
-              className="inline-flex items-center justify-center px-7 py-3 rounded-full bg-accent-gold text-deep-black font-medium tracking-wider uppercase text-sm hover:bg-accent-gold/90 transition-all"
-            >
-              Train Your Instincts &middot; $29/mo
-            </a>
-            <a
-              href="/tells"
-              className="inline-flex items-center justify-center px-7 py-3 rounded-full border border-accent-gold/40 text-accent-gold font-medium tracking-wider uppercase text-sm hover:bg-accent-gold/10 transition-all"
-            >
-              Tomorrow&rsquo;s Tell
-            </a>
+          <div className="space-y-5">
+            <TellEmailCapture />
+            <div className="flex flex-col sm:flex-row gap-3">
+              <a
+                href="/consilium/apply?src=tell"
+                className="inline-flex items-center justify-center px-7 py-3 rounded-full bg-accent-gold text-deep-black font-medium tracking-wider uppercase text-sm hover:bg-accent-gold/90 transition-all"
+              >
+                Train Your Instincts &middot; $29/mo
+              </a>
+              <a
+                href="/tells"
+                className="inline-flex items-center justify-center px-7 py-3 rounded-full border border-accent-gold/40 text-accent-gold font-medium tracking-wider uppercase text-sm hover:bg-accent-gold/10 transition-all"
+              >
+                Tomorrow&rsquo;s Tell
+              </a>
+            </div>
           </div>
         ) : (
           <div className="flex flex-col sm:flex-row gap-3">

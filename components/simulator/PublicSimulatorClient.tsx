@@ -1,10 +1,9 @@
 "use client";
 
-import Link from "next/link";
-import { ArrowRight } from "lucide-react";
 import type { Scenario } from "@/lib/simulator/types";
 import SimulatorRunner from "./SimulatorRunner";
 import SimulatorErrorBoundary from "./SimulatorErrorBoundary";
+import TrySimulatorEnding from "@/components/try/TrySimulatorEnding";
 
 type Props = {
   scenario: Scenario;
@@ -28,22 +27,12 @@ type Props = {
  * to login for a cold visitor.
  */
 export default function PublicSimulatorClient({ scenario }: Props) {
-  const conversionCta = (
-    <Link
-      href="/consilium/apply?src=try"
-      className="inline-flex items-center justify-center gap-2 px-8 py-3 bg-accent-gold text-deep-black font-medium tracking-wider uppercase text-sm rounded-full hover:bg-accent-gold/90 transition-all"
-    >
-      Step Inside, $29/mo
-      <ArrowRight size={16} strokeWidth={1.5} />
-    </Link>
-  );
-
   return (
     <SimulatorErrorBoundary scenarioId={scenario.id} exitHref="/">
       <SimulatorRunner
         scenario={scenario}
         exitHref="/"
-        endingCta={conversionCta}
+        endingCta={<TrySimulatorEnding />}
         /* Hide the failure-blog "Understand what happened" CTA on the
            public demo. Cold visitors on the free demo should see exactly
            one thing on the loss screen, the conversion CTA. Pulling
