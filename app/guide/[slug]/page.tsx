@@ -6,6 +6,7 @@ import PostContent from "@/components/blog/PostContent";
 import GoDeeper from "@/components/blog/GoDeeper";
 import JsonLd from "@/components/JsonLd";
 import Header from "@/components/Header";
+import { YouTubeEmbed } from "@/components/YouTubeEmbed";
 import { getContextualLinks } from "@/lib/internal-links";
 import { generateBreadcrumbSchema } from "@/lib/schema";
 import type { FaqEntry } from "@/lib/mdx";
@@ -212,6 +213,18 @@ export default async function GuidePage({ params }: PageProps) {
                 </div>
               </div>
             </header>
+
+            {pillar.frontmatter.youtubeId && (
+              <div className="mb-16">
+                <YouTubeEmbed
+                  videoId={pillar.frontmatter.youtubeId}
+                  title={
+                    pillar.frontmatter.youtubeTitle || pillar.frontmatter.title
+                  }
+                  description={pillar.frontmatter.excerpt}
+                />
+              </div>
+            )}
 
             {/* Content */}
             <div className="mb-16">

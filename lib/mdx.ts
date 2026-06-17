@@ -24,6 +24,8 @@ export interface PostFrontmatter {
   readingTime?: string;
   isPillar?: boolean;
   faq?: FaqEntry[];
+  youtubeId?: string;
+  youtubeTitle?: string;
 }
 
 export interface Post {
@@ -80,6 +82,9 @@ export function getPostBySlug(slug: string): Post | null {
     readingTime: data.readingTime,
     isPillar: data.isPillar || false,
     faq: Array.isArray(data.faq) ? data.faq : undefined,
+    youtubeId: typeof data.youtubeId === "string" ? data.youtubeId : undefined,
+    youtubeTitle:
+      typeof data.youtubeTitle === "string" ? data.youtubeTitle : undefined,
   };
 
   return {

@@ -14,6 +14,7 @@ import BookPromo from "@/components/blog/BookPromo";
 import InlineCoachingCTA from "@/components/blog/InlineCoachingCTA";
 import EndOfPostConsiliumCTA from "@/components/blog/EndOfPostConsiliumCTA";
 import GoDeeper from "@/components/blog/GoDeeper";
+import { YouTubeEmbed } from "@/components/YouTubeEmbed";
 import TableOfContents from "@/components/blog/TableOfContents";
 import SocialShareButtons from "@/components/blog/SocialShareButtons";
 import NewsletterForm from "@/components/NewsletterForm";
@@ -148,6 +149,18 @@ export default function BlogPostClient({
                       </ul>
                     </aside>
                   )}
+
+                {post.frontmatter.youtubeId && (
+                  <div className="mb-12">
+                    <YouTubeEmbed
+                      videoId={post.frontmatter.youtubeId}
+                      title={
+                        post.frontmatter.youtubeTitle || post.frontmatter.title
+                      }
+                      description={post.frontmatter.excerpt}
+                    />
+                  </div>
+                )}
 
                 {children}
 
