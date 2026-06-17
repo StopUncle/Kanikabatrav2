@@ -51,6 +51,7 @@ export function getPillarBySlug(slug: string): Pillar | null {
     coverImageAlt: data.coverImageAlt,
     author: data.author || "Kanika Batra",
     isPillar: true,
+    faq: Array.isArray(data.faq) ? data.faq : undefined,
   };
 
   return {

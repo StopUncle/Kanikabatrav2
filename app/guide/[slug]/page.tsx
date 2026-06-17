@@ -7,8 +7,24 @@ import GoDeeper from "@/components/blog/GoDeeper";
 import JsonLd from "@/components/JsonLd";
 import Header from "@/components/Header";
 import { getContextualLinks } from "@/lib/internal-links";
+import type { FaqEntry } from "@/lib/mdx";
 import Link from "next/link";
 import { SITE_CONFIG } from "@/lib/constants";
+
+function buildFaqSchema(faq: FaqEntry[]) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: faq.map((entry) => ({
+      "@type": "Question",
+      name: entry.q,
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: entry.a,
+      },
+    })),
+  };
+}
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -116,9 +132,14 @@ export default async function GuidePage({ params }: PageProps) {
     articleSection: pillar.frontmatter.category,
   };
 
+  const faqSchema =
+    pillar.frontmatter.faq && pillar.frontmatter.faq.length > 0
+      ? buildFaqSchema(pillar.frontmatter.faq)
+      : null;
+
   return (
     <>
-      <JsonLd data={articleSchema} />
+      <JsonLd data={faqSchema ? [articleSchema, faqSchema] : articleSchema} />
       <div className="min-h-screen bg-deep-black">
         <Header />
 
