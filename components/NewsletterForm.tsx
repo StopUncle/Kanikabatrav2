@@ -3,7 +3,12 @@
 import { useState } from "react";
 import { m, AnimatePresence } from "framer-motion";
 
-export default function NewsletterForm() {
+export default function NewsletterForm({
+  source = "newsletter",
+}: {
+  /** Subscriber.source for attribution (e.g. "footer", "newsletter"). */
+  source?: string;
+}) {
   const [email, setEmail] = useState("");
   const [status, setStatus] = useState<
     "idle" | "loading" | "success" | "error"
@@ -22,7 +27,7 @@ export default function NewsletterForm() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           email,
-          source: "newsletter",
+          source,
         }),
       });
 

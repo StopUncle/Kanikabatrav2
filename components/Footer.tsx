@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { Instagram, Youtube, Mail, Heart } from "lucide-react";
 import KanikaroseLogo from "./KanikaroseLogo";
+import NewsletterForm from "./NewsletterForm";
 
 const TikTokIcon = ({ className }: { className?: string }) => (
   <svg className={className} fill="currentColor" viewBox="0 0 24 24">
@@ -54,6 +55,22 @@ const Footer = () => {
   return (
     <footer className="relative z-20 bg-gradient-to-b from-deep-black to-burgundy-dark/10 border-t border-gold/10">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
+        {/* Newsletter band. Free real estate on every page, the footer
+            renders site-wide. Source-tagged "footer" so capture from here
+            is attributable separately from the homepage / blog forms. */}
+        <div className="mb-8 sm:mb-10 pb-8 sm:pb-10 border-b border-gold/10 grid gap-5 lg:grid-cols-2 lg:items-center">
+          <div>
+            <h4 className="text-gold text-sm font-medium tracking-wider mb-2">
+              THE LETTERS
+            </h4>
+            <p className="text-text-muted text-xs sm:text-sm max-w-md leading-relaxed">
+              The psychology of power, red flags, and the patterns most people
+              miss, from a diagnosed sociopath. No fluff, unsubscribe any time.
+            </p>
+          </div>
+          <NewsletterForm source="footer" />
+        </div>
+
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
           {/* Brand Section.
               `fullName` swaps the "KR" monogram for the full "KANIKAROSE"

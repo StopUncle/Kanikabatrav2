@@ -6,7 +6,7 @@ import { m } from "framer-motion";
 import Link from "next/link";
 import Header from "@/components/Header";
 import BackgroundEffects from "@/components/BackgroundEffects";
-import QuizEmailCapture from "@/components/quiz/QuizEmailCapture";
+import QuizResultGate from "@/components/quiz/QuizResultGate";
 import {
   BPDDiagnosis,
   BPDScores,
@@ -151,6 +151,12 @@ export default function BPDResultsPage() {
             </p>
           </m.div>
 
+          <QuizResultGate
+            quizSlug="bpd"
+            source="bpd-quiz"
+            tags={[`tier:${diagnosis.tier}`]}
+            resultLabel={profile.name}
+          >
           {/* Score card with cutoff line */}
           <m.div
             initial={{ opacity: 0, y: 20 }}
@@ -341,12 +347,7 @@ export default function BPDResultsPage() {
               </div>
             </m.div>
           )}
-
-          <QuizEmailCapture
-            source="bpd-quiz"
-            tags={[`tier:${diagnosis.tier}`]}
-            resultLabel={profile.name}
-          />
+          </QuizResultGate>
 
           {/* Related */}
           <m.div

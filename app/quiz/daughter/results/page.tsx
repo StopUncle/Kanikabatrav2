@@ -17,7 +17,7 @@ import {
 } from "lucide-react";
 import Header from "@/components/Header";
 import BackgroundEffects from "@/components/BackgroundEffects";
-import DaughterEmailCapture from "@/components/quiz/DaughterEmailCapture";
+import QuizResultGate from "@/components/quiz/QuizResultGate";
 import {
   DAUGHTER_PROFILES,
   DAUGHTER_QUIZ_INFO,
@@ -172,6 +172,15 @@ export default function DaughterQuizResultsPage() {
             </p>
           </m.div>
 
+          <QuizResultGate
+            quizSlug="daughter"
+            source="daughter-quiz"
+            tags={[
+              `primary:${data.primaryType}`,
+              `secondary:${data.secondaryType}`,
+            ]}
+            resultLabel={profile.name}
+          >
           {/* Composite label + recovery stage */}
           <m.div
             initial={{ opacity: 0, y: 16 }}
@@ -284,18 +293,6 @@ export default function DaughterQuizResultsPage() {
             </div>
           </m.div>
 
-          {/* Email capture, soft opt-in. Surfaces after the recovery
-              move (the most useful piece of content) so the user has
-              already received their full free result before being asked.
-              Tags the Subscriber with primary + secondary daughter type
-              for future segmented email sequences. Reuses /api/newsletter
-             , no new endpoint, no schema change. */}
-          <DaughterEmailCapture
-            primaryType={data.primaryType}
-            secondaryType={data.secondaryType}
-            primaryProfileName={profile.name}
-          />
-
           {/* Secondary profile, the runner-up */}
           {data.primaryType !== data.secondaryType && (
             <m.div
@@ -314,13 +311,14 @@ export default function DaughterQuizResultsPage() {
                 &ldquo;{secondaryProfile.tagline}&rdquo;
               </p>
               <p className="text-text-gray/80 text-xs leading-relaxed">
-                Your secondary scoring suggests this pattern is also active —
+                Your secondary scoring suggests this pattern is also active,
                 often in different rooms (work vs family vs partner). Worth
                 reading the {secondaryProfile.name} profile after you sit with
                 the primary.
               </p>
             </m.div>
           )}
+          </QuizResultGate>
 
           {/* Where to go from here */}
           <m.div
@@ -432,9 +430,9 @@ export default function DaughterQuizResultsPage() {
                 </h3>
                 <p className="text-text-gray text-sm leading-relaxed">
                   $29 a month. Private threads for women in this exact niche.
-                  The members-only simulator runs the pc-child track scenarios
-                 , practice reps for the conversations you&apos;ve spent years
-                  rehearsing alone.
+                  The members-only simulator runs the pc-child track
+                  scenarios, practice reps for the conversations you&apos;ve
+                  spent years rehearsing alone.
                 </p>
               </Link>
             </div>
