@@ -1,5 +1,6 @@
 import { Metadata } from "next";
 import { getAllPosts, getAllCategories } from "@/lib/mdx";
+import { getAllPillars } from "@/lib/pillars";
 import BlogClient from "./BlogClient";
 import { SITE_CONFIG } from "@/lib/constants";
 import JsonLd from "@/components/JsonLd";
@@ -30,6 +31,7 @@ export const metadata: Metadata = {
 export default function BlogPage() {
   const posts = getAllPosts();
   const categories = getAllCategories();
+  const pillars = getAllPillars();
 
   const collectionSchema = {
     "@context": "https://schema.org",
@@ -53,7 +55,11 @@ export default function BlogPage() {
   return (
     <>
       <JsonLd data={collectionSchema} />
-      <BlogClient initialPosts={posts} categories={categories} />
+      <BlogClient
+        initialPosts={posts}
+        categories={categories}
+        pillars={pillars}
+      />
     </>
   );
 }
