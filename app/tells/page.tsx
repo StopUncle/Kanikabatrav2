@@ -27,37 +27,60 @@ export const dynamic = "force-dynamic";
  * this becomes a real schedule lookup against PUBLISHED Tells.
  */
 
-export const metadata: Metadata = {
-  title: "Today's Tell | Train Your Instincts | Kanika Batra",
-  description:
-    "Sixty seconds. One artifact, one question, one read. Train the instincts no one taught you, dark psychology, red flags, manipulation, power. New Tell every day.",
-  alternates: {
-    canonical: "https://kanikarose.com/tells",
-  },
-  openGraph: {
-    title: "Today's Tell · Train Your Instincts",
+type TellsSearchParams = { [key: string]: string | string[] | undefined };
+
+// Result-share links (?r=correct&n=003&track=Red+Flags) render a brag
+// card; the bare /tells URL renders the evergreen landing card. The
+// canonical always points at the clean /tells so param variants are not
+// indexed.
+export async function generateMetadata({
+  searchParams,
+}: {
+  searchParams: Promise<TellsSearchParams>;
+}): Promise<Metadata> {
+  const sp = await searchParams;
+  const str = (k: string) =>
+    typeof sp[k] === "string" ? (sp[k] as string) : undefined;
+  const r = sp.r === "correct" || sp.r === "missed" ? (sp.r as string) : undefined;
+
+  const ogParams = new URLSearchParams();
+  if (r) {
+    ogParams.set("r", r);
+    const n = str("n");
+    const track = str("track");
+    if (n) ogParams.set("n", n);
+    if (track) ogParams.set("track", track);
+  }
+  const ogImage = `https://kanikarose.com/api/og/tells${
+    ogParams.toString() ? `?${ogParams.toString()}` : ""
+  }`;
+
+  const shareTitle = r
+    ? `${r === "correct" ? "I read it right" : "I missed it"} · Today's Tell`
+    : "Today's Tell · Train Your Instincts";
+  const shareDescription =
+    "Sixty seconds. One artifact, one question, one read. Train your instincts daily.";
+
+  return {
+    title: "Today's Tell | Train Your Instincts | Kanika Batra",
     description:
-      "Sixty seconds. One artifact, one question, one read. Train your instincts daily.",
-    url: "https://kanikarose.com/tells",
-    type: "website",
-    images: [
-      {
-        url: "/api/og?title=Today%27s%20Tell&subtitle=Train%20Your%20Instincts",
-        width: 1200,
-        height: 630,
-      },
-    ],
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "Today's Tell · Train Your Instincts",
-    description:
-      "Sixty seconds. One artifact, one question, one read. Train your instincts daily.",
-    images: [
-      "/api/og?title=Today%27s%20Tell&subtitle=Train%20Your%20Instincts",
-    ],
-  },
-};
+      "Sixty seconds. One artifact, one question, one read. Train the instincts no one taught you, dark psychology, red flags, manipulation, power. New Tell every day.",
+    alternates: { canonical: "https://kanikarose.com/tells" },
+    openGraph: {
+      title: shareTitle,
+      description: shareDescription,
+      url: "https://kanikarose.com/tells",
+      type: "website",
+      images: [{ url: ogImage, width: 1200, height: 630 }],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: shareTitle,
+      description: shareDescription,
+      images: [ogImage],
+    },
+  };
+}
 
 export default async function TellsPage() {
   // Try the DB schedule first, fall back to the seed pool until the

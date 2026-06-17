@@ -21,6 +21,7 @@ import {
 } from "@/lib/tells/streak";
 import StreakBadge from "./StreakBadge";
 import TellEmailCapture from "./TellEmailCapture";
+import ShareResultButton from "./ShareResultButton";
 
 interface ServerAnswerResult {
   correct: boolean;
@@ -184,6 +185,7 @@ export default function TellPlayer({
       ? reveal.choices.find((c) => c.id === pickedId) ?? null
       : null;
   const isCorrect = pickedRevealChoice?.isCorrect ?? false;
+  const shareUrl = `https://kanikarose.com/tells?n=${String(tell.number).padStart(3, "0")}&track=${encodeURIComponent(TRACK_LABELS[tell.track])}&r=${isCorrect ? "correct" : "missed"}`;
 
   return (
     <div className="max-w-3xl mx-auto px-4 py-12">
@@ -221,6 +223,7 @@ export default function TellPlayer({
               isCorrect={isCorrect}
               serverResult={serverResult}
               surface={surface}
+              shareUrl={shareUrl}
             />
           </m.div>
         )}
@@ -420,6 +423,7 @@ function TellRevealView({
   isCorrect,
   serverResult,
   surface,
+  shareUrl,
 }: {
   reveal: RevealPayload;
   picked: TellChoice;
@@ -427,6 +431,7 @@ function TellRevealView({
   isCorrect: boolean;
   serverResult: ServerAnswerResult | null;
   surface: "public" | "member";
+  shareUrl: string;
 }) {
   return (
     <div className="mt-10 space-y-8">
@@ -513,6 +518,15 @@ function TellRevealView({
           <div className="space-y-5">
             <TellEmailCapture />
             <div className="flex flex-col sm:flex-row gap-3">
+              <ShareResultButton
+                url={shareUrl}
+                title="Today's Tell"
+                text={
+                  isCorrect
+                    ? "I read today's Tell right. Can you?"
+                    : "I missed today's Tell. Think you can read it?"
+                }
+              />
               <a
                 href="/consilium/apply?src=tell"
                 className="inline-flex items-center justify-center px-7 py-3 rounded-full bg-accent-gold text-deep-black font-medium tracking-wider uppercase text-sm hover:bg-accent-gold/90 transition-all"
