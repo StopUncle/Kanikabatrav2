@@ -71,6 +71,11 @@ on:
     # the morning content drops. The draft only goes live when published
     # from /admin/scenarios.
     - cron: '0 11 * * *'
+    # Content-freshness report — Monday 06:00 UTC. Scans every published
+    # blog post and emails Kanika the ones not touched in 90+ days, stalest
+    # first, so she can refresh what already ranks before it decays. Weekly
+    # is plenty: posts age slowly and a daily nag would just get ignored.
+    - cron: '0 6 * * 1'
   workflow_dispatch:
     # Allow manual triggering from the GitHub Actions UI. Useful for
     # testing or firing a cron out-of-band without waiting for the next
@@ -99,6 +104,7 @@ on:
           - reconcile-memberships
           - daily-streak-nudge
           - generate-scenario
+          - content-freshness
 
 env:
   BASE_URL: https://kanikarose.com
@@ -367,3 +373,19 @@ jobs:
             -H "x-cron-secret: ${{ secrets.CRON_SECRET }}" \
             -H "Content-Type: application/json" \
             --max-time 290
+  content-freshness:
+    # Monday 06:00 UTC. Scans published blog posts and emails Kanika the
+    # ones not updated in 90+ days (stalest first) so she can refresh what
+    # already ranks. Report only, no content is written by the cron.
+    if: >-
+      github.event.schedule == '0 6 * * 1' ||
+      (github.event_name == 'workflow_dispatch' &&
+       (github.event.inputs.target == 'all' || github.event.inputs.target == 'content-freshness'))
+    runs-on: ubuntu-latest
+    steps:
+      - name: Hit /api/cron/content-freshness
+        run: |
+          curl -fsS -X POST "$BASE_URL/api/cron/content-freshness" \
+            -H "x-cron-secret: ${{ secrets.CRON_SECRET }}" \
+            -H "Content-Type: application/json" \
+            --max-time 60

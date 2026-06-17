@@ -13,6 +13,7 @@ export interface FaqEntry {
 export interface PostFrontmatter {
   title: string;
   excerpt: string;
+  tldr?: string[];
   publishedAt: string;
   updatedAt?: string;
   category: string;
@@ -65,6 +66,10 @@ export function getPostBySlug(slug: string): Post | null {
   const frontmatter: PostFrontmatter = {
     title: data.title || "Untitled Post",
     excerpt: data.excerpt || DEFAULT_EXCERPT,
+    tldr:
+      Array.isArray(data.tldr) && data.tldr.length > 0
+        ? data.tldr.map(String)
+        : undefined,
     publishedAt: data.publishedAt || new Date().toISOString().split("T")[0],
     updatedAt: data.updatedAt,
     category: data.category || "Dark Psychology",

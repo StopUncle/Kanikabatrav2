@@ -48,6 +48,12 @@ export const metadata: Metadata = {
     description:
       "Psychology of power expert with 670K+ followers. Clinically diagnosed sociopath teaching strategic psychology.",
   },
+  // Google Search Console HTML-tag verification. Set GOOGLE_SITE_VERIFICATION
+  // on Railway to the token GSC gives you (the value of the content="" attr).
+  // When unset the tag is simply omitted, so this is safe before GSC is wired.
+  verification: {
+    google: process.env.GOOGLE_SITE_VERIFICATION,
+  },
 };
 
 export const viewport = {

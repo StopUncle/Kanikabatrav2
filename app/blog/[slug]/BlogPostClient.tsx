@@ -123,6 +123,32 @@ export default function BlogPostClient({
               <TableOfContents content={rawContent} />
 
               <div className="max-w-3xl">
+                {post.frontmatter.tldr &&
+                  post.frontmatter.tldr.length > 0 && (
+                    <aside
+                      className="mb-12 p-6 rounded-2xl bg-white/[0.03] border border-accent-gold/20"
+                      aria-label="Summary"
+                    >
+                      <p className="text-accent-gold uppercase tracking-[0.2em] text-xs mb-4">
+                        The short version
+                      </p>
+                      <ul className="space-y-2.5">
+                        {post.frontmatter.tldr.map((point, i) => (
+                          <li
+                            key={i}
+                            className="flex gap-3 text-text-light text-sm md:text-base leading-relaxed"
+                          >
+                            <span
+                              className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-accent-gold"
+                              aria-hidden="true"
+                            />
+                            <span>{point}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </aside>
+                  )}
+
                 {children}
 
                 <footer className="mt-20 pt-12 border-t border-white/10">

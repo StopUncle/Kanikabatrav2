@@ -34,6 +34,37 @@ const QUIZ_RULES: { test: RegExp; slug: string }[] = [
   { test: /sociopath|\baspd\b|antisocial/, slug: "sociopath" },
 ];
 
+// Ordered most-specific first. Maps a post's topic to the pillar guide that
+// should be its hub. Mirrors QUIZ_RULES so adding a cluster is one line. The
+// resolved slug must exist in the passed `pillars` list, otherwise we fall
+// through to the category / tag-overlap heuristic below. This keeps each
+// cluster's posts funnelling up to their OWN hub even when several pillars
+// share a category (e.g. multiple "Dark Psychology" pillars).
+const PILLAR_RULES: { test: RegExp; slug: string }[] = [
+  // Cluster B first: its overview post is also tagged npd/narcissism, so it
+  // must beat the narciss rule to land on its own umbrella hub. We match the
+  // specific disorder tokens (borderline/bpd/histrionic/hpd) NOT a bare
+  // "cluster b", because narcissism posts carry "cluster b" as a comorbidity
+  // tag and would otherwise be hijacked off their own hub.
+  { test: /borderline|histrionic|\bbpd\b|\bhpd\b/, slug: "cluster-b-complete-guide" },
+  { test: /dark triad|machiavellian|dark tetrad/, slug: "dark-triad-complete-guide" },
+  { test: /narciss|\bnpd\b|hoover/, slug: "narcissism-complete-guide" },
+  {
+    // Distinctly-named dating tactics (offensive + defensive). Tokens are
+    // specific so this never steals narciss / sociopath posts above it.
+    test: /ghostlight|quiet.?dump|sledging|the rotation|doctrine of cold|beige protocol|breadcrumb|future.?fak/,
+    slug: "manipulation-tactics-complete-guide",
+  },
+  {
+    test: /attachment|avoidant|anxiously attached|secure attach|disorganised attach|disorganized attach/,
+    slug: "attachment-styles-complete-guide",
+  },
+  {
+    test: /sociopath|\baspd\b|antisocial|psychopath/,
+    slug: "aspd-sociopathy-complete-guide",
+  },
+];
+
 export function getContextualLinks(
   post: { category: string; tags: string[]; title: string },
   pillars: PillarMeta[],
@@ -57,19 +88,23 @@ export function getContextualLinks(
     .filter(Boolean)
     .map((q) => ({ href: q.href, title: q.title, caption: q.caption }));
 
-  // Most relevant pillar: same category first, else any tag overlap. With a
-  // single ASPD pillar today this resolves sociopath-adjacent posts up to it
-  // even when they live in the Relationships / Dark Psychology clusters.
-  const postTags = post.tags.map((t) => t.toLowerCase());
-  const pillar =
-    pillars.find(
-      (p) =>
-        p.frontmatter.category.toLowerCase() === post.category.toLowerCase(),
-    ) ||
-    pillars.find((p) =>
-      p.frontmatter.tags.some((t) => postTags.includes(t.toLowerCase())),
-    ) ||
-    null;
+  // Most relevant pillar: resolved purely by explicit PILLAR_RULES so each
+  // cluster's posts funnel up to their own hub. There is deliberately NO
+  // category/tag fallback: with several pillars sharing the "Dark Psychology"
+  // category (and a generic "dark psychology" tag), a fallback would collapse
+  // every unmatched post onto whichever pillar sorts first, which is worse than
+  // showing none. A post that matches no rule simply surfaces its quizzes; add
+  // a PILLAR_RULE when a new cluster earns a hub.
+  let pillar: PillarMeta | null = null;
+  for (const rule of PILLAR_RULES) {
+    if (rule.test.test(haystack)) {
+      const match = pillars.find((p) => p.slug === rule.slug);
+      if (match) {
+        pillar = match;
+        break;
+      }
+    }
+  }
 
   return {
     pillar: pillar
