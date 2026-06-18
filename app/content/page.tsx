@@ -90,7 +90,7 @@ export default function ContentPage() {
                   {/* Video Thumbnail */}
                   <div className="relative aspect-video bg-gray-800">
                     <Image
-                      src={`https://img.youtube.com/vi/${video.id}/maxresdefault.jpg`}
+                      src={`https://img.youtube.com/vi/${video.id}/hqdefault.jpg`}
                       alt={video.title}
                       fill
                       sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
