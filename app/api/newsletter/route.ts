@@ -8,9 +8,18 @@ import {
   QUIZ_DRIP_SLUGS,
 } from "@/lib/email-sequences";
 import { logger } from "@/lib/logger";
+import { enforceRateLimit, getClientIp, limits } from "@/lib/rate-limit";
 
 export async function POST(request: NextRequest) {
   try {
+    // Public, unauthenticated capture: rate-limit per IP so it can't be
+    // flooded to spam the subscriber list and the email queue.
+    const limited = await enforceRateLimit(
+      limits.newsletterCapture,
+      `ip:${getClientIp(request)}`,
+    );
+    if (limited) return limited;
+
     const {
       email,
       name,

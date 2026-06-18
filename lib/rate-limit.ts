@@ -257,4 +257,15 @@ export const limits = {
     max: 2000,
     windowMs: 24 * 60 * 60_000,
   },
+  /**
+   * Newsletter / lead capture: 10 per minute per IP. The capture endpoint is
+   * public and unauthenticated and writes a Subscriber plus enqueues a drip,
+   * so an unguarded flood could spam the list and the queue. Generous enough
+   * that no real signer-up ever hits it.
+   */
+  newsletterCapture: {
+    action: "newsletter:capture",
+    max: 10,
+    windowMs: 60_000,
+  },
 } satisfies Record<string, RateLimitConfig>;

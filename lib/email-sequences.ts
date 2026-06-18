@@ -1441,7 +1441,7 @@ function coachingConsiliumLink(stepLabel: string): string {
 }
 
 function buildCoachingStep1(name: string): string {
-  return `
+  const body = `
     <p style="color: #f5f0ed; font-size: 16px; margin: 0 0 8px 0; line-height: 1.7;">
       Hey ${esc(name)},
     </p>
@@ -1456,10 +1456,11 @@ function buildCoachingStep1(name: string): string {
     </p>
     ${goldButton("See the options", coachingLink("step1-book"))}
   `;
+  return emailShell("What a session actually is", "Coaching, Day 1", body);
 }
 
 function buildCoachingStep2(name: string): string {
-  return `
+  const body = `
     <p style="color: #f5f0ed; font-size: 16px; margin: 0 0 8px 0; line-height: 1.7;">
       ${esc(name)},
     </p>
@@ -1477,10 +1478,11 @@ function buildCoachingStep2(name: string): string {
       <a href="${coachingConsiliumLink("step2-consilium")}" style="color: #d4af37; text-decoration: none;">Or start with The Consilium, $29/mo &rarr;</a>
     </p>
   `;
+  return emailShell("The real question under the price", "Coaching, Day 3", body);
 }
 
 function buildCoachingStep3(name: string): string {
-  return `
+  const body = `
     <p style="color: #f5f0ed; font-size: 16px; margin: 0 0 8px 0; line-height: 1.7;">
       ${esc(name)},
     </p>
@@ -1498,6 +1500,7 @@ function buildCoachingStep3(name: string): string {
       <a href="${coachingConsiliumLink("step3-consilium")}" style="color: #d4af37; text-decoration: none;">Not yet? The Consilium, $29/mo &rarr;</a>
     </p>
   `;
+  return emailShell("Eight spots", "Coaching, Day 6", body);
 }
 
 export function buildCoachingLeadDrip(
