@@ -93,6 +93,18 @@ const nextConfig = {
       },
     ];
   },
+  async redirects() {
+    return [
+      {
+        // dark-psychology-beginners-guide was promoted from a blog post to a
+        // pillar guide, moving its URL from /blog to /guide. 301 so the
+        // ranking URL and any inbound backlinks follow to the new location.
+        source: "/blog/dark-psychology-beginners-guide",
+        destination: "/guide/dark-psychology-beginners-guide",
+        permanent: true,
+      },
+    ];
+  },
 };
 
 // Wrap with Sentry only if SENTRY_DSN is configured — avoids build-time

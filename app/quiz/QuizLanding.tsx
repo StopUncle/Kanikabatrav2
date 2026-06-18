@@ -117,7 +117,7 @@ const RELATED_LINKS: Array<{
     type: "Pillar",
   },
   {
-    href: "/blog/dark-psychology-beginners-guide",
+    href: "/guide/dark-psychology-beginners-guide",
     title: "Dark Psychology. A Beginner's Guide",
     description:
       "What dark psychology actually is (and isn't), why your assessment results matter, and where to start if any axis surprised you.",
