@@ -225,4 +225,36 @@ export const limits = {
    * turn cap and daily session cap bound the long tail.
    */
   labMessage: { action: "lab:message", max: 6, windowMs: 60_000 },
+  /**
+   * Free public Receipts. Layered to bound LLM spend on an anonymous,
+   * uncapped-by-login surface, cheap-to-expensive:
+   *   - Burst: 4/min per anonId, mirrors receiptsCreate.
+   *   - Anon: 1 free read / 24h per anonId, before the email gate.
+   *   - IP: 5 free reads / 24h per IP, backstop against cookie-clearing
+   *     to farm fresh anonIds.
+   *   - Email: 3 reads / day for email-gated (subscribed) visitors.
+   *   - Global: hard daily ceiling on total free reads, the circuit
+   *     breaker against an abuse spike running up an unbounded bill.
+   */
+  receiptsFreeBurst: { action: "receipts:free:burst", max: 4, windowMs: 60_000 },
+  receiptsFreeAnon: {
+    action: "receipts:free:anon",
+    max: 1,
+    windowMs: 24 * 60 * 60_000,
+  },
+  receiptsFreeIp: {
+    action: "receipts:free:ip",
+    max: 5,
+    windowMs: 24 * 60 * 60_000,
+  },
+  receiptsFreeEmail: {
+    action: "receipts:free:email",
+    max: 3,
+    windowMs: 24 * 60 * 60_000,
+  },
+  receiptsFreeGlobal: {
+    action: "receipts:free:global",
+    max: 2000,
+    windowMs: 24 * 60 * 60_000,
+  },
 } satisfies Record<string, RateLimitConfig>;

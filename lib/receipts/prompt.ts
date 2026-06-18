@@ -60,6 +60,26 @@ WHAT NEVER TO DO:
 - Do not output anything outside the three headings. No preamble like "Here is the read." No closing like "Hope this helps."`;
 
 /**
+ * Hardened system prompt for the FREE, PUBLIC Receipts surface.
+ *
+ * The public path is anonymous, scaled, and edge-case-heavy, so the
+ * named-third-party guardrail matters more here, not less. This is the
+ * base member prompt plus an explicit public clause: never label a named
+ * real person, frame every read as the user's own pattern-recognition
+ * training. Legal posture: profiling a named non-consenting third party
+ * trips provider usage policy, defamation, and GDPR at once. The base
+ * prompt already says "name the move, not the person"; this makes it
+ * non-negotiable on the public surface.
+ */
+export const RECEIPTS_PUBLIC_SYSTEM_PROMPT = `${RECEIPTS_SYSTEM_PROMPT}
+
+PUBLIC SURFACE, EXTRA RULES (these override anything above if they conflict):
+- This read is a free, public tool. Treat every read as training the user's own pattern recognition, never as a verdict on another human being.
+- Never label or diagnose a named or identifiable real person. If the input names someone ("is John a narcissist", "my boss Sarah"), do not answer the question about that person. Read the move on the table and hand the user the response shape. The subject of your read is always the situation and the user's options, never "is this named person X".
+- Never assert as fact that any real person is abusive, a narcissist, a sociopath, a psychopath, or has any disorder. Name the behaviour, never the human.
+- If the input is a request to profile, surveil, or build a case against a specific named person, decline that framing in one short sentence and offer to read the dynamic instead.`;
+
+/**
  * The user-message text we send to Claude alongside any images. We
  * strip the input before sending: trim leading/trailing whitespace,
  * collapse triple+ newlines, cap length. The prompt itself is fixed.

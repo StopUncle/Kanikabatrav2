@@ -1600,6 +1600,30 @@ model Receipt {
   @@index([inputHash])
 }
 
+// One PublicReceipt is the stored OUTPUT of a free, public Receipts read.
+// It exists only so the shareable card has something to render server-side
+// when a social scraper fetches /api/og/receipts/[id]. We store ONLY the
+// generated read, never the user's pasted input or screenshots, preserving
+// the same "your input is not stored" promise as the paid Receipt model.
+// Anonymous by design: there is no userId, only a coarse anonId for abuse
+// analytics.
+model PublicReceipt {
+  id         String  @id @default(cuid())
+  // Kanika-voice response, the read. The only content we keep.
+  response   String  @db.Text
+  // Model ID actually called (Haiku on the free tier), for cost analytics.
+  model      String
+  // Cost in USD * 10000, rounded. Int to avoid float weirdness.
+  costMicros Int     @default(0)
+  // anonId cookie of the visitor who generated it, for coarse abuse
+  // analytics. Not a User FK: free reads are anonymous by design.
+  anonId     String?
+
+  createdAt DateTime @default(now())
+
+  @@index([anonId, createdAt])
+}
+
 // ============================================================================
 // ADVENTURES — curated multi-scenario arcs stitched together from existing
 // simulator content. Scenarios live in code (lib/simulator/scenarios/**);
