@@ -1410,6 +1410,149 @@ export function buildNewsletterDrip(
 }
 
 // ============================================================
+// Coaching lead nurture.
+//
+// For high-intent visitors who looked at 1:1 coaching ($297 to $4,997)
+// but were not ready to checkout. Direct-checkout alone loses everyone
+// who needs a beat to decide. Three emails: what a session actually is,
+// the real hesitation (not price, but "will this change anything"), and
+// a direct close with the lower-commitment downsell to Consilium for
+// anyone not ready for 1:1. Cadence Day 1 / 3 / 6. No fake urgency.
+// ============================================================
+
+function coachingLink(stepLabel: string): string {
+  const params = new URLSearchParams({
+    utm_source: "email",
+    utm_medium: "email",
+    utm_campaign: "coaching-lead-nurture",
+    utm_content: stepLabel,
+  });
+  return `${baseUrl}/coaching?${params.toString()}`;
+}
+
+function coachingConsiliumLink(stepLabel: string): string {
+  const params = new URLSearchParams({
+    utm_source: "email",
+    utm_medium: "email",
+    utm_campaign: "coaching-lead-nurture",
+    utm_content: stepLabel,
+  });
+  return `${baseUrl}/consilium?${params.toString()}`;
+}
+
+function buildCoachingStep1(name: string): string {
+  const body = `
+    <p style="color: #f5f0ed; font-size: 16px; margin: 0 0 8px 0; line-height: 1.7;">
+      Hey ${esc(name)},
+    </p>
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 20px 0; font-size: 15px;">
+      You looked at coaching. You did not book. That is not a problem, most people need a beat. So let me tell you what a session actually is, then you can decide from the real thing instead of the idea of it.
+    </p>
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 20px 0; font-size: 15px;">
+      You bring me one situation. A person, a pattern, a decision you keep circling. I tell you what I see, without softening it. You leave with a move, an actual thing you do differently the next time you are in it. Not a mindset shift. Not homework. A move.
+    </p>
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 24px 0; font-size: 15px;">
+      It is not therapy and it is not validation. If you want someone to tell you that you were right, this is the wrong room. If you want to see the thing you keep missing, it is the right one.
+    </p>
+    ${goldButton("See the options", coachingLink("step1-book"))}
+  `;
+  return emailShell("What a session actually is", "Coaching, Day 1", body);
+}
+
+function buildCoachingStep2(name: string): string {
+  const body = `
+    <p style="color: #f5f0ed; font-size: 16px; margin: 0 0 8px 0; line-height: 1.7;">
+      ${esc(name)},
+    </p>
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 20px 0; font-size: 15px;">
+      The hesitation is almost never the price. It is the quieter question underneath it: <strong style="color: #d4af37;">will this actually change anything.</strong>
+    </p>
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 20px 0; font-size: 15px;">
+      Fair. So run the other number. How many more months do you spend in the same loop, paying for it in the currency that actually matters, your time, your certainty, the version of you that keeps getting blindsided. That cost is real too. It is just easier to ignore because no one sends you an invoice for it.
+    </p>
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 24px 0; font-size: 15px;">
+      If 1:1 is more than you want to commit to right now, start smaller. The Consilium is where the same way of thinking runs every day, for $29 a month. It is the cheapest way to find out whether this lands for you.
+    </p>
+    ${goldButton("Book a session", coachingLink("step2-book"))}
+    <p style="margin: 0; font-size: 14px;">
+      <a href="${coachingConsiliumLink("step2-consilium")}" style="color: #d4af37; text-decoration: none;">Or start with The Consilium, $29/mo &rarr;</a>
+    </p>
+  `;
+  return emailShell("The real question under the price", "Coaching, Day 3", body);
+}
+
+function buildCoachingStep3(name: string): string {
+  const body = `
+    <p style="color: #f5f0ed; font-size: 16px; margin: 0 0 8px 0; line-height: 1.7;">
+      ${esc(name)},
+    </p>
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 20px 0; font-size: 15px;">
+      Last one from me on this, then I leave you to it.
+    </p>
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 20px 0; font-size: 15px;">
+      I take eight clients a month. Not a marketing line, a real ceiling, because attention does not scale and I will not pretend it does. If there is one situation that is genuinely keeping you up, a single session is $297 and you walk out with a move on it.
+    </p>
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 24px 0; font-size: 15px;">
+      If now is not the moment, that is a real answer too. The door stays open, and the Consilium is there in the meantime. Either way, stop circling the same thing. Pick one.
+    </p>
+    ${goldButton("Book a session", coachingLink("step3-book"))}
+    <p style="margin: 0; font-size: 14px;">
+      <a href="${coachingConsiliumLink("step3-consilium")}" style="color: #d4af37; text-decoration: none;">Not yet? The Consilium, $29/mo &rarr;</a>
+    </p>
+  `;
+  return emailShell("Eight spots", "Coaching, Day 6", body);
+}
+
+export function buildCoachingLeadDrip(
+  recipientEmail: string,
+  recipientName: string,
+): EmailQueueEntry[] {
+  const now = new Date();
+
+  return [
+    {
+      recipientEmail,
+      recipientName,
+      sequence: "coaching-lead-nurture",
+      step: 1,
+      subject: "What a coaching session actually is",
+      htmlBody: withMarketingFooter(
+        buildCoachingStep1(recipientName),
+        recipientEmail,
+      ),
+      scheduledAt: addDays(now, 1),
+      metadata: { ...MARKETING_META },
+    },
+    {
+      recipientEmail,
+      recipientName,
+      sequence: "coaching-lead-nurture",
+      step: 2,
+      subject: "The real question under the price",
+      htmlBody: withMarketingFooter(
+        buildCoachingStep2(recipientName),
+        recipientEmail,
+      ),
+      scheduledAt: addDays(now, 3),
+      metadata: { ...MARKETING_META },
+    },
+    {
+      recipientEmail,
+      recipientName,
+      sequence: "coaching-lead-nurture",
+      step: 3,
+      subject: "Eight spots",
+      htmlBody: withMarketingFooter(
+        buildCoachingStep3(recipientName),
+        recipientEmail,
+      ),
+      scheduledAt: addDays(now, 6),
+      metadata: { ...MARKETING_META },
+    },
+  ];
+}
+
+// ============================================================
 // Book-buyer Consilium re-engagement push.
 //
 // Targets the cohort the audit on 2026-05-15 surfaced:
