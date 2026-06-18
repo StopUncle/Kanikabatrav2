@@ -228,7 +228,11 @@ export function generateBreadcrumbSchema(items: BreadcrumbItem[]) {
       "@type": "ListItem",
       position: index + 1,
       name: item.name,
-      item: item.url,
+      // Google: the last crumb is the current page and should omit `item`
+      // (Google falls back to the page URL). Linking the current page is a
+      // known SEO and UX mistake, so only earlier crumbs carry a link. This
+      // mirrors the Breadcrumbs component in components/RelatedPosts.tsx.
+      ...(index === items.length - 1 ? {} : { item: item.url }),
     })),
   };
 }
