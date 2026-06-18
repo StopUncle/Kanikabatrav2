@@ -6,7 +6,9 @@ import {
   QuizScores,
 } from "@/lib/quiz-data";
 
-export const runtime = "edge";
+// Node runtime (not edge) so the Prisma read works. Prisma Client does not
+// run on the edge runtime, which made this card 500 on every request.
+export const runtime = "nodejs";
 
 interface RouteParams {
   params: Promise<{ id: string }>;
@@ -109,7 +111,7 @@ export async function GET(_request: Request, { params }: RouteParams) {
                     color: type === primaryType ? "#d4af37" : "#a0a0a0",
                   }}
                 >
-                  {score}%
+                  {`${score}%`}
                 </div>
                 <div
                   style={{
@@ -132,7 +134,7 @@ export async function GET(_request: Request, { params }: RouteParams) {
               marginTop: "20px",
             }}
           >
-            kanikabatra.com/quiz
+            kanikarose.com/quiz
           </div>
         </div>
       </div>,

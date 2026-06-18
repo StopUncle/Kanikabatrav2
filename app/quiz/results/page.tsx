@@ -26,6 +26,7 @@ import {
   QUIZ_INFO,
 } from "@/lib/quiz-data";
 import RadarChart from "@/components/quiz/RadarChart";
+import ShareResultButton from "@/components/quiz/ShareResultButton";
 import SocialProofTickerClient from "@/components/consilium/SocialProofTickerClient";
 import { getAttributionForSubmit } from "@/lib/attribution";
 
@@ -365,6 +366,15 @@ export default function QuizResultsPage() {
                   </span>
                 </div>
               </div>
+
+              {apiData?.quizResultId && (
+                <div className="mt-6">
+                  <ShareResultButton
+                    resultId={apiData.quizResultId}
+                    typeName={primaryProfile.name}
+                  />
+                </div>
+              )}
             </m.div>
 
             {/* Locked Radar Chart Preview */}
@@ -704,6 +714,15 @@ export default function QuizResultsPage() {
                   {diagnosis?.clinicalLabel || "Clinical diagnosis"}
                 </p>
               </div>
+
+              {apiData?.quizResultId && (
+                <div className="mt-6">
+                  <ShareResultButton
+                    resultId={apiData.quizResultId}
+                    typeName={primaryProfile.name}
+                  />
+                </div>
+              )}
             </m.div>
 
             {/* Radar Chart */}
