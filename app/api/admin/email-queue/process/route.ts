@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { sendEmail } from "@/lib/email";
 import { requireAdminSession } from "@/lib/admin/auth";
 import { buildUnsubscribeUrl } from "@/lib/unsubscribe-token";
+import { instrumentMarketingHtml } from "@/lib/email-tracking";
 import crypto from "crypto";
 
 /**
@@ -218,10 +219,22 @@ export async function POST(request: NextRequest) {
           continue;
         }
 
+        // Inject open + click tracking on marketing rows only. Transactional
+        // rows (book delivery, coaching intake) are left untouched so a
+        // rewrite bug can never break a critical link.
+        const meta = (email.metadata as { isMarketing?: boolean } | null) ?? {};
+        const html = meta.isMarketing
+          ? instrumentMarketingHtml(email.htmlBody, {
+              email: email.recipientEmail,
+              sequence: email.sequence,
+              step: email.step,
+            })
+          : email.htmlBody;
+
         const ok = await sendEmail({
           to: email.recipientEmail,
           subject: email.subject,
-          html: email.htmlBody,
+          html,
           headers: preflight.headers,
         });
 
