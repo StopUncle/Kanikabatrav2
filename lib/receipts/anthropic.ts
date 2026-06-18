@@ -8,12 +8,28 @@
 
 import { getAnthropic } from "@/lib/anthropic";
 import { RECEIPTS_SYSTEM_PROMPT, buildUserMessage } from "./prompt";
+import { logger } from "@/lib/logger";
 
 const RECEIPTS_MODEL = "claude-sonnet-4-6-20250929";
-// Tier 0 of pricing for Sonnet 4.6 as of ship date. If the SKU changes,
-// these numbers need to be re-tuned. costMicros below assumes USD * 10000.
-const SONNET_INPUT_PER_M = 3_000_000; // micros per million input tokens
-const SONNET_OUTPUT_PER_M = 15_000_000; // micros per million output tokens
+
+// Per-model pricing in micros (USD millionths) per million tokens. Sonnet
+// drives the paid member feature ("the model is the moat"); Haiku drives the
+// free public lead magnet, where volume matters more than the last 5% of
+// nuance. Re-tune if the SKUs change. Unknown models fall back to Sonnet
+// pricing so a cost is never under-counted.
+const PRICING: Record<string, { inputPerM: number; outputPerM: number }> = {
+  "claude-sonnet-4-6-20250929": { inputPerM: 3_000_000, outputPerM: 15_000_000 },
+  "claude-haiku-4-5-20251001": { inputPerM: 1_000_000, outputPerM: 5_000_000 },
+};
+
+export interface CallReceiptsOptions {
+  /** Model id to call. Defaults to Sonnet (the paid member tier). The free
+   *  public route passes Haiku to bound cost at volume. */
+  model?: string;
+  /** System prompt override. Defaults to the member prompt. The public route
+   *  passes a hardened variant (never label a named real person). */
+  systemPrompt?: string;
+}
 
 export interface ReceiptsCallResult {
   response: string;
@@ -63,7 +79,10 @@ export async function callReceipts(
   rawInput: string,
   label?: string,
   images?: ReceiptImage[],
+  options?: CallReceiptsOptions,
 ): Promise<ReceiptsCallResult> {
+  const model = options?.model ?? RECEIPTS_MODEL;
+  const systemPrompt = options?.systemPrompt ?? RECEIPTS_SYSTEM_PROMPT;
   const trimmed = rawInput.trim();
   const imageList = images ?? [];
 
@@ -137,10 +156,10 @@ export async function callReceipts(
 
   const client = getAnthropic();
   const response = await client.messages.create({
-    model: RECEIPTS_MODEL,
+    model,
     max_tokens: 700,
     temperature: 0.5,
-    system: RECEIPTS_SYSTEM_PROMPT,
+    system: systemPrompt,
     messages: [
       {
         role: "user",
@@ -162,9 +181,14 @@ export async function callReceipts(
 
   const inputTokens = response.usage.input_tokens;
   const outputTokens = response.usage.output_tokens;
+  const pricing = PRICING[model];
+  if (!pricing) {
+    logger.warn("[receipts] no pricing for model, using Sonnet rate", { model });
+  }
+  const { inputPerM, outputPerM } = pricing ?? PRICING[RECEIPTS_MODEL];
   const costMicros = Math.round(
-    (inputTokens / 1_000_000) * SONNET_INPUT_PER_M +
-      (outputTokens / 1_000_000) * SONNET_OUTPUT_PER_M,
+    (inputTokens / 1_000_000) * inputPerM +
+      (outputTokens / 1_000_000) * outputPerM,
   );
 
   return {
@@ -172,6 +196,6 @@ export async function callReceipts(
     inputTokens,
     outputTokens,
     costMicros,
-    model: RECEIPTS_MODEL,
+    model,
   };
 }
