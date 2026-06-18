@@ -48,7 +48,8 @@ export function getPostSlugs(): string[] {
   return fs.readdirSync(postsDirectory).filter((file) => file.endsWith(".mdx"));
 }
 
-const DEFAULT_COVER_IMAGE = "/images/blog-default.jpg";
+const DEFAULT_COVER_IMAGE =
+  "/api/og?title=Kanika%20Batra&subtitle=The%20Psychology%20of%20Power";
 const DEFAULT_AUTHOR = "Kanika Batra";
 const DEFAULT_EXCERPT =
   "Explore dark psychology insights and strategic thinking from a diagnosed sociopath.";

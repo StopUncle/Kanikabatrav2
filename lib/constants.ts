@@ -282,7 +282,22 @@ export const VIRAL_TOPICS = [
   "The idealization phase and love bombing",
 ];
 
-export const FEATURED_VIDEOS = {
+export interface FeaturedVideo {
+  id: string;
+  title: string;
+  description: string;
+  views: string;
+  category: string;
+  // Optional fields are only populated when verified. duration and uploadDate
+  // are omitted rather than guessed, so the sitemap never emits fabricated data.
+  duration?: string;
+  uploadDate?: string;
+}
+
+export const FEATURED_VIDEOS: {
+  categories: { id: string; title: string; description: string }[];
+  videos: FeaturedVideo[];
+} = {
   categories: [
     {
       id: "understanding-aspd",
@@ -308,68 +323,76 @@ export const FEATURED_VIDEOS = {
   ],
   videos: [
     {
-      id: "R-SsbAUdgKk",
-      title: "It's Your Fault The Narcissist Cheated",
-      description: "Why you shouldn't blame yourself for getting manipulated",
-      views: "500K+",
+      id: "0LauT7jWlQg",
+      title: "Sociopath Reacts to Dr. Ramani",
+      description:
+        "A diagnosed sociopath responds to the internet's best-known narcissism expert.",
+      views: "380K",
       category: "manipulation",
-      duration: "12:34",
     },
     {
-      id: "interview-sociopath",
-      title: "Interview with a Sociopath",
-      description: "The viral video that started it all - 269K+ views",
-      views: "269K+",
+      id: "WMYnt78tmVU",
+      title: "Interview With a Sociopath: How It Relates to Me",
+      description: "The reaction video that broke her into the mainstream.",
+      views: "352K",
       category: "understanding-aspd",
-      duration: "15:00",
+      uploadDate: "2021-11-23",
     },
     {
-      id: "love-bombing",
-      title: "The Love Bombing Phase Explained",
-      description: "How we create obsession through calculated affection",
-      views: "1.2M+",
-      category: "dating-strategy",
-      duration: "10:45",
-    },
-    {
-      id: "spot-sociopath",
-      title: "How to Spot People Like Me",
-      description: "Warning signs you're dealing with a sociopath",
-      views: "800K+",
-      category: "understanding-aspd",
-      duration: "14:20",
-    },
-    {
-      id: "win-crush",
-      title: "Sociopathic Ways to Win Your Crush",
-      description: "Strategic attraction techniques that actually work",
-      views: "2.1M+",
-      category: "dating-strategy",
-      duration: "11:15",
-    },
-    {
-      id: "relationship-thoughts",
-      title: "What Sociopaths Think About YOU",
-      description: "Inside the mind of someone who sees you strategically",
-      views: "1.8M+",
+      id: "Zz5CX5q2osU",
+      title: "How to Control and Destroy a Narcissist",
+      description: "A diagnosed sociopath on out-maneuvering a narcissist.",
+      views: "324K",
       category: "manipulation",
-      duration: "13:00",
     },
     {
-      id: "work-pros-cons",
-      title: "Pros and Cons of Being a Sociopath at Work",
-      description: "How ASPD affects professional life and career success",
-      views: "600K+",
+      id: "4nufVvvtfs4",
+      title: "The Most Bizarre Thoughts I Have as a Sociopath",
+      description: "An unfiltered look inside an ASPD mind.",
+      views: "137K",
       category: "understanding-aspd",
-      duration: "16:30",
     },
     {
-      id: "dark-psychology-intro",
-      title: "What is Dark Psychology?",
-      description: "Embracing your shadow side for power and control",
-      views: "1.5M+",
+      id: "y_E96c1DGYg",
+      title: "A Sociopath's Secrets on Seduction",
+      description: "Strategic attraction from someone who feels none of it.",
+      views: "117K",
+      category: "dating-strategy",
+    },
+    {
+      id: "WihdqUhH-HQ",
+      title: "7 Reasons Sociopaths Hurt You",
+      description: "Storytime on why the damage happens, from the other side.",
+      views: "111K",
+      category: "dating-strategy",
+    },
+    {
+      id: "YZOOhB7rf4M",
+      title: "Sociopath Answers Unhinged Questions",
+      description: "The questions people only dare ask anonymously.",
+      views: "99K",
+      category: "understanding-aspd",
+    },
+    {
+      id: "PZLwUoy5-DA",
+      title: "How I Manipulate People",
+      description: "A diagnosed sociopath breaks down her own playbook.",
+      views: "96K",
       category: "dark-psychology",
-      duration: "12:00",
+    },
+    {
+      id: "RDUkXAzACYc",
+      title: "Low vs High Functioning Sociopaths",
+      description: "The difference between the two presentations of ASPD.",
+      views: "68K",
+      category: "understanding-aspd",
+    },
+    {
+      id: "FVHRb9aE7R4",
+      title: "How to Win Your Crush",
+      description: "Sociopathic attraction tactics that actually work.",
+      views: "49K",
+      category: "dating-strategy",
     },
   ],
 };
