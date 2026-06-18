@@ -14,6 +14,9 @@ export interface PostFrontmatter {
   title: string;
   excerpt: string;
   tldr?: string[];
+  // Short, standalone, quotable facts rendered as a "Key facts" block atop
+  // pillars. Engineered to be lifted verbatim by AI search and journalists.
+  keyFacts?: string[];
   publishedAt: string;
   updatedAt?: string;
   category: string;

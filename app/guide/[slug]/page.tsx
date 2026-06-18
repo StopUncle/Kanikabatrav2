@@ -6,6 +6,7 @@ import PostContent from "@/components/blog/PostContent";
 import GoDeeper from "@/components/blog/GoDeeper";
 import JsonLd from "@/components/JsonLd";
 import Header from "@/components/Header";
+import CrisisNote from "@/components/CrisisNote";
 import { YouTubeEmbed } from "@/components/YouTubeEmbed";
 import { getContextualLinks } from "@/lib/internal-links";
 import { generateBreadcrumbSchema } from "@/lib/schema";
@@ -214,6 +215,28 @@ export default async function GuidePage({ params }: PageProps) {
               </div>
             </header>
 
+            {pillar.frontmatter.keyFacts &&
+              pillar.frontmatter.keyFacts.length > 0 && (
+                <div className="mb-16 rounded-xl border border-accent-gold/20 bg-accent-gold/[0.04] p-6 sm:p-8">
+                  <h2 className="text-sm uppercase tracking-[0.2em] text-accent-gold mb-5">
+                    Key Facts
+                  </h2>
+                  <ul className="space-y-4">
+                    {pillar.frontmatter.keyFacts.map((fact, i) => (
+                      <li
+                        key={i}
+                        className="flex gap-3 text-text-light leading-relaxed"
+                      >
+                        <span className="text-accent-gold/60 shrink-0">
+                          &bull;
+                        </span>
+                        <span>{fact}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
             {pillar.frontmatter.youtubeId && (
               <div className="mb-16">
                 <YouTubeEmbed
@@ -230,6 +253,8 @@ export default async function GuidePage({ params }: PageProps) {
             <div className="mb-16">
               <PostContent source={pillar.content} slug={pillar.slug} />
             </div>
+
+            <CrisisNote />
 
             {/* Go Deeper: funnel into the relevant quizzes */}
             {contextualLinks.quizzes.length > 0 && (

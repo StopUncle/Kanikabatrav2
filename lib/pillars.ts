@@ -43,6 +43,9 @@ export function getPillarBySlug(slug: string): Pillar | null {
   const frontmatter: PostFrontmatter = {
     title: data.title || "Untitled Guide",
     excerpt: data.excerpt || "",
+    keyFacts: Array.isArray(data.keyFacts)
+      ? data.keyFacts.map(String)
+      : undefined,
     publishedAt: data.publishedAt || new Date().toISOString().split("T")[0],
     updatedAt: data.updatedAt,
     category: data.category || "Dark Psychology",
