@@ -72,6 +72,14 @@ const PILLAR_RULES: { test: RegExp; slug: string }[] = [
     slug: "attachment-styles-complete-guide",
   },
   {
+    // The two-factor / primary-secondary psychopathy model (Hare's PCL-R) gets
+    // its own hub, co-equal with the ASPD/sociopath guide below. Tokens are
+    // specific to the factor framework so this only claims posts actually about
+    // it, leaving general sociopath / psychopath posts on the ASPD hub.
+    test: /factor 1|factor 2|factor one|factor two|primary psychopath|secondary psychopath|two.?factor|pcl-r|psychopathy checklist/,
+    slug: "factor-1-vs-factor-2-psychopathy",
+  },
+  {
     test: /sociopath|\baspd\b|antisocial|psychopath/,
     slug: "aspd-sociopathy-complete-guide",
   },
