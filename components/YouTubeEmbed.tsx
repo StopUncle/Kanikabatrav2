@@ -18,11 +18,28 @@ interface YouTubeEmbedProps {
   duration?: string;
 }
 
+// Maps the requested quality to YouTube's actual thumbnail filename. The old
+// `${quality}default.jpg` scheme only produced a valid URL for "maxres"; every
+// other value 404'd. "hqdefault" is the one size that exists for every video,
+// so it doubles as the universal fallback.
+const THUMBNAIL_FILE: Record<
+  NonNullable<YouTubeEmbedProps["thumbnailQuality"]>,
+  string
+> = {
+  default: "default",
+  medium: "mqdefault",
+  high: "hqdefault",
+  standard: "sddefault",
+  maxres: "maxresdefault",
+};
+
 export function YouTubeEmbed({
   videoId,
   title = "YouTube video",
   description,
-  thumbnailQuality = "maxres",
+  // hqdefault exists for every video; maxresdefault 404s on many older uploads
+  // (which rendered as a broken thumbnail). Callers can still opt into "maxres".
+  thumbnailQuality = "high",
   privacyMode = true,
   autoplay = true,
   showSchema = true,
@@ -31,7 +48,18 @@ export function YouTubeEmbed({
 }: YouTubeEmbedProps) {
   const [isLoaded, setIsLoaded] = useState(false);
 
-  const thumbnailUrl = `https://img.youtube.com/vi/${videoId}/${thumbnailQuality}default.jpg`;
+  // Try the requested quality first, fall back to hqdefault (guaranteed to
+  // exist) if it 404s, so the thumbnail never renders broken.
+  const hqThumbnail = `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`;
+  const [thumbnailSrc, setThumbnailSrc] = useState(
+    `https://img.youtube.com/vi/${videoId}/${THUMBNAIL_FILE[thumbnailQuality]}.jpg`,
+  );
+  const handleThumbnailError = useCallback(() => {
+    setThumbnailSrc((current) =>
+      current === hqThumbnail ? current : hqThumbnail,
+    );
+  }, [hqThumbnail]);
+
   const embedDomain = privacyMode
     ? "www.youtube-nocookie.com"
     : "www.youtube.com";
@@ -47,7 +75,7 @@ export function YouTubeEmbed({
         "@type": "VideoObject",
         name: title,
         description: description || title,
-        thumbnailUrl: thumbnailUrl,
+        thumbnailUrl: hqThumbnail,
         uploadDate: uploadDate || new Date().toISOString(),
         duration: duration,
         contentUrl: `https://www.youtube.com/watch?v=${videoId}`,
@@ -76,7 +104,8 @@ export function YouTubeEmbed({
           aria-label={`Play video: ${title}`}
         >
           <Image
-            src={thumbnailUrl}
+            src={thumbnailSrc}
+            onError={handleThumbnailError}
             alt={`Thumbnail for ${title}`}
             fill
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 1200px"
