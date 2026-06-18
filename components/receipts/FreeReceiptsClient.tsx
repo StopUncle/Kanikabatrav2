@@ -375,18 +375,30 @@ export default function FreeReceiptsClient() {
         </m.div>
       )}
 
-      <div className="rounded-lg border border-gray-800 bg-deep-black/40 p-6 text-center">
-        <p className="text-text-gray text-sm font-light mb-3">
-          Want unlimited reads, the deeper version, and the room where the
-          patterns get named every day?
+      <div className="rounded-lg border border-accent-gold/30 bg-accent-gold/[0.04] p-6 text-center">
+        <p className="text-text-light text-base font-light mb-1">
+          Want to read your own patterns, not just theirs?
+        </p>
+        <p className="text-text-gray text-sm font-light mb-5 max-w-md mx-auto leading-relaxed">
+          The Dark Mirror Assessment maps where you land across the six axes of
+          dark psychology. Five minutes, free.
         </p>
         <Link
-          href="/consilium/apply"
-          className="inline-flex items-center gap-2 text-accent-gold text-xs uppercase tracking-[0.3em] hover:text-accent-gold/80 transition-colors"
+          href="/quiz"
+          className="inline-flex items-center gap-2 px-7 py-3 rounded-full bg-accent-gold text-deep-black font-medium tracking-wider uppercase text-xs hover:bg-accent-gold/90 transition-all"
         >
-          Join Consilium
+          Take the Dark Mirror quiz
           <ArrowRight size={14} />
         </Link>
+        <p className="text-text-gray/60 text-xs mt-5">
+          Or go deeper:{" "}
+          <Link
+            href="/consilium/apply"
+            className="text-accent-gold hover:text-accent-gold/80 transition-colors"
+          >
+            join Consilium &rarr;
+          </Link>
+        </p>
       </div>
     </div>
   );
