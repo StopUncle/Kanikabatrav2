@@ -90,6 +90,13 @@ export async function createCheckoutSession(options: {
   bundleAddOnPriceId?: string;
   /** Trial length when bundling — keeps the recurring price free during the bundle period. */
   trialPeriodDays?: number;
+  /**
+   * Coupon id to apply directly at checkout (e.g. the referee referral
+   * reward). When set, the promo-code box is disabled: Stripe forbids
+   * `discounts` and `allow_promotion_codes` together, and a checkout that
+   * already carries its discount does not need the box.
+   */
+  discountCouponId?: string;
 }) {
   const lineItems = [
     { price: options.priceId, quantity: 1 },
@@ -106,7 +113,9 @@ export async function createCheckoutSession(options: {
     cancel_url: options.cancelUrl,
     customer_email: options.customerEmail,
     metadata: options.metadata,
-    allow_promotion_codes: true,
+    ...(options.discountCouponId
+      ? { discounts: [{ coupon: options.discountCouponId }] }
+      : { allow_promotion_codes: true }),
     ...(options.mode === "subscription" && options.trialPeriodDays
       ? {
           subscription_data: {

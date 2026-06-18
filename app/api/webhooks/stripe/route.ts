@@ -993,6 +993,7 @@ export async function POST(request: NextRequest) {
                 referralCode,
                 refereeUserId: user.id,
                 refereeEmail: user.email,
+                refereeRewardId: session.metadata?.referee_reward,
               });
               if (!result.ok) {
                 console.log(

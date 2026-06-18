@@ -3,7 +3,8 @@ import { requireAuth } from "@/lib/auth/middleware";
 import { prisma } from "@/lib/prisma";
 import { createCheckoutSession, STRIPE_PRICES } from "@/lib/stripe";
 import { buildConsiliumAbandonmentDrip } from "@/lib/email-sequences";
-import { REFERRAL_COOKIE_NAME } from "@/lib/referrals";
+import { REFERRAL_COOKIE_NAME, resolveReferralCode } from "@/lib/referrals";
+import { ensureRefereeReferralCoupon } from "@/lib/stripe-credits";
 
 export async function POST(request: NextRequest) {
   return requireAuth(request, async (req, user) => {
@@ -79,6 +80,36 @@ export async function POST(request: NextRequest) {
     // recordReferralConversion.
     const referralCode = request.cookies.get(REFERRAL_COOKIE_NAME)?.value || "";
 
+    // Referee reward (two-sided referral). When the visitor arrived on a
+    // valid referral link, and the code is not their own, and they have not
+    // already converted a referral, give them 50% off the first month,
+    // applied directly at checkout. Monthly only: a "once" coupon on the
+    // annual plan would discount the whole year, not the first month.
+    // Non-fatal: any failure here just means no referee discount, the
+    // referrer is still credited on conversion.
+    let refereeCouponId: string | null = null;
+    if (referralCode && billingCycle === "monthly") {
+      try {
+        const referrer = await resolveReferralCode(referralCode);
+        const priorReferral = await prisma.referral.findUnique({
+          where: { refereeUserId: user.id },
+          select: { status: true },
+        });
+        if (
+          referrer &&
+          referrer.id !== user.id &&
+          priorReferral?.status !== "CONVERTED"
+        ) {
+          refereeCouponId = await ensureRefereeReferralCoupon();
+        }
+      } catch (err) {
+        console.error(
+          "[consilium/subscription/create] referee coupon setup failed:",
+          err,
+        );
+      }
+    }
+
     try {
       const session = await createCheckoutSession({
         priceId,
@@ -91,7 +122,9 @@ export async function POST(request: NextRequest) {
           product_key: productKey,
           billing_cycle: billingCycle,
           ...(referralCode ? { referral_code: referralCode } : {}),
+          ...(refereeCouponId ? { referee_reward: refereeCouponId } : {}),
         },
+        ...(refereeCouponId ? { discountCouponId: refereeCouponId } : {}),
       });
 
       if (!session.url) {

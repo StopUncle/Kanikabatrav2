@@ -26,8 +26,13 @@ export async function recordReferralConversion(args: {
   referralCode: string;
   refereeUserId: string;
   refereeEmail: string;
+  /** Coupon id of the referee's reward (50% off first month), applied at
+   *  checkout. Stored as an audit marker that the referee reward was
+   *  extended. Absent on legacy referrals or when the discount could not
+   *  be applied. */
+  refereeRewardId?: string | null;
 }): Promise<{ ok: boolean; reason?: string }> {
-  const { referralCode, refereeUserId, refereeEmail } = args;
+  const { referralCode, refereeUserId, refereeEmail, refereeRewardId } = args;
 
   try {
     const referrer = await resolveReferralCode(referralCode);
@@ -103,11 +108,13 @@ export async function recordReferralConversion(args: {
         refereeEmail: refereeEmail.toLowerCase(),
         status: "CONVERTED",
         rewardTxnId,
+        refereeRewardId: refereeRewardId ?? null,
         convertedAt: new Date(),
       },
       update: {
         status: "CONVERTED",
         rewardTxnId,
+        ...(refereeRewardId ? { refereeRewardId } : {}),
         convertedAt: new Date(),
       },
     });

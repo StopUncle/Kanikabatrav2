@@ -93,3 +93,49 @@ export const QUIZ_CREDIT = {
   amount: QUIZ_INFO.price,
   expiryDays: QUIZ_CREDIT_EXPIRY_DAYS,
 } as const;
+
+/* -------------------------------------------------------------------------- */
+/* Referral: referee reward (50% off first Consilium month)                   */
+/* -------------------------------------------------------------------------- */
+
+// The new joiner's reward in a two-sided referral: 50% off the first month,
+// applied as a "once" coupon directly at checkout. Stable ID so we look it
+// up (or lazily create it) on first use and never spin up duplicates across
+// deploys, mirroring the quiz-credit coupon above.
+const REFEREE_REFERRAL_COUPON_ID = "referral-referee-50pct";
+export const REFEREE_REFERRAL_PERCENT_OFF = 50;
+
+let cachedRefereeCouponId: string | null = null;
+
+/**
+ * Lazily ensure the master "referee reward" coupon exists on the connected
+ * Stripe account. Idempotent: returns the same coupon ID for the lifetime of
+ * the process, and retrieves an existing coupon by stable ID so fresh deploys
+ * do not recreate it. Duration "once" means it discounts only the first
+ * invoice, so on a monthly plan it is exactly one month at half price.
+ */
+export async function ensureRefereeReferralCoupon(): Promise<string> {
+  if (cachedRefereeCouponId) return cachedRefereeCouponId;
+
+  const stripe = getStripe();
+
+  try {
+    const existing = await stripe.coupons.retrieve(REFEREE_REFERRAL_COUPON_ID);
+    cachedRefereeCouponId = existing.id;
+    return existing.id;
+  } catch (err: unknown) {
+    const code = (err as { code?: string })?.code;
+    if (code !== "resource_missing") throw err;
+  }
+
+  const created = await stripe.coupons.create({
+    id: REFEREE_REFERRAL_COUPON_ID,
+    name: "Referral reward: 50% off first month",
+    percent_off: REFEREE_REFERRAL_PERCENT_OFF,
+    duration: "once",
+    metadata: { source: "referral-referee" },
+  });
+
+  cachedRefereeCouponId = created.id;
+  return created.id;
+}
