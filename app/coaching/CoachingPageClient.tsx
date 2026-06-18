@@ -6,6 +6,7 @@ import Link from "next/link";
 import BackgroundEffects from "@/components/BackgroundEffects";
 import Header from "@/components/Header";
 import StripeButton from "@/components/StripeButton";
+import CoachingLeadCapture from "@/components/coaching/CoachingLeadCapture";
 import { COACHING_PACKAGES } from "@/lib/constants";
 import { Check, ArrowRight, ChevronDown } from "lucide-react";
 
@@ -459,16 +460,27 @@ export default function CoachingPage() {
             </div>
           </m.div>
 
-          {/* ── INNER CIRCLE MENTION ── */}
-          <div className="mt-8 text-center">
-            <p className="text-text-gray text-sm mb-2">Not ready for 1:1?</p>
-            <Link
-              href="/consilium"
-              className="text-accent-gold hover:text-accent-gold/80 text-sm transition-colors"
-            >
-              Start with The Consilium, $29/mo →
-            </Link>
-          </div>
+          {/* ── LEAD CAPTURE + DOWNSELL ── */}
+          <m.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            viewport={{ once: true }}
+            className="mb-20 sm:mb-28"
+          >
+            <CoachingLeadCapture />
+            <div className="mt-6 text-center">
+              <p className="text-text-gray text-sm mb-2">
+                Want the lower-commitment way in?
+              </p>
+              <Link
+                href="/consilium"
+                className="text-accent-gold hover:text-accent-gold/80 text-sm transition-colors"
+              >
+                Start with The Consilium, $29/mo →
+              </Link>
+            </div>
+          </m.div>
 
           {/* ── SOCIAL PROOF ── */}
           <m.div

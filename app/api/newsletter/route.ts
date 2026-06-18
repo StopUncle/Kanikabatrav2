@@ -4,6 +4,7 @@ import { sendEmail } from "@/lib/email";
 import {
   buildNewsletterDrip,
   buildQuizResultDrip,
+  buildCoachingLeadDrip,
   QUIZ_DRIP_SLUGS,
 } from "@/lib/email-sequences";
 import { logger } from "@/lib/logger";
@@ -88,6 +89,19 @@ export async function POST(request: NextRequest) {
           if (!existingDrip) {
             await prisma.emailQueue.createMany({ data: entries });
           }
+        }
+      } else if (source === "coaching") {
+        // Coaching lead nurture. Fires for new AND returning subscribers,
+        // since a returning newsletter subscriber expressing coaching
+        // interest is a high-intent signal worth nurturing. Deduped on the
+        // sequence so it never double-enrolls.
+        const entries = buildCoachingLeadDrip(normalized, dripDisplayName);
+        const existingDrip = await prisma.emailQueue.findFirst({
+          where: { recipientEmail: normalized, sequence: entries[0]!.sequence },
+          select: { id: true },
+        });
+        if (!existingDrip) {
+          await prisma.emailQueue.createMany({ data: entries });
         }
       } else if (isNew) {
         const existingDrip = await prisma.emailQueue.findFirst({
