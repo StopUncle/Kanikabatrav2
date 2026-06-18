@@ -213,6 +213,89 @@ https://kanikarose.com/<path>?utm_source=<platform>&utm_medium=<how>&utm_campaig
 
 **Anonymous traffic:** GA4 (`G-DTNLQQ321K` in `app/layout.tsx`). DB attribution covers registered + quiz cohorts only.
 
+## 🔎 SEO, AI-SEO (GEO) & Content Architecture
+
+> Governing docs (gitignored, local-only, so the durable rules are duplicated here):
+> `docs/SEO-PLAYBOOK-KANIKAROSE.md`, `docs/AI-SEO-GEO-PLAN.md`,
+> `docs/INTEL/` (Operation Dark Mirror recon), `docs/INTEL/inputs/clinical-positioning.md`.
+
+**Content model = hub-and-spoke.** Pillars live in `content/pillars/*.mdx` (served at
+`/guide/[slug]`), posts in `content/posts/*.mdx` (served at `/blog/[slug]`). Both
+auto-discover via `getAllPillars()` / `getAllPosts()` (just add the file; it flows to
+the blog hub, sitemap, and `/guide` or `/blog` route with no registry edit). The
+**dark-psychology umbrella** pillar (`dark-psychology-beginners-guide`, promoted from a
+post, 301 from `/blog/...` in `next.config.js`) sits above all clusters. 9 pillars:
+aspd-sociopathy, factor-1-vs-factor-2-psychopathy, narcissism, dark-triad,
+manipulation-tactics, attachment-styles, cluster-b, high-value-woman, dark-psychology.
+
+**Internal routing = `lib/internal-links.ts`.** `PILLAR_RULES` + `QUIZ_RULES` are
+regex->slug, **most-specific-first, NO fallback** (a post matching no rule shows no
+pillar, which beats collapsing onto the wrong one). **Adding a cluster = add one rule**,
+keyed on specific tokens not generic comorbidity tags. The factor-1 rule sits ABOVE the
+aspd rule so factor-specific posts route to the Factor 1 pillar while general
+sociopath/psychopath posts stay on the ASPD hub.
+
+**Every post MUST have:** `tldr` (answer-first bullet array, renders atop the post AND
+feeds AI extraction), `faq` (frontmatter array + a visible `## Frequently Asked Questions`
+that mirrors it), a `coverImage` using the `/api/og?title=...&subtitle=...` generator
+(**NEVER `/images/blog/*` — those 404; `public/images/` only holds the logo**), and
+`author: "Kanika Batra"`. Optional `youtubeId` + `youtubeTitle` render a `YouTubeEmbed`
+(VideoObject schema). Real YouTube IDs + the video->post map are in
+`docs/INTEL/B/B1-youtube-to-blog-map.md`. Weekly `content-freshness` cron emails stale
+posts; bump `updatedAt` on substantive edits.
+
+**Schema (`lib/schema.ts`):** Article, FAQPage, Person/Organization (`sameAs`),
+VideoObject, BreadcrumbList. **Breadcrumb rule:** the last crumb (current page) must NOT
+be linked (omit `item`; Google uses the page URL). The `Breadcrumbs` component in
+`components/RelatedPosts.tsx` (used by posts) emits visible trail + matching schema and
+already does this; `generateBreadcrumbSchema` (used by guides/quizzes/manifesto) was
+fixed to match. `KANIKA_AUTHOR_REF` ties every article to her entity (E-E-A-T).
+
+**Psychopath / Factor 1 positioning (DECIDED: co-equal pillar, not a rebrand).** Keep all
+ranking "sociopath"/ASPD content; ADD psychopath/Factor 1 alongside. The book stays
+"Sociopathic Dating Bible"; quiz axes unchanged. **Clinical rules (hard, governed by
+`docs/INTEL/inputs/clinical-positioning.md`):** Kanika is diagnosed ASPD and CLINICALLY
+ASSESSED as Factor 1 psychopathy by her psychiatrist. NEVER write "identifies with" /
+"self-identifies as" (it is a clinician's assessment). Factor 1/2 = Hare's PCL-R, NOT the
+DSM; NEVER claim the DSM renamed sociopath to psychopath Factor 1/2 (DSM diagnosis = ASPD
++ a DSM-5 psychopathy specifier). Do NOT name Dr. Zen Zhang publicly until Sam/Kanika
+confirm. True-crime/celebrity analysis is OK for deceased convicted killers (Bundy,
+Dahmer); for living people, comment on patterns/behaviour, never assert a diagnosis.
+
+**AI-SEO / GEO (be cited by ChatGPT, Claude, Perplexity, Google AI Overviews).** Goal =
+**educational-authority citations, NOT crisis/treatment recommendations** (AI rightly
+routes crisis/help to professionals; do not chase that). AI crawlers are ALLOWED and
+verified reachable (GPTBot, OAI-SearchBot, ChatGPT-User, ClaudeBot, PerplexityBot,
+Google-Extended, CCBot all 200; robots.txt is a single `*` rule; no Cloudflare AI-block).
+Citation mechanics: be reachable (done), extractable (answer-first tldr/FAQ/definitions),
+a recognized entity (Wikidata + Person/sameAs), corroborated off-site (Reddit/Quora/press),
+and unique (her first-person diagnosed voice). Pending on-page wins: `/llms.txt`, "Key
+facts" blocks on pillars, crisis-resource notes (which RAISE citability). Full plan in
+`docs/AI-SEO-GEO-PLAN.md`.
+
+**Off-site / entity / press (Tier 4 #15, biggest GEO lever).** Canonical URL is
+**non-www `https://kanikarose.com`** (www 301s to it; give journalists the non-www form).
+Link targets: homepage or `/about` for profile pieces (entity), the matching `/guide/...`
+for topic pieces. Lead press outreach with NEW info (the Factor 1 reframe, the free
+Receipts tool, expert commentary, quiz data), not a bare link ask. The **`/manifesto`**
+page is a linkable-asset scaffold (PR #44, bracketed placeholders) **awaiting Kanika's real
+content — do NOT merge or add to sitemap/nav until she writes it.** Wikidata entity +
+press-backlink reclamation (LADbible/UNILAD/Newsweek covered her, linked nothing) are
+Sam/Kanika/PR tasks.
+
+**Sitemaps:** `https://kanikarose.com/sitemap.xml` (pages) + `/video-sitemap.xml` (now
+declared in robots.txt, real video IDs). Resubmit both in GSC after large content
+changes; request-index high-value new pages.
+
+**Operation Dark Mirror build phase (shipped to prod 2026-06-18):** Tier 0 (fixed 46
+broken OG covers + fake video data + sitemap), Tier 1 (Factor 1 pillar + true-crime lane
++ comparison harmonization), Tier 2 (free Receipts tool, quiz share card, two-sided
+referral — conversion lane), Tier 3 (coaching funnel, email open/click tracking), Tier 4
+(quiz front door, umbrella hub, 3 starved clusters de-starved, starved quizzes fed, HPD
+post). ~20 new posts + 2 new pillars. Remaining (not built): Tier 3 #11 product quick
+wins (blocked on assets: workbook PDF, Honeytrap manuscript+price, ASK voice-pack
+pricing), Tier 4 #13 certification tier + #15 off-site (Sam/PR).
+
 ## 🎨 Design System
 
 - **Logo:** `KBSpinLogo` (sm/md/lg/xl, optional spin animation).
