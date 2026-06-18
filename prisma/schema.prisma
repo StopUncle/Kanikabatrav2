@@ -1005,6 +1005,31 @@ model EmailQueue {
   @@index([sequence])
 }
 
+enum EmailEventType {
+  OPEN
+  CLICK
+}
+
+// Open + click tracking for marketing emails. Recorded by the pixel and
+// click-redirect endpoints (/api/email/open, /api/email/click), which the
+// queue processor injects into marketing rows before sending. Powers
+// open/click rates per sequence and engagement-based segmentation. Stores
+// the recipient email (the same PII the unsubscribe footer already embeds),
+// the sequence + step, and for clicks the destination URL.
+model EmailEvent {
+  id        String         @id @default(cuid())
+  email     String
+  sequence  String?
+  step      Int?
+  type      EmailEventType
+  url       String?        @db.Text
+  createdAt DateTime       @default(now())
+
+  @@index([email])
+  @@index([sequence, type])
+  @@index([type, createdAt])
+}
+
 // ========================================
 // AUTOMATED CONTENT SEEDING
 // ========================================
