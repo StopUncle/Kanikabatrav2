@@ -97,6 +97,15 @@ export default async function SharedReceiptPage({ params }: PageParams) {
               Get your own read
               <ArrowRight size={14} />
             </Link>
+            <p className="text-text-gray/60 text-xs mt-5">
+              Or map your own patterns:{" "}
+              <Link
+                href="/quiz"
+                className="text-accent-gold hover:text-accent-gold/80 transition-colors"
+              >
+                take the Dark Mirror quiz &rarr;
+              </Link>
+            </p>
           </div>
 
           <p className="text-text-gray/50 text-xs mt-10 leading-relaxed text-center max-w-xl mx-auto">
