@@ -59,9 +59,12 @@ const PILLAR_RULES: { test: RegExp; slug: string }[] = [
     slug: "high-value-woman-complete-guide",
   },
   {
-    // Distinctly-named dating tactics (offensive + defensive). Tokens are
-    // specific so this never steals narciss / sociopath posts above it.
-    test: /ghostlight|quiet.?dump|sledging|the rotation|doctrine of cold|beige protocol|breadcrumb|future.?fak/,
+    // Distinctly-named dating tactics (offensive + defensive) plus the core
+    // manipulation mechanism "intermittent reinforcement". Tokens are specific
+    // so this never steals narciss / sociopath posts above it (any post that
+    // also carries an intermittent-reinforcement tag is already claimed by the
+    // narcissism or dark-triad rule higher up).
+    test: /ghostlight|quiet.?dump|sledging|the rotation|doctrine of cold|beige protocol|breadcrumb|future.?fak|intermittent reinforcement/,
     slug: "manipulation-tactics-complete-guide",
   },
   {
