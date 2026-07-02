@@ -98,3 +98,49 @@ export async function isDailyMissionDoneToday(
     progress?.completedAt != null && progress.completedAt >= startOfUtcDay(now)
   );
 }
+
+export interface MissionCouncilToday {
+  scenarioId: string;
+  /** YYYY-MM-DD UTC the stats are for; lets clients confirm freshness. */
+  dateKey: string;
+  playedToday: number;
+  outcomes: { good: number; neutral: number; bad: number };
+}
+
+/**
+ * How the council played today's shared mission. Same "completed today"
+ * definition as isDailyMissionDoneToday (completedAt is sticky to first
+ * completion, so replayers of an old scenario don't count: consistent,
+ * slightly conservative). Bots are excluded: this is the one number that
+ * claims to be the council's real intelligence.
+ */
+export async function getMissionCouncilToday(
+  prisma: PrismaClient,
+  now: Date = new Date(),
+): Promise<MissionCouncilToday | null> {
+  const mission = getDailyMission(now);
+  if (!mission) return null;
+  const rows = await prisma.simulatorProgress.groupBy({
+    by: ["outcome"],
+    where: {
+      scenarioId: mission.scenarioId,
+      completedAt: { gte: startOfUtcDay(now) },
+      user: { isBot: false },
+    },
+    _count: { _all: true },
+  });
+  const outcomes = { good: 0, neutral: 0, bad: 0 };
+  let playedToday = 0;
+  for (const row of rows) {
+    playedToday += row._count._all;
+    if (row.outcome === "good") outcomes.good += row._count._all;
+    else if (row.outcome === "bad") outcomes.bad += row._count._all;
+    else outcomes.neutral += row._count._all;
+  }
+  return {
+    scenarioId: mission.scenarioId,
+    dateKey: mission.dateKey,
+    playedToday,
+    outcomes,
+  };
+}

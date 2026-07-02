@@ -15,6 +15,7 @@ import { getTodaysGeneratedDrop } from "@/lib/simulator/generated";
 import { readDailyStreak } from "@/lib/streak/daily";
 import {
   getDailyMission,
+  getMissionCouncilToday,
   isDailyMissionDoneToday,
 } from "@/lib/streak/daily-mission";
 import { utcDateKey } from "@/lib/tells/streak";
@@ -92,9 +93,10 @@ export default async function FeedPage({
   // Today's mission is a pure function of the UTC date — no query needed.
   const dailyMission = getDailyMission();
   // Tell streak, feed, mission-done, unified streak, and today's drop are
-  // mutually independent — run them in one parallel round-trip. The redirect
+  // mutually independent, so run them in one parallel round-trip. The redirect
   // guard above only depends on viewerRecord, which is already resolved.
-  const [tellStreak, rows, missionDone, dailyStreak, freshDrop] = await Promise.all([
+  const [tellStreak, rows, missionDone, dailyStreak, freshDrop, council] =
+    await Promise.all([
     getTellStreak(userId),
     prisma.feedPost.findMany({
       where: genderWhere,
@@ -124,6 +126,7 @@ export default async function FeedPage({
     isDailyMissionDoneToday(prisma, userId),
     readDailyStreak(prisma, userId),
     getTodaysGeneratedDrop(),
+    getMissionCouncilToday(prisma),
   ]);
   const today = utcDateKey();
   const doneToday = tellStreak?.lastTellDate === today;
@@ -230,6 +233,7 @@ export default async function FeedPage({
           atRisk={dailyStreak.isAtRisk}
           tellDoneToday={doneToday}
           freshDrop={freshDrop}
+          council={council}
         />
 
         <FirstSevenDays

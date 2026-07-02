@@ -1,10 +1,13 @@
 import Link from "next/link";
 import { Check, ArrowRight, Eye, Sparkles } from "lucide-react";
 import DailyMissionCard from "./DailyMissionCard";
-import type { DailyMission } from "@/lib/streak/daily-mission";
+import type {
+  DailyMission,
+  MissionCouncilToday,
+} from "@/lib/streak/daily-mission";
 
 /**
- * "Today at the Council" — the single front door for the daily loop at the
+ * "Today at the Council": the single front door for the daily loop at the
  * top of the feed. Composes the shared Daily Mission (the hero), the Daily
  * Tell, and a freshly published generated scenario (when there is one) so
  * a returning member sees everything today asks of them in one glance
@@ -21,6 +24,7 @@ interface Props {
   atRisk: boolean;
   tellDoneToday: boolean;
   freshDrop: { scenarioId: string; title: string; tagline: string } | null;
+  council: MissionCouncilToday | null;
 }
 
 function TodayRow({
@@ -74,6 +78,7 @@ export default function TodayBlock({
   atRisk,
   tellDoneToday,
   freshDrop,
+  council,
 }: Props) {
   return (
     <section aria-label="Today at the Council" className="mb-6">
@@ -87,6 +92,7 @@ export default function TodayBlock({
           doneToday={missionDone}
           streakCurrent={streakCurrent}
           atRisk={atRisk}
+          council={council}
         />
       )}
 

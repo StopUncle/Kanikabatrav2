@@ -471,7 +471,7 @@ export async function getGeneratedScenario(
 
 /**
  * The freshest generated scenario published in the last 24h, for the
- * feed's Today block. Null most hours of most days is fine — the block
+ * feed's Today block. Null most hours of most days is fine; the block
  * simply omits the row.
  */
 export async function getTodaysGeneratedDrop(): Promise<{
