@@ -7,11 +7,11 @@ import FeedList from "@/components/consilium/FeedList";
 import OnboardingModal from "@/components/consilium/OnboardingModal";
 import FirstMovesChecklist from "@/components/consilium/FirstMovesChecklist";
 import FirstSevenDays from "@/components/consilium/FirstSevenDays";
-import InstinctsFeedCard from "@/components/consilium/InstinctsFeedCard";
-import DailyMissionCard from "@/components/consilium/DailyMissionCard";
+import TodayBlock from "@/components/consilium/TodayBlock";
 import { MessageCircle, Mail } from "lucide-react";
 import { tierForMember } from "@/components/consilium/badge-tiers";
-import { getInstinctScore, getTellStreak } from "@/lib/tells/db";
+import { getTellStreak } from "@/lib/tells/db";
+import { getTodaysGeneratedDrop } from "@/lib/simulator/generated";
 import { readDailyStreak } from "@/lib/streak/daily";
 import {
   getDailyMission,
@@ -91,11 +91,10 @@ export default async function FeedPage({
   const PAGE_SIZE = 20;
   // Today's mission is a pure function of the UTC date — no query needed.
   const dailyMission = getDailyMission();
-  // Score, streak, feed, mission-done, and unified streak are mutually
-  // independent — run them in one parallel round-trip. The redirect guard
-  // above only depends on viewerRecord, which is already resolved.
-  const [instinctScore, tellStreak, rows, missionDone, dailyStreak] = await Promise.all([
-    getInstinctScore(userId),
+  // Tell streak, feed, mission-done, unified streak, and today's drop are
+  // mutually independent — run them in one parallel round-trip. The redirect
+  // guard above only depends on viewerRecord, which is already resolved.
+  const [tellStreak, rows, missionDone, dailyStreak, freshDrop] = await Promise.all([
     getTellStreak(userId),
     prisma.feedPost.findMany({
       where: genderWhere,
@@ -124,6 +123,7 @@ export default async function FeedPage({
     }),
     isDailyMissionDoneToday(prisma, userId),
     readDailyStreak(prisma, userId),
+    getTodaysGeneratedDrop(),
   ]);
   const today = utcDateKey();
   const doneToday = tellStreak?.lastTellDate === today;
@@ -223,16 +223,14 @@ export default async function FeedPage({
           </p>
         </div>
 
-        {dailyMission && (
-          <div className="mb-6">
-            <DailyMissionCard
-              mission={dailyMission}
-              doneToday={missionDone}
-              streakCurrent={dailyStreak.current}
-              atRisk={dailyStreak.isAtRisk}
-            />
-          </div>
-        )}
+        <TodayBlock
+          mission={dailyMission}
+          missionDone={missionDone}
+          streakCurrent={dailyStreak.current}
+          atRisk={dailyStreak.isAtRisk}
+          tellDoneToday={doneToday}
+          freshDrop={freshDrop}
+        />
 
         <FirstSevenDays
           activatedAt={
@@ -242,19 +240,6 @@ export default async function FeedPage({
           signals={firstMovesSignals}
         />
         <FirstMovesChecklist signals={firstMovesSignals} />
-
-        <div className="mb-6">
-          <InstinctsFeedCard
-            score={instinctScore}
-            streak={{
-              currentDays: tellStreak?.currentDays ?? 0,
-              longestDays: tellStreak?.longestDays ?? 0,
-              freezesAvail: tellStreak?.freezesAvail ?? 1,
-              lastTellDate: tellStreak?.lastTellDate ?? null,
-            }}
-            doneToday={doneToday}
-          />
-        </div>
 
         {formatted.length === 0 ? (
           <div className="text-center py-16">
