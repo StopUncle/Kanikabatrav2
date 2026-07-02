@@ -13,6 +13,7 @@ import { RotateCcw, ArrowRight, Award, BookOpen, Star } from "lucide-react";
 import type { Scene, Scenario, SimulatorState } from "@/lib/simulator/types";
 import { BADGE_BY_KEY } from "@/lib/simulator/badges";
 import { computeStars, masteryPercent } from "@/lib/simulator/stars";
+import CouncilTodayCard from "./CouncilTodayCard";
 
 /**
  * Count-up hook. Animates a number from 0 → target over ~1.2s using
@@ -98,6 +99,7 @@ function XpCounter({ target }: { target: number }) {
 }
 
 export default function EndingScreen({
+  scenario,
   scene,
   state,
   badgesEarned = [],
@@ -271,6 +273,12 @@ export default function EndingScreen({
             )}
           </m.div>
         )}
+
+        {/* "The Council today" compare card. Self-suppressing: only
+            renders when this scenario is today's shared Daily Mission
+            and enough members played. The everyone-gets-the-same-
+            mission design exists exactly for this moment. */}
+        <CouncilTodayCard scenarioId={scenario.id} />
 
         {/* Failure → blog post CTA.
             Only shown on defeat endings that declare a `failureBlogSlug`.

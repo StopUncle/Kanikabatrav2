@@ -1,6 +1,9 @@
 import Link from "next/link";
-import { Target, ArrowRight, Check, Clock, Flame } from "lucide-react";
-import type { DailyMission } from "@/lib/streak/daily-mission";
+import { Target, ArrowRight, Check, Clock, Flame, Users } from "lucide-react";
+import type {
+  DailyMission,
+  MissionCouncilToday,
+} from "@/lib/streak/daily-mission";
 
 /**
  * The "scenario of the day" card. Sits at the top of the feed as the daily
@@ -14,6 +17,9 @@ interface Props {
   streakCurrent: number;
   /** Last play was yesterday — one more day breaks the streak. */
   atRisk: boolean;
+  /** Today's council aggregate; social proof line suppressed below 3
+   *  players so a quiet day never reads as a dead room. */
+  council?: MissionCouncilToday | null;
 }
 
 export default function DailyMissionCard({
@@ -21,7 +27,15 @@ export default function DailyMissionCard({
   doneToday,
   streakCurrent,
   atRisk,
+  council = null,
 }: Props) {
+  const showCouncil =
+    council !== null &&
+    council.scenarioId === mission.scenarioId &&
+    council.playedToday >= 3;
+  const cleanExitPct = showCouncil
+    ? Math.round((council.outcomes.good / council.playedToday) * 100)
+    : 0;
   return (
     <div className="rounded-2xl border border-warm-gold/20 bg-gradient-to-br from-warm-gold/[0.06] to-transparent p-5">
       <div className="flex items-center justify-between mb-3">
@@ -71,6 +85,31 @@ export default function DailyMissionCard({
             : "Begin today’s mission"}
           <ArrowRight size={14} strokeWidth={1.6} />
         </Link>
+      )}
+
+      {showCouncil && (
+        <p className="mt-3 flex items-center gap-1.5 text-[11px] uppercase tracking-[0.15em] text-text-gray/60">
+          <Users size={11} strokeWidth={1.6} />
+          {doneToday ? (
+            <>
+              <span className="tabular-nums text-text-gray/80">
+                {council.playedToday}
+              </span>{" "}
+              played today ·{" "}
+              <span className="tabular-nums text-emerald-300/90">
+                {cleanExitPct}%
+              </span>{" "}
+              clean exits
+            </>
+          ) : (
+            <>
+              <span className="tabular-nums text-text-gray/80">
+                {council.playedToday}
+              </span>{" "}
+              members already played today
+            </>
+          )}
+        </p>
       )}
     </div>
   );

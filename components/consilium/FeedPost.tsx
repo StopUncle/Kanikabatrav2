@@ -19,6 +19,8 @@ import remarkGfm from "remark-gfm";
 import VoiceNotePlayer from "./VoiceNotePlayer";
 import VideoPlayer from "./VideoPlayer";
 import MemberBadge from "./MemberBadge";
+import FeedPollCard from "./FeedPollCard";
+import type { FormattedPoll } from "@/lib/community/poll-format";
 
 interface FeedPostAuthor {
   id: string;
@@ -44,6 +46,8 @@ export interface FeedPostData {
   isLiked: boolean;
   createdAt: string;
   author: FeedPostAuthor | null;
+  /** One-tap poll (currently attached to daily discussion prompts). */
+  poll?: FormattedPoll | null;
 }
 
 interface FeedPostProps {
@@ -345,6 +349,12 @@ export default function FeedPost({ post, isDetail = false, isNew = false }: Feed
           </Link>
         )}
       </div>
+      )}
+
+      {!isCollapsed && post.poll && (
+        <div className="mb-4 -mt-1">
+          <FeedPollCard postId={post.id} poll={post.poll} />
+        </div>
       )}
 
       {!isCollapsed && post.type === "VOICE_NOTE" && post.voiceNoteUrl && (
