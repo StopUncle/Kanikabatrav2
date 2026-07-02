@@ -46,7 +46,12 @@ export interface NavSection {
   readonly items: readonly NavItem[];
 }
 
-const FEED: NavItem = { href: "/consilium/feed", label: "Feed", icon: Scroll };
+const FEED: NavItem = {
+  href: "/consilium/feed",
+  label: "Feed",
+  icon: Scroll,
+  matchPrefix: "/consilium/feed",
+};
 const SIMULATOR: NavItem = {
   href: "/consilium/simulator",
   label: "Simulator",
