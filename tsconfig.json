@@ -25,6 +25,8 @@
   "include": ["**/*.ts", "**/*.tsx", "next-env.d.ts", ".next/types/**/*.ts"],
   "exclude": [
     "node_modules",
+    "dark-mirror-app",
+    "marketing",
     "scripts/ad-campaign-analysis.ts",
     "scripts/ad-deep-dive.ts"
   ]

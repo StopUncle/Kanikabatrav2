@@ -121,12 +121,12 @@ Files at `private/books/EVENBETTERBOOK/*` (main) and `private/books/Addendums/*`
 
 Legacy PENDING / APPROVED rows survive in the DB but are not produced by any current code path. `lib/community/membership.ts` redirects them to `/consilium`.
 
-**What's inside:**
-- **Feed** (`/inner-circle/feed`): Kanika posts + cron-driven daily insights / discussion prompts. Members comment + react, cannot create top-level posts.
-- **Voice Notes** (`/inner-circle/voice-notes`): Admin-only uploads.
-- **Classroom** (`/inner-circle/classroom`): Courses → Modules → Lessons → CourseEnrollment → LessonProgress.
-- **Forum** (`/community/forum/*`): Member-authored threads.
-- **Chat** (`/community/chat`): Pusher-backed rooms with `accessTier` gating.
+**What's inside** (all member surfaces live under `/consilium/*`; **nav source of truth is `lib/consilium/nav.ts`** — both `InnerCircleSidebar` and `MemberPillNav` render from it; adding a surface = add it to one section there):
+- **Feed** (`/consilium/feed`): Kanika posts + cron-driven daily insights / discussion prompts. Members comment + react (markdown renders via react-markdown, cursor pagination), cannot create top-level posts.
+- **Simulator** (`/consilium/simulator`): the engagement engine — scenario runs, XP, streaks, leaderboard, plus Adventures (multi-chapter arcs), The Lab (freeform AI roleplay), Games (Speed Drill), Instincts/Tells, daily generated scenarios.
+- **Receipts** (`/consilium/receipts`): AI message analysis, member edition.
+- **Library surfaces:** The Book, Videos, Voice Notes (admin-only uploads), Previews.
+- **Dormant, hidden AND redirected** (2026-04-30 audit; pages 302 to feed since 2026-07-02, APIs/schema intact): Forum, Chat, Classroom.
 - **Member-exclusive book pricing** ($9.99 for active members, $24.99 standalone). The Sociopathic Dating Bible is NOT bundled into the $29/mo Consilium; the only bundles that include the book are the one-time `BOOK_CONSILIUM_1MO` ($39, 30 days access) and `BOOK_CONSILIUM_3MO` ($79, 90 days access) SKUs sold from the book page.
 
 **Daily auto-content:** 60 psychology cards + 28 discussion prompts + 15 book chapter cards + 6 viral quote prompts (seeded 2026-04-24 to prod, 109 rows total via `scripts/seed-insights.ts`, idempotent). Crons at `/api/cron/daily-insight` (09:00 UTC) and `/api/cron/discussion-prompt` (10:00 UTC) create FeedPosts. Pool auto-resets when exhausted.
@@ -154,7 +154,7 @@ To raise daily cap: `UPDATE "MemberQuestionSettings" SET "dailyCap" = 3`.
 - **Categories:** `questionAnswered`, `voiceNote`, `forumReply`, `mention`, `broadcast`. All default-on except `broadcast` (opt-in only).
 - **API:** `/api/push/{subscribe,unsubscribe,preferences}`.
 - **Client:** `components/pwa/{ServiceWorkerRegister,InstallPrompt,NotificationPrompt}.tsx`, mounted member-side only.
-- **Wired sender:** `lib/questions/notify-asker.ts` (questionAnswered). Others not yet wired: voiceNote, forumReply, mention, broadcast.
+- **Wired senders** (verified 2026-07-02): `lib/questions/notify-asker.ts`, `lib/messages/notify.ts`, `lib/tells/leagues/resolve.ts`, feed post + comment routes, `daily-streak-nudge` and `daily-tell-push` crons.
 - **Schema:** `PushSubscription` (endpoint UNIQUE) + `User.pushPreferences Json?`.
 - **Deps:** `web-push@3.6.7`.
 
@@ -326,14 +326,12 @@ pricing), Tier 4 #13 certification tier + #15 off-site (Sam/PR).
 - [ ] **Token refresh race** in `components/dashboard/DashboardClient.tsx:112-131` — concurrent 401s spawn multiple `/api/auth/refresh`. Add singleton refresh promise.
 - [ ] **Password reset tokens** never invalidated; replayable until JWT expiry. Add single-use tracking.
 - [ ] **Forgot-password timing leak** — make timing-equal between known/unknown emails.
-- [ ] **Markdown not rendered** in feed posts. Use `react-markdown`.
-- [ ] **Feed pagination missing** — `findMany({ take: 20 })` no cursor. Posts #21+ invisible.
 - [ ] **Email template HTML escaping** — sanitize user-supplied strings.
 - [ ] **Rate limiting** — none on `/api/auth/login`, `/api/auth/forgot-password`, `/api/admin/auth`, `/api/inner-circle/feed/[postId]/comments`. (Register IS rate-limited.)
 
 ### Engagement (surfaced 2026-04-25)
-- [ ] **Feed 4% lifetime participation** (1 of 25 active members has commented). Seed Kanika's first comment on each prompt to remove "who goes first" friction.
-- [ ] **Forum + Chat + Classroom dormant** — 0 posts/messages/enrollments in 7d. Either light a fire under one or hide them. Empty rooms erode premium feel.
+- [ ] **Feed participation still low** (4% lifetime comment rate as of the April audit; 2026-05-29 pulse: 58 active human members, only 15 seen in 7d — dormancy, not deadness). Seed Kanika's first comment on each prompt to remove "who goes first" friction.
+- [x] **Forum + Chat + Classroom dormant** — hidden from nav 2026-04-30, pages redirect to feed since 2026-07-02. Revive only with real content.
 - [ ] **Gift conversion unmeasured** — 14 of 25 active memberships are gifts. Re-run `scripts/engagement-deep-dive.ts` once first batch hits `expiresAt`.
 
 ### Nice-to-have

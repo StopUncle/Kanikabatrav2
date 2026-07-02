@@ -3,21 +3,9 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef } from "react";
-import {
-  Scroll,
-  Film,
-  Trophy,
-  Award,
-  AudioLines,
-  Video,
-  Newspaper,
-  Gamepad2,
-  Receipt,
-  FlaskConical,
-  type LucideIcon,
-} from "lucide-react";
 import AskKanikaPill from "./AskKanikaPill";
 import MessagesPill from "./MessagesPill";
+import { PILL_ITEMS, activeNavHref } from "@/lib/consilium/nav";
 
 /**
  * Member-area secondary nav. Sits at the top of <main> in the
@@ -39,49 +27,9 @@ import MessagesPill from "./MessagesPill";
  *     Should feel like quick navigation, not a second sales row.
  */
 
-type PillItem = {
-  href: string;
-  label: string;
-  icon: LucideIcon;
-  /** When provided, used as a prefix match for the active state, useful
-   *  for nested routes like simulator/[scenarioId] still highlighting
-   *  the Simulator pill. */
-  matchPrefix?: string;
-  /** Optional key the parent uses to attach a live count badge to this
-   *  pill. Currently only "feed" is wired (online count), kept generic
-   *  so we can light up Forum/Chat with "N unread" later without
-   *  another API surface. */
-  countKey?: "feed";
-};
-
-// Classroom pill removed 2026-04-30: zero enrollments per the
-// multimillion-roadmap audit (research/multimillion-roadmap/01-current-state-audit.md
-// section 3). Empty surfaces erode the premium feel of the live ones; the
-// route still exists for revival but is hidden from member nav until the
-// certification curriculum (Phase 3-4) gives it real content.
-// Instincts pill demoted from the top strip 2026-05-29: Tells/Instincts
-// is cooling (≈20 responses / 7d) while the Simulator carries engagement
-// (271 runs / 30d). The top strip is for the surfaces members actually
-// return to; Instincts stays reachable from the sidebar, folded under the
-// Simulator. To revive, re-add the pill with icon Target (and its import).
-const PILLS: PillItem[] = [
-  { href: "/consilium/feed", label: "Feed", icon: Scroll, matchPrefix: "/consilium/feed", countKey: "feed" },
-  { href: "/consilium/simulator", label: "Simulator", icon: Film, matchPrefix: "/consilium/simulator" },
-  { href: "/consilium/lab", label: "The Lab", icon: FlaskConical, matchPrefix: "/consilium/lab" },
-  { href: "/consilium/games", label: "Games", icon: Gamepad2, matchPrefix: "/consilium/games" },
-  // Receipts was fully built but invisible in the member top nav, so it sat
-  // out of the daily loop. Surface it here.
-  { href: "/consilium/receipts", label: "Receipts", icon: Receipt, matchPrefix: "/consilium/receipts" },
-  {
-    href: "/consilium/simulator/leaderboard",
-    label: "Leaderboard",
-    icon: Trophy,
-  },
-  { href: "/consilium/badges", label: "Badges", icon: Award, matchPrefix: "/consilium/badges" },
-  { href: "/consilium/videos", label: "Videos", icon: Video, matchPrefix: "/consilium/videos" },
-  { href: "/consilium/voice-notes", label: "Voice Notes", icon: AudioLines, matchPrefix: "/consilium/voice-notes" },
-  { href: "/blog", label: "Blog", icon: Newspaper, matchPrefix: "/blog" },
-];
+// Pill contents live in lib/consilium/nav.ts (PILL_ITEMS), shared with
+// InnerCircleSidebar so the two navs can't drift. The strip is the daily
+// loop only; everything else is reachable from the sectioned sidebar.
 
 interface Props {
   /** Members active in the last 5 minutes. Surfaced as a pulsing dot +
@@ -117,21 +65,9 @@ export default function MemberPillNav({ onlineCount }: Props) {
     return () => el.removeEventListener("wheel", handler);
   }, []);
 
-  // Determine the active pill. Leaderboard is a special case, it's nested
-  // under /consilium/simulator/leaderboard, but should NOT light up the
-  // Simulator pill. So we check leaderboard FIRST (exact) before the
-  // simulator prefix match wins.
-  const activeHref = (() => {
-    if (pathname === "/consilium/simulator/leaderboard")
-      return "/consilium/simulator/leaderboard";
-    for (const pill of PILLS) {
-      if (pill.href === "/consilium/simulator/leaderboard") continue;
-      if (pathname === pill.href) return pill.href;
-      if (pill.matchPrefix && pathname.startsWith(pill.matchPrefix))
-        return pill.href;
-    }
-    return null;
-  })();
+  // Longest-prefix matching (in activeNavHref) keeps Leaderboard lit on
+  // /consilium/simulator/leaderboard instead of its Simulator parent.
+  const activeHref = activeNavHref(pathname, PILL_ITEMS);
 
   return (
     <nav
@@ -189,11 +125,11 @@ export default function MemberPillNav({ onlineCount }: Props) {
           {/* Messages from Kanika. Self-hides until she opens a thread, so it
               only appears for members she's actually written to. */}
           <MessagesPill />
-          {PILLS.map((pill, index) => {
+          {PILL_ITEMS.map((pill, index) => {
             const isActive = activeHref === pill.href;
             const Icon = pill.icon;
             const showOnlinePip =
-              pill.countKey === "feed" &&
+              pill.href === "/consilium/feed" &&
               typeof onlineCount === "number" &&
               onlineCount >= 1;
             return (
@@ -207,7 +143,7 @@ export default function MemberPillNav({ onlineCount }: Props) {
                 className={`group shrink-0 snap-start inline-flex items-center gap-1.5 px-3.5 py-2 rounded-full border text-[11px] tracking-[0.18em] uppercase transition-all duration-200 ${
                   index === 0 ? "ml-1 lg:ml-0" : ""
                 } ${
-                  index === PILLS.length - 1 ? "mr-3 lg:mr-0" : ""
+                  index === PILL_ITEMS.length - 1 ? "mr-3 lg:mr-0" : ""
                 } ${
                   isActive
                     ? "border-warm-gold/60 bg-warm-gold/10 text-warm-gold shadow-[0_0_16px_-6px_rgba(212,175,55,0.4)]"
