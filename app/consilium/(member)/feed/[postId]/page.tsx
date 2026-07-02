@@ -8,6 +8,7 @@ import FeedPost from "@/components/consilium/FeedPost";
 import FeedCommentSection from "@/components/consilium/FeedCommentSection";
 import { ArrowLeft } from "lucide-react";
 import { tierForMember } from "@/components/consilium/badge-tiers";
+import { formatPoll, pollInclude } from "@/lib/community/poll-format";
 
 export async function generateMetadata({ params }: { params: Promise<{ postId: string }> }) {
   const { postId } = await params;
@@ -49,6 +50,7 @@ export default async function PostDetailPage({ params }: { params: Promise<{ pos
           likes: true,
         },
       },
+      poll: pollInclude,
     },
   });
 
@@ -71,6 +73,7 @@ export default async function PostDetailPage({ params }: { params: Promise<{ pos
     commentCount: post._count.comments,
     isLiked: post.likes.length > 0,
     createdAt: post.createdAt.toISOString(),
+    poll: formatPoll(post.poll, userId),
     author: post.author
       ? {
           id: post.author.id,

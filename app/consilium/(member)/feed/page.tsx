@@ -12,6 +12,7 @@ import { MessageCircle, Mail } from "lucide-react";
 import { tierForMember } from "@/components/consilium/badge-tiers";
 import { getTellStreak } from "@/lib/tells/db";
 import { getTodaysGeneratedDrop } from "@/lib/simulator/generated";
+import { formatPoll, pollInclude } from "@/lib/community/poll-format";
 import { readDailyStreak } from "@/lib/streak/daily";
 import {
   getDailyMission,
@@ -121,6 +122,7 @@ export default async function FeedPage({
           where: { userId },
           select: { id: true },
         },
+        poll: pollInclude,
       },
     }),
     isDailyMissionDoneToday(prisma, userId),
@@ -165,6 +167,7 @@ export default async function FeedPage({
     commentCount: post._count.comments,
     isLiked: post.likes.length > 0,
     createdAt: post.createdAt.toISOString(),
+    poll: formatPoll(post.poll, userId),
     author: post.author
       ? {
           id: post.author.id,

@@ -54,6 +54,7 @@ model User {
   feedPosts                 FeedPost[]
   feedComments              FeedComment[]
   feedPostLikes             FeedPostLike[]
+  feedPollVotes             FeedPostPollVote[]
   commentLikes              CommentLike[]
   points                    Int                  @default(0)
   level                     Int                  @default(1)
@@ -859,11 +860,42 @@ model FeedPost {
   likes                FeedPostLike[]
   botActions           BotAction[]      @relation("BotActionsOnPost")
   answersQuestions     MemberQuestion[] @relation("QuestionAnswers")
+  poll                 FeedPostPoll?
 
   @@index([authorId])
   @@index([type])
   @@index([createdAt])
   @@index([isPinned])
+}
+
+// One-tap poll attached to a feed post (currently the daily discussion
+// prompts, options keyed by theme in lib/community/prompt-polls.ts).
+// The tap is the participation floor: members who'd never type a comment
+// still cast a stance and see how the council splits.
+model FeedPostPoll {
+  id        String             @id @default(cuid())
+  postId    String             @unique
+  post      FeedPost           @relation(fields: [postId], references: [id], onDelete: Cascade)
+  question  String
+  options   String[]
+  createdAt DateTime           @default(now())
+  votes     FeedPostPollVote[]
+}
+
+// One vote per (poll, user); re-voting updates the existing row, same
+// shape as CrowdVote.
+model FeedPostPollVote {
+  id          String       @id @default(cuid())
+  pollId      String
+  poll        FeedPostPoll @relation(fields: [pollId], references: [id], onDelete: Cascade)
+  userId      String
+  user        User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  optionIndex Int
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  @@unique([pollId, userId])
+  @@index([pollId])
 }
 
 // Ask Kanika — members submit one question per rolling 24h. Other

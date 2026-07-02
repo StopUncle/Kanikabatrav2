@@ -3,6 +3,7 @@ import { verifyCronSecret } from "@/lib/cron-auth";
 import { prisma } from "@/lib/prisma";
 import { sendEmail } from "@/lib/email";
 import { logger } from "@/lib/logger";
+import { pollForTheme } from "@/lib/community/prompt-polls";
 
 export async function POST(request: NextRequest) {
   if (!verifyCronSecret(request)) {
@@ -99,6 +100,26 @@ export async function POST(request: NextRequest) {
       where: { id: prompt.id },
       data: { isUsed: true, postedAt: now },
     });
+
+    // Attach the one-tap poll. Non-fatal: a prompt without a poll is
+    // still a prompt; a failed poll create must not kill the post.
+    const poll = pollForTheme(prompt.theme);
+    if (poll) {
+      try {
+        await prisma.feedPostPoll.create({
+          data: {
+            postId: post.id,
+            question: poll.question,
+            options: poll.options,
+          },
+        });
+      } catch (err) {
+        logger.error("[cron discussion-prompt] poll create failed", err as Error, {
+          postId: post.id,
+          theme: prompt.theme,
+        });
+      }
+    }
 
     // Fire-and-forget bot engagement (Project B).
     import("@/lib/bots/scheduler")

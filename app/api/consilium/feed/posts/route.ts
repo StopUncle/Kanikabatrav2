@@ -10,6 +10,7 @@ import {
 import { prisma } from "@/lib/prisma";
 import { memberSafeName } from "@/lib/community/privacy";
 import { tierForMember } from "@/components/consilium/badge-tiers";
+import { formatPoll, pollInclude } from "@/lib/community/poll-format";
 import { z } from "zod";
 import { logger } from "@/lib/logger";
 import { sendPushToUsers, type PushCategory } from "@/lib/push";
@@ -94,6 +95,7 @@ export async function GET(request: NextRequest) {
         where: { userId },
         select: { id: true },
       },
+      poll: pollInclude,
     },
   });
 
@@ -130,6 +132,7 @@ export async function GET(request: NextRequest) {
     commentCount: post._count.comments,
     isLiked: post.likes.length > 0,
     createdAt: post.createdAt.toISOString(),
+    poll: formatPoll(post.poll, userId),
     author: post.author
       ? {
           id: post.author.id,
