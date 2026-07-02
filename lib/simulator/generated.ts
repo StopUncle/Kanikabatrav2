@@ -469,6 +469,24 @@ export async function getGeneratedScenario(
   return row.json as unknown as Scenario;
 }
 
+/**
+ * The freshest generated scenario published in the last 24h, for the
+ * feed's Today block. Null most hours of most days is fine — the block
+ * simply omits the row.
+ */
+export async function getTodaysGeneratedDrop(): Promise<{
+  scenarioId: string;
+  title: string;
+  tagline: string;
+} | null> {
+  const cutoff = new Date(Date.now() - 24 * 60 * 60 * 1000);
+  return prisma.generatedScenario.findFirst({
+    where: { status: "PUBLISHED", publishedAt: { gte: cutoff } },
+    orderBy: { publishedAt: "desc" },
+    select: { scenarioId: true, title: true, tagline: true },
+  });
+}
+
 export async function listPublishedGenerated(): Promise<
   { scenarioId: string; title: string; tagline: string; publishedAt: Date | null }[]
 > {

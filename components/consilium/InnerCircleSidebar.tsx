@@ -4,18 +4,11 @@ import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import {
-  Scroll,
-  AudioLines,
   Menu,
   X,
   ArrowLeft,
   Home,
   UserCircle2,
-  Award,
-  Eye,
-  Clock,
-  Film,
-  BookOpen,
   Heart,
   MessageCircle,
   Sparkles,
@@ -23,37 +16,17 @@ import {
   UserPlus,
   LogOut,
   Loader2,
-  Target,
-  ScrollText,
   type LucideIcon,
 } from "lucide-react";
 import ConsiliumSeal from "@/components/ConsiliumSeal";
 import MemberBadge, { getBadge } from "@/components/consilium/MemberBadge";
 import type { ActivityItem, ActivityKind } from "@/lib/community/activity";
+import { NAV_SECTIONS, activeNavHref } from "@/lib/consilium/nav";
 
-// Classroom hidden 2026-04-30 per multimillion-roadmap audit (zero
-// enrollments). Routes still exist; entry restored once certification
-// curriculum lands (Phase 3-4). Forum + Chat sections previously rendered
-// below were removed in the same pass: 0 forum posts, 0 chat messages
-// across 7d / nearly all-time, empty surfaces erode the premium feel of
-// the live ones. Their data-fetch effect was removed too. To revive,
-// `git log` this file and put back the ForumCategory / ChatRoom types,
-// the useEffect at line ~140 that called /api/community/categories +
-// /api/community/chat/rooms, and the JSX blocks they fed.
-// Instincts demoted below Simulator 2026-05-29: Tells/Instincts is cooling
-// while the Simulator carries engagement, so it's folded into the
-// Simulator's orbit rather than holding the #2 slot.
-const MAIN_NAV = [
-  { href: "/consilium/feed", label: "Feed", icon: Scroll },
-  { href: "/consilium/receipts", label: "Receipts", icon: ScrollText },
-  { href: "/consilium/voice-notes", label: "Voice Notes", icon: AudioLines },
-  { href: "/consilium/previews", label: "Previews", icon: Clock },
-  { href: "/consilium/simulator", label: "Simulator", icon: Film },
-  { href: "/consilium/instincts/today", label: "Instincts", icon: Target },
-  { href: "/consilium/book", label: "The Book", icon: BookOpen },
-  { href: "/consilium/badges", label: "Badges", icon: Award },
-  { href: "/consilium/quiz", label: "Dark Mirror", icon: Eye },
-];
+// Nav structure lives in lib/consilium/nav.ts (shared with MemberPillNav).
+// Forum, Chat and Classroom stay out per the 2026-04-30 multimillion-
+// roadmap audit; their routes redirect to the feed until revival.
+const ALL_NAV_ITEMS = NAV_SECTIONS.flatMap((section) => section.items);
 
 const ACTIVITY_ICON: Record<ActivityKind, LucideIcon> = {
   comment: MessageCircle,
@@ -142,10 +115,7 @@ export default function InnerCircleSidebar({
     };
   }, [mobileOpen]);
 
-  const isActive = (href: string) => {
-    if (href === "/consilium/feed") return pathname === "/consilium/feed";
-    return pathname.startsWith(href);
-  };
+  const activeHref = activeNavHref(pathname, ALL_NAV_ITEMS);
 
   async function handleLogout() {
     setLoggingOut(true);
@@ -258,33 +228,30 @@ export default function InnerCircleSidebar({
 
       {/* Main sections */}
       <nav className="flex-1 py-4 overflow-y-auto">
-        <div className="px-3 mb-1">
-          <p className="px-2 text-[10px] font-semibold text-text-gray/50 uppercase tracking-[0.15em] mb-2">
-            Chambers
-          </p>
-        </div>
-        {MAIN_NAV.map(({ href, label, icon: Icon }) => (
-          <Link
-            key={href}
-            href={href}
-            className={`flex items-center gap-3 mx-3 px-3 py-3 lg:py-2.5 min-h-[44px] lg:min-h-0 rounded-lg text-sm font-light tracking-wide transition-all duration-200 active:bg-accent-gold/15 ${
-              isActive(href)
-                ? "text-accent-gold bg-accent-gold/8 border-l-2 border-accent-gold ml-3"
-                : "text-text-gray hover:text-text-light hover:bg-white/[0.03]"
-            }`}
-            onClick={() => setMobileOpen(false)}
-          >
-            <Icon size={16} strokeWidth={1.25} />
-            {label}
-          </Link>
+        {NAV_SECTIONS.map((section) => (
+          <div key={section.title} className="mb-4 last:mb-0">
+            <div className="px-3 mb-1">
+              <p className="px-2 text-[10px] font-semibold text-text-gray/50 uppercase tracking-[0.15em] mb-2">
+                {section.title}
+              </p>
+            </div>
+            {section.items.map(({ href, label, icon: Icon }) => (
+              <Link
+                key={href}
+                href={href}
+                className={`flex items-center gap-3 mx-3 px-3 py-3 lg:py-2.5 min-h-[44px] lg:min-h-0 rounded-lg text-sm font-light tracking-wide transition-all duration-200 active:bg-accent-gold/15 ${
+                  activeHref === href
+                    ? "text-accent-gold bg-accent-gold/8 border-l-2 border-accent-gold ml-3"
+                    : "text-text-gray hover:text-text-light hover:bg-white/[0.03]"
+                }`}
+                onClick={() => setMobileOpen(false)}
+              >
+                <Icon size={16} strokeWidth={1.25} />
+                {label}
+              </Link>
+            ))}
+          </div>
         ))}
-
-        {/* Forum + Chat sections hidden 2026-04-30 per multimillion-
-            roadmap audit (research/multimillion-roadmap/01-current-state-
-            audit.md sec 3): 0 forum posts and 0 chat messages in 7d /
-            nearly all-time. Empty rooms erode the premium feel of the
-            live surfaces. Data fetch above is left in place so reviving
-            either is a matter of putting the JSX back, no API rebuild. */}
 
         {/* Live in the Council, recent activity strip. Real signals
             (comments, likes, new members, simulator wins) merged with
