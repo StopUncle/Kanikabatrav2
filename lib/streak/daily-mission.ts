@@ -129,13 +129,21 @@ export async function getMissionCouncilToday(
     },
     _count: { _all: true },
   });
+  // OutcomeType is five-valued ("good" | "neutral" | "bad" | "passed" |
+  // "failed"); fold the pass/fail pair into win/loss the same way
+  // EndingScreen does (passed = won, failed = lost). Static scenarios
+  // only emit the first three today, but generated scenarios may not.
   const outcomes = { good: 0, neutral: 0, bad: 0 };
   let playedToday = 0;
   for (const row of rows) {
     playedToday += row._count._all;
-    if (row.outcome === "good") outcomes.good += row._count._all;
-    else if (row.outcome === "bad") outcomes.bad += row._count._all;
-    else outcomes.neutral += row._count._all;
+    if (row.outcome === "good" || row.outcome === "passed") {
+      outcomes.good += row._count._all;
+    } else if (row.outcome === "bad" || row.outcome === "failed") {
+      outcomes.bad += row._count._all;
+    } else {
+      outcomes.neutral += row._count._all;
+    }
   }
   return {
     scenarioId: mission.scenarioId,
