@@ -176,8 +176,8 @@ export default function AchievementsSection({
             title="Start Your Journey"
             description="Complete activities to unlock achievements and track your progress"
             action={{
-              label: "Browse Courses",
-              href: "/courses",
+              label: "Enter the Consilium",
+              href: "/consilium",
             }}
           />
         )}
