@@ -103,6 +103,16 @@ const nextConfig = {
         destination: "/guide/dark-psychology-beginners-guide",
         permanent: true,
       },
+      {
+        // /courses is a Coming Soon placeholder that still earns branded
+        // SERP impressions. 301 to Consilium so that visibility lands on a
+        // page that sells something. Exact match only: legacy member course
+        // routes under /courses/[slug] keep resolving (they redirect here
+        // server-side and then follow this 301).
+        source: "/courses",
+        destination: "/consilium",
+        permanent: true,
+      },
     ];
   },
 };

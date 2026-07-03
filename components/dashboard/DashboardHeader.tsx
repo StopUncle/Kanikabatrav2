@@ -12,7 +12,6 @@ import {
   Home,
   Users,
   Brain,
-  GraduationCap,
   Settings,
   CheckCircle,
   ArrowUpRight,
@@ -74,7 +73,6 @@ const DashboardHeader = ({ userEmail, userName = null }: DashboardHeaderProps) =
     { href: "/", label: "Home", icon: Home },
     { href: "/quiz", label: "Quiz", icon: Brain },
     { href: "/book", label: "The Book", icon: BookOpen },
-    { href: "/courses", label: "Courses", icon: GraduationCap },
     { href: "/coaching", label: "Coaching", icon: Calendar },
   ];
 
