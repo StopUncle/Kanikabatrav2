@@ -6,24 +6,24 @@ import { generatePersonSchema } from "@/lib/schema";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title:
-    "About Kanika Batra | The Psychology of Power | Dark Psychology Expert",
+  title: "Kanika Batra: Diagnosed Sociopath, Dark Psychology Educator",
   description:
-    "Learn about Kanika Batra, diagnosed sociopath and dark psychology expert. Her story from psychiatric wards to becoming a viral sensation with 37M+ views teaching strategic psychology.",
+    "Kanika Batra's real story: diagnosed ASPD, clinically assessed as Factor 1 psychopathy, 37M+ views teaching dark psychology from the inside.",
   keywords:
-    "kanika batra, the psychology of power, dark psychology expert, diagnosed sociopath, ASPD, strategic psychology",
+    "kanika batra, the psychology of power, dark psychology expert, diagnosed sociopath, ASPD, factor 1 psychopathy, strategic psychology",
   openGraph: {
-    title: "About Kanika Batra - The Psychology of Power",
+    title: "Kanika Batra: Diagnosed Sociopath, Dark Psychology Educator",
     description:
-      "Diagnosed sociopath and dark psychology expert. Teaching strategic psychology to 670K+ followers.",
+      "Diagnosed ASPD, clinically assessed as Factor 1 psychopathy. Teaching dark psychology from the inside to 670K+ followers.",
     type: "profile",
     url: "https://kanikarose.com/about",
     images: [{ url: "https://kanikarose.com/api/og" }],
   },
   twitter: {
     card: "summary_large_image",
-    title: "About Kanika Batra - The Psychology of Power",
-    description: "Diagnosed sociopath and dark psychology expert.",
+    title: "Kanika Batra: Diagnosed Sociopath, Dark Psychology Educator",
+    description:
+      "Diagnosed ASPD, clinically assessed as Factor 1 psychopathy. Dark psychology from the inside.",
   },
   alternates: {
     canonical: "https://kanikarose.com/about",
