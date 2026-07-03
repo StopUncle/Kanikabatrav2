@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { m } from "framer-motion";
 import { SITE_CONFIG, SOCIAL_METRICS, CONTENT_THEMES } from "@/lib/constants";
 import SocialHub from "./SocialHub";
@@ -150,6 +151,15 @@ export default function AboutContent() {
                   </h3>
                   <ul className="space-y-2 text-text-gray">
                     <li>• Clinically diagnosed with ASPD</li>
+                    <li>
+                      • Clinically assessed as{" "}
+                      <Link
+                        href="/guide/factor-1-vs-factor-2-psychopathy"
+                        className="text-accent-gold hover:text-accent-gold/80 transition-colors underline underline-offset-4 decoration-accent-gold/40"
+                      >
+                        Factor 1 psychopathy
+                      </Link>
+                    </li>
                     <li>• Assessed by a prison-psychiatrist specialist</li>
                     <li>• Documented behavioural patterns since childhood</li>
                     <li>
