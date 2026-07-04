@@ -27,7 +27,7 @@ const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export async function POST(request: NextRequest) {
   try {
-    const { email, sendToEmail } = await request.json();
+    const { email } = await request.json();
 
     if (!email || typeof email !== "string") {
       return NextResponse.json(
@@ -50,19 +50,6 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         { error: "Too many requests. Please try again in 15 minutes." },
         { status: 429 },
-      );
-    }
-
-    // Validate sendToEmail if provided
-    const targetEmail =
-      sendToEmail && typeof sendToEmail === "string"
-        ? sendToEmail.trim().toLowerCase()
-        : normalizedEmail;
-
-    if (targetEmail !== normalizedEmail && !EMAIL_REGEX.test(targetEmail)) {
-      return NextResponse.json(
-        { error: "Please enter a valid delivery email address" },
-        { status: 400 },
       );
     }
 
@@ -90,9 +77,13 @@ export async function POST(request: NextRequest) {
     const expiresAt = new Date();
     expiresAt.setDate(expiresAt.getDate() + 30);
 
-    // Send email FIRST, only update DB if email succeeds
+    // Send email FIRST, only update DB if email succeeds.
+    // Always deliver to the purchase email: sending to a caller-supplied
+    // address would let anyone who knows a buyer's email exfiltrate the
+    // book (and kill the buyer's live links via token rotation). Buyers
+    // who mistyped their checkout email go through the admin panel.
     const sent = await sendBookDelivery(
-      targetEmail,
+      normalizedEmail,
       purchase.customerName,
       downloadToken,
       purchase.productVariant ?? null,
