@@ -9,8 +9,6 @@ import { Mail, ArrowRight, CheckCircle, AlertCircle } from "lucide-react";
 
 export default function ResendPage() {
   const [email, setEmail] = useState("");
-  const [sendToEmail, setSendToEmail] = useState("");
-  const [useDifferentEmail, setUseDifferentEmail] = useState(false);
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
   const [message, setMessage] = useState("");
 
@@ -24,10 +22,7 @@ export default function ResendPage() {
       const res = await fetch("/api/resend-download", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          email: email.trim(),
-          sendToEmail: useDifferentEmail && sendToEmail.trim() ? sendToEmail.trim() : undefined,
-        }),
+        body: JSON.stringify({ email: email.trim() }),
       });
 
       const data = await res.json();
@@ -40,9 +35,7 @@ export default function ResendPage() {
 
       setStatus("success");
       setMessage(
-        useDifferentEmail && sendToEmail.trim()
-          ? `If a purchase was found, a fresh download link has been sent to ${sendToEmail.trim()}.`
-          : "If a purchase was found for this email, a fresh download link has been sent. Check your inbox and spam folder.",
+        "If a purchase was found for this email, a fresh download link has been sent. Check your inbox and spam folder.",
       );
     } catch {
       setStatus("error");
@@ -95,8 +88,6 @@ export default function ResendPage() {
                   onClick={() => {
                     setStatus("idle");
                     setEmail("");
-                    setSendToEmail("");
-                    setUseDifferentEmail(false);
                   }}
                   className="text-accent-gold hover:underline text-sm"
                 >
@@ -110,53 +101,18 @@ export default function ResendPage() {
                     htmlFor="email"
                     className="block text-text-light text-sm font-medium mb-2"
                   >
-                    PayPal Email Address
+                    Checkout Email Address
                   </label>
                   <input
                     id="email"
                     type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    placeholder="The email linked to your PayPal account"
+                    placeholder="The email you used at checkout"
                     required
                     className="w-full px-4 py-3 bg-deep-black/50 border border-accent-gold/20 rounded-lg text-text-light placeholder:text-text-gray/50 focus:outline-none focus:border-accent-gold/50 transition-colors"
                   />
                 </div>
-
-                <div>
-                  <button
-                    type="button"
-                    onClick={() => setUseDifferentEmail(!useDifferentEmail)}
-                    className="text-sm text-accent-gold hover:underline"
-                  >
-                    {useDifferentEmail
-                      ? "Use same email for delivery"
-                      : "Send to a different email instead?"}
-                  </button>
-                </div>
-
-                {useDifferentEmail && (
-                  <m.div
-                    initial={{ opacity: 0, height: 0 }}
-                    animate={{ opacity: 1, height: "auto" }}
-                    transition={{ duration: 0.2 }}
-                  >
-                    <label
-                      htmlFor="sendToEmail"
-                      className="block text-text-light text-sm font-medium mb-2"
-                    >
-                      Send Download Link To
-                    </label>
-                    <input
-                      id="sendToEmail"
-                      type="email"
-                      value={sendToEmail}
-                      onChange={(e) => setSendToEmail(e.target.value)}
-                      placeholder="Your preferred email address"
-                      className="w-full px-4 py-3 bg-deep-black/50 border border-accent-gold/20 rounded-lg text-text-light placeholder:text-text-gray/50 focus:outline-none focus:border-accent-gold/50 transition-colors"
-                    />
-                  </m.div>
-                )}
 
                 {status === "error" && (
                   <div className="flex items-start gap-3 bg-red-950/30 border border-red-800/30 rounded-lg p-4">
@@ -200,7 +156,7 @@ export default function ResendPage() {
               >
                 Kanika@kanikarose.com
               </a>{" "}
-              with your PayPal transaction ID and we&apos;ll get you sorted.
+              with your order details and we&apos;ll get you sorted.
             </p>
             <Link href="/" className="text-accent-gold hover:underline text-sm">
               &larr; Back to Home

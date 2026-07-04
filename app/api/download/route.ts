@@ -105,17 +105,50 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    // Read the file BEFORE incrementing download count so a readFile
-    // failure doesn't burn one of the user's 10 allowed downloads.
-    const fileBuffer = await fs.readFile(bookPath);
-
-    await prisma.purchase.update({
-      where: { id: purchase.id },
+    // Atomically claim a download slot. The guard inside the WHERE is the
+    // real enforcement of maxDownloads: the earlier read-then-check above
+    // gives a friendly 429 message but can't stop concurrent requests that
+    // all read the same stale count. This conditional update can.
+    const claimed = await prisma.purchase.updateMany({
+      where: {
+        id: purchase.id,
+        downloadCount: { lt: purchase.maxDownloads },
+      },
       data: {
         downloadCount: { increment: 1 },
         lastDownloadAt: new Date(),
       },
     });
+
+    if (claimed.count === 0) {
+      return NextResponse.json(
+        {
+          error: `Maximum download limit (${purchase.maxDownloads}) reached. Please contact Kanika@kanikarose.com for help.`,
+        },
+        { status: 429 },
+      );
+    }
+
+    let fileBuffer: Buffer;
+    try {
+      fileBuffer = await fs.readFile(bookPath);
+    } catch (readError) {
+      // Refund the claimed slot so a disk failure doesn't burn one of the
+      // user's 10 allowed downloads.
+      try {
+        await prisma.purchase.update({
+          where: { id: purchase.id },
+          data: { downloadCount: { decrement: 1 } },
+        });
+      } catch (refundError) {
+        console.error("[download] failed to refund download slot:", refundError);
+      }
+      console.error(`[download] readFile failed for ${bookFilename}:`, readError);
+      return NextResponse.json(
+        { error: "Book file is temporarily unavailable. Please try again in a few minutes or contact Kanika@kanikarose.com" },
+        { status: 503 },
+      );
+    }
 
     return new NextResponse(fileBuffer as BodyInit, {
       status: 200,
