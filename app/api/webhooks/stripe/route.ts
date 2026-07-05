@@ -308,6 +308,31 @@ export async function POST(request: NextRequest) {
               );
             }
           }
+
+          // Instant full-results email, the receipt-of-goods the old
+          // PayPal capture flow used to send. Runs after the credit is
+          // written to the row so the email carries the promo code.
+          // Idempotent via the emailSent flag; the Day 1 drip recap
+          // still follows. Non-blocking, the unlock already happened.
+          if (unlockedQuizResultId) {
+            try {
+              const { sendQuizResultsEmailForResult } = await import(
+                "@/lib/quiz-results-email"
+              );
+              const emailStatus =
+                await sendQuizResultsEmailForResult(unlockedQuizResultId);
+              if (emailStatus !== "sent" && emailStatus !== "already_sent") {
+                console.error(
+                  `[stripe-webhook] quiz results email ${emailStatus} for ${unlockedQuizResultId}`,
+                );
+              }
+            } catch (err) {
+              console.error(
+                "[stripe-webhook] quiz results email failed:",
+                err,
+              );
+            }
+          }
         } else if (
           ["COACHING_SINGLE", "COACHING_CLARITY", "COACHING_INTENSIVE", "COACHING_CAREER", "COACHING_RETAINER"].includes(productKey)
         ) {
