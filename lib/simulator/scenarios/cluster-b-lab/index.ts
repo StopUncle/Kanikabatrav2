@@ -22,6 +22,8 @@ import clusterBLab12 from "./l1-2-the-mentor-lunch";
 import clusterBLab13 from "./l1-3-the-meeting-notes";
 import clusterBLab14 from "./l1-4-the-engagement-announcement";
 import clusterBLab21 from "./l2-1-the-friday-slack";
+import clusterBLab22 from "./l2-2-the-client-dinner";
+import clusterBLab31 from "./l3-1-the-group-chat";
 
 export const CLUSTER_B_LAB_SCENARIOS: Scenario[] = [
   clusterBLab11,
@@ -29,6 +31,8 @@ export const CLUSTER_B_LAB_SCENARIOS: Scenario[] = [
   clusterBLab13,
   clusterBLab14,
   clusterBLab21,
+  clusterBLab22,
+  clusterBLab31,
 ];
 
 export const CLUSTER_B_LAB_LEVEL_TITLES: Record<
