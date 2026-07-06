@@ -85,6 +85,14 @@ export default async function SimulatorPlay({
       }
     : null;
 
+  // Endings the player has already reached across prior runs. Deduped
+  // because /api/simulator/complete pushes on every completion and can
+  // hold repeats. Powers the "N of M endings" catalog on the ending
+  // screen so replayers can hunt the paths they haven't found yet.
+  const seenEndingIds = row?.endingsReached
+    ? Array.from(new Set(row.endingsReached))
+    : [];
+
   // "Next scenario" link, whatever comes after this one in ALL_SCENARIOS.
   const currentIdx = ALL_SCENARIOS.findIndex((s) => s.id === scenario.id);
   const next = currentIdx >= 0 ? ALL_SCENARIOS[currentIdx + 1] : undefined;
@@ -96,6 +104,7 @@ export default async function SimulatorPlay({
       initialState={initialState}
       previousBest={previousBest}
       nextScenarioHref={nextHref}
+      seenEndingIds={seenEndingIds}
     />
   );
 }

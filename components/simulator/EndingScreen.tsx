@@ -14,6 +14,7 @@ import type { Scene, Scenario, SimulatorState } from "@/lib/simulator/types";
 import { BADGE_BY_KEY } from "@/lib/simulator/badges";
 import { computeStars, masteryPercent } from "@/lib/simulator/stars";
 import CouncilTodayCard from "./CouncilTodayCard";
+import EndingsCatalog from "./EndingsCatalog";
 
 /**
  * Count-up hook. Animates a number from 0 → target over ~1.2s using
@@ -73,6 +74,13 @@ type Props = {
     outcome: import("@/lib/simulator/types").OutcomeType | null;
     completedAt: string;
   } | null;
+  /**
+   * Ending sceneIds the player has reached in prior runs, from persisted
+   * history at page load. Drives the endings catalog. The run that just
+   * finished is unioned in below so a first completion never shows its
+   * own ending as still-unseen (the client list predates this run).
+   */
+  seenEndingIds?: string[];
   onRestart: () => void;
 };
 
@@ -107,9 +115,19 @@ export default function EndingScreen({
   customCta,
   hideFailureBlog = false,
   previousBest = null,
+  seenEndingIds = [],
   onRestart,
 }: Props) {
   const outcome = state.outcome ?? scene.outcomeType ?? "neutral";
+
+  // Endings catalog data. The total list comes straight off the scenario
+  // (stays in sync with content); the seen set is prior-run history plus
+  // this run's ending (scene.id, always an ending here). Only worth
+  // showing when a scenario branches into more than one ending.
+  const allEndings = scenario.scenes
+    .filter((s) => s.isEnding)
+    .map((s) => ({ id: s.id, title: s.endingTitle ?? "Untitled ending" }));
+  const seenEndings = [...seenEndingIds, scene.id];
 
   // Stars are the new verdict. ★/★★/★★★ replaces the old text pill
   // because pass/fail alone leaves no replay incentive once a player
@@ -367,6 +385,18 @@ export default function EndingScreen({
               })}
             </div>
           </m.div>
+        )}
+
+        {/* Endings catalog. Turns "already done" into ending-hunting:
+            seen endings read full-strength, unseen ones stay dimmed and
+            masked so the player sees how many paths are left. Only shown
+            when the scenario actually branches to multiple endings. */}
+        {allEndings.length > 1 && (
+          <EndingsCatalog
+            endings={allEndings}
+            seenIds={seenEndings}
+            delay={2.3}
+          />
         )}
 
         <m.div

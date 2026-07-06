@@ -115,6 +115,11 @@ type Props = {
     outcome: import("@/lib/simulator/types").OutcomeType | null;
     completedAt: string;
   } | null;
+  /**
+   * Ending sceneIds the player has reached in prior runs. Forwarded to
+   * EndingScreen for the endings catalog. Empty on a first-ever play.
+   */
+  seenEndingIds?: string[];
 };
 
 export default function SimulatorRunner({
@@ -128,6 +133,7 @@ export default function SimulatorRunner({
   endingCta,
   hideFailureBlog = false,
   previousBest = null,
+  seenEndingIds = [],
 }: Props) {
   const [state, setState] = useState<SimulatorState>(
     initialState ?? initState(scenario),
@@ -783,6 +789,7 @@ export default function SimulatorRunner({
             customCta={endingCta}
             hideFailureBlog={hideFailureBlog}
             previousBest={previousBest}
+            seenEndingIds={seenEndingIds}
             onRestart={restart}
           />
         </AnimatePresence>
