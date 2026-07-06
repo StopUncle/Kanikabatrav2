@@ -3,21 +3,34 @@
  * actively leaving a marriage. Handoff register from toxic-narc:
  * tn-4-1 (the eighteen-month infrastructure) opens the operational
  * window; divorce-1-1 (the decision table) speaks the decision; L2-L6
- * (planned) cover the lawyer call, the kids conversation, the
- * extended-family disclosure, the move-out logistics, and the year
- * after.
+ * cover the lawyer call, the kids conversation, the extended-family
+ * disclosure, the move-out logistics, and the year after.
  *
  * Register: clinical-decision, low affect. The scenes are choices,
  * not endurance. Heavier than tn-4-1 because the speaking is in
  * daylight rather than in your head.
  *
- * Phase 5 ships L1-1 only. L2-L6 in Phase 6.
+ * Arc canon: the children are Nell (12, id "daughter") and Jonah
+ * (8, id "son"), first named in L3/L6. Keep those names and ids in
+ * any future scenario that puts the kids on screen.
  */
 
 import type { Scenario } from "../../types";
 import divorce11 from "./l1-1-the-decision-table";
+import divorce21 from "./l2-1-the-lawyer-call";
+import divorce31 from "./l3-1-the-kids-conversation";
+import divorce41 from "./l4-1-the-family-disclosure";
+import divorce51 from "./l5-1-the-move-out";
+import divorce61 from "./l6-1-the-year-after";
 
-export const DIVORCE_ARC_SCENARIOS: Scenario[] = [divorce11];
+export const DIVORCE_ARC_SCENARIOS: Scenario[] = [
+  divorce11,
+  divorce21,
+  divorce31,
+  divorce41,
+  divorce51,
+  divorce61,
+];
 
 export const DIVORCE_ARC_LEVEL_TITLES: Record<
   number,
