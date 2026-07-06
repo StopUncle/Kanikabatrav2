@@ -33,9 +33,16 @@ interface Props {
     situation: SituationKey;
     recommendedTrack: string;
   } | null;
+  /**
+   * Server-computed next playable scenario per track (in-progress run
+   * first, else first unlocked unstarted). Lets the Start CTA deep-link
+   * into an actual run; without it the CTA falls back to the track
+   * catalog link.
+   */
+  nextByTrack?: Record<string, { id: string; title: string } | null>;
 }
 
-export default function DailyCheckInCard({ gender, initial }: Props) {
+export default function DailyCheckInCard({ gender, initial, nextByTrack }: Props) {
   const [current, setCurrent] = useState<{
     situation: SituationKey;
     recommendedTrack: string;
@@ -81,6 +88,7 @@ export default function DailyCheckInCard({ gender, initial }: Props) {
     const situation = getSituation(current.situation);
     const trackSlug = current.recommendedTrack as ScenarioTrack | "";
     const trackMeta = trackSlug ? TRACK_META[trackSlug as ScenarioTrack] : null;
+    const nextScenario = trackSlug ? (nextByTrack?.[trackSlug] ?? null) : null;
     const reason = situation ? situation.reasonFor(gender) : "";
     const isExploring =
       current.situation === "exploring" || current.recommendedTrack === "";
@@ -117,13 +125,32 @@ export default function DailyCheckInCard({ gender, initial }: Props) {
                   {reason}
                 </p>
                 {trackMeta && (
-                  <Link
-                    href={trackMeta.href}
-                    className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-warm-gold text-deep-black text-sm font-medium tracking-[0.2em] uppercase transition-all hover:bg-warm-gold/90 hover:shadow-[0_6px_20px_-4px_rgba(212,175,55,0.5)]"
-                  >
-                    Start
-                    <ArrowRight size={14} strokeWidth={2} />
-                  </Link>
+                  <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
+                    <Link
+                      href={
+                        nextScenario
+                          ? `/consilium/simulator/${nextScenario.id}`
+                          : trackMeta.href
+                      }
+                      className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-warm-gold text-deep-black text-sm font-medium tracking-[0.2em] uppercase transition-all hover:bg-warm-gold/90 hover:shadow-[0_6px_20px_-4px_rgba(212,175,55,0.5)]"
+                    >
+                      Start
+                      {nextScenario && (
+                        <span className="normal-case tracking-normal font-normal opacity-80">
+                          · {nextScenario.title}
+                        </span>
+                      )}
+                      <ArrowRight size={14} strokeWidth={2} />
+                    </Link>
+                    {nextScenario && (
+                      <Link
+                        href={trackMeta.href}
+                        className="text-text-gray/60 hover:text-warm-gold text-[10px] uppercase tracking-[0.25em] transition-colors"
+                      >
+                        View the track
+                      </Link>
+                    )}
+                  </div>
                 )}
               </>
             )}
@@ -165,7 +192,7 @@ export default function DailyCheckInCard({ gender, initial }: Props) {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
         {SITUATIONS.map((s) => (
           <button
             key={s.key}

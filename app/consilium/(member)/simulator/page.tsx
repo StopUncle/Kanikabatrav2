@@ -172,6 +172,27 @@ export default async function SimulatorIndex({
   const isUnlocked = (prerequisites?: string[]) =>
     !prerequisites || prerequisites.every((id) => completedIds.has(id));
 
+  // Next playable scenario per track: the user's in-progress scenario if
+  // one exists, else the first unlocked scenario they haven't started.
+  // Powers the check-in card's Start CTA so it deep-links into a run
+  // instead of re-navigating to the catalog page it already sits on
+  // (which reads as a dead button when the track is already active).
+  const nextByTrack: Record<string, { id: string; title: string } | null> = {};
+  for (const t of VALID_TRACKS) {
+    const list = scenariosForTrack(t);
+    const candidate =
+      list.find((s) => {
+        const p = progressByScenario.get(s.id);
+        return !!p && !p.completedAt;
+      }) ??
+      list.find(
+        (s) => !progressByScenario.has(s.id) && isUnlocked(s.prerequisites),
+      );
+    nextByTrack[t] = candidate
+      ? { id: candidate.id, title: candidate.title }
+      : null;
+  }
+
   const trackScenarios = scenariosForTrack(track);
   const byLevel = scenariosByLevel(track);
   const levelKeys = Object.keys(byLevel)
@@ -466,6 +487,7 @@ export default async function SimulatorIndex({
           enforced by a unique constraint. */}
       <DailyCheckInCard
         gender={currentUser?.gender ?? null}
+        nextByTrack={nextByTrack}
         initial={
           todayCheckIn
             ? {
@@ -532,8 +554,11 @@ export default async function SimulatorIndex({
           })}
         </div>
 
-        {/* Desktop: wrapping card grid. */}
-        <div className="hidden sm:flex sm:flex-wrap gap-2">
+        {/* Desktop: compact wrapping pill row. One line per track (label,
+            progress counter, NEW chip); the sublabel moves to a hover
+            tooltip via title. Keeps the chooser to two calm rows instead
+            of eleven three-line cards. */}
+        <div className="hidden sm:flex sm:flex-wrap gap-1.5">
           {VALID_TRACKS.map((t) => {
             const tMeta = TRACK_META[t];
             const active = t === track;
@@ -541,66 +566,40 @@ export default async function SimulatorIndex({
             const total = totalByTrack.get(t) ?? 0;
             const started = startedTrackIds.has(t);
             const newCount = newByTrack.get(t) ?? 0;
-            const eyebrow = active
-              ? "Current"
-              : started
-                ? `Resume · ${done} / ${total}`
-                : "Start";
             return (
               <Link
                 key={t}
                 href={tMeta.href}
+                title={tMeta.sublabel}
                 aria-current={active ? "page" : undefined}
-                className={`group relative flex-1 basis-[220px] flex flex-col items-start px-4 py-3 rounded-lg transition-all ${
+                className={`inline-flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-light tracking-wide transition-all ${
                   active
-                    ? "bg-warm-gold/10 border border-warm-gold/50 ring-1 ring-warm-gold/15"
-                    : "border border-warm-gold/10 bg-deep-black/30 hover:border-warm-gold/40 hover:bg-warm-gold/[0.04]"
+                    ? "bg-warm-gold/15 border border-warm-gold/50 text-white"
+                    : "border border-warm-gold/10 bg-deep-black/30 text-text-gray/90 hover:border-warm-gold/40 hover:bg-warm-gold/[0.04] hover:text-white"
                 }`}
               >
-                {!active && (
-                  <ArrowRight
-                    size={13}
-                    strokeWidth={1.6}
-                    className="absolute top-3 right-3 text-warm-gold/30 group-hover:text-warm-gold group-hover:translate-x-0.5 transition-all"
-                  />
-                )}
                 {active && (
-                  <span className="absolute top-3 right-3 inline-flex items-center justify-center w-4 h-4 rounded-full bg-warm-gold/20 border border-warm-gold/50">
-                    <Check
-                      size={9}
-                      strokeWidth={2.5}
-                      className="text-warm-gold"
-                    />
-                  </span>
+                  <Check size={11} strokeWidth={2.5} className="text-warm-gold" />
                 )}
-                <div className="flex items-center gap-2 mb-1 pr-6">
+                {tMeta.label}
+                {started && (
                   <span
-                    className={`uppercase tracking-[0.3em] text-[10px] ${
-                      active ? "text-warm-gold" : "text-warm-gold/55"
+                    className={`text-[10px] tabular-nums tracking-wide ${
+                      active ? "text-warm-gold/90" : "text-warm-gold/50"
                     }`}
                   >
-                    {eyebrow}
+                    {done}/{total}
                   </span>
-                  {newCount > 0 && (
-                    <span className="inline-flex items-center gap-1.5 text-[9px] uppercase tracking-[0.2em] px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-300 border border-emerald-400/30">
-                      <span aria-hidden className="relative inline-flex w-1.5 h-1.5">
-                        <span className="absolute inset-0 rounded-full bg-emerald-400/40 animate-ping" />
-                        <span className="relative inline-block w-1.5 h-1.5 rounded-full bg-emerald-400" />
-                      </span>
-                      {newCount} New
+                )}
+                {newCount > 0 && (
+                  <span className="inline-flex items-center gap-1 text-[9px] uppercase tracking-[0.18em] px-1.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-300 border border-emerald-400/30">
+                    <span aria-hidden className="relative inline-flex w-1 h-1">
+                      <span className="absolute inset-0 rounded-full bg-emerald-400/40 animate-ping" />
+                      <span className="relative inline-block w-1 h-1 rounded-full bg-emerald-400" />
                     </span>
-                  )}
-                </div>
-                <span
-                  className={`text-base font-light tracking-wide pr-6 ${
-                    active ? "text-white" : "text-text-light"
-                  }`}
-                >
-                  {tMeta.label}
-                </span>
-                <span className="text-text-gray/50 text-xs font-light mt-1 leading-snug">
-                  {tMeta.sublabel}
-                </span>
+                    {newCount}
+                  </span>
+                )}
               </Link>
             );
           })}
@@ -618,41 +617,32 @@ export default async function SimulatorIndex({
       {totalAdventures > 0 && (
         <Link
           href="/consilium/adventures"
-          className="group block mb-10 p-5 rounded-xl border border-warm-gold/15 bg-deep-black/40 transition-all hover:border-warm-gold/40 hover:bg-warm-gold/[0.03]"
+          className="group flex items-center gap-3 mb-10 px-4 py-3 rounded-xl border border-warm-gold/15 bg-deep-black/40 transition-all hover:border-warm-gold/40 hover:bg-warm-gold/[0.03]"
         >
-          <div className="flex items-start gap-4">
-            <div className="flex-1 min-w-0">
-              <div className="flex items-center gap-2 mb-1.5">
-                <p className="text-warm-gold/70 uppercase tracking-[0.3em] text-[10px]">
-                  Adventures
-                </p>
-                {unseenAdventures > 0 && (
-                  <span className="inline-flex items-center gap-1.5 text-[9px] uppercase tracking-[0.2em] px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-300 border border-emerald-400/30">
-                    <span aria-hidden className="relative inline-flex w-1.5 h-1.5">
-                      <span className="absolute inset-0 rounded-full bg-emerald-400/40 animate-ping" />
-                      <span className="relative inline-block w-1.5 h-1.5 rounded-full bg-emerald-400" />
-                    </span>
-                    {unseenAdventures} New
-                  </span>
-                )}
-              </div>
-              <p className="text-white text-lg font-light tracking-wide mb-1">
-                Play scenarios as one continuous journey
-              </p>
-              <p className="text-text-gray/70 text-sm font-light leading-relaxed">
-                {totalAdventures} {totalAdventures === 1 ? "arc" : "arcs"} live
-                {inProgressAdventures > 0
-                  ? ` . ${inProgressAdventures} in progress`
-                  : ""}
-                . 40 to 95 minutes each. Progress saves between chapters.
-              </p>
-            </div>
-            <ArrowRight
-              size={18}
-              strokeWidth={1.6}
-              className="shrink-0 mt-1 text-warm-gold/50 group-hover:text-warm-gold group-hover:translate-x-0.5 transition-all"
-            />
-          </div>
+          <p className="text-warm-gold/70 uppercase tracking-[0.3em] text-[10px] shrink-0">
+            Adventures
+          </p>
+          <p className="text-text-gray/80 text-sm font-light truncate min-w-0 flex-1">
+            Multi-chapter arcs played as one journey ·{" "}
+            {totalAdventures} live
+            {inProgressAdventures > 0
+              ? ` · ${inProgressAdventures} in progress`
+              : ""}
+          </p>
+          {unseenAdventures > 0 && (
+            <span className="shrink-0 inline-flex items-center gap-1.5 text-[9px] uppercase tracking-[0.2em] px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-300 border border-emerald-400/30">
+              <span aria-hidden className="relative inline-flex w-1.5 h-1.5">
+                <span className="absolute inset-0 rounded-full bg-emerald-400/40 animate-ping" />
+                <span className="relative inline-block w-1.5 h-1.5 rounded-full bg-emerald-400" />
+              </span>
+              {unseenAdventures} New
+            </span>
+          )}
+          <ArrowRight
+            size={16}
+            strokeWidth={1.6}
+            className="shrink-0 text-warm-gold/50 group-hover:text-warm-gold group-hover:translate-x-0.5 transition-all"
+          />
         </Link>
       )}
 
