@@ -214,10 +214,11 @@ export function validateScenarioGraph(raw: unknown): {
   if (endings < 2) failures.push(`needs at least 2 endings, found ${endings}`);
 
   for (const issue of collectScenarioIssues(s as unknown as Scenario)) {
-    if (
-      issue.code === "choice-missing-is-optimal" ||
-      issue.code === "blank-auto-advance"
-    ) {
+    // A genuinely neutral choice legitimately omits isOptimal, so that stays
+    // advisory. Every other structural issue is fatal for the publish gate.
+    // (The empty-non-ending-scene error cannot fire here anyway: the schema
+    // requires each scene to carry at least one dialog line.)
+    if (issue.code === "choice-missing-is-optimal") {
       continue;
     }
     failures.push(issue.message);

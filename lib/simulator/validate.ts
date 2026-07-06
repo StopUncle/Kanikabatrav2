@@ -40,7 +40,7 @@ export type IssueCode =
   | "no-reachable-ending"
   | "ending-missing-outcome-type"
   | "choice-missing-is-optimal"
-  | "blank-auto-advance";
+  | "empty-non-ending-scene";
 
 export interface ScenarioIssue {
   code: IssueCode;
@@ -62,14 +62,13 @@ const VALID_MOODS: ReadonlySet<string> = new Set([
 /**
  * Codes that are advisory rather than structural. Everything else defaults
  * to "error". A missing outcomeType only downgrades a run to a neutral
- * ending; an unset isOptimal is sometimes intentional on neutral choices;
- * a blank auto-advance scene renders empty for one tick. None of these
- * break the graph, so the build script surfaces them as warnings.
+ * ending, and an unset isOptimal is sometimes intentional on neutral
+ * choices. Neither breaks the graph, so the build script surfaces them as
+ * warnings.
  */
 const WARNING_CODES: ReadonlySet<IssueCode> = new Set<IssueCode>([
   "ending-missing-outcome-type",
   "choice-missing-is-optimal",
-  "blank-auto-advance",
 ]);
 
 function severityFor(code: IssueCode): IssueSeverity {
@@ -233,15 +232,19 @@ export function collectScenarioIssues(scenario: Scenario): ScenarioIssue[] {
       }
     }
 
+    // A non-ending scene with neither dialog nor choices renders nothing
+    // the player can read or tap. If it carries a nextSceneId the runner
+    // may still stall on the empty beat; if it does not, it is also a
+    // soft-lock. Either way there is nothing to present, so this is an
+    // error, not a cosmetic warning.
     if (
       !scene.isEnding &&
       (!scene.dialog || scene.dialog.length === 0) &&
-      (!scene.choices || scene.choices.length === 0) &&
-      scene.nextSceneId
+      (!scene.choices || scene.choices.length === 0)
     ) {
       add(
-        "blank-auto-advance",
-        `scene "${scene.id}" has empty dialog and no choices (renders blank briefly before auto-advance)`,
+        "empty-non-ending-scene",
+        `scene "${scene.id}" is not an ending but has no dialog and no choices (renders nothing tappable, can soft-lock the run)`,
       );
     }
   }
