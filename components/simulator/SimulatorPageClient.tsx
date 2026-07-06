@@ -28,6 +28,12 @@ type Props = {
    */
   previousBest?: PreviousBest | null;
   nextScenarioHref?: string | null;
+  /**
+   * Ending sceneIds the player has reached in prior runs, from the
+   * persisted progress row. Forwarded to the runner for the endings
+   * catalog on the ending screen. Empty on a first-ever play.
+   */
+  seenEndingIds?: string[];
 };
 
 /**
@@ -45,6 +51,7 @@ export default function SimulatorPageClient({
   initialState,
   previousBest = null,
   nextScenarioHref,
+  seenEndingIds = [],
 }: Props) {
   const router = useRouter();
   const [badgesEarned, setBadgesEarned] = useState<string[]>([]);
@@ -176,6 +183,7 @@ export default function SimulatorPageClient({
         onComplete={handleComplete}
         nextScenarioHref={nextScenarioHref}
         badgesEarned={badgesEarned}
+        seenEndingIds={seenEndingIds}
       />
       <AchievementToast unlocks={unlockedThisRun} />
     </SimulatorErrorBoundary>

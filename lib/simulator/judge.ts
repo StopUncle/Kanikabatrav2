@@ -15,7 +15,12 @@
  */
 
 import { z } from "zod";
-import { getAnthropic, ANTHROPIC_MODEL } from "@/lib/anthropic";
+import {
+  getAnthropic,
+  ANTHROPIC_MODEL,
+  extractText,
+  stripCodeFences,
+} from "@/lib/anthropic";
 import type { Scenario, Scene, Choice } from "./types";
 
 const MAX_MOVE_CHARS = 300;
@@ -109,14 +114,7 @@ function buildUserPrompt(
  * parse and validate. Throws on anything that doesn't conform.
  */
 function parseJudgeOutput(raw: string): z.infer<typeof JudgeOutput> {
-  let out = raw.trim();
-  if (out.startsWith("```")) {
-    const firstNewline = out.indexOf("\n");
-    if (firstNewline > -1) out = out.slice(firstNewline + 1);
-    const lastFence = out.lastIndexOf("```");
-    if (lastFence > -1) out = out.slice(0, lastFence);
-  }
-  return JudgeOutput.parse(JSON.parse(out.trim()));
+  return JudgeOutput.parse(JSON.parse(stripCodeFences(raw)));
 }
 
 export async function judgeFreeformMove(
@@ -158,10 +156,7 @@ export async function judgeFreeformMove(
     ],
   });
 
-  const text = response.content
-    .flatMap((block) => (block.type === "text" ? [block.text] : []))
-    .join("\n")
-    .trim();
+  const text = extractText(response);
   if (!text) throw new Error("Judge returned no text.");
 
   const parsed = parseJudgeOutput(text);

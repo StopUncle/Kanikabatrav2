@@ -30,6 +30,7 @@ import ImmersionOverlay from "./ImmersionOverlay";
 import SceneShake from "./SceneShake";
 import XpFloater from "./XpFloater";
 import StreakIndicator from "./StreakIndicator";
+import StreakPulse, { type StreakMilestone } from "./StreakPulse";
 import SceneProgress from "./SceneProgress";
 import ScenarioIntro from "./ScenarioIntro";
 import ChoiceTimer from "./ChoiceTimer";
@@ -114,6 +115,11 @@ type Props = {
     outcome: import("@/lib/simulator/types").OutcomeType | null;
     completedAt: string;
   } | null;
+  /**
+   * Ending sceneIds the player has reached in prior runs. Forwarded to
+   * EndingScreen for the endings catalog. Empty on a first-ever play.
+   */
+  seenEndingIds?: string[];
 };
 
 export default function SimulatorRunner({
@@ -127,6 +133,7 @@ export default function SimulatorRunner({
   endingCta,
   hideFailureBlog = false,
   previousBest = null,
+  seenEndingIds = [],
 }: Props) {
   const [state, setState] = useState<SimulatorState>(
     initialState ?? initState(scenario),
@@ -239,6 +246,10 @@ export default function SimulatorRunner({
     tone: "optimal" | "neutral" | "bad";
   } | null>(null);
   const [streak, setStreak] = useState(0);
+  // Fires a one-shot celebratory pulse when the streak crosses a 3/5/7
+  // milestone. A fresh object (new `id`) each time re-triggers the
+  // animation even when the milestone value repeats across runs.
+  const [streakPulse, setStreakPulse] = useState<StreakMilestone | null>(null);
   // Ref avoids re-firing onComplete when React double-invokes in StrictMode.
   const completeFiredRef = useRef(false);
 
@@ -465,6 +476,11 @@ export default function SimulatorRunner({
         setTimeout(() => setXpFloat(null), 1500);
       }
       setStreak(nextStreak);
+      // Milestone pulse. streakBonus is non-zero only at 3/5/7 optimal in
+      // a row, so it doubles as the "just hit a milestone" signal.
+      if (streakBonus > 0) {
+        setStreakPulse({ value: nextStreak, id: Date.now() });
+      }
 
       // Choice popularity reveal, look up the rate for the choice we just
       // picked on the scene we're leaving. Suppressed on scenes with too
@@ -493,6 +509,7 @@ export default function SimulatorRunner({
     setState(initState(scenario));
     setLineIndex(0);
     setStreak(0);
+    setStreakPulse(null);
     setXpFloat(null);
     // Re-show the intro on replay so the player sees the "Replay"
     // framing + previous-best callout before diving back in.
@@ -772,6 +789,7 @@ export default function SimulatorRunner({
             customCta={endingCta}
             hideFailureBlog={hideFailureBlog}
             previousBest={previousBest}
+            seenEndingIds={seenEndingIds}
             onRestart={restart}
           />
         </AnimatePresence>
@@ -839,6 +857,7 @@ export default function SimulatorRunner({
       <ImmersionOverlay sceneId={scene.id} trigger={scene.immersionTrigger} />
       <SceneProgress scenario={scenario} state={state} />
       <StreakIndicator streak={streak} />
+      <StreakPulse milestone={streakPulse} />
       {/* Brief social-proof reveal after a choice resolves —
           "Only 23% of players chose this." Suppresses on rare
           aggregations (<5 picks per scene). */}

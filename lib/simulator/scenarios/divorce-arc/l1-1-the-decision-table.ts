@@ -119,7 +119,7 @@ const scenes: Scene[] = [
       },
       {
         id: "soften-the-opening",
-        text: '"I know this is going to come out of nowhere, but. I have been thinking, and I do not know how to say this, but I think. I think we might —"',
+        text: '"I know this is going to come out of nowhere, but. I have been thinking, and I do not know how to say this, but I think. I think we might..."',
         tactic: "The softened opening forces you to land the noun ('separate') under his interruption. He will, before you finish, ask 'what are you trying to say.' You will then have to land it under pressure, which both invalidates the calmness you brought in and gives him the opening line of the conversation. The cleanness is the kindness.",
         nextSceneId: "soft-derail",
         isOptimal: false,
@@ -176,14 +176,14 @@ const scenes: Scene[] = [
       },
       {
         id: "explain-the-history",
-        text: 'Walk him through the last six months: the specific incidents, the way you tried, the way it did not work. "It started in February with the —"',
+        text: 'Walk him through the last six months: the specific incidents, the way you tried, the way it did not work. "It started in February with the..."',
         tactic: `The history-walk is what he asked for. It is also unwinnable. He will interrupt every fourth sentence to reframe ("that's not what happened"), to invalidate ("you never said that bothered you"), or to absorb ("I will fix it"). Three hours later, the original sentence, "I think it is time we separate", will not have been answered, only contextualised away.`,
         nextSceneId: "history-walk-derail",
         isOptimal: false,
       },
       {
         id: "apologise-for-timing",
-        text: '"I know this is awful timing. I am so sorry to bring it up like this —"',
+        text: '"I know this is awful timing. I am so sorry to bring it up like this..."',
         tactic: "The apology hands him the moral position. He is now the wounded party who is being treated unfairly; you are now the unstable one who 'sprung this on him.' Every conversation in the next six months will reference this apology as evidence that you were not sure about the decision.",
         nextSceneId: "apology-given",
         isOptimal: false,

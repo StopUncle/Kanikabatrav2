@@ -139,6 +139,10 @@ function xpForChoice(choice: Choice): number {
  * out at the engine level.
  */
 function finalizeEnding(scene: Scene, state: SimulatorState): SimulatorState {
+  // Idempotency guard: finalizing an already-finalized state must not
+  // re-credit the ending bonus or overwrite endedAt. Complete states
+  // always carry a stamped cursor, so returning unchanged is safe.
+  if (isComplete(state)) return state;
   const outcome: OutcomeType = scene.outcomeType ?? "neutral";
   // Bonus tier follows outcomeRank in lib/simulator/progress-merge.ts so
   // a "failed" ending (rank 1, above "bad") also pays more XP than "bad"
@@ -223,7 +227,7 @@ export function streakBonusXp(choicesMade: ChoiceRecord[]): number {
 export function replayXp(
   scenario: Scenario,
   choicesMade: ChoiceRecord[],
-): { xp: number; endedAt: SimulatorState } {
+): { xp: number; finalState: SimulatorState } {
   let state = initState(scenario);
   const validated: ChoiceRecord[] = [];
   for (const record of choicesMade) {
@@ -253,5 +257,5 @@ export function replayXp(
   // Streak bonus is computed over validated records only. Padding the
   // input with bogus optimal records past an abort point cannot inflate
   // the bonus.
-  return { xp: state.xpEarned + streakBonusXp(validated), endedAt: state };
+  return { xp: state.xpEarned + streakBonusXp(validated), finalState: state };
 }
