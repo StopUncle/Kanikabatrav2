@@ -15,15 +15,18 @@
  */
 
 import { z } from "zod";
-import { getAnthropic } from "@/lib/anthropic";
+import {
+  getAnthropic,
+  extractText,
+  stripCodeFences,
+  costMicros,
+} from "@/lib/anthropic";
 import { prisma } from "@/lib/prisma";
 import { getScenario } from "./scenarios";
 import type { Scenario } from "./types";
 
 const GENERATION_MODEL = "claude-opus-4-8";
 const MAX_TOKENS = 16000;
-const OPUS_INPUT_PER_M = 5_000_000; // micros per million input tokens
-const OPUS_OUTPUT_PER_M = 25_000_000;
 
 /* -------------------------------------------------------------------------- */
 /* Brief seeds                                                                */
@@ -358,22 +361,9 @@ export async function generateDailyScenario(): Promise<GenerationOutcome> {
     ],
   });
 
-  const cost = Math.round(
-    (response.usage.input_tokens / 1_000_000) * OPUS_INPUT_PER_M +
-      (response.usage.output_tokens / 1_000_000) * OPUS_OUTPUT_PER_M,
-  );
+  const cost = costMicros(GENERATION_MODEL, response.usage);
 
-  let text = response.content
-    .flatMap((block) => (block.type === "text" ? [block.text] : []))
-    .join("\n")
-    .trim();
-  if (text.startsWith("```")) {
-    const firstNewline = text.indexOf("\n");
-    if (firstNewline > -1) text = text.slice(firstNewline + 1);
-    const lastFence = text.lastIndexOf("```");
-    if (lastFence > -1) text = text.slice(0, lastFence);
-    text = text.trim();
-  }
+  const text = stripCodeFences(extractText(response));
 
   let raw: unknown;
   try {

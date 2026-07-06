@@ -10,14 +10,16 @@
  */
 
 import { z } from "zod";
-import { getAnthropic, ANTHROPIC_MODEL } from "@/lib/anthropic";
+import {
+  getAnthropic,
+  ANTHROPIC_MODEL,
+  extractText,
+  stripCodeFences,
+  costMicros,
+} from "@/lib/anthropic";
 import type { LabPersona } from "./personas";
 
 const LAB_MODEL = "claude-sonnet-4-6";
-const SONNET_INPUT_PER_M = 3_000_000; // micros per million input tokens
-const SONNET_OUTPUT_PER_M = 15_000_000;
-const HAIKU_INPUT_PER_M = 1_000_000;
-const HAIKU_OUTPUT_PER_M = 5_000_000;
 
 /** Player messages allowed per session. Server-enforced. */
 export const LAB_MAX_TURNS = 16;
@@ -47,17 +49,6 @@ export interface LabScore {
   };
   outcome: "held" | "mixed" | "played";
   verdict: string;
-}
-
-function costMicros(
-  inputTokens: number,
-  outputTokens: number,
-  perMIn: number,
-  perMOut: number,
-): number {
-  return Math.round(
-    (inputTokens / 1_000_000) * perMIn + (outputTokens / 1_000_000) * perMOut,
-  );
 }
 
 /**
@@ -135,10 +126,7 @@ export async function labReply(
     messages,
   });
 
-  const raw = response.content
-    .flatMap((block) => (block.type === "text" ? [block.text] : []))
-    .join("\n")
-    .trim();
+  const raw = extractText(response);
   if (!raw) throw new Error("Lab persona returned no text.");
 
   // Split a barrage into separate messages; cap at 3 so a runaway reply
@@ -152,12 +140,7 @@ export async function labReply(
 
   return {
     texts,
-    costMicros: costMicros(
-      response.usage.input_tokens,
-      response.usage.output_tokens,
-      SONNET_INPUT_PER_M,
-      SONNET_OUTPUT_PER_M,
-    ),
+    costMicros: costMicros(LAB_MODEL, response.usage),
   };
 }
 
@@ -213,20 +196,10 @@ export async function scoreLabSession(
     ],
   });
 
-  const text = response.content
-    .flatMap((block) => (block.type === "text" ? [block.text] : []))
-    .join("\n")
-    .trim();
+  const text = extractText(response);
   if (!text) throw new Error("Lab judge returned no text.");
 
-  let cleaned = text;
-  if (cleaned.startsWith("```")) {
-    const firstNewline = cleaned.indexOf("\n");
-    if (firstNewline > -1) cleaned = cleaned.slice(firstNewline + 1);
-    const lastFence = cleaned.lastIndexOf("```");
-    if (lastFence > -1) cleaned = cleaned.slice(0, lastFence);
-  }
-  const parsed = ScoreOutput.parse(JSON.parse(cleaned.trim()));
+  const parsed = ScoreOutput.parse(JSON.parse(stripCodeFences(text)));
 
   return {
     score: {
@@ -239,11 +212,6 @@ export async function scoreLabSession(
       outcome: parsed.outcome,
       verdict: parsed.verdict.slice(0, 600),
     },
-    costMicros: costMicros(
-      response.usage.input_tokens,
-      response.usage.output_tokens,
-      HAIKU_INPUT_PER_M,
-      HAIKU_OUTPUT_PER_M,
-    ),
+    costMicros: costMicros(ANTHROPIC_MODEL, response.usage),
   };
 }

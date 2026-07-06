@@ -6,21 +6,16 @@
  * cost. System prompt locked in lib/receipts/prompt.ts.
  */
 
-import { getAnthropic } from "@/lib/anthropic";
+import {
+  getAnthropic,
+  costMicros,
+  extractText,
+  MODEL_PRICING_MICROS,
+} from "@/lib/anthropic";
 import { RECEIPTS_SYSTEM_PROMPT, buildUserMessage } from "./prompt";
 import { logger } from "@/lib/logger";
 
 const RECEIPTS_MODEL = "claude-sonnet-4-6-20250929";
-
-// Per-model pricing in micros (USD millionths) per million tokens. Sonnet
-// drives the paid member feature ("the model is the moat"); Haiku drives the
-// free public lead magnet, where volume matters more than the last 5% of
-// nuance. Re-tune if the SKUs change. Unknown models fall back to Sonnet
-// pricing so a cost is never under-counted.
-const PRICING: Record<string, { inputPerM: number; outputPerM: number }> = {
-  "claude-sonnet-4-6-20250929": { inputPerM: 3_000_000, outputPerM: 15_000_000 },
-  "claude-haiku-4-5-20251001": { inputPerM: 1_000_000, outputPerM: 5_000_000 },
-};
 
 export interface CallReceiptsOptions {
   /** Model id to call. Defaults to Sonnet (the paid member tier). The free
@@ -168,12 +163,7 @@ export async function callReceipts(
     ],
   });
 
-  // Extract text from the response. Claude returns a content array
-  // of typed blocks; only the "text" blocks have a .text field.
-  const text = response.content
-    .flatMap((block) => (block.type === "text" ? [block.text] : []))
-    .join("\n")
-    .trim();
+  const text = extractText(response);
 
   if (!text) {
     throw new Error("Receipts call returned no text.");
@@ -181,21 +171,16 @@ export async function callReceipts(
 
   const inputTokens = response.usage.input_tokens;
   const outputTokens = response.usage.output_tokens;
-  const pricing = PRICING[model];
-  if (!pricing) {
+  if (!(model in MODEL_PRICING_MICROS)) {
     logger.warn("[receipts] no pricing for model, using Sonnet rate", { model });
   }
-  const { inputPerM, outputPerM } = pricing ?? PRICING[RECEIPTS_MODEL];
-  const costMicros = Math.round(
-    (inputTokens / 1_000_000) * inputPerM +
-      (outputTokens / 1_000_000) * outputPerM,
-  );
+  const cost = costMicros(model, response.usage);
 
   return {
     response: text,
     inputTokens,
     outputTokens,
-    costMicros,
+    costMicros: cost,
     model,
   };
 }
