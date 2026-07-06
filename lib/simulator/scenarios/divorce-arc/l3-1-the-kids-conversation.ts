@@ -47,7 +47,7 @@ const DAUGHTER: Character = {
   traits: ["perceptive", "composed", "asks-the-hard-question"],
   defaultEmotion: "serious",
   gender: "female",
-  personalityType: "daughter",
+  personalityType: "child",
   silhouetteType: "child",
 };
 
@@ -59,7 +59,7 @@ const SON: Character = {
   traits: ["concrete", "young", "unedited"],
   defaultEmotion: "confused",
   gender: "male",
-  personalityType: "son",
+  personalityType: "child",
   silhouetteType: "child",
 };
 
@@ -177,7 +177,7 @@ const scenes: Scene[] = [
       },
       {
         speakerId: "inner-voice",
-        text: "There it is, the worse thing he built in the two seconds of your wind-up. The preamble did not soften the news; it opened a door to a bigger fear and let a eight-year-old walk through it. Close it now with the calm, complete sentence you were supposed to lead with.",
+        text: "There it is, the worse thing he built in the two seconds of your wind-up. The preamble did not soften the news; it opened a door to a bigger fear and let an eight-year-old walk through it. Close it now with the calm, complete sentence you were supposed to lead with.",
         emotion: "serious",
         tone: "tactical",
       },
@@ -453,7 +453,7 @@ const scenes: Scene[] = [
     dialog: [
       {
         speakerId: "son",
-        text: "Jonah's face does the thing where it holds for a second and then goes, and he is crying, the full uncomplicated crying of a eight-year-old, into the toy still in his hand.",
+        text: "Jonah's face does the thing where it holds for a second and then goes, and he is crying, the full uncomplicated crying of an eight-year-old, into the toy still in his hand.",
         emotion: "sad",
       },
       {
