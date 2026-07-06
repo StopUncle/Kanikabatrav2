@@ -23,6 +23,7 @@ import {
 } from "@/lib/anthropic";
 import { prisma } from "@/lib/prisma";
 import { getScenario } from "./scenarios";
+import { collectScenarioIssues } from "./validate";
 import type { Scenario } from "./types";
 
 const GENERATION_MODEL = "claude-opus-4-8";
@@ -165,10 +166,21 @@ const GeneratedScenarioSchema = z.object({
 });
 
 /**
- * Same graph rules the static validator enforces: unique scene ids,
- * resolvable transitions, no self-loops, well-formed endings, no
- * soft-locks, valid speakers, reachability, and the project-wide
- * em-dash ban. Returns a list of failures; empty list means valid.
+ * Publish gate for AI-generated scenarios. Returns a list of failures;
+ * empty list means valid.
+ *
+ * Three layers:
+ * 1. Zod shape/type validation (this output is untrusted model JSON).
+ * 2. Content rules specific to generated scenarios: the project-wide
+ *    em-dash ban, ending copy (title + summary), and at least 2 endings.
+ * 3. The shared structural graph checks (lib/simulator/validate.ts, the
+ *    same source of truth the build-time script uses).
+ *
+ * The gate is server-authoritative, so every structural issue is fatal
+ * except the two soft authoring conventions the shared validator flags as
+ * warnings: a genuinely neutral choice legitimately omits isOptimal, and
+ * the blank-auto-advance case cannot occur here because the schema
+ * requires non-empty dialog.
  */
 export function validateScenarioGraph(raw: unknown): {
   scenario: Scenario | null;
@@ -190,87 +202,25 @@ export function validateScenarioGraph(raw: unknown): {
     failures.push("contains em dashes (project-wide ban)");
   }
 
-  const sceneIds = new Set<string>();
-  for (const scene of s.scenes) {
-    if (sceneIds.has(scene.id)) failures.push(`duplicate scene id: ${scene.id}`);
-    sceneIds.add(scene.id);
-  }
-
-  if (!sceneIds.has(s.startSceneId)) {
-    failures.push(`startSceneId "${s.startSceneId}" is not a scene`);
-  }
-
-  const characterIds = new Set(s.characters.map((c) => c.id));
+  // Content requirements beyond the structural graph: endings need
+  // publish-ready copy, and a generated scenario must offer a real branch.
   let endings = 0;
-
   for (const scene of s.scenes) {
-    const choices = scene.choices ?? [];
-    if (scene.isEnding) {
-      endings += 1;
-      if (!scene.outcomeType) failures.push(`ending ${scene.id} missing outcomeType`);
-      if (!scene.endingTitle) failures.push(`ending ${scene.id} missing endingTitle`);
-      if (!scene.endingSummary) failures.push(`ending ${scene.id} missing endingSummary`);
-      if (choices.length > 0 || scene.nextSceneId) {
-        failures.push(`ending ${scene.id} must not have choices or nextSceneId`);
-      }
-      continue;
-    }
-    if (choices.length === 0 && !scene.nextSceneId) {
-      failures.push(`scene ${scene.id} soft-locks (no choices, no nextSceneId)`);
-    }
-    if (scene.nextSceneId) {
-      if (scene.nextSceneId === scene.id) failures.push(`scene ${scene.id} self-loops`);
-      if (!sceneIds.has(scene.nextSceneId)) {
-        failures.push(`scene ${scene.id} nextSceneId "${scene.nextSceneId}" unresolved`);
-      }
-    }
-    const choiceIds = new Set<string>();
-    for (const choice of choices) {
-      if (choiceIds.has(choice.id)) {
-        failures.push(`scene ${scene.id} duplicate choice id: ${choice.id}`);
-      }
-      choiceIds.add(choice.id);
-      if (choice.nextSceneId === scene.id) {
-        failures.push(`scene ${scene.id} choice ${choice.id} self-loops`);
-      }
-      if (!sceneIds.has(choice.nextSceneId)) {
-        failures.push(
-          `scene ${scene.id} choice ${choice.id} nextSceneId "${choice.nextSceneId}" unresolved`,
-        );
-      }
-    }
-    for (const line of scene.dialog) {
-      if (
-        line.speakerId &&
-        line.speakerId !== "inner-voice" &&
-        !characterIds.has(line.speakerId)
-      ) {
-        failures.push(`scene ${scene.id} unknown speakerId "${line.speakerId}"`);
-      }
-    }
+    if (!scene.isEnding) continue;
+    endings += 1;
+    if (!scene.endingTitle) failures.push(`ending ${scene.id} missing endingTitle`);
+    if (!scene.endingSummary) failures.push(`ending ${scene.id} missing endingSummary`);
   }
-
   if (endings < 2) failures.push(`needs at least 2 endings, found ${endings}`);
 
-  // Reachability sweep from the start scene; unreachable scenes are
-  // dead prose at best and a validator-evading soft-lock at worst.
-  const adjacency = new Map<string, string[]>();
-  for (const scene of s.scenes) {
-    const next: string[] = [];
-    if (scene.nextSceneId) next.push(scene.nextSceneId);
-    for (const c of scene.choices ?? []) next.push(c.nextSceneId);
-    adjacency.set(scene.id, next);
-  }
-  const reachable = new Set<string>();
-  const queue = [s.startSceneId];
-  while (queue.length) {
-    const id = queue.pop() as string;
-    if (reachable.has(id)) continue;
-    reachable.add(id);
-    queue.push(...(adjacency.get(id) ?? []));
-  }
-  for (const scene of s.scenes) {
-    if (!reachable.has(scene.id)) failures.push(`scene ${scene.id} unreachable`);
+  for (const issue of collectScenarioIssues(s as unknown as Scenario)) {
+    if (
+      issue.code === "choice-missing-is-optimal" ||
+      issue.code === "blank-auto-advance"
+    ) {
+      continue;
+    }
+    failures.push(issue.message);
   }
 
   return {
