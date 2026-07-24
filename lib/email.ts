@@ -14,6 +14,7 @@ import {
 } from "@/lib/mini-quiz";
 import { STARTER_PATTERNS } from "@/lib/starter-pack-content";
 import { marketingFooterByEmailHtml } from "@/lib/email-footer";
+import { BOOK_MAX_DOWNLOADS } from "@/lib/constants";
 
 const logger = {
   info: (message: string) => console.log(`[EMAIL INFO] ${message}`),
@@ -652,7 +653,7 @@ export const sendBookDelivery = async (
                           </tr>
                           <tr>
                             <td style="padding: 8px 0; color: #94a3b8; font-size: 14px; line-height: 1.6;">
-                              Maximum downloads: <strong style="color: #d4af37;">10 times total</strong> (across all formats)
+                              Maximum downloads: <strong style="color: #d4af37;">${BOOK_MAX_DOWNLOADS} times total</strong> (across all formats)
                             </td>
                           </tr>
                           <tr>

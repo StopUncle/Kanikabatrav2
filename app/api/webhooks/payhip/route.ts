@@ -3,6 +3,7 @@ import crypto from "crypto";
 import { prisma } from "@/lib/prisma";
 import { sendBookDelivery } from "@/lib/email";
 import { PAYHIP_PRODUCTS } from "@/lib/payhip";
+import { BOOK_MAX_DOWNLOADS } from "@/lib/constants";
 
 function verifySignature(payload: string, signature: string): boolean {
   const apiKey = process.env.PAYHIP_API_KEY;
@@ -20,8 +21,16 @@ export async function POST(request: NextRequest) {
   const rawBody = await request.text();
   const signature = request.headers.get("x-payhip-signature") || "";
 
-  // Verify signature (skip in dev if no API key configured)
-  if (process.env.PAYHIP_API_KEY && !verifySignature(rawBody, signature)) {
+  // Verify signature. In production a missing PAYHIP_API_KEY must reject,
+  // not skip: an unverified endpoint would let anyone POST a forged "paid"
+  // event and have the book emailed to an arbitrary address. Dev without
+  // the key keeps the skip for local testing.
+  if (!process.env.PAYHIP_API_KEY) {
+    if (process.env.NODE_ENV === "production") {
+      console.error("[payhip-webhook] PAYHIP_API_KEY not configured, rejecting");
+      return NextResponse.json({ error: "Webhook not configured" }, { status: 401 });
+    }
+  } else if (!verifySignature(rawBody, signature)) {
     return NextResponse.json({ error: "Invalid signature" }, { status: 401 });
   }
 
@@ -31,12 +40,31 @@ export async function POST(request: NextRequest) {
   try {
     switch (eventType) {
       case "paid": {
-        const email = payload.email;
+        // Lowercase to match the Stripe path; register/login and the
+        // purchase lookups all assume lowercased storage.
+        const email = (payload.email || "").toLowerCase();
         const name = payload.name || email;
         const amount = (payload.price || 0) / 100; // cents to dollars
         const transactionId = payload.id;
         const items = payload.items || [];
         const productId = items[0]?.product_id || "";
+
+        if (!email) break;
+
+        // Idempotency: Payhip retries undelivered webhooks. Without this
+        // guard a duplicate "paid" event would hit the unique constraint on
+        // paypalOrderId, throw, and 500 the whole request, causing Payhip
+        // to keep retrying a purchase that already succeeded.
+        const idempotencyKey = `PH-${transactionId}`;
+        const alreadyProcessed = await prisma.purchase.findUnique({
+          where: { paypalOrderId: idempotencyKey },
+        });
+        if (alreadyProcessed) {
+          console.log(
+            `[payhip-webhook] ${idempotencyKey} already processed, skipping`,
+          );
+          break;
+        }
 
         // Match product ID to our products
         if (productId === PAYHIP_PRODUCTS.BOOK) {
@@ -44,6 +72,10 @@ export async function POST(request: NextRequest) {
           const expiresAt = new Date();
           expiresAt.setDate(expiresAt.getDate() + 30);
 
+          // Born flagged-for-retry, same pattern as the Stripe BOOK branch:
+          // the flag clears only after the email confirms sent, so a failed
+          // or interrupted send gets recovered by cron/retry-emails instead
+          // of vanishing.
           await prisma.purchase.create({
             data: {
               type: "BOOK",
@@ -51,15 +83,44 @@ export async function POST(request: NextRequest) {
               customerName: name,
               amount,
               status: "COMPLETED",
-              paypalOrderId: `PH-${transactionId}`,
+              paypalOrderId: idempotencyKey,
               downloadToken,
               expiresAt,
-              maxDownloads: 10,
-              metadata: { source: "payhip", transactionId, productId },
+              maxDownloads: BOOK_MAX_DOWNLOADS,
+              metadata: {
+                source: "payhip",
+                transactionId,
+                productId,
+                emailDeliveryFailed: true,
+              },
             },
           });
 
-          await sendBookDelivery(email, name, downloadToken, null, expiresAt);
+          const emailSent = await sendBookDelivery(
+            email,
+            name,
+            downloadToken,
+            null,
+            expiresAt,
+          );
+
+          if (emailSent) {
+            await prisma.purchase.update({
+              where: { paypalOrderId: idempotencyKey },
+              data: {
+                metadata: {
+                  source: "payhip",
+                  transactionId,
+                  productId,
+                  emailDeliveredAt: new Date().toISOString(),
+                },
+              },
+            });
+          } else {
+            console.error(
+              `[payhip-webhook] BOOK delivery email failed for ${email} (${idempotencyKey}), flagged for retry`,
+            );
+          }
 
           // Auto-enroll in email sequence
           try {

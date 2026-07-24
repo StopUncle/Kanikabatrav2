@@ -226,7 +226,7 @@ export default function MemberBookClient({
               </li>
               <li className="flex items-start gap-2 text-text-gray text-sm">
                 <Check size={16} className="text-accent-gold/80 mt-0.5 shrink-0" />
-                <span>30-day download window, 10 downloads, fresh links via the Consilium anytime</span>
+                <span>30-day download window, 30 downloads, fresh links via the Consilium anytime</span>
               </li>
             </ul>
 

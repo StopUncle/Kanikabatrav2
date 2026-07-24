@@ -5,15 +5,39 @@ import path from "path";
 
 export const dynamic = "force-dynamic";
 
+// People click these links from an email, so a dead link must land on a
+// page with a way forward (the /resend self-serve form), not a raw JSON
+// blob. Browsers advertise text/html in Accept; API clients keep JSON.
+function friendlyFail(
+  request: NextRequest,
+  reason: "invalid" | "expired" | "limit" | "unavailable",
+  jsonBody: { error: string },
+  status: number,
+): NextResponse {
+  const wantsHtml = request.headers
+    .get("accept")
+    ?.toLowerCase()
+    .includes("text/html");
+  if (wantsHtml) {
+    return NextResponse.redirect(
+      new URL(`/resend?reason=${reason}`, request.url),
+      302,
+    );
+  }
+  return NextResponse.json(jsonBody, { status });
+}
+
 export async function GET(request: NextRequest) {
   try {
     const searchParams = request.nextUrl.searchParams;
     const token = searchParams.get("token");
 
     if (!token) {
-      return NextResponse.json(
+      return friendlyFail(
+        request,
+        "invalid",
         { error: "Download token is required" },
-        { status: 400 },
+        400,
       );
     }
 
@@ -22,39 +46,49 @@ export async function GET(request: NextRequest) {
     });
 
     if (!purchase) {
-      return NextResponse.json(
+      return friendlyFail(
+        request,
+        "invalid",
         { error: "Invalid download token" },
-        { status: 404 },
+        404,
       );
     }
 
     if (purchase.status !== "COMPLETED") {
-      return NextResponse.json(
+      return friendlyFail(
+        request,
+        "invalid",
         { error: "Purchase is not completed" },
-        { status: 400 },
+        400,
       );
     }
 
     if (purchase.expiresAt && purchase.expiresAt < new Date()) {
-      return NextResponse.json(
+      return friendlyFail(
+        request,
+        "expired",
         { error: "Download link has expired. Please contact Kanika@kanikarose.com for a new link." },
-        { status: 410 },
+        410,
       );
     }
 
     if (purchase.downloadCount >= purchase.maxDownloads) {
-      return NextResponse.json(
+      return friendlyFail(
+        request,
+        "limit",
         {
           error: `Maximum download limit (${purchase.maxDownloads}) reached. Please contact Kanika@kanikarose.com for help.`,
         },
-        { status: 429 },
+        429,
       );
     }
 
     if (purchase.type !== "BOOK") {
-      return NextResponse.json(
+      return friendlyFail(
+        request,
+        "invalid",
         { error: "This purchase is not for a downloadable book" },
-        { status: 400 },
+        400,
       );
     }
 
@@ -99,9 +133,11 @@ export async function GET(request: NextRequest) {
       await fs.access(bookPath);
     } catch {
       console.error(`[download] file not found: ${bookFilename}`);
-      return NextResponse.json(
+      return friendlyFail(
+        request,
+        "unavailable",
         { error: "Book file is temporarily unavailable. Please try again in a few minutes or contact Kanika@kanikarose.com" },
-        { status: 503 },
+        503,
       );
     }
 
@@ -121,11 +157,13 @@ export async function GET(request: NextRequest) {
     });
 
     if (claimed.count === 0) {
-      return NextResponse.json(
+      return friendlyFail(
+        request,
+        "limit",
         {
           error: `Maximum download limit (${purchase.maxDownloads}) reached. Please contact Kanika@kanikarose.com for help.`,
         },
-        { status: 429 },
+        429,
       );
     }
 
@@ -144,9 +182,11 @@ export async function GET(request: NextRequest) {
         console.error("[download] failed to refund download slot:", refundError);
       }
       console.error(`[download] readFile failed for ${bookFilename}:`, readError);
-      return NextResponse.json(
+      return friendlyFail(
+        request,
+        "unavailable",
         { error: "Book file is temporarily unavailable. Please try again in a few minutes or contact Kanika@kanikarose.com" },
-        { status: 503 },
+        503,
       );
     }
 

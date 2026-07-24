@@ -4,6 +4,7 @@ import { optionalServerAuth } from "@/lib/auth/server-auth";
 import { checkMembership } from "@/lib/community/membership";
 import { prisma } from "@/lib/prisma";
 import { sendBookDelivery } from "@/lib/email";
+import { BOOK_MAX_DOWNLOADS } from "@/lib/constants";
 
 /**
  * Resend the book's download links to the authenticated member.
@@ -71,6 +72,7 @@ export async function POST() {
       downloadToken: freshToken,
       expiresAt: freshExpiry,
       downloadCount: 0,
+      maxDownloads: BOOK_MAX_DOWNLOADS,
     },
   });
 

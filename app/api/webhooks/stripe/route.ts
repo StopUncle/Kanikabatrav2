@@ -3,6 +3,7 @@ import { stripe } from "@/lib/stripe";
 import { prisma } from "@/lib/prisma";
 import { sendBookDelivery, sendInnerCircleWelcomeNewUser, sendMembershipRenewed, sendMembershipSuspended, sendMembershipCancelled } from "@/lib/email";
 import { createQuizConsiliumCredit } from "@/lib/stripe-credits";
+import { BOOK_MAX_DOWNLOADS } from "@/lib/constants";
 import jwt from "jsonwebtoken";
 import crypto from "crypto";
 
@@ -77,6 +78,14 @@ export async function POST(request: NextRequest) {
           const expiresAt = new Date();
           expiresAt.setDate(expiresAt.getDate() + 30);
 
+          // Born flagged-for-retry: if the process dies between this create
+          // and the sendBookDelivery below (deploy restart, OOM), Stripe's
+          // webhook retry hits the idempotency guard and skips, so nothing
+          // would ever email the buyer. With the flag preset, the
+          // cron/retry-emails sweep recovers them; the flag is cleared only
+          // once the email actually sends. Worst case is a duplicate email
+          // carrying the same links if the cron fires inside the send
+          // window, which is harmless.
           await prisma.purchase.create({
             data: {
               type: "BOOK",
@@ -87,8 +96,13 @@ export async function POST(request: NextRequest) {
               paypalOrderId: idempotencyKey,
               downloadToken,
               expiresAt,
-              maxDownloads: 10,
-              metadata: { source: "stripe", sessionId, productKey },
+              maxDownloads: BOOK_MAX_DOWNLOADS,
+              metadata: {
+                source: "stripe",
+                sessionId,
+                productKey,
+                emailDeliveryFailed: true,
+              },
             },
           });
 
@@ -100,10 +114,7 @@ export async function POST(request: NextRequest) {
             expiresAt,
           );
 
-          // Flag the purchase if book delivery email silently failed so
-          // cron/retry-emails can pick it up. SendBookDelivery returns
-          // false (doesn't throw) after exhausting 3 retries.
-          if (!emailSent) {
+          if (emailSent) {
             await prisma.purchase.update({
               where: { paypalOrderId: idempotencyKey },
               data: {
@@ -111,10 +122,14 @@ export async function POST(request: NextRequest) {
                   source: "stripe",
                   sessionId,
                   productKey,
-                  emailDeliveryFailed: true,
+                  emailDeliveredAt: new Date().toISOString(),
                 },
               },
             });
+          } else {
+            // sendBookDelivery returns false (doesn't throw) after
+            // exhausting 3 retries; the preset flag stays and
+            // cron/retry-emails picks it up.
             console.error(
               `[stripe-webhook] BOOK delivery email failed for ${email} (session ${sessionId}), flagged for retry`,
             );
@@ -456,6 +471,8 @@ export async function POST(request: NextRequest) {
           const bookExpiresAt = new Date();
           bookExpiresAt.setDate(bookExpiresAt.getDate() + 30);
 
+          // Born flagged-for-retry, same crash-window protection as the
+          // BOOK branch above: cleared only after the email confirms sent.
           await prisma.purchase.create({
             data: {
               type: "BOOK",
@@ -467,8 +484,14 @@ export async function POST(request: NextRequest) {
               paypalOrderId: idempotencyKey,
               downloadToken,
               expiresAt: bookExpiresAt,
-              maxDownloads: 10,
-              metadata: { source: "stripe", sessionId, productKey, subscriptionId },
+              maxDownloads: BOOK_MAX_DOWNLOADS,
+              metadata: {
+                source: "stripe",
+                sessionId,
+                productKey,
+                subscriptionId,
+                emailDeliveryFailed: true,
+              },
             },
           });
 
@@ -479,7 +502,7 @@ export async function POST(request: NextRequest) {
             "PREMIUM",
             bookExpiresAt,
           );
-          if (!emailSent) {
+          if (emailSent) {
             await prisma.purchase.update({
               where: { paypalOrderId: idempotencyKey },
               data: {
@@ -488,10 +511,11 @@ export async function POST(request: NextRequest) {
                   sessionId,
                   productKey,
                   subscriptionId,
-                  emailDeliveryFailed: true,
+                  emailDeliveredAt: new Date().toISOString(),
                 },
               },
             });
+          } else {
             console.error(
               `[stripe-webhook] ${productKey} book delivery email failed for ${email}, flagged for retry`,
             );

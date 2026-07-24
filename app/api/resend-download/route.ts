@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { sendBookDelivery } from "@/lib/email";
+import { BOOK_MAX_DOWNLOADS } from "@/lib/constants";
 import crypto from "crypto";
 
 // Simple in-memory rate limiter: max 3 requests per email per 15 minutes
@@ -100,12 +101,15 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Email confirmed sent, now persist the new token
+    // Email confirmed sent, now persist the new token. maxDownloads is
+    // bumped too so purchases created under the old cap of 10 pick up the
+    // current budget when their link is refreshed.
     await prisma.purchase.update({
       where: { id: purchase.id },
       data: {
         downloadToken,
         downloadCount: 0,
+        maxDownloads: BOOK_MAX_DOWNLOADS,
         expiresAt,
       },
     });
