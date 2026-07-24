@@ -10,6 +10,9 @@ import type {
 import SimulatorRunner from "@/components/simulator/SimulatorRunner";
 import AchievementToast from "@/components/simulator/AchievementToast";
 import SimulatorErrorBoundary from "@/components/simulator/SimulatorErrorBoundary";
+import RingUpCeremony, {
+  type RingUpPayload,
+} from "@/components/rings/RingUpCeremony";
 
 export type PreviousBest = {
   xpEarned: number;
@@ -52,6 +55,7 @@ export default function AdventureSimulatorPageClient({
   const router = useRouter();
   const [badgesEarned, setBadgesEarned] = useState<string[]>([]);
   const [unlockedThisRun, setUnlockedThisRun] = useState<string[]>([]);
+  const [ringUp, setRingUp] = useState<RingUpPayload | null>(null);
   const [bestToDate, setBestToDate] = useState<PreviousBest | null>(previousBest);
 
   useEffect(() => {
@@ -88,6 +92,7 @@ export default function AdventureSimulatorPageClient({
     async (state: SimulatorState) => {
       setBadgesEarned([]);
       setUnlockedThisRun([]);
+      setRingUp(null);
       setBestToDate((prev) => {
         if (!prev || state.xpEarned > prev.xpEarned) {
           return {
@@ -127,9 +132,11 @@ export default function AdventureSimulatorPageClient({
           const data = (await completeRes.json()) as {
             allEarnedKeys: string[];
             newlyEarnedKeys: string[];
+            ringUp: RingUpPayload | null;
           };
           setBadgesEarned(data.allEarnedKeys);
           setUnlockedThisRun(data.newlyEarnedKeys);
+          setRingUp(data.ringUp ?? null);
         }
         router.refresh();
       } catch {
@@ -162,6 +169,7 @@ export default function AdventureSimulatorPageClient({
       />
       <AdventureChapterBanner label={stepLabel} title={adventureTitle} />
       <AchievementToast unlocks={unlockedThisRun} />
+      <RingUpCeremony ringUp={ringUp} onDismiss={() => setRingUp(null)} />
     </SimulatorErrorBoundary>
   );
 }
