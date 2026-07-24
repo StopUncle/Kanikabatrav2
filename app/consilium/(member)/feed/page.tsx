@@ -1,12 +1,9 @@
-import { redirect } from "next/navigation";
 import { requireServerAuth } from "@/lib/auth/server-auth";
 import { feedPostGenderWhere } from "@/lib/community/gender-filter";
 import { prisma } from "@/lib/prisma";
 import { memberSafeName } from "@/lib/community/privacy";
 import FeedList from "@/components/consilium/FeedList";
-import OnboardingModal from "@/components/consilium/OnboardingModal";
-import FirstMovesChecklist from "@/components/consilium/FirstMovesChecklist";
-import FirstSevenDays from "@/components/consilium/FirstSevenDays";
+import RingStrip from "@/components/rings/RingStrip";
 import TodayBlock from "@/components/consilium/TodayBlock";
 import { MessageCircle, Mail } from "lucide-react";
 import { tierForMember } from "@/components/consilium/badge-tiers";
@@ -35,58 +32,19 @@ export default async function FeedPage({
   const params = await searchParams;
   const justClaimed = params.claimed === "1";
 
-  // Pull onboarding state + the signals that back the "Your first moves"
-  // checklist in one round-trip. Counts instead of booleans so any future
-  // "how many comments/scenarios completed" UI can reuse this shape.
+  // One viewer read: gender drives the feed filter, standing/ringLevel
+  // drive the identity strip. The old onboarding signals (modal state,
+  // first-moves counts, the mission-1-1 intercept) are gone; the
+  // Initiation gate in the member layout owns Day-0 routing now.
   const viewerRecord = await prisma.user.findUnique({
     where: { id: userId },
     select: {
-      onboardingSeenAt: true,
-      displayName: true,
       gender: true,
-      communityMembership: { select: { activatedAt: true } },
-      _count: {
-        select: {
-          quizResults: true,
-          simulatorProgress: true,
-          feedComments: true,
-        },
-      },
+      standing: true,
+      ringLevel: true,
     },
   });
-  // First-scenario intercept (mirrors /dashboard/page.tsx). The
-  // dashboard catches most new members, but anyone who deep-links
-  // straight to /consilium/feed (e.g. from the dashboard's gold
-  // "Enter the Consilium" pill, an email link, or a bookmark) needs
-  // the same nudge or they end up on a near-empty feed and bounce.
-  // Skipped when ?claimed=1 is set (post-bonus-month-claim flow has
-  // its own welcome state). The redirect stops firing the moment
-  // their first SimulatorProgress row exists.
-  if (
-    !justClaimed &&
-    (viewerRecord?._count.simulatorProgress ?? 0) === 0
-  ) {
-    redirect("/consilium/simulator/mission-1-1?welcome=1");
-  }
 
-  const showOnboarding = viewerRecord?.onboardingSeenAt == null;
-  // The modal collects gender + display name post-pay (the application
-  // form used to collect them; now that it's gone, we capture them on
-  // first feed visit). Skip the form half if the user already has them.
-  const needsDisplayName = !viewerRecord?.displayName;
-  const needsGender = !viewerRecord?.gender;
-  const firstMovesSignals = {
-    hasDisplayName:
-      !!viewerRecord?.displayName && viewerRecord.displayName.trim() !== "",
-    hasQuizResult: (viewerRecord?._count.quizResults ?? 0) > 0,
-    hasSimulatorProgress:
-      (viewerRecord?._count.simulatorProgress ?? 0) > 0,
-    hasComment: (viewerRecord?._count.feedComments ?? 0) > 0,
-  };
-
-  // viewerRecord already selected `gender`, so reuse it instead of firing a
-  // second full User lookup (getViewerGender did exactly that). genderWhere
-  // is pure once we have the gender.
   const viewerGender = viewerRecord?.gender ?? null;
   const genderWhere = feedPostGenderWhere(viewerGender);
 
@@ -184,13 +142,6 @@ export default async function FeedPage({
 
   return (
     <>
-      {showOnboarding && (
-        <OnboardingModal
-          needsDisplayName={needsDisplayName}
-          needsGender={needsGender}
-        />
-      )}
-
       <div className="max-w-2xl mx-auto px-3 sm:px-4 py-6 sm:py-8 lg:py-12">
         {justClaimed && (
           // One-off banner shown only when the user just landed via the
@@ -229,6 +180,11 @@ export default async function FeedPage({
           </p>
         </div>
 
+        <RingStrip
+          standing={viewerRecord?.standing ?? 0}
+          ringLevel={viewerRecord?.ringLevel ?? 7}
+        />
+
         <TodayBlock
           mission={dailyMission}
           missionDone={missionDone}
@@ -238,15 +194,6 @@ export default async function FeedPage({
           freshDrop={freshDrop}
           council={council}
         />
-
-        <FirstSevenDays
-          activatedAt={
-            viewerRecord?.communityMembership?.activatedAt?.toISOString() ??
-            null
-          }
-          signals={firstMovesSignals}
-        />
-        <FirstMovesChecklist signals={firstMovesSignals} />
 
         {formatted.length === 0 ? (
           <div className="text-center py-16">

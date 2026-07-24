@@ -37,6 +37,14 @@ type Props = {
    * catalog on the ending screen. Empty on a first-ever play.
    */
   seenEndingIds?: string[];
+  /**
+   * Custom ending-screen CTA, forwarded to the runner. The Initiation
+   * uses this to route finishers into The Placement instead of the
+   * default "Next Scenario" link.
+   */
+  endingCta?: React.ReactNode;
+  /** Where the runner's exit X navigates. Defaults to the catalog. */
+  exitHref?: string;
 };
 
 /**
@@ -55,6 +63,8 @@ export default function SimulatorPageClient({
   previousBest = null,
   nextScenarioHref,
   seenEndingIds = [],
+  endingCta,
+  exitHref,
 }: Props) {
   const router = useRouter();
   const [badgesEarned, setBadgesEarned] = useState<string[]>([]);
@@ -182,7 +192,7 @@ export default function SimulatorPageClient({
     <SimulatorErrorBoundary
       scenarioId={scenario.id}
       currentSceneIdRef={currentSceneIdRef}
-      exitHref="/consilium/simulator"
+      exitHref={exitHref ?? "/consilium/simulator"}
     >
       <SimulatorRunner
         scenario={scenario}
@@ -193,6 +203,8 @@ export default function SimulatorPageClient({
         nextScenarioHref={nextScenarioHref}
         badgesEarned={badgesEarned}
         seenEndingIds={seenEndingIds}
+        endingCta={endingCta}
+        exitHref={exitHref}
       />
       <AchievementToast unlocks={unlockedThisRun} />
       <RingUpCeremony ringUp={ringUp} onDismiss={() => setRingUp(null)} />

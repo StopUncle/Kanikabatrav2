@@ -24,6 +24,11 @@ model User {
   // they haven't seen it yet — the feed renders the welcome modal on
   // their first visit after activation.
   onboardingSeenAt          DateTime?
+  // When the member finished the Initiation (or the veteran interstitial
+  // at the Rings launch). Null routes consilium surfaces to
+  // /consilium/initiation. Distinct from onboardingSeenAt, which belongs
+  // to the pre-Rings tour and dies with it.
+  initiationAt              DateTime?
   // Best-effort "last seen" stamp. Written by /api/auth/refresh
   // (fires roughly every 15min for any active session) and by
   // /api/auth/login. Read only by /api/cron/dormant-member to

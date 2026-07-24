@@ -243,6 +243,17 @@ async function claimAction(formData: FormData): Promise<void> {
     console.error("[claim] welcome series enqueue failed:", err);
   }
 
+  // Fresh claimers haven't done the Initiation, and the member layout
+  // would bounce them there anyway, silently eating the ?claimed=1
+  // set-your-password notice. Send them to the flow WITH the flag so
+  // the Door step can carry the notice instead.
+  const claimerInitiated = await prisma.user.findUnique({
+    where: { id: user.id },
+    select: { initiationAt: true },
+  });
+  if (!claimerInitiated?.initiationAt) {
+    redirect("/consilium/initiation?claimed=1");
+  }
   redirect("/consilium/feed?claimed=1");
 }
 
