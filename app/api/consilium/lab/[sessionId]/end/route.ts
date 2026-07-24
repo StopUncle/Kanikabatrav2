@@ -22,6 +22,8 @@ import {
   type TranscriptMessage,
 } from "@/lib/lab/engine";
 import { bumpDailyStreak } from "@/lib/streak/daily";
+import { grantStanding } from "@/lib/standing/grant";
+import { STANDING } from "@/lib/standing/config";
 import { logger } from "@/lib/logger";
 
 export async function POST(
@@ -82,6 +84,17 @@ export async function POST(
           userId: user.id,
           error: err instanceof Error ? err.message : String(err),
         });
+      });
+
+      // Standing: one grant per scored session (deduped on the session id
+      // so an end-request retry can't double-pay). Abandoned sessions earn
+      // nothing — the quota upstream bounds farm attempts.
+      void grantStanding(prisma, {
+        userId: user.id,
+        source: "LAB",
+        amount: STANDING.LAB,
+        refId: session.id,
+        dedupe: true,
       });
 
       return NextResponse.json({ score, abandoned: false });

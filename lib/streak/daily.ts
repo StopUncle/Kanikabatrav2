@@ -14,6 +14,7 @@
  */
 
 import type { PrismaClient } from "@prisma/client";
+import { STANDING } from "@/lib/standing/config";
 
 /** YYYY-MM-DD in UTC. */
 function utcDateKey(d: Date): string {
@@ -73,6 +74,22 @@ export async function bumpDailyStreak(
         dailyStreakLastDate: todayKey,
       },
     });
+
+    // Standing milestone: fires the day the streak reaches 7/30/100.
+    // Deduped on the milestone number so a streak that breaks and later
+    // re-reaches the same length doesn't pay twice (a design choice —
+    // the milestone marks the first time you got there).
+    const milestone = STANDING.STREAK_MILESTONES[newCurrent];
+    if (milestone) {
+      const { grantStanding } = await import("@/lib/standing/grant");
+      void grantStanding(prisma, {
+        userId,
+        source: "STREAK_MILESTONE",
+        amount: milestone,
+        refId: String(newCurrent),
+        dedupe: true,
+      });
+    }
 
     return { current: newCurrent, longest: newLongest, bumped: true };
   } catch (err) {

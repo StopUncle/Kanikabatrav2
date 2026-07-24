@@ -17,6 +17,8 @@ import { prisma } from "@/lib/prisma";
 import { z } from "zod";
 import { bumpGamesStreak } from "@/lib/games/status";
 import { bumpDailyStreak } from "@/lib/streak/daily";
+import { grantStanding, grantsTodayCount } from "@/lib/standing/grant";
+import { STANDING } from "@/lib/standing/config";
 import { DRILL_CARDS } from "@/lib/games/speed-drill/content";
 import { logger } from "@/lib/logger";
 
@@ -94,6 +96,20 @@ export async function POST(request: NextRequest) {
           err instanceof Error ? err : undefined,
         );
       });
+
+      // Standing: capped at 3 drill grants per UTC day so session-spamming
+      // can't farm the Rings. The session row itself is uncapped.
+      void (async () => {
+        const today = await grantsTodayCount(prisma, user.id, "DRILL");
+        if (today < 3) {
+          await grantStanding(prisma, {
+            userId: user.id,
+            source: "DRILL",
+            amount: STANDING.DRILL,
+            refId: session.id,
+          });
+        }
+      })().catch(() => {});
 
       return NextResponse.json({ session, streak });
     } catch (err) {

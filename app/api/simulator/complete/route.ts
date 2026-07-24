@@ -36,6 +36,9 @@ import { replayXp } from "@/lib/simulator/engine";
 import { mergeProgress } from "@/lib/simulator/progress-merge";
 import { bumpSimulatorStreak } from "@/lib/simulator/streak";
 import { bumpDailyStreak } from "@/lib/streak/daily";
+import { grantStanding } from "@/lib/standing/grant";
+import { STANDING } from "@/lib/standing/config";
+import { getDailyMission } from "@/lib/streak/daily-mission";
 import { logger } from "@/lib/logger";
 
 const CompleteBody = z.object({
@@ -361,10 +364,42 @@ export async function POST(request: NextRequest) {
         });
       });
 
+      // Standing (the Rings). First completion of a scenario grants its
+      // server-authoritative XP as Standing (replays grant nothing — the
+      // dedupe key backstops the wasFirstCompletion check against request
+      // retries). Completing today's shared daily mission adds a flat
+      // bonus, deduped per mission-day so one member can't re-earn it.
+      let ringUp: { fromLevel: number; toLevel: number; ringName: string } | null =
+        null;
+      if (wasFirstCompletion && safeXp > 0) {
+        const scenarioGrant = await grantStanding(prisma, {
+          userId: user.id,
+          source: "SCENARIO",
+          amount: safeXp * STANDING.SCENARIO_XP_MULTIPLIER,
+          refId: body.scenarioId,
+          dedupe: true,
+        });
+        if (scenarioGrant.rangUp) ringUp = scenarioGrant.rangUp;
+      }
+      const mission = getDailyMission();
+      if (mission && mission.scenarioId === body.scenarioId) {
+        const missionGrant = await grantStanding(prisma, {
+          userId: user.id,
+          source: "DAILY_MISSION",
+          amount: STANDING.DAILY_MISSION_BONUS,
+          refId: mission.dateKey,
+          dedupe: true,
+        });
+        if (missionGrant.rangUp) ringUp = missionGrant.rangUp;
+      }
+
       return NextResponse.json({
         success: true,
         allEarnedKeys: earnedKeys, // every badge the run would earn
         newlyEarnedKeys: newKeys, // only the ones not previously held
+        // Non-null when this completion crossed a ring threshold; the
+        // client uses it to fire the ring-up ceremony.
+        ringUp,
       });
     } catch (err) {
       logger.error("[simulator-complete] failed", err as Error, {

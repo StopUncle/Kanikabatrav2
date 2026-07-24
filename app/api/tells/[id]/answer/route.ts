@@ -17,6 +17,8 @@ import {
 import { recordAnswer, RecordAnswerInputError } from "@/lib/tells/db";
 import { prisma } from "@/lib/prisma";
 import { bumpDailyStreak } from "@/lib/streak/daily";
+import { grantStanding } from "@/lib/standing/grant";
+import { STANDING } from "@/lib/standing/config";
 import { logger } from "@/lib/logger";
 
 const Body = z.object({
@@ -68,6 +70,22 @@ export async function POST(
           { tellId: id, userId: uid },
         );
       });
+
+      // Standing (the Rings): first scored response to a tell only —
+      // replays already return isReplay, and the dedupe key makes a
+      // retried request a no-op. Skill (Elo) is untouched by this.
+      if (!result.isReplay) {
+        const axisBonus = result.correct
+          ? Object.keys(result.axesImpact).length * STANDING.TELL_CORRECT_AXIS
+          : 0;
+        void grantStanding(prisma, {
+          userId: uid,
+          source: "TELL",
+          amount: STANDING.TELL + axisBonus,
+          refId: id,
+          dedupe: true,
+        });
+      }
     }
 
     const res = NextResponse.json(result);

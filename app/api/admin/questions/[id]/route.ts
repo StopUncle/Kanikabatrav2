@@ -133,6 +133,21 @@ export async function PATCH(
     },
   });
 
+  // Standing for the asker: Kanika answering YOUR question is the rarest
+  // grant in the ledger. Deduped on the question id so re-linking the
+  // answer to a different post never pays twice.
+  if (body.answerPostId && !before.answerPostId) {
+    const { grantStanding } = await import("@/lib/standing/grant");
+    const { STANDING } = await import("@/lib/standing/config");
+    void grantStanding(prisma, {
+      userId: before.userId,
+      source: "QUESTION_ANSWERED",
+      amount: STANDING.QUESTION_ANSWERED,
+      refId: id,
+      dedupe: true,
+    });
+  }
+
   // Trigger asker notification only when an answer is freshly linked
   // (not on every re-link or status edit). Fire-and-forget.
   if (body.answerPostId && before.answerPostId !== body.answerPostId) {
