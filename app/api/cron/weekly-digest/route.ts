@@ -5,6 +5,11 @@ import { sendWeeklyDigest } from "@/lib/email";
 import { feedPostGenderWhere } from "@/lib/community/gender-filter";
 import { buildUnsubscribeUrl } from "@/lib/unsubscribe-token";
 import { logger } from "@/lib/logger";
+import { getPathState } from "@/lib/path/progress";
+import { stepHref } from "@/lib/path/curriculum";
+import { ringByLevel, standingToNextRing } from "@/lib/standing/config";
+import { isoWeekKey } from "@/lib/tells/streak";
+import type { LeagueOutcome } from "@prisma/client";
 
 /**
  * Weekly digest for ACTIVE Inner Circle members.
@@ -58,10 +63,83 @@ export async function POST(request: NextRequest) {
             displayName: true,
             gender: true,
             emailPreferences: true,
+            standing: true,
+            ringLevel: true,
           },
         },
       },
     });
+
+    const baseUrl =
+      process.env.NEXT_PUBLIC_BASE_URL || "https://kanikarose.com";
+
+    // The week's most-misread Tell (plan §6.3), computed ONCE for all
+    // members: among Tells scheduled in the window with at least 3
+    // scored answers, the one the room got wrong most often. Kanika's
+    // read is the first sentence of the reveal.
+    let misreadTell: {
+      question: string;
+      missRate: number;
+      read: string;
+      href: string;
+    } | null = null;
+    try {
+      const weekTells = await prisma.tell.findMany({
+        where: {
+          scheduleDate: { gte: weekAgo, lte: now },
+          status: { in: ["PUBLISHED", "ARCHIVED"] },
+        },
+        select: { id: true, slug: true, question: true, reveal: true },
+      });
+      if (weekTells.length > 0) {
+        const ids = weekTells.map((t) => t.id);
+        const [totals, corrects] = await Promise.all([
+          prisma.tellResponse.groupBy({
+            by: ["tellId"],
+            where: { tellId: { in: ids }, countedScored: true },
+            _count: { _all: true },
+          }),
+          prisma.tellResponse.groupBy({
+            by: ["tellId"],
+            where: { tellId: { in: ids }, countedScored: true, isCorrect: true },
+            _count: { _all: true },
+          }),
+        ]);
+        const totalBy = new Map(totals.map((r) => [r.tellId, r._count._all]));
+        const correctBy = new Map(corrects.map((r) => [r.tellId, r._count._all]));
+        const worst = Array.from(totalBy.entries()).reduce<{
+          tellId: string;
+          missRate: number;
+        } | null>((best, [tellId, total]) => {
+          if (total < 3) return best;
+          const missRate = Math.round(
+            (100 * (total - (correctBy.get(tellId) ?? 0))) / total,
+          );
+          return !best || missRate > best.missRate ? { tellId, missRate } : best;
+        }, null);
+        if (worst && worst.missRate >= 40) {
+          const tell = weekTells.find((t) => t.id === worst!.tellId)!;
+          const firstSentence = tell.reveal
+            .replace(/\s+/g, " ")
+            .trim()
+            .split(/(?<=[.!?])\s/)[0]
+            .slice(0, 200);
+          misreadTell = {
+            question: tell.question,
+            missRate: worst.missRate,
+            read: firstSentence,
+            href: `${baseUrl}/tells/${tell.slug}`,
+          };
+        }
+      }
+    } catch (err) {
+      // The verdict ships without this card rather than blocking sends.
+      logger.error("[cron weekly-digest] misread-tell calc failed", err as Error);
+    }
+
+    // Last resolved league week: at Sunday 08:00 the current ISO week
+    // has not resolved yet (that cron runs 23:59), so report last week's.
+    const lastWeekKey = isoWeekKey(weekAgo);
 
     let sent = 0;
     let failed = 0;
@@ -138,6 +216,53 @@ export async function POST(request: NextRequest) {
           },
         });
 
+        // The personal report card (plan §6.3). Each piece degrades to
+        // null independently; the email renders what it gets.
+        const [gained, leagueRow, pathState] = await Promise.all([
+          prisma.standingEvent.aggregate({
+            where: { userId: user.id, createdAt: { gte: weekAgo, lte: now } },
+            _sum: { amount: true },
+          }),
+          prisma.leagueMembership.findUnique({
+            where: { userId_weekKey: { userId: user.id, weekKey: lastWeekKey } },
+            select: {
+              finalRank: true,
+              outcome: true,
+              league: { select: { tierName: true } },
+            },
+          }),
+          getPathState(prisma, user.id, {
+            gender: user.gender,
+            ringLevel: user.ringLevel,
+          }).catch(() => null),
+        ]);
+
+        const toNext = standingToNextRing(user.standing);
+        const verdict = {
+          standingGained: gained._sum.amount ?? 0,
+          standingTotal: user.standing,
+          ringName: ringByLevel(user.ringLevel).name,
+          toNext: toNext
+            ? { ringName: toNext.next.name, remaining: toNext.remaining }
+            : null,
+          league:
+            leagueRow?.outcome && leagueRow.finalRank
+              ? {
+                  tierName: leagueRow.league.tierName,
+                  finalRank: leagueRow.finalRank,
+                  outcome: leagueRow.outcome as LeagueOutcome,
+                }
+              : null,
+          misreadTell,
+          nextStep: pathState?.current
+            ? {
+                chapterTitle: `Chapter ${pathState.current.chapter.number} · ${pathState.current.chapter.title}`,
+                label: pathState.current.step.label,
+                href: `${baseUrl}${stepHref(pathState.current.step, user.gender)}`,
+              }
+            : null,
+        };
+
         const unsubscribeUrl = buildUnsubscribeUrl({
           userId: user.id,
           type: "weeklyDigest",
@@ -164,6 +289,7 @@ export async function POST(request: NextRequest) {
           newVoiceNotes,
           newCourses,
           newCommentsOnYourPosts,
+          verdict,
           unsubscribeUrl,
         });
 
