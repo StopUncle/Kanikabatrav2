@@ -46,6 +46,8 @@ export interface PathState {
   newSeals: string[];
   /** Completed chapters overall (the Seal count). */
   sealedCount: number;
+  /** Every completed step id (incl. seal markers), for step-level UI. */
+  completedStepIds: ReadonlySet<string>;
 }
 
 type Db = PrismaClient | Prisma.TransactionClient;
@@ -253,5 +255,5 @@ export async function getPathState(
   }
 
   const sealedCount = chapters.filter((c) => c.status === "complete").length;
-  return { chapters, current, newSeals, sealedCount };
+  return { chapters, current, newSeals, sealedCount, completedStepIds: done };
 }

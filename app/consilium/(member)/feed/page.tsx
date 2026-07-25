@@ -3,24 +3,13 @@ import { feedPostGenderWhere } from "@/lib/community/gender-filter";
 import { prisma } from "@/lib/prisma";
 import { memberSafeName } from "@/lib/community/privacy";
 import FeedList from "@/components/consilium/FeedList";
-import RingStrip from "@/components/rings/RingStrip";
-import TodayBlock from "@/components/consilium/TodayBlock";
 import { MessageCircle, Mail } from "lucide-react";
 import { tierForMember } from "@/components/consilium/badge-tiers";
-import { getTellStreak } from "@/lib/tells/db";
-import { getTodaysGeneratedDrop } from "@/lib/simulator/generated";
 import { formatPoll, pollInclude } from "@/lib/community/poll-format";
-import { readDailyStreak } from "@/lib/streak/daily";
-import {
-  getDailyMission,
-  getMissionCouncilToday,
-  isDailyMissionDoneToday,
-} from "@/lib/streak/daily-mission";
-import { utcDateKey } from "@/lib/tells/streak";
 
 export const metadata = {
-  title: "Feed. The Consilium | Kanika Batra",
-  description: "The council feed, insights, discussions, and voice notes from Kanika.",
+  title: "Kanika. The Consilium | Kanika Batra",
+  description: "Her room. Posts, insights, discussions, and voice notes from Kanika.",
 };
 
 export default async function FeedPage({
@@ -32,32 +21,20 @@ export default async function FeedPage({
   const params = await searchParams;
   const justClaimed = params.claimed === "1";
 
-  // One viewer read: gender drives the feed filter, standing/ringLevel
-  // drive the identity strip. The old onboarding signals (modal state,
-  // first-moves counts, the mission-1-1 intercept) are gone; the
-  // Initiation gate in the member layout owns Day-0 routing now.
+  // One viewer read: gender drives the feed filter. The identity strip
+  // moved to the Chamber (the member home); this page is Kanika's room.
   const viewerRecord = await prisma.user.findUnique({
     where: { id: userId },
-    select: {
-      gender: true,
-      standing: true,
-      ringLevel: true,
-    },
+    select: { gender: true },
   });
 
   const viewerGender = viewerRecord?.gender ?? null;
   const genderWhere = feedPostGenderWhere(viewerGender);
 
   const PAGE_SIZE = 20;
-  // Today's mission is a pure function of the UTC date — no query needed.
-  const dailyMission = getDailyMission();
-  // Tell streak, feed, mission-done, unified streak, and today's drop are
-  // mutually independent, so run them in one parallel round-trip. The redirect
-  // guard above only depends on viewerRecord, which is already resolved.
-  const [tellStreak, rows, missionDone, dailyStreak, freshDrop, council] =
-    await Promise.all([
-    getTellStreak(userId),
-    prisma.feedPost.findMany({
+  // The daily loop (mission, tell, streak, drop) lives on the Chamber
+  // now; this page only loads the posts.
+  const rows = await prisma.feedPost.findMany({
       where: genderWhere,
       take: PAGE_SIZE + 1,
       orderBy: [{ isPinned: "desc" }, { createdAt: "desc" }],
@@ -82,14 +59,7 @@ export default async function FeedPage({
         },
         poll: pollInclude,
       },
-    }),
-    isDailyMissionDoneToday(prisma, userId),
-    readDailyStreak(prisma, userId),
-    getTodaysGeneratedDrop(),
-    getMissionCouncilToday(prisma),
-  ]);
-  const today = utcDateKey();
-  const doneToday = tellStreak?.lastTellDate === today;
+    });
 
   // Drop unpinned posts whose title matches an already-pinned post.
   // Re-pinning a fresh copy of an evergreen welcome/rules post used to
@@ -172,28 +142,13 @@ export default async function FeedPage({
 
         <div className="mb-6 sm:mb-8">
           <h1 className="text-2xl sm:text-3xl font-extralight tracking-wider uppercase gradient-text-gold mb-2">
-            The Feed
+            Kanika
           </h1>
           <div className="w-12 h-px bg-warm-gold/40 mb-3" />
           <p className="text-text-gray text-sm">
-            Posts, insights, and discussions from the council.
+            Her room. Posts, insights, voice notes, and the discussions under them.
           </p>
         </div>
-
-        <RingStrip
-          standing={viewerRecord?.standing ?? 0}
-          ringLevel={viewerRecord?.ringLevel ?? 7}
-        />
-
-        <TodayBlock
-          mission={dailyMission}
-          missionDone={missionDone}
-          streakCurrent={dailyStreak.current}
-          atRisk={dailyStreak.isAtRisk}
-          tellDoneToday={doneToday}
-          freshDrop={freshDrop}
-          council={council}
-        />
 
         {formatted.length === 0 ? (
           <div className="text-center py-16">
