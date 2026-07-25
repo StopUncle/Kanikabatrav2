@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { m, AnimatePresence } from "framer-motion";
 import { ringByLevel } from "@/lib/standing/config";
+import { tracksOpeningAt, TRACK_LABELS } from "@/lib/simulator/track-gates";
 import { useReducedMotion } from "@/lib/hooks/use-reduced-motion";
 import RingEmblem from "./RingEmblem";
 
@@ -72,6 +73,9 @@ export default function RingUpCeremony({
 
   if (!ringUp || !portalReady) return null;
   const ring = ringByLevel(ringUp.toLevel);
+  // Doors that open at this ring (plan §3.2): named in the ceremony so
+  // the advancement is a key, not just a title.
+  const opened = tracksOpeningAt(ringUp.toLevel).map((t) => TRACK_LABELS[t]);
 
   return createPortal(
     <AnimatePresence>
@@ -140,6 +144,17 @@ export default function RingUpCeremony({
           >
             {ring.epithet}
           </m.p>
+
+          {opened.length > 0 && (
+            <m.p
+              initial={reduceMotion ? false : { opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.6, delay: reduceMotion ? 0 : 2.2 }}
+              className="mt-5 text-warm-gold/80 text-xs uppercase tracking-[0.25em]"
+            >
+              {ring.name} opens: {opened.join(" · ")}
+            </m.p>
+          )}
 
           <m.div
             initial={reduceMotion ? false : { opacity: 0 }}

@@ -22,6 +22,8 @@ import StreakBanner from "@/components/simulator/StreakBanner";
 import { readSimulatorStreak } from "@/lib/simulator/streak";
 import DailyCheckInCard from "@/components/consilium/DailyCheckInCard";
 import { readTodayCheckIn } from "@/lib/checkin/db";
+import { trackAccess, sealedLine, spineTracks, type TrackAccess } from "@/lib/simulator/track-gates";
+import { Lock } from "lucide-react";
 
 export const metadata = {
   title: "The Dark Mirror. Simulator | Kanika Batra",
@@ -125,7 +127,7 @@ export default async function SimulatorIndex({
       // User gender for the gender-aware situation buckets.
       prisma.user.findUnique({
         where: { id: userId },
-        select: { gender: true },
+        select: { gender: true, ringLevel: true },
       }),
       // Fresh Files shelf: published LLM-generated scenarios.
       listPublishedGenerated(),
@@ -146,7 +148,36 @@ export default async function SimulatorIndex({
     (found, row) => found ?? trackForScenarioId(row.scenarioId),
     null,
   );
-  const track: ScenarioTrack = paramTrack ?? mostRecentTrack ?? "female";
+  const requestedTrack: ScenarioTrack =
+    paramTrack ?? mostRecentTrack ?? "female";
+
+  // Ring gates (plan §3.2). Spine always open; today's check-in
+  // recommendation overrides the ring; started tracks stay open. The
+  // access map drives the sealed pills below AND guards the ladder: a
+  // deep link (or stale most-recent default) onto a sealed track falls
+  // back to the spine instead of rendering a locked room.
+  const scenarioById = new Map(ALL_SCENARIOS.map((s) => [s.id, s]));
+  const startedTrackIds = new Set<ScenarioTrack>();
+  for (const p of progress) {
+    const sc = scenarioById.get(p.scenarioId);
+    if (sc) startedTrackIds.add((sc.track ?? "female") as ScenarioTrack);
+  }
+  const recommendedTrack =
+    (todayCheckIn?.recommendedTrack as ScenarioTrack | null) ?? null;
+  const accessByTrack = new Map<ScenarioTrack, TrackAccess>(
+    VALID_TRACKS.map((t) => [
+      t,
+      trackAccess(t, {
+        gender: currentUser?.gender ?? null,
+        ringLevel: currentUser?.ringLevel ?? 7,
+        recommendedTrack,
+        startedTracks: startedTrackIds,
+      }),
+    ]),
+  );
+  const track: ScenarioTrack = accessByTrack.get(requestedTrack)?.open
+    ? requestedTrack
+    : spineTracks(currentUser?.gender ?? null)[0];
 
   // Adventures entry card stats. "Unseen" = published arcs the user has
   // never opened. Drives the emerald NEW pill on the entry card so the
@@ -168,7 +199,6 @@ export default async function SimulatorIndex({
   const completedIds = new Set(
     progress.filter((p) => p.completedAt).map((p) => p.scenarioId),
   );
-  const scenarioById = new Map(ALL_SCENARIOS.map((s) => [s.id, s]));
   const isUnlocked = (prerequisites?: string[]) =>
     !prerequisites || prerequisites.every((id) => completedIds.has(id));
 
@@ -228,13 +258,8 @@ export default async function SimulatorIndex({
     const t = (s.track ?? "female") as ScenarioTrack;
     completedByTrack.set(t, (completedByTrack.get(t) ?? 0) + 1);
   }
-  const startedTrackIds = new Set<ScenarioTrack>();
   const seenScenarioIds = new Set<string>();
-  for (const p of progress) {
-    seenScenarioIds.add(p.scenarioId);
-    const s = scenarioById.get(p.scenarioId);
-    if (s) startedTrackIds.add((s.track ?? "female") as ScenarioTrack);
-  }
+  for (const p of progress) seenScenarioIds.add(p.scenarioId);
 
   // Per-track "new" counter — scenarios authored with `isNew: true`
   // that the player has not opened yet. Drives the NEW chip on the
@@ -378,8 +403,9 @@ export default async function SimulatorIndex({
             The <span className="text-warm-gold">Dark Mirror</span>
           </h1>
           <p className="text-text-gray text-base sm:text-lg font-light max-w-2xl mx-auto leading-relaxed">
-            Eleven lines. Pick the one that matches your life right now. You
-            can switch any time. Progress tracks independently.
+            Pick the line that matches your life right now. Sealed doors
+            open as you move inward through the Rings; your check-in can
+            open the one you need today.
           </p>
         </header>
 
@@ -387,6 +413,31 @@ export default async function SimulatorIndex({
           {VALID_TRACKS.map((t) => {
             const tMeta = TRACK_META[t];
             const total = totalByTrack.get(t) ?? 0;
+            const access = accessByTrack.get(t);
+            if (access && !access.open) {
+              return (
+                <div
+                  key={t}
+                  className="flex flex-col p-5 rounded-xl border border-white/[0.06] bg-deep-black/20"
+                >
+                  <div className="flex items-center justify-between mb-3">
+                    <span className="text-text-gray/40 uppercase tracking-[0.3em] text-[10px]">
+                      {total} scenarios
+                    </span>
+                    <Lock size={13} className="text-text-gray/40" strokeWidth={1.6} />
+                  </div>
+                  <p className="text-text-gray/60 text-lg font-light tracking-wide mb-2">
+                    {tMeta.label}
+                  </p>
+                  <p className="text-text-gray/40 text-xs font-light leading-relaxed mb-2">
+                    {tMeta.sublabel}
+                  </p>
+                  <p className="text-warm-gold/50 text-[10px] uppercase tracking-[0.2em]">
+                    {sealedLine(access.opensAtRing ?? 3)}
+                  </p>
+                </div>
+              );
+            }
             return (
               <Link
                 key={t}
@@ -508,7 +559,7 @@ export default async function SimulatorIndex({
           Desktop (≥sm): wrapping card grid. */}
       <div className="mb-3 flex items-baseline justify-between">
         <p className="text-warm-gold/70 uppercase tracking-[0.3em] text-[10px]">
-          Pick your line · 11 tracks
+          Pick your line · doors open as you move inward
         </p>
         <p className="text-text-gray/50 text-[10px] uppercase tracking-[0.25em] hidden sm:block">
           Progress tracks independently
@@ -525,6 +576,19 @@ export default async function SimulatorIndex({
             const active = t === track;
             const started = startedTrackIds.has(t);
             const hasNew = (newByTrack.get(t) ?? 0) > 0;
+            const access = accessByTrack.get(t);
+            if (access && !access.open) {
+              return (
+                <span
+                  key={t}
+                  title={sealedLine(access.opensAtRing ?? 3)}
+                  className="shrink-0 snap-start px-4 py-2.5 rounded-lg text-xs font-light tracking-wide whitespace-nowrap inline-flex items-center gap-1.5 border border-white/[0.06] bg-deep-black/20 text-text-gray/40"
+                >
+                  <Lock size={10} strokeWidth={1.6} />
+                  {tMeta.label}
+                </span>
+              );
+            }
             return (
               <Link
                 key={t}
@@ -566,6 +630,22 @@ export default async function SimulatorIndex({
             const total = totalByTrack.get(t) ?? 0;
             const started = startedTrackIds.has(t);
             const newCount = newByTrack.get(t) ?? 0;
+            const access = accessByTrack.get(t);
+            if (access && !access.open) {
+              return (
+                <span
+                  key={t}
+                  title={tMeta.sublabel}
+                  className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-light tracking-wide border border-white/[0.06] bg-deep-black/20 text-text-gray/40 cursor-default"
+                >
+                  <Lock size={11} strokeWidth={1.6} />
+                  {tMeta.label}
+                  <span className="text-[10px] uppercase tracking-[0.15em] text-warm-gold/40">
+                    {sealedLine(access.opensAtRing ?? 3)}
+                  </span>
+                </span>
+              );
+            }
             return (
               <Link
                 key={t}

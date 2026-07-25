@@ -1,7 +1,15 @@
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { requireServerAuth } from "@/lib/auth/server-auth";
 import { prisma } from "@/lib/prisma";
-import { ALL_SCENARIOS } from "@/lib/simulator/scenarios";
+import {
+  ALL_SCENARIOS,
+  SCENARIO_BY_ID,
+  getTrack,
+  scenariosForTrack,
+} from "@/lib/simulator/scenarios";
+import { readTodayCheckIn } from "@/lib/checkin/db";
+import { trackAccess } from "@/lib/simulator/track-gates";
+import type { ScenarioTrack } from "@/lib/simulator/types";
 import { resolveScenario } from "@/lib/simulator/resolve";
 import type { SimulatorState, ChoiceRecord, OutcomeType } from "@/lib/simulator/types";
 import SimulatorPageClient from "@/components/simulator/SimulatorPageClient";
@@ -41,9 +49,44 @@ export default async function SimulatorPlay({
   );
 
   // Load persisted state, null when never played.
-  const row = await prisma.simulatorProgress.findUnique({
-    where: { userId_scenarioId: { userId, scenarioId } },
-  });
+  const [row, viewer, todayCheckIn] = await Promise.all([
+    prisma.simulatorProgress.findUnique({
+      where: { userId_scenarioId: { userId, scenarioId } },
+    }),
+    prisma.user.findUnique({
+      where: { id: userId },
+      select: { gender: true, ringLevel: true },
+    }),
+    readTodayCheckIn(prisma, userId),
+  ]);
+
+  // Ring gate (plan §3.2): a deep link into a sealed track bounces to
+  // the catalog, where the door renders with its opens-at line. Static
+  // catalog scenarios only; generated drops carry no track. A track the
+  // member has started (ANY scenario in it, matching the catalog's
+  // definition) stays open, and today's check-in recommendation opens
+  // its track regardless of Ring.
+  if (SCENARIO_BY_ID[scenario.id]) {
+    const trackId = getTrack(scenario);
+    const access = trackAccess(trackId, {
+      gender: viewer?.gender ?? null,
+      ringLevel: viewer?.ringLevel ?? 7,
+      recommendedTrack:
+        (todayCheckIn?.recommendedTrack as ScenarioTrack | null) ?? null,
+      startedTracks: row ? new Set([trackId]) : undefined,
+    });
+    if (!access.open) {
+      const startedInTrack = await prisma.simulatorProgress.count({
+        where: {
+          userId,
+          scenarioId: { in: scenariosForTrack(trackId).map((sc) => sc.id) },
+        },
+      });
+      if (startedInTrack === 0) {
+        redirect("/consilium/simulator");
+      }
+    }
+  }
 
   // Completed runs always start fresh; only mid-run progress resumes.
   //
