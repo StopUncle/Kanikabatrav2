@@ -97,6 +97,15 @@ export async function createCheckoutSession(options: {
    * already carries its discount does not need the box.
    */
   discountCouponId?: string;
+  /**
+   * Promotion code id (`promo_...`, not the human code) to apply directly
+   * at checkout, e.g. a quiz buyer's Consilium credit. Preferred over
+   * `discountCouponId` for anything single-use: Stripe enforces the code's
+   * own max_redemptions and expiry, and counts the redemption, which a
+   * bare coupon does not. Also disables the promo-code box, since Stripe
+   * forbids `discounts` and `allow_promotion_codes` together.
+   */
+  discountPromotionCodeId?: string;
 }) {
   const lineItems = [
     { price: options.priceId, quantity: 1 },
@@ -113,9 +122,11 @@ export async function createCheckoutSession(options: {
     cancel_url: options.cancelUrl,
     customer_email: options.customerEmail,
     metadata: options.metadata,
-    ...(options.discountCouponId
-      ? { discounts: [{ coupon: options.discountCouponId }] }
-      : { allow_promotion_codes: true }),
+    ...(options.discountPromotionCodeId
+      ? { discounts: [{ promotion_code: options.discountPromotionCodeId }] }
+      : options.discountCouponId
+        ? { discounts: [{ coupon: options.discountCouponId }] }
+        : { allow_promotion_codes: true }),
     ...(options.mode === "subscription" && options.trialPeriodDays
       ? {
           subscription_data: {

@@ -11,6 +11,41 @@ import {
   type AttributionPayload,
 } from "@/lib/attribution";
 
+/**
+ * Quiz-unlock abandonment drip. Only fires when the taker provided an
+ * email; anonymous takes are unreachable. Idempotent per email: a
+ * re-take within the drip window won't double-enqueue.
+ */
+async function enqueueAbandonmentDrip(
+  recipientEmail: string,
+  name: string,
+  quizResultId: string,
+): Promise<void> {
+  try {
+    const existing = await prisma.emailQueue.findFirst({
+      where: {
+        recipientEmail,
+        sequence: "quiz-unlock-abandonment",
+        status: "PENDING",
+      },
+      select: { id: true },
+    });
+    if (existing) return;
+
+    const { buildQuizUnlockAbandonmentDrip } = await import(
+      "@/lib/email-sequences"
+    );
+    const entries = buildQuizUnlockAbandonmentDrip(
+      recipientEmail,
+      name,
+      quizResultId,
+    );
+    await prisma.emailQueue.createMany({ data: entries });
+  } catch (err) {
+    console.error("[quiz/submit] abandonment enqueue failed:", err);
+  }
+}
+
 export async function POST(request: NextRequest) {
   try {
     // Quiz is public (no auth) so limit by IP. 10/day is more than enough
@@ -19,11 +54,50 @@ export async function POST(request: NextRequest) {
     const rateLimited = await enforceRateLimit(limits.quizSubmit, ip);
     if (rateLimited) return rateLimited;
 
-    const { answers, email, attribution } = (await request.json()) as {
-      answers: Record<number, PersonalityType>;
-      email?: string;
-      attribution?: AttributionPayload;
-    };
+    const { answers, email, attribution, resultId } =
+      (await request.json()) as {
+        answers?: Record<number, PersonalityType>;
+        email?: string;
+        attribution?: AttributionPayload;
+        resultId?: string;
+      };
+
+    // Second call for the same anonymous take. The visitor finished the
+    // quiz (row already written on results-page load) and has now handed
+    // over an email at the auth gate. Attach it to the existing row
+    // rather than writing a duplicate take.
+    if (typeof resultId === "string" && resultId.length > 0) {
+      const row = await prisma.quizResult.findFirst({
+        where: { id: resultId, userId: null },
+        select: {
+          id: true,
+          email: true,
+          primaryType: true,
+          secondaryType: true,
+          scores: true,
+        },
+      });
+
+      if (!row) {
+        return NextResponse.json({ error: "Result not found" }, { status: 404 });
+      }
+
+      if (email && !row.email) {
+        const recipientEmail = email.toLowerCase();
+        await prisma.quizResult.update({
+          where: { id: row.id },
+          data: { email: recipientEmail },
+        });
+        await enqueueAbandonmentDrip(recipientEmail, "there", row.id);
+      }
+
+      return NextResponse.json({
+        resultId: row.id,
+        primaryType: row.primaryType,
+        secondaryType: row.secondaryType,
+        scores: row.scores,
+      });
+    }
 
     if (!answers || typeof answers !== "object") {
       return NextResponse.json(
@@ -43,7 +117,7 @@ export async function POST(request: NextRequest) {
 
     const quizResult = await prisma.quizResult.create({
       data: {
-        email: email || null,
+        email: email ? email.toLowerCase() : null,
         primaryType: types.primary,
         secondaryType: types.secondary,
         scores: JSON.parse(JSON.stringify(scores)),
@@ -55,34 +129,8 @@ export async function POST(request: NextRequest) {
       },
     });
 
-    // Quiz-unlock abandonment drip. Only fires when the taker
-    // provided an email; anonymous takes are unreachable. Idempotent
-    // per email: a re-take within the drip window won't double-enqueue.
     if (email) {
-      try {
-        const recipientEmail = email.toLowerCase();
-        const existing = await prisma.emailQueue.findFirst({
-          where: {
-            recipientEmail,
-            sequence: "quiz-unlock-abandonment",
-            status: "PENDING",
-          },
-          select: { id: true },
-        });
-        if (!existing) {
-          const { buildQuizUnlockAbandonmentDrip } = await import(
-            "@/lib/email-sequences"
-          );
-          const entries = buildQuizUnlockAbandonmentDrip(
-            recipientEmail,
-            "there",
-            quizResult.id,
-          );
-          await prisma.emailQueue.createMany({ data: entries });
-        }
-      } catch (err) {
-        console.error("[quiz/submit] abandonment enqueue failed:", err);
-      }
+      await enqueueAbandonmentDrip(email.toLowerCase(), "there", quizResult.id);
     }
 
     return NextResponse.json({
