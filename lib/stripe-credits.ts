@@ -89,6 +89,43 @@ export async function createQuizConsiliumCredit(
   }
 }
 
+/**
+ * Resolve a human credit code (QUIZ-ABCD1234) to its Stripe promotion
+ * code id so it can be applied directly at checkout instead of asking
+ * the buyer to retype it into the promo box.
+ *
+ * Returns null when the code is unknown, inactive, expired, or already
+ * redeemed. Callers treat that as "no discount" and continue: a credit
+ * that cannot be resolved must never block someone from subscribing.
+ */
+export async function resolveQuizCreditPromotionCode(
+  code: string,
+): Promise<string | null> {
+  try {
+    const stripe = getStripe();
+    const matches = await stripe.promotionCodes.list({
+      code,
+      active: true,
+      limit: 1,
+    });
+
+    const promo = matches.data[0];
+    if (!promo) return null;
+
+    // Guard against a code that happens to exist but hangs off a
+    // different coupon (a referral reward, a one-off campaign). Only the
+    // quiz-credit coupon is redeemable through this path.
+    const coupon = promo.promotion?.coupon;
+    const couponId = typeof coupon === "string" ? coupon : coupon?.id;
+    if (couponId !== QUIZ_CREDIT_COUPON_ID) return null;
+
+    return promo.id;
+  } catch (err) {
+    console.error("[stripe-credits] failed to resolve quiz credit", err);
+    return null;
+  }
+}
+
 export const QUIZ_CREDIT = {
   amount: QUIZ_INFO.price,
   expiryDays: QUIZ_CREDIT_EXPIRY_DAYS,

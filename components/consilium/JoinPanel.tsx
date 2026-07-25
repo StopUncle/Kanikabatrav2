@@ -1,8 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { ArrowRight, Loader2, CheckCircle } from "lucide-react";
+import { ArrowRight, Loader2, CheckCircle, BadgeCheck } from "lucide-react";
 import { catalogueStats } from "@/lib/simulator/stats";
+import { QUIZ_INFO } from "@/lib/quiz-data";
 
 const INCLUDED = [
   `The Dark Mirror Simulator, ${catalogueStats.scenarios} branching scenarios across ${catalogueStats.tracks} tracks`,
@@ -30,9 +31,17 @@ type BillingCycle = "monthly" | "annual";
  * POSTs to /api/consilium/subscription/create with the chosen cycle
  * and redirects to Stripe. The success webhook stamps billingCycle on
  * the membership row.
+ *
+ * `creditCode` arrives from a quiz buyer's "Apply my credit" link. When
+ * present the server pre-applies it at checkout, and the default flips
+ * to MONTHLY: the credit is a fixed $9.99, which is a third off a $29
+ * month but barely visible against $290 a year. The toggle still works,
+ * this only changes which plan they see first.
  */
-export default function JoinPanel() {
-  const [cycle, setCycle] = useState<BillingCycle>("annual");
+export default function JoinPanel({ creditCode }: { creditCode?: string }) {
+  const [cycle, setCycle] = useState<BillingCycle>(
+    creditCode ? "monthly" : "annual",
+  );
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -43,7 +52,10 @@ export default function JoinPanel() {
       const res = await fetch("/api/consilium/subscription/create", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ billingCycle: cycle }),
+        body: JSON.stringify({
+          billingCycle: cycle,
+          ...(creditCode ? { creditCode } : {}),
+        }),
       });
       const data = await res.json();
       if (data.checkoutUrl) {
@@ -70,6 +82,24 @@ export default function JoinPanel() {
 
   return (
     <div className="bg-deep-black/50 backdrop-blur-sm border border-warm-gold/20 rounded-2xl p-8">
+      {creditCode && (
+        <div className="flex items-start gap-3 mb-6 p-4 rounded-xl border border-warm-gold/30 bg-warm-gold/[0.06]">
+          <BadgeCheck
+            size={18}
+            className="text-warm-gold mt-0.5 shrink-0"
+            strokeWidth={1.5}
+          />
+          <div>
+            <p className="text-text-light text-sm font-light">
+              Your ${QUIZ_INFO.price.toFixed(2)} quiz credit is applied
+            </p>
+            <p className="text-text-gray/70 text-xs font-light mt-1">
+              It comes off automatically at checkout. Nothing to type in.
+            </p>
+          </div>
+        </div>
+      )}
+
       <div
         role="tablist"
         aria-label="Choose billing cycle"
