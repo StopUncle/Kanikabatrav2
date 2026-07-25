@@ -485,12 +485,12 @@ export default async function DashboardPage() {
                 title="The Consilium"
                 copy={
                   memberStatus === "ACTIVE"
-                    ? "Your private feed, voice notes, classroom and chat. Active."
+                    ? "Your chamber, the Path, the simulator, Kanika's room. Active."
                     : "Voice notes, courses, daily threads. Apply to enter the council."
                 }
-                cta={memberStatus === "ACTIVE" ? "Enter feed" : "Apply"}
+                cta={memberStatus === "ACTIVE" ? "Enter the Chamber" : "Apply"}
                 href={
-                  memberStatus === "ACTIVE" ? "/consilium/feed" : "/consilium"
+                  memberStatus === "ACTIVE" ? "/consilium/chamber" : "/consilium"
                 }
                 accent={memberStatus === "ACTIVE"}
               />
@@ -715,7 +715,7 @@ function MemberChip({
   if (status === "ACTIVE") {
     return (
       <Link
-        href="/consilium/feed"
+        href="/consilium/chamber"
         className="inline-flex items-center gap-2.5 px-4 py-2 rounded-full border border-warm-gold/40 bg-warm-gold/[0.06] text-warm-gold text-[11px] uppercase tracking-[0.3em] hover:bg-warm-gold/10 transition-colors"
       >
         <span className="w-1.5 h-1.5 rounded-full bg-warm-gold animate-pulse" />

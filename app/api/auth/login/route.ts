@@ -47,6 +47,13 @@ export async function POST(request: NextRequest) {
       v: user.tokenVersion,
     });
 
+    // Membership state rides along so the login form can land ACTIVE
+    // members in the Chamber (the member home) instead of the dashboard.
+    const membership = await prisma.communityMembership.findUnique({
+      where: { userId: user.id },
+      select: { status: true },
+    });
+
     // Create response
     const response = NextResponse.json({
       success: true,
@@ -54,6 +61,7 @@ export async function POST(request: NextRequest) {
         id: user.id,
         email: user.email,
       },
+      isActiveMember: membership?.status === "ACTIVE",
     });
 
     // Set cookies
