@@ -64,6 +64,8 @@ export const STANDING = {
   QUESTION_ANSWERED: 100,
   /** Watched a weekly Session video (Phase 2 surface). */
   SESSION_WATCH: 60,
+  /** Completed a Path chapter (the Seal bonus, deduped per chapter). */
+  CHAPTER: 100,
   /** Unified-streak milestones, keyed by day count. */
   STREAK_MILESTONES: { 7: 100, 30: 500, 100: 2000 } as Record<number, number>,
 } as const;

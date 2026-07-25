@@ -109,6 +109,7 @@ model User {
   // filter by ring without recomputing thresholds.
   ringLevel                 Int                  @default(7)
   standingEvents            StandingEvent[]
+  pathProgress              UserPathProgress[]
   dailyCheckIns             DailyCheckIn[]
   simulatorBadges           SimulatorBadge[]
   isBot                     Boolean              @default(false)
@@ -2214,5 +2215,22 @@ enum StandingSource {
   STREAK_MILESTONE
   BASELINE
   SESSION_WATCH
+  CHAPTER
   RETRO
+}
+
+/// One completed Path step (the chaptered curriculum, plan §5). The
+/// registry of chapters/steps lives in code (lib/path/curriculum.ts);
+/// this table only records which steps a member has completed. Rows are
+/// written by lib/path/progress.ts when detection sees the underlying
+/// action done; stepId is the registry's stable slug (e.g. "ch3-receipt").
+model UserPathProgress {
+  id          String   @id @default(cuid())
+  userId      String
+  stepId      String
+  completedAt DateTime @default(now())
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, stepId])
+  @@index([userId])
 }
