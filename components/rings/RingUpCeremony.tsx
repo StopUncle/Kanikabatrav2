@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import { m, AnimatePresence } from "framer-motion";
 import { ringByLevel } from "@/lib/standing/config";
 import { useReducedMotion } from "@/lib/hooks/use-reduced-motion";
@@ -40,6 +41,14 @@ export default function RingUpCeremony({
   const reduceMotion = useReducedMotion();
   const [visible, setVisible] = useState(false);
   const [ignited, setIgnited] = useState(false);
+  // Portal to document.body, same trick as SimulatorRunner: the member
+  // layout (and the initiation page) wrap content in `relative z-10`,
+  // which traps an in-tree fixed overlay under the portaled runner no
+  // matter how high its own z-index is. Null until mount for SSR.
+  const [portalReady, setPortalReady] = useState(false);
+  useEffect(() => {
+    setPortalReady(true);
+  }, []);
 
   useEffect(() => {
     if (!ringUp) {
@@ -61,10 +70,10 @@ export default function RingUpCeremony({
     return () => clearTimeout(t);
   }, [visible, reduceMotion]);
 
-  if (!ringUp) return null;
+  if (!ringUp || !portalReady) return null;
   const ring = ringByLevel(ringUp.toLevel);
 
-  return (
+  return createPortal(
     <AnimatePresence>
       {visible && (
         <m.div
@@ -152,6 +161,7 @@ export default function RingUpCeremony({
           </m.div>
         </m.div>
       )}
-    </AnimatePresence>
+    </AnimatePresence>,
+    document.body,
   );
 }

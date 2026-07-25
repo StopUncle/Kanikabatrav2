@@ -497,6 +497,12 @@
 body[data-simulator-active="true"] footer {
   display: none;
 }
+/* The Initiation borrows the footer suppression only: its steps can be
+   taller than one viewport (the Reading is 12 questions), so no scroll
+   lock. Set by InitiationFlow while mounted. */
+body[data-initiation-active="true"] footer {
+  display: none;
+}
 body[data-simulator-active="true"] {
   overflow: hidden;
 }

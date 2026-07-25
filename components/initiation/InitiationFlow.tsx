@@ -63,6 +63,16 @@ export default function InitiationFlow({
 }: Props) {
   const [step, setStep] = useState<Step>("door");
 
+  // The Initiation is a sealed moment: the public site footer (newsletter
+  // box, sitemap) must not render under it. Same body-flag mechanism the
+  // simulator uses, minus its scroll lock (the Reading can scroll).
+  useEffect(() => {
+    document.body.dataset.initiationActive = "true";
+    return () => {
+      delete document.body.dataset.initiationActive;
+    };
+  }, []);
+
   const afterDoor = useCallback(() => {
     setStep(hasQuizResult ? "situation" : "reading");
   }, [hasQuizResult]);

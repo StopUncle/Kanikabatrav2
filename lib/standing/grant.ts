@@ -3,7 +3,12 @@ import { ringForStanding } from "./config";
 
 /**
  * The ONE writer for Standing. Appends a StandingEvent, bumps the
- * denormalized User.standing, and recomputes ringLevel — atomically.
+ * denormalized User.standing, and recomputes ringLevel.
+ *
+ * Concurrency: the standing bump is a DB-side increment, and the ring is
+ * derived from the post-increment total that update() returns, so two
+ * grants landing at once each see a total that includes the other and
+ * the ring can only converge upward, never regress.
  *
  * Self-protecting like bumpDailyStreak: every caller sits on a
  * non-critical path (a scenario completing, a comment posting), so a
@@ -62,29 +67,38 @@ export async function grantStanding(
       data: { userId, source, amount, refId },
     });
 
-    const before = await prisma.user.findUnique({
+    // Returned row reflects the increment; ringLevel is still the value
+    // from before this grant, which is exactly the rangUp comparison base.
+    const updated = await prisma.user.update({
       where: { id: userId },
+      data: { standing: { increment: amount } },
       select: { standing: true, ringLevel: true },
     });
-    if (!before) return NO_GRANT;
 
-    const newStanding = before.standing + amount;
-    const ring = ringForStanding(newStanding);
+    const ring = ringForStanding(updated.standing);
     const rangUp =
-      ring.level < before.ringLevel
+      ring.level < updated.ringLevel
         ? {
-            fromLevel: before.ringLevel,
+            fromLevel: updated.ringLevel,
             toLevel: ring.level,
             ringName: ring.name,
           }
         : null;
 
-    await prisma.user.update({
-      where: { id: userId },
-      data: { standing: { increment: amount }, ringLevel: ring.level },
-    });
+    if (ring.level !== updated.ringLevel) {
+      await prisma.user.update({
+        where: { id: userId },
+        data: { ringLevel: ring.level },
+      });
+    }
 
-    return { granted: true, amount, newStanding, ringLevel: ring.level, rangUp };
+    return {
+      granted: true,
+      amount,
+      newStanding: updated.standing,
+      ringLevel: ring.level,
+      rangUp,
+    };
   } catch (err) {
     console.error("[standing] grant failed (non-fatal):", err);
     return NO_GRANT;

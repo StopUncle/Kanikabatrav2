@@ -13,6 +13,7 @@
  */
 
 import { useEffect, useMemo, useState } from "react";
+import { createPortal } from "react-dom";
 import { AnimatePresence, m } from "framer-motion";
 import {
   Award,
@@ -99,6 +100,15 @@ export default function AchievementToast({
 
   const [index, setIndex] = useState(0);
 
+  // Portal to document.body, same as SimulatorRunner: member pages wrap
+  // content in `relative z-10`, and an in-tree fixed toast is trapped in
+  // that stacking context underneath the portaled runner regardless of
+  // its own z-index. Null until mount for SSR.
+  const [portalReady, setPortalReady] = useState(false);
+  useEffect(() => {
+    setPortalReady(true);
+  }, []);
+
   // Reset index when the queue itself changes.
   useEffect(() => {
     setIndex(0);
@@ -115,11 +125,11 @@ export default function AchievementToast({
   }, [index, queue.length, durationMs]);
 
   const current = queue[index];
-  if (!current) return null;
+  if (!current || !portalReady) return null;
 
   const palette = RARITY_COLORS[current.rarity];
 
-  return (
+  return createPortal(
     <div
       aria-live="polite"
       aria-atomic="true"
@@ -206,6 +216,7 @@ export default function AchievementToast({
           </div>
         </m.div>
       </AnimatePresence>
-    </div>
+    </div>,
+    document.body,
   );
 }

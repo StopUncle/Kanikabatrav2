@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { requireAuth } from "@/lib/auth/middleware";
+import { checkMembership } from "@/lib/community/membership";
 import { ringByLevel, standingToNextRing } from "@/lib/standing/config";
 
 /**
@@ -14,6 +15,13 @@ import { ringByLevel, standingToNextRing } from "@/lib/standing/config";
  */
 export async function POST(request: NextRequest) {
   return requireAuth(request, async (_req, user) => {
+    // Members only: without this, any logged-in account could stamp
+    // initiationAt ahead of joining and skip the flow on Day 0.
+    const { isMember } = await checkMembership(user.id);
+    if (!isMember) {
+      return NextResponse.json({ error: "Membership required" }, { status: 403 });
+    }
+
     const row = await prisma.user.findUnique({
       where: { id: user.id },
       select: { initiationAt: true, standing: true, ringLevel: true },

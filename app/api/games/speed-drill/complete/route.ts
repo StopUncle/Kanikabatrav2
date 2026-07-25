@@ -97,11 +97,11 @@ export async function POST(request: NextRequest) {
         );
       });
 
-      // Standing: capped at 3 drill grants per UTC day so session-spamming
-      // can't farm the Rings. The session row itself is uncapped.
+      // Standing: daily-capped so session-spamming can't farm the Rings.
+      // The session row itself is uncapped.
       void (async () => {
         const today = await grantsTodayCount(prisma, user.id, "DRILL");
-        if (today < 3) {
+        if (today < STANDING.DRILL_DAILY_CAP) {
           await grantStanding(prisma, {
             userId: user.id,
             source: "DRILL",

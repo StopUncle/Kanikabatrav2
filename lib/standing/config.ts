@@ -50,6 +50,8 @@ export const STANDING = {
   TELL_CORRECT_AXIS: 15,
   /** A finished Speed Drill session. */
   DRILL: 20,
+  /** Max DRILL grants per UTC day (anti-farm). */
+  DRILL_DAILY_CAP: 3,
   /** A Lab session brought to an end state. */
   LAB: 40,
   /** A submitted Receipt (already quota-capped upstream). */
