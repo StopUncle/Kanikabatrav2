@@ -16,8 +16,8 @@ jest.mock("next/navigation", () => ({
   usePathname: () => "/register",
 }));
 
-jest.mock("framer-motion", () => ({
-  motion: {
+jest.mock("framer-motion", () => {
+  const stubs = {
     div: ({
       children,
       ...props
@@ -56,8 +56,10 @@ jest.mock("framer-motion", () => ({
       void transition;
       return <button {...validProps}>{children}</button>;
     },
-  },
-}));
+  };
+  // Components use the lightweight `m` API; keep `motion` for older imports.
+  return { motion: stubs, m: stubs };
+});
 
 describe("RegisterForm", () => {
   beforeEach(() => {
@@ -113,15 +115,16 @@ describe("RegisterForm", () => {
     await waitFor(() => {
       expect(global.fetch).toHaveBeenCalledWith(
         "/api/auth/register",
-        expect.objectContaining({
-          method: "POST",
-          body: JSON.stringify({
-            email: "test@example.com",
-            password: "password123",
-          }),
-        }),
+        expect.objectContaining({ method: "POST" }),
       );
     });
+
+    // The body also carries the first-touch attribution snapshot; only pin
+    // the credentials so attribution fields can evolve without breaking this.
+    const [, init] = (global.fetch as jest.Mock).mock.calls[0];
+    const body = JSON.parse(init.body as string);
+    expect(body.email).toBe("test@example.com");
+    expect(body.password).toBe("password123");
   });
 
   it("displays error message on 409 conflict", async () => {
