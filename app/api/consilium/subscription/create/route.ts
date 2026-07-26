@@ -4,16 +4,26 @@ import { prisma } from "@/lib/prisma";
 import { createCheckoutSession, STRIPE_PRICES } from "@/lib/stripe";
 import { buildConsiliumAbandonmentDrip } from "@/lib/email-sequences";
 import { REFERRAL_COOKIE_NAME, resolveReferralCode } from "@/lib/referrals";
-import { ensureRefereeReferralCoupon } from "@/lib/stripe-credits";
+import {
+  ensureRefereeReferralCoupon,
+  resolveQuizCreditPromotionCode,
+} from "@/lib/stripe-credits";
 
 export async function POST(request: NextRequest) {
   return requireAuth(request, async (req, user) => {
     // Body is optional. Defaults to monthly so unchanged callers (legacy
     // pre-annual-plan JS) keep working without code changes.
     let billingCycle: "monthly" | "annual" = "monthly";
+    let creditCode = "";
     try {
-      const body = (await req.json()) as { billingCycle?: unknown };
+      const body = (await req.json()) as {
+        billingCycle?: unknown;
+        creditCode?: unknown;
+      };
       if (body.billingCycle === "annual") billingCycle = "annual";
+      if (typeof body.creditCode === "string") {
+        creditCode = body.creditCode.trim().toUpperCase();
+      }
     } catch {
       // Empty body, fine.
     }
@@ -110,6 +120,46 @@ export async function POST(request: NextRequest) {
       }
     }
 
+    // Quiz buyer's Consilium credit, pre-applied. The code is minted on
+    // quiz purchase and used to be surfaced as a string to retype into
+    // Stripe's promo box, which almost nobody did. Resolving it here puts
+    // the discount on the checkout page before they arrive.
+    //
+    // Ownership is checked against the quiz result that minted it, so a
+    // code shared around is not redeemable by a stranger. Takes
+    // precedence over the referee reward: this one was paid for. Any
+    // failure is non-fatal, checkout continues at full price.
+    let creditPromotionCodeId: string | null = null;
+    if (creditCode) {
+      try {
+        const owned = await prisma.quizResult.findFirst({
+          where: {
+            consiliumCreditCode: creditCode,
+            consiliumCreditExpiresAt: { gt: new Date() },
+            OR: [
+              { userId: user.id },
+              {
+                email: {
+                  equals: dbUser?.email || user.email,
+                  mode: "insensitive",
+                },
+              },
+            ],
+          },
+          select: { id: true },
+        });
+        if (owned) {
+          creditPromotionCodeId =
+            await resolveQuizCreditPromotionCode(creditCode);
+        }
+      } catch (err) {
+        console.error(
+          "[consilium/subscription/create] quiz credit lookup failed:",
+          err,
+        );
+      }
+    }
+
     try {
       const session = await createCheckoutSession({
         priceId,
@@ -122,9 +172,18 @@ export async function POST(request: NextRequest) {
           product_key: productKey,
           billing_cycle: billingCycle,
           ...(referralCode ? { referral_code: referralCode } : {}),
-          ...(refereeCouponId ? { referee_reward: refereeCouponId } : {}),
+          ...(refereeCouponId && !creditPromotionCodeId
+            ? { referee_reward: refereeCouponId }
+            : {}),
+          ...(creditPromotionCodeId ? { quiz_credit_code: creditCode } : {}),
         },
-        ...(refereeCouponId ? { discountCouponId: refereeCouponId } : {}),
+        // Stripe allows exactly one entry in `discounts`, so these are
+        // mutually exclusive by construction.
+        ...(creditPromotionCodeId
+          ? { discountPromotionCodeId: creditPromotionCodeId }
+          : refereeCouponId
+            ? { discountCouponId: refereeCouponId }
+            : {}),
       });
 
       if (!session.url) {

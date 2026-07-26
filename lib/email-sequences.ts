@@ -273,6 +273,25 @@ function dripConsiliumUrl(campaign: string, content: string): string {
   return `${baseUrl}/consilium?${params.toString()}`;
 }
 
+/**
+ * Checkout link that carries a quiz buyer's credit, so the discount is
+ * already applied when they land instead of being a code to retype.
+ */
+function dripCreditUrl(
+  creditCode: string,
+  campaign: string,
+  content: string,
+): string {
+  const params = new URLSearchParams({
+    credit: creditCode,
+    utm_source: "email",
+    utm_medium: "email",
+    utm_campaign: campaign,
+    utm_content: content,
+  });
+  return `${baseUrl}/consilium/apply?${params.toString()}`;
+}
+
 // ============================================================
 // Mini Dark Mirror + Starter Pack drip sequences.
 //
@@ -1099,7 +1118,11 @@ function creditCodeBlock(
   args: QuizBuyerCreditArgs,
   stepLabel: string,
 ): string {
-  const consiliumUrl = dripConsiliumUrl("quiz-buyer-welcome", stepLabel);
+  const consiliumUrl = dripCreditUrl(
+    args.creditCode,
+    "quiz-buyer-welcome",
+    stepLabel,
+  );
   const expiry = formatCreditExpiry(args.creditExpiresAt);
   return `
     <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="margin: 0 0 25px 0;">
@@ -1120,7 +1143,7 @@ function creditCodeBlock(
             </p>
           </div>
           <p style="color: #666; margin: 0 0 18px 0; font-size: 11px; text-align: center;">
-            Expires ${expiry} · Single use · Applies to your first month
+            Expires ${expiry} · Single use · Applied automatically at checkout
           </p>
           <div style="text-align: center;">
             <a href="${consiliumUrl}" style="display: inline-block; background: #d4af37; color: #0a0a0a; padding: 14px 32px; text-decoration: none; border-radius: 50px; font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;">

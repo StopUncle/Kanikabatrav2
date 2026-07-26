@@ -24,14 +24,24 @@ export const metadata = {
  *   - CANCELLED + admin-rejected (legacy) → tasteful refusal card
  *   - everyone else → the JoinPanel button
  */
-export default async function JoinPage() {
+export default async function JoinPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ credit?: string }>;
+}) {
   const userId = await optionalServerAuth();
+  const { credit } = await searchParams;
+  const creditCode = typeof credit === "string" ? credit.trim() : "";
 
   if (!userId) {
     // Send them to register. After signup, /register's returnTo handler
     // brings them back here, where the auth check now passes and they
-    // hit the join button.
-    redirect("/register?returnTo=/consilium/apply");
+    // hit the join button. The credit rides along in returnTo so a quiz
+    // buyer with an expired session does not silently lose it.
+    const returnTo = creditCode
+      ? `/consilium/apply?credit=${encodeURIComponent(creditCode)}`
+      : "/consilium/apply";
+    redirect(`/register?returnTo=${encodeURIComponent(returnTo)}`);
   }
 
   const membership = await prisma.communityMembership.findUnique({
@@ -41,6 +51,32 @@ export default async function JoinPage() {
 
   if (membership?.status === "ACTIVE") {
     redirect("/consilium/feed");
+  }
+
+  // Only surface the credit once it is actually redeemable by THIS user.
+  // The checkout route re-checks the same conditions, so a code that
+  // fails here would silently buy at full price: promising a discount we
+  // will not apply is worse than never mentioning it.
+  let validCreditCode = "";
+  if (creditCode) {
+    const viewer = await prisma.user.findUnique({
+      where: { id: userId },
+      select: { email: true },
+    });
+    const owned = await prisma.quizResult.findFirst({
+      where: {
+        consiliumCreditCode: creditCode,
+        consiliumCreditExpiresAt: { gt: new Date() },
+        OR: [
+          { userId },
+          ...(viewer?.email
+            ? [{ email: { equals: viewer.email, mode: "insensitive" as const } }]
+            : []),
+        ],
+      },
+      select: { id: true },
+    });
+    if (owned) validCreditCode = creditCode;
   }
 
   const data = membership?.applicationData as Record<string, unknown> | null;
@@ -93,7 +129,7 @@ export default async function JoinPage() {
 
         <SocialProofTicker className="mb-6" />
 
-        <JoinPanel />
+        <JoinPanel creditCode={validCreditCode || undefined} />
       </div>
     </div>
   );

@@ -9,14 +9,21 @@ import {
 export async function POST(request: NextRequest) {
   return requireAuth(request, async (_req, user) => {
     const body = await request.json();
-    const { scores, primaryType, secondaryType, answers, attribution } =
-      body as {
-        scores: unknown;
-        primaryType: string;
-        secondaryType?: string;
-        answers: unknown;
-        attribution?: AttributionPayload;
-      };
+    const {
+      scores,
+      primaryType,
+      secondaryType,
+      answers,
+      attribution,
+      anonResultId,
+    } = body as {
+      scores: unknown;
+      primaryType: string;
+      secondaryType?: string;
+      answers: unknown;
+      attribution?: AttributionPayload;
+      anonResultId?: string;
+    };
 
     if (!scores || !primaryType || !answers) {
       return NextResponse.json({ error: "Missing quiz data" }, { status: 400 });
@@ -38,21 +45,46 @@ export async function POST(request: NextRequest) {
         data: { scores, primaryType, secondaryType, answers, email: user.email },
       });
     } else {
-      const attrRecord = buildAttributionRecord(attribution, request.headers);
-      quizResult = await prisma.quizResult.create({
-        data: {
-          userId: user.id,
-          email: user.email,
-          scores,
-          primaryType,
-          secondaryType: secondaryType || null,
-          answers,
-          paid: false,
-          emailSent: false,
-          shared: false,
-          ...attrRecord,
-        },
-      });
+      // This take was already written anonymously when the visitor hit
+      // the auth gate on the results page. Claim that row rather than
+      // writing a second one, so one take stays one row and the
+      // first-touch attribution captured pre-registration survives.
+      const claimable = anonResultId
+        ? await prisma.quizResult.findFirst({
+            where: { id: anonResultId, userId: null },
+            select: { id: true },
+          })
+        : null;
+
+      if (claimable) {
+        quizResult = await prisma.quizResult.update({
+          where: { id: claimable.id },
+          data: {
+            userId: user.id,
+            email: user.email,
+            scores,
+            primaryType,
+            secondaryType: secondaryType || null,
+            answers,
+          },
+        });
+      } else {
+        const attrRecord = buildAttributionRecord(attribution, request.headers);
+        quizResult = await prisma.quizResult.create({
+          data: {
+            userId: user.id,
+            email: user.email,
+            scores,
+            primaryType,
+            secondaryType: secondaryType || null,
+            answers,
+            paid: false,
+            emailSent: false,
+            shared: false,
+            ...attrRecord,
+          },
+        });
+      }
     }
 
     // Quiz-unlock abandonment drip. Save endpoint runs for logged-in

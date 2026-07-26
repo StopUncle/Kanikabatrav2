@@ -68,12 +68,22 @@ type PageState =
   | "locked"
   | "unlocked";
 
+/** sessionStorage key holding the id of the anonymous row written for
+ *  this take, so a reload of the gate doesn't record a second take and
+ *  registration can claim the row it already has. */
+const ANON_RESULT_KEY = "quizAnonResultId";
+
 export default function QuizResultsPage() {
   const [pageState, setPageState] = useState<PageState>("loading");
   const [sessionData, setSessionData] = useState<QuizResultsData | null>(null);
   const [apiData, setApiData] = useState<ApiQuizResult | null>(null);
   const [email, setEmail] = useState("");
   const [showPayment, setShowPayment] = useState(false);
+  const [anonResultId, setAnonResultId] = useState<string | null>(null);
+  const [captureEmail, setCaptureEmail] = useState("");
+  const [captureState, setCaptureState] = useState<
+    "idle" | "saving" | "done" | "error"
+  >("idle");
 
   useEffect(() => {
     let stored: QuizResultsData | null = null;
@@ -90,13 +100,63 @@ export default function QuizResultsPage() {
       const authRes = await fetch("/api/auth/me");
 
       if (!authRes.ok) {
-        // Not authenticated
+        // Persist the take BEFORE the auth gate. Without this row, every
+        // visitor who answers all 20 questions and then bounces at
+        // "Create an account" leaves no trace at all: the results live
+        // in sessionStorage only, so the real top of the funnel is
+        // unmeasurable and unreachable.
+        if (stored) {
+          let knownId: string | null = null;
+          try {
+            knownId = sessionStorage.getItem(ANON_RESULT_KEY);
+          } catch {
+            knownId = null;
+          }
+
+          if (knownId) {
+            setAnonResultId(knownId);
+          } else {
+            try {
+              const res = await fetch("/api/quiz/submit", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                  answers: stored.answers,
+                  attribution: getAttributionForSubmit(),
+                }),
+              });
+              if (res.ok) {
+                const data = (await res.json()) as { resultId?: string };
+                if (data.resultId) {
+                  setAnonResultId(data.resultId);
+                  try {
+                    sessionStorage.setItem(ANON_RESULT_KEY, data.resultId);
+                  } catch {
+                    // Private mode, fine. Worst case is a duplicate row
+                    // on reload, which still beats no row at all.
+                  }
+                }
+              }
+            } catch {
+              // Non-fatal. The gate still renders and the visitor can
+              // still register; we just lose this row.
+            }
+          }
+        }
+
         setPageState("unauthenticated");
         return;
       }
 
       // Authenticated, save quiz if sessionStorage has data
       if (stored) {
+        let claimId: string | null = null;
+        try {
+          claimId = sessionStorage.getItem(ANON_RESULT_KEY);
+        } catch {
+          claimId = null;
+        }
+
         try {
           await fetch("/api/quiz/save", {
             method: "POST",
@@ -112,9 +172,18 @@ export default function QuizResultsPage() {
               // server-side, so a returning user's existing source is
               // preserved.
               attribution: getAttributionForSubmit(),
+              // Set when this visitor took the quiz logged out and has
+              // just registered. Claims that row instead of writing a
+              // second one for the same take.
+              ...(claimId ? { anonResultId: claimId } : {}),
             }),
           });
           sessionStorage.removeItem("quizResults");
+          try {
+            sessionStorage.removeItem(ANON_RESULT_KEY);
+          } catch {
+            // Ignore, the id is single-use server-side anyway.
+          }
         } catch {
           // Save failed silently, results page will still work from DB
         }
@@ -141,6 +210,29 @@ export default function QuizResultsPage() {
 
     init();
   }, []);
+
+  /** Attach an email to the anonymous row behind this take. Enrols the
+   *  visitor in the unlock-recovery drip, which is the only way to reach
+   *  someone who finishes the quiz but does not create an account. */
+  async function handleCaptureEmail(e: React.FormEvent) {
+    e.preventDefault();
+    if (!anonResultId || captureState === "saving") return;
+
+    setCaptureState("saving");
+    try {
+      const res = await fetch("/api/quiz/submit", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          resultId: anonResultId,
+          email: captureEmail.trim(),
+        }),
+      });
+      setCaptureState(res.ok ? "done" : "error");
+    } catch {
+      setCaptureState("error");
+    }
+  }
 
   // Resolve the display data depending on state
   const primaryType: PersonalityType | null =
@@ -278,6 +370,56 @@ export default function QuizResultsPage() {
                     Sign In
                   </Link>
                 </div>
+
+                {/* Fallback capture. Most people who finish 20 questions
+                    will not create an account on the spot; without this
+                    they leave with nothing and we can never reach them. */}
+                {anonResultId && (
+                  <div className="mt-8 pt-8 border-t border-accent-gold/15">
+                    {captureState === "done" ? (
+                      <p className="text-accent-gold text-sm font-light">
+                        Sent. Check your inbox for the link back to your
+                        results.
+                      </p>
+                    ) : (
+                      <>
+                        <p className="text-text-gray text-sm font-light mb-4">
+                          Not ready to sign up? Email me the link instead.
+                        </p>
+                        <form
+                          onSubmit={handleCaptureEmail}
+                          className="flex flex-col sm:flex-row gap-3"
+                        >
+                          <label htmlFor="quiz-capture-email" className="sr-only">
+                            Email address
+                          </label>
+                          <input
+                            id="quiz-capture-email"
+                            type="email"
+                            required
+                            value={captureEmail}
+                            onChange={(e) => setCaptureEmail(e.target.value)}
+                            placeholder="your@email.com"
+                            disabled={captureState === "saving"}
+                            className="flex-1 px-4 py-3 bg-deep-black/60 border border-accent-gold/20 rounded text-white placeholder:text-text-gray/50 font-light focus:outline-none focus:border-accent-gold/50 transition-colors disabled:opacity-60"
+                          />
+                          <button
+                            type="submit"
+                            disabled={captureState === "saving"}
+                            className="px-6 py-3 border border-accent-gold/30 text-accent-gold text-sm font-medium tracking-wider uppercase rounded transition-all hover:bg-accent-gold/10 disabled:opacity-60"
+                          >
+                            {captureState === "saving" ? "Sending" : "Send Link"}
+                          </button>
+                        </form>
+                        {captureState === "error" && (
+                          <p className="text-red-400/90 text-xs font-light mt-3">
+                            That didn&apos;t send. Please try again in a moment.
+                          </p>
+                        )}
+                      </>
+                    )}
+                  </div>
+                )}
               </div>
             </m.div>
 
@@ -591,7 +733,9 @@ export default function QuizResultsPage() {
                     · Single use
                   </p>
                   <Link
-                    href="/consilium"
+                    href={`/consilium/apply?credit=${encodeURIComponent(
+                      apiData.consiliumCredit.code,
+                    )}`}
                     className="inline-block px-8 py-3 text-sm font-medium uppercase tracking-wider text-deep-black bg-accent-gold rounded-full hover:bg-accent-gold/90 transition-all"
                   >
                     Apply My Credit
@@ -875,7 +1019,9 @@ export default function QuizResultsPage() {
                     · Single use
                   </p>
                   <Link
-                    href="/consilium"
+                    href={`/consilium/apply?credit=${encodeURIComponent(
+                      apiData.consiliumCredit.code,
+                    )}`}
                     className="inline-block px-8 py-3 text-sm font-medium uppercase tracking-wider text-deep-black bg-accent-gold rounded-full hover:bg-accent-gold/90 transition-all"
                   >
                     Apply My Credit

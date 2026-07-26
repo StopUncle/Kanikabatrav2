@@ -1116,7 +1116,7 @@ export const sendQuizResults = async (
             Your $${c.amount.toFixed(2)} is credited toward The Consilium
           </h3>
           <p style="color: #94a3b8; margin: 0 0 22px 0; font-size: 14px; line-height: 1.7; text-align: center;">
-            Inside: the Dark Mirror Simulator (branching scenarios on the same axes you just scored on), the classroom, voice notes, and a moderated community. Use this code at checkout, it comes off your first month.
+            Inside: the Dark Mirror Simulator (branching scenarios on the same axes you just scored on), the classroom, voice notes, and a moderated community. The button below applies it for you, nothing to type in.
           </p>
           <div style="background: #050511; border: 1px dashed #d4af37; border-radius: 8px; padding: 18px 20px; text-align: center; margin: 0 0 20px 0;">
             <p style="color: #94a3b8; margin: 0 0 6px 0; font-size: 10px; text-transform: uppercase; letter-spacing: 2px;">
@@ -1130,7 +1130,7 @@ export const sendQuizResults = async (
             Expires ${expiry} · Single use · Applies to your first month
           </p>
           <div style="text-align: center;">
-            <a href="${baseUrl}/consilium" style="display: inline-block; background: #d4af37; color: #0a0a0a; padding: 14px 32px; text-decoration: none; border-radius: 50px; font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;">
+            <a href="${baseUrl}/consilium/apply?credit=${encodeURIComponent(c.code)}" style="display: inline-block; background: #d4af37; color: #0a0a0a; padding: 14px 32px; text-decoration: none; border-radius: 50px; font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;">
               Apply My Credit
             </a>
           </div>
