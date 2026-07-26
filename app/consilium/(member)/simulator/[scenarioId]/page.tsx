@@ -70,7 +70,7 @@ export default async function SimulatorPlay({
     const trackId = getTrack(scenario);
     const access = trackAccess(trackId, {
       gender: viewer?.gender ?? null,
-      ringLevel: viewer?.ringLevel ?? 7,
+      ringLevel: viewer?.ringLevel ?? 4,
       recommendedTrack:
         (todayCheckIn?.recommendedTrack as ScenarioTrack | null) ?? null,
       startedTracks: row ? new Set([trackId]) : undefined,

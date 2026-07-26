@@ -46,7 +46,7 @@ export default async function ChamberPage() {
   ] = await Promise.all([
     getPathState(prisma, userId, {
       gender: viewer?.gender ?? null,
-      ringLevel: viewer?.ringLevel ?? 7,
+      ringLevel: viewer?.ringLevel ?? 4,
     }),
     getTellStreak(userId),
     isDailyMissionDoneToday(prisma, userId),
@@ -79,7 +79,7 @@ export default async function ChamberPage() {
 
       <RingStrip
         standing={viewer?.standing ?? 0}
-        ringLevel={viewer?.ringLevel ?? 7}
+        ringLevel={viewer?.ringLevel ?? 4}
       />
 
       <TodayBlock

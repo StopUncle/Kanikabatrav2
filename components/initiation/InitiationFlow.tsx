@@ -28,7 +28,6 @@ type Placement = {
   standing: number;
   ringLevel: number;
   ringName: string;
-  ringEpithet: string;
   nextRingName: string | null;
   standingToNext: number | null;
 };
@@ -485,14 +484,6 @@ function PlacementStep() {
       >
         {placement.ringName}
       </m.h2>
-      <m.p
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.6, delay: 1.3 }}
-        className="mt-2 text-text-gray italic text-sm"
-      >
-        {placement.ringEpithet}
-      </m.p>
       <m.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
@@ -508,7 +499,7 @@ function PlacementStep() {
         )}
         <span className="block h-px w-12 bg-warm-gold/40" />
         <p className="text-text-gray text-sm">
-          Every ring inward is earned. Day one starts now.
+          Every rank is earned. Day one starts now.
         </p>
         <button
           type="button"

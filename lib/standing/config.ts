@@ -1,41 +1,35 @@
 /**
- * The Rings — unified progression config.
+ * Ranks — unified progression config.
  *
- * Standing is the engagement currency every surface grants; the ring is the
- * member's earned position, counted INWARD (7 = the door, 1 = innermost).
- * Above the First Ring sits The Seat, which is invitation-only and lives
- * outside this ladder (a flag Kanika sets, not a threshold).
+ * Standing is the engagement currency every surface grants; the rank is the
+ * member's earned position, counted INWARD (4 = the door, 1 = innermost).
+ * Four ranks: Initiate, Analyst, Profiler, IC. The top rank is a job, not a
+ * badge: IC carries duties (welcomer role, Board input) assigned by Kanika.
  *
- * Design rules (docs/CONSILIUM-REMAKE-PLAN.md §3, §5.5):
+ * Design rules:
  *  - Standing only goes up. It measures showing up, not skill.
- *  - The skill Measure (Elo / Baseline Read) never feeds Standing and
- *    Standing never feeds it.
- *  - Thresholds are tuned so an engaged member (daily mission + tell +
- *    ~3 scenarios a week) advances roughly every 4-6 weeks early on,
- *    slowing to quarterly at the top. Re-tune against the retro-grant
- *    distribution before launch, not after.
+ *  - The skill Measure (Baseline Read) never feeds Standing and Standing
+ *    never feeds it.
+ *  - Analyst must be reachable in week one for a normally engaged member
+ *    (the activation rule). Profiler lands around month two; IC takes a
+ *    committed half year.
  */
 
 export interface RingDef {
-  /** 7 (outermost) … 1 (innermost). */
+  /** 4 (outermost) … 1 (innermost). */
   level: number;
-  /** Display name, e.g. "The Fifth Ring". */
+  /** Display name, e.g. "Analyst". */
   name: string;
-  /** One-word flavor shown under the name in ceremonies. */
-  epithet: string;
-  /** Minimum lifetime Standing to hold this ring. */
+  /** Minimum lifetime Standing to hold this rank. */
   threshold: number;
 }
 
 /** Ordered outermost → innermost. */
 export const RINGS: readonly RingDef[] = [
-  { level: 7, name: "The Seventh Ring", epithet: "the door", threshold: 0 },
-  { level: 6, name: "The Sixth Ring", epithet: "the listeners", threshold: 500 },
-  { level: 5, name: "The Fifth Ring", epithet: "the readers", threshold: 1500 },
-  { level: 4, name: "The Fourth Ring", epithet: "the operators", threshold: 3500 },
-  { level: 3, name: "The Third Ring", epithet: "the strategists", threshold: 7000 },
-  { level: 2, name: "The Second Ring", epithet: "the counsel", threshold: 12000 },
-  { level: 1, name: "The First Ring", epithet: "the regents", threshold: 20000 },
+  { level: 4, name: "Initiate", threshold: 0 },
+  { level: 3, name: "Analyst", threshold: 250 },
+  { level: 2, name: "Profiler", threshold: 2500 },
+  { level: 1, name: "IC", threshold: 10000 },
 ];
 
 /** Standing granted per action. One place, so amounts never drift. */
@@ -70,7 +64,7 @@ export const STANDING = {
   STREAK_MILESTONES: { 7: 100, 30: 500, 100: 2000 } as Record<number, number>,
 } as const;
 
-/** Resolve the ring a lifetime-Standing total earns. */
+/** Resolve the rank a lifetime-Standing total earns. */
 export function ringForStanding(standing: number): RingDef {
   let ring: RingDef = RINGS[0];
   for (const r of RINGS) {
@@ -84,8 +78,7 @@ export function ringByLevel(level: number): RingDef {
 }
 
 /**
- * Standing still needed to reach the next ring inward, or null at the
- * First Ring (The Seat is not a threshold — it is an invitation).
+ * Standing still needed to reach the next rank inward, or null at IC.
  */
 export function standingToNextRing(standing: number): {
   next: RingDef;

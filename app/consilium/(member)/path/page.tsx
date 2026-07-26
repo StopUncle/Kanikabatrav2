@@ -34,7 +34,7 @@ export default async function PathMapPage() {
 
   const state = await getPathState(prisma, userId, {
     gender,
-    ringLevel: viewer?.ringLevel ?? 7,
+    ringLevel: viewer?.ringLevel ?? 4,
   });
 
   const doneSteps = state.completedStepIds;

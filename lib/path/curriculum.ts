@@ -64,8 +64,9 @@ export interface PathChapter {
   /** Act I / II / III. Display grouping only. */
   act: 1 | 2 | 3;
   /**
-   * Minimum Ring to ENTER this chapter (inclusive; rings count down, so
-   * ringRequired 5 means ringLevel <= 5). Only set at act boundaries.
+   * Minimum rank to ENTER this chapter (inclusive; ranks count down, so
+   * ringRequired 3 means ringLevel <= 3, i.e. Analyst or better). Only
+   * set at act boundaries.
    */
   ringRequired?: number;
   steps: PathStep[];
@@ -224,7 +225,7 @@ export const PATH_CHAPTERS: readonly PathChapter[] = [
   },
 
   // ---------------------------------------------------------------
-  // Act II, The Middle Rings: learn to move. Opens at the Fifth Ring.
+  // Act II: learn to move. Opens at Analyst.
   // ---------------------------------------------------------------
   {
     id: "ch5",
@@ -232,7 +233,7 @@ export const PATH_CHAPTERS: readonly PathChapter[] = [
     title: "Defense",
     blurb: "Smears, DARVO, public ambushes. Staying upright while targeted.",
     act: 2,
-    ringRequired: 5,
+    ringRequired: 3,
     steps: [
       {
         id: "ch5-l4-a",
@@ -385,7 +386,7 @@ export const PATH_CHAPTERS: readonly PathChapter[] = [
   },
 
   // ---------------------------------------------------------------
-  // Act III, The Inner Rings: learn to build. Opens at the Third Ring.
+  // Act III: learn to build. Opens at Profiler.
   // ---------------------------------------------------------------
   {
     id: "ch10",
@@ -393,7 +394,7 @@ export const PATH_CHAPTERS: readonly PathChapter[] = [
     title: "The Long Game",
     blurb: "Six months of whispers you never heard. What to do in three weeks.",
     act: 3,
-    ringRequired: 3,
+    ringRequired: 2,
     steps: [
       {
         id: "ch10-l9-a",

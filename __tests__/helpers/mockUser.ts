@@ -108,7 +108,7 @@ export function createMockUser(overrides: Partial<MockUser> = {}): MockUser {
     dailyStreakLongest: 0,
     dailyStreakLastDate: null,
     standing: 0,
-    ringLevel: 7,
+    ringLevel: 4,
     pushPreferences: null,
     handle: null,
     profilePublic: false,

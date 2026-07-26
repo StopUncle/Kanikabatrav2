@@ -169,7 +169,7 @@ export default async function SimulatorIndex({
       t,
       trackAccess(t, {
         gender: currentUser?.gender ?? null,
-        ringLevel: currentUser?.ringLevel ?? 7,
+        ringLevel: currentUser?.ringLevel ?? 4,
         recommendedTrack,
         startedTracks: startedTrackIds,
       }),

@@ -107,7 +107,7 @@ model User {
   // Current ring derived from standing (lib/standing/config.ts thresholds).
   // 7 = outermost (the door) … 1 = innermost. Stored so queries and gates can
   // filter by ring without recomputing thresholds.
-  ringLevel                 Int                  @default(7)
+  ringLevel                 Int                  @default(4)
   standingEvents            StandingEvent[]
   pathProgress              UserPathProgress[]
   dailyCheckIns             DailyCheckIn[]

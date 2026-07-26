@@ -187,8 +187,8 @@ export async function getPathState(
     if (ringLocked || seqLocked) {
       chapters.push({
         chapter,
-        // Ring lock outranks sequence lock in the display: "opens at the
-        // Fifth Ring" is actionable, "finish the previous chapter" is not
+        // Rank lock outranks sequence lock in the display: "Opens at
+        // Analyst" is actionable, "finish the previous chapter" is not
         // news when the previous chapter is also on screen.
         status: ringLocked ? "locked-ring" : "locked-seq",
         completedSteps: 0,

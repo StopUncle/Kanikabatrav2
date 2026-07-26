@@ -1534,7 +1534,7 @@ interface DigestVerdict {
   standingGained: number;
   standingTotal: number;
   ringName: string;
-  /** Null at the First Ring. */
+  /** Null at IC. */
   toNext: { ringName: string; remaining: number } | null;
   /** Last resolved league week, null if the member didn't play. */
   league: {

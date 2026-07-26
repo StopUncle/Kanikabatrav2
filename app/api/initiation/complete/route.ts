@@ -43,7 +43,6 @@ export async function POST(request: NextRequest) {
       standing: row.standing,
       ringLevel: ring.level,
       ringName: ring.name,
-      ringEpithet: ring.epithet,
       nextRingName: next?.next.name ?? null,
       standingToNext: next?.remaining ?? null,
     });

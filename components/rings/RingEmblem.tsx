@@ -1,10 +1,10 @@
 import { RINGS, ringByLevel } from "@/lib/standing/config";
 
 /**
- * The Rings emblem: seven concentric circles read from the outside in,
- * with The Seat as the point at the center. The member's current ring
- * is lit; rings already passed through sit as faint gold traces; rings
- * not yet earned are sealed (dashed, near-invisible).
+ * The rank emblem: four concentric circles read from the outside in.
+ * The member's current rank is lit; ranks already passed through sit as
+ * faint gold traces; ranks not yet earned are sealed (dashed,
+ * near-invisible).
  *
  * Pure SVG, no client hooks, so it renders in server components (the
  * ceremony, the identity strip, profiles) without a hydration cost.
@@ -13,16 +13,16 @@ import { RINGS, ringByLevel } from "@/lib/standing/config";
  */
 
 type Props = {
-  /** The ring being displayed as held, 7 (outermost) … 1 (innermost). */
+  /** The rank being displayed as held, 4 (outermost) … 1 (innermost). */
   level: number;
   /** Rendered square size in px. */
   size?: number;
   className?: string;
 };
 
-/** Ring level → circle radius in the 100×100 viewBox. */
+/** Rank level → circle radius in the 100×100 viewBox. */
 function radiusFor(level: number): number {
-  return 16 + (level - 1) * 5;
+  return 14 + (level - 1) * 11;
 }
 
 const GOLD = "#d4af37";

@@ -3,9 +3,8 @@ import RingEmblem from "./RingEmblem";
 import { ringByLevel, standingToNextRing } from "@/lib/standing/config";
 
 /**
- * The identity strip: the member's Ring, Standing, and distance to the
- * next ring inward. Phase 1 mounts it atop the feed; Phase 2 moves it
- * into the Chamber. Server component, one render, no client JS.
+ * The identity strip: the member's rank, Standing, and distance to the
+ * next rank. Server component, one render, no client JS.
  */
 
 type Props = {
@@ -17,8 +16,8 @@ export default function RingStrip({ standing, ringLevel }: Props) {
   const ring = ringByLevel(ringLevel);
   const next = standingToNextRing(standing);
 
-  // Progress through the current ring's segment, 0-100. The First Ring
-  // has no threshold above it; render the bar full.
+  // Progress through the current rank's segment, 0-100. IC has no
+  // threshold above it; render the bar full.
   let pct = 100;
   if (next) {
     const floor = ring.threshold;
@@ -50,7 +49,7 @@ export default function RingStrip({ standing, ringLevel }: Props) {
         <p className="mt-1.5 text-text-gray/70 text-[10px]">
           {next
             ? `${next.remaining.toLocaleString()} to ${next.next.name}`
-            : "The innermost ring. The Seat is not earned, it is offered."}
+            : "Inner Circle. The room runs through you."}
         </p>
       </div>
     </Link>

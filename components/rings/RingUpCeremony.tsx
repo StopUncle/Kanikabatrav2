@@ -13,7 +13,7 @@ import RingEmblem from "./RingEmblem";
  * crosses a Standing threshold (the `ringUp` payload from
  * /api/simulator/complete). Sequence: black veil, the emblem holding
  * the old ring, an ignition burst as the new ring lights, then the
- * name and epithet. Player dismisses when ready, same rule as the
+ * rank name. Player dismisses when ready, same rule as the
  * ending screen (no auto-advance).
  *
  * Mounts on top of the ending screen after a delay so the XP count-up
@@ -136,15 +136,6 @@ export default function RingUpCeremony({
             {ring.name}
           </m.h2>
 
-          <m.p
-            initial={reduceMotion ? false : { opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.6, delay: reduceMotion ? 0 : 2.0 }}
-            className="mt-2 text-text-gray italic text-sm"
-          >
-            {ring.epithet}
-          </m.p>
-
           {opened.length > 0 && (
             <m.p
               initial={reduceMotion ? false : { opacity: 0 }}
@@ -164,7 +155,7 @@ export default function RingUpCeremony({
           >
             <span className="block h-px w-12 bg-warm-gold/40" />
             <p className="text-text-gray text-sm">
-              Every ring inward is earned.
+              Every rank is earned.
             </p>
             <button
               type="button"

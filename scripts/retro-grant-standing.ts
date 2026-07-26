@@ -180,16 +180,16 @@ async function main() {
     };
   });
 
-  // Ring distribution, the founder gut-check.
+  // Rank distribution, the founder gut-check.
   const dist = new Map<number, number>();
   for (const t of totals) {
     const ring = ringForStanding(t.total);
     dist.set(ring.level, (dist.get(ring.level) ?? 0) + 1);
   }
-  console.log("Ring distribution:");
+  console.log("Rank distribution:");
   for (const r of RINGS) {
     const n = dist.get(r.level) ?? 0;
-    if (n > 0 || r.level === 7) {
+    if (n > 0 || r.level === 4) {
       console.log(`  ${r.name.padEnd(18)} ${String(n).padStart(4)} members`);
     }
   }

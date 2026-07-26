@@ -29,7 +29,7 @@ const NO_GRANT: GrantResult = {
   granted: false,
   amount: 0,
   newStanding: 0,
-  ringLevel: 7,
+  ringLevel: 4,
   rangUp: null,
 };
 
