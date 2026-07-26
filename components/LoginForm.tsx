@@ -66,7 +66,7 @@ export default function LoginForm() {
       // members land in the Chamber (the member home), everyone else
       // on the dashboard.
       router.push(
-        returnTo || (result.isActiveMember ? "/consilium/chamber" : "/dashboard"),
+        returnTo || (result.isActiveMember ? "/app" : "/dashboard"),
       );
       router.refresh();
     } catch (err) {
