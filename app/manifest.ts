@@ -1,76 +1,66 @@
 import type { MetadataRoute } from "next";
 
 /**
- * PWA manifest for the Consilium experience.
+ * PWA manifest for the Consilium app.
  *
- * Scope is root ("/") so the manifest applies across the marketing
- * site too, but the install prompt only appears on member pages —
- * the prompt component is mounted under the consilium layout, so
- * we don't pester non-members with "install this app" banners.
+ * Installed members land in the app shell at /app, not on a website page.
+ * Scope stays root so a member who follows a link to an older surface stays
+ * inside the installed window rather than getting kicked to the browser.
  *
- * Theme uses the existing dark luxury palette: deep-black bg,
- * accent-gold theme. Icons reference the existing logo PNG; iOS
- * Safari + Android Chrome will scale appropriately. Higher-fidelity
- * pre-rendered sizes (192/512/180/maskable) can be generated from
- * the same source later without a manifest change.
+ * Icons are pre-rendered from the logo into /public/icons (192, 512, a
+ * padded maskable for Android's circular crop, and the iOS touch icon).
  */
 export default function manifest(): MetadataRoute.Manifest {
   return {
     name: "The Consilium · Kanika Batra",
     short_name: "Consilium",
     description:
-      "The Consilium membership: voice notes, classroom, simulator, and Kanika's daily psychology of power.",
-    start_url: "/consilium/feed",
+      "Read people better. Daily scenarios, Kanika's room, and your rank.",
+    start_url: "/app",
     scope: "/",
     display: "standalone",
     orientation: "portrait",
-    background_color: "#050511",
-    theme_color: "#050511",
+    background_color: "#0a0908",
+    theme_color: "#0a0908",
     categories: ["lifestyle", "education", "social"],
     icons: [
       {
-        src: "/images/kanikarose-logo.png",
+        src: "/icons/icon-192.png",
         sizes: "192x192",
         type: "image/png",
         purpose: "any",
       },
       {
-        src: "/images/kanikarose-logo.png",
+        src: "/icons/icon-512.png",
         sizes: "512x512",
         type: "image/png",
         purpose: "any",
       },
       {
-        src: "/images/kanikarose-logo.png",
-        sizes: "192x192",
+        src: "/icons/icon-maskable-512.png",
+        sizes: "512x512",
         type: "image/png",
         purpose: "maskable",
       },
     ],
     shortcuts: [
       {
-        name: "Feed",
-        short_name: "Feed",
-        description: "Today's drop and recent posts",
-        url: "/consilium/feed",
+        name: "Today",
+        short_name: "Today",
+        description: "Today's moves and your next step",
+        url: "/app",
       },
       {
-        name: "Voice Notes",
-        short_name: "Voice",
-        description: "Latest voice notes from Kanika",
-        url: "/consilium/voice-notes",
+        name: "Train",
+        short_name: "Train",
+        description: "Scenarios, drills, and the Lab",
+        url: "/app/train",
       },
       {
-        name: "Simulator",
-        short_name: "Simulator",
-        description: "The Dark Mirror Simulator",
-        url: "/consilium/simulator",
-      },
-      {
-        name: "Ask Kanika",
-        short_name: "Ask",
-        description: "Submit a question",
-        url: "/consilium/feed",
+        name: "Message Kanika",
+        short_name: "Kanika",
+        description: "Your private line",
+        url: "/app/kanika",
       },
     ],
   };

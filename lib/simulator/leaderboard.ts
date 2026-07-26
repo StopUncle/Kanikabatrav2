@@ -192,17 +192,25 @@ export async function getLeaderboard(
     };
   });
 
-  const mockEntries: LeaderboardEntry[] = MOCK_LEADERBOARD.map((m, idx) => ({
-    id: `mock-${idx.toString().padStart(3, "0")}`,
-    rank: 0,
-    name: m.handle,
-    tier: m.tier,
-    xp: m.xp,
-    completed: m.completed,
-    lastActiveDays: m.lastActiveDays,
-    isViewer: false,
-    isReal: false,
-  }));
+  // The mock cohort exists so the board doesn't read as an empty room
+  // pre-surge. Once enough real members are on it, the mocks retire in
+  // one go rather than being slowly out-scored, which would look like a
+  // wave of members going silent.
+  const REAL_ENTRIES_TO_RETIRE_MOCKS = 20;
+  const mockEntries: LeaderboardEntry[] =
+    realEntries.length >= REAL_ENTRIES_TO_RETIRE_MOCKS
+      ? []
+      : MOCK_LEADERBOARD.map((m, idx) => ({
+          id: `mock-${idx.toString().padStart(3, "0")}`,
+          rank: 0,
+          name: m.handle,
+          tier: m.tier,
+          xp: m.xp,
+          completed: m.completed,
+          lastActiveDays: m.lastActiveDays,
+          isViewer: false,
+          isReal: false,
+        }));
 
   // Merge + sort.
   const merged = [...realEntries, ...mockEntries].sort(sortEntries);
@@ -214,6 +222,88 @@ export async function getLeaderboard(
 
   const top = merged.slice(0, limit);
   const viewer = merged.find((e) => e.isViewer) ?? null;
+
+  return { top, viewer };
+}
+
+export interface StandingEntry {
+  id: string;
+  rank: number;
+  name: string;
+  standing: number;
+  ringLevel: number;
+  isViewer: boolean;
+}
+
+export interface StandingBoard {
+  top: StandingEntry[];
+  /** The viewer's row + rank even when outside `top`; null at 0 Standing. */
+  viewer: StandingEntry | null;
+}
+
+/**
+ * The Standing board: lifetime Standing across members, no mocks. Standing
+ * launches at zero for everyone on the same day, so an empty board here is
+ * a starting line, not a dead room.
+ */
+export async function getStandingBoard(
+  viewerId: string,
+  limit = 50,
+): Promise<StandingBoard> {
+  const rows = await prisma.user.findMany({
+    where: { isBot: false, role: { not: "ADMIN" }, standing: { gt: 0 } },
+    orderBy: { standing: "desc" },
+    take: limit,
+    select: {
+      id: true,
+      name: true,
+      displayName: true,
+      role: true,
+      standing: true,
+      ringLevel: true,
+    },
+  });
+
+  const top: StandingEntry[] = rows.map((u, i) => ({
+    id: u.id,
+    rank: i + 1,
+    name: memberSafeName(u),
+    standing: u.standing,
+    ringLevel: u.ringLevel,
+    isViewer: u.id === viewerId,
+  }));
+
+  let viewer = top.find((e) => e.isViewer) ?? null;
+  if (!viewer) {
+    const me = await prisma.user.findUnique({
+      where: { id: viewerId },
+      select: {
+        id: true,
+        name: true,
+        displayName: true,
+        role: true,
+        standing: true,
+        ringLevel: true,
+      },
+    });
+    if (me && me.standing > 0) {
+      const ahead = await prisma.user.count({
+        where: {
+          isBot: false,
+          role: { not: "ADMIN" },
+          standing: { gt: me.standing },
+        },
+      });
+      viewer = {
+        id: me.id,
+        rank: ahead + 1,
+        name: memberSafeName(me),
+        standing: me.standing,
+        ringLevel: me.ringLevel,
+        isViewer: true,
+      };
+    }
+  }
 
   return { top, viewer };
 }
