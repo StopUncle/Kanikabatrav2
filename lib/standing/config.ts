@@ -1,5 +1,5 @@
 /**
- * Ranks — unified progression config.
+ * Ranks: unified progression config.
  *
  * Standing is the engagement currency every surface grants; the rank is the
  * member's earned position, counted INWARD (4 = the door, 1 = innermost).

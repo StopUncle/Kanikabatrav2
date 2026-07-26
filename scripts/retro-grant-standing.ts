@@ -229,21 +229,29 @@ async function main() {
   let written = 0;
   for (const t of totals) {
     if (t.total <= 0) continue;
-    const ring = ringForStanding(t.total);
-    await prisma.$transaction([
-      prisma.standingEvent.create({
+    await prisma.$transaction(async (tx) => {
+      await tx.standingEvent.create({
         data: {
           userId: t.userId,
           source: "RETRO",
           amount: t.total,
           refId: "launch",
         },
-      }),
-      prisma.user.update({
+      });
+      // The ring must come from the POST-increment total, not the retro
+      // total alone: members keep earning organic Standing between deploy
+      // and this run, and deriving the ring from t.total would clobber a
+      // rank they already hold.
+      const updated = await tx.user.update({
         where: { id: t.userId },
-        data: { standing: { increment: t.total }, ringLevel: ring.level },
-      }),
-    ]);
+        data: { standing: { increment: t.total } },
+        select: { standing: true },
+      });
+      await tx.user.update({
+        where: { id: t.userId },
+        data: { ringLevel: ringForStanding(updated.standing).level },
+      });
+    });
     written++;
   }
   console.log(
