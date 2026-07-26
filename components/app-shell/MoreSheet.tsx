@@ -31,12 +31,8 @@ const SECTIONS: { title: string; items: Item[] }[] = [
     items: [
       { href: "/app/path", label: "The Path", icon: <Route size={17} /> },
       { href: "/app/you", label: "Your progress", icon: <User size={17} /> },
-      {
-        href: "/consilium/simulator/leaderboard",
-        label: "Leaderboards",
-        icon: <Trophy size={17} />,
-      },
-      { href: "/consilium/quiz", label: "Quizzes", icon: <Brain size={17} /> },
+      { href: "/app/ranks", label: "Leaderboards", icon: <Trophy size={17} /> },
+      { href: "/app/quizzes", label: "Quizzes", icon: <Brain size={17} /> },
     ],
   },
   {
