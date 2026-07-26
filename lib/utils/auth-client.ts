@@ -83,16 +83,29 @@ class AuthClient {
     }
   }
 
-  async refreshToken(): Promise<boolean> {
-    try {
-      const response = await fetch("/api/auth/refresh", {
-        method: "POST",
-      });
+  private refreshInFlight: Promise<boolean> | null = null;
 
-      return response.ok;
-    } catch (_error) {
-      return false;
-    }
+  /**
+   * Singleton-guarded: concurrent 401s from parallel fetches share one
+   * refresh call instead of racing several. The refresh endpoint rotates
+   * the cookie pair, so parallel refreshes can invalidate each other and
+   * log the member out mid-session.
+   */
+  async refreshToken(): Promise<boolean> {
+    if (this.refreshInFlight) return this.refreshInFlight;
+    this.refreshInFlight = (async () => {
+      try {
+        const response = await fetch("/api/auth/refresh", {
+          method: "POST",
+        });
+        return response.ok;
+      } catch (_error) {
+        return false;
+      } finally {
+        this.refreshInFlight = null;
+      }
+    })();
+    return this.refreshInFlight;
   }
 }
 

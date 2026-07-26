@@ -31,7 +31,9 @@ export async function notifyMemberOfDirectMessage(
   member: NotifyTarget,
   preview: string,
 ): Promise<void> {
-  const url = "/consilium/messages";
+  // Deep-link into the app-shell thread; /consilium/messages stays live
+  // for anyone who lands there, but the app is the canonical surface.
+  const url = "/app/kanika";
   const snippet = preview.length > 120 ? `${preview.slice(0, 117)}...` : preview;
 
   // Push — collapses to a single entry via the shared tag so a burst of
