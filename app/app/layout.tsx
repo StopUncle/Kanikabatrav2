@@ -65,8 +65,11 @@ export default async function AppShellLayout({
       className={`${fraunces.variable} ${instrument.variable} min-h-[100dvh] bg-[#060505]`}
       style={{ fontFamily: "var(--font-ui)" }}
     >
+      {/* Pages own their bottom padding (`pb-28` on scrolling screens) so a
+          full-height screen like the Kanika thread can pin its composer
+          directly above the tab bar. */}
       <div className="relative mx-auto min-h-[100dvh] w-full max-w-[430px] bg-[var(--app-black)] text-[var(--app-text)]">
-        <div className="pb-32">{children}</div>
+        {children}
         <TabBar />
       </div>
       <ServiceWorkerRegister />

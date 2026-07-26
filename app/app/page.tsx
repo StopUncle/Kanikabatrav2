@@ -74,7 +74,7 @@ export default async function TodayPage() {
     : 0;
 
   return (
-    <div className="pt-4">
+    <div className="pb-28 pt-4">
       {/* Header: identity left, streak right */}
       <div className="flex items-center justify-between px-5 pb-5 pt-2">
         <RankChip
