@@ -93,8 +93,41 @@ const nextConfig = {
       },
     ];
   },
+  async rewrites() {
+    return [
+      {
+        // The member app shell lives at app/hub on disk but serves at /app.
+        // The route directory cannot be named app/app: a segment folder
+        // literally named "app" breaks Linux builds (Railway) — every page
+        // loses static prerendering and renders through the shell layout,
+        // which auth-redirects the whole site (including /login) into a
+        // loop. Windows builds are unaffected, so this only surfaced on
+        // deploy. Public URLs stay /app/*; only the folder name changed.
+        source: "/app",
+        destination: "/hub",
+      },
+      {
+        source: "/app/:path*",
+        destination: "/hub/:path*",
+      },
+    ];
+  },
   async redirects() {
     return [
+      {
+        // Canonicalize direct /hub hits back to /app so the shell has one
+        // public URL. Runs before the rewrite above, which then maps /app
+        // back onto the hub files internally (no loop: rewrites are
+        // server-internal).
+        source: "/hub",
+        destination: "/app",
+        permanent: false,
+      },
+      {
+        source: "/hub/:path*",
+        destination: "/app/:path*",
+        permanent: false,
+      },
       {
         // dark-psychology-beginners-guide was promoted from a blog post to a
         // pillar guide, moving its URL from /blog to /guide. 301 so the
