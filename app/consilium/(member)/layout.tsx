@@ -43,6 +43,7 @@ export default async function MemberLayout({
       select: {
         displayName: true,
         role: true,
+        initiationAt: true,
         communityMembership: {
           select: { activatedAt: true },
         },
@@ -56,6 +57,15 @@ export default async function MemberLayout({
     getRecentActivity(5),
     readDailyStreak(prisma, userId),
   ]);
+
+  // The Initiation is mandatory: members who haven't completed it get
+  // routed into the flow before any member surface renders. The
+  // initiation route itself lives OUTSIDE this route group, so there is
+  // no loop. Admins are exempt (Kanika shouldn't be walled out of her
+  // own product by a Day-0 flow).
+  if (me && !me.initiationAt && me.role !== "ADMIN") {
+    redirect("/consilium/initiation");
+  }
 
   // Current tier is pure function of (role, activatedAt), no DB
   // column to keep in sync, no cron to run, no drift. Admins always

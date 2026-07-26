@@ -1523,6 +1523,38 @@ interface DigestCourse {
   slug: string;
 }
 
+/**
+ * The personal report card that leads the digest (plan §6.3, "The
+ * Week's Verdict"). Optional: when absent the email falls back to the
+ * plain content summary, so the cron can ship the verdict per member
+ * without an all-or-nothing cutover.
+ */
+interface DigestVerdict {
+  /** Standing earned inside the 7-day window. */
+  standingGained: number;
+  standingTotal: number;
+  ringName: string;
+  /** Null at IC. */
+  toNext: { ringName: string; remaining: number } | null;
+  /** Last resolved league week, null if the member didn't play. */
+  league: {
+    tierName: string;
+    finalRank: number;
+    outcome: "PROMOTED" | "DEMOTED" | "HELD";
+  } | null;
+  /** The week's most-misread Tell, null on quiet weeks. */
+  misreadTell: {
+    question: string;
+    /** Percent of scored answers that got it WRONG, 0-100. */
+    missRate: number;
+    /** First sentence of Kanika's reveal. */
+    read: string;
+    href: string;
+  } | null;
+  /** The member's next Path step (the chapter tease). */
+  nextStep: { chapterTitle: string; label: string; href: string } | null;
+}
+
 interface WeeklyDigestData {
   memberEmail: string;
   memberName: string;
@@ -1532,6 +1564,7 @@ interface WeeklyDigestData {
   newVoiceNotes: DigestVoiceNote[];
   newCourses: DigestCourse[];
   newCommentsOnYourPosts: number;
+  verdict?: DigestVerdict;
   // One-click unsubscribe URL (signed token, no login required). Built
   // by lib/unsubscribe-token.ts buildUnsubscribeUrl. Optional only so
   // existing test fixtures don't have to construct it.
@@ -1646,13 +1679,96 @@ export const sendWeeklyDigest = async (
   `
       : "";
 
+  const v = data.verdict;
+  const outcomeLine =
+    v?.league &&
+    {
+      PROMOTED: { text: "Promoted.", color: "#34d399" },
+      HELD: { text: "Held.", color: "#94a3b8" },
+      DEMOTED: { text: "Demoted.", color: "#f87171" },
+    }[v.league.outcome];
+
+  const verdictBlock = v
+    ? `
+    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="margin: 0 0 25px 0;">
+      <tr>
+        <td bgcolor="#1a0d11" style="padding: 22px; border-radius: 10px; border: 1px solid rgba(212,175,55,0.35);">
+          <p style="color: #d4af37; margin: 0 0 14px 0; font-size: 12px; text-transform: uppercase; letter-spacing: 2px;">The Verdict</p>
+          <p style="color: #f5f0ed; margin: 0 0 4px 0; font-size: 26px; font-weight: 300;">
+            ${v.standingGained > 0 ? `+${v.standingGained.toLocaleString()}` : "0"} <span style="font-size: 14px; color: #94a3b8;">Standing this week</span>
+          </p>
+          <p style="color: #94a3b8; margin: 0 0 14px 0; font-size: 13px;">
+            ${esc(v.ringName)} · ${v.standingTotal.toLocaleString()} total${
+              v.toNext
+                ? ` · ${v.toNext.remaining.toLocaleString()} to ${esc(v.toNext.ringName)}`
+                : ""
+            }
+          </p>
+          ${
+            v.league && outcomeLine
+              ? `<p style="color: #f5f0ed; margin: 0 0 6px 0; font-size: 14px;">
+                   ${esc(v.league.tierName)}: ${ordinal(v.league.finalRank)}. <strong style="color: ${outcomeLine.color};">${outcomeLine.text}</strong>
+                 </p>`
+              : ""
+          }
+          ${
+            v.standingGained === 0
+              ? `<p style="color: #94a3b8; margin: 6px 0 0 0; font-size: 13px; line-height: 1.6;">
+                   A silent week. The room noticed. One scenario puts you back on the board.
+                 </p>`
+              : ""
+          }
+        </td>
+      </tr>
+    </table>
+    ${
+      v.misreadTell
+        ? `
+    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="margin: 0 0 25px 0;">
+      <tr>
+        <td bgcolor="#1a0d11" style="padding: 20px 22px; border-radius: 10px; border: 1px solid rgba(212,175,55,0.15);">
+          <p style="color: #d4af37; margin: 0 0 8px 0; font-size: 12px; text-transform: uppercase; letter-spacing: 2px;">The room misread this one</p>
+          <p style="color: #f5f0ed; margin: 0 0 8px 0; font-size: 14px; line-height: 1.6;">${esc(v.misreadTell.question)}</p>
+          <p style="color: #94a3b8; margin: 0 0 10px 0; font-size: 13px;">${v.misreadTell.missRate}% of the room got it wrong.</p>
+          <p style="color: #f5f0ed; margin: 0 0 12px 0; font-size: 13px; line-height: 1.7; border-left: 2px solid rgba(212,175,55,0.4); padding-left: 12px;">
+            ${esc(v.misreadTell.read)}
+          </p>
+          <a href="${v.misreadTell.href}" style="color: #d4af37; text-decoration: none; font-size: 13px;">Take the read yourself →</a>
+        </td>
+      </tr>
+    </table>`
+        : ""
+    }
+    ${
+      v.nextStep
+        ? `
+    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="margin: 0 0 25px 0;">
+      <tr>
+        <td bgcolor="#1a0d11" style="padding: 20px 22px; border-radius: 10px; border: 1px solid rgba(212,175,55,0.15);">
+          <p style="color: #d4af37; margin: 0 0 8px 0; font-size: 12px; text-transform: uppercase; letter-spacing: 2px;">Next on the Path</p>
+          <p style="color: #f5f0ed; margin: 0 0 12px 0; font-size: 14px;">${esc(v.nextStep.chapterTitle)} · ${esc(v.nextStep.label)}</p>
+          <a href="${v.nextStep.href}" style="color: #d4af37; text-decoration: none; font-size: 13px;">Continue the Path →</a>
+        </td>
+      </tr>
+    </table>`
+        : ""
+    }
+  `
+    : "";
+
   const inner = `
     <p style="color: #f5f0ed; font-size: 18px; margin: 0 0 10px 0; line-height: 1.6;">
-      Hi ${esc(data.memberName)},
+      ${esc(data.memberName)},
     </p>
     <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 25px 0; font-size: 14px;">
-      Here's what happened inside The Consilium this past week (${weekRange}).
+      ${
+        v
+          ? `Sunday. The week closed (${weekRange}). Here is where you stand.`
+          : `Here's what happened inside The Consilium this past week (${weekRange}).`
+      }
     </p>
+
+    ${verdictBlock}
 
     ${commentsNote}
     ${postsBlock}
@@ -1689,10 +1805,28 @@ export const sendWeeklyDigest = async (
 
   return await sendEmail({
     to: data.memberEmail,
-    subject: `The Consilium. This week in review`,
-    html: luxuryEmailShell(inner, "Weekly Digest", weekRange),
+    subject: data.verdict
+      ? data.verdict.standingGained > 0
+        ? `The Week's Verdict: +${data.verdict.standingGained.toLocaleString()} Standing`
+        : `The Week's Verdict`
+      : `The Consilium. This week in review`,
+    html: luxuryEmailShell(
+      inner,
+      data.verdict ? "The Week's Verdict" : "Weekly Digest",
+      weekRange,
+    ),
   });
 };
+
+/** 1 → "1st", 2 → "2nd" … for the league rank line. */
+function ordinal(n: number): string {
+  const rem10 = n % 10;
+  const rem100 = n % 100;
+  if (rem10 === 1 && rem100 !== 11) return `${n}st`;
+  if (rem10 === 2 && rem100 !== 12) return `${n}nd`;
+  if (rem10 === 3 && rem100 !== 13) return `${n}rd`;
+  return `${n}th`;
+}
 
 export const sendInnerCircleWelcomeNewUser = async (
   userEmail: string,

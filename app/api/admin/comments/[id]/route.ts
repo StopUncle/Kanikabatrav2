@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { CommentStatus } from "@prisma/client";
 import { requireAdminSession } from "@/lib/admin/auth";
+import { grantStanding, grantsTodayCount } from "@/lib/standing/grant";
+import { STANDING } from "@/lib/standing/config";
 
 const ACTION_TO_STATUS: Record<string, CommentStatus> = {
   approve: "APPROVED",
@@ -64,6 +66,28 @@ export async function POST(
         where: { id: comment.postId },
         data: { commentCount: { increment: 1 } },
       });
+
+      // Standing for the comment AUTHOR, granted at approval (not at
+      // submission — a rejected comment earns nothing). Deduped on the
+      // comment id so re-approving after a hide can't double-pay, and
+      // capped per day so a flood of one member's approvals doesn't
+      // farm the Rings.
+      void (async () => {
+        const today = await grantsTodayCount(
+          prisma,
+          comment.authorId,
+          "COMMENT",
+        );
+        if (today < STANDING.COMMENT_DAILY_CAP) {
+          await grantStanding(prisma, {
+            userId: comment.authorId,
+            source: "COMMENT",
+            amount: STANDING.COMMENT,
+            refId: comment.id,
+            dedupe: true,
+          });
+        }
+      })().catch(() => {});
     }
 
     return NextResponse.json({

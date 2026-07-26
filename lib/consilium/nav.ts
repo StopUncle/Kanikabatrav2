@@ -1,4 +1,6 @@
 import {
+  Home,
+  Route,
   Scroll,
   Film,
   Compass,
@@ -46,9 +48,23 @@ export interface NavSection {
   readonly items: readonly NavItem[];
 }
 
+const TODAY: NavItem = {
+  href: "/consilium/chamber",
+  label: "Today",
+  icon: Home,
+  matchPrefix: "/consilium/chamber",
+};
+const THE_PATH: NavItem = {
+  href: "/consilium/path",
+  label: "The Path",
+  icon: Route,
+  matchPrefix: "/consilium/path",
+};
+// The feed is Kanika's room now (plan Chamber spec): her posts, her
+// voice notes, Ask Kanika. The label carries that framing.
 const FEED: NavItem = {
   href: "/consilium/feed",
-  label: "Feed",
+  label: "Kanika",
   icon: Scroll,
   matchPrefix: "/consilium/feed",
 };
@@ -145,8 +161,12 @@ const BLOG: NavItem = {
 
 export const NAV_SECTIONS: readonly NavSection[] = [
   {
-    title: "Daily",
-    items: [FEED, SIMULATOR, ADVENTURES, GAMES, LAB, INSTINCTS, LEADERBOARD],
+    title: "Home",
+    items: [TODAY, THE_PATH, FEED],
+  },
+  {
+    title: "Train",
+    items: [SIMULATOR, ADVENTURES, GAMES, LAB, INSTINCTS, LEADERBOARD],
   },
   {
     title: "Library",
@@ -161,11 +181,11 @@ export const NAV_SECTIONS: readonly NavSection[] = [
 /** Daily-loop shortcuts for the top pill strip, highest-return surfaces
  *  only, plus the Blog escape hatch back to public content. */
 export const PILL_ITEMS: readonly NavItem[] = [
-  FEED,
+  TODAY,
+  THE_PATH,
   SIMULATOR,
-  GAMES,
   LAB,
-  RECEIPTS,
+  FEED,
   LEADERBOARD,
   BLOG,
 ];

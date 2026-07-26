@@ -16,8 +16,8 @@ jest.mock("next/navigation", () => ({
   usePathname: () => "/login",
 }));
 
-jest.mock("framer-motion", () => ({
-  motion: {
+jest.mock("framer-motion", () => {
+  const stubs = {
     div: ({
       children,
       ...props
@@ -56,8 +56,10 @@ jest.mock("framer-motion", () => ({
       void transition;
       return <button {...validProps}>{children}</button>;
     },
-  },
-}));
+  };
+  // Components use the lightweight `m` API; keep `motion` for older imports.
+  return { motion: stubs, m: stubs };
+});
 
 describe("LoginForm", () => {
   beforeEach(() => {

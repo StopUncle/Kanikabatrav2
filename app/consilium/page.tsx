@@ -33,7 +33,7 @@ export default async function InnerCircleLanding({
     });
 
     if (membership?.status === "ACTIVE") {
-      redirect("/consilium/feed");
+      redirect("/consilium/chamber");
     }
   }
 

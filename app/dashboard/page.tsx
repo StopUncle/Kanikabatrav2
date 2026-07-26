@@ -117,7 +117,8 @@ export default async function DashboardPage() {
       email: true,
       name: true,
       createdAt: true,
-      _count: { select: { simulatorProgress: true } },
+      initiationAt: true,
+      role: true,
       communityMembership: {
         select: {
           id: true,
@@ -169,15 +170,16 @@ export default async function DashboardPage() {
   });
   if (!user) redirect("/login");
 
-  // First-scenario intercept. Same logic as the previous /dashboard:
-  // ACTIVE members with zero simulator runs get bumped straight into
-  // mission-1-1 the first time they hit the dashboard. Once they begin,
-  // a SimulatorProgress row is created and the redirect stops firing.
+  // Initiation intercept, replacing the old first-scenario redirect.
+  // ACTIVE members who haven't completed the Initiation get walked
+  // into it the moment they hit the dashboard, mirroring the gate in
+  // the member layout. Stops firing once initiationAt is stamped.
   if (
     user.communityMembership?.status === "ACTIVE" &&
-    user._count.simulatorProgress === 0
+    !user.initiationAt &&
+    user.role !== "ADMIN"
   ) {
-    redirect("/consilium/simulator/mission-1-1?welcome=1");
+    redirect("/consilium/initiation");
   }
 
   // Fetch course subscriptions in a separate roundtrip — the include
@@ -483,12 +485,12 @@ export default async function DashboardPage() {
                 title="The Consilium"
                 copy={
                   memberStatus === "ACTIVE"
-                    ? "Your private feed, voice notes, classroom and chat. Active."
+                    ? "Your chamber, the Path, the simulator, Kanika's room. Active."
                     : "Voice notes, courses, daily threads. Apply to enter the council."
                 }
-                cta={memberStatus === "ACTIVE" ? "Enter feed" : "Apply"}
+                cta={memberStatus === "ACTIVE" ? "Enter the Chamber" : "Apply"}
                 href={
-                  memberStatus === "ACTIVE" ? "/consilium/feed" : "/consilium"
+                  memberStatus === "ACTIVE" ? "/consilium/chamber" : "/consilium"
                 }
                 accent={memberStatus === "ACTIVE"}
               />
@@ -713,7 +715,7 @@ function MemberChip({
   if (status === "ACTIVE") {
     return (
       <Link
-        href="/consilium/feed"
+        href="/consilium/chamber"
         className="inline-flex items-center gap-2.5 px-4 py-2 rounded-full border border-warm-gold/40 bg-warm-gold/[0.06] text-warm-gold text-[11px] uppercase tracking-[0.3em] hover:bg-warm-gold/10 transition-colors"
       >
         <span className="w-1.5 h-1.5 rounded-full bg-warm-gold animate-pulse" />

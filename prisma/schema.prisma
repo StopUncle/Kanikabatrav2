@@ -24,6 +24,11 @@ model User {
   // they haven't seen it yet — the feed renders the welcome modal on
   // their first visit after activation.
   onboardingSeenAt          DateTime?
+  // When the member finished the Initiation (or the veteran interstitial
+  // at the Rings launch). Null routes consilium surfaces to
+  // /consilium/initiation. Distinct from onboardingSeenAt, which belongs
+  // to the pre-Rings tour and dies with it.
+  initiationAt              DateTime?
   // Best-effort "last seen" stamp. Written by /api/auth/refresh
   // (fires roughly every 15min for any active session) and by
   // /api/auth/login. Read only by /api/cron/dormant-member to
@@ -94,6 +99,17 @@ model User {
   dailyStreakCurrent        Int                  @default(0)
   dailyStreakLongest        Int                  @default(0)
   dailyStreakLastDate       String? // YYYY-MM-DD UTC of last qualifying action
+  // Unified progression currency (the Rings). Denormalized sum of the user's
+  // StandingEvent amounts; lib/standing/grant.ts is the ONLY writer. Standing
+  // measures engagement (it only goes up) and is deliberately separate from
+  // the skill Measure (Elo / Baseline Read) — neither may ever feed the other.
+  standing                  Int                  @default(0)
+  // Current ring derived from standing (lib/standing/config.ts thresholds).
+  // 7 = outermost (the door) … 1 = innermost. Stored so queries and gates can
+  // filter by ring without recomputing thresholds.
+  ringLevel                 Int                  @default(4)
+  standingEvents            StandingEvent[]
+  pathProgress              UserPathProgress[]
   dailyCheckIns             DailyCheckIn[]
   simulatorBadges           SimulatorBadge[]
   isBot                     Boolean              @default(false)
@@ -1790,20 +1806,20 @@ enum ReferralStatus {
 // Never the member's real name unless they explicitly authorised it.
 // ============================================================================
 model Testimonial {
-  id           String   @id @default(cuid())
-  videoUrl     String?
-  posterUrl    String?
+  id              String   @id @default(cuid())
+  videoUrl        String?
+  posterUrl       String?
   durationSeconds Int?
-  quoteText    String?  @db.Text
-  transcript   String?  @db.Text
-  authorName   String
-  authorRole   String?
+  quoteText       String?  @db.Text
+  transcript      String?  @db.Text
+  authorName      String
+  authorRole      String?
   // Lower numbers sort first on the public wall. Negative is allowed so
   // a freshly-added testimonial can jump to the top without renumbering.
-  displayOrder Int      @default(0)
-  published    Boolean  @default(false)
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  displayOrder    Int      @default(0)
+  published       Boolean  @default(false)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
 
   @@index([published, displayOrder])
 }
@@ -1826,30 +1842,30 @@ model Testimonial {
 // mismatches are safe to auto-heal.
 // ============================================================================
 model MembershipReconciliation {
-  id             String    @id @default(cuid())
-  membershipId   String
-  userId         String
-  stripeSubId    String
+  id            String    @id @default(cuid())
+  membershipId  String
+  userId        String
+  stripeSubId   String
   // The mismatch shape, one of:
   //   status-drift           local status != derived Stripe status
   //   cancel-flag-drift      local cancelledAt presence != Stripe cancel_at_period_end
   //   expires-drift          local expiresAt diverged > 24h from Stripe current_period_end
   //   stripe-missing         Stripe couldn't find the subscription at all
   //   stripe-unreachable     Stripe API call errored, transient
-  mismatch       String
+  mismatch      String
   // Human-readable detail. Includes the actual values on both sides
   // so an admin can read this row alone and understand what to do.
-  detail         String    @db.Text
+  detail        String    @db.Text
   // Snapshot of the values at detection time, kept structured for
   // future analytics dashboards (drift-rate by week, etc).
-  localStatus    String
-  stripeStatus   String?
+  localStatus   String
+  stripeStatus  String?
   // Mark with reviewer admin id once handled. Unresolved rows are the
   // queue; resolved rows are history.
-  resolvedAt     DateTime?
-  resolvedBy     String?
-  resolvedNotes  String?   @db.Text
-  createdAt      DateTime  @default(now())
+  resolvedAt    DateTime?
+  resolvedBy    String?
+  resolvedNotes String?   @db.Text
+  createdAt     DateTime  @default(now())
 
   @@index([resolvedAt, createdAt])
   @@index([membershipId])
@@ -1895,9 +1911,9 @@ model DailyCheckIn {
   id               String   @id @default(cuid())
   userId           String
   user             User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  checkedDate      String   // YYYY-MM-DD UTC
-  situation        String   // slug; see lib/checkin/situations.ts
-  recommendedTrack String   // ScenarioTrack slug; "" for "exploring" no-op
+  checkedDate      String // YYYY-MM-DD UTC
+  situation        String // slug; see lib/checkin/situations.ts
+  recommendedTrack String // ScenarioTrack slug; "" for "exploring" no-op
   createdAt        DateTime @default(now())
 
   @@unique([userId, checkedDate])
@@ -1909,12 +1925,12 @@ model GameSession {
   id          String   @id @default(cuid())
   userId      String
   user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  gameKey     String   // "speed-drill" for v1; future-proof for more games
-  score       Int      // correct calls
-  totalCards  Int      // total cards in the run (10 for Speed Drill)
-  accuracy    Int      // 0-100, denormalised for cheap leaderboard reads
+  gameKey     String // "speed-drill" for v1; future-proof for more games
+  score       Int // correct calls
+  totalCards  Int // total cards in the run (10 for Speed Drill)
+  accuracy    Int // 0-100, denormalised for cheap leaderboard reads
   maxCombo    Int      @default(0)
-  durationSec Int      // total session length including countdown
+  durationSec Int // total session length including countdown
   tier        Int      @default(2) // 1=warm-up, 2=sharp, 3=ruthless
   playedAt    DateTime @default(now())
 
@@ -1933,35 +1949,35 @@ model GameSession {
 // ========================================
 
 model Figure {
-  id        String       @id @default(cuid())
+  id              String       @id @default(cuid())
   // URL-safe deep-link key for /board/[slug]. Set in the admin UI.
-  slug      String       @unique
-  name      String
+  slug            String       @unique
+  name            String
   // One-line role context shown under the name ("Tech founder",
   // "Daytime host"). Keeps the row readable without opening the dossier.
-  descriptor String?
+  descriptor      String?
   // Uniform editorial portrait. Treatment (duotone + accent) is applied
   // in CSS, so this can stay a plain source image on R2 / a static path.
-  photoUrl  String?
-  archetype Archetype?
-  status    FigureStatus @default(ON_BOARD)
+  photoUrl        String?
+  archetype       Archetype?
+  status          FigureStatus @default(ON_BOARD)
   // Calibration anchors (Keanu, Kemper) are true. Excluded from the
   // ranked board and from sort/rank math; rendered only on /board/scale
   // and the fixed reference rail.
-  isCalibration Boolean  @default(false)
+  isCalibration   Boolean      @default(false)
   // Pin to the top of the Most Requested rail regardless of activity.
   // Editorial control over the "how is X not on here?!" surface.
-  featuredRequest Boolean @default(false)
+  featuredRequest Boolean      @default(false)
   // Denormalised pointer to the latest Score row, so the board and
   // scorecard read the current numbers without aggregating the history
   // every render. Written whenever a new Score is added. Null until the
   // figure has been scored at least once (e.g. a MOST_REQUESTED stub).
-  currentScoreId String?  @unique
-  currentScore   Score?   @relation("CurrentScore", fields: [currentScoreId], references: [id], onDelete: SetNull)
+  currentScoreId  String?      @unique
+  currentScore    Score?       @relation("CurrentScore", fields: [currentScoreId], references: [id], onDelete: SetNull)
 
   // Full re-score history. Each row is one (re)scoring event; the
   // timeline on the dossier is just this list ordered by scoredAt.
-  scores    Score[]      @relation("ScoreHistory")
+  scores    Score[]           @relation("ScoreHistory")
   sources   Source[]
   votes     CrowdVote[]
   petitions RescorePetition[]
@@ -1978,24 +1994,24 @@ model Figure {
 // figure's headline numbers come from whichever Score is referenced by
 // Figure.currentScoreId.
 model Score {
-  id        String  @id @default(cuid())
-  figureId  String
-  figure    Figure  @relation("ScoreHistory", fields: [figureId], references: [id], onDelete: Cascade)
+  id           String   @id @default(cuid())
+  figureId     String
+  figure       Figure   @relation("ScoreHistory", fields: [figureId], references: [id], onDelete: Cascade)
   // 0-100. composite is the headline; factor1 (interpersonal-affective)
   // and factor2 (lifestyle-antisocial) are the two mini-bars.
-  composite Int
-  factor1   Int
-  factor2   Int
-  tier      Tier
+  composite    Int
+  factor1      Int
+  factor2      Int
+  tier         Tier
   // Kanika's written read. The payoff section of the dossier.
-  verdict   String  @db.Text
+  verdict      String   @db.Text
   // The ~6 scored observations: [{ name, score, note }]. JSON because
   // the sector list is editorial and varies per figure.
-  sectors   Json
+  sectors      Json
   // What news prompted this re-score ("after [event]"). Null on the
   // first/debut score.
   triggerEvent String?
-  scoredAt  DateTime @default(now())
+  scoredAt     DateTime @default(now())
 
   // Back-relation for the denormalised currentScore pointer above.
   currentFor Figure? @relation("CurrentScore")
@@ -2006,12 +2022,12 @@ model Score {
 // Public material a read is grounded in: interviews, filings,
 // documentaries. Rendered on the dossier as credibility + legal hygiene.
 model Source {
-  id       String @id @default(cuid())
-  figureId String
-  figure   Figure @relation(fields: [figureId], references: [id], onDelete: Cascade)
-  label    String // "2019 BBC interview", "SEC filing, Mar 2024"
-  url      String
-  sortOrder Int   @default(0)
+  id        String @id @default(cuid())
+  figureId  String
+  figure    Figure @relation(fields: [figureId], references: [id], onDelete: Cascade)
+  label     String // "2019 BBC interview", "SEC filing, Mar 2024"
+  url       String
+  sortOrder Int    @default(0)
 
   @@index([figureId])
 }
@@ -2025,7 +2041,7 @@ model CrowdVote {
   figure    Figure   @relation(fields: [figureId], references: [id], onDelete: Cascade)
   userId    String
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  composite Int      // 0-100
+  composite Int // 0-100
   // Vote weight. Longer-standing Consilium members count heavier — also
   // the anti-brigade defense. Default 1.0 for free accounts; set higher
   // for members at write time based on membership tenure.
@@ -2046,7 +2062,7 @@ model RescorePetition {
   figure    Figure   @relation(fields: [figureId], references: [id], onDelete: Cascade)
   userId    String
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  sourceUrl String   // citation REQUIRED
+  sourceUrl String // citation REQUIRED
   createdAt DateTime @default(now())
 
   @@unique([figureId, userId])
@@ -2058,7 +2074,7 @@ model RescorePetition {
 // Actor handle and figure name/slug are denormalised at write time so
 // the ticker is a single cheap query with no joins.
 model BoardActivityEvent {
-  id          String   @id @default(cuid())
+  id          String         @id @default(cuid())
   type        BoardEventType
   figureId    String?
   figureName  String?
@@ -2067,7 +2083,7 @@ model BoardActivityEvent {
   // Null for anonymized or system events (DEBUT, RESCORE_REVEALED).
   actorHandle String?
   metadata    Json?
-  createdAt   DateTime @default(now())
+  createdAt   DateTime       @default(now())
 
   @@index([createdAt])
 }
@@ -2085,10 +2101,10 @@ enum FigureStatus {
 
 enum Tier {
   NEGLIGIBLE // 0-19
-  LOW        // 20-39
-  MODERATE   // 40-59
-  ELEVATED   // 60-79 (clinical-threshold range)
-  HIGH       // 80-100 (armchair)
+  LOW // 20-39
+  MODERATE // 40-59
+  ELEVATED // 60-79 (clinical-threshold range)
+  HIGH // 80-100 (armchair)
 }
 
 enum BoardEventType {
@@ -2165,4 +2181,56 @@ model GeneratedScenario {
   publishedAt DateTime?
 
   @@index([status, createdAt])
+}
+
+/// One granted parcel of Standing (the Rings progression currency).
+/// Append-only ledger; User.standing is the denormalized sum. Written
+/// exclusively by lib/standing/grant.ts — never insert rows directly,
+/// the grant helper owns dedupe and the ring recompute.
+model StandingEvent {
+  id        String         @id @default(cuid())
+  userId    String
+  source    StandingSource
+  amount    Int
+  /// What earned it (scenarioId, tellId, receiptId, commentId, "7"/"30"
+  /// for streak milestones). With `source`, the dedupe key for one-shot
+  /// grants (first completion of a scenario, one grant per tell).
+  refId     String?
+  createdAt DateTime       @default(now())
+  user      User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt])
+  @@index([userId, source, refId])
+}
+
+enum StandingSource {
+  SCENARIO
+  DAILY_MISSION
+  TELL
+  DRILL
+  LAB
+  RECEIPT
+  COMMENT
+  QUESTION_ANSWERED
+  STREAK_MILESTONE
+  BASELINE
+  SESSION_WATCH
+  CHAPTER
+  RETRO
+}
+
+/// One completed Path step (the chaptered curriculum, plan §5). The
+/// registry of chapters/steps lives in code (lib/path/curriculum.ts);
+/// this table only records which steps a member has completed. Rows are
+/// written by lib/path/progress.ts when detection sees the underlying
+/// action done; stepId is the registry's stable slug (e.g. "ch3-receipt").
+model UserPathProgress {
+  id          String   @id @default(cuid())
+  userId      String
+  stepId      String
+  completedAt DateTime @default(now())
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, stepId])
+  @@index([userId])
 }

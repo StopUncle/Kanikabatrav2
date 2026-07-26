@@ -114,12 +114,18 @@ export async function POST(request: NextRequest) {
         },
       });
 
+      // endedAt is forced null here: /complete is the ONLY writer of
+      // completedAt. The runner autosaves the ending state through this
+      // route a beat before it calls /complete, and letting that save
+      // stamp completedAt made /complete see an already-completed row,
+      // so first-completion rewards (the Standing grant, the first-try
+      // achievement) silently never fired.
       const { create, update } = mergeProgress(existing, {
         currentSceneId: body.currentSceneId,
         choicesMade: body.choicesMade,
         xpEarned: safeXp,
         outcome: body.outcome ?? null,
-        endedAt: body.endedAt ?? null,
+        endedAt: null,
       });
 
       const saved = await prisma.simulatorProgress.upsert({

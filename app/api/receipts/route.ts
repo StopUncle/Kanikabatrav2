@@ -31,6 +31,8 @@ import {
   type ReceiptsTier,
 } from "@/lib/receipts/db";
 import { enforceRateLimit, limits } from "@/lib/rate-limit";
+import { grantStanding } from "@/lib/standing/grant";
+import { STANDING } from "@/lib/standing/config";
 import { logger } from "@/lib/logger";
 
 const Body = z.object({
@@ -186,6 +188,14 @@ export async function POST(request: NextRequest) {
     );
     row = inserted.created;
     usedAfter = inserted.used;
+    // Standing: one grant per receipt row. The weekly quota above is the
+    // farm-prevention; grant failure is internal-only and never throws.
+    void grantStanding(prisma, {
+      userId: ctx.userId!,
+      source: "RECEIPT",
+      amount: STANDING.RECEIPT,
+      refId: row.id,
+    });
   } catch (err) {
     if (err instanceof QuotaExceededError) {
       logger.warn("[receipts] quota raced past cap, rejecting", {

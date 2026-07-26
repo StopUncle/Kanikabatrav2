@@ -10,6 +10,9 @@ import type {
 import SimulatorRunner from "./SimulatorRunner";
 import AchievementToast from "./AchievementToast";
 import SimulatorErrorBoundary from "./SimulatorErrorBoundary";
+import RingUpCeremony, {
+  type RingUpPayload,
+} from "@/components/rings/RingUpCeremony";
 
 export type PreviousBest = {
   xpEarned: number;
@@ -34,6 +37,14 @@ type Props = {
    * catalog on the ending screen. Empty on a first-ever play.
    */
   seenEndingIds?: string[];
+  /**
+   * Custom ending-screen CTA, forwarded to the runner. The Initiation
+   * uses this to route finishers into The Placement instead of the
+   * default "Next Scenario" link.
+   */
+  endingCta?: React.ReactNode;
+  /** Where the runner's exit X navigates. Defaults to the catalog. */
+  exitHref?: string;
 };
 
 /**
@@ -52,6 +63,8 @@ export default function SimulatorPageClient({
   previousBest = null,
   nextScenarioHref,
   seenEndingIds = [],
+  endingCta,
+  exitHref,
 }: Props) {
   const router = useRouter();
   const [badgesEarned, setBadgesEarned] = useState<string[]>([]);
@@ -60,6 +73,9 @@ export default function SimulatorPageClient({
   // ending grid) so replays of an already-unlocked scenario don't
   // re-fire the toast.
   const [unlockedThisRun, setUnlockedThisRun] = useState<string[]>([]);
+  // Non-null when the completion that just resolved crossed a ring
+  // threshold; drives the full-screen ceremony over the ending screen.
+  const [ringUp, setRingUp] = useState<RingUpPayload | null>(null);
   // Track the "best-to-date" across the session so a second replay
   // in the same tab compares against the run that just finished, not
   // the previousBest prop frozen at page load. Initial value mirrors
@@ -120,6 +136,7 @@ export default function SimulatorPageClient({
     //, a misleading render window of 200ms–2s on slow connections.
     setBadgesEarned([]);
     setUnlockedThisRun([]);
+    setRingUp(null);
 
     // Update the session's best-to-date if this run exceeded it.
     // A subsequent in-session replay sees this as the new baseline so
@@ -152,6 +169,7 @@ export default function SimulatorPageClient({
         const data = (await res.json()) as {
           allEarnedKeys: string[];
           newlyEarnedKeys: string[];
+          ringUp: RingUpPayload | null;
         };
         // Show ALL earned badges on the ending screen (visual reward), even
         // if duplicates so replays still feel rewarding. Uniqueness is
@@ -160,6 +178,7 @@ export default function SimulatorPageClient({
         // Toast only on first-time unlocks, a replay that re-earns the
         // same key array gets no popup, which is what players want.
         setUnlockedThisRun(data.newlyEarnedKeys);
+        setRingUp(data.ringUp ?? null);
         // Refresh server components so the index page reflects new state
         // when the user returns.
         router.refresh();
@@ -173,7 +192,7 @@ export default function SimulatorPageClient({
     <SimulatorErrorBoundary
       scenarioId={scenario.id}
       currentSceneIdRef={currentSceneIdRef}
-      exitHref="/consilium/simulator"
+      exitHref={exitHref ?? "/consilium/simulator"}
     >
       <SimulatorRunner
         scenario={scenario}
@@ -184,8 +203,11 @@ export default function SimulatorPageClient({
         nextScenarioHref={nextScenarioHref}
         badgesEarned={badgesEarned}
         seenEndingIds={seenEndingIds}
+        endingCta={endingCta}
+        exitHref={exitHref}
       />
       <AchievementToast unlocks={unlockedThisRun} />
+      <RingUpCeremony ringUp={ringUp} onDismiss={() => setRingUp(null)} />
     </SimulatorErrorBoundary>
   );
 }

@@ -62,8 +62,12 @@ export default function LoginForm() {
       // Fire-and-forget, never blocks the redirect.
       migrateLocalStreakIfPresent();
 
-      // Login successful, redirect to returnTo or dashboard
-      router.push(returnTo || "/dashboard");
+      // Login successful. Explicit returnTo wins; otherwise ACTIVE
+      // members land in the Chamber (the member home), everyone else
+      // on the dashboard.
+      router.push(
+        returnTo || (result.isActiveMember ? "/app" : "/dashboard"),
+      );
       router.refresh();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Login failed");

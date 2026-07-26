@@ -1,29 +1,15 @@
-import { redirect } from "next/navigation";
 import { requireServerAuth } from "@/lib/auth/server-auth";
 import { feedPostGenderWhere } from "@/lib/community/gender-filter";
 import { prisma } from "@/lib/prisma";
 import { memberSafeName } from "@/lib/community/privacy";
 import FeedList from "@/components/consilium/FeedList";
-import OnboardingModal from "@/components/consilium/OnboardingModal";
-import FirstMovesChecklist from "@/components/consilium/FirstMovesChecklist";
-import FirstSevenDays from "@/components/consilium/FirstSevenDays";
-import TodayBlock from "@/components/consilium/TodayBlock";
 import { MessageCircle, Mail } from "lucide-react";
 import { tierForMember } from "@/components/consilium/badge-tiers";
-import { getTellStreak } from "@/lib/tells/db";
-import { getTodaysGeneratedDrop } from "@/lib/simulator/generated";
 import { formatPoll, pollInclude } from "@/lib/community/poll-format";
-import { readDailyStreak } from "@/lib/streak/daily";
-import {
-  getDailyMission,
-  getMissionCouncilToday,
-  isDailyMissionDoneToday,
-} from "@/lib/streak/daily-mission";
-import { utcDateKey } from "@/lib/tells/streak";
 
 export const metadata = {
-  title: "Feed. The Consilium | Kanika Batra",
-  description: "The council feed, insights, discussions, and voice notes from Kanika.",
+  title: "Kanika. The Consilium | Kanika Batra",
+  description: "Her room. Posts, insights, discussions, and voice notes from Kanika.",
 };
 
 export default async function FeedPage({
@@ -35,71 +21,20 @@ export default async function FeedPage({
   const params = await searchParams;
   const justClaimed = params.claimed === "1";
 
-  // Pull onboarding state + the signals that back the "Your first moves"
-  // checklist in one round-trip. Counts instead of booleans so any future
-  // "how many comments/scenarios completed" UI can reuse this shape.
+  // One viewer read: gender drives the feed filter. The identity strip
+  // moved to the Chamber (the member home); this page is Kanika's room.
   const viewerRecord = await prisma.user.findUnique({
     where: { id: userId },
-    select: {
-      onboardingSeenAt: true,
-      displayName: true,
-      gender: true,
-      communityMembership: { select: { activatedAt: true } },
-      _count: {
-        select: {
-          quizResults: true,
-          simulatorProgress: true,
-          feedComments: true,
-        },
-      },
-    },
+    select: { gender: true },
   });
-  // First-scenario intercept (mirrors /dashboard/page.tsx). The
-  // dashboard catches most new members, but anyone who deep-links
-  // straight to /consilium/feed (e.g. from the dashboard's gold
-  // "Enter the Consilium" pill, an email link, or a bookmark) needs
-  // the same nudge or they end up on a near-empty feed and bounce.
-  // Skipped when ?claimed=1 is set (post-bonus-month-claim flow has
-  // its own welcome state). The redirect stops firing the moment
-  // their first SimulatorProgress row exists.
-  if (
-    !justClaimed &&
-    (viewerRecord?._count.simulatorProgress ?? 0) === 0
-  ) {
-    redirect("/consilium/simulator/mission-1-1?welcome=1");
-  }
 
-  const showOnboarding = viewerRecord?.onboardingSeenAt == null;
-  // The modal collects gender + display name post-pay (the application
-  // form used to collect them; now that it's gone, we capture them on
-  // first feed visit). Skip the form half if the user already has them.
-  const needsDisplayName = !viewerRecord?.displayName;
-  const needsGender = !viewerRecord?.gender;
-  const firstMovesSignals = {
-    hasDisplayName:
-      !!viewerRecord?.displayName && viewerRecord.displayName.trim() !== "",
-    hasQuizResult: (viewerRecord?._count.quizResults ?? 0) > 0,
-    hasSimulatorProgress:
-      (viewerRecord?._count.simulatorProgress ?? 0) > 0,
-    hasComment: (viewerRecord?._count.feedComments ?? 0) > 0,
-  };
-
-  // viewerRecord already selected `gender`, so reuse it instead of firing a
-  // second full User lookup (getViewerGender did exactly that). genderWhere
-  // is pure once we have the gender.
   const viewerGender = viewerRecord?.gender ?? null;
   const genderWhere = feedPostGenderWhere(viewerGender);
 
   const PAGE_SIZE = 20;
-  // Today's mission is a pure function of the UTC date — no query needed.
-  const dailyMission = getDailyMission();
-  // Tell streak, feed, mission-done, unified streak, and today's drop are
-  // mutually independent, so run them in one parallel round-trip. The redirect
-  // guard above only depends on viewerRecord, which is already resolved.
-  const [tellStreak, rows, missionDone, dailyStreak, freshDrop, council] =
-    await Promise.all([
-    getTellStreak(userId),
-    prisma.feedPost.findMany({
+  // The daily loop (mission, tell, streak, drop) lives on the Chamber
+  // now; this page only loads the posts.
+  const rows = await prisma.feedPost.findMany({
       where: genderWhere,
       take: PAGE_SIZE + 1,
       orderBy: [{ isPinned: "desc" }, { createdAt: "desc" }],
@@ -124,14 +59,7 @@ export default async function FeedPage({
         },
         poll: pollInclude,
       },
-    }),
-    isDailyMissionDoneToday(prisma, userId),
-    readDailyStreak(prisma, userId),
-    getTodaysGeneratedDrop(),
-    getMissionCouncilToday(prisma),
-  ]);
-  const today = utcDateKey();
-  const doneToday = tellStreak?.lastTellDate === today;
+    });
 
   // Drop unpinned posts whose title matches an already-pinned post.
   // Re-pinning a fresh copy of an evergreen welcome/rules post used to
@@ -184,13 +112,6 @@ export default async function FeedPage({
 
   return (
     <>
-      {showOnboarding && (
-        <OnboardingModal
-          needsDisplayName={needsDisplayName}
-          needsGender={needsGender}
-        />
-      )}
-
       <div className="max-w-2xl mx-auto px-3 sm:px-4 py-6 sm:py-8 lg:py-12">
         {justClaimed && (
           // One-off banner shown only when the user just landed via the
@@ -221,32 +142,13 @@ export default async function FeedPage({
 
         <div className="mb-6 sm:mb-8">
           <h1 className="text-2xl sm:text-3xl font-extralight tracking-wider uppercase gradient-text-gold mb-2">
-            The Feed
+            Kanika
           </h1>
           <div className="w-12 h-px bg-warm-gold/40 mb-3" />
           <p className="text-text-gray text-sm">
-            Posts, insights, and discussions from the council.
+            Her room. Posts, insights, voice notes, and the discussions under them.
           </p>
         </div>
-
-        <TodayBlock
-          mission={dailyMission}
-          missionDone={missionDone}
-          streakCurrent={dailyStreak.current}
-          atRisk={dailyStreak.isAtRisk}
-          tellDoneToday={doneToday}
-          freshDrop={freshDrop}
-          council={council}
-        />
-
-        <FirstSevenDays
-          activatedAt={
-            viewerRecord?.communityMembership?.activatedAt?.toISOString() ??
-            null
-          }
-          signals={firstMovesSignals}
-        />
-        <FirstMovesChecklist signals={firstMovesSignals} />
 
         {formatted.length === 0 ? (
           <div className="text-center py-16">

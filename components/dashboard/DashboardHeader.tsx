@@ -80,7 +80,7 @@ const DashboardHeader = ({ userEmail, userName = null }: DashboardHeaderProps) =
   // exposes the shortcut; the desktop layout shows it as the gold pill.
   const mobileMenuLinks = [
     ...navLinks,
-    { href: "/consilium/feed", label: "The Consilium", icon: Users },
+    { href: "/consilium/chamber", label: "The Consilium", icon: Users },
   ];
 
   const handleLogout = async () => {
