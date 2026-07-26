@@ -21,8 +21,14 @@ export interface GrantResult {
   amount: number;
   newStanding: number;
   ringLevel: number;
-  /** Set when this grant crossed a threshold — the ceremony trigger. */
+  /** Set when this grant crossed a threshold: the ceremony trigger. */
   rangUp: { fromLevel: number; toLevel: number; ringName: string } | null;
+  /**
+   * True only when the grant errored out (not when dedupe made it a
+   * no-op). Callers that write their own "already granted" markers must
+   * skip the marker on failure so the grant can retry on the next pass.
+   */
+  failed?: boolean;
 }
 
 const NO_GRANT: GrantResult = {
@@ -63,9 +69,18 @@ export async function grantStanding(
       if (existing) return NO_GRANT;
     }
 
-    await prisma.standingEvent.create({
-      data: { userId, source, amount, refId },
-    });
+    try {
+      await prisma.standingEvent.create({
+        data: { userId, source, amount, refId },
+      });
+    } catch (err) {
+      // The (userId, source, refId) unique index is the dedupe backstop:
+      // two identical grants racing past the read above resolve here,
+      // with exactly one winner. The loser is a normal no-op, not an
+      // error, and must not bump standing.
+      if ((err as { code?: string }).code === "P2002") return NO_GRANT;
+      throw err;
+    }
 
     // Returned row reflects the increment; ringLevel is still the value
     // from before this grant, which is exactly the rangUp comparison base.
@@ -101,12 +116,12 @@ export async function grantStanding(
     };
   } catch (err) {
     console.error("[standing] grant failed (non-fatal):", err);
-    return NO_GRANT;
+    return { ...NO_GRANT, failed: true };
   }
 }
 
 /**
- * Count today's grants from one source — used for daily caps
+ * Count today's grants from one source, used for daily caps
  * (e.g. COMMENT is capped at 3/day so spam can't farm Standing).
  */
 export async function grantsTodayCount(

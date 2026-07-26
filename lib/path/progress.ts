@@ -241,13 +241,17 @@ export async function getPathState(
   // which grantStanding's dedupe (source+refId) turns into a no-op.
   // The reverse order would skip a failed grant forever.
   for (const chapterId of newSeals) {
-    await grantStanding(prisma, {
+    const grant = await grantStanding(prisma, {
       userId,
       source: "CHAPTER",
       amount: STANDING.CHAPTER,
       refId: chapterId,
       dedupe: true,
     });
+    // A grant that errored (not a dedupe no-op) must NOT get its marker,
+    // or the Seal's Standing would be skipped forever; leaving the marker
+    // unwritten makes the next visit re-detect and retry the grant.
+    if (grant.failed) continue;
     await prisma.userPathProgress.createMany({
       data: [{ userId, stepId: sealId(chapterId) }],
       skipDuplicates: true,
