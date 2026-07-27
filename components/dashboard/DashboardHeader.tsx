@@ -80,7 +80,7 @@ const DashboardHeader = ({ userEmail, userName = null }: DashboardHeaderProps) =
   // exposes the shortcut; the desktop layout shows it as the gold pill.
   const mobileMenuLinks = [
     ...navLinks,
-    { href: "/consilium/chamber", label: "The Consilium", icon: Users },
+    { href: "/app", label: "The Consilium", icon: Users },
   ];
 
   const handleLogout = async () => {
@@ -128,7 +128,7 @@ const DashboardHeader = ({ userEmail, userName = null }: DashboardHeaderProps) =
                   standard nav and the profile chip so it's the most
                   visually charged link in the chrome. */}
               <Link
-                href="/consilium/feed"
+                href="/app"
                 className="group inline-flex items-center gap-1.5 pl-4 pr-3 py-1.5 rounded-full border border-warm-gold/60 text-warm-gold text-[11px] tracking-[0.22em] uppercase whitespace-nowrap hover:border-warm-gold hover:bg-warm-gold/10 hover:shadow-[0_0_20px_-6px_rgba(212,175,55,0.5)] transition-all duration-300"
               >
                 The Consilium
@@ -230,7 +230,7 @@ const DashboardHeader = ({ userEmail, userName = null }: DashboardHeaderProps) =
                     key={link.href}
                     href={link.href}
                     className={`flex items-center gap-3 transition-colors py-2.5 px-2 rounded-lg text-[15px] ${
-                      link.href === "/consilium/feed"
+                      link.href === "/app"
                         ? "text-warm-gold font-medium hover:bg-warm-gold/[0.06]"
                         : "text-text-light hover:text-warm-gold hover:bg-warm-gold/[0.04]"
                     }`}
