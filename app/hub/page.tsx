@@ -13,6 +13,7 @@ import {
 } from "@/lib/streak/daily-mission";
 import { utcDateKey } from "@/lib/tells/streak";
 import { getDay0Checklist } from "@/lib/day0/checklist";
+import { readProgram } from "@/lib/program/read";
 import RankChip from "@/components/app-shell/RankChip";
 import Move from "@/components/app-shell/Move";
 import DailySetCard from "@/components/app-shell/play/DailySetCard";
@@ -49,6 +50,7 @@ export default async function TodayPage() {
     drillsToday,
     todaysTell,
     day0,
+    program,
   ] = await Promise.all([
     getPathState(prisma, userId, {
       gender: viewer?.gender ?? null,
@@ -77,6 +79,7 @@ export default async function TodayPage() {
     }),
     getTodaysTellRow(),
     getDay0Checklist(prisma, userId),
+    readProgram(prisma, userId),
   ]);
 
   const tellDoneToday = tellStreak?.lastTellDate === utcDateKey();
@@ -121,6 +124,34 @@ export default async function TodayPage() {
 
       {/* First week: shown until the window closes or all three are done */}
       {day0 && <ChecklistCard checklist={day0} />}
+
+      {/* The transformation. Sits above everything else on Today because it
+          is the reason the app is worth opening on a given week, and it
+          disappears the moment the week's challenge is done. */}
+      {program.actionable && (
+        <Link
+          href="/app/program"
+          className="mb-4 block rounded-[18px] border border-[var(--app-gold)]/30 bg-[var(--app-gold)]/[0.05] px-[18px] py-4"
+        >
+          <div className="flex items-baseline justify-between gap-3">
+            <p className="text-[10px] uppercase tracking-[0.22em] text-[var(--app-gold)]">
+              Week {program.actionable.weekNumber} of 12
+            </p>
+            <p className="shrink-0 text-[11px] tracking-[0.1em] text-[var(--app-gold)]">
+              OPEN →
+            </p>
+          </div>
+          <p
+            className="mt-1.5 text-[19px] leading-tight"
+            style={{ fontFamily: "var(--font-display)" }}
+          >
+            {program.actionable.title}
+          </p>
+          <p className="mt-1.5 text-[12.5px] leading-relaxed text-[var(--app-muted)]">
+            {program.actionable.lede}
+          </p>
+        </Link>
+      )}
 
       {/* Hero: latest from Kanika. Becomes the weekly session later. */}
       {latestFromKanika && (

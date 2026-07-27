@@ -154,6 +154,11 @@ model User {
   markEncounters            MarkEncounter[]
   baselineAttempts          BaselineAttempt[]
   mirrorReadings            MirrorReading[]
+  // The 12 Week Transformation. weekCompletions are the challenge
+  // check-ins (one per week, the thing that actually changes someone);
+  // lessonViews track which videos inside a week have been watched.
+  weekCompletions           WeekCompletion[]
+  lessonViews               LessonView[]
   // The Board: a member's own /100 crowd score per figure, and the
   // re-score petitions they have signed. Both gated behind a free
   // account (the JWT cookie pair), one row per (figure, user).
@@ -2232,6 +2237,7 @@ enum StandingSource {
   SESSION_WATCH
   CHAPTER
   RETRO
+  PROGRAM_WEEK
 }
 
 /// One completed Path step (the chaptered curriculum, plan §5). The
@@ -2359,4 +2365,94 @@ model PushSend {
 
   @@index([userId, sentAt])
   @@index([sentAt])
+}
+
+// ---------------------------------------------------------------------------
+// The 12 Week Transformation
+//
+// Twelve weeks, each one video lessons + assigned reading from the book + a
+// challenge the member does off-screen. The challenge is the product; the
+// video is the delivery.
+//
+// There is deliberately no per-member unlock row. A week's availability is
+// derived from the member's own start date (activatedAt + (n-1) * 7 days), so
+// every member gets all twelve weeks counted from when THEY joined, nothing
+// can drift out of sync, and a new member never lands in a half-empty ladder.
+//
+// These are NOT library videos. The general video library reads FeedPost and
+// never touches this table, which is what keeps "browse all videos" free of
+// program content without a filter that can be got wrong later.
+// ---------------------------------------------------------------------------
+
+model TransformationWeek {
+  id           String  @id @default(cuid())
+  weekNumber   Int     @unique
+  title        String
+  lede         String
+  /// The assignment. The thing they do in the world, not on the screen.
+  challenge    String
+  /// Assigned reading, e.g. "Ch. 1, The Doctrine of Cold". Null for a week
+  /// that carries no reading.
+  readingLabel String?
+  /// Why this chapter belongs to this week, shown under the reading row so
+  /// the assignment reads as deliberate rather than arbitrary.
+  readingWhy   String?
+  /// Weeks stay unpublished until Kanika has filmed them. An unpublished
+  /// week never unlocks and never notifies, so the ladder simply stops
+  /// rather than showing a member an empty room.
+  isPublished  Boolean @default(false)
+
+  lessons     TransformationLesson[]
+  completions WeekCompletion[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model TransformationLesson {
+  id                   String  @id @default(cuid())
+  weekId               String
+  orderIndex           Int
+  title                String
+  /// Null until filmed. A week renders its lessons either way, so the
+  /// curriculum is visible before the footage exists.
+  videoUrl             String?
+  videoDurationSeconds Int?
+  posterUrl            String?
+  notes                String?
+
+  week  TransformationWeek @relation(fields: [weekId], references: [id], onDelete: Cascade)
+  views LessonView[]
+
+  @@unique([weekId, orderIndex])
+  @@index([weekId])
+}
+
+model WeekCompletion {
+  id          String   @id @default(cuid())
+  userId      String
+  weekNumber  Int
+  completedAt DateTime @default(now())
+  /// What they wrote about doing it. Private by default; sharing to the
+  /// feed is an explicit separate act.
+  reflection  String?
+
+  user User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  week TransformationWeek @relation(fields: [weekNumber], references: [weekNumber], onDelete: Cascade)
+
+  @@unique([userId, weekNumber])
+  @@index([weekNumber, completedAt])
+}
+
+model LessonView {
+  id       String   @id @default(cuid())
+  userId   String
+  lessonId String
+  viewedAt DateTime @default(now())
+
+  user   User                 @relation(fields: [userId], references: [id], onDelete: Cascade)
+  lesson TransformationLesson @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, lessonId])
+  @@index([userId])
 }

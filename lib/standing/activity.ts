@@ -49,6 +49,7 @@ export const SOURCE_LABELS: Record<StandingSource, string> = {
   SCENARIO: "Scenarios",
   DAILY_MISSION: "Daily missions",
   TELL: "Daily Tells",
+  PROGRAM_WEEK: "The 12 Weeks",
   DRILL: "Speed Drill",
   LAB: "The Lab",
   RECEIPT: "Receipts",
