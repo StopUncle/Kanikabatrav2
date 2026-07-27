@@ -15,6 +15,8 @@
 
 import { prisma } from "@/lib/prisma";
 import { Prisma } from "@prisma/client";
+import { recordEncounters } from "@/lib/mark/encounters";
+import { asOperator, asTactic } from "@/lib/mark/taxonomy";
 import {
   AXIS_KEYS,
   type InstinctAxis,
@@ -400,6 +402,27 @@ export async function recordAnswer(
       // Logged as a warning so we notice persistent failures.
       console.warn("[recordAnswer] league accrue failed:", err);
     }
+  }
+
+  // The Mark's ledger. Only the first scored response counts: a replay
+  // measures memory, not read. Tells with no tactic tag write nothing,
+  // so an untagged cell stays honestly empty rather than silently wrong.
+  const tactic = asTactic(tellRow.tactic);
+  if (tactic) {
+    await recordEncounters(prisma, {
+      userId: args.userId as string,
+      source: "TELL",
+      dedupe: true,
+      encounters: [
+        {
+          tactic,
+          operatorType: asOperator(tellRow.operatorType),
+          correct: isCorrect,
+          sourceId: tellRow.id,
+          answerMs: args.answerMs,
+        },
+      ],
+    });
   }
 
   // Phase 4: backfill the side-effect fields on the row we just inserted.

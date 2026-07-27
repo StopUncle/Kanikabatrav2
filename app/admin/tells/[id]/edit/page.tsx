@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import TellForm from "@/components/admin/TellForm";
+import { asOperator, asTactic } from "@/lib/mark/taxonomy";
 import { prisma } from "@/lib/prisma";
 import type {
   InstinctAxis,
@@ -46,6 +47,8 @@ export default async function EditTellPage({
           track: tell.track as InstinctTrack,
           axes: tell.axes as InstinctAxis[],
           difficulty: tell.difficulty,
+          tactic: asTactic(tell.tactic),
+          operatorType: asOperator(tell.operatorType),
           artifact: tell.artifact as unknown as TellArtifact,
           question: tell.question,
           choices: tell.choices as unknown as {

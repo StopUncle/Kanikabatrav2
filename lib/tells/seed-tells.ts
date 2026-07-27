@@ -18,6 +18,8 @@ export const SEED_TELLS: Tell[] = [
     number: 1,
     format: "DIAGNOSE",
     track: "DARK_PSYCH",
+    // Asks which cluster, not which tactic: operator ledger only.
+    operatorType: "BORDERLINE",
     axes: ["READ", "SPOT"],
     difficulty: 3,
     artifact: {
@@ -63,6 +65,8 @@ export const SEED_TELLS: Tell[] = [
     number: 2,
     format: "DIAGNOSE",
     track: "DARK_PSYCH",
+    tactic: "GUILT",
+    operatorType: "NARCISSIST",
     axes: ["READ", "SPOT"],
     difficulty: 3,
     artifact: {
@@ -261,6 +265,7 @@ export const SEED_TELLS: Tell[] = [
     number: 3,
     format: "DIAGNOSE",
     track: "RED_FLAGS",
+    tactic: "LOVE_BOMBING",
     axes: ["READ", "SPOT", "CALIBRATE"],
     difficulty: 2,
     artifact: {

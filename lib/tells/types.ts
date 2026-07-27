@@ -1,3 +1,5 @@
+import type { Operator, Tactic } from "@/lib/mark/taxonomy";
+
 /**
  * Tells, the daily rep for Train Your Instincts.
  *
@@ -106,6 +108,15 @@ export interface Tell {
   format: TellFormat;
   track: InstinctTrack;
   axes: InstinctAxis[];            // 1-2 axes
+  /**
+   * The Mark tags: what is being run, and who is running it.
+   * Either may be absent. A 'which cluster is this' Tell carries
+   * only the operator, a 'what just happened' Tell carries the
+   * tactic, and a Tell about neither carries nothing and simply
+   * stays out of the vulnerability ledger.
+   */
+  tactic?: Tactic | null;
+  operatorType?: Operator | null;
   difficulty: 1 | 2 | 3 | 4 | 5;
   artifact: TellArtifact;
   question: string;

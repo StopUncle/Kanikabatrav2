@@ -10,6 +10,7 @@ import { z } from "zod";
 import type { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import { requireAdminSession } from "@/lib/admin/auth";
+import { OPERATOR_KEYS, TACTIC_KEYS } from "@/lib/mark/taxonomy";
 
 const ChoiceSchema = z.object({
   id: z.string().min(1).max(60),
@@ -33,6 +34,11 @@ const Body = z.object({
     .min(1)
     .max(2),
   difficulty: z.number().int().min(1).max(5),
+  // The Mark tags. Optional: an untagged Tell still scores and still
+  // counts for streaks, it just never speaks in the vulnerability
+  // ledger, which is better than speaking wrongly.
+  tactic: z.enum(TACTIC_KEYS).nullable().optional(),
+  operatorType: z.enum(OPERATOR_KEYS).nullable().optional(),
   artifact: z.unknown(),
   question: z.string().min(1).max(500),
   choices: z.array(ChoiceSchema).length(4),
@@ -75,6 +81,8 @@ export async function PATCH(
         track: body.track,
         axes: body.axes,
         difficulty: body.difficulty,
+        tactic: body.tactic ?? null,
+        operatorType: body.operatorType ?? null,
         artifact: body.artifact as Prisma.InputJsonValue,
         question: body.question,
         choices: body.choices as unknown as Prisma.InputJsonValue,

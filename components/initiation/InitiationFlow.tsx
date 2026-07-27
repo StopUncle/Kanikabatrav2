@@ -125,7 +125,23 @@ export default function InitiationFlow({
             />
           )}
           {step === "reading" && (
-            <InitiationReading onDone={() => setStep("situation")} />
+            <InitiationReading
+              onDone={(result) => {
+                // Keep the reading. It used to render and vanish. Fire and
+                // forget on purpose: a storage hiccup must never strand a
+                // member inside their own Initiation.
+                void fetch("/api/initiation/reading", {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({
+                    scores: result.scores,
+                    dominantType: result.dominantType,
+                    secondaryType: result.secondaryType,
+                  }),
+                }).catch(() => {});
+                setStep("situation");
+              }}
+            />
           )}
           {step === "situation" && (
             <SituationStep

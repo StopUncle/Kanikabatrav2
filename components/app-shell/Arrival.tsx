@@ -19,7 +19,7 @@ const SEEN_KEY = "consilium-arrival-seen-v1";
 type Props = {
   /** Kanika's welcome video, when one is configured. */
   videoUrl: string | null;
-  /** Where Begin sends them. The Baseline Read takes this slot once it ships. */
+  /** Where Begin sends them. Currently the Baseline Read. */
   beginHref: string;
   firstName: string | null;
 };

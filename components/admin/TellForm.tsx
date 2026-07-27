@@ -10,6 +10,14 @@ import {
   type InstinctTrack,
   type TellArtifact,
 } from "@/lib/tells/types";
+import {
+  OPERATOR_KEYS,
+  OPERATOR_LABELS,
+  TACTIC_KEYS,
+  TACTIC_LABELS,
+  type Operator,
+  type Tactic,
+} from "@/lib/mark/taxonomy";
 
 /**
  * Admin authoring form for Tells.
@@ -35,6 +43,8 @@ interface Props {
     track: InstinctTrack;
     axes: InstinctAxis[];
     difficulty: number;
+    tactic: Tactic | null;
+    operatorType: Operator | null;
     artifact: TellArtifact;
     question: string;
     choices: FormChoice[];
@@ -68,6 +78,12 @@ export default function TellForm({ initial, mode, tellId }: Props) {
     initial?.axes ?? ["READ"],
   );
   const [difficulty, setDifficulty] = useState(initial?.difficulty ?? 3);
+  const [tactic, setTactic] = useState<Tactic | "">(
+    initial?.tactic ?? "",
+  );
+  const [operatorType, setOperatorType] = useState<Operator | "">(
+    initial?.operatorType ?? "",
+  );
   const [artifactKind, setArtifactKind] = useState<ArtifactKind>(
     (initial?.artifact.kind as ArtifactKind | undefined) ?? "voicemail",
   );
@@ -159,6 +175,8 @@ export default function TellForm({ initial, mode, tellId }: Props) {
         body: JSON.stringify({
           number,
           track,
+          tactic: tactic || null,
+          operatorType: operatorType || null,
           axes,
           difficulty,
           artifact: artifactValue,
@@ -249,6 +267,45 @@ export default function TellForm({ initial, mode, tellId }: Props) {
             })}
           </div>
         </Field>
+      </Section>
+
+      <Section title="The Mark">
+        <p className="text-xs text-text-gray mb-3">
+          What is being run, and who is running it. Leave both blank if the
+          Tell does not cleanly fit one: an untagged Tell still scores and
+          still counts for streaks, it just stays out of the vulnerability
+          ledger. Better silent than wrong.
+        </p>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <Field label="Tactic">
+            <select
+              value={tactic}
+              onChange={(e) => setTactic(e.target.value as Tactic | "")}
+              className="input"
+            >
+              <option value="">Not tagged</option>
+              {TACTIC_KEYS.map((t) => (
+                <option key={t} value={t}>
+                  {TACTIC_LABELS[t]}
+                </option>
+              ))}
+            </select>
+          </Field>
+          <Field label="Operator">
+            <select
+              value={operatorType}
+              onChange={(e) => setOperatorType(e.target.value as Operator | "")}
+              className="input"
+            >
+              <option value="">Not tagged</option>
+              {OPERATOR_KEYS.map((o) => (
+                <option key={o} value={o}>
+                  {OPERATOR_LABELS[o]}
+                </option>
+              ))}
+            </select>
+          </Field>
+        </div>
       </Section>
 
       <Section title="Artifact">

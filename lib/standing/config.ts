@@ -60,6 +60,12 @@ export const STANDING = {
   SESSION_WATCH: 60,
   /** Completed a Path chapter (the Seal bonus, deduped per chapter). */
   CHAPTER: 100,
+  /**
+   * Finished a sitting of the Baseline Read. Paid for showing up, never
+   * for the result: The Mark measures skill, Standing measures presence,
+   * and the two stay strictly separate.
+   */
+  BASELINE: 75,
   /** Unified-streak milestones, keyed by day count. */
   STREAK_MILESTONES: { 7: 100, 30: 500, 100: 2000 } as Record<number, number>,
 } as const;

@@ -25,7 +25,14 @@ export default async function WelcomePage() {
   const rawName = me?.displayName || me?.name || "";
   const firstName = rawName.trim().split(/\s+/)[0] || null;
 
+  // Begin goes to the Baseline Read: the before picture is worth most on
+  // the one day a member is guaranteed to be paying attention. The runner
+  // carries its own quiet way out for anyone who does not want it now.
   return (
-    <Arrival videoUrl={videoUrl} beginHref="/app" firstName={firstName} />
+    <Arrival
+      videoUrl={videoUrl}
+      beginHref="/app/measure/baseline"
+      firstName={firstName}
+    />
   );
 }
