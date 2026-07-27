@@ -15,9 +15,12 @@ import {
  * GET /api/consilium/messages
  *
  * The member's single thread with Kanika. Opening it marks her messages read.
- * Members can now START a thread, so this also returns the send-cooldown state
- * for the composer; a null conversation just means "no thread yet", which the
- * UI renders as an invitation to write the first message.
+ * Members start their own threads, so this also returns the send-cooldown
+ * state for the composer; a null conversation just means "no thread yet",
+ * which the UI renders as an invitation to write the first message.
+ *
+ * Kanika answers these herself. Nothing in this channel is generated, drafted
+ * or suggested by a model, and nothing in it ever will be.
  */
 export async function GET() {
   const userId = await resolveActiveUserId();
@@ -68,7 +71,7 @@ export async function GET() {
 /**
  * POST /api/consilium/messages  { content }
  *
- * A member sends Kanika a message. Members may now open a thread themselves
+ * A member sends Kanika a message. Members open threads themselves
  * (first contact creates the conversation). A cooldown stops pile-on: one
  * unanswered message at a time, auto-unlocking 24h later or the moment Kanika
  * replies. Bumps her unread and reopens the thread if she'd marked it Done.

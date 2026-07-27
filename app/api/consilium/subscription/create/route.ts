@@ -1,4 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
+import { captureServerAsync } from "@/lib/analytics/server";
+import { ANALYTICS_EVENTS } from "@/lib/analytics/events";
 import { requireAuth } from "@/lib/auth/middleware";
 import { prisma } from "@/lib/prisma";
 import { createCheckoutSession, STRIPE_PRICES } from "@/lib/stripe";
@@ -224,6 +226,14 @@ export async function POST(request: NextRequest) {
           err,
         );
       }
+
+      // Intent, not conversion. Fired from the route rather than the join
+      // button so it counts every path into Stripe, including any future
+      // entry point that never touches the panel.
+      captureServerAsync(user.id, ANALYTICS_EVENTS.CHECKOUT_STARTED, {
+        billing_cycle: billingCycle,
+        product_key: productKey,
+      });
 
       return NextResponse.json({
         success: true,

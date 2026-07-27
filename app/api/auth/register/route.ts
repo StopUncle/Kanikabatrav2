@@ -1,4 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
+import { captureServerAsync } from "@/lib/analytics/server";
+import { ANALYTICS_EVENTS } from "@/lib/analytics/events";
 import { PrismaUserDatabase } from "@/lib/auth/prisma-database";
 import { generateTokenPair } from "@/lib/auth/jwt";
 import { CreateUserData } from "@/lib/auth/types";
@@ -49,6 +51,10 @@ export async function POST(request: NextRequest) {
       password: body.password,
       name: body.name,
     });
+
+    // Top of the funnel. Fire and forget: a stranger just became an
+    // account, and nothing about that is worth delaying the response for.
+    captureServerAsync(user.id, ANALYTICS_EVENTS.SIGNUP);
 
     // Stamp acquisition attribution. Done as a follow-up update so the
     // legacy createUser signature stays clean. Errors here are

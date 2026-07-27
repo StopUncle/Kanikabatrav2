@@ -31,13 +31,27 @@ const SUBSCRIBED_KEY = "consilium-push-subscribed-v1";
  * We detect "standalone display-mode" and only show the prompt on iOS
  * if the app is installed. Plain-Safari iOS visitors see the
  * InstallPrompt instead, which converts the right way.
+ *
+ * Timing (`unlocked`): the caller decides when this member has earned the
+ * question, and today that means they have finished a Baseline Read. Asking
+ * for notification permission on arrival spends the one prompt a browser
+ * gives you on someone with nothing yet to be notified about, and a denial
+ * is close to permanent. Asked after the Baseline Read, it lands on someone
+ * who just spent five minutes and has a result they want moved.
  */
-export default function NotificationPrompt() {
+export default function NotificationPrompt({
+  unlocked = false,
+}: {
+  unlocked?: boolean;
+}) {
   const [shouldShow, setShouldShow] = useState(false);
   const [busy, setBusy] = useState(false);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
+
+    // 0. Has this member reached the moment worth asking at?
+    if (!unlocked) return;
 
     // 1. API support gate.
     if (!("Notification" in window)) return;
@@ -98,7 +112,7 @@ export default function NotificationPrompt() {
     // the next visit.
     const handle = window.setTimeout(() => setShouldShow(true), 4500);
     return () => window.clearTimeout(handle);
-  }, []);
+  }, [unlocked]);
 
   function dismiss() {
     setShouldShow(false);

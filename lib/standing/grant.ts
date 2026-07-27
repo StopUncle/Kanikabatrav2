@@ -1,5 +1,6 @@
 import type { Prisma, PrismaClient, StandingSource } from "@prisma/client";
 import { ringForStanding } from "./config";
+import { notifyRankUp } from "@/lib/push/rank-up";
 
 /**
  * The ONE writer for Standing. Appends a StandingEvent, bumps the
@@ -105,6 +106,14 @@ export async function grantStanding(
         where: { id: userId },
         data: { ringLevel: ring.level },
       });
+    }
+
+    // Rank-up push. Sits here, in the one writer for Standing, so every
+    // surface that can promote someone gets it without having to remember.
+    // Not awaited: the member is mid-action and a slow push service must
+    // never hold up the response they are waiting on.
+    if (rangUp) {
+      notifyRankUp(userId, rangUp);
     }
 
     return {

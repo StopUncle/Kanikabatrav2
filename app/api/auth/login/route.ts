@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { markSeen } from "@/lib/analytics/seen";
 import { PrismaUserDatabase } from "@/lib/auth/prisma-database";
 import { generateTokenPair } from "@/lib/auth/jwt";
 import { LoginCredentials } from "@/lib/auth/types";
@@ -84,13 +85,9 @@ export async function POST(request: NextRequest) {
     // Stamp lastSeenAt at login. The refresh route keeps it fresh
     // every ~15min while a session is active; login covers the
     // long-dormancy case where refresh tokens have expired and the
-    // user is signing in cold. Non-blocking.
-    prisma.user
-      .update({
-        where: { id: user.id },
-        data: { lastSeenAt: new Date() },
-      })
-      .catch((err) => console.error("[auth/login] lastSeenAt update failed:", err));
+    // user is signing in cold. Non-blocking. markSeen also notices the
+    // first return on or after day 7 and reports it once.
+    void markSeen(user.id);
 
     return response;
   } catch (error: unknown) {
