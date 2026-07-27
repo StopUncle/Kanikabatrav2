@@ -23,7 +23,7 @@ export default async function TellPage() {
 
   if (!tell) {
     return (
-      <div className="px-5 pb-28 pt-6">
+      <div className="px-5 pb-8 pt-6">
         <p className="text-[11px] uppercase tracking-[0.26em] text-[var(--app-gold-soft)]">
           Daily tell
         </p>

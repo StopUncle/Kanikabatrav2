@@ -100,11 +100,15 @@ export default function TabBar() {
 
   return (
     <>
-      {/* Fixed to the viewport on a phone; pinned inside the framed column on
-          desktop, where the app no longer owns the whole window. */}
+      {/* The last row of the shell's flex column, not a fixed overlay. The
+          content above scrolls; this does not move, because there is
+          nothing for it to move relative to. Solid rather than blurred:
+          a backdrop-filter over a scrolling list is one of the most
+          expensive things a phone can be asked to paint, and nothing is
+          passing underneath it any more. */}
       <nav
         aria-label="App navigation"
-        className="fixed bottom-0 left-1/2 z-40 w-full max-w-[430px] -translate-x-1/2 border-t border-[var(--app-line-soft)] bg-[rgba(10,9,8,0.92)] backdrop-blur-md lg:absolute lg:left-0 lg:translate-x-0"
+        className="relative z-40 w-full shrink-0 border-t border-[var(--app-line-soft)] bg-[#0a0908]"
       >
         <div className="flex items-center justify-around px-1 pb-[max(14px,env(safe-area-inset-bottom))] pt-2.5">
           {TABS.map((tab) => {

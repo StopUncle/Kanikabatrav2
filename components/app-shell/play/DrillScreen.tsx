@@ -104,7 +104,7 @@ export default function DrillScreen({
 
   if (drill.phase === "intro") {
     return (
-      <div className="flex min-h-[100dvh] flex-col px-6 pb-[max(24px,env(safe-area-inset-bottom))] pt-6">
+      <div className="flex min-h-full flex-col px-6 pb-[max(24px,env(safe-area-inset-bottom))] pt-6">
         <div className="flex justify-end">
           <Link
             href="/app/play"
@@ -181,7 +181,7 @@ export default function DrillScreen({
 
   if (drill.phase === "countdown") {
     return (
-      <div className="flex min-h-[100dvh] items-center justify-center">
+      <div className="flex min-h-full items-center justify-center">
         <span
           key={drill.countdownTick}
           className="app-pop-in text-[86px] font-light leading-none text-[var(--app-gold)]"
@@ -200,7 +200,7 @@ export default function DrillScreen({
     const urgent = drill.clock <= 10;
 
     return (
-      <div className="relative flex min-h-[100dvh] flex-col overflow-hidden">
+      <div className="relative flex min-h-full flex-col overflow-hidden">
         {/* Call feedback. Opacity only, so it composites cheaply. */}
         <span
           aria-hidden

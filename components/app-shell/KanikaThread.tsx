@@ -144,7 +144,7 @@ export default function KanikaThread() {
   }
 
   return (
-    <div className="flex h-[calc(100dvh-72px)] flex-col">
+    <div className="flex h-full flex-col">
       <header className="shrink-0 px-5 pb-3 pt-6">
         <h1
           className="text-[28px] font-light leading-none"

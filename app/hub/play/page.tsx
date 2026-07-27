@@ -20,7 +20,7 @@ export default async function ArcadePage() {
   const { games, set, streak } = await getArcadeData(prisma, userId);
 
   return (
-    <div className="px-5 pb-28 pt-6">
+    <div className="px-5 pb-8 pt-6">
       <h1
         className="text-[28px] font-light"
         style={{ fontFamily: "var(--font-display)" }}

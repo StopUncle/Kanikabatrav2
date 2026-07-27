@@ -27,7 +27,7 @@ export default async function TrainPage() {
   const { nextUp, tracks, freshFiles } = await getTrainData(prisma, userId);
 
   return (
-    <div className="pb-28 pt-6">
+    <div className="pb-8 pt-6">
       <div className="px-5">
         <h1
           className="text-[28px] font-light"
@@ -43,7 +43,7 @@ export default async function TrainPage() {
       {/* The next move */}
       {nextUp && (
         <Link
-          href={`/consilium/simulator/${nextUp.scenarioId}`}
+          href={`/app/train/${nextUp.scenarioId}`}
           className="relative mx-5 mt-5 flex flex-col justify-end overflow-hidden rounded-[22px] border border-[var(--app-line)]"
           style={{
             aspectRatio: "16 / 9",
@@ -155,7 +155,7 @@ export default async function TrainPage() {
             {freshFiles.map((f) => (
               <Link
                 key={f.scenarioId}
-                href={`/consilium/simulator/${f.scenarioId}`}
+                href={`/app/train/${f.scenarioId}`}
                 className="w-[200px] shrink-0 rounded-2xl border border-[var(--app-line-soft)] bg-[var(--app-card)] p-4"
               >
                 <span

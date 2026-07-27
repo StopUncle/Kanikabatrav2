@@ -49,7 +49,7 @@ export default function TellScreen({ tell }: { tell: PublicTell }) {
   }, [run.phase, run.outcome]);
 
   return (
-    <div className="px-5 pb-28 pt-6">
+    <div className="px-5 pb-8 pt-6">
       <div className="flex items-start justify-between">
         <div>
           <p className="text-[11px] uppercase tracking-[0.26em] text-[var(--app-gold-soft)]">

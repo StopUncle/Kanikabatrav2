@@ -101,7 +101,7 @@ export default async function TodayPage() {
     : 0;
 
   return (
-    <div className="pb-28 pt-4">
+    <div className="pb-8 pt-4">
       {/* Header: identity left, streak right */}
       <div className="flex items-center justify-between px-5 pb-5 pt-2">
         <RankChip
@@ -208,7 +208,7 @@ export default async function TodayPage() {
       <div className="mx-5 flex flex-col gap-2.5">
         {dailyMission && (
           <Move
-            href={`/consilium/simulator/${dailyMission.scenarioId}`}
+            href={`/app/train/${dailyMission.scenarioId}`}
             title="Daily mission"
             sub={dailyMission.title}
             cta="PLAY"
@@ -230,7 +230,7 @@ export default async function TodayPage() {
         />
         {freshDrop && (
           <Move
-            href={`/consilium/simulator/${freshDrop.scenarioId}`}
+            href={`/app/train/${freshDrop.scenarioId}`}
             title={`Fresh drop: ${freshDrop.title}`}
             sub={freshDrop.tagline}
             cta="PLAY"
