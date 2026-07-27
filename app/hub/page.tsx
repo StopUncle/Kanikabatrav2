@@ -2,7 +2,7 @@ import Link from "next/link";
 import { requireServerAuth } from "@/lib/auth/server-auth";
 import { prisma } from "@/lib/prisma";
 import { getPathState } from "@/lib/path/progress";
-import { stepHref } from "@/lib/path/curriculum";
+import { appStepHref } from "@/lib/path/curriculum";
 import { getTellStreak, getTodaysTellRow } from "@/lib/tells/db";
 import { buildDailySet } from "@/lib/games/arcade";
 import { getTodaysGeneratedDrop } from "@/lib/simulator/generated";
@@ -246,7 +246,7 @@ export default async function TodayPage() {
       {/* Path continue card */}
       {current && (
         <Link
-          href={stepHref(current.step, viewer?.gender ?? null)}
+          href={appStepHref(current.step, viewer?.gender ?? null)}
           className="mx-5 mt-4 flex items-center gap-3.5 rounded-[18px] border border-[var(--app-line)] px-[18px] py-[18px]"
           style={{
             background:

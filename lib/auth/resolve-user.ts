@@ -1,6 +1,6 @@
 import { cookies } from "next/headers";
 import { NextRequest } from "next/server";
-import { verifyAccessToken } from "./jwt";
+import { verifyAccessToken, verifyRefreshToken } from "./jwt";
 import { prisma } from "@/lib/prisma";
 
 /**
@@ -31,22 +31,55 @@ import { prisma } from "@/lib/prisma";
 export async function resolveActiveUserId(): Promise<string | null> {
   const cookieStore = await cookies();
   const token = cookieStore.get("accessToken")?.value;
-  if (!token) return null;
-  return resolveFromToken(token);
+  if (token) {
+    const viaAccess = await resolveFromToken(token);
+    if (viaAccess) return viaAccess;
+  }
+  // The accessToken lives 15 minutes; any tab older than that sends a dead
+  // one. Falling back to the 7-day refreshToken here is what
+  // requireServerAuth already does for page renders, and without the same
+  // fallback every API behind this helper 401s silently mid-session: a
+  // like that does not stick, a comment box that swallows the comment.
+  // Identity only, no cookie rotation; the next requireAuth call rotates.
+  // Same revocation checks as the access path (isBanned, tokenVersion).
+  return resolveFromRefresh(cookieStore.get("refreshToken")?.value);
 }
 
 export async function resolveActiveUserIdFromRequest(
   request: NextRequest,
 ): Promise<string | null> {
   const token = request.cookies.get("accessToken")?.value;
-  if (!token) return null;
-  return resolveFromToken(token);
+  if (token) {
+    const viaAccess = await resolveFromToken(token);
+    if (viaAccess) return viaAccess;
+  }
+  return resolveFromRefresh(request.cookies.get("refreshToken")?.value);
 }
 
 async function resolveFromToken(token: string): Promise<string | null> {
   let payload;
   try {
     payload = verifyAccessToken(token);
+  } catch {
+    return null;
+  }
+  const user = await prisma.user.findUnique({
+    where: { id: payload.userId },
+    select: { id: true, isBanned: true, tokenVersion: true },
+  });
+  if (!user) return null;
+  if (user.isBanned) return null;
+  if (payload.v !== undefined && payload.v !== user.tokenVersion) return null;
+  return user.id;
+}
+
+async function resolveFromRefresh(
+  token: string | undefined,
+): Promise<string | null> {
+  if (!token) return null;
+  let payload;
+  try {
+    payload = verifyRefreshToken(token);
   } catch {
     return null;
   }
