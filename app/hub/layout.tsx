@@ -82,6 +82,16 @@ export default async function AppShellLayout({
         <div className="relative min-h-[100dvh] w-full max-w-[430px] shrink-0 bg-[var(--app-black)] text-[var(--app-text)] lg:min-h-[844px] lg:overflow-hidden lg:rounded-[44px] lg:border lg:border-[#262220] lg:shadow-[0_30px_80px_rgba(0,0,0,0.6)]">
           {children}
           <TabBar />
+          {/* Overlay host for ceremonies and floaters. It lives inside the
+              column so portalled content keeps the [data-app-shell] tokens,
+              and it follows TabBar's fixed/lg:absolute trick so a full-screen
+              moment covers the phone on mobile and stays inside the frame on
+              desktop. z-60 sits above the tab bar, so "the shell dims" means
+              all of it. */}
+          <div
+            id="app-overlay-root"
+            className="pointer-events-none fixed inset-0 z-[60] mx-auto max-w-[430px] lg:absolute lg:max-w-none lg:overflow-hidden lg:rounded-[44px]"
+          />
         </div>
         <PhoneHandoff />
       </div>

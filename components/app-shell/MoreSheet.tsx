@@ -11,6 +11,7 @@ import {
   Video,
   Mic,
   Settings,
+  Gamepad2,
   X,
 } from "lucide-react";
 
@@ -26,6 +27,7 @@ const SECTIONS: { title: string; items: Item[] }[] = [
   {
     title: "You",
     items: [
+      { href: "/app/play", label: "Arcade", icon: <Gamepad2 size={17} /> },
       { href: "/app/path", label: "The Path", icon: <Route size={17} /> },
       { href: "/app/you", label: "Your progress", icon: <User size={17} /> },
       { href: "/app/ranks", label: "Leaderboards", icon: <Trophy size={17} /> },

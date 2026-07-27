@@ -1,19 +1,18 @@
 import Link from "next/link";
 import RingEmblem from "@/components/rings/RingEmblem";
+import ProgressRing from "@/components/app-shell/juice/ProgressRing";
 import { ringByLevel, standingToNextRing } from "@/lib/standing/config";
 
 /**
  * The identity chip in the app shell header: a progress donut around the
- * rank emblem, rank name, distance to the next rank. Server component.
+ * rank emblem, rank name, distance to the next rank. Server component that
+ * renders one client ring.
  */
 
 type Props = {
   standing: number;
   ringLevel: number;
 };
-
-const R = 20;
-const C = 2 * Math.PI * R;
 
 export default function RankChip({ standing, ringLevel }: Props) {
   const rank = ringByLevel(ringLevel);
@@ -28,32 +27,9 @@ export default function RankChip({ standing, ringLevel }: Props) {
 
   return (
     <Link href="/app/you" className="flex items-center gap-3">
-      <span className="relative block h-11 w-11 shrink-0">
-        <svg viewBox="0 0 44 44" className="h-11 w-11 -rotate-90">
-          <circle
-            cx="22"
-            cy="22"
-            r={R}
-            fill="none"
-            stroke="rgba(212,175,55,0.15)"
-            strokeWidth="2.5"
-          />
-          <circle
-            cx="22"
-            cy="22"
-            r={R}
-            fill="none"
-            stroke="var(--app-gold)"
-            strokeWidth="2.5"
-            strokeLinecap="round"
-            strokeDasharray={C}
-            strokeDashoffset={C * (1 - pct)}
-          />
-        </svg>
-        <span className="absolute inset-0 flex items-center justify-center">
-          <RingEmblem level={ringLevel} size={26} />
-        </span>
-      </span>
+      <ProgressRing value={pct} size={44} strokeWidth={2.5}>
+        <RingEmblem level={ringLevel} size={26} />
+      </ProgressRing>
       <span className="min-w-0">
         <span className="block text-[15px] font-medium leading-tight">
           {rank.name}

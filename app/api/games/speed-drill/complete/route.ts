@@ -99,19 +99,41 @@ export async function POST(request: NextRequest) {
 
       // Standing: daily-capped so session-spamming can't farm the Rings.
       // The session row itself is uncapped.
-      void (async () => {
+      //
+      // Awaited rather than fired and forgotten, because the app-shell drill
+      // shows what the run earned and opens the rank-up ceremony off `rangUp`,
+      // which used to be computed and thrown away. A failure here degrades to
+      // a null field so this can never turn a saved session into a 500.
+      let standing: {
+        amount: number;
+        newStanding: number;
+        rangUp: { fromLevel: number; toLevel: number; ringName: string } | null;
+      } | null = null;
+      try {
         const today = await grantsTodayCount(prisma, user.id, "DRILL");
         if (today < STANDING.DRILL_DAILY_CAP) {
-          await grantStanding(prisma, {
+          const grant = await grantStanding(prisma, {
             userId: user.id,
             source: "DRILL",
             amount: STANDING.DRILL,
             refId: session.id,
           });
+          if (grant.granted) {
+            standing = {
+              amount: grant.amount,
+              newStanding: grant.newStanding,
+              rangUp: grant.rangUp,
+            };
+          }
         }
-      })().catch(() => {});
+      } catch (err) {
+        logger.error(
+          "drill standing grant failed",
+          err instanceof Error ? err : undefined,
+        );
+      }
 
-      return NextResponse.json({ session, streak });
+      return NextResponse.json({ session, streak, standing });
     } catch (err) {
       logger.error(
         "speed-drill complete failed",

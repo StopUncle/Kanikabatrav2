@@ -87,13 +87,16 @@ export default function TabBar() {
   }, [onKanika, fetchUnread]);
 
   const isMoreRoute =
+    pathname.startsWith("/app/play") ||
     pathname.startsWith("/app/path") ||
     pathname.startsWith("/app/you") ||
     pathname.startsWith("/app/ranks") ||
     pathname.startsWith("/app/quizzes");
 
-  // The Arrival is a full-screen moment: one door, one button, no navigation.
-  if (pathname === "/app/welcome") return null;
+  // Screens that own the whole display: the Arrival is one door and one
+  // button, and a drill under a running clock cannot afford a nav bar in
+  // thumb range of the answer buttons.
+  if (pathname === "/app/welcome" || pathname === "/app/play/drill") return null;
 
   return (
     <>

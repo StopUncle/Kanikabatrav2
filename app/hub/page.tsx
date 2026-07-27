@@ -3,7 +3,8 @@ import { requireServerAuth } from "@/lib/auth/server-auth";
 import { prisma } from "@/lib/prisma";
 import { getPathState } from "@/lib/path/progress";
 import { stepHref } from "@/lib/path/curriculum";
-import { getTellStreak } from "@/lib/tells/db";
+import { getTellStreak, getTodaysTellRow } from "@/lib/tells/db";
+import { buildDailySet } from "@/lib/games/arcade";
 import { getTodaysGeneratedDrop } from "@/lib/simulator/generated";
 import { readDailyStreak } from "@/lib/streak/daily";
 import {
@@ -14,6 +15,7 @@ import { utcDateKey } from "@/lib/tells/streak";
 import { getDay0Checklist } from "@/lib/day0/checklist";
 import RankChip from "@/components/app-shell/RankChip";
 import Move from "@/components/app-shell/Move";
+import DailySetCard from "@/components/app-shell/play/DailySetCard";
 import ChecklistCard from "@/components/day0/ChecklistCard";
 
 export const metadata = {
@@ -34,6 +36,9 @@ export default async function TodayPage() {
   });
 
   const dailyMission = getDailyMission();
+  const startOfUtcToday = new Date();
+  startOfUtcToday.setUTCHours(0, 0, 0, 0);
+
   const [
     pathState,
     tellStreak,
@@ -41,6 +46,8 @@ export default async function TodayPage() {
     dailyStreak,
     freshDrop,
     latestFromKanika,
+    drillsToday,
+    todaysTell,
     day0,
   ] = await Promise.all([
     getPathState(prisma, userId, {
@@ -61,10 +68,23 @@ export default async function TodayPage() {
         voiceNoteUrl: true,
       },
     }),
+    prisma.gameSession.count({
+      where: {
+        userId,
+        gameKey: "speed-drill",
+        playedAt: { gte: startOfUtcToday },
+      },
+    }),
+    getTodaysTellRow(),
     getDay0Checklist(prisma, userId),
   ]);
 
   const tellDoneToday = tellStreak?.lastTellDate === utcDateKey();
+  const dailySet = buildDailySet({
+    drillDone: drillsToday > 0,
+    tellDone: tellDoneToday,
+    tellAvailable: todaysTell !== null,
+  });
   const current = pathState.current;
   const chapterProgress = current
     ? pathState.chapters.find((c) => c.chapter.id === current.chapter.id)
@@ -169,18 +189,13 @@ export default async function TodayPage() {
             }
           />
         )}
-        <Move
-          href="/consilium/instincts/today"
-          title="Daily tell"
-          sub="Sixty seconds. Read the moment."
-          cta="READ"
-          done={tellDoneToday}
-          icon={
-            <svg viewBox="0 0 24 24">
-              <circle cx="12" cy="12" r="9" />
-              <circle cx="12" cy="12" r="3.5" />
-            </svg>
-          }
+        <DailySetCard
+          set={dailySet}
+          streak={{
+            current: dailyStreak.current,
+            longest: dailyStreak.longest,
+            atRisk: dailyStreak.isAtRisk,
+          }}
         />
         {freshDrop && (
           <Move
