@@ -76,6 +76,10 @@ on:
     # first, so she can refresh what already ranks before it decays. Weekly
     # is plenty: posts age slowly and a daily nag would just get ignored.
     - cron: '0 6 * * 1'
+    # Intro-reply nudge — daily at 11:30 UTC. Emails Kanika the Day-0
+    # intro comments that are 2-3 days old with no reply from her yet.
+    # The reply guarantee ("I read every single one") depends on it.
+    - cron: '30 11 * * *'
   workflow_dispatch:
     # Allow manual triggering from the GitHub Actions UI. Useful for
     # testing or firing a cron out-of-band without waiting for the next
@@ -105,6 +109,7 @@ on:
           - daily-streak-nudge
           - generate-scenario
           - content-freshness
+          - intro-reply-nudge
 
 env:
   BASE_URL: https://kanikarose.com
@@ -386,6 +391,22 @@ jobs:
       - name: Hit /api/cron/content-freshness
         run: |
           curl -fsS -X POST "$BASE_URL/api/cron/content-freshness" \
+            -H "x-cron-secret: ${{ secrets.CRON_SECRET }}" \
+            -H "Content-Type: application/json" \
+            --max-time 60
+  intro-reply-nudge:
+    # Daily 11:30 UTC. Emails Kanika the Day-0 intro comments that are
+    # 2-3 days old with no admin reply. The [48h, 72h) window means each
+    # comment is surfaced exactly once by a daily run.
+    if: >-
+      github.event.schedule == '30 11 * * *' ||
+      (github.event_name == 'workflow_dispatch' &&
+       (github.event.inputs.target == 'all' || github.event.inputs.target == 'intro-reply-nudge'))
+    runs-on: ubuntu-latest
+    steps:
+      - name: Hit /api/cron/intro-reply-nudge
+        run: |
+          curl -fsS -X POST "$BASE_URL/api/cron/intro-reply-nudge" \
             -H "x-cron-secret: ${{ secrets.CRON_SECRET }}" \
             -H "Content-Type: application/json" \
             --max-time 60
