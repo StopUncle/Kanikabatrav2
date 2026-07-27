@@ -12,9 +12,11 @@ import {
   isDailyMissionDoneToday,
 } from "@/lib/streak/daily-mission";
 import { utcDateKey } from "@/lib/tells/streak";
+import { getDay0Checklist } from "@/lib/day0/checklist";
 import RankChip from "@/components/app-shell/RankChip";
 import Move from "@/components/app-shell/Move";
 import DailySetCard from "@/components/app-shell/play/DailySetCard";
+import ChecklistCard from "@/components/day0/ChecklistCard";
 
 export const metadata = {
   title: "Today | Consilium",
@@ -46,6 +48,7 @@ export default async function TodayPage() {
     latestFromKanika,
     drillsToday,
     todaysTell,
+    day0,
   ] = await Promise.all([
     getPathState(prisma, userId, {
       gender: viewer?.gender ?? null,
@@ -73,6 +76,7 @@ export default async function TodayPage() {
       },
     }),
     getTodaysTellRow(),
+    getDay0Checklist(prisma, userId),
   ]);
 
   const tellDoneToday = tellStreak?.lastTellDate === utcDateKey();
@@ -114,6 +118,9 @@ export default async function TodayPage() {
           {dailyStreak.current}
         </div>
       </div>
+
+      {/* First week: shown until the window closes or all three are done */}
+      {day0 && <ChecklistCard checklist={day0} />}
 
       {/* Hero: latest from Kanika. Becomes the weekly session later. */}
       {latestFromKanika && (
