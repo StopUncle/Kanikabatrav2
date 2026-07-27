@@ -8,8 +8,8 @@ datasource db {
 }
 
 model User {
-  id                        String               @id @default(cuid())
-  email                     String               @unique
+  id                        String                @id @default(cuid())
+  email                     String                @unique
   password                  String
   name                      String?
   displayName               String?
@@ -19,7 +19,7 @@ model User {
   // value at issue time; if the two don't match, the token is rejected.
   // This is what makes reset tokens single-use without needing a separate
   // blacklist table.
-  tokenVersion              Int                  @default(0)
+  tokenVersion              Int                   @default(0)
   // When the user dismissed the Inner Circle onboarding tour. Null means
   // they haven't seen it yet — the feed renders the welcome modal on
   // their first visit after activation.
@@ -36,9 +36,9 @@ model User {
   // auth path — auth uses the JWT exclusively.
   lastSeenAt                DateTime?
   emailPreferences          Json?
-  role                      UserRole             @default(MEMBER)
-  createdAt                 DateTime             @default(now())
-  updatedAt                 DateTime             @updatedAt
+  role                      UserRole              @default(MEMBER)
+  createdAt                 DateTime              @default(now())
+  updatedAt                 DateTime              @updatedAt
   sessions                  CoachingSession[]
   purchases                 Purchase[]
   forumPosts                ForumPost[]
@@ -61,17 +61,17 @@ model User {
   feedPostLikes             FeedPostLike[]
   feedPollVotes             FeedPostPollVote[]
   commentLikes              CommentLike[]
-  points                    Int                  @default(0)
-  level                     Int                  @default(1)
-  isBanned                  Boolean              @default(false)
+  points                    Int                   @default(0)
+  level                     Int                   @default(1)
+  isBanned                  Boolean               @default(false)
   banReason                 String?
   // Messaging restriction — softer than a ban. User can still read
   // and browse, but cannot post comments. Toggled per-user by admin.
-  messagingRestricted       Boolean              @default(false)
+  messagingRestricted       Boolean               @default(false)
   messagingRestrictedAt     DateTime?
   messagingRestrictedReason String?
-  reportsFiled              CommentReport[]      @relation("ReportsFiled")
-  reportsResolved           CommentReport[]      @relation("ReportsResolved")
+  reportsFiled              CommentReport[]       @relation("ReportsFiled")
+  reportsResolved           CommentReport[]       @relation("ReportsResolved")
   simulatorProgress         SimulatorProgress[]
   // Simulator daily-streak. simulatorStreakCurrent ticks up by 1 the first
   // time the user takes a simulator action on a calendar day; resets to 0
@@ -79,8 +79,8 @@ model User {
   // increasing — read-only "all-time best" displayed on the catalog header.
   // simulatorLastSession is the timestamp of the last action; the day-rollover
   // check compares its date to today's date in UTC.
-  simulatorStreakCurrent    Int                  @default(0)
-  simulatorStreakLongest    Int                  @default(0)
+  simulatorStreakCurrent    Int                   @default(0)
+  simulatorStreakLongest    Int                   @default(0)
   simulatorLastSession      DateTime?
   // Games daily-training streak. Separate from simulator streak so each
   // becomes its own habit (Lumosity model: one daily training session per
@@ -88,45 +88,45 @@ model User {
   // is recorded for the first time on a given UTC calendar day.
   gameSessions              GameSession[]
   labSessions               LabSession[]
-  gamesStreakCurrent        Int                  @default(0)
-  gamesStreakLongest        Int                  @default(0)
+  gamesStreakCurrent        Int                   @default(0)
+  gamesStreakLongest        Int                   @default(0)
   gamesLastSession          DateTime?
   // Unified Consilium daily streak: the headline "played today" habit that
   // ANY qualifying action feeds (simulator run, game session, Tell, daily
   // mission, check-in). Additive over the per-surface streaks above — each of
   // those keeps its own number; this is the single streak members chase.
   // UTC day boundaries, same math as lib/simulator/streak.ts.
-  dailyStreakCurrent        Int                  @default(0)
-  dailyStreakLongest        Int                  @default(0)
+  dailyStreakCurrent        Int                   @default(0)
+  dailyStreakLongest        Int                   @default(0)
   dailyStreakLastDate       String? // YYYY-MM-DD UTC of last qualifying action
   // Unified progression currency (the Rings). Denormalized sum of the user's
   // StandingEvent amounts; lib/standing/grant.ts is the ONLY writer. Standing
   // measures engagement (it only goes up) and is deliberately separate from
   // the skill Measure (Elo / Baseline Read) — neither may ever feed the other.
-  standing                  Int                  @default(0)
+  standing                  Int                   @default(0)
   // Current ring derived from standing (lib/standing/config.ts thresholds).
   // 7 = outermost (the door) … 1 = innermost. Stored so queries and gates can
   // filter by ring without recomputing thresholds.
-  ringLevel                 Int                  @default(4)
+  ringLevel                 Int                   @default(4)
   standingEvents            StandingEvent[]
   pathProgress              UserPathProgress[]
   dailyCheckIns             DailyCheckIn[]
   simulatorBadges           SimulatorBadge[]
-  isBot                     Boolean              @default(false)
-  botActive                 Boolean              @default(true)
+  isBot                     Boolean               @default(false)
+  botActive                 Boolean               @default(true)
   botActions                BotAction[]
   // Training bots fill the Tells leaderboard / league brackets so the
   // social pressure layer reads as alive at low real-member counts.
   // Distinct from `isBot` (community-engagement bots that comment +
   // post). Training bots never post, never get push, never have a
   // CommunityMembership, never count in member-facing metrics.
-  isTrainingBot             Boolean              @default(false)
+  isTrainingBot             Boolean               @default(false)
   // { archetype, baseSkill, activityProb, axisStrengths, originDay }.
   // Drives the daily-tick cron that advances each bot's TellResponse +
   // streak + Elo without any LLM calls. Pure deterministic math.
   botProfile                Json?
-  memberQuestions           MemberQuestion[]     @relation("MemberQuestions")
-  questionUpvotes           QuestionUpvote[]     @relation("QuestionUpvotes")
+  memberQuestions           MemberQuestion[]      @relation("MemberQuestions")
+  questionUpvotes           QuestionUpvote[]      @relation("QuestionUpvotes")
   // PWA push subscriptions (one per device). The browser issues a
   // unique endpoint per (origin, device, browser-instance), so a
   // user with phone + laptop has two rows. Pruned automatically
@@ -158,6 +158,7 @@ model User {
   // check-ins (one per week, the thing that actually changes someone);
   // lessonViews track which videos inside a week have been watched.
   weekCompletions           WeekCompletion[]
+  programUnlockNotices      ProgramUnlockNotice[]
   lessonViews               LessonView[]
   // The Board: a member's own /100 crowd score per figure, and the
   // re-score petitions they have signed. Both gated behind a free
@@ -173,18 +174,18 @@ model User {
   // Public-profile slug for /u/[handle]. Optional (member opts in by
   // claiming a handle). Lowercase a-z, 0-9, hyphens. 3-30 chars.
   // Unique only when set; null users do not collide.
-  handle                    String?              @unique
+  handle                    String?               @unique
   // Whether the user has chosen to make their hex public on /u/[handle].
   // Default false: claiming a handle does not auto-publish the hex.
-  profilePublic             Boolean              @default(false)
+  profilePublic             Boolean               @default(false)
   // Member-gets-member referrals. referralCode is lazy-generated the
   // first time a member visits /consilium/invite, lowercase 8-char
   // alphanumeric. Two sides: referralsSent are referrals where this
   // user is the referrer, referralReceived is the (at most one) row
   // where this user joined via someone else's link.
-  referralCode              String?              @unique
-  referralsSent             Referral[]           @relation("ReferralsSent")
-  referralReceived          Referral?            @relation("ReferralReceived")
+  referralCode              String?               @unique
+  referralsSent             Referral[]            @relation("ReferralsSent")
+  referralReceived          Referral?             @relation("ReferralReceived")
   // Acquisition attribution — captured from URL params + headers on
   // the visit that ended in registration. Joinable against revenue
   // (Purchase), retention (CommunityMembership), and quiz outcomes
@@ -2455,4 +2456,22 @@ model LessonView {
 
   @@unique([userId, lessonId])
   @@index([userId])
+}
+
+/// One "your week is open" notification, sent once per member per week.
+///
+/// The unlock itself is derived from dates and needs no storage, but the
+/// notification is a side effect that must happen exactly once. cron.yml
+/// allows manual workflow_dispatch runs, so "it only fires once because the
+/// schedule only runs once" is not a guarantee worth relying on.
+model ProgramUnlockNotice {
+  id         String   @id @default(cuid())
+  userId     String
+  weekNumber Int
+  notifiedAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, weekNumber])
+  @@index([weekNumber])
 }

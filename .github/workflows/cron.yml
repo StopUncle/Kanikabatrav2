@@ -77,6 +77,11 @@ on:
     # first, so she can refresh what already ranks before it decays. Weekly
     # is plenty: posts age slowly and a daily nag would just get ignored.
     - cron: '0 6 * * 1'
+    # Program unlock, daily at 08:10 UTC. Tells members whose next week of
+    # the 12 Week Transformation has opened, and creates that week's
+    # discussion thread. Early in the day so the unlock is the first thing
+    # they hear about, ahead of the 09:00 daily insight.
+    - cron: '10 8 * * *'
     # Intro-reply nudge — daily at 11:30 UTC. Emails Kanika the Day-0
     # intro comments that are 2-3 days old with no reply from her yet.
     # The reply guarantee ("I read every single one") depends on it.
@@ -111,6 +116,7 @@ on:
           - generate-scenario
           - content-freshness
           - intro-reply-nudge
+          - program-unlock
 
 env:
   BASE_URL: https://kanikarose.com
@@ -412,3 +418,16 @@ jobs:
             -H "x-cron-secret: ${{ secrets.CRON_SECRET }}" \
             -H "Content-Type: application/json" \
             --max-time 60
+
+  program-unlock:
+    # Daily 08:10 UTC. Both side effects are deduped (notice row per
+    # member+week, metadata marker per thread), so a manual re-run is safe.
+    if: >-
+      github.event.schedule == '10 8 * * *' ||
+      (github.event_name == 'workflow_dispatch' &&
+       (github.event.inputs.target == 'all' || github.event.inputs.target == 'program-unlock'))
+    runs-on: ubuntu-latest
+    steps:
+      - name: Hit /api/cron/program-unlock
+        run: |
+          curl -fsS -X POST "$BASE_URL/api/cron/program-unlock"             -H "x-cron-secret: ${{ secrets.CRON_SECRET }}"             -H "Content-Type: application/json"             --max-time 120

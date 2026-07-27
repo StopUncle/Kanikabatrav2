@@ -35,6 +35,7 @@ export type PushCategory =
   | "leagueResult"
   | "weeklyVerdict"
   | "rankUp"
+  | "programUnlock"
   | "directMessage";
 
 export interface PushPayload {
@@ -82,6 +83,10 @@ const DEFAULT_OPT_IN: Record<PushCategory, boolean> = {
   // Crossing a rank threshold. Default-ON: rare by construction, and it is
   // news the member earned rather than a prompt.
   rankUp: true,
+  // A week of the 12 Week Transformation opening. Default-ON: it is the
+  // thing they are paying for, it arrives once a week, and a program whose
+  // unlocks go unannounced is just a page nobody visits.
+  programUnlock: true,
   // A private message from Kanika. Default-ON: a 1-on-1 from the founder is
   // the highest-signal notification a member can get; the whole point is they
   // hear about it. They can still opt out per-category.
