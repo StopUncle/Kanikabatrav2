@@ -502,6 +502,43 @@ export const CHAPTER_BY_ID: Record<string, PathChapter> = Object.fromEntries(
   PATH_CHAPTERS.map((c) => [c.id, c]),
 );
 
+/**
+ * Where a step's action lives inside the APP shell. Unported surfaces
+ * (Receipts, The Lab) still point at the old skin, which is the honest
+ * option until they exist at /app.
+ *
+ * Split from stepHref rather than replacing it: the legacy Path page and
+ * the weekly digest email still address members who live on /consilium,
+ * and routing THEM into the app before the cutover would be the same bug
+ * this fixes, pointed the other way.
+ */
+export function appStepHref(
+  step: PathStep,
+  gender: "MALE" | "FEMALE" | null,
+): string {
+  const k = step.kind;
+  switch (k.type) {
+    case "scenario":
+      return `/app/train/${gender === "MALE" ? k.male : k.female}`;
+    case "tells":
+      return "/app/play/tell";
+    case "comments":
+      return "/app/feed";
+    case "receipts":
+      return "/consilium/receipts";
+    case "drills":
+      return "/app/play/drill";
+    case "labs":
+      return "/consilium/lab";
+    case "quiz":
+      return "/app/quizzes";
+    case "question":
+      return "/app/feed";
+    case "elective":
+      return "/app/train";
+  }
+}
+
 /** Where a step's action lives, for the "do it" button. */
 export function stepHref(
   step: PathStep,

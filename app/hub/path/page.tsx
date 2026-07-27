@@ -2,7 +2,7 @@ import Link from "next/link";
 import { requireServerAuth } from "@/lib/auth/server-auth";
 import { prisma } from "@/lib/prisma";
 import { getPathState } from "@/lib/path/progress";
-import { stepHref } from "@/lib/path/curriculum";
+import { appStepHref } from "@/lib/path/curriculum";
 import { ringByLevel } from "@/lib/standing/config";
 
 export const metadata = {
@@ -122,7 +122,7 @@ export default async function PathPage() {
 
               {isCurrent && (
                 <Link
-                  href={stepHref(isCurrent.step, viewer?.gender ?? null)}
+                  href={appStepHref(isCurrent.step, viewer?.gender ?? null)}
                   className="mt-3 block rounded-2xl border border-[var(--app-line)] bg-[var(--app-card)] px-4 py-[15px]"
                 >
                   <span className="block text-[14.5px] font-medium">
