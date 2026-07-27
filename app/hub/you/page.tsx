@@ -1,46 +1,68 @@
 import { requireServerAuth } from "@/lib/auth/server-auth";
 import { prisma } from "@/lib/prisma";
 import { readDailyStreak } from "@/lib/streak/daily";
-import { ringByLevel, standingToNextRing } from "@/lib/standing/config";
 import { readMark } from "@/lib/mark/read";
-import RingEmblem from "@/components/rings/RingEmblem";
-import Move from "@/components/app-shell/Move";
+import { getStandingActivity } from "@/lib/standing/activity";
+import { getBadgeWall } from "@/lib/badges/wall";
 import MarkPanel from "@/components/mark/MarkPanel";
+import Move from "@/components/app-shell/Move";
+import StatTile from "@/components/app-shell/juice/StatTile";
+import RankHero from "@/components/app-shell/you/RankHero";
+import ActivityGrid from "@/components/app-shell/you/ActivityGrid";
+import StandingBreakdown from "@/components/app-shell/you/StandingBreakdown";
+import BadgeWall from "@/components/app-shell/you/BadgeWall";
+import RankLadder from "@/components/app-shell/you/RankLadder";
 
 export const metadata = {
   title: "You | Consilium",
 };
 
 /**
- * You: rank, the numbers that move, and the doors that don't fit a tab
- * (the library, profile).
+ * You: the progression page.
+ *
+ * Two halves that must not be confused, per docs/THE-MARK-PLAN.md. Standing,
+ * rank, streaks and badges measure showing up, so they are allowed to be
+ * numbers and are the flashy half. The Mark measures skill, so it is only
+ * ever sentences and a shrinking list of what gets past you.
+ *
+ * That is why there is no aggregate accuracy anywhere on this page, no
+ * radar, and no composite score. A single number claiming to be "how good
+ * you are at reading people" would become the thing members trained instead
+ * of the skill, and it is a claim nobody can stand behind.
  */
 export default async function YouPage() {
   const userId = await requireServerAuth("/app/you");
 
-  const [viewer, dailyStreak, simStats, mark] = await Promise.all([
-    prisma.user.findUnique({
-      where: { id: userId },
-      select: { displayName: true, standing: true, ringLevel: true },
-    }),
-    readDailyStreak(prisma, userId),
-    prisma.simulatorProgress.aggregate({
-      where: { userId, completedAt: { not: null } },
-      _count: { _all: true },
-    }),
-    readMark(prisma, userId),
-  ]);
+  const [viewer, dailyStreak, simStats, mark, activity, wall] =
+    await Promise.all([
+      prisma.user.findUnique({
+        where: { id: userId },
+        select: {
+          displayName: true,
+          standing: true,
+          ringLevel: true,
+          createdAt: true,
+        },
+      }),
+      readDailyStreak(prisma, userId),
+      prisma.simulatorProgress.aggregate({
+        where: { userId, completedAt: { not: null } },
+        _count: { _all: true },
+      }),
+      readMark(prisma, userId),
+      getStandingActivity(prisma, userId),
+      getBadgeWall(prisma, userId),
+    ]);
 
   const standing = viewer?.standing ?? 0;
   const ringLevel = viewer?.ringLevel ?? 4;
-  const rank = ringByLevel(ringLevel);
-  const next = standingToNextRing(standing);
-  let pct = 100;
-  if (next) {
-    const floor = rank.threshold;
-    const span = next.next.threshold - floor;
-    pct = span > 0 ? Math.min(100, ((standing - floor) / span) * 100) : 100;
-  }
+
+  const memberSince = viewer?.createdAt
+    ? viewer.createdAt.toLocaleDateString("en-US", {
+        month: "long",
+        year: "numeric",
+      })
+    : null;
 
   return (
     <div className="px-5 pb-28 pt-6">
@@ -50,71 +72,74 @@ export default async function YouPage() {
       >
         {viewer?.displayName || "You"}
       </h1>
-      <p className="mb-6 mt-1 text-[13px] text-[var(--app-muted)]">
-        Measured. Earned. Yours.
+      <p className="mb-5 mt-1 text-[13px] text-[var(--app-muted)]">
+        {memberSince ? `Here since ${memberSince}.` : "Measured. Earned. Yours."}
       </p>
 
-      {/* Rank card */}
-      <div className="mb-4 flex items-center gap-5 rounded-[18px] border border-[var(--app-line)] bg-[var(--app-card)] p-[18px]">
-        <RingEmblem level={ringLevel} size={84} className="shrink-0" />
-        <div className="min-w-0 flex-1">
-          <p className="mb-1 text-[11px] uppercase tracking-[0.22em] text-[var(--app-gold-soft)]">
-            Your rank
-          </p>
-          <p
-            className="text-[22px]"
-            style={{ fontFamily: "var(--font-display)" }}
-          >
-            {rank.name}
-          </p>
-          <div className="mt-3 h-[3px] overflow-hidden rounded-full bg-[rgba(212,175,55,0.15)]">
-            <div
-              className="h-full rounded-full bg-[var(--app-gold)]"
-              style={{ width: `${pct}%` }}
-            />
-          </div>
-          <p className="mt-1.5 text-[11.5px] text-[var(--app-dim)]">
-            {standing.toLocaleString()} Standing
-            {next
-              ? ` · ${next.remaining.toLocaleString()} to ${next.next.name}`
-              : " · Inner Circle"}
-          </p>
-        </div>
+      <RankHero standing={standing} ringLevel={ringLevel} />
+
+      <div className="mb-7 mt-3 grid grid-cols-3 gap-2.5">
+        <StatTile
+          value={dailyStreak.current}
+          label="day streak"
+          delayMs={0}
+          hint={
+            dailyStreak.longest > dailyStreak.current
+              ? `best ${dailyStreak.longest}`
+              : undefined
+          }
+        />
+        <StatTile
+          value={simStats._count._all}
+          label="scenarios run"
+          tone="rose"
+          delayMs={110}
+        />
+        <StatTile
+          value={wall.earned}
+          label="badges"
+          tone="green"
+          delayMs={220}
+          hint={`of ${wall.total}`}
+        />
       </div>
 
-      {/* Tallies */}
-      <div className="mb-6 grid grid-cols-3 gap-2.5">
-        {[
-          { num: dailyStreak.current, label: "day streak" },
-          { num: simStats._count._all, label: "scenarios run" },
-          { num: standing, label: "Standing" },
-        ].map((t) => (
-          <div
-            key={t.label}
-            className="rounded-2xl border border-[var(--app-line-soft)] bg-[var(--app-card)] px-3 py-4 text-center"
-          >
-            <p
-              className="text-[24px] font-light text-[var(--app-gold)]"
-              style={{ fontFamily: "var(--font-display)" }}
-            >
-              {t.num.toLocaleString()}
-            </p>
-            <p className="mt-1 text-[11px] leading-tight text-[var(--app-dim)]">
-              {t.label}
-            </p>
-          </div>
-        ))}
-      </div>
-
-      {/* The Mark: how easily you get played. Sits under the tallies
-          because it is the one thing here that is about skill rather
-          than attendance. */}
-      <div className="mb-6">
+      {/* The Mark: the skill half, and the only half that speaks in
+          sentences. Left exactly where the measurement work put it. */}
+      <div className="mb-7">
         <MarkPanel read={mark} />
+      </div>
+
+      <div className="mb-7">
+        <ActivityGrid activity={activity} />
+      </div>
+
+      <div className="mb-7">
+        <StandingBreakdown sources={activity.bySource} />
+      </div>
+
+      <div className="mb-7">
+        <RankLadder standing={standing} ringLevel={ringLevel} />
+      </div>
+
+      <div className="mb-7">
+        <BadgeWall wall={wall} />
       </div>
 
       {/* The rest of the house */}
       <div className="flex flex-col gap-2.5">
+        <Move
+          href="/app/ranks"
+          title="Leaderboards"
+          sub="Standing and Simulator XP."
+          cta="OPEN"
+          icon={
+            <svg viewBox="0 0 24 24">
+              <path d="M8 21h8m-4-4v4M5 4h14v5a7 7 0 0 1-14 0z" />
+              <path d="M5 6H3v2a3 3 0 0 0 2 2.8M19 6h2v2a3 3 0 0 1-2 2.8" />
+            </svg>
+          }
+        />
         <Move
           href="/consilium/book"
           title="The book"
