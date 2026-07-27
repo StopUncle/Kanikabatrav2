@@ -22,6 +22,7 @@
 
 import webpush from "web-push";
 import { prisma } from "@/lib/prisma";
+import { logPushSend, withinPushCap } from "./policy";
 
 export type PushCategory =
   | "questionAnswered"
@@ -32,6 +33,8 @@ export type PushCategory =
   | "dailyTell"
   | "dailyStreak"
   | "leagueResult"
+  | "weeklyVerdict"
+  | "rankUp"
   | "directMessage";
 
 export interface PushPayload {
@@ -72,6 +75,13 @@ const DEFAULT_OPT_IN: Record<PushCategory, boolean> = {
   // Weekly Instincts league result. Default-ON: once a week, high
   // relevance, the strongest weekly return loop.
   leagueResult: true,
+  // The Sunday Verdict, mirroring the weekly digest email. Default-ON:
+  // once a week, and it is the one push that reports back rather than asks
+  // for something.
+  weeklyVerdict: true,
+  // Crossing a rank threshold. Default-ON: rare by construction, and it is
+  // news the member earned rather than a prompt.
+  rankUp: true,
   // A private message from Kanika. Default-ON: a 1-on-1 from the founder is
   // the highest-signal notification a member can get; the whole point is they
   // hear about it. They can still opt out per-category.
@@ -148,6 +158,10 @@ export async function sendPushToUser(
   if (!userIsOptedIn(user.pushPreferences, category)) return 0;
   if (user.pushSubscriptions.length === 0) return 0;
 
+  // The rolling cap. Checked here rather than in each caller so no future
+  // feature can add a sixth weekly interruption by forgetting about it.
+  if (!(await withinPushCap(userId, category))) return 0;
+
   const json = JSON.stringify({
     title: payload.title,
     body: payload.body,
@@ -194,6 +208,13 @@ export async function sendPushToUser(
       .catch(() => {
         /* non-fatal */
       });
+  }
+
+  // One log row per delivered notification, not per device: the cap is
+  // about how often we interrupt a person, and a member with a phone and a
+  // laptop is still one person.
+  if (delivered > 0) {
+    await logPushSend(userId, category);
   }
 
   // Bump lastUsedAt on the surviving subs (best-effort).

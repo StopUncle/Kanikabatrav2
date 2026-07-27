@@ -5,6 +5,8 @@ import { sendWeeklyDigest } from "@/lib/email";
 import { feedPostGenderWhere } from "@/lib/community/gender-filter";
 import { buildUnsubscribeUrl } from "@/lib/unsubscribe-token";
 import { logger } from "@/lib/logger";
+import { sendPushToUser } from "@/lib/push";
+import { prunePushSendLog } from "@/lib/push/policy";
 import { getPathState } from "@/lib/path/progress";
 import { stepHref } from "@/lib/path/curriculum";
 import { ringByLevel, standingToNextRing } from "@/lib/standing/config";
@@ -144,6 +146,7 @@ export async function POST(request: NextRequest) {
     let sent = 0;
     let failed = 0;
     let skipped = 0;
+    let verdictPushes = 0;
     const failures: Array<{ userId: string; error: string }> = [];
 
     for (const membership of members) {
@@ -299,6 +302,14 @@ export async function POST(request: NextRequest) {
           failed++;
           failures.push({ userId: user.id, error: "sendEmail returned false" });
         }
+
+        // The Verdict, as a push. Same numbers the email just used, said in
+        // one line: the point is to pull them back to read the rest, not to
+        // reproduce the email on a lock screen. Independent of whether the
+        // email sent, since push and email reach different people.
+        if (await sendVerdictPush(user.id, verdict)) {
+          verdictPushes++;
+        }
       } catch (err) {
         failed++;
         failures.push({
@@ -313,6 +324,10 @@ export async function POST(request: NextRequest) {
       }
     }
 
+    // Keep the push log from growing without bound. Weekly is often enough
+    // for a table that only needs a 7-day window to answer its one question.
+    const prunedPushLog = await prunePushSendLog();
+
     logger.info(
       `[cron weekly-digest] completed: ${sent} sent, ${skipped} skipped (opted out), ${failed} failed of ${members.length} active members`,
     );
@@ -323,6 +338,8 @@ export async function POST(request: NextRequest) {
       sent,
       skipped,
       failed,
+      verdictPushes,
+      prunedPushLog,
       failures: failed > 0 ? failures : undefined,
     });
   } catch (error) {
@@ -332,4 +349,72 @@ export async function POST(request: NextRequest) {
       { status: 500 },
     );
   }
+}
+
+/**
+ * The Verdict, compressed to a lock screen.
+ *
+ * One line, built from the numbers the digest email already computed, so
+ * the two can never disagree. It reports rather than asks, which is why it
+ * is the one weekly push worth spending the cap on.
+ */
+type WeeklyVerdict = {
+  standingGained: number;
+  toNext: { ringName: string; remaining: number } | null;
+  league: { finalRank: number; outcome: LeagueOutcome } | null;
+};
+
+async function sendVerdictPush(
+  userId: string,
+  verdict: WeeklyVerdict,
+): Promise<boolean> {
+  const parts: string[] = [];
+
+  if (verdict.standingGained > 0) {
+    parts.push(`${verdict.standingGained.toLocaleString()} Standing earned`);
+  }
+  if (verdict.league?.outcome === "PROMOTED") {
+    parts.push("promoted in your league");
+  } else if (verdict.league?.finalRank) {
+    parts.push(`${ordinal(verdict.league.finalRank)} in your league`);
+  }
+  if (verdict.toNext) {
+    parts.push(
+      `${verdict.toNext.remaining.toLocaleString()} to ${verdict.toNext.ringName}`,
+    );
+  }
+
+  // A week where nothing moved is still worth saying out loud, because
+  // that is the week the member most needs to hear from us.
+  const body =
+    parts.length > 0
+      ? `${capitalise(parts.join(". "))}.`
+      : "Nothing moved this week. One scenario is enough to change that.";
+
+  const delivered = await sendPushToUser(userId, "weeklyVerdict", {
+    title: "Your week, read back to you",
+    body,
+    url: "/app/you",
+    tag: "weekly-verdict",
+  });
+  return delivered > 0;
+}
+
+function ordinal(n: number): string {
+  const rem100 = n % 100;
+  if (rem100 >= 11 && rem100 <= 13) return `${n}th`;
+  switch (n % 10) {
+    case 1:
+      return `${n}st`;
+    case 2:
+      return `${n}nd`;
+    case 3:
+      return `${n}rd`;
+    default:
+      return `${n}th`;
+  }
+}
+
+function capitalise(text: string): string {
+  return text.charAt(0).toUpperCase() + text.slice(1);
 }

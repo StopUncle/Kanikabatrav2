@@ -6,6 +6,8 @@ import { prisma } from "@/lib/prisma";
 import TabBar from "@/components/app-shell/TabBar";
 import PhoneHandoff from "@/components/app-shell/PhoneHandoff";
 import ServiceWorkerRegister from "@/components/pwa/ServiceWorkerRegister";
+import AnalyticsIdentify from "@/components/analytics/AnalyticsIdentify";
+import NotificationPrompt from "@/components/pwa/NotificationPrompt";
 
 /**
  * The app shell: the mobile-first member experience at /app. Phone-width
@@ -52,10 +54,13 @@ export default async function AppShellLayout({
     redirect(redirectUrl || "/consilium");
   }
 
-  const me = await prisma.user.findUnique({
-    where: { id: userId },
-    select: { initiationAt: true, role: true },
-  });
+  const [me, baselineAttempts] = await Promise.all([
+    prisma.user.findUnique({
+      where: { id: userId },
+      select: { initiationAt: true, role: true },
+    }),
+    prisma.baselineAttempt.count({ where: { userId } }),
+  ]);
   if (me && !me.initiationAt && me.role !== "ADMIN") {
     redirect("/consilium/initiation");
   }
@@ -90,7 +95,12 @@ export default async function AppShellLayout({
         </div>
         <PhoneHandoff />
       </div>
+      <AnalyticsIdentify userId={userId} />
       <ServiceWorkerRegister />
+      {/* Push permission, asked only once the member has finished a Baseline
+          Read. A browser gives you one shot at this prompt, so it is spent
+          on someone with a result worth being notified about. */}
+      <NotificationPrompt unlocked={baselineAttempts > 0} />
     </div>
   );
 }

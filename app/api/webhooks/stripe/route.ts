@@ -1,4 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
+import { captureServerAsync } from "@/lib/analytics/server";
+import { ANALYTICS_EVENTS } from "@/lib/analytics/events";
 import { stripe } from "@/lib/stripe";
 import { prisma } from "@/lib/prisma";
 import { sendBookDelivery, sendInnerCircleWelcomeNewUser, sendMembershipRenewed, sendMembershipSuspended, sendMembershipCancelled } from "@/lib/email";
@@ -796,6 +798,7 @@ export async function POST(request: NextRequest) {
           // billing_cycle=annual in session metadata).
           const billingCycle =
             productKey === "INNER_CIRCLE_ANNUAL" ? "annual" : "monthly";
+
           const subscriptionId = session.subscription as string;
           if (!subscriptionId) {
             console.error(
@@ -881,6 +884,14 @@ export async function POST(request: NextRequest) {
               activatedAt: new Date(),
               expiresAt,
             },
+          });
+
+          // The moment a stranger becomes a member. Fired after the
+          // membership row lands, not at checkout creation: an abandoned
+          // Stripe page is not an activation.
+          captureServerAsync(user.id, ANALYTICS_EVENTS.MEMBER_ACTIVATED, {
+            billing_cycle: billingCycle,
+            product_key: productKey,
           });
 
           // Purchase row exists for two reasons:

@@ -1,6 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { ANALYTICS_EVENTS } from "@/lib/analytics/events";
+import { capture } from "@/lib/analytics/client";
 
 const DISMISS_KEY = "consilium-install-dismissed-v1";
 const DISMISS_DURATION_DAYS = 14; // Don't re-prompt for 2 weeks if dismissed.
@@ -97,11 +99,25 @@ export default function InstallPrompt() {
     }
   }
 
+  // One shot when the banner actually becomes visible. Firing in render
+  // would count a re-render as another impression.
+  const visible = !isStandalone && !dismissed && (isIOS || Boolean(deferredPrompt));
+  const reportedShown = useRef(false);
+  useEffect(() => {
+    if (visible && !reportedShown.current) {
+      reportedShown.current = true;
+      capture(ANALYTICS_EVENTS.INSTALL_PROMPT_SHOWN, {
+        surface: isIOS ? "banner-ios" : "banner",
+      });
+    }
+  }, [visible, isIOS]);
+
   async function handleInstall() {
     if (!deferredPrompt) return;
     await deferredPrompt.prompt();
     const choice = await deferredPrompt.userChoice;
     if (choice.outcome === "accepted") {
+      capture(ANALYTICS_EVENTS.INSTALL_PROMPT_ACCEPTED, { surface: "banner" });
       setDismissed(true);
     } else {
       // Treat a dismiss in the native dialog the same as a tap-X.
@@ -111,6 +127,7 @@ export default function InstallPrompt() {
   }
 
   if (isStandalone || dismissed) return null;
+  if (!isIOS && !deferredPrompt) return null;
 
   // iOS path — manual instructions, no API call.
   if (isIOS) {

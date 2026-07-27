@@ -381,6 +381,14 @@ NODE_ENV="development"
 NEXT_PUBLIC_VAPID_PUBLIC_KEY="..."
 VAPID_PRIVATE_KEY="..."
 VAPID_SUBJECT="mailto:Kanika@kanikarose.com"
+
+# PostHog (funnel analytics). Unset = silent no-op everywhere, which is
+# the intended state for local and dev. The project key is write-only and
+# already ships in the client bundle, so POSTHOG_KEY exists only for
+# setups that want the server half configured separately.
+NEXT_PUBLIC_POSTHOG_KEY="phc_..."
+NEXT_PUBLIC_POSTHOG_HOST="https://us.i.posthog.com"
+POSTHOG_KEY=""                # optional server-side override
 ```
 
 When sending SMTP from local: add `tls: { rejectUnauthorized: false }` to nodemailer config.

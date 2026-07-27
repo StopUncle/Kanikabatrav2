@@ -1,11 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
+import { markSeen } from "@/lib/analytics/seen";
 import {
   verifyRefreshToken,
   generateAccessToken,
   generateRefreshToken,
 } from "@/lib/auth/jwt";
 import { PrismaUserDatabase } from "@/lib/auth/prisma-database";
-import { prisma } from "@/lib/prisma";
 
 export async function POST(request: NextRequest) {
   try {
@@ -76,12 +76,8 @@ export async function POST(request: NextRequest) {
     // active session (accessToken TTL), making this the most
     // reliable activity signal we have for the dormant-member cron.
     // Non-blocking, a DB hiccup here must not fail the refresh.
-    prisma.user
-      .update({
-        where: { id: user.id },
-        data: { lastSeenAt: new Date() },
-      })
-      .catch((err) => console.error("[auth/refresh] lastSeenAt update failed:", err));
+    // markSeen also reports the first return on or after day 7.
+    void markSeen(user.id);
 
     return response;
   } catch (error: unknown) {
