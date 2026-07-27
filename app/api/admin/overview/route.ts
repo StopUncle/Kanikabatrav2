@@ -19,10 +19,11 @@ import { INTRO_PROMPT_MARKER } from "@/lib/day0/checklist";
 export const dynamic = "force-dynamic";
 
 export async function GET() {
-  const session = await requireAdminSession();
-  if (!session) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
+  // requireAdminSession returns the 401 response when the caller is NOT an
+  // admin, and null when they are. Returning it directly is the only safe
+  // shape; testing it for falsiness inverts the gate.
+  const unauthorized = await requireAdminSession();
+  if (unauthorized) return unauthorized;
 
   const now = Date.now();
   const dayAgo = new Date(now - 24 * 3600_000);
