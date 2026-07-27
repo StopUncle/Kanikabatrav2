@@ -141,7 +141,7 @@ export default async function YouPage() {
           }
         />
         <Move
-          href="/consilium/book"
+          href="/app/book"
           title="The book"
           sub="The Sociopathic Dating Bible, inside."
           cta="READ"
@@ -153,7 +153,7 @@ export default async function YouPage() {
           }
         />
         <Move
-          href="/consilium/videos"
+          href="/app/videos"
           title="Videos"
           sub="The video library."
           cta="WATCH"
@@ -165,7 +165,7 @@ export default async function YouPage() {
           }
         />
         <Move
-          href="/consilium/voice-notes"
+          href="/app/voice-notes"
           title="Voice notes"
           sub="Kanika, in your ear."
           cta="LISTEN"
@@ -177,7 +177,7 @@ export default async function YouPage() {
           }
         />
         <Move
-          href="/consilium/profile"
+          href="/app/profile"
           title="Profile & settings"
           sub="Name, avatar, notifications."
           cta="EDIT"
