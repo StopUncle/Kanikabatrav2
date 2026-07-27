@@ -1,0 +1,181 @@
+import { Metadata } from "next";
+import Link from "next/link";
+import BackgroundEffects from "@/components/BackgroundEffects";
+import Header from "@/components/Header";
+import BookShowcase from "@/components/BookShowcase";
+import NewsletterForm from "@/components/NewsletterForm";
+import SocialHub from "@/components/SocialHub";
+import PostCard from "@/components/blog/PostCard";
+import HeroV2 from "@/components/v2/HeroV2";
+import TestimonialsV2 from "@/components/v2/TestimonialsV2";
+import AskKanikaV2 from "@/components/v2/AskKanikaV2";
+import CoachingV2 from "@/components/v2/CoachingV2";
+import { getAllPosts } from "@/lib/mdx";
+import { SITE_CONFIG, SOCIAL_METRICS } from "@/lib/constants";
+
+export const metadata: Metadata = {
+  title: `${SITE_CONFIG.name} - ${SITE_CONFIG.title} (v2)`,
+  description: SITE_CONFIG.description,
+  robots: { index: false, follow: false },
+};
+
+export default function HomeV2() {
+  const latestPosts = getAllPosts().slice(0, 3);
+
+  return (
+    <>
+      <BackgroundEffects />
+      <Header />
+
+      <main className="relative z-10 pt-20">
+        {/* 1. Hero — single dominant headline + book visual + proof strip */}
+        <HeroV2 />
+
+        {/* 2. Book — the primary product */}
+        <BookShowcase />
+
+        {/* 3. Testimonials — 3-up grid + press strip */}
+        <TestimonialsV2 />
+
+        {/* 4. Ask Kanika — retuned pricing ladder */}
+        <AskKanikaV2 />
+
+        {/* 5. Quiz CTA */}
+        <section className="py-20 sm:py-24 px-4 relative overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-r from-accent-burgundy/10 via-transparent to-accent-gold/10" />
+          <div className="max-w-4xl mx-auto text-center relative z-10">
+            <div className="inline-block mb-6 px-4 py-2 border border-accent-gold/30 rounded-full">
+              <span className="text-accent-gold text-sm tracking-[0.2em] uppercase">
+                Free Assessment
+              </span>
+            </div>
+            <h2 className="font-serif font-light text-4xl sm:text-5xl text-text-light mb-6 tracking-tight">
+              What&apos;s Your{" "}
+              <span className="text-accent-gold">Dark Mirror</span> Type?
+            </h2>
+            <p className="text-text-gray text-lg mb-8 max-w-2xl mx-auto leading-relaxed">
+              Take the 20-question assessment to discover which personality type
+              dominates your psychology, plus receive a clinical-style diagnosis
+              with your functioning level.
+            </p>
+            <a
+              href="/quiz"
+              className="inline-flex items-center gap-3 px-10 py-4 bg-gradient-to-r from-accent-gold to-accent-gold/80 text-deep-black font-medium text-lg tracking-wider uppercase rounded transition-all hover:shadow-lg hover:shadow-accent-gold/20"
+            >
+              Take The Quiz
+              <span className="text-xl">&rarr;</span>
+            </a>
+            <p className="mt-6 text-text-gray/60 text-sm">
+              Free to take. Results unlocked for $9.99.
+            </p>
+          </div>
+        </section>
+
+        {/* 6. Coaching — retainer reframed as application-only, 3 spots */}
+        <CoachingV2 />
+
+        {/* 7. Social proof stats — pulled up close to coaching for credibility */}
+        <section className="py-16 px-4 bg-gradient-to-b from-transparent via-deep-burgundy/5 to-transparent">
+          <div className="max-w-7xl mx-auto">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+              <StatCell value={SOCIAL_METRICS.combined.totalFollowers} label="Total Followers" />
+              <StatCell value={SOCIAL_METRICS.combined.totalViews} label="Total Views" />
+              <StatCell value={SOCIAL_METRICS.tiktok.likes} label="TikTok Likes" />
+              <StatCell value={String(SOCIAL_METRICS.youtube.videos)} label="YouTube Videos" />
+            </div>
+          </div>
+        </section>
+
+        {/* 8. Social hub */}
+        <SocialHub />
+
+        {/* 9. Blog */}
+        {latestPosts.length > 0 && (
+          <section className="py-20 sm:py-24 px-4">
+            <div className="max-w-7xl mx-auto">
+              <div className="text-center mb-14">
+                <p className="text-accent-gold uppercase tracking-[0.3em] text-xs sm:text-sm mb-4">
+                  Latest Insights
+                </p>
+                <h2 className="font-serif font-light text-4xl sm:text-5xl text-text-light mb-4 tracking-tight">
+                  From the <span className="text-accent-gold">Blog</span>
+                </h2>
+                <p className="text-text-gray max-w-lg mx-auto">
+                  Dark psychology, power dynamics, and the strategic influence they won&apos;t teach you.
+                </p>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-10">
+                {latestPosts.map((post, index) => (
+                  <PostCard key={post.slug} post={post} index={index} />
+                ))}
+              </div>
+              <div className="text-center mt-12">
+                <Link
+                  href="/blog"
+                  className="inline-flex items-center gap-3 px-8 py-3 text-sm font-medium uppercase tracking-wider text-accent-gold border border-accent-gold/30 rounded-full hover:bg-accent-gold/10 hover:border-accent-gold/50 transition-all duration-300"
+                >
+                  View All Articles
+                  <span>&rarr;</span>
+                </Link>
+              </div>
+            </div>
+          </section>
+        )}
+
+        {/* 10. Final CTA */}
+        <section className="py-24 sm:py-32 px-4">
+          <div className="max-w-4xl mx-auto text-center">
+            <h2 className="font-serif font-light text-4xl sm:text-5xl lg:text-6xl mb-6 tracking-tight leading-[1.05]">
+              <span className="text-text-light">Stop being the victim.</span>
+              <br />
+              <span className="gradient-text">Start being the villain.</span>
+            </h2>
+            <p className="text-text-gray text-lg mb-10 max-w-2xl mx-auto">
+              Join thousands who have discovered the power of understanding psychology
+              others won&apos;t teach. Your transformation begins with a single decision.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <a
+                href="/book"
+                className="btn-primary rounded-full text-white px-8 py-4 inline-block"
+              >
+                Get the Book — $24.99
+              </a>
+              <a
+                href="/coaching"
+                className="btn-secondary rounded-full px-8 py-4 inline-block"
+              >
+                Private Coaching
+              </a>
+            </div>
+          </div>
+        </section>
+
+        {/* 11. Newsletter */}
+        <section className="py-20 px-4 border-t border-accent-gold/10">
+          <div className="max-w-3xl mx-auto text-center">
+            <h3 className="text-2xl font-light mb-4 gradient-text-gold">
+              Psychology of Power — Weekly
+            </h3>
+            <p className="text-text-gray mb-8">
+              Strategic psychology, power dynamics, and the insights they don&apos;t teach in school.
+            </p>
+            <NewsletterForm />
+            <p className="text-text-gray text-sm mt-4">
+              No spam. Only power. Unsubscribe anytime.
+            </p>
+          </div>
+        </section>
+      </main>
+    </>
+  );
+}
+
+function StatCell({ value, label }: { value: string; label: string }) {
+  return (
+    <div className="space-y-2">
+      <div className="text-3xl md:text-4xl font-light gradient-text-gold">{value}</div>
+      <p className="text-text-gray text-sm">{label}</p>
+    </div>
+  );
+}

@@ -4,15 +4,22 @@ import { m } from "framer-motion";
 import { Check } from "lucide-react";
 import { COACHING_PACKAGES } from "@/lib/constants";
 
+type CoachingPackage = (typeof COACHING_PACKAGES)[number];
+
 interface CoachingTiersProps {
   showButton?: boolean;
   onSelect?: (packageId: string) => void;
+  packages?: CoachingPackage[];
 }
 
-const CoachingTiers = ({ showButton = true, onSelect }: CoachingTiersProps) => {
+const CoachingTiers = ({
+  showButton = true,
+  onSelect,
+  packages = COACHING_PACKAGES,
+}: CoachingTiersProps) => {
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-5 sm:gap-6">
-      {COACHING_PACKAGES.map((pkg, index) => {
+      {packages.map((pkg, index) => {
         const badge = pkg.badge;
         const ctaLabel =
           pkg.ctaLabel || `Book ${pkg.name}`;
