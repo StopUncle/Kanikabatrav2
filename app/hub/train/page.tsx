@@ -2,8 +2,8 @@ import Link from "next/link";
 import { requireServerAuth } from "@/lib/auth/server-auth";
 import { prisma } from "@/lib/prisma";
 import { getTrainData } from "@/lib/simulator/train-data";
-import { sealedLine } from "@/lib/simulator/track-gates";
 import Move from "@/components/app-shell/Move";
+import TrackLadder from "@/components/app-shell/train/TrackLadder";
 
 export const metadata = {
   title: "Train | Consilium",
@@ -81,68 +81,11 @@ export default async function TrainPage() {
       )}
 
       {/* Tracks: open rows tap through, sealed rows tease */}
-      <p className="mx-5 mb-2.5 mt-7 text-[11px] uppercase tracking-[0.26em] text-[var(--app-dim)]">
-        Your tracks
+      <p className="mx-5 mb-1 mt-7 text-[11px] uppercase tracking-[0.26em] text-[var(--app-dim)]">
+        The climb
       </p>
-      <div className="mx-5 overflow-hidden rounded-2xl border border-[var(--app-line-soft)] bg-[var(--app-card)]">
-        {tracks.map((t, i) => {
-          const row = (
-            <span
-              className={`flex items-center gap-3.5 px-4 py-3.5 ${
-                i > 0 ? "border-t border-[var(--app-line-soft)]" : ""
-              } ${t.access.open ? "" : "opacity-50"}`}
-            >
-              <span className="min-w-0 flex-1">
-                <span className="flex items-center gap-2">
-                  <span className="truncate text-[14.5px] font-medium">
-                    {t.label}
-                  </span>
-                  {t.access.reason === "recommended" && (
-                    <span className="shrink-0 rounded-full bg-[rgba(212,175,55,0.15)] px-2 py-0.5 text-[9px] uppercase tracking-[0.14em] text-[var(--app-gold)]">
-                      Today
-                    </span>
-                  )}
-                  {t.access.open && t.newCount > 0 && (
-                    <span className="shrink-0 rounded-full bg-[rgba(127,184,144,0.15)] px-2 py-0.5 text-[9px] uppercase tracking-[0.14em] text-[var(--app-green)]">
-                      {t.newCount} new
-                    </span>
-                  )}
-                </span>
-                <span className="mt-0.5 block truncate text-xs text-[var(--app-dim)]">
-                  {t.access.open
-                    ? `${t.completed} of ${t.total} complete`
-                    : sealedLine(t.access.opensAtRing ?? 3)}
-                </span>
-              </span>
-              {t.access.open ? (
-                <span className="shrink-0 text-[var(--app-dim)]">›</span>
-              ) : (
-                <svg
-                  aria-hidden
-                  className="h-3.5 w-3.5 shrink-0"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="var(--app-dim)"
-                  strokeWidth="2"
-                >
-                  <rect x="5" y="11" width="14" height="9" rx="2" />
-                  <path d="M8 11V7a4 4 0 0 1 8 0v4" />
-                </svg>
-              )}
-            </span>
-          );
-          return t.access.open ? (
-            <Link
-              key={t.track}
-              href={`/consilium/simulator?track=${t.track}`}
-              className="block"
-            >
-              {row}
-            </Link>
-          ) : (
-            <div key={t.track}>{row}</div>
-          );
-        })}
+      <div className="mx-5">
+        <TrackLadder tracks={tracks} />
       </div>
 
       {/* Fresh Files */}
@@ -230,14 +173,6 @@ export default async function TrainPage() {
         />
       </div>
 
-      <div className="px-5 pt-6 text-center">
-        <Link
-          href="/consilium/simulator"
-          className="text-xs uppercase tracking-[0.2em] text-[var(--app-dim)] underline-offset-4 hover:text-[var(--app-muted)]"
-        >
-          Browse everything
-        </Link>
-      </div>
     </div>
   );
 }

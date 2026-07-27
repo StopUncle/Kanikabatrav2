@@ -38,6 +38,17 @@ export const VALID_TRACKS: ScenarioTrack[] = [
   "after-her",
 ];
 
+/** One rung: a scenario inside a track, with the member's state on it. */
+export interface TrackRung {
+  scenarioId: string;
+  title: string;
+  level: number;
+  done: boolean;
+  /** Started but never finished. */
+  inProgress: boolean;
+  isNew: boolean;
+}
+
 export interface TrackSummary {
   track: ScenarioTrack;
   label: string;
@@ -46,6 +57,12 @@ export interface TrackSummary {
   completed: number;
   total: number;
   newCount: number;
+  /**
+   * The scenarios themselves, ordered by level. Carried here so Train can
+   * open a track in place instead of handing the member to the old
+   * catalog, which was the last thing routing anybody out of the app.
+   */
+  rungs: TrackRung[];
 }
 
 export interface NextUp {
@@ -120,6 +137,18 @@ export async function getTrainData(
       if (completedIds.has(s.id)) completed++;
       if (s.isNew && !progressByScenario.has(s.id)) newCount++;
     }
+    const rungs: TrackRung[] = list.map((s) => {
+      const p = progressByScenario.get(s.id);
+      return {
+        scenarioId: s.id,
+        title: s.title,
+        level: s.level,
+        done: completedIds.has(s.id),
+        inProgress: !!p && !p.completedAt,
+        isNew: !!s.isNew && !p,
+      };
+    });
+
     return {
       track: t,
       label: TRACK_META[t].label,
@@ -133,6 +162,7 @@ export async function getTrainData(
       completed,
       total: list.length,
       newCount,
+      rungs,
     };
   });
 
