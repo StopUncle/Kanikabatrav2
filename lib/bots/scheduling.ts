@@ -8,13 +8,24 @@ interface VolumeRange {
   max: number;
 }
 
+/**
+ * Roughly half what it was.
+ *
+ * Twelve bot comments under a discussion prompt does not read as a busy
+ * room, it reads as a room where there is nothing left to say. With 58 real
+ * members and a 4% comment rate, the one member who does write was landing
+ * eleventh and being buried by the crowd meant to encourage them.
+ *
+ * Fewer, shorter, and leaving obvious gaps is the point: a thread with three
+ * short reactions has space in it, and space is what makes someone type.
+ */
 const COMMENT_VOLUME: Record<PostTypeAffinity | "ANNOUNCEMENT_PINNED", VolumeRange> = {
-  AUTOMATED: { min: 3, max: 5 },
-  ANNOUNCEMENT: { min: 5, max: 9 },
-  ANNOUNCEMENT_PINNED: { min: 2, max: 4 },
-  DISCUSSION_PROMPT: { min: 7, max: 12 },
-  VOICE_NOTE: { min: 6, max: 10 },
-  VIDEO: { min: 6, max: 10 },
+  AUTOMATED: { min: 1, max: 3 },
+  ANNOUNCEMENT: { min: 2, max: 4 },
+  ANNOUNCEMENT_PINNED: { min: 1, max: 2 },
+  DISCUSSION_PROMPT: { min: 3, max: 5 },
+  VOICE_NOTE: { min: 2, max: 4 },
+  VIDEO: { min: 2, max: 4 },
 };
 
 const LIKE_VOLUME: Record<PostTypeAffinity | "ANNOUNCEMENT_PINNED", VolumeRange> = {

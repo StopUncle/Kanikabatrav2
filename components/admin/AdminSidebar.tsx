@@ -27,6 +27,7 @@ import {
   Megaphone,
   MessageCircle,
   MessagesSquare,
+  CalendarCheck,
   Target,
   Quote,
   Clapperboard,
@@ -35,6 +36,7 @@ import {
 const NAV_ITEMS = [
   { href: "/admin", label: "Dashboard", icon: LayoutDashboard },
   { href: "/admin/messages", label: "Messages", icon: MessagesSquare },
+  { href: "/admin/transformation", label: "The 12 Weeks", icon: CalendarCheck },
   { href: "/admin/metrics", label: "Metrics", icon: BarChart3 },
   { href: "/admin/content", label: "Content", icon: Lightbulb },
   { href: "/admin/content-studio", label: "Content Studio", icon: Sparkles },

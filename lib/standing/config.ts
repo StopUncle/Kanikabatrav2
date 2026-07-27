@@ -66,6 +66,12 @@ export const STANDING = {
    * and the two stay strictly separate.
    */
   BASELINE: 75,
+  /**
+   * Finished a week of the 12 Week Transformation. The largest single grant
+   * in the system, because it is the only one that asks the member to do
+   * something away from the screen and come back.
+   */
+  PROGRAM_WEEK: 150,
   /** Unified-streak milestones, keyed by day count. */
   STREAK_MILESTONES: { 7: 100, 30: 500, 100: 2000 } as Record<number, number>,
 } as const;

@@ -12,6 +12,7 @@ import {
   Mic,
   Settings,
   Gamepad2,
+  CalendarCheck,
   X,
 } from "lucide-react";
 
@@ -27,6 +28,11 @@ const SECTIONS: { title: string; items: Item[] }[] = [
   {
     title: "You",
     items: [
+      {
+        href: "/app/program",
+        label: "The 12 Weeks",
+        icon: <CalendarCheck size={17} />,
+      },
       { href: "/app/play", label: "Arcade", icon: <Gamepad2 size={17} /> },
       { href: "/app/path", label: "The Path", icon: <Route size={17} /> },
       { href: "/app/you", label: "Your progress", icon: <User size={17} /> },

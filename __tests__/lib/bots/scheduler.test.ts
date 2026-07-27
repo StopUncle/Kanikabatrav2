@@ -51,8 +51,11 @@ describe("scheduleBotActions", () => {
 
   it("schedules within the per-type ranges and inserts the right shape", async () => {
     const r = await scheduleBotActions("post-1");
-    expect(r.commentsScheduled).toBeGreaterThanOrEqual(3);
-    expect(r.commentsScheduled).toBeLessThanOrEqual(5);
+    // AUTOMATED, halved in the 2026-07-27 quiet-bots pass. Likes are
+    // untouched: they are a signal without being noise, so the reduction
+    // applies to comments only.
+    expect(r.commentsScheduled).toBeGreaterThanOrEqual(1);
+    expect(r.commentsScheduled).toBeLessThanOrEqual(3);
     expect(r.likesScheduled).toBeGreaterThanOrEqual(10);
     expect(r.likesScheduled).toBeLessThanOrEqual(18);
     expect(prisma.botAction.createMany).toHaveBeenCalledTimes(1);
