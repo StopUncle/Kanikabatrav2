@@ -17,10 +17,8 @@ import { isSafeMediaUrl } from "@/lib/security/safe-media-url";
 import { readRunway } from "@/lib/program/runway";
 
 export async function GET() {
-  const session = await requireAdminSession();
-  if (!session) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
+  const unauthorized = await requireAdminSession();
+  if (unauthorized) return unauthorized;
 
   const [weeks, runway] = await Promise.all([
     prisma.transformationWeek.findMany({
@@ -69,10 +67,8 @@ const Patch = z.union([
 ]);
 
 export async function PATCH(request: NextRequest) {
-  const session = await requireAdminSession();
-  if (!session) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
+  const unauthorized = await requireAdminSession();
+  if (unauthorized) return unauthorized;
 
   let body: z.infer<typeof Patch>;
   try {
