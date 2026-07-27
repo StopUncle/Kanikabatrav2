@@ -32,7 +32,7 @@ export default function Sheen({
     return (
       <span
         aria-hidden
-        className={`pointer-events-none absolute inset-y-0 -left-full w-[200%] -translate-x-1/4 transition-transform duration-[900ms] ease-out group-hover:translate-x-1/2 ${className}`}
+        className={`pointer-events-none absolute inset-y-0 -left-full w-[200%] -translate-x-1/2 transition-transform duration-[900ms] ease-out group-hover:translate-x-full ${className}`}
         style={{ backgroundImage: BAND }}
       />
     );
