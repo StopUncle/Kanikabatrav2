@@ -62,7 +62,7 @@ export interface ArcadeData {
 }
 
 export const DRILL_HREF = "/app/play/drill";
-export const TELL_HREF = "/consilium/instincts/today";
+export const TELL_HREF = "/app/play/tell";
 
 /**
  * Reduce the two games to a set. Split out so Today can render the same card

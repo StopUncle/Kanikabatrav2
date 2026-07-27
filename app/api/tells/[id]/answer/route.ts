@@ -59,6 +59,12 @@ export async function POST(
       answerMs: body.answerMs,
     });
 
+    let standing: {
+      amount: number;
+      newStanding: number;
+      rangUp: { fromLevel: number; toLevel: number; ringName: string } | null;
+    } | null = null;
+
     // Unified Consilium daily streak — a logged-in Tell answer counts toward
     // it. Idempotent per UTC day, so replays the same day are silent no-ops.
     if (ctx.userId) {
@@ -74,21 +80,40 @@ export async function POST(
       // Standing (the Rings): first scored response to a tell only —
       // replays already return isReplay, and the dedupe key makes a
       // retried request a no-op. Skill (Elo) is untouched by this.
+      //
+      // Awaited, so the app-shell reveal can report what the answer earned
+      // and open the rank-up ceremony off `rangUp`. A grant failure degrades
+      // to a null field and never costs the member their recorded answer.
       if (!result.isReplay) {
         const axisBonus = result.correct
           ? Object.keys(result.axesImpact).length * STANDING.TELL_CORRECT_AXIS
           : 0;
-        void grantStanding(prisma, {
-          userId: uid,
-          source: "TELL",
-          amount: STANDING.TELL + axisBonus,
-          refId: id,
-          dedupe: true,
-        });
+        try {
+          const grant = await grantStanding(prisma, {
+            userId: uid,
+            source: "TELL",
+            amount: STANDING.TELL + axisBonus,
+            refId: id,
+            dedupe: true,
+          });
+          if (grant.granted) {
+            standing = {
+              amount: grant.amount,
+              newStanding: grant.newStanding,
+              rangUp: grant.rangUp,
+            };
+          }
+        } catch (err) {
+          logger.error(
+            "[tells.answer] standing grant failed",
+            err instanceof Error ? err : new Error(String(err)),
+            { tellId: id, userId: uid },
+          );
+        }
       }
     }
 
-    const res = NextResponse.json(result);
+    const res = NextResponse.json({ ...result, standing });
     if (ctx.anonIdMinted) setAnonCookie(res, ctx.anonId);
     return res;
   } catch (err) {
