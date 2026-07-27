@@ -13,6 +13,7 @@ import { z } from "zod";
 import {
   resolveTellContext,
   setAnonCookie,
+  staleCredentialResponse,
 } from "@/lib/tells/auth-context";
 import { recordAnswer, RecordAnswerInputError } from "@/lib/tells/db";
 import { prisma } from "@/lib/prisma";
@@ -49,6 +50,12 @@ export async function POST(
   }
 
   const ctx = await resolveTellContext();
+
+  // A member whose accessToken lapsed mid-session must not have this
+  // answer filed under an anonymous id: the score, Standing, streak and
+  // history entry would all be written to nobody, behind a 200. Refuse,
+  // and let the client refresh and resend.
+  if (ctx.stale) return staleCredentialResponse();
 
   try {
     const result = await recordAnswer({
