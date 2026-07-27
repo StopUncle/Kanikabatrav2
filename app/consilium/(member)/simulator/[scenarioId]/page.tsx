@@ -139,7 +139,9 @@ export default async function SimulatorPlay({
   // "Next scenario" link, whatever comes after this one in ALL_SCENARIOS.
   const currentIdx = ALL_SCENARIOS.findIndex((s) => s.id === scenario.id);
   const next = currentIdx >= 0 ? ALL_SCENARIOS[currentIdx + 1] : undefined;
-  const nextHref = next ? `/consilium/simulator/${next.id}` : null;
+  // Into the app, not the legacy runner: finishing a scenario and being
+  // handed to the old skin for the next one undoes the whole point.
+  const nextHref = next ? `/app/train/${next.id}` : null;
 
   return (
     <SimulatorPageClient
