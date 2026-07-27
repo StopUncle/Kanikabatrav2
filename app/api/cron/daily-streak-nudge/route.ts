@@ -9,11 +9,16 @@ import { logger } from "@/lib/logger";
  * Cron: daily streak-save / mission nudge — the retention mechanic against
  * dormancy.
  *
- * Runs once a day, a few hours before the UTC midnight that breaks streaks.
- * Pushes every ACTIVE member who hasn't played today:
+ * Sweeps hourly and nudges each member in their own hour, derived from when
+ * they last opened the app. At most one nudge per member per UTC day:
  *   - at-risk streak holders (streak > 0, last play = yesterday) get
  *     "your N-day streak breaks tonight"
  *   - everyone else who hasn't played gets a gentler "today's mission is ready"
+ *
+ * Skipped: anyone who played today, and anyone who merely opened the app
+ * today. The second one matters. Someone who has been in already saw the
+ * mission card; pushing them is nagging, and nagging is how a product ends
+ * up muted.
  *
  * Push only. Email re-engagement for the genuinely-gone cohort is handled by
  * the 14-day dormant-member drip; a *daily* email would be fatiguing. Push
@@ -25,8 +30,27 @@ import { logger } from "@/lib/logger";
  * second nudge the same day (e.g. a manual re-run over the scheduled one).
  */
 
+/**
+ * Fallback send hour (UTC) for members with no lastSeenAt to learn from.
+ * The old fixed schedule, kept for anyone we know nothing about yet.
+ */
+const FALLBACK_SEND_HOUR_UTC = 20;
+
 function utcDateKey(d: Date): string {
   return d.toISOString().slice(0, 10);
+}
+
+/**
+ * The hour we nudge this member, in UTC.
+ *
+ * Derived from when they were last actually here. A UTC hour would be a
+ * poor guess at someone's evening, but the hour they themselves last
+ * opened the app is not a guess: their timezone and their habits are
+ * already baked into it. Members we have never seen fall back to the
+ * fixed evening slot.
+ */
+function sendHourFor(lastSeenAt: Date | null): number {
+  return lastSeenAt ? lastSeenAt.getUTCHours() : FALLBACK_SEND_HOUR_UTC;
 }
 
 export async function POST(request: NextRequest) {
@@ -54,13 +78,18 @@ export async function POST(request: NextRequest) {
         id: true,
         dailyStreakCurrent: true,
         dailyStreakLastDate: true,
+        lastSeenAt: true,
         pushPreferences: true,
       },
     });
 
+    const hourNow = now.getUTCHours();
+
     let atRiskSent = 0;
     let missionSent = 0;
     let alreadyPlayed = 0;
+    let alreadyOpened = 0;
+    let notTheirHour = 0;
     let skippedSent = 0;
 
     for (const m of members) {
@@ -69,6 +98,20 @@ export async function POST(request: NextRequest) {
         alreadyPlayed++;
         continue;
       }
+      // Opened the app today without playing. They have already seen the
+      // mission card sitting there, so a push would be nagging rather than
+      // reminding. The nudge is for people who have not been back.
+      if (m.lastSeenAt && utcDateKey(m.lastSeenAt) === today) {
+        alreadyOpened++;
+        continue;
+      }
+      // Their hour, not ours. The cron sweeps hourly and each member is
+      // only eligible in the slot their own history points at.
+      if (sendHourFor(m.lastSeenAt) !== hourNow) {
+        notTheirHour++;
+        continue;
+      }
+
       const prefs =
         (m.pushPreferences as Record<string, unknown> | null) ?? {};
       // One nudge per UTC day.
@@ -124,7 +167,10 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       success: true,
       candidates: members.length,
+      hourUtc: hourNow,
       alreadyPlayed,
+      alreadyOpened,
+      notTheirHour,
       atRiskSent,
       missionSent,
       skippedSent,

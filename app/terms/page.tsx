@@ -141,6 +141,37 @@ export default function TermsPage() {
                       at the end of the trial your access expires unless you
                       subscribe. No charges are made during the trial.
                     </p>
+                    <p className="text-text-gray leading-relaxed mb-4">
+                      The Consilium is for adults. You must be 18 or older to
+                      join, and accounts found to belong to minors are closed
+                      and refunded.
+                    </p>
+                  </div>
+
+                  <div>
+                    <h3 className="text-lg font-light text-accent-gold mb-3">
+                      Messaging Kanika Directly
+                    </h3>
+                    <p className="text-text-gray leading-relaxed mb-4">
+                      Members can write to Kanika directly from inside The
+                      Consilium. She reads everything. She does not reply to
+                      everything, and replies usually take days rather than
+                      hours, because she answers them herself. Nothing in that
+                      channel is written, drafted or suggested by AI.
+                    </p>
+                    <p className="text-text-gray leading-relaxed mb-4">
+                      To keep that possible, you can have one unanswered
+                      message waiting at a time. Once she replies, or after 24
+                      hours, you can write again.
+                    </p>
+                    <p className="text-text-gray leading-relaxed">
+                      This is education, not therapy. It is not counselling,
+                      not medical or psychiatric advice, and not a crisis
+                      service. If you are in danger or in crisis, contact your
+                      local emergency number, Lifeline on 13 11 14 in
+                      Australia, or the 988 Suicide &amp; Crisis Lifeline in
+                      the United States.
+                    </p>
                   </div>
 
                   <div>

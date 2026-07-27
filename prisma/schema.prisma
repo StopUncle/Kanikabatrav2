@@ -132,6 +132,8 @@ model User {
   // user with phone + laptop has two rows. Pruned automatically
   // when web-push reports a 404/410 from the push service.
   pushSubscriptions         PushSubscription[]
+  /// Delivered-push log, read only by the rolling send cap in lib/push.
+  pushSends                 PushSend[]
   // Per-category push notification opt-ins. JSON for flexibility:
   // { questionAnswered: true, voiceNote: true, forumReply: false }.
   // Null = all defaults (treated as opt-in for the categories
@@ -2337,4 +2339,24 @@ model MirrorReading {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId, takenAt])
+}
+
+/// One delivered push, logged so the rolling send cap can be enforced.
+///
+/// The cap is the whole reason this table exists: without a record of what
+/// was sent, "no more than five a week" is unenforceable and the app slowly
+/// becomes the thing people mute. Rows are small and pruned after 30 days by
+/// the weekly digest cron.
+model PushSend {
+  id       String   @id @default(cuid())
+  userId   String
+  /// PushCategory value from lib/push/index.ts. String rather than an enum
+  /// so adding a category stays a code change, not a migration.
+  category String
+  sentAt   DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, sentAt])
+  @@index([sentAt])
 }

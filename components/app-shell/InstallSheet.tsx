@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { ANALYTICS_EVENTS } from "@/lib/analytics/events";
+import { capture } from "@/lib/analytics/client";
 
 /**
  * The install sheet, app skin. Slides up on the Arrival screen once, because
@@ -58,6 +60,7 @@ export default function InstallSheet() {
       e.preventDefault();
       setDeferred(e as BeforeInstallPromptEvent);
       setVisible(true);
+      capture(ANALYTICS_EVENTS.INSTALL_PROMPT_SHOWN, { surface: "sheet" });
     }
     window.addEventListener("beforeinstallprompt", onBeforeInstall);
     return () =>
@@ -77,7 +80,10 @@ export default function InstallSheet() {
     if (!deferred) return;
     await deferred.prompt();
     const choice = await deferred.userChoice;
-    if (choice.outcome === "accepted") setVisible(false);
+    if (choice.outcome === "accepted") {
+      capture(ANALYTICS_EVENTS.INSTALL_PROMPT_ACCEPTED, { surface: "sheet" });
+      setVisible(false);
+    }
     else dismiss();
     setDeferred(null);
   }

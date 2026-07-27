@@ -9,6 +9,8 @@
  */
 
 import { NextResponse, type NextRequest } from "next/server";
+import { captureServerAsync } from "@/lib/analytics/server";
+import { ANALYTICS_EVENTS } from "@/lib/analytics/events";
 import { z } from "zod";
 import type { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
@@ -123,6 +125,15 @@ export async function POST(request: NextRequest) {
     } catch (error) {
       logger.error("[baseline] standing grant failed", error as Error);
     }
+
+    // The activation metric. Properties carry the shape of the sitting,
+    // never a score: The Mark does not publish numbers, not even to us.
+    captureServerAsync(user.id, ANALYTICS_EVENTS.BASELINE_COMPLETED, {
+      items_version: BASELINE_ITEMS_VERSION,
+      item_count: grade.itemCount,
+      missed: grade.itemCount - grade.correctCount,
+      is_retake: Boolean(last),
+    });
 
     return NextResponse.json({
       attemptId: attempt.id,
