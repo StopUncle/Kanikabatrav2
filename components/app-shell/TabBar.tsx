@@ -87,6 +87,7 @@ export default function TabBar() {
   }, [onKanika, fetchUnread]);
 
   const isMoreRoute =
+    pathname.startsWith("/app/play") ||
     pathname.startsWith("/app/path") ||
     pathname.startsWith("/app/you") ||
     pathname.startsWith("/app/ranks") ||

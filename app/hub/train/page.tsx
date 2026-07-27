@@ -191,26 +191,16 @@ export default async function TrainPage() {
           }
         />
         <Move
-          href="/consilium/instincts/today"
-          title="Daily tell"
-          sub="Read the moment, spot the tell."
-          cta="READ"
+          href="/app/play"
+          title="Arcade"
+          sub="Speed Drill and the Daily Tell."
+          cta="OPEN"
           icon={
             <svg viewBox="0 0 24 24">
-              <circle cx="12" cy="12" r="9" />
-              <circle cx="12" cy="12" r="3.5" />
-            </svg>
-          }
-        />
-        <Move
-          href="/consilium/games"
-          title="Speed drill"
-          sub="Pattern recognition against the clock."
-          cta="PLAY"
-          icon={
-            <svg viewBox="0 0 24 24">
-              <circle cx="12" cy="13" r="8" />
-              <path d="M12 9v4l2.5 2.5M9 2h6" />
+              <rect x="2" y="7" width="20" height="12" rx="4" />
+              <path d="M7 11.5v3M5.5 13h3" />
+              <circle cx="16" cy="12" r="0.9" />
+              <circle cx="18.4" cy="14.4" r="0.9" />
             </svg>
           }
         />
