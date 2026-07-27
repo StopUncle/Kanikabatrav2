@@ -16,12 +16,16 @@ function makeRng(seed: number): SeedRng {
 }
 
 describe("pickCommentCount", () => {
+  // Halved in the 2026-07-27 quiet-bots pass. Twelve comments under a
+  // prompt read as a room with nothing left to say, and buried the one
+  // real member who wrote. These numbers are the intent, so they are
+  // asserted literally rather than read back from the source.
   const cases: Array<[PostTypeAffinity, number, number]> = [
-    ["AUTOMATED", 3, 5],
-    ["ANNOUNCEMENT", 5, 9],
-    ["DISCUSSION_PROMPT", 7, 12],
-    ["VOICE_NOTE", 6, 10],
-    ["VIDEO", 6, 10],
+    ["AUTOMATED", 1, 3],
+    ["ANNOUNCEMENT", 2, 4],
+    ["DISCUSSION_PROMPT", 3, 5],
+    ["VOICE_NOTE", 2, 4],
+    ["VIDEO", 2, 4],
   ];
   it.each(cases)("returns within range for %s", (type, lo, hi) => {
     const rng = makeRng(42);
@@ -36,8 +40,8 @@ describe("pickCommentCount", () => {
     const rng = makeRng(7);
     for (let i = 0; i < 50; i++) {
       const n = pickCommentCount("ANNOUNCEMENT", true, rng);
-      expect(n).toBeGreaterThanOrEqual(2);
-      expect(n).toBeLessThanOrEqual(4);
+      expect(n).toBeGreaterThanOrEqual(1);
+      expect(n).toBeLessThanOrEqual(2);
     }
   });
 });
