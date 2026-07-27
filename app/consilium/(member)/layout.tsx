@@ -6,6 +6,7 @@ import InnerCircleSidebar from "@/components/consilium/InnerCircleSidebar";
 import MemberPillNav from "@/components/consilium/MemberPillNav";
 import SessionWatermark from "@/components/consilium/SessionWatermark";
 import ServiceWorkerRegister from "@/components/pwa/ServiceWorkerRegister";
+import AnalyticsIdentify from "@/components/analytics/AnalyticsIdentify";
 import InstallPrompt from "@/components/pwa/InstallPrompt";
 import NotificationPrompt from "@/components/pwa/NotificationPrompt";
 import { prisma } from "@/lib/prisma";
@@ -30,7 +31,14 @@ export default async function MemberLayout({
   // online count, simulator stats, recent activity. Bundling in
   // Promise.all keeps TTFB tight as the sidebar gets richer.
   const fiveMinAgo = new Date(Date.now() - 5 * 60 * 1000);
-  const [onlineCount, me, simStats, recentActivity, dailyStreak] = await Promise.all([
+  const [
+    onlineCount,
+    me,
+    simStats,
+    recentActivity,
+    dailyStreak,
+    baselineAttempts,
+  ] = await Promise.all([
     prisma.user.count({
       where: {
         communityMembership: { status: "ACTIVE" },
@@ -56,6 +64,7 @@ export default async function MemberLayout({
     }),
     getRecentActivity(5),
     readDailyStreak(prisma, userId),
+    prisma.baselineAttempt.count({ where: { userId } }),
   ]);
 
   // The Initiation is mandatory: members who haven't completed it get
@@ -119,10 +128,14 @@ export default async function MemberLayout({
           Mounted member-side only — non-members don't get pestered
           to install an app they can't use. NotificationPrompt
           self-defers a few seconds behind InstallPrompt so the two
-          banners don't fight for attention on the same page load. */}
+          banners don't fight for attention on the same page load.
+          NotificationPrompt additionally waits for a finished Baseline
+          Read: the browser gives one shot at the permission dialog and
+          it is worth more once the member has a result to be told about. */}
+      <AnalyticsIdentify userId={userId} />
       <ServiceWorkerRegister />
       <InstallPrompt />
-      <NotificationPrompt />
+      <NotificationPrompt unlocked={baselineAttempts > 0} />
     </div>
   );
 }

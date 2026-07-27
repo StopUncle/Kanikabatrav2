@@ -63,10 +63,11 @@ on:
     # collisions). Drift detector: writes mismatches to
     # MembershipReconciliation for admin review. No automatic remediation.
     - cron: '23 * * * *'
-    # Daily streak-save / mission nudge — 20:00 UTC, a few hours before the
-    # UTC-midnight rollover that breaks streaks, so members have the evening
-    # to act. Pushes active members who haven't played today.
-    - cron: '0 20 * * *'
+    # Streak-save / mission nudge. Hourly at :47 (clear of the :00/:15/:30/:45
+    # email queue, :03 daily-tell and :23 reconcile). The endpoint decides who
+    # is due: each member is nudged in the hour their own lastSeenAt points at,
+    # at most once per UTC day, so this is a sweep rather than 24 sends.
+    - cron: '47 * * * *'
     # Generate the daily scenario draft for admin review. 11:00 UTC, after
     # the morning content drops. The draft only goes live when published
     # from /admin/scenarios.
@@ -349,11 +350,12 @@ jobs:
             --max-time 120
 
   daily-streak-nudge:
-    # Daily at 20:00 UTC — a few hours before the UTC-midnight rollover that
-    # breaks streaks. Pushes active members who haven't played today: at-risk
-    # streak holders get a save reminder, everyone else a gentle mission ping.
+    # Hourly sweep. Each member is nudged only in the hour derived from their
+    # own last visit, and only if they have neither played nor opened the app
+    # today: at-risk streak holders get a save reminder, everyone else a
+    # gentle mission ping.
     if: >-
-      github.event.schedule == '0 20 * * *' ||
+      github.event.schedule == '47 * * * *' ||
       (github.event_name == 'workflow_dispatch' &&
        (github.event.inputs.target == 'all' || github.event.inputs.target == 'daily-streak-nudge'))
     runs-on: ubuntu-latest

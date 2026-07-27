@@ -1,4 +1,6 @@
 import { NextResponse } from "next/server";
+import { captureServerAsync } from "@/lib/analytics/server";
+import { ANALYTICS_EVENTS } from "@/lib/analytics/events";
 import { checkMembership } from "@/lib/community/membership";
 import { isAdmin } from "@/lib/community/membership";
 import { getAdminUserId } from "@/lib/auth/server-auth";
@@ -236,6 +238,23 @@ export async function POST(
         data: { commentCount: { increment: 1 } },
       }),
     ]);
+
+    // First comment ever. The count runs after the write, so exactly one
+    // is the one that just landed. Off the response path: nobody waits on
+    // a funnel event to see their own comment appear.
+    void prisma.feedComment
+      .count({ where: { authorId: userId } })
+      .then((total) => {
+        if (total === 1) {
+          captureServerAsync(userId, ANALYTICS_EVENTS.FIRST_COMMENT, {
+            post_id: postId,
+            is_reply: Boolean(effectiveParentId),
+          });
+        }
+      })
+      .catch(() => {
+        /* analytics only */
+      });
 
     // Notify the person being replied to (not yourself) so a reply pulls
     // them back. Only fires for visible (APPROVED) replies; fire-and-
