@@ -1,46 +1,71 @@
-import Link from "next/link";
 import { redirect } from "next/navigation";
 import { requireServerAuth } from "@/lib/auth/server-auth";
 import { checkMembership } from "@/lib/community/membership";
 import BackgroundEffects from "@/components/BackgroundEffects";
+import InnerCircleSidebar from "@/components/consilium/InnerCircleSidebar";
+import MemberPillNav from "@/components/consilium/MemberPillNav";
 import SessionWatermark from "@/components/consilium/SessionWatermark";
 import ServiceWorkerRegister from "@/components/pwa/ServiceWorkerRegister";
 import AnalyticsIdentify from "@/components/analytics/AnalyticsIdentify";
+import InstallPrompt from "@/components/pwa/InstallPrompt";
+import NotificationPrompt from "@/components/pwa/NotificationPrompt";
 import { prisma } from "@/lib/prisma";
+import { tierForMember, daysToNextTier } from "@/components/consilium/badge-tiers";
 import { computeFingerprint } from "@/lib/community/fingerprint";
+import { getRecentActivity } from "@/lib/community/activity";
+import { readDailyStreak } from "@/lib/streak/daily";
 
-/**
- * The annex.
- *
- * After the cutover the member's home is /app. This layout no longer serves
- * a member's day: it holds the surfaces that have no /app equivalent yet
- * (the simulator catalog and runner, Adventures, The Lab, Receipts, the
- * instinct hex and history, Previews) plus anything a stale link still
- * reaches.
- *
- * So the sidebar and the pill nav are gone. Two full navigations, each
- * claiming to be the way around, is how an app starts feeling like two
- * half-built apps. What is left is a single way back, and the queries that
- * fed the old nav (online count, tier, streak, recent activity, simulator
- * totals) are gone with it: six round-trips that every one of these pages
- * was paying for a nav it no longer renders.
- */
 export default async function MemberLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const userId = await requireServerAuth("/app");
+  const userId = await requireServerAuth("/consilium/feed");
   const { isMember, redirectUrl } = await checkMembership(userId);
 
   if (!isMember) {
     redirect(redirectUrl || "/consilium");
   }
 
-  const me = await prisma.user.findUnique({
-    where: { id: userId },
-    select: { initiationAt: true, role: true },
-  });
+  // Single round-trip for everything the sidebar needs: viewer record,
+  // online count, simulator stats, recent activity. Bundling in
+  // Promise.all keeps TTFB tight as the sidebar gets richer.
+  const fiveMinAgo = new Date(Date.now() - 5 * 60 * 1000);
+  const [
+    onlineCount,
+    me,
+    simStats,
+    recentActivity,
+    dailyStreak,
+    baselineAttempts,
+  ] = await Promise.all([
+    prisma.user.count({
+      where: {
+        communityMembership: { status: "ACTIVE" },
+        updatedAt: { gte: fiveMinAgo },
+        isBot: false,
+      },
+    }),
+    prisma.user.findUnique({
+      where: { id: userId },
+      select: {
+        displayName: true,
+        role: true,
+        initiationAt: true,
+        communityMembership: {
+          select: { activatedAt: true },
+        },
+      },
+    }),
+    prisma.simulatorProgress.aggregate({
+      where: { userId },
+      _sum: { xpEarned: true },
+      _count: { _all: true },
+    }),
+    getRecentActivity(5),
+    readDailyStreak(prisma, userId),
+    prisma.baselineAttempt.count({ where: { userId } }),
+  ]);
 
   // The Initiation is mandatory: members who haven't completed it get
   // routed into the flow before any member surface renders. The
@@ -51,40 +76,66 @@ export default async function MemberLayout({
     redirect("/consilium/initiation");
   }
 
+  // Current tier is pure function of (role, activatedAt), no DB
+  // column to keep in sync, no cron to run, no drift. Admins always
+  // read as Queen regardless of tenure.
+  const currentTier = tierForMember({
+    role: me?.role,
+    activatedAt: me?.communityMembership?.activatedAt ?? null,
+  });
+  const displayName = me?.displayName || "Counselor";
+
+  const totalXp = simStats._sum.xpEarned ?? 0;
+  const completedRuns = simStats._count._all;
+  const daysToNext =
+    me?.role === "ADMIN"
+      ? null
+      : daysToNextTier(me?.communityMembership?.activatedAt ?? null);
+
   const fingerprint = computeFingerprint(userId);
 
+  // The public marketing Header used to render here too. It's gone now —
+  // member pages should feel like a private destination, not a tab in
+  // the brochure site. Everything a member needs (back to dashboard,
+  // profile, logout) lives in the sidebar footer.
   return (
     <div className="min-h-screen bg-deep-black text-text-light">
       <BackgroundEffects />
-      <div className="relative z-10">
-        <div className="sticky top-0 z-40 border-b border-accent-gold/15 bg-deep-black/85 backdrop-blur-sm">
-          <Link
-            href="/app"
-            className="mx-auto flex max-w-3xl items-center gap-2 px-4 py-3 text-[11px] uppercase tracking-[0.22em] text-text-gray transition-colors hover:text-accent-gold"
-          >
-            <svg
-              viewBox="0 0 24 24"
-              className="h-3.5 w-3.5"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="1.8"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              aria-hidden="true"
-            >
-              <path d="M15 18l-6-6 6-6" />
-            </svg>
-            Back to Consilium
-          </Link>
-        </div>
-        <main className="min-w-0">{children}</main>
+      <div className="relative z-10 lg:flex">
+        <InnerCircleSidebar
+          onlineCount={onlineCount}
+          currentTier={currentTier}
+          displayName={displayName}
+          totalXp={totalXp}
+          completedRuns={completedRuns}
+          daysToNext={daysToNext}
+          dailyStreak={dailyStreak.current}
+          streakAtRisk={dailyStreak.isAtRisk}
+          recentActivity={recentActivity}
+        />
+        <main className="flex-1 min-w-0 pt-14 lg:pt-0">
+          {/* Quick-access pill nav. Sits at the top of every member
+              page as a sticky strip, the equivalent of "below the
+              header" for a space that uses the sidebar instead of
+              the marketing Header. Re-uses the same `onlineCount`
+              already fetched for the sidebar (no extra round-trip). */}
+          <MemberPillNav onlineCount={onlineCount} />
+          {children}
+        </main>
       </div>
       <SessionWatermark fingerprint={fingerprint} />
-      {/* The install and notification prompts moved to the app shell with
-          the members. This layout keeps only the service worker (so an
-          annex page opened from a push still has one) and identify. */}
+      {/* PWA hooks: SW registration + install banner + push prompt.
+          Mounted member-side only — non-members don't get pestered
+          to install an app they can't use. NotificationPrompt
+          self-defers a few seconds behind InstallPrompt so the two
+          banners don't fight for attention on the same page load.
+          NotificationPrompt additionally waits for a finished Baseline
+          Read: the browser gives one shot at the permission dialog and
+          it is worth more once the member has a result to be told about. */}
       <AnalyticsIdentify userId={userId} />
       <ServiceWorkerRegister />
+      <InstallPrompt />
+      <NotificationPrompt unlocked={baselineAttempts > 0} />
     </div>
   );
 }

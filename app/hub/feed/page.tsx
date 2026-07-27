@@ -16,13 +16,8 @@ export const metadata = {
  * cursor pagination via the existing API); only the render layer is new.
  * Comment threads open /app/feed/[postId].
  */
-export default async function AppFeedPage({
-  searchParams,
-}: {
-  searchParams: Promise<{ claimed?: string }>;
-}) {
+export default async function AppFeedPage() {
   const userId = await requireServerAuth("/app/feed");
-  const justClaimed = (await searchParams).claimed === "1";
 
   const viewerRecord = await prisma.user.findUnique({
     where: { id: userId },
@@ -109,26 +104,6 @@ export default async function AppFeedPage({
       <p className="mb-5 mt-1 text-[13px] text-[var(--app-muted)]">
         Kanika&apos;s room. Posts, voice notes, and the talk under them.
       </p>
-
-      {justClaimed && (
-        // Shown once, straight off the magic-claim flow. A gift member
-        // arrives with a session but no password, so without this they can
-        // be locked out the moment they open the app on another device.
-        // Non-dismissible on purpose: it disappears as soon as they
-        // navigate anywhere else.
-        <div className="mb-5 rounded-2xl border border-[var(--app-gold)]/35 bg-[var(--app-gold)]/[0.06] px-4 py-4">
-          <p className="mb-1 text-[10px] uppercase tracking-[0.25em] text-[var(--app-gold)]">
-            Your gift is claimed
-          </p>
-          <p className="text-[13px] font-light leading-relaxed text-[var(--app-text)]">
-            30 days start now. Check your email for a{" "}
-            <strong className="font-normal text-[var(--app-gold)]">
-              set-your-password
-            </strong>{" "}
-            link so you can log back in from any device later.
-          </p>
-        </div>
-      )}
 
       {formatted.length === 0 ? (
         <p className="rounded-2xl border border-[var(--app-line-soft)] bg-[var(--app-card)] px-4 py-8 text-center text-[13px] text-[var(--app-muted)]">
