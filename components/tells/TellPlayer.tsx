@@ -10,6 +10,7 @@ import type {
   TellChoice,
 } from "@/lib/tells/types";
 import { TRACK_LABELS, AXIS_LABELS } from "@/lib/tells/types";
+import { fetchWithRefresh } from "@/lib/auth/fetch-with-refresh";
 import {
   EMPTY_STREAK,
   complete,
@@ -147,7 +148,7 @@ export default function TellPlayer({
     }
 
     const answerMs = Math.max(0, Date.now() - startedAtRef.current);
-    fetch(`/api/tells/${encodeURIComponent(tell.id)}/answer`, {
+    fetchWithRefresh(`/api/tells/${encodeURIComponent(tell.id)}/answer`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ choiceId, answerMs }),

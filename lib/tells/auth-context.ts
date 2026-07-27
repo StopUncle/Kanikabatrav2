@@ -21,6 +21,21 @@ export interface TellContext {
   /** True if anonId was minted on this request, so the route handler
    *  knows to set the cookie on the response. */
   anonIdMinted: boolean;
+  /**
+   * True when the request carried an accessToken that failed to verify
+   * and nothing else identified the caller.
+   *
+   * This is NOT the same as anonymous. A visitor with no cookie at all
+   * is anonymous on purpose, and public /tells depends on that. A member
+   * whose 15-minute accessToken just expired is not anonymous: they hold
+   * a 7-day refreshToken and are one silent refresh away from being
+   * themselves again. Writing their work to anonId instead loses it.
+   *
+   * Routes that persist member-owned progress must refuse a stale
+   * request so the client can refresh and retry. Read-only routes can
+   * ignore this and degrade to the anonymous view.
+   */
+  stale: boolean;
 }
 
 const ANON_COOKIE = "kb-tells-anon";
@@ -30,13 +45,18 @@ export async function resolveTellContext(): Promise<TellContext> {
   const store = await cookies();
 
   let userId: string | null = null;
+  let stale = false;
   const access = store.get("accessToken")?.value;
   if (access) {
     try {
       const payload = verifyAccessToken(access);
       userId = payload?.userId ?? null;
+      // A token that verifies but carries no userId is malformed, which
+      // is a stale credential too: the caller believes they are signed in.
+      stale = userId === null;
     } catch {
       userId = null;
+      stale = true;
     }
   }
 
@@ -47,6 +67,8 @@ export async function resolveTellContext(): Promise<TellContext> {
   // request, matching the behavior of requireServerAuth on the page.
   if (!userId) {
     userId = await getAdminUserId();
+    // An admin session identified them after all, so nothing is stale.
+    if (userId) stale = false;
   }
 
   let anonId = store.get(ANON_COOKIE)?.value;
@@ -56,7 +78,19 @@ export async function resolveTellContext(): Promise<TellContext> {
     anonIdMinted = true;
   }
 
-  return { userId, anonId, anonIdMinted };
+  return { userId, anonId, anonIdMinted, stale };
+}
+
+/**
+ * The response a route should send when a stale credential would have
+ * cost the member their work. `retry: true` tells the client this is
+ * worth one refresh-and-resend, as opposed to a real sign-in prompt.
+ */
+export function staleCredentialResponse(): Response {
+  return Response.json(
+    { error: "Session expired", retry: true },
+    { status: 401 },
+  );
 }
 
 /** Apply a freshly minted anonId to the response cookies. */
