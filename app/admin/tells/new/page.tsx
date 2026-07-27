@@ -35,6 +35,8 @@ export default async function NewTellPage() {
           track: "DARK_PSYCH",
           axes: ["READ"],
           difficulty: 3,
+          tactic: null,
+          operatorType: null,
           artifact: {
             kind: "voicemail",
             speakerLabel: "",

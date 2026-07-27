@@ -2,8 +2,10 @@ import { requireServerAuth } from "@/lib/auth/server-auth";
 import { prisma } from "@/lib/prisma";
 import { readDailyStreak } from "@/lib/streak/daily";
 import { ringByLevel, standingToNextRing } from "@/lib/standing/config";
+import { readMark } from "@/lib/mark/read";
 import RingEmblem from "@/components/rings/RingEmblem";
 import Move from "@/components/app-shell/Move";
+import MarkPanel from "@/components/mark/MarkPanel";
 
 export const metadata = {
   title: "You | Consilium",
@@ -16,7 +18,7 @@ export const metadata = {
 export default async function YouPage() {
   const userId = await requireServerAuth("/app/you");
 
-  const [viewer, dailyStreak, simStats] = await Promise.all([
+  const [viewer, dailyStreak, simStats, mark] = await Promise.all([
     prisma.user.findUnique({
       where: { id: userId },
       select: { displayName: true, standing: true, ringLevel: true },
@@ -26,6 +28,7 @@ export default async function YouPage() {
       where: { userId, completedAt: { not: null } },
       _count: { _all: true },
     }),
+    readMark(prisma, userId),
   ]);
 
   const standing = viewer?.standing ?? 0;
@@ -101,6 +104,13 @@ export default async function YouPage() {
             </p>
           </div>
         ))}
+      </div>
+
+      {/* The Mark: how easily you get played. Sits under the tallies
+          because it is the one thing here that is about skill rather
+          than attendance. */}
+      <div className="mb-6">
+        <MarkPanel read={mark} />
       </div>
 
       {/* The rest of the house */}

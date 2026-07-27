@@ -145,6 +145,13 @@ model User {
   instinctScore             InstinctScore?
   tellStreak                TellStreak?
   leagueMemberships         LeagueMembership[]
+  // The Mark: the vulnerability profile. markEncounters is the ledger
+  // every graded moment writes to; baselineAttempts are the keyed
+  // sittings; mirrorReadings are Dark Mirror results taken in-app. The
+  // Mark and The Mirror are separate instruments and never mix.
+  markEncounters            MarkEncounter[]
+  baselineAttempts          BaselineAttempt[]
+  mirrorReadings            MirrorReading[]
   // The Board: a member's own /100 crowd score per figure, and the
   // re-score petitions they have signed. Both gated behind a free
   // account (the JWT cookie pair), one row per (figure, user).
@@ -1440,6 +1447,12 @@ model Tell {
   // the array natively; an enum array would be tidier but Prisma's
   // enum-array support is fragile across migrations.
   axes         String[] // InstinctAxis values
+  // The Mark tags: which tactic this Tell runs, and which kind of
+  // operator runs it. Vocabulary lives in lib/mark/taxonomy.ts (String,
+  // not a Prisma enum, so the forge can widen it without a migration).
+  // Null on both = the Tell is scored but never speaks in the ledger.
+  tactic       String?
+  operatorType String?
   difficulty   Int           @default(3) // 1-5
   // Polymorphic artifact payload. Shape depends on format:
   //   voicemail     → { kind, speakerLabel, transcript, durationLabel? }
@@ -2233,4 +2246,95 @@ model UserPathProgress {
 
   @@unique([userId, stepId])
   @@index([userId])
+}
+
+// ---------------------------------------------------------------------
+// The Mark: how easily you get played.
+//
+// A different instrument from The Mirror (the Dark Mirror quiz, who you
+// are) and from Standing (showing up). Nothing here ever feeds Standing
+// and Standing never feeds anything here.
+// ---------------------------------------------------------------------
+
+/// Which surface a graded moment came from.
+enum MarkSource {
+  BASELINE
+  TELL
+  SCENARIO
+  LAB
+  RECEIPT
+}
+
+/// One graded moment: a tagged item the member either caught or did not.
+/// The whole measurement layer reads from this one ledger, so a new
+/// surface joins by writing rows here (lib/mark/encounters.ts) and needs
+/// no schema change and no new join.
+///
+/// `tactic` and `operatorType` are Strings holding lib/mark/taxonomy.ts
+/// values, narrowed with asTactic()/asOperator() on read. Rows carrying
+/// an unrecognised label are dropped at read time rather than crashing
+/// the panel.
+model MarkEncounter {
+  id           String     @id @default(cuid())
+  userId       String
+  /// At least one of tactic/operatorType is always set, never neither.
+  /// A "what is being run here" item tags a tactic; a "which cluster is
+  /// this" item tags only the operator; most tag both. A row feeds only
+  /// the ledgers it carries a label for.
+  tactic       String?
+  operatorType String?
+  correct      Boolean
+  source       MarkSource
+  /// The originating row: tellId, baseline item id, scenarioId. With
+  /// `source`, the dedupe key that keeps a replay from counting twice.
+  sourceId     String?
+  answerMs     Int?
+  createdAt    DateTime   @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt])
+  @@index([userId, tactic])
+  @@index([userId, operatorType])
+}
+
+/// One sitting of the Baseline Read: the day-one keyed test, retaken
+/// monthly. `answers` holds [{ itemId, choiceId, correct, answerMs }].
+/// correctCount is stored for the catch-rate line, never displayed as a
+/// score: The Mark speaks in sentences, not numbers.
+model BaselineAttempt {
+  id           String   @id @default(cuid())
+  userId       String
+  /// Which item bank this sitting used, so a later rotation stays
+  /// comparable to itself rather than silently to a different test.
+  itemsVersion String
+  answers      Json
+  correctCount Int
+  itemCount    Int
+  takenAt      DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, takenAt])
+}
+
+/// The Mirror, stored. The Initiation's abbreviated Dark Mirror produced
+/// a result and threw it away; this keeps it. Deliberately NOT a
+/// QuizResult row: that model carries payment, delivery and credit-code
+/// state, and a free in-app reading is none of those things.
+model MirrorReading {
+  id            String   @id @default(cuid())
+  userId        String
+  /// Where it was taken, e.g. "INITIATION". Free-form so a later surface
+  /// can record its own without a migration.
+  source        String
+  /// Per-axis percentages, same shape as QuizResult.scores.
+  scores        Json
+  dominantType  String
+  secondaryType String?
+  takenAt       DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, takenAt])
 }
