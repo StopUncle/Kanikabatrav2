@@ -68,29 +68,38 @@ export default async function AppShellLayout({
   return (
     <div
       data-app-shell
-      className={`${fraunces.variable} ${instrument.variable} min-h-[100dvh] bg-[#060505]`}
+      className={`${fraunces.variable} ${instrument.variable} h-[100dvh] overflow-hidden bg-[#060505]`}
       style={{ fontFamily: "var(--font-ui)" }}
     >
       {/* On a wide screen the app sits in its phone column with the handoff
           panel beside it. Below lg the panel is gone and the column is the
           whole screen, which is where this is meant to be used.
 
-          Pages own their bottom padding (`pb-28` on scrolling screens) so a
-          full-height screen like the Kanika thread can pin its composer
-          directly above the tab bar. */}
-      <div className="mx-auto flex min-h-[100dvh] w-full max-w-[430px] items-start justify-center lg:max-w-5xl lg:gap-14 lg:px-8 lg:py-10">
-        <div className="relative min-h-[100dvh] w-full max-w-[430px] shrink-0 bg-[var(--app-black)] text-[var(--app-text)] lg:min-h-[844px] lg:overflow-hidden lg:rounded-[44px] lg:border lg:border-[#262220] lg:shadow-[0_30px_80px_rgba(0,0,0,0.6)]">
-          {children}
+          The shell is a fixed-height flex column and the CONTENT scrolls
+          inside it, rather than the document scrolling under a fixed tab
+          bar. That distinction is the whole reason the bar used to drift:
+          a `fixed` element is pinned to the visual viewport, so on iOS it
+          slides around as the address bar collapses and expands. As the
+          last row of a container that is exactly one viewport tall, it
+          cannot move, and the app stops feeling like a web page. */}
+      <div className="mx-auto flex h-[100dvh] w-full max-w-[430px] items-start justify-center lg:max-w-5xl lg:gap-14 lg:px-8 lg:py-10">
+        <div className="relative flex h-[100dvh] w-full max-w-[430px] shrink-0 flex-col overflow-hidden bg-[var(--app-black)] text-[var(--app-text)] lg:h-[844px] lg:rounded-[44px] lg:border lg:border-[#262220] lg:shadow-[0_30px_80px_rgba(0,0,0,0.6)]">
+          {/* min-h-0 is load-bearing: without it a flex child refuses to
+              shrink below its content and the scroll never engages. */}
+          <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain">
+            {children}
+          </div>
           <TabBar />
           {/* Overlay host for ceremonies and floaters. It lives inside the
-              column so portalled content keeps the [data-app-shell] tokens,
-              and it follows TabBar's fixed/lg:absolute trick so a full-screen
-              moment covers the phone on mobile and stays inside the frame on
-              desktop. z-60 sits above the tab bar, so "the shell dims" means
-              all of it. */}
+              column so portalled content keeps the [data-app-shell] tokens.
+              Absolute against the shell now that the shell is a fixed-size
+              positioned box, which covers the phone on mobile and stays
+              inside the frame on desktop with one rule instead of two.
+              z-60 sits above the tab bar, so "the shell dims" means all
+              of it. */}
           <div
             id="app-overlay-root"
-            className="pointer-events-none fixed inset-0 z-[60] mx-auto max-w-[430px] lg:absolute lg:max-w-none lg:overflow-hidden lg:rounded-[44px]"
+            className="pointer-events-none absolute inset-0 z-[60] lg:overflow-hidden lg:rounded-[44px]"
           />
         </div>
         <PhoneHandoff />

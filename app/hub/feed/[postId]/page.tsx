@@ -104,7 +104,7 @@ export default async function AppPostDetailPage({
   };
 
   return (
-    <div className="px-5 pb-28 pt-6">
+    <div className="px-5 pb-8 pt-6">
       <Link
         href="/app/feed"
         className="mb-4 inline-flex items-center gap-1.5 text-[13px] text-[var(--app-dim)]"

@@ -39,7 +39,7 @@ export default async function AppBookPage() {
     existingBook?.expiresAt && existingBook.expiresAt < new Date();
 
   return (
-    <div className="pb-28 pt-2">
+    <div className="pb-8 pt-2">
       <MemberBookClient
         ownsBook={!!existingBook}
         downloadToken={existingBook?.downloadToken ?? null}

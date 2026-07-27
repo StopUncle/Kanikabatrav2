@@ -526,6 +526,16 @@ body[data-simulator-active="true"] main {
   --app-muted: #9a938a;
   --app-dim: #67615a;
   --app-green: #7fb890;
+  /* One accent per game, so the Arcade rail reads as four different
+     things rather than four gold rectangles. Steel and clay were added
+     for The Lab and Adventures; violet for Receipts. All desaturated to
+     sit beside the gold without competing with it. */
+  --game-drill: #d4af37;
+  --game-tell: #b76e79;
+  --game-scenario: #7fb890;
+  --game-lab: #8aa0c8;
+  --game-adventures: #c98f6a;
+  --game-receipts: #9d8ec0;
 }
 /* The public marketing footer has no place inside the app shell. */
 body:has([data-app-shell]) footer {

@@ -38,7 +38,7 @@ export default function Arrival({ videoUrl, beginHref, firstName }: Props) {
   }
 
   return (
-    <div className="relative flex min-h-[100dvh] flex-col bg-[radial-gradient(120%_70%_at_50%_-10%,rgba(183,110,121,0.12),transparent_60%),radial-gradient(140%_90%_at_50%_115%,rgba(212,175,55,0.1),transparent_55%)]">
+    <div className="relative flex min-h-full flex-col bg-[radial-gradient(120%_70%_at_50%_-10%,rgba(183,110,121,0.12),transparent_60%),radial-gradient(140%_90%_at_50%_115%,rgba(212,175,55,0.1),transparent_55%)]">
       <div className="flex flex-1 flex-col items-center justify-center px-9 text-center">
         {playing && videoUrl ? (
           <video
