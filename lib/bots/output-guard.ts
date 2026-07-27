@@ -33,11 +33,35 @@ const TYPOGRAPHIC_DASH = /[—–]/;
 const EMOJI_PIECE = /[\uD800-\uDBFF][\uDC00-\uDFFF]|[☀-➿⌀-⏿⬀-⯿]/;
 const EMOJI_PIECE_GLOBAL = /[\uD800-\uDBFF][\uDC00-\uDFFF]|[☀-➿⌀-⏿⬀-⯿]/g;
 
+/**
+ * Short is a rule, not a preference, so it is enforced here rather than
+ * left to the prompt. A model told to be brief drifts long over a few
+ * hundred generations, and the drift is invisible until the feed is full
+ * of essays.
+ *
+ * 240 characters is about forty words: enough for a reaction and a half,
+ * not enough for a thesis. A rejected comment simply does not get posted,
+ * which is the direction we want to fail in anyway.
+ */
+const MAX_CHARS = 240;
+const MAX_SENTENCES = 2;
+
+/** Terminal punctuation runs, so "..." and "?!" each count once. */
+function countSentences(text: string): number {
+  const matches = text.match(/[.!?]+(\s|$)/g);
+  if (!matches) return 1;
+  // Trailing punctuation on the final sentence is not a separator.
+  return /[.!?]\s*$/.test(text) ? matches.length : matches.length + 1;
+}
+
 export function validateBotComment(text: string, priorOnPost: string[]): GuardResult {
   const trimmed = text.trim();
 
   if (trimmed.length === 0) return { ok: false, reason: "empty" };
-  if (trimmed.length > 600) return { ok: false, reason: "too-long" };
+  if (trimmed.length > MAX_CHARS) return { ok: false, reason: "too-long" };
+  if (countSentences(trimmed) > MAX_SENTENCES) {
+    return { ok: false, reason: "too-many-sentences" };
+  }
 
   for (const re of SELF_REVEAL_PATTERNS) {
     if (re.test(trimmed)) return { ok: false, reason: "ai-self-reveal" };
@@ -54,8 +78,14 @@ export function validateBotComment(text: string, priorOnPost: string[]): GuardRe
   if (leadingEmojiMatch && leadingEmojiMatch.index === 0) {
     return { ok: false, reason: "emoji-leading" };
   }
+  // The minimum only applies when emoji were actually present. It exists to
+  // catch "🔥🔥🔥", and without the guard it also rejected "oof." and "same.",
+  // which are precisely the short reactions this is meant to encourage.
   const stripped = trimmed.replace(EMOJI_PIECE_GLOBAL, "").trim();
-  if (stripped.length < 5) return { ok: false, reason: "emoji-only" };
+  if (stripped.length === 0) return { ok: false, reason: "emoji-only" };
+  if (EMOJI_PIECE.test(trimmed) && stripped.length < 5) {
+    return { ok: false, reason: "emoji-only" };
+  }
 
   for (const prior of priorOnPost) {
     if (prior.trim().toLowerCase() === trimmed.toLowerCase()) {

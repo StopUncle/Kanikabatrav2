@@ -79,9 +79,30 @@ export function currentWeekFor(startedAt: Date, now: Date = new Date()): number 
 }
 
 /**
- * The member's start date for the program: when their membership went active.
- * Null for someone with no active membership row, who therefore has not
- * started.
+ * When the program itself opened, as an ISO date in PROGRAM_LAUNCH_DATE.
+ *
+ * Without this, every existing member would start the program at the date
+ * they joined Consilium, which for the current cohort is months ago, so all
+ * twelve weeks would unlock at once and the drip would exist only for
+ * people who join later. The people the program is meant to hold are
+ * exactly the ones it would skip.
+ *
+ * With it, a member's start is the later of their activation and the
+ * launch: everyone already here begins at week 1 together, and anyone
+ * joining afterwards still gets their own twelve weeks from their own join
+ * date. Unset means fall back to activation, which is the right behaviour
+ * for local and for any environment where the program has not launched.
+ */
+export function programLaunchDate(): Date | null {
+  const raw = process.env.PROGRAM_LAUNCH_DATE;
+  if (!raw) return null;
+  const d = new Date(raw);
+  return Number.isNaN(d.getTime()) ? null : d;
+}
+
+/**
+ * The member's start date for the program. Null for someone with no active
+ * membership row, who therefore has not started.
  */
 export async function programStartFor(
   db: PrismaClient,
@@ -91,7 +112,12 @@ export async function programStartFor(
     where: { userId },
     select: { activatedAt: true },
   });
-  return membership?.activatedAt ?? null;
+  const activatedAt = membership?.activatedAt ?? null;
+  if (!activatedAt) return null;
+
+  const launch = programLaunchDate();
+  if (launch && launch > activatedAt) return launch;
+  return activatedAt;
 }
 
 export async function readProgram(

@@ -377,6 +377,13 @@ ADMIN_EMAIL="Kanika@kanikarose.com"
 NEXT_PUBLIC_BASE_URL="http://localhost:3000"
 NODE_ENV="development"
 
+# The 12 Week Transformation. Unset = each member starts the program on
+# their own activation date, which for the existing cohort is months ago
+# and would unlock all twelve weeks at once. Set it to the launch date so
+# everyone already here begins at week 1 together, while anyone joining
+# later still gets their own twelve weeks from their own join date.
+PROGRAM_LAUNCH_DATE="2026-08-01T00:00:00Z"
+
 # Web Push
 NEXT_PUBLIC_VAPID_PUBLIC_KEY="..."
 VAPID_PRIVATE_KEY="..."
