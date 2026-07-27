@@ -61,7 +61,7 @@ export interface ArcadeData {
   streak: ArcadeStreak;
 }
 
-export const DRILL_HREF = "/consilium/games/speed-drill";
+export const DRILL_HREF = "/app/play/drill";
 export const TELL_HREF = "/consilium/instincts/today";
 
 /**
@@ -124,7 +124,7 @@ export async function getArcadeData(
     key: "speed-drill",
     title: "Speed Drill",
     blurb: "Ten lines, sixty seconds. Manipulation, or clean?",
-    href: "/consilium/games/speed-drill",
+    href: DRILL_HREF,
     cta: drillDone ? "REPLAY" : "PLAY",
     doneToday: drillDone,
     isNew: drillNew,
@@ -151,7 +151,7 @@ export async function getArcadeData(
     key: "daily-tell",
     title: "Daily Tell",
     blurb: "One moment. Spot what is really being done to you.",
-    href: "/consilium/instincts/today",
+    href: TELL_HREF,
     cta: tellDone ? "SEEN" : "READ",
     doneToday: tellDone,
     isNew: tellNew,
