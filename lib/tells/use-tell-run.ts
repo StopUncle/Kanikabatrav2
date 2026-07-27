@@ -16,6 +16,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { PublicTell, TellChoice } from "./types";
+import { fetchWithRefresh } from "@/lib/auth/fetch-with-refresh";
 
 export type TellRunPhase = "restoring" | "asking" | "revealed";
 
@@ -116,7 +117,7 @@ export function useTellRun(tell: PublicTell): TellRunState {
 
       void (async () => {
         try {
-          const res = await fetch(`/api/tells/${tell.id}/answer`, {
+          const res = await fetchWithRefresh(`/api/tells/${tell.id}/answer`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
