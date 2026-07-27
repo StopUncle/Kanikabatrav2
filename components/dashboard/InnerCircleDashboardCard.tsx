@@ -288,7 +288,7 @@ export default function InnerCircleDashboardCard({ membership }: Props) {
 
         <div className="flex flex-col sm:flex-row gap-2">
           <Link
-            href="/consilium/feed"
+            href="/app/feed"
             className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2 bg-accent-gold text-deep-black rounded-full text-sm font-medium hover:bg-accent-gold/90 transition-all"
           >
             Go to Feed
