@@ -14,8 +14,7 @@ export const metadata = {
  * The Feed tab: Kanika's room in the app skin. Same data assembly as the
  * old /consilium/feed page (gender filter, pinned-first with dedupe,
  * cursor pagination via the existing API); only the render layer is new.
- * Comment threads still open the existing detail page until that surface
- * is rebuilt.
+ * Comment threads open /app/feed/[postId].
  */
 export default async function AppFeedPage() {
   const userId = await requireServerAuth("/app/feed");
