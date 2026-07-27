@@ -2,7 +2,13 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { Loader2, ArrowRight, AlertTriangle, Check } from "lucide-react";
+import {
+  Loader2,
+  ArrowRight,
+  AlertTriangle,
+  Check,
+  Smartphone,
+} from "lucide-react";
 
 /**
  * Admin home: what needs Kanika, then how the place is doing.
@@ -74,6 +80,37 @@ export default function AdminDashboardPage() {
       <h1 className="mb-8 text-2xl font-light uppercase tracking-[0.15em] text-text-light">
         Today
       </h1>
+
+      {/* Open the member app from here.
+          The admin_session cookie is enough on its own: requireServerAuth
+          falls back to it and checkMembership treats an admin as ACTIVE, so
+          this works on a phone with only the PIN login and no member
+          account. It renders as the real ADMIN user, which means anything
+          done in there (Standing, streaks, completions) lands on that
+          account rather than on a test one.
+
+          A plain anchor, not next/link, on purpose: /app is a rewrite onto
+          /hub with its own root layout, and a full load is what gets the
+          app shell and its PWA manifest initialised cleanly. */}
+      <a
+        href="/app"
+        className="glass-card group mb-8 flex items-center gap-4 rounded-lg p-5 transition-all duration-300 hover:border-accent-gold/40"
+      >
+        <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-accent-gold/10 text-accent-gold">
+          <Smartphone size={20} strokeWidth={1.5} />
+        </span>
+        <span className="min-w-0 flex-1">
+          <span className="block font-light text-text-light">Open the app</span>
+          <span className="mt-0.5 block text-sm font-light text-text-gray">
+            The member app as you. Best on a phone, and installable from the
+            browser share menu.
+          </span>
+        </span>
+        <ArrowRight
+          size={16}
+          className="shrink-0 text-text-gray opacity-0 transition-opacity duration-200 group-hover:opacity-100"
+        />
+      </a>
 
       {/* Needs you */}
       <section className="mb-10">
