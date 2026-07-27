@@ -3,376 +3,414 @@
 import { useState } from "react";
 
 /**
- * Four ways to stop the games menu blending into one list, on one URL,
- * so they can be judged against each other rather than one at a time.
+ * Round two.
  *
- * The brief was "PNG images to break them up". These are the cheaper
- * options tried first, because bitmap art costs load time on a shell
- * that already renders server-side, and generated illustration tends to
- * look like every other app. Everything here is CSS and inline SVG: no
- * bytes over the wire, nothing to commission, nothing to redraw when a
- * game changes.
+ * The first five were all the same silhouette in different paint: a full
+ * width row, four times down the page. Changing the colour of a list does
+ * not stop it being a list.
+ *
+ * These four change the LAYOUT instead. Different tiles are different
+ * sizes, which is what actually creates hierarchy: if everything is the
+ * same size, nothing is important, and a screen where nothing is
+ * important reads as a menu rather than a place.
+ *
+ * Luxury here means restraint, not decoration. Hairline rules, deep
+ * near-black, one display serif carrying the weight, gold used about
+ * four times per screen and never as a fill. Still no bitmaps: CSS and
+ * inline SVG only.
  */
 
 interface Game {
   key: string;
   name: string;
   line: string;
+  short: string;
   meta: string;
-  /** Accent, used for icon, rule and progress. */
   accent: string;
-  /** The numeral or glyph a typographic cover leads with. */
   numeral: string;
-  /** Opening fragment, for the cover option. */
   fragment: string;
+  duration: string;
 }
 
-const GAMES: Game[] = [
-  {
+const G: Record<string, Game> = {
+  drill: {
     key: "drill",
     name: "Speed Drill",
     line: "Ten lines, sixty seconds. Manipulation, or clean?",
-    meta: "7/10 best · 70% accuracy",
+    short: "Ten lines. Sixty seconds.",
+    meta: "7/10 best",
     accent: "#d4af37",
     numeral: "60",
     fragment: "Ten lines. Sixty seconds.",
+    duration: "60s",
   },
-  {
+  tell: {
     key: "tell",
     name: "Daily Tell",
     line: "One moment. Spot what is really being done to you.",
-    meta: "1d streak",
+    short: "One moment, once a day.",
+    meta: "1 day streak",
     accent: "#b76e79",
     numeral: "01",
-    fragment: "One moment, once a day.",
+    fragment: "“I only get like this because I care.”",
+    duration: "Daily",
   },
-  {
+  scenario: {
     key: "scenario",
     name: "Scenarios",
     line: "Read a person across a whole scene.",
-    meta: "2 run · 139 open",
+    short: "He texts at 11pm. Again.",
+    meta: "139 open",
     accent: "#7fb890",
     numeral: "12",
     fragment: "He texts at 11pm. Again.",
+    duration: "10 min",
   },
-  {
+  lab: {
     key: "lab",
     name: "The Lab",
     line: "Freeform. Say anything, see what it costs you.",
+    short: "No script. No safety net.",
     meta: "4 drills",
     accent: "#8aa0c8",
     numeral: "∞",
     fragment: "No script. No safety net.",
+    duration: "Open",
   },
-];
+};
 
-function Icon({ k, color }: { k: string; color: string }) {
-  const common = {
+function Glyph({ k, c, w = "100%" }: { k: string; c: string; w?: string }) {
+  const p = {
     fill: "none",
-    stroke: color,
-    strokeWidth: 1.6,
+    stroke: c,
+    strokeWidth: 1.4,
     strokeLinecap: "round" as const,
     strokeLinejoin: "round" as const,
   };
+  const s = { width: w, height: w };
   if (k === "drill")
     return (
-      <svg viewBox="0 0 24 24" className="h-full w-full" {...common}>
+      <svg viewBox="0 0 24 24" style={s} {...p}>
         <circle cx="12" cy="13" r="8" />
         <path d="M12 9v4l2.5 2M9 2h6" />
       </svg>
     );
   if (k === "tell")
     return (
-      <svg viewBox="0 0 24 24" className="h-full w-full" {...common}>
+      <svg viewBox="0 0 24 24" style={s} {...p}>
         <path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6-10-6-10-6z" />
         <circle cx="12" cy="12" r="2.6" />
       </svg>
     );
   if (k === "scenario")
     return (
-      <svg viewBox="0 0 24 24" className="h-full w-full" {...common}>
+      <svg viewBox="0 0 24 24" style={s} {...p}>
         <rect x="3" y="5" width="18" height="13" rx="2.5" />
         <path d="M7 10h7M7 14h5" />
       </svg>
     );
   return (
-    <svg viewBox="0 0 24 24" className="h-full w-full" {...common}>
+    <svg viewBox="0 0 24 24" style={s} {...p}>
       <path d="M9 3v6l-5 9a2 2 0 0 0 1.8 3h12.4A2 2 0 0 0 20 18l-5-9V3M9 3h6" />
       <path d="M7.5 15h9" />
     </svg>
   );
 }
 
-/* ------------------------------------------------------------------ */
+const serif = { fontFamily: "var(--font-display)" } as const;
 
-/** What it looks like today: one card, one border, four times over. */
-function Baseline({ g }: { g: Game }) {
+/* ================================================================== E */
+/** Bento. One hero, two halves, one wide strip. Nothing is the same size. */
+function Bento() {
+  const hero = G.scenario;
   return (
-    <div className="flex items-center gap-3.5 rounded-2xl border border-[var(--app-line-soft)] bg-[var(--app-card)] px-4 py-[15px]">
-      <span className="flex h-[38px] w-[38px] shrink-0 items-center justify-center rounded-xl bg-[rgba(212,175,55,0.08)] p-[9px]">
-        <Icon k={g.key} color="#d4af37" />
-      </span>
-      <span className="min-w-0 flex-1">
-        <span className="block text-[14.5px] font-medium">{g.name}</span>
-        <span className="mt-0.5 block truncate text-xs text-[var(--app-dim)]">
-          {g.line}
-        </span>
-      </span>
-      <span className="shrink-0 text-xs tracking-[0.1em] text-[var(--app-gold)]">
-        PLAY →
-      </span>
-    </div>
-  );
-}
-
-/** A: one accent per game, carried through icon, tint and rule. */
-function AccentOnly({ g }: { g: Game }) {
-  return (
-    <div
-      className="relative overflow-hidden rounded-2xl border bg-[var(--app-card)] px-4 py-[15px]"
-      style={{ borderColor: `${g.accent}33` }}
-    >
-      <span
-        className="absolute inset-y-0 left-0 w-[3px]"
-        style={{ background: g.accent }}
-      />
-      <div className="flex items-center gap-3.5 pl-1.5">
-        <span
-          className="flex h-[38px] w-[38px] shrink-0 items-center justify-center rounded-xl p-[9px]"
-          style={{ background: `${g.accent}14` }}
-        >
-          <Icon k={g.key} color={g.accent} />
-        </span>
-        <span className="min-w-0 flex-1">
-          <span className="block text-[14.5px] font-medium">{g.name}</span>
-          <span className="mt-0.5 block truncate text-xs text-[var(--app-dim)]">
-            {g.line}
-          </span>
-        </span>
-        <span
-          className="shrink-0 text-xs tracking-[0.1em]"
-          style={{ color: g.accent }}
-        >
-          PLAY →
-        </span>
-      </div>
-    </div>
-  );
-}
-
-/** B: a different silhouette per game, readable before the words are. */
-function Silhouette({ g }: { g: Game }) {
-  if (g.key === "drill")
-    return (
+    <div className="grid grid-cols-2 gap-2.5">
+      {/* hero, full width, tall */}
       <div
-        className="flex items-center gap-4 rounded-2xl border bg-[var(--app-card)] px-4 py-4"
-        style={{ borderColor: `${g.accent}33` }}
-      >
-        <span className="relative flex h-[52px] w-[52px] shrink-0 items-center justify-center">
-          <svg viewBox="0 0 44 44" className="absolute inset-0 -rotate-90">
-            <circle
-              cx="22"
-              cy="22"
-              r="20"
-              fill="none"
-              stroke={`${g.accent}22`}
-              strokeWidth="3"
-            />
-            <circle
-              cx="22"
-              cy="22"
-              r="20"
-              fill="none"
-              stroke={g.accent}
-              strokeWidth="3"
-              strokeLinecap="round"
-              strokeDasharray={`${2 * Math.PI * 20 * 0.7} ${2 * Math.PI * 20}`}
-            />
-          </svg>
-          <span
-            className="text-[15px] font-light"
-            style={{ fontFamily: "var(--font-display)", color: g.accent }}
-          >
-            60
-          </span>
-        </span>
-        <span className="min-w-0 flex-1">
-          <span className="block text-[15px] font-medium">{g.name}</span>
-          <span className="mt-0.5 block text-xs text-[var(--app-dim)]">
-            {g.meta}
-          </span>
-        </span>
-      </div>
-    );
-
-  if (g.key === "tell")
-    return (
-      <div
-        className="rounded-2xl border bg-[var(--app-card)] p-3"
-        style={{ borderColor: `${g.accent}33` }}
-      >
-        <div
-          className="rounded-xl px-3.5 py-3"
-          style={{ background: `${g.accent}10` }}
-        >
-          <p className="text-[12.5px] italic leading-snug text-[var(--app-text)]">
-            &ldquo;I only get like this because I care so much.&rdquo;
-          </p>
-        </div>
-        <div className="mt-2.5 flex items-center justify-between px-1">
-          <span className="text-[14.5px] font-medium">{g.name}</span>
-          <span
-            className="text-xs tracking-[0.1em]"
-            style={{ color: g.accent }}
-          >
-            READ IT →
-          </span>
-        </div>
-      </div>
-    );
-
-  if (g.key === "scenario")
-    return (
-      <div
-        className="relative overflow-hidden rounded-2xl border"
+        className="relative col-span-2 overflow-hidden rounded-[20px] border border-[var(--app-line-soft)]"
         style={{
-          borderColor: `${g.accent}33`,
-          background: `linear-gradient(155deg, ${g.accent}1f, var(--app-card) 62%)`,
+          minHeight: 168,
+          background: `radial-gradient(115% 90% at 82% 6%, ${hero.accent}1f, transparent 58%), linear-gradient(168deg, #1b1815, #0d0b0a 76%)`,
         }}
       >
-        <div className="absolute right-3 top-3 flex gap-1">
-          {[0, 1, 2].map((i) => (
+        <div className="flex h-full flex-col justify-between p-[18px]">
+          <div className="flex items-start justify-between">
             <span
-              key={i}
-              className="h-1 w-5 rounded-full"
-              style={{ background: i === 0 ? g.accent : `${g.accent}33` }}
-            />
-          ))}
-        </div>
-        <div className="px-4 pb-4 pt-9">
-          <p
-            className="text-[17px] leading-tight"
-            style={{ fontFamily: "var(--font-display)" }}
-          >
-            {g.fragment}
-          </p>
-          <p className="mt-1.5 text-xs text-[var(--app-dim)]">
-            {g.name} · {g.meta}
-          </p>
-        </div>
-      </div>
-    );
-
-  return (
-    <div
-      className="rounded-2xl border-2 border-dashed bg-transparent px-4 py-[18px]"
-      style={{ borderColor: `${g.accent}44` }}
-    >
-      <div className="flex items-center gap-3.5">
-        <span className="h-[30px] w-[30px] shrink-0">
-          <Icon k={g.key} color={g.accent} />
-        </span>
-        <span className="min-w-0 flex-1">
-          <span className="block text-[14.5px] font-medium">{g.name}</span>
-          <span className="mt-0.5 block text-xs text-[var(--app-dim)]">
-            {g.line}
-          </span>
-        </span>
-      </div>
-    </div>
-  );
-}
-
-/** C: a typographic cover. The numeral is the image. */
-function TypographicCover({ g }: { g: Game }) {
-  return (
-    <div
-      className="relative overflow-hidden rounded-2xl border"
-      style={{
-        borderColor: `${g.accent}33`,
-        background: `radial-gradient(120% 100% at 85% 0%, ${g.accent}26, transparent 60%), var(--app-card)`,
-      }}
-    >
-      <span
-        className="pointer-events-none absolute -right-1 -top-7 select-none leading-none"
-        style={{
-          fontFamily: "var(--font-display)",
-          fontSize: 108,
-          color: g.accent,
-          opacity: 0.16,
-        }}
-      >
-        {g.numeral}
-      </span>
-      <div className="relative px-4 py-[18px]">
-        <p
-          className="text-[10px] uppercase tracking-[0.24em]"
-          style={{ color: g.accent }}
-        >
-          {g.name}
-        </p>
-        <p
-          className="mt-1.5 text-[18px] leading-tight"
-          style={{ fontFamily: "var(--font-display)" }}
-        >
-          {g.fragment}
-        </p>
-        <p className="mt-1.5 text-xs text-[var(--app-dim)]">{g.meta}</p>
-      </div>
-    </div>
-  );
-}
-
-/** D: accent plus silhouette, which is the one worth shipping. */
-function Recommended({ g }: { g: Game }) {
-  return (
-    <div
-      className="relative overflow-hidden rounded-2xl border bg-[var(--app-card)]"
-      style={{ borderColor: `${g.accent}30` }}
-    >
-      <span
-        className="absolute inset-x-0 top-0 h-[2px]"
-        style={{
-          background: `linear-gradient(90deg, ${g.accent}, transparent 70%)`,
-        }}
-      />
-      <div className="flex items-center gap-3.5 px-4 py-[16px]">
-        <span
-          className="relative flex h-[44px] w-[44px] shrink-0 items-center justify-center rounded-[14px] p-[11px]"
-          style={{
-            background: `${g.accent}12`,
-            boxShadow: `inset 0 0 0 1px ${g.accent}24`,
-          }}
-        >
-          <Icon k={g.key} color={g.accent} />
-        </span>
-        <span className="min-w-0 flex-1">
-          <span className="flex items-baseline gap-2">
-            <span className="text-[15px] font-medium">{g.name}</span>
-            <span
-              className="text-[10px] uppercase tracking-[0.18em]"
-              style={{ color: `${g.accent}cc` }}
+              className="text-[9.5px] uppercase tracking-[0.3em]"
+              style={{ color: hero.accent }}
             >
-              {g.key === "drill"
-                ? "60s"
-                : g.key === "tell"
-                  ? "daily"
-                  : g.key === "scenario"
-                    ? "scene"
-                    : "open"}
+              {hero.name}
+            </span>
+            <span className="text-[9.5px] uppercase tracking-[0.2em] text-[var(--app-dim)]">
+              {hero.meta}
+            </span>
+          </div>
+          <div>
+            <p className="text-[25px] leading-[1.15]" style={serif}>
+              {hero.fragment}
+            </p>
+            <p className="mt-2 text-[12px] text-[var(--app-muted)]">
+              {hero.line}
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* two halves */}
+      {[G.drill, G.tell].map((g) => (
+        <div
+          key={g.key}
+          className="relative overflow-hidden rounded-[20px] border border-[var(--app-line-soft)] bg-[var(--app-card)] p-[16px]"
+          style={{ minHeight: 132 }}
+        >
+          <span
+            className="absolute right-[14px] top-[14px] opacity-[0.9]"
+            style={{ width: 18, height: 18 }}
+          >
+            <Glyph k={g.key} c={g.accent} />
+          </span>
+          <div className="flex h-full flex-col justify-end">
+            <p
+              className="text-[30px] leading-none"
+              style={{ ...serif, color: g.accent, opacity: 0.9 }}
+            >
+              {g.numeral}
+            </p>
+            <p className="mt-2 text-[13.5px] font-medium">{g.name}</p>
+            <p className="mt-0.5 text-[11px] text-[var(--app-dim)]">
+              {g.duration}
+            </p>
+          </div>
+        </div>
+      ))}
+
+      {/* wide strip */}
+      <div className="col-span-2 flex items-center gap-3.5 rounded-[20px] border border-dashed border-[rgba(138,160,200,0.28)] px-[18px] py-[15px]">
+        <span style={{ width: 20, height: 20 }} className="shrink-0">
+          <Glyph k="lab" c={G.lab.accent} />
+        </span>
+        <span className="min-w-0 flex-1">
+          <span className="block text-[13.5px] font-medium">{G.lab.name}</span>
+          <span className="mt-0.5 block truncate text-[11.5px] text-[var(--app-dim)]">
+            {G.lab.short}
+          </span>
+        </span>
+        <span
+          className="shrink-0 text-[10px] uppercase tracking-[0.2em]"
+          style={{ color: G.lab.accent }}
+        >
+          Open
+        </span>
+      </div>
+    </div>
+  );
+}
+
+/* ================================================================== F */
+/** Editorial. One feature, then a contents page. No boxes at all. */
+function Editorial() {
+  const feature = G.drill;
+  const rest = [G.tell, G.scenario, G.lab];
+  return (
+    <div>
+      <div className="mb-1.5 flex items-center gap-2.5">
+        <span
+          className="h-[1px] w-6"
+          style={{ background: feature.accent }}
+        />
+        <span
+          className="text-[9.5px] uppercase tracking-[0.32em]"
+          style={{ color: feature.accent }}
+        >
+          Today
+        </span>
+      </div>
+      <p className="text-[34px] leading-[1.06]" style={serif}>
+        {feature.fragment}
+      </p>
+      <p className="mt-2.5 max-w-[85%] text-[12.5px] leading-relaxed text-[var(--app-muted)]">
+        {feature.line}
+      </p>
+      <div className="mt-4 flex items-center gap-3">
+        <button
+          type="button"
+          className="rounded-full px-5 py-2 text-[11px] uppercase tracking-[0.2em] text-[#0a0908]"
+          style={{ background: feature.accent }}
+        >
+          Begin
+        </button>
+        <span className="text-[11px] text-[var(--app-dim)]">
+          {feature.meta}
+        </span>
+      </div>
+
+      <div className="mt-8">
+        {rest.map((g, i) => (
+          <div
+            key={g.key}
+            className={`flex items-baseline gap-4 py-[15px] ${
+              i === 0 ? "border-t border-[var(--app-line-soft)]" : ""
+            } border-b border-[var(--app-line-soft)]`}
+          >
+            <span
+              className="w-5 shrink-0 text-[11px] tabular-nums"
+              style={{ color: g.accent }}
+            >
+              0{i + 2}
+            </span>
+            <span className="min-w-0 flex-1">
+              <span className="block text-[15px]" style={serif}>
+                {g.name}
+              </span>
+              <span className="mt-0.5 block truncate text-[11.5px] text-[var(--app-dim)]">
+                {g.short}
+              </span>
+            </span>
+            <span className="shrink-0 text-[10px] uppercase tracking-[0.18em] text-[var(--app-dim)]">
+              {g.duration}
+            </span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/* ================================================================== G */
+/** The rail. A wide today card, then tall portraits you scroll sideways. */
+function Rail() {
+  const today = G.tell;
+  const rail = [G.scenario, G.drill, G.lab];
+  return (
+    <div>
+      <div
+        className="relative mb-5 overflow-hidden rounded-[20px] border border-[var(--app-line-soft)]"
+        style={{
+          background: `radial-gradient(120% 120% at 8% 0%, ${today.accent}24, transparent 55%), var(--app-card)`,
+        }}
+      >
+        <div className="flex items-center gap-4 p-[18px]">
+          <span
+            className="flex h-[46px] w-[46px] shrink-0 items-center justify-center rounded-full"
+            style={{ boxShadow: `inset 0 0 0 1px ${today.accent}44` }}
+          >
+            <span style={{ width: 20, height: 20 }}>
+              <Glyph k={today.key} c={today.accent} />
             </span>
           </span>
-          <span className="mt-0.5 block truncate text-xs text-[var(--app-dim)]">
-            {g.line}
-          </span>
-        </span>
-        <span
-          className="shrink-0 text-xs tracking-[0.1em]"
-          style={{ color: g.accent }}
-        >
-          →
-        </span>
+          <div className="min-w-0 flex-1">
+            <p
+              className="text-[9.5px] uppercase tracking-[0.3em]"
+              style={{ color: today.accent }}
+            >
+              Today only
+            </p>
+            <p className="mt-1 text-[17px] leading-tight" style={serif}>
+              {today.name}
+            </p>
+            <p className="mt-0.5 text-[11.5px] text-[var(--app-dim)]">
+              {today.meta}
+            </p>
+          </div>
+        </div>
       </div>
+
+      <div className="mb-2.5 flex items-baseline justify-between">
+        <span className="text-[9.5px] uppercase tracking-[0.3em] text-[var(--app-dim)]">
+          Train
+        </span>
+        <span className="text-[10px] text-[var(--app-dim)]">Swipe</span>
+      </div>
+      {/* -mx-5 px-5 lets the rail bleed to both edges of the screen */}
+      <div className="-mx-5 flex gap-3 overflow-x-auto px-5 pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+        {rail.map((g) => (
+          <div
+            key={g.key}
+            className="relative shrink-0 overflow-hidden rounded-[18px] border border-[var(--app-line-soft)]"
+            style={{
+              width: 148,
+              height: 196,
+              background: `linear-gradient(178deg, ${g.accent}1c, #100e0c 62%)`,
+            }}
+          >
+            <span
+              className="pointer-events-none absolute -right-2 -top-6 select-none leading-none"
+              style={{ ...serif, fontSize: 92, color: g.accent, opacity: 0.14 }}
+            >
+              {g.numeral}
+            </span>
+            <div className="flex h-full flex-col justify-end p-[14px]">
+              <p className="text-[14.5px] leading-tight" style={serif}>
+                {g.name}
+              </p>
+              <p className="mt-1 text-[10.5px] leading-snug text-[var(--app-dim)]">
+                {g.duration} · {g.meta}
+              </p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/* ================================================================== H */
+/** Weighted stack. Each card is a different height, heaviest first. */
+function Weighted() {
+  const order = [G.scenario, G.drill, G.tell, G.lab];
+  const heights = [150, 116, 96, 78];
+  return (
+    <div className="flex flex-col gap-2.5">
+      {order.map((g, i) => (
+        <div
+          key={g.key}
+          className="relative overflow-hidden rounded-[18px] border border-[var(--app-line-soft)]"
+          style={{
+            height: heights[i],
+            background:
+              i === 0
+                ? `radial-gradient(110% 130% at 88% 0%, ${g.accent}22, transparent 60%), linear-gradient(170deg, #1a1714, #0e0c0b 78%)`
+                : "var(--app-card)",
+          }}
+        >
+          <span
+            className="absolute left-0 top-0 h-full w-[2px]"
+            style={{
+              background: `linear-gradient(180deg, ${g.accent}, transparent)`,
+              opacity: 1 - i * 0.22,
+            }}
+          />
+          <div className="flex h-full flex-col justify-between px-[18px] py-[15px]">
+            <div className="flex items-start justify-between">
+              <span
+                className="uppercase tracking-[0.28em]"
+                style={{
+                  color: g.accent,
+                  fontSize: i === 0 ? 10 : 9,
+                }}
+              >
+                {g.name}
+              </span>
+              <span style={{ width: i === 0 ? 19 : 15, height: i === 0 ? 19 : 15 }}>
+                <Glyph k={g.key} c={g.accent} />
+              </span>
+            </div>
+            <div>
+              <p
+                style={{ ...serif, fontSize: i === 0 ? 22 : i === 1 ? 17 : 15 }}
+                className="leading-tight"
+              >
+                {i === 0 ? g.fragment : g.short}
+              </p>
+              {i < 2 && (
+                <p className="mt-1.5 text-[11px] text-[var(--app-dim)]">
+                  {g.duration} · {g.meta}
+                </p>
+              )}
+            </div>
+          </div>
+        </div>
+      ))}
     </div>
   );
 }
@@ -381,39 +419,32 @@ function Recommended({ g }: { g: Game }) {
 
 const OPTIONS = [
   {
-    id: "baseline",
-    label: "Now",
+    id: "bento",
+    label: "E · Bento",
     blurb:
-      "What ships today. One card, one gold, four times over. Nothing tells you these are different kinds of thing.",
-    render: (g: Game) => <Baseline g={g} />,
+      "One hero, two halves, one strip. Four tiles, four different sizes, so the screen has a shape instead of a rhythm. The hero is whatever deserves it today, so the layout changes as the content does.",
+    render: () => <Bento />,
   },
   {
-    id: "accent",
-    label: "A · Colour",
+    id: "editorial",
+    label: "F · Editorial",
     blurb:
-      "One accent per game, carried through icon, tint, rule and CTA. Cheapest change here, and it does most of the work. Stays entirely inside the existing palette.",
-    render: (g: Game) => <AccentOnly g={g} />,
+      "One thing is the page; the rest is a contents list under hairlines. No cards at all. The most restrained and the most confident, and it only works while one game genuinely leads.",
+    render: () => <Editorial />,
   },
   {
-    id: "silhouette",
-    label: "B · Shape",
+    id: "rail",
+    label: "G · Rail",
     blurb:
-      "A different card shape per game: a timer ring, a quoted artefact, a scene card, an open frame. You know which is which before reading a word. Most distinctive, most work to maintain.",
-    render: (g: Game) => <Silhouette g={g} />,
+      "A wide today card, then tall portraits you swipe. Sideways motion is the fastest way to stop a screen reading as a list, and the tiles bleed off the edge so there is obviously more.",
+    render: () => <Rail />,
   },
   {
-    id: "cover",
-    label: "C · Type",
+    id: "weighted",
+    label: "H · Weighted",
     blurb:
-      "The numeral is the image. Weightless, impossible to mistake for stock art, and scales to any new game without commissioning anything. Risks feeling samey across many cards.",
-    render: (g: Game) => <TypographicCover g={g} />,
-  },
-  {
-    id: "recommended",
-    label: "D · A+B",
-    blurb:
-      "Accent plus a small shape signal and a duration tag. Reads as one family with four members, which is the actual goal: different, but obviously the same app.",
-    render: (g: Game) => <Recommended g={g} />,
+      "Still a stack, but each card is a different height and the type shrinks down the page. Keeps the simplicity of a list while making it obvious what matters most. The safest of the four.",
+    render: () => <Weighted />,
   },
 ];
 
@@ -423,16 +454,13 @@ export default function GamesGallery() {
 
   return (
     <div className="px-5 pb-8 pt-6">
-      <h1
-        className="text-[26px] font-light"
-        style={{ fontFamily: "var(--font-display)" }}
-      >
-        Telling the games apart
+      <h1 className="text-[26px] font-light" style={serif}>
+        Four layouts
       </h1>
       <p className="mb-4 mt-1 text-[13px] leading-relaxed text-[var(--app-muted)]">
-        Five treatments of the same four games. No images: everything here is
-        CSS and inline SVG, so it costs nothing to load and nothing to redraw
-        when a game changes.
+        Round two. The last set were all the same row in different paint;
+        these change the layout instead. Different tiles are different sizes,
+        because if everything is the same size nothing is important.
       </p>
 
       <div className="mb-7 flex flex-wrap gap-1.5">
@@ -464,27 +492,23 @@ export default function GamesGallery() {
       </div>
 
       {shown.map((o) => (
-        <section key={o.id} className="mb-9">
-          <div className="mb-3">
-            <h2 className="text-[11px] uppercase tracking-[0.24em] text-[var(--app-gold)]">
+        <section key={o.id} className="mb-11">
+          <div className="mb-4">
+            <h2 className="text-[11px] uppercase tracking-[0.26em] text-[var(--app-gold)]">
               {o.label}
             </h2>
             <p className="mt-1.5 text-[12.5px] leading-relaxed text-[var(--app-dim)]">
               {o.blurb}
             </p>
           </div>
-          <div className="flex flex-col gap-2.5">
-            {GAMES.map((g) => (
-              <div key={g.key}>{o.render(g)}</div>
-            ))}
-          </div>
+          {o.render()}
         </section>
       ))}
 
       <p className="mt-2 border-t border-[var(--app-line-soft)] pt-5 text-[12px] leading-relaxed text-[var(--app-dim)]">
-        The same argument applies to the More sheet: it reads as one list
-        because every row weighs the same. Grouping it into named sections
-        with accent-coloured icons fixes that faster than art would.
+        All four use the same four accents and the same display serif, so
+        whichever wins, the Arcade, Train and the More sheet can follow it
+        without a second design language.
       </p>
     </div>
   );
