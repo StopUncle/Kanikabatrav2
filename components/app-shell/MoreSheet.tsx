@@ -18,9 +18,6 @@ import {
  * The More sheet: everything that earns a place in the app but not a place on
  * the tab bar. Slides up from the bottom, closes on backdrop, Escape, or any
  * navigation.
- *
- * Some rows still point at the old member surfaces. They move to their /app
- * equivalents as each screen is rebuilt; the row itself never changes.
  */
 
 type Item = { href: string; label: string; icon: React.ReactNode };
@@ -38,16 +35,16 @@ const SECTIONS: { title: string; items: Item[] }[] = [
   {
     title: "Library",
     items: [
-      { href: "/consilium/book", label: "The book", icon: <BookOpen size={17} /> },
-      { href: "/consilium/videos", label: "Videos", icon: <Video size={17} /> },
-      { href: "/consilium/voice-notes", label: "Voice notes", icon: <Mic size={17} /> },
+      { href: "/app/book", label: "The book", icon: <BookOpen size={17} /> },
+      { href: "/app/videos", label: "Videos", icon: <Video size={17} /> },
+      { href: "/app/voice-notes", label: "Voice notes", icon: <Mic size={17} /> },
     ],
   },
   {
     title: "Account",
     items: [
       {
-        href: "/consilium/profile",
+        href: "/app/profile",
         label: "Profile and settings",
         icon: <Settings size={17} />,
       },

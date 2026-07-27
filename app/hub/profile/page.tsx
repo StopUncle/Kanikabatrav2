@@ -1,0 +1,162 @@
+import { requireServerAuth } from "@/lib/auth/server-auth";
+import { prisma } from "@/lib/prisma";
+import ManageSubscriptionButton from "@/app/consilium/(member)/profile/ManageSubscriptionButton";
+import NotificationPreferences from "@/app/consilium/(member)/profile/NotificationPreferences";
+
+export const metadata = {
+  title: "Profile | Consilium",
+};
+
+/**
+ * Profile and settings in the app skin: identity, the seat (membership
+ * status and billing), what pings the phone. The old page's tenure
+ * ladder is deliberately absent; rank lives on the You tab now and the
+ * month-badge ladder is the superseded system.
+ */
+export default async function AppProfilePage() {
+  const userId = await requireServerAuth("/app/profile");
+
+  const [user, membership] = await Promise.all([
+    prisma.user.findUnique({
+      where: { id: userId },
+      select: {
+        displayName: true,
+        name: true,
+        email: true,
+        gender: true,
+      },
+    }),
+    prisma.communityMembership.findUnique({
+      where: { userId },
+      select: {
+        status: true,
+        activatedAt: true,
+        expiresAt: true,
+        billingCycle: true,
+      },
+    }),
+  ]);
+
+  const handle = user?.displayName || user?.name || "Member";
+  const joinedLabel = membership?.activatedAt
+    ? membership.activatedAt.toLocaleDateString("en-US", {
+        month: "long",
+        day: "numeric",
+        year: "numeric",
+      })
+    : null;
+  const renewsLabel =
+    membership?.status === "ACTIVE" && membership.expiresAt
+      ? membership.expiresAt.toLocaleDateString("en-US", {
+          month: "short",
+          day: "numeric",
+          year: "numeric",
+        })
+      : null;
+  const statusColor =
+    membership?.status === "ACTIVE"
+      ? "text-[var(--app-green)]"
+      : membership?.status === "SUSPENDED"
+        ? "text-amber-400"
+        : "text-[var(--app-dim)]";
+
+  return (
+    <div className="px-5 pb-28 pt-6">
+      <h1
+        className="text-[28px] font-light"
+        style={{ fontFamily: "var(--font-display)" }}
+      >
+        Profile
+      </h1>
+      <p className="mb-6 mt-1 text-[13px] text-[var(--app-muted)]">
+        Your identity, your seat, your settings.
+      </p>
+
+      {/* Identity */}
+      <section className="mb-4 rounded-[18px] border border-[var(--app-line)] bg-[var(--app-card)] p-[18px]">
+        <p className="mb-3 text-[11px] uppercase tracking-[0.22em] text-[var(--app-gold-soft)]">
+          Identity
+        </p>
+        <IdentityRow label="Display name" value={handle} />
+        <IdentityRow label="Email" value={user?.email ?? ""} muted />
+        {user?.gender && (
+          <IdentityRow label="Chamber" value={user.gender.toLowerCase()} />
+        )}
+        <p className="mt-3 border-t border-[var(--app-line-soft)] pt-3 text-[11.5px] text-[var(--app-dim)]">
+          To change your email or display name, open the{" "}
+          <a href="/dashboard" className="text-[var(--app-gold)]">
+            Dashboard
+          </a>
+          .
+        </p>
+      </section>
+
+      {/* The seat */}
+      <section className="mb-4 rounded-[18px] border border-[var(--app-line)] bg-[var(--app-card)] p-[18px]">
+        <p className="mb-3 text-[11px] uppercase tracking-[0.22em] text-[var(--app-gold-soft)]">
+          Your seat
+        </p>
+        <p
+          className={`text-[13px] uppercase tracking-[0.18em] ${statusColor}`}
+        >
+          {membership?.status ?? "Inactive"}
+        </p>
+        {joinedLabel && (
+          <p className="mt-2 text-[13px] text-[var(--app-muted)]">
+            Joined {joinedLabel}
+          </p>
+        )}
+        {renewsLabel && (
+          <p className="mt-1 text-[13px] text-[var(--app-muted)]">
+            Renews {renewsLabel}
+            {membership?.billingCycle && (
+              <span className="capitalize text-[var(--app-dim)]">
+                {" "}
+                · {membership.billingCycle} billing
+              </span>
+            )}
+          </p>
+        )}
+        {(membership?.status === "ACTIVE" ||
+          membership?.status === "SUSPENDED") && (
+          <div className="mt-4">
+            <ManageSubscriptionButton />
+          </div>
+        )}
+      </section>
+
+      {/* Notifications */}
+      <section className="rounded-[18px] border border-[var(--app-line)] bg-[var(--app-card)] p-[18px]">
+        <p className="mb-3 text-[11px] uppercase tracking-[0.22em] text-[var(--app-gold-soft)]">
+          What pings your phone
+        </p>
+        <NotificationPreferences />
+      </section>
+    </div>
+  );
+}
+
+function IdentityRow({
+  label,
+  value,
+  muted = false,
+}: {
+  label: string;
+  value: string;
+  muted?: boolean;
+}) {
+  return (
+    <div className="flex items-center justify-between gap-4 py-1.5">
+      <span className="text-[11px] uppercase tracking-[0.18em] text-[var(--app-dim)]">
+        {label}
+      </span>
+      <span
+        className={`truncate text-[13.5px] ${
+          muted ? "text-[var(--app-dim)]" : ""
+        }`}
+      >
+        {value}
+      </span>
+    </div>
+  );
+}
