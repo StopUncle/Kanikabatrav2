@@ -77,6 +77,28 @@ const G: Record<string, Game> = {
     fragment: "No script. No safety net.",
     duration: "Open",
   },
+  adventures: {
+    key: "adventures",
+    name: "Adventures",
+    line: "A story across several nights.",
+    short: "A story across several nights.",
+    meta: "3 arcs",
+    accent: "#c98f6a",
+    numeral: "06",
+    fragment: "Six chapters. One person.",
+    duration: "Chapters",
+  },
+  receipts: {
+    key: "receipts",
+    name: "Receipts",
+    line: "Paste what they sent. See what it was.",
+    short: "Paste what they sent.",
+    meta: "Free tool",
+    accent: "#9d8ec0",
+    numeral: "01",
+    fragment: "Paste what they sent.",
+    duration: "2 min",
+  },
 };
 
 function Glyph({ k, c, w = "100%" }: { k: string; c: string; w?: string }) {
@@ -107,6 +129,20 @@ function Glyph({ k, c, w = "100%" }: { k: string; c: string; w?: string }) {
       <svg viewBox="0 0 24 24" style={s} {...p}>
         <rect x="3" y="5" width="18" height="13" rx="2.5" />
         <path d="M7 10h7M7 14h5" />
+      </svg>
+    );
+  if (k === "adventures")
+    return (
+      <svg viewBox="0 0 24 24" style={s} {...p}>
+        <path d="M4 5.5v13c2.6-1.4 5.4-1.4 8 0 2.6-1.4 5.4-1.4 8 0v-13c-2.6-1.4-5.4-1.4-8 0-2.6-1.4-5.4-1.4-8 0z" />
+        <path d="M12 5.5v13" />
+      </svg>
+    );
+  if (k === "receipts")
+    return (
+      <svg viewBox="0 0 24 24" style={s} {...p}>
+        <path d="M6 3h12v18l-3-2-3 2-3-2-3 2z" />
+        <path d="M9.5 8h5M9.5 12h5" />
       </svg>
     );
   return (
@@ -156,33 +192,48 @@ function Bento() {
         </div>
       </div>
 
-      {/* two halves */}
-      {[G.drill, G.tell].map((g) => (
-        <div
-          key={g.key}
-          className="relative overflow-hidden rounded-[20px] border border-[var(--app-line-soft)] bg-[var(--app-card)] p-[16px]"
-          style={{ minHeight: 132 }}
-        >
-          <span
-            className="absolute right-[14px] top-[14px] opacity-[0.9]"
-            style={{ width: 18, height: 18 }}
+      {/* The squares slide.
+          Two squares fit the screen exactly, so a rail of two would have
+          nowhere to go: the gesture only reads as a gesture when the next
+          tile is already half visible. So the row is sized to show two and
+          a sliver, it bleeds to both edges (-mx-5 px-5), and it snaps so a
+          flick always lands square rather than halfway. */}
+      <div className="col-span-2 -mx-5 flex snap-x snap-mandatory gap-2.5 overflow-x-auto px-5 pb-0.5 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+        {[G.drill, G.tell, G.adventures, G.receipts].map((g) => (
+          <div
+            key={g.key}
+            className="relative shrink-0 snap-start overflow-hidden rounded-[20px] border border-[var(--app-line-soft)] bg-[var(--app-card)] p-[16px]"
+            // Square, and sized so two sit in the column with the third
+            // breaking the edge. 40px is the two gutters plus the peek.
+            style={{
+              width: "calc((100% - 40px) / 2)",
+              aspectRatio: "1 / 1",
+              minWidth: 132,
+            }}
           >
-            <Glyph k={g.key} c={g.accent} />
-          </span>
-          <div className="flex h-full flex-col justify-end">
-            <p
-              className="text-[30px] leading-none"
-              style={{ ...serif, color: g.accent, opacity: 0.9 }}
+            <span
+              className="absolute right-[14px] top-[14px]"
+              style={{ width: 18, height: 18 }}
             >
-              {g.numeral}
-            </p>
-            <p className="mt-2 text-[13.5px] font-medium">{g.name}</p>
-            <p className="mt-0.5 text-[11px] text-[var(--app-dim)]">
-              {g.duration}
-            </p>
+              <Glyph k={g.key} c={g.accent} />
+            </span>
+            <div className="flex h-full flex-col justify-end">
+              <p
+                className="text-[30px] leading-none"
+                style={{ ...serif, color: g.accent, opacity: 0.9 }}
+              >
+                {g.numeral}
+              </p>
+              <p className="mt-2 text-[13.5px] font-medium leading-tight">
+                {g.name}
+              </p>
+              <p className="mt-0.5 text-[11px] text-[var(--app-dim)]">
+                {g.duration}
+              </p>
+            </div>
           </div>
-        </div>
-      ))}
+        ))}
+      </div>
 
       {/* wide strip */}
       <div className="col-span-2 flex items-center gap-3.5 rounded-[20px] border border-dashed border-[rgba(138,160,200,0.28)] px-[18px] py-[15px]">
@@ -422,7 +473,7 @@ const OPTIONS = [
     id: "bento",
     label: "E · Bento",
     blurb:
-      "One hero, two halves, one strip. Four tiles, four different sizes, so the screen has a shape instead of a rhythm. The hero is whatever deserves it today, so the layout changes as the content does.",
+      "Chosen. One hero, a sliding row of squares, one strip. The squares snap and the third breaks the edge, so it is obvious there is more without a scrollbar saying so. Adding a sixth game costs nothing: the rail simply gets longer, where a fixed grid would need relaying out.",
     render: () => <Bento />,
   },
   {
@@ -449,7 +500,8 @@ const OPTIONS = [
 ];
 
 export default function GamesGallery() {
-  const [only, setOnly] = useState<string | null>(null);
+  // Opens on the chosen direction rather than the full set.
+  const [only, setOnly] = useState<string | null>("bento");
   const shown = only ? OPTIONS.filter((o) => o.id === only) : OPTIONS;
 
   return (
