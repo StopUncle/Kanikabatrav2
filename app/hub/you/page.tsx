@@ -11,7 +11,7 @@ export const metadata = {
 
 /**
  * You: rank, the numbers that move, and the doors that don't fit a tab
- * (Kanika's room, the library, profile).
+ * (the library, profile).
  */
 export default async function YouPage() {
   const userId = await requireServerAuth("/app/you");
@@ -105,17 +105,6 @@ export default async function YouPage() {
 
       {/* The rest of the house */}
       <div className="flex flex-col gap-2.5">
-        <Move
-          href="/consilium/feed"
-          title="Kanika's room"
-          sub="Posts, voice notes, the conversation."
-          cta="OPEN"
-          icon={
-            <svg viewBox="0 0 24 24">
-              <path d="M4 5h16v11H8l-4 4z" />
-            </svg>
-          }
-        />
         <Move
           href="/consilium/book"
           title="The book"

@@ -25,8 +25,8 @@ import type { FeedPostData } from "@/components/consilium/FeedPost";
  * video embeds); only the clothes changed. Kanika's own posts read richer
  * than the cron-generated insight/discussion cards.
  *
- * Comments still open the existing detail page until that surface is
- * rebuilt in this skin.
+ * With `detail` the card renders as the top of its own page: full
+ * content, no self-links, no pinned collapse.
  */
 
 const PINNED_EXPAND_STORAGE_PREFIX = "feed-pinned-expanded:";
@@ -38,15 +38,17 @@ function pinnedExpandKey(post: { id: string; createdAt: string }): string {
 export default function AppFeedPost({
   post,
   isNew = false,
+  detail = false,
 }: {
   post: FeedPostData;
   isNew?: boolean;
+  detail?: boolean;
 }) {
   const [liked, setLiked] = useState(post.isLiked);
   const [likeCount, setLikeCount] = useState(post.likeCount);
   const [isToggling, setIsToggling] = useState(false);
 
-  const canCollapse = post.isPinned;
+  const canCollapse = post.isPinned && !detail;
   const [isCollapsed, setIsCollapsed] = useState(canCollapse);
   useEffect(() => {
     if (!canCollapse) return;
@@ -96,7 +98,7 @@ export default function AppFeedPost({
   const isKanika = !post.author || post.author.role === "ADMIN";
   const isSystemCard =
     post.type === "AUTOMATED" || post.type === "DISCUSSION_PROMPT";
-  const shouldTruncate = post.content.length > 500;
+  const shouldTruncate = !detail && post.content.length > 500;
   const displayContent = shouldTruncate
     ? post.content.slice(0, 500)
     : post.content;
@@ -135,7 +137,7 @@ export default function AppFeedPost({
             New
           </span>
         )}
-        {post.isPinned && (
+        {canCollapse && (
           <button
             type="button"
             onClick={toggleCollapsed}
@@ -150,6 +152,12 @@ export default function AppFeedPost({
               <ChevronUp className="-mr-0.5 h-3 w-3" />
             )}
           </button>
+        )}
+        {post.isPinned && !canCollapse && (
+          <span className="ml-auto inline-flex items-center gap-1 rounded-full border border-[var(--app-line)] bg-[rgba(212,175,55,0.08)] px-2 py-0.5 text-[9px] uppercase tracking-[0.16em] text-[var(--app-gold)]">
+            <Pin className="h-2.5 w-2.5" />
+            Pinned
+          </span>
         )}
       </div>
 
@@ -171,8 +179,15 @@ export default function AppFeedPost({
             Tap to expand
           </span>
         </button>
+      ) : detail ? (
+        <h1
+          className="mb-2 block text-[20px] leading-snug"
+          style={{ fontFamily: "var(--font-display)" }}
+        >
+          {post.title}
+        </h1>
       ) : (
-        <Link href={`/consilium/feed/${post.id}`} className="mb-2 block">
+        <Link href={`/app/feed/${post.id}`} className="mb-2 block">
           <span
             className="block text-[18px] leading-snug"
             style={{ fontFamily: "var(--font-display)" }}
@@ -251,7 +266,7 @@ export default function AppFeedPost({
             </ReactMarkdown>
             {shouldTruncate && (
               <Link
-                href={`/consilium/feed/${post.id}`}
+                href={`/app/feed/${post.id}`}
                 className="text-[var(--app-gold)]"
               >
                 Read more
@@ -307,14 +322,21 @@ export default function AppFeedPost({
                 </span>
               )}
             </button>
-            <Link
-              href={`/consilium/feed/${post.id}`}
-              aria-label="View comments"
-              className="flex items-center gap-1.5 rounded-lg px-2 py-1.5 text-[13px] text-[var(--app-dim)]"
-            >
-              <MessageCircle className="h-[18px] w-[18px]" />
-              {post.commentCount > 0 && <span>{post.commentCount}</span>}
-            </Link>
+            {detail ? (
+              <span className="flex items-center gap-1.5 rounded-lg px-2 py-1.5 text-[13px] text-[var(--app-dim)]">
+                <MessageCircle className="h-[18px] w-[18px]" />
+                {post.commentCount > 0 && <span>{post.commentCount}</span>}
+              </span>
+            ) : (
+              <Link
+                href={`/app/feed/${post.id}`}
+                aria-label="View comments"
+                className="flex items-center gap-1.5 rounded-lg px-2 py-1.5 text-[13px] text-[var(--app-dim)]"
+              >
+                <MessageCircle className="h-[18px] w-[18px]" />
+                {post.commentCount > 0 && <span>{post.commentCount}</span>}
+              </Link>
+            )}
           </div>
         </>
       )}

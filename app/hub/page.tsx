@@ -98,7 +98,7 @@ export default async function TodayPage() {
       {/* Hero: latest from Kanika. Becomes the weekly session later. */}
       {latestFromKanika && (
         <Link
-          href="/consilium/feed"
+          href={`/app/feed/${latestFromKanika.id}`}
           className="relative mx-5 mb-6 flex flex-col justify-end overflow-hidden rounded-[22px] border border-[var(--app-line)]"
           style={{
             aspectRatio: "16 / 10.5",
