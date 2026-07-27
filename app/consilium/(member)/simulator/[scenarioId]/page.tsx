@@ -83,7 +83,7 @@ export default async function SimulatorPlay({
         },
       });
       if (startedInTrack === 0) {
-        redirect("/consilium/simulator");
+        redirect("/app/train");
       }
     }
   }
@@ -148,6 +148,9 @@ export default async function SimulatorPlay({
       previousBest={previousBest}
       nextScenarioHref={nextHref}
       seenEndingIds={seenEndingIds}
+      // Members enter runs from the app's Train screen now; leaving a run
+      // must land back there, not on the legacy catalog.
+      exitHref="/app/train"
     />
   );
 }
