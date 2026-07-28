@@ -10,7 +10,7 @@ export const metadata = {
 };
 
 export default async function AdventuresIndex() {
-  const userId = await requireServerAuth("/consilium/adventures");
+  const userId = await requireServerAuth("/app/adventures");
 
   const [adventures, progresses] = await Promise.all([
     prisma.adventure.findMany({
@@ -58,7 +58,7 @@ export default async function AdventuresIndex() {
             return (
               <Link
                 key={adv.id}
-                href={`/consilium/adventures/${adv.slug}`}
+                href={`/app/adventures/${adv.slug}`}
                 className={`group relative flex flex-col p-6 rounded-xl border bg-deep-black/40 transition-all hover:-translate-y-0.5 ${
                   isCompleted
                     ? "border-warm-gold/10 opacity-70 hover:opacity-100 hover:border-warm-gold/30"
@@ -118,7 +118,7 @@ export default async function AdventuresIndex() {
         Each adventure reuses scenarios from the catalog. You can replay any
         single chapter from the
         <Link
-          href="/consilium/simulator"
+          href="/app/train/browse"
           className="text-warm-gold/70 hover:text-warm-gold ml-1 transition-colors"
         >
           simulator

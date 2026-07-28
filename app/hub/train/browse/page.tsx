@@ -82,7 +82,7 @@ export default async function SimulatorIndex({
 }: {
   searchParams: Promise<{ track?: string }>;
 }) {
-  const userId = await requireServerAuth("/consilium/simulator");
+  const userId = await requireServerAuth("/app/train/browse");
   const params = await searchParams;
   const paramTrack = resolveTrackFromParam(params.track);
 
@@ -136,7 +136,7 @@ export default async function SimulatorIndex({
   // Resolve the active track. URL param wins; otherwise default to the
   // track of the player's most-recently-started scenario; otherwise
   // "female". Fixes the bug where players on Business Line kept landing
-  // back on Feminine whenever they hit /consilium/simulator without a
+  // back on Feminine whenever they hit /app/train/browse without a
   // query param (pill nav, sidebar, dashboard links).
   // Walk the progress list (already DESC by startedAt) for the first row
   // that resolves to a real catalog track. Generated "Fresh Files"
@@ -467,7 +467,7 @@ export default async function SimulatorIndex({
 
         <div className="mt-10 text-center">
           <Link
-            href="/consilium/simulator?track=female"
+            href="/app/train/browse?track=female"
             className="inline-flex items-center gap-2 text-text-gray/60 hover:text-warm-gold text-xs uppercase tracking-[0.25em] transition-colors"
           >
             Just browsing? Start with Feminine
@@ -513,14 +513,14 @@ export default async function SimulatorIndex({
 
         <div className="mt-6 flex flex-wrap gap-2.5">
           <Link
-            href="/consilium/simulator/leaderboard"
+            href="/app/ranks?board=xp"
             className="inline-flex items-center gap-2 px-4 py-2 text-xs uppercase tracking-[0.2em] text-warm-gold border border-warm-gold/30 rounded-full hover:bg-warm-gold/10 hover:border-warm-gold/60 transition-all"
           >
             <BarChart3 size={12} strokeWidth={1.6} />
             Leaderboard
           </Link>
           <Link
-            href="/consilium/simulator/achievements"
+            href="/app/train/achievements"
             className="inline-flex items-center gap-2 px-4 py-2 text-xs uppercase tracking-[0.2em] text-warm-gold border border-warm-gold/30 rounded-full hover:bg-warm-gold/10 hover:border-warm-gold/60 transition-all"
           >
             <Trophy size={12} strokeWidth={1.6} />
@@ -696,7 +696,7 @@ export default async function SimulatorIndex({
           totalAdventures===0 hides the row entirely (e.g. fresh DB). */}
       {totalAdventures > 0 && (
         <Link
-          href="/consilium/adventures"
+          href="/app/adventures"
           className="group flex items-center gap-3 mb-10 px-4 py-3 rounded-xl border border-warm-gold/15 bg-deep-black/40 transition-all hover:border-warm-gold/40 hover:bg-warm-gold/[0.03]"
         >
           <p className="text-warm-gold/70 uppercase tracking-[0.3em] text-[10px] shrink-0">
@@ -756,7 +756,7 @@ export default async function SimulatorIndex({
               return (
                 <Link
                   key={f.scenarioId}
-                  href={`/consilium/simulator/${f.scenarioId}`}
+                  href={`/app/train/${f.scenarioId}`}
                   className="group flex items-start justify-between gap-4 p-4 rounded-xl border border-warm-gold/15 bg-deep-black/40 transition-all hover:border-warm-gold/40 hover:bg-warm-gold/[0.03]"
                 >
                   <div className="min-w-0">
@@ -808,7 +808,7 @@ export default async function SimulatorIndex({
       {nextUp && nextUp.status !== "locked" && (
         <div className="mt-8 text-center">
           <Link
-            href={`/consilium/simulator/${nextUp.scenario.id}`}
+            href={`/app/train/${nextUp.scenario.id}`}
             className="inline-flex items-center gap-2 py-3.5 px-8 rounded-full bg-warm-gold text-deep-black font-medium tracking-wider uppercase text-sm transition-all hover:bg-warm-gold/90 hover:shadow-[0_8px_24px_-4px_rgba(212,175,55,0.55)]"
           >
             {nextUp.status === "in-progress" ? "Resume" : "Start"} —{" "}

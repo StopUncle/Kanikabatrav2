@@ -25,7 +25,7 @@ export default async function AdventureDetail({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const userId = await requireServerAuth(`/consilium/adventures/${slug}`);
+  const userId = await requireServerAuth(`/app/adventures/${slug}`);
 
   const adventure = await prisma.adventure.findUnique({ where: { slug } });
   if (!adventure || !adventure.publishedAt) notFound();
@@ -51,8 +51,8 @@ export default async function AdventureDetail({
   const currentStep = progress?.currentStep ?? 0;
 
   const ctaHref = isCompleted
-    ? `/consilium/adventures/${adventure.slug}/complete`
-    : `/consilium/adventures/${adventure.slug}/run`;
+    ? `/app/adventures/${adventure.slug}/complete`
+    : `/app/adventures/${adventure.slug}/run`;
   const ctaLabel = isCompleted
     ? "Read recap"
     : isInProgress
@@ -62,7 +62,7 @@ export default async function AdventureDetail({
   return (
     <main className="min-h-screen px-4 sm:px-8 py-10 max-w-3xl mx-auto">
       <Link
-        href="/consilium/adventures"
+        href="/app/adventures"
         className="inline-flex items-center gap-1 text-warm-gold/60 hover:text-warm-gold text-[10px] uppercase tracking-[0.3em] mb-6 transition-colors"
       >
         <ArrowRight size={10} strokeWidth={1.6} className="rotate-180" />

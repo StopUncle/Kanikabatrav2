@@ -125,13 +125,13 @@ export default function TellReveal({
 
       <div className="mt-7 flex flex-col gap-2.5 pb-4">
         <Link
-          href="/app/play"
+          href="/app/train"
           className="w-full rounded-full bg-[var(--app-gold)] py-3.5 text-center text-[12.5px] font-semibold uppercase tracking-[0.16em] text-[#0a0908] transition-transform active:scale-[0.97]"
         >
-          Back to the Arcade
+          Back to Train
         </Link>
         <Link
-          href={`/consilium/instincts/history`}
+          href={`/app/instincts/history`}
           className="w-full py-2.5 text-center text-[12px] uppercase tracking-[0.16em] text-[var(--app-muted)]"
         >
           Every Tell you have answered

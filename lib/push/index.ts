@@ -41,7 +41,7 @@ export type PushCategory =
 export interface PushPayload {
   title: string;
   body: string;
-  /** Path to navigate to when tapped. Defaults to /consilium/feed. */
+  /** Path to navigate to when tapped. Defaults to /app/feed. */
   url?: string;
   /** Optional small icon (defaults to /images/kanikarose-logo.png). */
   icon?: string;
@@ -174,7 +174,7 @@ export async function sendPushToUser(
     badge: payload.icon || "/images/kanikarose-logo.png",
     tag: payload.tag,
     requireInteraction: payload.requireInteraction ?? false,
-    data: { url: payload.url || "/consilium/feed" },
+    data: { url: payload.url || "/app/feed" },
   });
 
   let delivered = 0;

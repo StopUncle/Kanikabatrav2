@@ -313,7 +313,7 @@ function ScenarioCard({
     return <div aria-disabled>{inner}</div>;
   }
   return (
-    <Link href={`/consilium/simulator/${s.id}`} className="group block">
+    <Link href={`/app/train/${s.id}`} className="group block">
       {inner}
     </Link>
   );
@@ -417,7 +417,7 @@ export default function LevelJourney({
           </div>
           {nextUp && nextUp.status !== "locked" && (
             <Link
-              href={`/consilium/simulator/${nextUp.scenario.id}`}
+              href={`/app/train/${nextUp.scenario.id}`}
               className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-full bg-warm-gold text-deep-black font-medium text-sm tracking-wider uppercase transition-all hover:bg-warm-gold/90 hover:shadow-[0_8px_24px_-4px_rgba(212,175,55,0.55)] shrink-0"
             >
               {nextUp.status === "in-progress" ? "Resume" : "Play Next"}

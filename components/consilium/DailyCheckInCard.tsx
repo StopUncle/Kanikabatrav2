@@ -1,7 +1,7 @@
 "use client";
 
 /**
- * Daily Check-In card. Sits at the top of /consilium/simulator.
+ * Daily Check-In card. Sits at the top of /app/train/browse.
  *
  * Two states:
  *   - Empty (today, no answer yet): "Where are you today?" + 9 chips.
@@ -129,7 +129,7 @@ export default function DailyCheckInCard({ gender, initial, nextByTrack }: Props
                     <Link
                       href={
                         nextScenario
-                          ? `/consilium/simulator/${nextScenario.id}`
+                          ? `/app/train/${nextScenario.id}`
                           : trackMeta.href
                       }
                       className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-warm-gold text-deep-black text-sm font-medium tracking-[0.2em] uppercase transition-all hover:bg-warm-gold/90 hover:shadow-[0_6px_20px_-4px_rgba(212,175,55,0.5)]"

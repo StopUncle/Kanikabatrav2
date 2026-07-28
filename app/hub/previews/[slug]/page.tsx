@@ -26,7 +26,7 @@ export async function generateMetadata({ params }: PageProps) {
 
 export default async function PreviewDetailPage({ params }: PageProps) {
   const { slug } = await params;
-  await requireServerAuth(`/consilium/previews/${slug}`);
+  await requireServerAuth(`/app/previews/${slug}`);
 
   const post = getPostBySlug(slug);
   if (!post) notFound();
@@ -56,7 +56,7 @@ export default async function PreviewDetailPage({ params }: PageProps) {
     <div className="max-w-3xl mx-auto px-3 sm:px-4 py-6 sm:py-8 lg:py-12">
       {/* Back nav */}
       <Link
-        href="/consilium/previews"
+        href="/app/previews"
         className="inline-flex items-center gap-1.5 text-sm text-text-gray hover:text-warm-gold transition-colors mb-6"
       >
         <ArrowLeft className="w-4 h-4" />
@@ -114,7 +114,7 @@ export default async function PreviewDetailPage({ params }: PageProps) {
       {/* Footer, back to the list */}
       <div className="mt-12 pt-6 border-t border-warm-gold/10 flex items-center justify-between">
         <Link
-          href="/consilium/previews"
+          href="/app/previews"
           className="inline-flex items-center gap-1.5 text-sm text-text-gray hover:text-warm-gold transition-colors"
         >
           <ArrowLeft className="w-4 h-4" />

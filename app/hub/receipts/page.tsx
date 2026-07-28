@@ -12,7 +12,7 @@ export const metadata: Metadata = {
 };
 
 export default async function ReceiptsPage() {
-  const userId = await requireServerAuth("/consilium/receipts");
+  const userId = await requireServerAuth("/app/receipts");
 
   const [items, quota] = await Promise.all([
     listReceipts(userId, { limit: 30 }),

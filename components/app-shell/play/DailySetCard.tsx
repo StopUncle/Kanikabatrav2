@@ -25,13 +25,13 @@ function Flame() {
 export default function DailySetCard({
   set,
   streak,
-  href = "/app/play",
+  href = "/app/train",
 }: {
   set: DailySet;
   streak: ArcadeStreak;
   /**
    * Where the whole card goes when there is nothing left to start. On the
-   * Arcade itself that is nowhere; on Today it is the Arcade.
+   * Arcade itself that is nowhere; on Today it is Train.
    */
   href?: string | null;
 }) {
@@ -102,7 +102,7 @@ export default function DailySetCard({
     : "linear-gradient(140deg, rgba(212,175,55,0.11), rgba(212,175,55,0.02))";
 
   // Straight into the next game when there is one, otherwise wherever the
-  // caller wants a finished set to lead (nowhere, on the Arcade itself).
+  // caller wants a finished set to lead (nowhere, on Train itself).
   const target = set.nextHref ?? href;
 
   if (!target) {

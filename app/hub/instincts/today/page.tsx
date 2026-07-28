@@ -22,7 +22,7 @@ export const metadata: Metadata = {
 };
 
 export default async function ConsiliumTellsTodayPage() {
-  const userId = await requireServerAuth("/consilium/instincts/today");
+  const userId = await requireServerAuth("/app/instincts/today");
 
   const [tell, score, streak] = await Promise.all([
     getTodaysTellRow().then((row) => row ?? getTodaysSeed()),
@@ -92,14 +92,14 @@ export default async function ConsiliumTellsTodayPage() {
               />
             </div>
             <Link
-              href="/consilium/instincts/score"
+              href="/app/instincts/score"
               className="mt-5 flex items-center justify-between text-text-light hover:text-accent-gold transition-colors text-sm"
             >
               <span>Full breakdown</span>
               <ChevronRight size={16} />
             </Link>
             <Link
-              href="/consilium/instincts/history"
+              href="/app/instincts/history"
               className="mt-3 flex items-center justify-between text-text-gray hover:text-accent-gold transition-colors text-sm"
             >
               <span>History</span>

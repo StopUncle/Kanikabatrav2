@@ -302,7 +302,7 @@ export default function EndingScreen({
             Only shown on defeat endings that declare a `failureBlogSlug`.
             The pedagogy: when a player loses to a manipulation tactic, hand
             them the blog post that teaches the pattern. Links to the member
-            preview route (`/consilium/previews/<slug>`) rather than the
+            preview route (`/app/previews/<slug>`) rather than the
             public `/blog/<slug>`, many referenced posts are future-dated
             in their MDX frontmatter and the public route 404s on them.
             The preview route uses `getPostBySlug` (not `getPublicPostBySlug`)
@@ -322,7 +322,7 @@ export default function EndingScreen({
               className="mb-12 flex justify-center"
             >
               <Link
-                href={`/consilium/previews/${scene.failureBlogSlug}`}
+                href={`/app/previews/${scene.failureBlogSlug}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="group inline-flex items-center gap-3 px-6 py-4 rounded-xl border border-accent-gold/30 bg-deep-black/60 hover:border-accent-gold/60 hover:bg-accent-gold/5 transition-all max-w-md text-left"

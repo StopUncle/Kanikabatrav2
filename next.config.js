@@ -128,6 +128,53 @@ const nextConfig = {
         destination: "/app/:path*",
         permanent: false,
       },
+      // Six member surfaces moved out of /consilium and into the app: they
+      // are the ones the July cutover left behind, so the app had entrances
+      // that handed the member back to the old shell. The page files now
+      // live under app/hub, so these paths have nothing left to serve and
+      // these redirects catch bookmarks, emails and any link still in the
+      // wild. 302 for the same reason the cutover used 302: a 301 is cached
+      // ~forever and backing out would need every member to clear history.
+      // Query strings carry over, so ?track= survives the hop.
+      {
+        source: "/consilium/adventures/:path*",
+        destination: "/app/adventures/:path*",
+        permanent: false,
+      },
+      { source: "/consilium/adventures", destination: "/app/adventures", permanent: false },
+      { source: "/consilium/lab", destination: "/app/lab", permanent: false },
+      { source: "/consilium/receipts", destination: "/app/receipts", permanent: false },
+      {
+        source: "/consilium/previews/:path*",
+        destination: "/app/previews/:path*",
+        permanent: false,
+      },
+      { source: "/consilium/previews", destination: "/app/previews", permanent: false },
+      {
+        source: "/consilium/instincts/:path*",
+        destination: "/app/instincts/:path*",
+        permanent: false,
+      },
+      // Order matters: the two named simulator children must be matched
+      // before :scenarioId swallows them. The leaderboard has no app twin
+      // of its own because /app/ranks already renders the same XP board
+      // (plus Standing), so it lands there rather than on a second copy.
+      {
+        source: "/consilium/simulator/achievements",
+        destination: "/app/train/achievements",
+        permanent: false,
+      },
+      {
+        source: "/consilium/simulator/leaderboard",
+        destination: "/app/ranks?board=xp",
+        permanent: false,
+      },
+      {
+        source: "/consilium/simulator/:scenarioId",
+        destination: "/app/train/:scenarioId",
+        permanent: false,
+      },
+      { source: "/consilium/simulator", destination: "/app/train/browse", permanent: false },
       {
         // dark-psychology-beginners-guide was promoted from a blog post to a
         // pillar guide, moving its URL from /blog to /guide. 301 so the

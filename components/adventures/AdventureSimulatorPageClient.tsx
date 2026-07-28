@@ -149,13 +149,13 @@ export default function AdventureSimulatorPageClient({
   // The ending screen's "Next Scenario" link routes back into the run
   // dispatcher, which reads the freshly-advanced AdventureProgress row
   // and either renders the next chapter or redirects to /complete.
-  const nextScenarioHref = `/consilium/adventures/${adventureSlug}/run`;
+  const nextScenarioHref = `/app/adventures/${adventureSlug}/run`;
 
   return (
     <SimulatorErrorBoundary
       scenarioId={scenario.id}
       currentSceneIdRef={currentSceneIdRef}
-      exitHref={`/consilium/adventures/${adventureSlug}`}
+      exitHref={`/app/adventures/${adventureSlug}`}
     >
       <SimulatorRunner
         scenario={scenario}
@@ -165,7 +165,7 @@ export default function AdventureSimulatorPageClient({
         onComplete={handleComplete}
         nextScenarioHref={nextScenarioHref}
         badgesEarned={badgesEarned}
-        exitHref={`/consilium/adventures/${adventureSlug}`}
+        exitHref={`/app/adventures/${adventureSlug}`}
       />
       <AdventureChapterBanner label={stepLabel} title={adventureTitle} />
       <AchievementToast unlocks={unlockedThisRun} />

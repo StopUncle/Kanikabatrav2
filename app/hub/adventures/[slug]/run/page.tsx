@@ -26,13 +26,13 @@ export default async function AdventureRun({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const userId = await requireServerAuth(`/consilium/adventures/${slug}/run`);
+  const userId = await requireServerAuth(`/app/adventures/${slug}/run`);
 
   const adventure = await prisma.adventure.findUnique({ where: { slug } });
   if (!adventure || !adventure.publishedAt) notFound();
 
   if (adventure.scenarioIds.length === 0) {
-    redirect(`/consilium/adventures/${slug}`);
+    redirect(`/app/adventures/${slug}`);
   }
 
   // Lazily create the progress row on first visit so a deep-linked
@@ -45,7 +45,7 @@ export default async function AdventureRun({
 
   // Completed arc: send to the recap.
   if (progress.completedAt) {
-    redirect(`/consilium/adventures/${slug}/complete`);
+    redirect(`/app/adventures/${slug}/complete`);
   }
 
   // Self-heal: skip past chapters the player has already completed
@@ -69,7 +69,7 @@ export default async function AdventureRun({
       },
     });
     if (isFinal) {
-      redirect(`/consilium/adventures/${slug}/complete`);
+      redirect(`/app/adventures/${slug}/complete`);
     }
   }
 
@@ -79,7 +79,7 @@ export default async function AdventureRun({
     // Scenario was removed from code without updating the arc. Surface
     // it on the detail page (which shows the chapter as "Scenario removed")
     // so the admin can fix it.
-    redirect(`/consilium/adventures/${slug}`);
+    redirect(`/app/adventures/${slug}`);
   }
 
   // Mid-run resume for this chapter only (mirrors the standalone runner).

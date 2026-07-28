@@ -219,60 +219,60 @@ export const TRACK_META: Record<
   female: {
     label: "Feminine",
     sublabel: "The Maris arc · dark-psych at the gala and beyond",
-    href: "/consilium/simulator?track=female",
+    href: "/app/train/browse?track=female",
   },
   "male-business": {
     label: "Business Line",
     sublabel: "Power · career · capital · dark-psych in rooms that matter",
-    href: "/consilium/simulator?track=male-business",
+    href: "/app/train/browse?track=male-business",
   },
   "male-dating": {
     label: "Dating Line",
     sublabel: "Mate selection · BPD/HPD · gaslight · hoover · choose secure",
-    href: "/consilium/simulator?track=male-dating",
+    href: "/app/train/browse?track=male-dating",
   },
   anxiety: {
     label: "Self-Regulation",
     sublabel: "Interior work · the 3 a.m. text · urge-surfing · ally routing",
-    href: "/consilium/simulator?track=anxiety",
+    href: "/app/train/browse?track=anxiety",
   },
   "toxic-narc": {
     label: "Toxic Narcissist",
     sublabel: "Narc parent · boss · sibling · spouse · in-law · friend",
-    href: "/consilium/simulator?track=toxic-narc",
+    href: "/app/train/browse?track=toxic-narc",
   },
   "pc-child": {
     label: "Psychopath Child",
     sublabel: "Parental POV · conduct disorder · ages 5 to 20",
-    href: "/consilium/simulator?track=pc-child",
+    href: "/app/train/browse?track=pc-child",
   },
   "cluster-b-lab": {
     label: "Cluster-B Lab",
     sublabel: "Short drills · BPD / NPD / ASPD / HPD · audit, diagnose, prescribe",
-    href: "/consilium/simulator?track=cluster-b-lab",
+    href: "/app/train/browse?track=cluster-b-lab",
   },
   "divorce-arc": {
     label: "Divorce Arc",
     sublabel: "Long-form · the speaking, the lawyer, the kids, the year after",
-    href: "/consilium/simulator?track=divorce-arc",
+    href: "/app/train/browse?track=divorce-arc",
   },
   "loving-mira": {
     label: "Loving Mira",
     sublabel:
       "Long-form BPD narrative · the friend you can't save · learn to stay in love without losing yourself",
-    href: "/consilium/simulator?track=loving-mira",
+    href: "/app/train/browse?track=loving-mira",
   },
   "after-him": {
     label: "After Him",
     sublabel:
       "He left. Reclamation, not grief · no contact, costly signal, the hoover refused, the photo with no charge",
-    href: "/consilium/simulator?track=after-him",
+    href: "/app/train/browse?track=after-him",
   },
   "after-her": {
     label: "After Her",
     sublabel:
       "She left. Sovereignty, not vengeance · rage is the seductive feeling · become the man, not the message",
-    href: "/consilium/simulator?track=after-her",
+    href: "/app/train/browse?track=after-her",
   },
 };
 

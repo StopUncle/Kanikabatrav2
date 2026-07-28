@@ -13,14 +13,14 @@ export const metadata: Metadata = {
 };
 
 export default async function InstinctsHistoryPage() {
-  const userId = await requireServerAuth("/consilium/instincts/history");
+  const userId = await requireServerAuth("/app/instincts/history");
   const responses = await getResponseHistory(userId, { limit: 60 });
 
   return (
     <div className="min-h-screen px-4 py-10 sm:py-14">
       <div className="max-w-4xl mx-auto">
         <Link
-          href="/consilium/instincts/today"
+          href="/app/instincts/today"
           className="inline-flex items-center gap-2 text-text-gray hover:text-accent-gold transition-colors text-sm mb-8"
         >
           <ArrowLeft size={14} /> Today
@@ -45,7 +45,7 @@ export default async function InstinctsHistoryPage() {
               the dashboard.
             </p>
             <Link
-              href="/consilium/instincts/today"
+              href="/app/instincts/today"
               className="inline-block mt-6 px-5 py-2.5 rounded-full bg-accent-gold text-deep-black font-medium tracking-wider uppercase text-xs hover:bg-accent-gold/90"
             >
               Today&rsquo;s Tell

@@ -50,8 +50,8 @@ export default function DrillResults({
           </p>
         </div>
         <Link
-          href="/app/play"
-          aria-label="Back to the Arcade"
+          href="/app/train"
+          aria-label="Back to Train"
           className="mt-1 text-[var(--app-dim)]"
         >
           <svg
@@ -127,10 +127,10 @@ export default function DrillResults({
           Run it again
         </button>
         <Link
-          href="/app/play"
+          href="/app/train"
           className="w-full py-2.5 text-center text-[12px] uppercase tracking-[0.16em] text-[var(--app-muted)]"
         >
-          Back to the Arcade
+          Back to Train
         </Link>
       </div>
     </div>

@@ -129,7 +129,7 @@ export default function SimulatorRunner({
   onComplete,
   nextScenarioHref,
   badgesEarned,
-  exitHref = "/consilium/simulator",
+  exitHref = "/app/train/browse",
   endingCta,
   hideFailureBlog = false,
   previousBest = null,

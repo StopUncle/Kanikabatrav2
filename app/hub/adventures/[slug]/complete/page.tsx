@@ -25,7 +25,7 @@ export default async function AdventureComplete({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const userId = await requireServerAuth(`/consilium/adventures/${slug}/complete`);
+  const userId = await requireServerAuth(`/app/adventures/${slug}/complete`);
 
   const adventure = await prisma.adventure.findUnique({ where: { slug } });
   if (!adventure || !adventure.publishedAt) notFound();
@@ -34,7 +34,7 @@ export default async function AdventureComplete({
     where: { userId_adventureId: { userId, adventureId: adventure.id } },
   });
   if (!progress?.completedAt) {
-    redirect(`/consilium/adventures/${slug}`);
+    redirect(`/app/adventures/${slug}`);
   }
 
   // Sum XP earned across all scenarios in the arc. SimulatorProgress is
@@ -122,14 +122,14 @@ export default async function AdventureComplete({
 
       <div className="flex flex-wrap gap-3 justify-center">
         <Link
-          href="/consilium/adventures"
+          href="/app/adventures"
           className="inline-flex items-center gap-2 py-3.5 px-8 rounded-full bg-warm-gold text-deep-black font-medium tracking-wider uppercase text-sm transition-all hover:bg-warm-gold/90 hover:shadow-[0_8px_24px_-4px_rgba(212,175,55,0.55)]"
         >
           Browse more
           <ArrowRight size={16} />
         </Link>
         <Link
-          href={`/consilium/adventures/${slug}`}
+          href={`/app/adventures/${slug}`}
           className="inline-flex items-center gap-2 py-3.5 px-8 rounded-full border border-warm-gold/40 text-warm-gold font-light tracking-wider uppercase text-sm transition-all hover:bg-warm-gold/10"
         >
           <RotateCcw size={14} strokeWidth={1.6} />

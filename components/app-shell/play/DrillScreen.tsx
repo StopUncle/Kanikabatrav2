@@ -107,7 +107,7 @@ export default function DrillScreen({
       <div className="flex min-h-full flex-col px-6 pb-[max(24px,env(safe-area-inset-bottom))] pt-6">
         <div className="flex justify-end">
           <Link
-            href="/app/play"
+            href="/app/train"
             aria-label="Close"
             className="flex h-9 w-9 items-center justify-center rounded-full text-[var(--app-dim)]"
           >
@@ -217,7 +217,7 @@ export default function DrillScreen({
         <div className="px-5 pt-5">
           <div className="flex items-center justify-between">
             <Link
-              href="/app/play"
+              href="/app/train"
               aria-label="Leave the drill"
               className="text-[var(--app-dim)]"
             >
