@@ -60,6 +60,13 @@ const Footer = () => {
     };
   }, []);
 
+  /* Each block rises on its own beat, so the unfold reads as three things
+     arriving rather than one box changing size. */
+  const reveal = (delay: string) =>
+    `transition-[opacity,transform] duration-[700ms] ease-out motion-reduce:transition-none motion-reduce:translate-y-0 ${
+      expanded ? `opacity-100 translate-y-0 ${delay}` : "opacity-0 translate-y-5"
+    }`;
+
   const footerLinks = {
     explore: [
       { name: "About", href: "/about" },
@@ -134,26 +141,28 @@ const Footer = () => {
         </div>
 
         {/* Everything below opens on scroll. The 0fr to 1fr grid row is the
-            cheapest way to animate an unknown height without measuring it. */}
+            cheapest way to animate an unknown height without measuring it.
+
+            It opens over a slow beat on purpose. The trigger has to fire
+            early, roughly a screen-tenth before the footer's top edge would
+            come to rest on a fully scrolled page, or on tall displays it
+            would never fire at all. Fired that early at 700ms, the whole
+            thing was over before anyone arrived to see it: the footer read
+            as though it had always been open. Length is the only dial left,
+            so the unfold takes its time and the three blocks land in
+            sequence rather than together. */}
         <div
-          className={`grid transition-[grid-template-rows] duration-700 ease-out motion-reduce:transition-none ${
+          className={`grid transition-[grid-template-rows] duration-[850ms] ease-out motion-reduce:transition-none ${
             expanded ? "grid-rows-[1fr]" : "grid-rows-[0fr]"
           }`}
         >
           <div className={`overflow-hidden ${expanded ? "" : "invisible"}`}>
-            <div
-              aria-hidden={!expanded}
-              className={`transition-[opacity,transform] duration-700 ease-out motion-reduce:transition-none motion-reduce:translate-y-0 ${
-                expanded
-                  ? "opacity-100 translate-y-0 delay-100"
-                  : "opacity-0 translate-y-4"
-              }`}
-            >
+            <div aria-hidden={!expanded}>
               {/* Newsletter band. Free real estate on every page, the footer
                   renders site-wide. Source-tagged "footer" so capture from
                   here is attributable separately from the homepage / blog
                   forms. */}
-              <div className="pt-8 sm:pt-10 mb-8 sm:mb-10 pb-8 sm:pb-10 border-t border-b border-gold/10 grid gap-5 lg:grid-cols-2 lg:items-center">
+              <div className={`${reveal("delay-[120ms]")} pt-8 sm:pt-10 mb-8 sm:mb-10 pb-8 sm:pb-10 border-t border-b border-gold/10 grid gap-5 lg:grid-cols-2 lg:items-center`}>
                 <div>
                   <h4 className="text-gold text-sm font-medium tracking-wider mb-2">
                     THE LETTERS
@@ -167,7 +176,7 @@ const Footer = () => {
                 <NewsletterForm source="footer" />
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+              <div className={`${reveal("delay-[260ms]")} grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8`}>
                 {/* Brand Section */}
                 <div className="space-y-3 sm:space-y-4 col-span-1 sm:col-span-2 lg:col-span-1">
                   <p className="text-text-muted text-xs sm:text-sm">
@@ -218,7 +227,7 @@ const Footer = () => {
               </div>
 
               {/* Bottom Bar */}
-              <div className="mt-6 sm:mt-8 pt-6 sm:pt-8 pb-8 sm:pb-12 border-t border-gold/10">
+              <div className={`${reveal("delay-[400ms]")} mt-6 sm:mt-8 pt-6 sm:pt-8 pb-8 sm:pb-12 border-t border-gold/10`}>
                 <div className="flex flex-col sm:flex-row justify-between items-center space-y-3 sm:space-y-0">
                   <p className="text-text-muted text-xs sm:text-sm text-center sm:text-left">
                     © {currentYear} Kanika Batra. All rights reserved.
