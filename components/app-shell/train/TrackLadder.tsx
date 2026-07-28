@@ -1,9 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
 import type { TrackSummary } from "@/lib/simulator/train-data";
 import { sealedLine } from "@/lib/simulator/track-gates";
+import ChapterTrail from "./ChapterTrail";
 
 /**
  * The tracks as a climb, not a list.
@@ -86,50 +86,6 @@ function Node({ state, active }: { state: State; active: boolean }) {
         style={{ background: gold }}
       />
     </span>
-  );
-}
-
-function Rungs({ track }: { track: TrackSummary }) {
-  if (track.rungs.length === 0) {
-    return (
-      <p className="py-2 text-[12px] text-[var(--app-dim)]">
-        Nothing in this track yet.
-      </p>
-    );
-  }
-  return (
-    <ol className="flex flex-col gap-1 py-1">
-      {track.rungs.map((r) => (
-        <li key={r.scenarioId}>
-          <Link
-            href={`/app/train/${r.scenarioId}`}
-            className={`flex items-center gap-3 rounded-xl px-3 py-2.5 transition-colors active:bg-[var(--app-card-2)] ${
-              r.done ? "opacity-55" : ""
-            }`}
-          >
-            <span
-              className="w-4 shrink-0 text-center text-[10px] tabular-nums"
-              style={{ color: r.done ? "var(--app-green)" : "var(--app-dim)" }}
-            >
-              {r.done ? "✓" : r.level}
-            </span>
-            <span className="min-w-0 flex-1 truncate text-[13.5px]">
-              {r.title}
-            </span>
-            {r.inProgress && (
-              <span className="shrink-0 text-[9.5px] uppercase tracking-[0.18em] text-[var(--app-gold)]">
-                Resume
-              </span>
-            )}
-            {!r.inProgress && r.isNew && (
-              <span className="shrink-0 text-[9.5px] uppercase tracking-[0.18em] text-[var(--app-rose)]">
-                New
-              </span>
-            )}
-          </Link>
-        </li>
-      ))}
-    </ol>
   );
 }
 
@@ -217,8 +173,8 @@ export default function TrackLadder({ tracks }: { tracks: TrackSummary[] }) {
               </button>
 
               {isOpen && state !== "sealed" && (
-                <div className="ml-[39px] border-l border-[var(--app-line-soft)] pl-2">
-                  <Rungs track={t} />
+                <div className="ml-[39px] border-l border-[var(--app-line-soft)] pl-3 pr-1">
+                  <ChapterTrail track={t} />
                 </div>
               )}
             </li>
