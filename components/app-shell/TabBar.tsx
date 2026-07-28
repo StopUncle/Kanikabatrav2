@@ -4,6 +4,12 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import MoreSheet from "./MoreSheet";
+import {
+  TAB_SURFACES,
+  MORE_ACTIVE_PREFIXES,
+  FULL_SCREEN_ROUTES,
+  isTabActive,
+} from "@/lib/app/nav";
 
 /**
  * The app shell's bottom tab bar. Four destinations plus More: Today is the
@@ -12,50 +18,35 @@ import MoreSheet from "./MoreSheet";
  * lives one tap deeper in the More sheet.
  */
 
-const TABS = [
-  {
-    href: "/app",
-    label: "Today",
-    icon: (
-      <svg viewBox="0 0 24 24">
-        <circle cx="12" cy="12" r="9" />
-        <circle cx="12" cy="12" r="2" />
-      </svg>
-    ),
-  },
-  {
-    href: "/app/feed",
-    label: "Feed",
-    icon: (
-      <svg viewBox="0 0 24 24">
-        <path d="M4 5h16v11H8l-4 4z" />
-      </svg>
-    ),
-  },
-  {
-    href: "/app/train",
-    label: "Train",
-    // The games still live under /app/play, they are just launched from
-    // Train now, so the tab stays lit while one is open.
-    also: ["/app/play"],
-    icon: (
-      <svg viewBox="0 0 24 24">
-        <path d="M12 3l7 4v5c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V7z" />
-      </svg>
-    ),
-  },
-  {
-    href: "/app/kanika",
-    label: "Kanika",
-    badged: true,
-    icon: (
-      <svg viewBox="0 0 24 24">
-        <path d="M3 6.5A2.5 2.5 0 0 1 5.5 4h13A2.5 2.5 0 0 1 21 6.5v11a2.5 2.5 0 0 1-2.5 2.5h-13A2.5 2.5 0 0 1 3 17.5z" />
-        <path d="M3.5 6.5l8.5 6 8.5-6" />
-      </svg>
-    ),
-  },
-];
+/**
+ * Icons live here, not in the nav config: TabBar draws SVGs and MoreSheet
+ * uses lucide, and neither should have to agree with the other about it.
+ * The config owns what exists and where; this owns how it looks.
+ */
+const ICONS: Record<string, React.ReactNode> = {
+  "/app": (
+    <svg viewBox="0 0 24 24">
+      <circle cx="12" cy="12" r="9" />
+      <circle cx="12" cy="12" r="2" />
+    </svg>
+  ),
+  "/app/feed": (
+    <svg viewBox="0 0 24 24">
+      <path d="M4 5h16v11H8l-4 4z" />
+    </svg>
+  ),
+  "/app/train": (
+    <svg viewBox="0 0 24 24">
+      <path d="M12 3l7 4v5c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V7z" />
+    </svg>
+  ),
+  "/app/kanika": (
+    <svg viewBox="0 0 24 24">
+      <path d="M3 6.5A2.5 2.5 0 0 1 5.5 4h13A2.5 2.5 0 0 1 21 6.5v11a2.5 2.5 0 0 1-2.5 2.5h-13A2.5 2.5 0 0 1 3 17.5z" />
+      <path d="M3.5 6.5l8.5 6 8.5-6" />
+    </svg>
+  ),
+};
 
 export default function TabBar() {
   const pathname = usePathname();
@@ -89,16 +80,15 @@ export default function TabBar() {
     if (onKanika) fetchUnread();
   }, [onKanika, fetchUnread]);
 
-  const isMoreRoute =
-    pathname.startsWith("/app/path") ||
-    pathname.startsWith("/app/you") ||
-    pathname.startsWith("/app/ranks") ||
-    pathname.startsWith("/app/quizzes");
+  // Derived from the config, so a surface moving between the bar and the
+  // sheet cannot leave a stale highlight behind. The hardcoded version was
+  // missing five routes the sheet actually links to.
+  const isMoreRoute = MORE_ACTIVE_PREFIXES.some((p) => pathname.startsWith(p));
 
   // Screens that own the whole display: the Arrival is one door and one
   // button, and a drill under a running clock cannot afford a nav bar in
   // thumb range of the answer buttons.
-  if (pathname === "/app/welcome" || pathname === "/app/play/drill") return null;
+  if (FULL_SCREEN_ROUTES.includes(pathname)) return null;
 
   return (
     <>
@@ -113,12 +103,8 @@ export default function TabBar() {
         className="relative z-40 w-full shrink-0 border-t border-[var(--app-line-soft)] bg-[#0a0908]"
       >
         <div className="flex items-center justify-around px-1 pb-[max(14px,env(safe-area-inset-bottom))] pt-2.5">
-          {TABS.map((tab) => {
-            const active =
-              tab.href === "/app"
-                ? pathname === "/app"
-                : pathname.startsWith(tab.href) ||
-                  (tab.also ?? []).some((p) => pathname.startsWith(p));
+          {TAB_SURFACES.map((tab) => {
+            const active = isTabActive(tab, pathname);
             const showBadge = tab.badged && unread > 0;
             return (
               <Link
@@ -131,7 +117,7 @@ export default function TabBar() {
                 }`}
               >
                 <span className="relative h-[21px] w-[21px] [&>svg]:h-full [&>svg]:w-full [&>svg]:fill-none [&>svg]:stroke-current [&>svg]:[stroke-width:1.5]">
-                  {tab.icon}
+                  {ICONS[tab.href]}
                   {showBadge && (
                     <span
                       aria-hidden

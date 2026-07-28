@@ -2,6 +2,7 @@
 
 import { useEffect } from "react";
 import Link from "next/link";
+import { MORE_SECTIONS } from "@/lib/app/nav";
 import {
   Route,
   User,
@@ -21,42 +22,21 @@ import {
  * navigation.
  */
 
-type Item = { href: string; label: string; icon: React.ReactNode };
-
-const SECTIONS: { title: string; items: Item[] }[] = [
-  {
-    title: "You",
-    items: [
-      {
-        href: "/app/program",
-        label: "The 12 Weeks",
-        icon: <CalendarCheck size={17} />,
-      },
-      { href: "/app/path", label: "The Path", icon: <Route size={17} /> },
-      { href: "/app/you", label: "Your progress", icon: <User size={17} /> },
-      { href: "/app/ranks", label: "Leaderboards", icon: <Trophy size={17} /> },
-      { href: "/app/quizzes", label: "Quizzes", icon: <Brain size={17} /> },
-    ],
-  },
-  {
-    title: "Library",
-    items: [
-      { href: "/app/book", label: "The book", icon: <BookOpen size={17} /> },
-      { href: "/app/videos", label: "Videos", icon: <Video size={17} /> },
-      { href: "/app/voice-notes", label: "Voice notes", icon: <Mic size={17} /> },
-    ],
-  },
-  {
-    title: "Account",
-    items: [
-      {
-        href: "/app/profile",
-        label: "Profile and settings",
-        icon: <Settings size={17} />,
-      },
-    ],
-  },
-];
+/**
+ * Icons keyed by route. The nav config owns what is in this sheet and which
+ * group it sits in; this owns how each row looks.
+ */
+const ICONS: Record<string, React.ReactNode> = {
+  "/app/program": <CalendarCheck size={17} />,
+  "/app/path": <Route size={17} />,
+  "/app/you": <User size={17} />,
+  "/app/ranks": <Trophy size={17} />,
+  "/app/quizzes": <Brain size={17} />,
+  "/app/book": <BookOpen size={17} />,
+  "/app/videos": <Video size={17} />,
+  "/app/voice-notes": <Mic size={17} />,
+  "/app/profile": <Settings size={17} />,
+};
 
 export default function MoreSheet({
   open,
@@ -97,7 +77,7 @@ export default function MoreSheet({
           </button>
         </div>
 
-        {SECTIONS.map((section) => (
+        {MORE_SECTIONS.map((section) => (
           <div key={section.title} className="px-5 pt-4">
             <p className="mb-2 text-[10.5px] uppercase tracking-[0.24em] text-[var(--app-dim)]">
               {section.title}
@@ -112,7 +92,7 @@ export default function MoreSheet({
                     i > 0 ? "border-t border-[var(--app-line-soft)]" : ""
                   }`}
                 >
-                  <span className="text-[var(--app-gold)]">{item.icon}</span>
+                  <span className="text-[var(--app-gold)]">{ICONS[item.href]}</span>
                   <span className="flex-1 text-[14.5px]">{item.label}</span>
                   <span className="text-[var(--app-dim)]">›</span>
                 </Link>
