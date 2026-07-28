@@ -58,7 +58,11 @@ self.addEventListener("push", (event) => {
 
 self.addEventListener("notificationclick", (event) => {
   event.notification.close();
-  const targetUrl = (event.notification.data && event.notification.data.url) || "/consilium/feed";
+  // Falls back into the app, not the old member skin. Every push that ships
+  // without an explicit url was landing on /consilium/feed, which is the
+  // surface members were moved off: the notification worked and then dropped
+  // them outside the thing it opened.
+  const targetUrl = (event.notification.data && event.notification.data.url) || "/app/feed";
   event.waitUntil(
     self.clients
       .matchAll({ type: "window", includeUncontrolled: true })

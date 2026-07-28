@@ -1,5 +1,6 @@
 "use client";
 
+import { MEMBERSHIP } from "@/lib/constants";
 import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, m } from "framer-motion";
 import { Check, X } from "lucide-react";
@@ -63,7 +64,7 @@ export default function TellPlayer({
   tell: PublicTell;
   /**
    * Where the player is rendered. Drives the reveal footer:
-   *   "public"   → "Train Your Instincts $29/mo" + "Tomorrow's Tell"
+   *   "public"   → "Train Your Instincts" upsell + "Tomorrow's Tell"
    *                (cold-visitor funnel; current /tells, /tells/[slug]).
    *   "member"   → "Your hex" + "History" + "Receipts"
    *                (paying member; do NOT sell membership).
@@ -508,8 +509,9 @@ function TellRevealView({
       </div>
 
       {/* Footer disclaimer + CTA. Surface-aware: members never see the
-          $29/mo upsell because they already pay; cold visitors get the
-          conversion CTA. */}
+          upsell because they already pay; cold visitors get the conversion
+          CTA, which is why it points at the join page rather than into the
+          app. */}
       <div className="pt-6 border-t border-gray-800 space-y-6">
         <p className="text-text-gray/60 text-xs leading-relaxed">
           Pattern recognition training. Not medical or legal advice. Not a
@@ -532,7 +534,7 @@ function TellRevealView({
                 href="/consilium/apply?src=tell"
                 className="inline-flex items-center justify-center px-7 py-3 rounded-full bg-accent-gold text-deep-black font-medium tracking-wider uppercase text-sm hover:bg-accent-gold/90 transition-all"
               >
-                Train Your Instincts &middot; $29/mo
+                Train Your Instincts &middot; {MEMBERSHIP.monthlyShort}
               </a>
               <a
                 href="/tells"
