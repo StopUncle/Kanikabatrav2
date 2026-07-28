@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { Instagram, Youtube, Mail, Heart } from "lucide-react";
 import KanikaroseLogo from "./KanikaroseLogo";
@@ -13,6 +14,51 @@ const TikTokIcon = ({ className }: { className?: string }) => (
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
+  const sentinelRef = useRef<HTMLDivElement>(null);
+
+  /* Open by default so the footer is complete before hydration and with JS
+     off. The observer corrects it on mount, while the footer is still below
+     the fold, so the collapse is never seen as a jump. */
+  const [expanded, setExpanded] = useState(true);
+
+  /* Two observers on a sentinel pinned to the footer's top edge, one for each
+     direction, with a deliberate gap between the two trigger lines. A single
+     line oscillates: opening changes the page height, the browser's scroll
+     anchoring nudges the scroll position to compensate, that nudge crosses the
+     line again, and the footer flickers open and shut forever. Opening at 6%
+     above the fold and closing only once the footer sits 60% of a screen below
+     it leaves far more slack than any anchor correction. */
+  useEffect(() => {
+    const sentinel = sentinelRef.current;
+    if (!sentinel) return;
+
+    const open = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) setExpanded(true);
+      },
+      { rootMargin: "0px 0px -6% 0px" },
+    );
+
+    const close = new IntersectionObserver(
+      ([entry]) => {
+        /* Only when the footer is below the viewport. Once it is taller than
+           the screen its top edge scrolls off above, which is not a reason to
+           close it under the reader. */
+        if (!entry.isIntersecting && entry.boundingClientRect.top > 0) {
+          setExpanded(false);
+        }
+      },
+      { rootMargin: "0px 0px 60% 0px" },
+    );
+
+    open.observe(sentinel);
+    close.observe(sentinel);
+
+    return () => {
+      open.disconnect();
+      close.disconnect();
+    };
+  }, []);
 
   const footerLinks = {
     explore: [
@@ -52,118 +98,139 @@ const Footer = () => {
   };
 
   return (
-    <footer className="relative z-20 bg-gradient-to-b from-deep-black to-burgundy-dark/10 border-t border-gold/10">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
-        {/* Newsletter band. Free real estate on every page, the footer
-            renders site-wide. Source-tagged "footer" so capture from here
-            is attributable separately from the homepage / blog forms. */}
-        <div className="mb-8 sm:mb-10 pb-8 sm:pb-10 border-b border-gold/10 grid gap-5 lg:grid-cols-2 lg:items-center">
-          <div>
-            <h4 className="text-gold text-sm font-medium tracking-wider mb-2">
-              THE LETTERS
-            </h4>
-            <p className="text-text-muted text-xs sm:text-sm max-w-md leading-relaxed">
-              The psychology of power, red flags, and the patterns most people
-              miss, from a diagnosed sociopath. No fluff, unsubscribe any time.
-            </p>
-          </div>
-          <NewsletterForm source="footer" />
-        </div>
+    // [overflow-anchor:none] keeps the browser from anchoring the scroll
+    // position to content that is mid-animation.
+    <footer className="relative z-20 bg-gradient-to-b from-deep-black to-burgundy-dark/10 border-t border-gold/10 [overflow-anchor:none]">
+      <div
+        ref={sentinelRef}
+        aria-hidden="true"
+        className="absolute inset-x-0 top-0 h-px"
+      />
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
-          {/* Brand Section.
-              `fullName` swaps the "KR" monogram for the full "KANIKAROSE"
-              wordmark so the footer brand doesn't visually duplicate the
-              fixed-header "KR" at the top of the page, when you scroll
-              to the footer the two used to stack like an accidental
-              double-render. Full wordmark reads as a signature, not a
-              nav echo. */}
-          <div className="space-y-3 sm:space-y-4 col-span-1 sm:col-span-2 lg:col-span-1">
-            <div className="flex items-center">
-              <KanikaroseLogo size="lg" fullName />
-            </div>
-            <p className="text-text-muted text-xs sm:text-sm">
-              Diagnosed Sociopath. Author. Psychology of Power Expert.
-            </p>
-            <p className="text-gold text-xs">
-              Stop being the victim. Start being the villain.
-            </p>
-          </div>
-
-          {/* Explore Links */}
-          <div className="col-span-1">
-            <h4 className="text-gold text-xs sm:text-sm font-medium tracking-wider mb-3 sm:mb-4">
-              EXPLORE
-            </h4>
-            <ul className="space-y-1">
-              {footerLinks.explore.map((link) => (
-                <li key={link.name}>
-                  <Link
-                    href={link.href}
-                    className="block py-1.5 text-text-muted hover:text-gold transition-colors duration-300 text-xs sm:text-sm"
-                  >
-                    {link.name}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Legal Links */}
-          <div className="col-span-1">
-            <h4 className="text-gold text-xs sm:text-sm font-medium tracking-wider mb-3 sm:mb-4">
-              LEGAL
-            </h4>
-            <ul className="space-y-1">
-              {footerLinks.legal.map((link) => (
-                <li key={link.name}>
-                  <Link
-                    href={link.href}
-                    className="block py-1.5 text-text-muted hover:text-gold transition-colors duration-300 text-xs sm:text-sm"
-                  >
-                    {link.name}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Social Links */}
-          <div className="col-span-1 sm:col-span-2 lg:col-span-1">
-            <h4 className="text-gold text-xs sm:text-sm font-medium tracking-wider mb-3 sm:mb-4">
-              CONNECT
-            </h4>
-            <div className="flex space-x-3 sm:space-x-4">
-              {footerLinks.social.map((link) => {
-                const Icon = link.icon;
-                return (
-                  <a
-                    key={link.name}
-                    href={link.href}
-                    target="_blank"
-                    rel="me noopener noreferrer"
-                    className="text-text-muted hover:text-gold transition-colors duration-300"
-                    aria-label={link.name}
-                  >
-                    <Icon className="w-5 h-5" />
-                  </a>
-                );
-              })}
-            </div>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* The spine. Always visible, so the footer announces itself as a slim
+            bar the moment it comes into view, then opens. `fullName` swaps the
+            "KR" monogram for the wordmark so this doesn't echo the fixed
+            header's "KR" when the two meet at the bottom of the page. */}
+        <div className="flex flex-wrap items-center justify-between gap-4 py-6 sm:py-8">
+          <KanikaroseLogo size="lg" fullName />
+          <div className="flex space-x-4 sm:space-x-5">
+            {footerLinks.social.map((link) => {
+              const Icon = link.icon;
+              return (
+                <a
+                  key={link.name}
+                  href={link.href}
+                  target="_blank"
+                  rel="me noopener noreferrer"
+                  className="text-text-muted hover:text-gold transition-colors duration-300"
+                  aria-label={link.name}
+                >
+                  <Icon className="w-5 h-5" />
+                </a>
+              );
+            })}
           </div>
         </div>
 
-        {/* Bottom Bar */}
-        <div className="mt-6 sm:mt-8 pt-6 sm:pt-8 border-t border-gold/10">
-          <div className="flex flex-col sm:flex-row justify-between items-center space-y-3 sm:space-y-0">
-            <p className="text-text-muted text-xs sm:text-sm text-center sm:text-left">
-              © {currentYear} Kanika Batra. All rights reserved.
-            </p>
-            <p className="text-text-muted text-xs sm:text-sm flex items-center">
-              Crafted with{" "}
-              <Heart className="w-3 h-3 sm:w-4 sm:h-4 mx-1 text-burgundy" /> and
-              strategy
-            </p>
+        {/* Everything below opens on scroll. The 0fr to 1fr grid row is the
+            cheapest way to animate an unknown height without measuring it. */}
+        <div
+          className={`grid transition-[grid-template-rows] duration-700 ease-out motion-reduce:transition-none ${
+            expanded ? "grid-rows-[1fr]" : "grid-rows-[0fr]"
+          }`}
+        >
+          <div className={`overflow-hidden ${expanded ? "" : "invisible"}`}>
+            <div
+              aria-hidden={!expanded}
+              className={`transition-[opacity,transform] duration-700 ease-out motion-reduce:transition-none motion-reduce:translate-y-0 ${
+                expanded
+                  ? "opacity-100 translate-y-0 delay-100"
+                  : "opacity-0 translate-y-4"
+              }`}
+            >
+              {/* Newsletter band. Free real estate on every page, the footer
+                  renders site-wide. Source-tagged "footer" so capture from
+                  here is attributable separately from the homepage / blog
+                  forms. */}
+              <div className="pt-8 sm:pt-10 mb-8 sm:mb-10 pb-8 sm:pb-10 border-t border-b border-gold/10 grid gap-5 lg:grid-cols-2 lg:items-center">
+                <div>
+                  <h4 className="text-gold text-sm font-medium tracking-wider mb-2">
+                    THE LETTERS
+                  </h4>
+                  <p className="text-text-muted text-xs sm:text-sm max-w-md leading-relaxed">
+                    The psychology of power, red flags, and the patterns most
+                    people miss, from a diagnosed sociopath. No fluff,
+                    unsubscribe any time.
+                  </p>
+                </div>
+                <NewsletterForm source="footer" />
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+                {/* Brand Section */}
+                <div className="space-y-3 sm:space-y-4 col-span-1 sm:col-span-2 lg:col-span-1">
+                  <p className="text-text-muted text-xs sm:text-sm">
+                    Diagnosed Sociopath. Author. Psychology of Power Expert.
+                  </p>
+                  <p className="text-gold text-xs">
+                    Stop being the victim. Start being the villain.
+                  </p>
+                </div>
+
+                {/* Explore Links */}
+                <div className="col-span-1">
+                  <h4 className="text-gold text-xs sm:text-sm font-medium tracking-wider mb-3 sm:mb-4">
+                    EXPLORE
+                  </h4>
+                  <ul className="space-y-1">
+                    {footerLinks.explore.map((link) => (
+                      <li key={link.name}>
+                        <Link
+                          href={link.href}
+                          className="block py-1.5 text-text-muted hover:text-gold transition-colors duration-300 text-xs sm:text-sm"
+                        >
+                          {link.name}
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+
+                {/* Legal Links */}
+                <div className="col-span-1">
+                  <h4 className="text-gold text-xs sm:text-sm font-medium tracking-wider mb-3 sm:mb-4">
+                    LEGAL
+                  </h4>
+                  <ul className="space-y-1">
+                    {footerLinks.legal.map((link) => (
+                      <li key={link.name}>
+                        <Link
+                          href={link.href}
+                          className="block py-1.5 text-text-muted hover:text-gold transition-colors duration-300 text-xs sm:text-sm"
+                        >
+                          {link.name}
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+
+              {/* Bottom Bar */}
+              <div className="mt-6 sm:mt-8 pt-6 sm:pt-8 pb-8 sm:pb-12 border-t border-gold/10">
+                <div className="flex flex-col sm:flex-row justify-between items-center space-y-3 sm:space-y-0">
+                  <p className="text-text-muted text-xs sm:text-sm text-center sm:text-left">
+                    © {currentYear} Kanika Batra. All rights reserved.
+                  </p>
+                  <p className="text-text-muted text-xs sm:text-sm flex items-center">
+                    Crafted with{" "}
+                    <Heart className="w-3 h-3 sm:w-4 sm:h-4 mx-1 text-burgundy" />{" "}
+                    and strategy
+                  </p>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>

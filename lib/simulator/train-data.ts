@@ -1,6 +1,7 @@
 import type { PrismaClient } from "@prisma/client";
 import {
   ALL_SCENARIOS,
+  levelTitlesForTrack,
   scenariosForTrack,
   TRACK_META,
 } from "@/lib/simulator/scenarios";
@@ -42,11 +43,15 @@ export const VALID_TRACKS: ScenarioTrack[] = [
 export interface TrackRung {
   scenarioId: string;
   title: string;
+  /** One line of setup. The trail borrows the first rung's line to name its chapter. */
+  tagline: string;
   level: number;
   done: boolean;
   /** Started but never finished. */
   inProgress: boolean;
   isNew: boolean;
+  /** Prerequisites not met yet, so it cannot be played. */
+  locked: boolean;
 }
 
 export interface TrackSummary {
@@ -63,6 +68,11 @@ export interface TrackSummary {
    * catalog, which was the last thing routing anybody out of the app.
    */
   rungs: TrackRung[];
+  /**
+   * Chapter names, keyed by level. Every track already ships written ones,
+   * so the trail names its chapters rather than numbering them.
+   */
+  levelTitles: Record<number, { title: string; blurb: string }>;
 }
 
 export interface NextUp {
@@ -142,10 +152,12 @@ export async function getTrainData(
       return {
         scenarioId: s.id,
         title: s.title,
+        tagline: s.tagline,
         level: s.level,
         done: completedIds.has(s.id),
         inProgress: !!p && !p.completedAt,
         isNew: !!s.isNew && !p,
+        locked: !isUnlocked(s.prerequisites),
       };
     });
 
@@ -163,6 +175,7 @@ export async function getTrainData(
       total: list.length,
       newCount,
       rungs,
+      levelTitles: levelTitlesForTrack(t),
     };
   });
 
