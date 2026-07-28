@@ -1,16 +1,33 @@
 "use client";
 
-import { useState } from "react";
+import { useState, Suspense } from "react";
+import { useSearchParams } from "next/navigation";
 import { m } from "framer-motion";
 import Link from "next/link";
 import BackgroundEffects from "@/components/BackgroundEffects";
 import Header from "@/components/Header";
 import { Mail, ArrowRight, CheckCircle, AlertCircle } from "lucide-react";
 
-export default function ResendPage() {
+// The download API redirects browsers here with ?reason= when a link can't
+// be honoured, so the page opens by explaining what happened instead of
+// looking like the buyer landed on a generic form by mistake.
+const REASON_MESSAGES: Record<string, string> = {
+  expired:
+    "That download link has expired. No problem: enter your checkout email below and we'll send you a fresh one.",
+  limit:
+    "That link reached its download limit. Enter your checkout email below and we'll send you a fresh link with a reset counter.",
+  invalid:
+    "That download link is no longer valid (a newer link may have replaced it). Enter your checkout email below and we'll send you the latest one.",
+  unavailable:
+    "The book file is temporarily unavailable. Please try your link again in a few minutes, or request a fresh one below.",
+};
+
+function ResendContent() {
   const [email, setEmail] = useState("");
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
   const [message, setMessage] = useState("");
+  const searchParams = useSearchParams();
+  const reasonMessage = REASON_MESSAGES[searchParams.get("reason") || ""];
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -64,6 +81,18 @@ export default function ResendPage() {
               checkout and we&apos;ll send a fresh download link.
             </p>
           </m.div>
+
+          {reasonMessage && status !== "success" && (
+            <m.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4 }}
+              className="flex items-start gap-3 bg-accent-gold/10 border border-accent-gold/30 rounded-lg p-4 mb-6"
+            >
+              <AlertCircle className="w-5 h-5 text-accent-gold shrink-0 mt-0.5" />
+              <p className="text-text-light text-sm">{reasonMessage}</p>
+            </m.div>
+          )}
 
           <m.div
             initial={{ opacity: 0, y: 20 }}
@@ -165,5 +194,23 @@ export default function ResendPage() {
         </div>
       </div>
     </>
+  );
+}
+
+export default function ResendPage() {
+  return (
+    <Suspense
+      fallback={
+        <>
+          <BackgroundEffects />
+          <Header />
+          <div className="min-h-screen pt-32 pb-16 px-4 relative z-10 flex items-center justify-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-accent-gold" />
+          </div>
+        </>
+      }
+    >
+      <ResendContent />
+    </Suspense>
   );
 }

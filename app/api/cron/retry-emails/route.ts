@@ -37,7 +37,10 @@ export async function POST(request: NextRequest) {
         },
       },
       orderBy: { createdAt: "asc" },
-      take: 10,
+      // 50 per run × every 30 min = 100 recoveries/hour. At 10 the queue
+      // drained at 20/hour, which meant a surge-day email outage left the
+      // tail of buyers waiting most of a day for their book.
+      take: 50,
     });
 
     const results: { id: string; email: string; success: boolean }[] = [];
@@ -139,7 +142,7 @@ export async function POST(request: NextRequest) {
         NOT: { downloadToken: { not: null } },
       },
       orderBy: { createdAt: "asc" },
-      take: 10,
+      take: 50,
     });
 
     const welcomeResults: {

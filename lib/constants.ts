@@ -26,6 +26,12 @@ export const SITE_CONFIG = {
   ],
 };
 
+// Download-slot budget per purchase. The email offers six files (book EPUB +
+// PDF, two bonus chapters in both formats), so one full set on a phone AND a
+// laptop is 12 slots. The cap exists to stop mass link-sharing, not normal
+// multi-device use; the 30-day token expiry is the real abuse bound.
+export const BOOK_MAX_DOWNLOADS = 30;
+
 export const BOOK_INFO = {
   title: "Sociopathic Dating Bible",
   subtitle: "A Cure For Empathy",
