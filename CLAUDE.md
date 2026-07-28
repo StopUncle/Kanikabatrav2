@@ -107,6 +107,23 @@ All products created via Stripe API. productKeys:
 
 Files at `private/books/EVENBETTERBOOK/*` (main) and `private/books/Addendums/*` (bonus). Whole `private/` tree gitignored.
 
+## 🎓 The 12 Week Transformation (+ advanced course)
+
+Video program that pairs each week's lessons with assigned reading from the book.
+
+| Doc | What it is |
+|---|---|
+| `docs/TRANSFORMATION-PLAN.md` | Delivery system: data model, drip, unlock crons, Standing |
+| `docs/TRANSFORMATION-CURRICULUM.md` | Content. **Part I** = the 12 week program + reading map. **Part II** = the advanced 6 week course (working title "Advanced Dynamics") |
+| `docs/TRANSFORMATION-TALKING-POINTS.md` | Per-lesson filming beats for Part I (3-5 per lesson, not scripts) |
+
+**Rules that govern this content:**
+- Part I assigns all 15 chapters + both addendums exactly once, doctrine half only. Part II re-reads the same chapters' deep halves (case files, advanced tactics, drills). Nothing in Part II is a first read, so it is **gated on Week 12 completion**, never sold as an entry point.
+- Part II is 50% book / 50% new material (marked `[BOOK]` / `[NEW]` per lesson). The new half covers what the book lacks: being the target, the institutional layer (HR, mediation, courts), legal boundaries, repair, and the cost of the skills.
+- **The book's operational sabotage material is taught as recognition, never instruction.** No lesson gives steps for damaging a specific person. Same ethics line as Part I Week 7; also the only version that survives a platform review.
+- Part II lesson and module names are deliberately plain and clinical. Nothing in a title or thumbnail should be quotable out of context.
+- Chapter titles in the seed cards (`prisma/seeds/book-insights.ts`) are marketing names and **two do not match the book**: real Ch. 5 is "The Predator's Gaze" (weakness detection, not scarcity), real Ch. 6 is "The Architecture of Control". Trust the EPUB, not the cards.
+
 ## 🎯 Consilium / Inner Circle ($29/mo)
 
 > Full ops manual: `docs/INNER-CIRCLE.md` (gitignored).
