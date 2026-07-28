@@ -71,7 +71,7 @@ export function getDailyMission(now: Date = new Date()): DailyMission | null {
     level: scenario.level,
     track: getTrack(scenario),
     estimatedMinutes: scenario.estimatedMinutes,
-    href: `/consilium/simulator/${scenario.id}?mission=1`,
+    href: `/app/train/${scenario.id}?mission=1`,
   };
 }
 

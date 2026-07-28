@@ -503,9 +503,8 @@ export const CHAPTER_BY_ID: Record<string, PathChapter> = Object.fromEntries(
 );
 
 /**
- * Where a step's action lives inside the APP shell. Unported surfaces
- * (Receipts, The Lab) still point at the old skin, which is the honest
- * option until they exist at /app.
+ * Where a step's action lives inside the APP shell. Every surface now has
+ * an /app home, so no step hands the member back to the old skin.
  *
  * Split from stepHref rather than replacing it: the legacy Path page and
  * the weekly digest email still address members who live on /consilium,
@@ -525,11 +524,11 @@ export function appStepHref(
     case "comments":
       return "/app/feed";
     case "receipts":
-      return "/consilium/receipts";
+      return "/app/receipts";
     case "drills":
       return "/app/play/drill";
     case "labs":
-      return "/consilium/lab";
+      return "/app/lab";
     case "quiz":
       return "/app/quizzes";
     case "question":

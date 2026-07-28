@@ -10,7 +10,7 @@ export const metadata = {
 };
 
 export default async function PreviewsPage() {
-  await requireServerAuth("/consilium/previews");
+  await requireServerAuth("/app/previews");
   const upcoming = getUpcomingPosts(60);
 
   return (
@@ -59,7 +59,7 @@ export default async function PreviewsPage() {
             return (
               <Link
                 key={post.slug}
-                href={`/consilium/previews/${post.slug}`}
+                href={`/app/previews/${post.slug}`}
                 className="group block rounded-2xl border border-warm-gold/15 bg-deep-black/40 p-5 sm:p-6 hover:border-warm-gold/40 hover:bg-deep-black/60 hover:shadow-[0_8px_32px_-12px_rgba(212,175,55,0.25)] transition-all duration-300"
               >
                 {/* Meta row */}

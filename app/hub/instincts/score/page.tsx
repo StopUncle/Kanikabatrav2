@@ -34,7 +34,7 @@ function tier(rating: number): { label: string; color: string } {
 }
 
 export default async function ConsiliumInstinctsScorePage() {
-  const userId = await requireServerAuth("/consilium/instincts/score");
+  const userId = await requireServerAuth("/app/instincts/score");
 
   const [score, streak, profile] = await Promise.all([
     getInstinctScore(userId),
@@ -62,7 +62,7 @@ export default async function ConsiliumInstinctsScorePage() {
     <div className="min-h-screen px-4 py-10 sm:py-14">
       <div className="max-w-5xl mx-auto">
         <Link
-          href="/consilium/instincts/today"
+          href="/app/instincts/today"
           className="inline-flex items-center gap-2 text-text-gray hover:text-accent-gold transition-colors text-sm mb-8"
         >
           <ArrowLeft size={14} /> Today

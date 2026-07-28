@@ -192,7 +192,7 @@ export default function SimulatorPageClient({
     <SimulatorErrorBoundary
       scenarioId={scenario.id}
       currentSceneIdRef={currentSceneIdRef}
-      exitHref={exitHref ?? "/consilium/simulator"}
+      exitHref={exitHref ?? "/app/train/browse"}
     >
       <SimulatorRunner
         scenario={scenario}

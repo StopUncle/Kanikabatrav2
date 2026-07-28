@@ -271,7 +271,7 @@ export default function FeedPost({ post, isDetail = false, isNew = false }: Feed
         </h3>
       ) : (
         <Link
-          href={`/consilium/feed/${post.id}`}
+          href={`/app/feed/${post.id}`}
           className="block mb-2 hover:text-accent-gold transition-colors"
         >
           <h3 className="text-base sm:text-lg font-medium text-text-light hover:text-accent-gold transition-colors">
@@ -342,7 +342,7 @@ export default function FeedPost({ post, isDetail = false, isNew = false }: Feed
         </ReactMarkdown>
         {shouldTruncate && (
           <Link
-            href={`/consilium/feed/${post.id}`}
+            href={`/app/feed/${post.id}`}
             className="text-accent-gold hover:text-accent-gold/80 ml-1 inline-block"
           >
             Read more
@@ -403,7 +403,7 @@ export default function FeedPost({ post, isDetail = false, isNew = false }: Feed
         </button>
 
         <Link
-          href={`/consilium/feed/${post.id}`}
+          href={`/app/feed/${post.id}`}
           aria-label="View comments"
           className="flex items-center gap-1.5 text-sm text-text-gray/50 hover:text-accent-gold transition-colors px-2 py-2 -mx-2 rounded-lg active:bg-accent-gold/10 tap-target"
         >
