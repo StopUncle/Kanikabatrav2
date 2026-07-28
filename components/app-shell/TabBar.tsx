@@ -35,6 +35,9 @@ const TABS = [
   {
     href: "/app/train",
     label: "Train",
+    // The games still live under /app/play, they are just launched from
+    // Train now, so the tab stays lit while one is open.
+    also: ["/app/play"],
     icon: (
       <svg viewBox="0 0 24 24">
         <path d="M12 3l7 4v5c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V7z" />
@@ -87,7 +90,6 @@ export default function TabBar() {
   }, [onKanika, fetchUnread]);
 
   const isMoreRoute =
-    pathname.startsWith("/app/play") ||
     pathname.startsWith("/app/path") ||
     pathname.startsWith("/app/you") ||
     pathname.startsWith("/app/ranks") ||
@@ -115,7 +117,8 @@ export default function TabBar() {
             const active =
               tab.href === "/app"
                 ? pathname === "/app"
-                : pathname.startsWith(tab.href);
+                : pathname.startsWith(tab.href) ||
+                  (tab.also ?? []).some((p) => pathname.startsWith(p));
             const showBadge = tab.badged && unread > 0;
             return (
               <Link

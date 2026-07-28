@@ -94,7 +94,11 @@ export async function getBentoData(
           : "Start here."
       : "Read a person across a whole scene.",
     meta: nextUp?.trackLabel ?? "Simulator",
-    href: nextUp ? `/app/train/${nextUp.scenarioId}` : "/app/train",
+    // The climb, not the scenario. Every tile in this room opens a menu, and
+    // dropping straight into a run from here would be the one tile that
+    // starts something the member has not chosen yet. The climb puts the
+    // same scenario one tap further on, under a PLAY button.
+    href: "/app/train/climb",
   };
 
   const best = drillBest._max.score;
@@ -126,7 +130,7 @@ export async function getBentoData(
       numeral: "06",
       duration: "Chapters",
       meta: adventures > 0 ? `${adventures} started` : "Multi-night arcs",
-      href: "/consilium/adventures",
+      href: "/app/adventures",
       // No daily reset, so it is never "done today" and sorts on plays.
       doneToday: false,
       popular: false,
@@ -137,7 +141,7 @@ export async function getBentoData(
       numeral: "01",
       duration: "2 min",
       meta: receipts > 0 ? `${receipts} read` : "Paste what they sent",
-      href: "/consilium/receipts",
+      href: "/app/receipts",
       doneToday: false,
       popular: false,
     },
@@ -151,7 +155,7 @@ export async function getBentoData(
     strip: {
       name: "The Lab",
       line: "Freeform. Say anything, see what it costs you.",
-      href: "/consilium/lab",
+      href: "/app/lab",
       cta: "Open",
     },
   };

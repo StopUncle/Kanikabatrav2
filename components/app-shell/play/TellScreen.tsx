@@ -63,8 +63,8 @@ export default function TellScreen({ tell }: { tell: PublicTell }) {
           </h1>
         </div>
         <Link
-          href="/app/play"
-          aria-label="Back to the Arcade"
+          href="/app/train"
+          aria-label="Back to Train"
           className="mt-1 text-[var(--app-dim)]"
         >
           <svg
