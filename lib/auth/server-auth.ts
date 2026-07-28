@@ -77,12 +77,27 @@ export async function getAdminUserId(): Promise<string | null> {
  * Admins with a valid admin_session cookie bypass the member login check.
  */
 export async function requireServerAuth(redirectPath: string): Promise<string> {
-  if (process.env.DEV_BYPASS_AUTH === "true") {
-    return "dev-admin";
-  }
-
   const cookieStore = await cookies();
   const accessToken = cookieStore.get("accessToken")?.value;
+
+  /**
+   * The dev bypass yields to a real session.
+   *
+   * It used to return `dev-admin` before looking at cookies at all, which
+   * meant that with the bypass on you could log in as anyone and still see
+   * dev-admin's screens. Every surface in this app has therefore only ever
+   * been viewed as one account: an active member with full progress, which
+   * is the rarest state a real person is ever in. The fixture accounts
+   * (scripts/fixtures.ts) exist to fix that and were useless while this
+   * returned early.
+   *
+   * Signing out drops you back to dev-admin, so the bypass still does its
+   * job. Production is unaffected: the guard at the top of this module
+   * throws if the flag is ever set there.
+   */
+  if (process.env.DEV_BYPASS_AUTH === "true" && !accessToken) {
+    return "dev-admin";
+  }
 
   if (accessToken) {
     try {
@@ -123,6 +138,13 @@ export async function requireServerAuth(redirectPath: string): Promise<string> {
   // No valid member token, check for admin session
   const adminId = await getAdminUserId();
   if (adminId) return adminId;
+
+  // A stale cookie under the dev bypass should not bounce you to login: the
+  // point of the bypass is that dev never has to authenticate. Falls back
+  // here rather than at the top so a VALID session still wins.
+  if (process.env.DEV_BYPASS_AUTH === "true") {
+    return "dev-admin";
+  }
 
   redirect(`/login?redirect=${redirectPath}`);
 }
