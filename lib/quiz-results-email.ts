@@ -80,7 +80,7 @@ export async function sendQuizResultsEmailForResult(
       quizResult.consiliumCreditCode && quizResult.consiliumCreditExpiresAt
         ? {
             code: quizResult.consiliumCreditCode,
-            amount: QUIZ_CREDIT.amount,
+            amount: QUIZ_CREDIT.discount,
             expiresAt: quizResult.consiliumCreditExpiresAt,
           }
         : undefined,

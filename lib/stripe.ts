@@ -32,15 +32,30 @@ export const STRIPE_PRICES: Record<string, string> = {
    */
   BOOK_MEMBER: "price_1TNS57Jv9vx5CHTw3Miq2KmS",
   QUIZ: "price_1TJug0Jv9vx5CHTwa9tjzDlu",
-  INNER_CIRCLE: "price_1TJug1Jv9vx5CHTwjPYeSm7E",
   /**
-   * Annual Consilium plan. $290/year = "2 months free" vs $29/mo (which is
-   * $348/yr). Surfaced as the second option on the join page and as a
-   * one-click upgrade for existing monthly subscribers. Same Stripe product
-   * as INNER_CIRCLE so members are billed under the same brand line.
-   * Annual subscribers churn ~51% less than monthly (Recurly benchmark).
+   * The Consilium, monthly. $9 since the 2026-07-28 reset; it was $29.
+   *
+   * Stripe prices are immutable, so a reprice is always a new price plus a
+   * pointer swap here. The old $29 price stays alive and active on purpose:
+   * 17 live subscriptions still sit on it, and archiving a price that has
+   * subscribers does not move them, it just makes the object harder to
+   * reason about. They move in M9, one at a time, deliberately.
+   *
+   * Display copy comes from MEMBERSHIP in lib/constants. Nothing connects
+   * the two automatically, so if you change one, change the other.
    */
-  INNER_CIRCLE_ANNUAL: "price_1TY0ggJv9vx5CHTw87YoIcZn",
+  INNER_CIRCLE: "price_1TyFx2Jv9vx5CHTwBLpMLCze",
+  /** The old $29/mo price. Retained only because live subscriptions use it. */
+  INNER_CIRCLE_LEGACY_29: "price_1TJug1Jv9vx5CHTwjPYeSm7E",
+  /**
+   * Annual Consilium plan. $90/year = two months free against $9/mo. Same
+   * Stripe product as INNER_CIRCLE so members bill under one brand line.
+   * Annual subscribers churn ~51% less than monthly (Recurly benchmark).
+   * Nobody was on the old $290 annual price when it was replaced.
+   */
+  INNER_CIRCLE_ANNUAL: "price_1TyFxCJv9vx5CHTwQYf1iVot",
+  /** The old $290/yr price. No subscriber ever used it. */
+  INNER_CIRCLE_ANNUAL_LEGACY_290: "price_1TY0ggJv9vx5CHTw87YoIcZn",
   COACHING_SINGLE: "price_1TJug1Jv9vx5CHTw6FT0vzoW",
   COACHING_CLARITY: "price_1TN3uWJv9vx5CHTwUELJJn5E",
   COACHING_INTENSIVE: "price_1TJug2Jv9vx5CHTwiikiPESt",

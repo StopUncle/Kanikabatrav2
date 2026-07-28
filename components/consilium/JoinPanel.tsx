@@ -98,10 +98,10 @@ export default function JoinPanel({ creditCode }: { creditCode?: string }) {
           />
           <div>
             <p className="text-text-light text-sm font-light">
-              Your ${QUIZ_INFO.price.toFixed(2)} quiz credit is applied
+              Your first month is {MEMBERSHIP.quizFirstMonthDisplay}
             </p>
             <p className="text-text-gray/70 text-xs font-light mt-1">
-              It comes off automatically at checkout. Nothing to type in.
+              Applied automatically at checkout, then {MEMBERSHIP.monthly}.
             </p>
           </div>
         </div>

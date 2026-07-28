@@ -1,12 +1,40 @@
 import crypto from "node:crypto";
 import { getStripe } from "@/lib/stripe";
-import { QUIZ_INFO } from "@/lib/quiz-data";
+import { MEMBERSHIP } from "@/lib/constants";
 
-// $9.99 off once, applied to the first invoice. Stable ID means we
-// look it up (or lazily create it) on first use and never spin up
-// duplicates across deploys.
-const QUIZ_CREDIT_COUPON_ID = "quiz-credit-999";
-const QUIZ_CREDIT_AMOUNT_CENTS = Math.round(QUIZ_INFO.price * 100);
+/**
+ * The quiz buyer's reward: their first month of the Consilium at $4.99.
+ *
+ * It used to be a flat $9.99 off, matching the quiz price. Against the old
+ * $29 membership that was a third off; against $9 it would have been a free
+ * month, which gives away the entry rung rather than discounting it. So the
+ * coupon is now sized to land the first month exactly on $4.99, and it is
+ * derived from both prices rather than typed, because a hand-typed 401 would
+ * quietly become the wrong discount the moment either number moved.
+ *
+ * The id changed because it had to. A Stripe coupon's `amount_off` is
+ * immutable: the old `quiz-credit-999` had already been redeemed twice and
+ * could not be edited, only replaced. Leave it in place for anyone still
+ * holding an unredeemed code against it.
+ */
+const QUIZ_CREDIT_COUPON_ID = "quiz-first-month-499";
+
+/**
+ * The retired $9.99-off coupon. Codes issued against it are still honoured.
+ *
+ * At the time of the switch two unredeemed codes were still live, both
+ * expiring within a week. Refusing them would have quietly broken a promise
+ * made at the moment someone paid for the quiz, which is the worst possible
+ * moment to break one. Stripe caps a discount at the invoice total, so an
+ * old code now buys a free first month rather than $9.99 off $9. Two people,
+ * one month, and the exposure ends when the last code expires.
+ *
+ * This entry can be deleted once no active promotion codes hang off it.
+ */
+const QUIZ_CREDIT_LEGACY_COUPON_ID = "quiz-credit-999";
+const QUIZ_CREDIT_AMOUNT_CENTS = Math.round(
+  (MEMBERSHIP.price - MEMBERSHIP.quizFirstMonthPrice) * 100,
+);
 const QUIZ_CREDIT_EXPIRY_DAYS = 14;
 
 let cachedCouponId: string | null = null;
@@ -33,7 +61,7 @@ async function ensureQuizCreditCoupon(): Promise<string> {
 
   const created = await stripe.coupons.create({
     id: QUIZ_CREDIT_COUPON_ID,
-    name: "Quiz Credit",
+    name: "Quiz buyer first month",
     amount_off: QUIZ_CREDIT_AMOUNT_CENTS,
     currency: "usd",
     duration: "once",
@@ -114,10 +142,17 @@ export async function resolveQuizCreditPromotionCode(
 
     // Guard against a code that happens to exist but hangs off a
     // different coupon (a referral reward, a one-off campaign). Only the
-    // quiz-credit coupon is redeemable through this path.
+    // quiz-credit coupons are redeemable through this path, current and
+    // retired: someone holding an unredeemed code from before the reprice
+    // was promised a credit when they paid, and gets it.
     const coupon = promo.promotion?.coupon;
     const couponId = typeof coupon === "string" ? coupon : coupon?.id;
-    if (couponId !== QUIZ_CREDIT_COUPON_ID) return null;
+    if (
+      couponId !== QUIZ_CREDIT_COUPON_ID &&
+      couponId !== QUIZ_CREDIT_LEGACY_COUPON_ID
+    ) {
+      return null;
+    }
 
     return promo.id;
   } catch (err) {
@@ -126,8 +161,22 @@ export async function resolveQuizCreditPromotionCode(
   }
 }
 
+/**
+ * What the buyer is told, as opposed to what Stripe does.
+ *
+ * These are not the same number and never were. Stripe applies a discount;
+ * the buyer cares what they pay. While the discount happened to equal the
+ * quiz price the two could be conflated, and every surface quoted the
+ * discount ("your $9.99 credit"). Now the promise is a price: your first
+ * month is $4.99. `discount` stays exported for anywhere that genuinely
+ * needs the amount coming off.
+ */
 export const QUIZ_CREDIT = {
-  amount: QUIZ_INFO.price,
+  /** What the buyer pays for their first month. */
+  firstMonthPrice: MEMBERSHIP.quizFirstMonthPrice,
+  firstMonthDisplay: MEMBERSHIP.quizFirstMonthDisplay,
+  /** What Stripe takes off the first invoice. */
+  discount: QUIZ_CREDIT_AMOUNT_CENTS / 100,
   expiryDays: QUIZ_CREDIT_EXPIRY_DAYS,
 } as const;
 
