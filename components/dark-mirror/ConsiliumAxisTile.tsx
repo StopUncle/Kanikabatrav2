@@ -2,6 +2,7 @@
 
 import { m } from "framer-motion";
 import Link from "next/link";
+import { MEMBERSHIP } from "@/lib/constants";
 import { ArrowRight } from "lucide-react";
 import {
   AXIS_CONSILIUM_TIES,
@@ -50,7 +51,7 @@ export default function ConsiliumAxisTile({ result }: Props) {
             The next step
           </p>
           <p className="text-warm-gold text-base font-light tabular-nums">
-            $29<span className="text-text-gray/70 text-xs">/mo</span>
+            {MEMBERSHIP.priceDisplay}<span className="text-text-gray/70 text-xs">/mo</span>
           </p>
         </div>
 

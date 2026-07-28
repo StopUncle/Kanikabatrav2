@@ -1,4 +1,5 @@
 "use client";
+import { MEMBERSHIP } from "@/lib/constants";
 
 import { useState } from "react";
 import { m } from "framer-motion";
@@ -223,7 +224,7 @@ export default function BookShowcase() {
                   </div>
 
                   <p className="text-[11px] text-text-gray/70 text-center leading-relaxed -mt-1">
-                    Bundle covers your first month or three. Then $29/mo · cancel anytime.
+                    Bundle covers your first month or three. Then {MEMBERSHIP.monthlyShort} · cancel anytime.
                   </p>
 
                   {/* Breadcrumb to the Consilium pitch, pulls book-only

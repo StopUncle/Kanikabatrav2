@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { MEMBERSHIP } from "@/lib/constants";
 
 interface Props {
   slug?: string;
@@ -21,7 +22,7 @@ export default function InlineConsiliumCTA({ slug }: Props) {
       </p>
       <p className="text-text-gray text-base mb-4 leading-relaxed">
         Daily voice notes, the simulator, the forum, and the women who think
-        like this. $29/mo. The cheapest tuition you&rsquo;ll ever pay.
+        like this. {MEMBERSHIP.monthlyShort}. The cheapest tuition you&rsquo;ll ever pay.
       </p>
       <Link
         href={`/consilium?${params.toString()}`}

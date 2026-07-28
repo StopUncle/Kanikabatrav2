@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { MEMBERSHIP } from "@/lib/constants";
 
 interface Props {
   slug?: string;
@@ -21,7 +22,7 @@ export default function EndOfPostConsiliumCTA({ slug }: Props) {
 
       <div className="relative">
         <p className="text-accent-gold uppercase tracking-[0.3em] text-[10px] font-medium mb-4">
-          The Consilium &middot; $29/mo
+          The Consilium &middot; {MEMBERSHIP.monthlyShort}
         </p>
 
         <h3 className="text-2xl sm:text-3xl font-extralight text-white leading-tight tracking-tight mb-4">

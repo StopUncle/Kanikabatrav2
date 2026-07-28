@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { m } from "framer-motion";
 import Link from "next/link";
+import { MEMBERSHIP } from "@/lib/constants";
 import {
   ShieldAlert,
   Eye,
@@ -429,7 +430,7 @@ export default function DaughterQuizResultsPage() {
                   Join the Consilium
                 </h3>
                 <p className="text-text-gray text-sm leading-relaxed">
-                  $29 a month. Private threads for women in this exact niche.
+                  {MEMBERSHIP.priceDisplay} a month. Private threads for women in this exact niche.
                   The members-only simulator runs the pc-child track
                   scenarios, practice reps for the conversations you&apos;ve
                   spent years rehearsing alone.

@@ -13,7 +13,7 @@ import PostCard from "@/components/blog/PostCard";
 import ConsiliumSimulatorTeaser from "@/components/consilium/ConsiliumSimulatorTeaser";
 import ConsiliumOverview from "@/components/consilium/ConsiliumOverview";
 import { getAllPosts } from "@/lib/mdx";
-import { SITE_CONFIG } from "@/lib/constants";
+import { SITE_CONFIG, MEMBERSHIP } from "@/lib/constants";
 import { catalogueStats } from "@/lib/simulator/stats";
 import JsonLd from "@/components/JsonLd";
 import { generatePersonSchema } from "@/lib/schema";
@@ -100,7 +100,7 @@ export default function Home() {
         {/* Email-capture rail. The Mini quiz + Starter Pack are the
             only $0 entry points on the site; without a homepage tile,
             organic traffic skips the email funnel entirely and gets
-            asked for $25/$29 cold. Slim 3-tile layout so it doesn't
+            asked for the book or the membership cold. Slim 3-tile layout so it doesn't
             visually compete with the Book + Consilium primaries
             below. See components/HomepageDarkMirrorRail.tsx. */}
         <HomepageDarkMirrorRail />
@@ -110,7 +110,7 @@ export default function Home() {
 
         {/* PRIMARY #2. Consilium overview. Plain-English pitch of what
             the membership IS so cold traffic can answer "what does
-            $29/mo get me?" in one glance. Lives ABOVE the simulator
+            the membership get me?" in one glance. Lives ABOVE the simulator
             teaser so visitors understand the product before being
             asked to feel one feature of it. */}
         <ConsiliumOverview />
@@ -227,7 +227,7 @@ export default function Home() {
                     The Practice Ground
                   </p>
                   <p className="text-warm-gold text-lg font-light tabular-nums">
-                    $29<span className="text-text-gray/70 text-xs">/mo</span>
+                    {MEMBERSHIP.priceDisplay}<span className="text-text-gray/70 text-xs">/mo</span>
                   </p>
                 </div>
                 <h3 className="text-2xl md:text-3xl font-extralight text-text-light mb-3 tracking-wide leading-tight">

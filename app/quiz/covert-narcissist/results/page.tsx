@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { m } from "framer-motion";
 import Link from "next/link";
+import { MEMBERSHIP } from "@/lib/constants";
 import Header from "@/components/Header";
 import BackgroundEffects from "@/components/BackgroundEffects";
 import QuizResultGate from "@/components/quiz/QuizResultGate";
@@ -303,7 +304,7 @@ export default function CovertNarcissistResultsPage() {
                     and treated as those things, which entrenches it.
                     The Consilium has, by deliberate design, threads
                     dedicated to this exact pattern, run by an author
-                    with an adjacent diagnosis (ASPD, not NPD). $29 a
+                    with an adjacent diagnosis (ASPD, not NPD). {MEMBERSHIP.priceDisplay} a
                     month. The first month is typically the most useful.
                   </p>
                   <Link

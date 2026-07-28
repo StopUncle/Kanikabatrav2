@@ -3,7 +3,7 @@
 import { m } from "framer-motion";
 import BackgroundEffects from "@/components/BackgroundEffects";
 import Header from "@/components/Header";
-import { SITE_CONFIG } from "@/lib/constants";
+import { SITE_CONFIG, MEMBERSHIP } from "@/lib/constants";
 
 export default function TermsPage() {
   return (
@@ -129,8 +129,8 @@ export default function TermsPage() {
                       Subscription Billing (The Consilium)
                     </h3>
                     <p className="text-text-gray leading-relaxed mb-4">
-                      The Consilium is a paid monthly subscription at
-                      $29/month. Your subscription will automatically renew each
+                      The Consilium is a paid monthly subscription at{" "}
+                      {MEMBERSHIP.monthly}. Your subscription will automatically renew each
                       month until you cancel. You can cancel anytime from your
                       dashboard or by emailing Kanika@kanikarose.com, your
                       access continues until the end of the paid period.

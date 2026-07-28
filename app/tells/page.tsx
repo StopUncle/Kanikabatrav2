@@ -93,7 +93,7 @@ export default async function TellsPage() {
     : [];
 
   // Detect membership server-side so a logged-in member who lands on
-  // /tells from TikTok does not see the "Train Your Instincts $29/mo"
+  // /tells from TikTok does not see the paid "Train Your Instincts"
   // upsell they already pay for.
   const ctx = await resolveTellContext();
   const { isMember } = ctx.userId

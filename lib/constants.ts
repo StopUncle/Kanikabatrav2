@@ -55,6 +55,55 @@ export const BOOK_INFO = {
   ],
 };
 
+/**
+ * The Consilium's price, in one place.
+ *
+ * It has never had one. Until now the membership price lived as roughly 55
+ * hardcoded strings scattered across marketing pages, components, both email
+ * modules, two blog posts, and the Terms of Service and Refund Policy. There
+ * was no way to change it without hunting, and no way to be sure you had
+ * finished hunting.
+ *
+ * So: every surface reads from here. If you are about to type a dollar sign
+ * next to the word Consilium, import this instead.
+ *
+ * Prices are the source of truth for DISPLAY only. What a customer is actually
+ * charged is the Stripe price id in `lib/stripe.ts`, and the two are not
+ * automatically connected. Change one without the other and the page will
+ * advertise a number the checkout does not honour. That failure is already
+ * live on the coaching page, which carries three separate hardcoded copies of
+ * its prices; do not repeat it here.
+ */
+export const MEMBERSHIP = {
+  /** Monthly, the standard price. Was $29 until the 2026-07-28 reset. */
+  price: 9,
+  priceDisplay: "$9",
+  monthly: "$9/month",
+  monthlyShort: "$9/mo",
+
+  /**
+   * Annual. Two months free, the same ratio the $29 pricing used, so the
+   * saving reads the same way it always has.
+   */
+  annualPrice: 90,
+  annualDisplay: "$90",
+  annual: "$90/year",
+  monthsFreeOnAnnual: 2,
+  /** What annual works out to per month. Derived, never typed by hand. */
+  get annualPerMonthDisplay(): string {
+    return `$${(this.annualPrice / 12).toFixed(2)}`;
+  },
+
+  /**
+   * Quiz buyers' first month. Replaces the old $9.99 promo credit, which
+   * against a $9 membership would have been a free month. Kept as a real
+   * price rather than a discount so the member never sees a bill jump they
+   * were not told about.
+   */
+  quizFirstMonthPrice: 4.99,
+  quizFirstMonthDisplay: "$4.99",
+} as const;
+
 export const COACHING_PACKAGES = [
   {
     id: "single-session",

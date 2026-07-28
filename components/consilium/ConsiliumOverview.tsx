@@ -1,4 +1,5 @@
 "use client";
+import { MEMBERSHIP } from "@/lib/constants";
 
 import Link from "next/link";
 import { m } from "framer-motion";
@@ -257,7 +258,7 @@ export default function ConsiliumOverview() {
                 </div>
                 <div className="text-right">
                   <span className="text-3xl font-light gradient-text-gold tabular-nums">
-                    $29
+                    {MEMBERSHIP.priceDisplay}
                   </span>
                   <span className="text-text-gray/70 text-sm font-light ml-1">
                     /mo
@@ -270,7 +271,7 @@ export default function ConsiliumOverview() {
                   href="/consilium"
                   className="w-full inline-flex items-center justify-center gap-2 py-3 sm:py-4 px-6 rounded-full bg-warm-gold text-deep-black text-sm sm:text-base font-semibold tracking-wide transition-all hover:bg-warm-gold/90 hover:shadow-[0_12px_40px_-12px_rgba(212,175,55,0.55)]"
                 >
-                  Join the Community, $29/mo
+                  Join the Community, {MEMBERSHIP.monthlyShort}
                   <ArrowRight size={16} />
                 </Link>
 
@@ -281,8 +282,8 @@ export default function ConsiliumOverview() {
                 <div className="flex items-center justify-center gap-2 text-text-gray text-xs">
                   <ShieldCheck size={14} className="text-warm-gold" />
                   <span>
-                    Spend 7 days inside. If it&apos;s not the most useful
-                    $29 you&apos;ve spent, full refund.
+                    Spend 7 days inside. If it&apos;s not the most useful{" "}
+                    {MEMBERSHIP.priceDisplay} you&apos;ve spent, full refund.
                   </span>
                 </div>
 

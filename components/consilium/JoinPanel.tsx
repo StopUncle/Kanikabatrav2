@@ -4,6 +4,7 @@ import { useState } from "react";
 import { ArrowRight, Loader2, CheckCircle, BadgeCheck } from "lucide-react";
 import { catalogueStats } from "@/lib/simulator/stats";
 import { QUIZ_INFO } from "@/lib/quiz-data";
+import { MEMBERSHIP } from "@/lib/constants";
 
 const INCLUDED = [
   `The Dark Mirror Simulator, ${catalogueStats.scenarios} branching scenarios across ${catalogueStats.tracks} tracks`,
@@ -20,9 +21,9 @@ type BillingCycle = "monthly" | "annual";
  * Join card with a monthly / annual plan toggle.
  *
  * Annual is positioned as the recommended option (Recurly: annual subs
- * churn 51% less). "2 months free" is mathematically true ($29 x 12 =
- * $348, annual price is $290 = a $58 saving, which is exactly two
- * monthly payments).
+ * churn 51% less). "2 months free" is mathematically true: twelve monthly
+ * payments against the annual price is exactly two months of saving, and
+ * both numbers come from MEMBERSHIP so the claim cannot drift.
  *
  * Defaults to ANNUAL on first render. This matters: defaults steer
  * choice. The member can flip to monthly with one click, but the
@@ -34,9 +35,9 @@ type BillingCycle = "monthly" | "annual";
  *
  * `creditCode` arrives from a quiz buyer's "Apply my credit" link. When
  * present the server pre-applies it at checkout, and the default flips
- * to MONTHLY: the credit is a fixed $9.99, which is a third off a $29
- * month but barely visible against $290 a year. The toggle still works,
- * this only changes which plan they see first.
+ * to MONTHLY, because a one-off credit is worth far more against a single
+ * month than against a year. The toggle still works, this only changes
+ * which plan they see first.
  */
 export default function JoinPanel({ creditCode }: { creditCode?: string }) {
   const [cycle, setCycle] = useState<BillingCycle>(
@@ -73,12 +74,18 @@ export default function JoinPanel({ creditCode }: { creditCode?: string }) {
   }
 
   const isAnnual = cycle === "annual";
-  const displayPrice = isAnnual ? "$290" : "$29";
+  const displayPrice = isAnnual
+    ? MEMBERSHIP.annualDisplay
+    : MEMBERSHIP.priceDisplay;
   const displayPeriod = isAnnual ? "/year" : "/month";
+  // Derived, not typed. The old copy hardcoded "About $24.17/month" and would
+  // have gone quietly wrong the moment either price moved.
   const subline = isAnnual
-    ? "About $24.17/month, billed annually"
+    ? `About ${MEMBERSHIP.annualPerMonthDisplay}/month, billed annually`
     : "Cancel anytime · Instant access";
-  const ctaCopy = isAnnual ? "Join, $290/year" : "Join, $29/month";
+  const ctaCopy = isAnnual
+    ? `Join, ${MEMBERSHIP.annual}`
+    : `Join, ${MEMBERSHIP.monthly}`;
 
   return (
     <div className="bg-deep-black/50 backdrop-blur-sm border border-warm-gold/20 rounded-2xl p-8">

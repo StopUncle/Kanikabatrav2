@@ -1,4 +1,5 @@
 "use client";
+import { MEMBERSHIP } from "@/lib/constants";
 
 import { useEffect, useState, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
@@ -334,7 +335,7 @@ function SuccessContent() {
               >
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-text-light font-light">Join The Consilium, $29/mo</p>
+                    <p className="text-text-light font-light">Join The Consilium, {MEMBERSHIP.monthlyShort}</p>
                     <p className="text-text-gray text-sm">Courses, voice notes, community of women who get it</p>
                   </div>
                   <ArrowRight size={18} className="text-accent-gold" />

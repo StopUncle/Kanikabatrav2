@@ -1,3 +1,4 @@
+import { MEMBERSHIP } from "@/lib/constants";
 import nodemailer from "nodemailer";
 import type { Transporter } from "nodemailer";
 import { Resend } from "resend";
@@ -2192,7 +2193,7 @@ export const sendTrialExpiringSoon = async (
  * billing cycle, gift (1 month free), bundle-1mo, bundle-3mo, trial.
  * Paid monthly/annual subscriptions don't use this (Stripe handles renewal).
  *
- * One upgrade CTA → Stripe checkout for the standard $29/mo subscription.
+ * One upgrade CTA → Stripe checkout for the standard monthly subscription.
  */
 /**
  * Gift-expiry reminder. Fired by /api/cron/trial-expiry for ACTIVE
@@ -2226,7 +2227,7 @@ export const sendMembershipEndingSoon = async (
       Your free month inside The Consilium ends in <strong style="color: #d4af37;">${daysLeft} day${daysLeft === 1 ? "" : "s"}</strong>. There's no card on file, so nothing happens when the clock hits zero, access just lapses.
     </p>
     <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 25px 0; font-size: 15px;">
-      If the month inside has been useful, you can keep going at <strong style="color: #d4af37;">$29/month</strong>. Cancel any time, one click on the billing page, no email, no friction.
+      If the month inside has been useful, you can keep going at <strong style="color: #d4af37;">${MEMBERSHIP.monthly}</strong>. Cancel any time, one click on the billing page, no email, no friction.
     </p>
     <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="margin: 0 0 25px 0;">
       <tr>

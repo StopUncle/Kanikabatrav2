@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { MEMBERSHIP } from "@/lib/constants";
 import {
   Snowflake,
   Crown,
@@ -242,7 +243,7 @@ export default function QuizzesHubPage() {
               Where this gets practised
             </p>
             <h2 className="text-white text-2xl font-light mb-3">
-              The Consilium, $29/month
+              The Consilium, {MEMBERSHIP.monthly}
             </h2>
             <p className="text-text-gray font-light max-w-xl mx-auto leading-relaxed mb-6">
               The Dark Mirror Simulator runs the patterns these quizzes

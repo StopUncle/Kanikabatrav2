@@ -1,4 +1,5 @@
 "use client";
+import { MEMBERSHIP } from "@/lib/constants";
 
 import { useState } from "react";
 import { Plus, Minus } from "lucide-react";
@@ -15,11 +16,11 @@ export const CONSILIUM_FAQ: FaqItem[] = [
   },
   {
     q: "Monthly or annual?",
-    a: "Both. $29 a month, cancel anytime. Or $290 a year, which is two months free and locks the price for twelve. Members who pick annual stay longer on average and don't have to think about renewal again until next year. You can switch from monthly to annual at any point from your dashboard with one click; we prorate the credit so you're never charged twice.",
+    a: `Both. $${MEMBERSHIP.price} a month, cancel anytime. Or $${MEMBERSHIP.annualPrice} a year, which is two months free and locks the price for twelve. Members who pick annual stay longer on average and don't have to think about renewal again until next year. You can switch from monthly to annual at any point from your dashboard with one click; we prorate the credit so you're never charged twice.`,
   },
   {
     q: "What if it's not for me?",
-    a: "Spend 7 days inside. If the Consilium isn't the most useful $29 you've spent this year, message us at Kanika@kanikarose.com and we'll refund you in full. No form, no survey, no friction. We'd rather you leave clean than stay resenting it.",
+    a: `Spend 7 days inside. If the Consilium isn't the most useful $${MEMBERSHIP.price} you've spent this year, message us at Kanika@kanikarose.com and we'll refund you in full. No form, no survey, no friction. We'd rather you leave clean than stay resenting it.`,
   },
   {
     q: "Is this only for women?",

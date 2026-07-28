@@ -71,7 +71,7 @@ export default async function TellSlugPage({ params }: PageParams) {
   if (!tell) notFound();
 
   // Same membership-aware footer as /tells: members do not see the
-  // $29/mo upsell on a deep-page they hit from a share link.
+  // membership upsell on a deep-page they hit from a share link.
   const ctx = await resolveTellContext();
   const { isMember } = ctx.userId
     ? await checkMembership(ctx.userId)

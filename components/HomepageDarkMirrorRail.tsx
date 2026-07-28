@@ -12,7 +12,7 @@ import { ArrowRight, Sparkles, FileText, Eye } from "lucide-react";
  * email-capture surfaces on the site. Without a homepage tile,
  * organic / branded traffic (the cohort that types the URL or comes
  * from the IG bio link) lands on a page that immediately asks for
- * $25 or $29/mo with no $0 next step. This rail catches the curious-
+ * the book or the membership with no $0 next step. This rail catches the curious-
  * but-not-ready visitor and routes them into the email funnel.
  *
  * Visual ranking matches /dark-mirror: free, free, paid. Mobile

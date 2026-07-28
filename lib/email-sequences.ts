@@ -1,3 +1,4 @@
+import { MEMBERSHIP } from "@/lib/constants";
 import { escapeHtml as esc } from "@/lib/escape-html";
 import { marketingFooterByEmailHtml } from "@/lib/email-footer";
 
@@ -211,7 +212,7 @@ function buildTrialOfferHtml(name: string, trialToken: string): string {
     </table>
 
     <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 0 0; font-size: 15px;">
-      After the free month, you can subscribe at $29/month or simply let it expire, no obligation, no hidden charges.
+      After the free month, you can subscribe at ${MEMBERSHIP.monthly} or simply let it expire, no obligation, no hidden charges.
     </p>`;
 
   return emailShell(
@@ -295,7 +296,7 @@ function dripCreditUrl(
 // ============================================================
 // Mini Dark Mirror + Starter Pack drip sequences.
 //
-// Both target the same destination (Consilium $29/mo) but enter
+// Both target the same destination (the Consilium) but enter
 // from different acquisition surfaces:
 //   - mini-dark-mirror-drip: visitor took the free 7-question quiz
 //   - starter-pack-drip: visitor downloaded the 5-pattern reference
@@ -416,7 +417,7 @@ function buildMiniDripStep3(name: string): string {
     </p>
 
     <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 25px 0; font-size: 15px;">
-      It&rsquo;s called <strong style="color: #d4af37;">The Consilium</strong>. $29 a month. Inside:
+      It&rsquo;s called <strong style="color: #d4af37;">The Consilium</strong>. ${MEMBERSHIP.priceDisplay} a month. Inside:
     </p>
 
     <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="margin: 0 0 25px 0;">
@@ -472,7 +473,7 @@ function buildMiniDripStep4(name: string): string {
     </p>
 
     <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 25px 0; font-size: 15px;">
-      Membership is $29/month. Members get the Sociopathic Dating Bible at $9.99 instead of $24.99 (separate purchase, not bundled). Cancel any time, one click on the billing page, no email, no friction.
+      Membership is ${MEMBERSHIP.monthly}. Members get the Sociopathic Dating Bible at $9.99 instead of $24.99 (separate purchase, not bundled). Cancel any time, one click on the billing page, no email, no friction.
     </p>
 
     ${goldButton("Join The Consilium", consiliumUrl)}
@@ -567,7 +568,7 @@ function buildMiniDripStep7(name: string): string {
     </p>
 
     <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 25px 0; font-size: 15px;">
-      If the framework is something you want to keep developing, The Consilium is the room where the work happens. $29 a month, cancel any time. The reason I&rsquo;m sending one more is because the people who join two or three weeks after the quiz tend to be the ones who get the most out of it, they&rsquo;ve had time to notice the patterns showing up in their own life first.
+      If the framework is something you want to keep developing, The Consilium is the room where the work happens. ${MEMBERSHIP.priceDisplay} a month, cancel any time. The reason I&rsquo;m sending one more is because the people who join two or three weeks after the quiz tend to be the ones who get the most out of it, they&rsquo;ve had time to notice the patterns showing up in their own life first.
     </p>
 
     ${goldButton("Step inside", consiliumUrl)}
@@ -770,7 +771,7 @@ function buildStarterDripStep3(name: string): string {
     </p>
 
     <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 25px 0; font-size: 15px;">
-      <strong style="color: #d4af37;">The Consilium</strong> is where that part lives. $29/month, cancel any time. Inside:
+      <strong style="color: #d4af37;">The Consilium</strong> is where that part lives. ${MEMBERSHIP.monthly}, cancel any time. Inside:
     </p>
 
     <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="margin: 0 0 25px 0;">
@@ -826,7 +827,7 @@ function buildStarterDripStep4(name: string): string {
     </p>
 
     <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 25px 0; font-size: 15px;">
-      $29/month, cancel any time. The simulator is where you practice the patterns from the pack at full clinical depth. The voice notes are for the parts I won&rsquo;t put on Instagram. The book is sold separately, $9.99 for members vs $24.99 standalone.
+      ${MEMBERSHIP.monthly}, cancel any time. The simulator is where you practice the patterns from the pack at full clinical depth. The voice notes are for the parts I won&rsquo;t put on Instagram. The book is sold separately, $9.99 for members vs $24.99 standalone.
     </p>
 
     ${goldButton("Join The Consilium", consiliumUrl)}
@@ -913,7 +914,7 @@ function buildStarterDripStep7(name: string): string {
     </p>
 
     <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 25px 0; font-size: 15px;">
-      The Consilium is where this work lives at depth. $29 a month, cancel one click. Members who got the most out of it tended to join two to three weeks after the pack, after the patterns had started showing up in their own life and the question shifted from <em>is this useful</em> to <em>where do I practice this</em>.
+      The Consilium is where this work lives at depth. ${MEMBERSHIP.priceDisplay} a month, cancel one click. Members who got the most out of it tended to join two to three weeks after the pack, after the patterns had started showing up in their own life and the question shifted from <em>is this useful</em> to <em>where do I practice this</em>.
     </p>
 
     ${goldButton("Step inside", consiliumUrl)}
@@ -1338,7 +1339,7 @@ function buildNewsletterStep3(name: string): string {
     </p>
 
     <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 25px 0; font-size: 15px;">
-      That's what the <strong style="color: #d4af37;">Consilium</strong> is for. $29/month, cancel any time. Inside:
+      That's what the <strong style="color: #d4af37;">Consilium</strong> is for. ${MEMBERSHIP.monthly}, cancel any time. Inside:
     </p>
 
     <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="margin: 0 0 25px 0;">
@@ -1435,7 +1436,7 @@ export function buildNewsletterDrip(
 // ============================================================
 // Coaching lead nurture.
 //
-// For high-intent visitors who looked at 1:1 coaching ($297 to $4,997)
+// For high-intent visitors who looked at 1:1 coaching (${MEMBERSHIP.priceDisplay}7 to $4,997)
 // but were not ready to checkout. Direct-checkout alone loses everyone
 // who needs a beat to decide. Three emails: what a session actually is,
 // the real hesitation (not price, but "will this change anything"), and
@@ -1494,11 +1495,11 @@ function buildCoachingStep2(name: string): string {
       Fair. So run the other number. How many more months do you spend in the same loop, paying for it in the currency that actually matters, your time, your certainty, the version of you that keeps getting blindsided. That cost is real too. It is just easier to ignore because no one sends you an invoice for it.
     </p>
     <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 24px 0; font-size: 15px;">
-      If 1:1 is more than you want to commit to right now, start smaller. The Consilium is where the same way of thinking runs every day, for $29 a month. It is the cheapest way to find out whether this lands for you.
+      If 1:1 is more than you want to commit to right now, start smaller. The Consilium is where the same way of thinking runs every day, for ${MEMBERSHIP.priceDisplay} a month. It is the cheapest way to find out whether this lands for you.
     </p>
     ${goldButton("Book a session", coachingLink("step2-book"))}
     <p style="margin: 0; font-size: 14px;">
-      <a href="${coachingConsiliumLink("step2-consilium")}" style="color: #d4af37; text-decoration: none;">Or start with The Consilium, $29/mo &rarr;</a>
+      <a href="${coachingConsiliumLink("step2-consilium")}" style="color: #d4af37; text-decoration: none;">Or start with The Consilium, ${MEMBERSHIP.monthlyShort} &rarr;</a>
     </p>
   `;
   return emailShell("The real question under the price", "Coaching, Day 3", body);
@@ -1513,14 +1514,14 @@ function buildCoachingStep3(name: string): string {
       Last one from me on this, then I leave you to it.
     </p>
     <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 20px 0; font-size: 15px;">
-      I take eight clients a month. Not a marketing line, a real ceiling, because attention does not scale and I will not pretend it does. If there is one situation that is genuinely keeping you up, a single session is $297 and you walk out with a move on it.
+      I take eight clients a month. Not a marketing line, a real ceiling, because attention does not scale and I will not pretend it does. If there is one situation that is genuinely keeping you up, a single session is ${MEMBERSHIP.priceDisplay}7 and you walk out with a move on it.
     </p>
     <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 24px 0; font-size: 15px;">
       If now is not the moment, that is a real answer too. The door stays open, and the Consilium is there in the meantime. Either way, stop circling the same thing. Pick one.
     </p>
     ${goldButton("Book a session", coachingLink("step3-book"))}
     <p style="margin: 0; font-size: 14px;">
-      <a href="${coachingConsiliumLink("step3-consilium")}" style="color: #d4af37; text-decoration: none;">Not yet? The Consilium, $29/mo &rarr;</a>
+      <a href="${coachingConsiliumLink("step3-consilium")}" style="color: #d4af37; text-decoration: none;">Not yet? The Consilium, ${MEMBERSHIP.monthlyShort} &rarr;</a>
     </p>
   `;
   return emailShell("Eight spots", "Coaching, Day 6", body);
@@ -1651,7 +1652,7 @@ function buildBookConsiliumPushStep2(name: string): string {
     </p>
 
     <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 25px 0; font-size: 15px;">
-      The simulator is one piece of <strong style="color: #d4af37;">the Consilium</strong>. $29 a month, cancel any time. Voice notes weekly, daily psychology drops, Ask Kanika, the forum where members run their actual situations through each other before they make the move. Members buy the book at $9.99 instead of $24.99 if you ever want a spare or a gift copy.
+      The simulator is one piece of <strong style="color: #d4af37;">the Consilium</strong>. ${MEMBERSHIP.priceDisplay} a month, cancel any time. Voice notes weekly, daily psychology drops, Ask Kanika, the forum where members run their actual situations through each other before they make the move. Members buy the book at $9.99 instead of $24.99 if you ever want a spare or a gift copy.
     </p>
 
     <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 0 0; font-size: 15px;">
@@ -1680,7 +1681,7 @@ function buildBookConsiliumPushStep3(name: string): string {
     </p>
 
     <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 25px 0; font-size: 15px;">
-      The Consilium is where the rest of the conversation happens. $29 a month. Cancel any time, one click on the billing page, no email, no friction. Inside:
+      The Consilium is where the rest of the conversation happens. ${MEMBERSHIP.priceDisplay} a month. Cancel any time, one click on the billing page, no email, no friction. Inside:
     </p>
 
     <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="margin: 0 0 25px 0;">
@@ -2148,7 +2149,7 @@ function buildCartAbandonStep1(name: string): string {
     </p>
 
     <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 20px 0; font-size: 15px;">
-      It&rsquo;s $29 a month. Cancel any time from the billing page, no email, no friction.
+      It&rsquo;s ${MEMBERSHIP.priceDisplay} a month. Cancel any time from the billing page, no email, no friction.
     </p>
 
     ${goldButton("Pick up where you left off", consiliumUrl)}
@@ -2184,7 +2185,7 @@ function buildCartAbandonStep2(name: string): string {
     </p>
 
     <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 25px 0; font-size: 15px;">
-      That&rsquo;s the whole pitch. If five minutes a day for $29 a month is the right ratio, the door is below.
+      That&rsquo;s the whole pitch. If five minutes a day for ${MEMBERSHIP.priceDisplay} a month is the right ratio, the door is below.
     </p>
 
     ${goldButton("Join The Consilium", consiliumUrl)}
@@ -2801,7 +2802,7 @@ function buildWinbackStep3(name: string): string {
     </p>
 
     <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 25px 0; font-size: 15px;">
-      Members who come back tend to come back at the four-week mark. There&rsquo;s usually a specific moment, a conversation that made them realise they missed the pattern, a relationship they want to read more cleanly, a thing they would have said differently if they had named the move. If that&rsquo;s where you are, the door&rsquo;s open. Same $29, cancel any time.
+      Members who come back tend to come back at the four-week mark. There&rsquo;s usually a specific moment, a conversation that made them realise they missed the pattern, a relationship they want to read more cleanly, a thing they would have said differently if they had named the move. If that&rsquo;s where you are, the door&rsquo;s open. Same ${MEMBERSHIP.priceDisplay}, cancel any time.
     </p>
 
     ${goldButton("Rejoin The Consilium", consiliumUrl)}
@@ -3148,7 +3149,7 @@ const QUIZ_DRIP_COPY: Record<string, QuizDripCopy> = {
     ${goldButton("Step inside The Consilium", consiliumUrl)}
 
     <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 0 0; font-size: 15px;">
-      $29/month, cancel any time in one click. Or sit with your result a while longer, that&rsquo;s a real answer too.
+      ${MEMBERSHIP.monthly}, cancel any time in one click. Or sit with your result a while longer, that&rsquo;s a real answer too.
     </p>`,
         );
       },
@@ -3227,7 +3228,7 @@ const QUIZ_DRIP_COPY: Record<string, QuizDripCopy> = {
     ${goldButton("Step inside The Consilium", consiliumUrl)}
 
     <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 0 0; font-size: 15px;">
-      $29/month, cancel any time. No pressure either way, your result is yours to keep.
+      ${MEMBERSHIP.monthly}, cancel any time. No pressure either way, your result is yours to keep.
     </p>`,
         );
       },
@@ -3306,7 +3307,7 @@ const QUIZ_DRIP_COPY: Record<string, QuizDripCopy> = {
     ${goldButton("Step inside The Consilium", consiliumUrl)}
 
     <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 0 0; font-size: 15px;">
-      $29/month, cancel any time in one click. Either way, thanks for taking the test.
+      ${MEMBERSHIP.monthly}, cancel any time in one click. Either way, thanks for taking the test.
     </p>`,
         );
       },

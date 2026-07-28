@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { ArrowRight, CreditCard, CheckCircle, AlertTriangle, Loader2, Gift, RotateCcw, Play } from "lucide-react";
 import CancelOrPauseModal from "@/components/consilium/CancelOrPauseModal";
+import { MEMBERSHIP } from "@/lib/constants";
 
 interface Membership {
   id: string;
@@ -88,7 +89,7 @@ export default function InnerCircleDashboardCard({ membership }: Props) {
 
   async function upgradeToAnnual() {
     if (!confirm(
-      "Upgrade to annual? You'll get a prorated credit for the rest of this month and your next renewal will be a year out. Same $29/month price effectively, two months free per year.",
+      `Upgrade to annual? You'll get a prorated credit for the rest of this month and your next renewal will be a year out. ${MEMBERSHIP.monthsFreeOnAnnual} months free per year.`,
     )) {
       return;
     }

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { MEMBERSHIP } from "@/lib/constants";
 import BackgroundEffects from "@/components/BackgroundEffects";
 import Header from "@/components/Header";
 import HuntPreview from "@/components/demos/HuntPreview";
@@ -138,7 +139,7 @@ function StyleCta() {
         href="/consilium/apply?src=demo-compare"
         className="inline-flex items-center justify-center gap-2 px-8 py-3 rounded-full bg-warm-gold text-deep-black font-medium text-sm tracking-[0.2em] uppercase transition-all hover:bg-warm-gold/90 hover:shadow-[0_12px_40px_-12px_rgba(212,175,55,0.55)]"
       >
-        Step inside, $29/mo
+        Step inside, {MEMBERSHIP.monthlyShort}
         <ArrowRight size={14} />
       </Link>
     </div>

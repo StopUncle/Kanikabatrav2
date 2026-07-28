@@ -1,4 +1,5 @@
 "use client";
+import { MEMBERSHIP } from "@/lib/constants";
 
 import { useEffect, useState } from "react";
 import { m } from "framer-motion";
@@ -748,7 +749,7 @@ export default function QuizResultsPage() {
                     Where this gets practised
                   </p>
                   <p className="text-white font-light text-lg mb-3">
-                    The Consilium, $29/month
+                    The Consilium, {MEMBERSHIP.monthly}
                   </p>
                   <p className="text-text-gray text-xs mb-5 max-w-md mx-auto leading-relaxed">
                     The Dark Mirror Simulator runs the patterns you just scored on as branching scenarios, in real-world artefacts. Plus the classroom, voice notes, and a moderated community. Cancel any time.
@@ -1039,7 +1040,7 @@ export default function QuizResultsPage() {
                     href="/consilium"
                     className="inline-block px-6 py-2 text-sm font-medium text-accent-gold border border-accent-gold/20 rounded-full hover:bg-accent-gold/10 transition-all"
                   >
-                    Explore The Consilium, $29/mo
+                    Explore The Consilium, {MEMBERSHIP.monthlyShort}
                   </Link>
                 </div>
               )}

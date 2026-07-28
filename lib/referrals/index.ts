@@ -1,3 +1,4 @@
+import { MEMBERSHIP } from "@/lib/constants";
 import { randomBytes } from "crypto";
 import { prisma } from "@/lib/prisma";
 
@@ -11,7 +12,7 @@ import { prisma } from "@/lib/prisma";
  *    captures it on first touch (see `lib/referrals/cookie.ts`).
  *  - When the referee completes a Consilium checkout, the Stripe webhook
  *    calls `recordReferralConversion` which credits the referrer's
- *    Stripe customer balance by $29 (one month free at next renewal).
+ *    Stripe customer balance by one month (free at next renewal).
  *
  * Evidence: subscription brand referrals convert at 4.8% (ReferralCandy),
  * and a two-sided incentive (giver + receiver both get value) lifts
@@ -21,8 +22,14 @@ import { prisma } from "@/lib/prisma";
 const REFERRAL_CODE_LENGTH = 8;
 const CODE_ALPHABET = "ABCDEFGHJKMNPQRSTUVWXYZ23456789"; // unambiguous chars
 
-/** Per-referral reward in cents. $29 = one month of monthly Consilium. */
-export const REFERRER_REWARD_CENTS = 2900;
+/**
+ * Per-referral reward in cents: exactly one month of the monthly membership.
+ *
+ * Derived rather than typed, because it was `2900` back when the membership
+ * was $29 and would have silently become a three-month reward the moment the
+ * price dropped.
+ */
+export const REFERRER_REWARD_CENTS = Math.round(MEMBERSHIP.price * 100);
 
 export const REFERRAL_COOKIE_NAME = "kb-ref-v1";
 export const REFERRAL_COOKIE_DAYS = 30;

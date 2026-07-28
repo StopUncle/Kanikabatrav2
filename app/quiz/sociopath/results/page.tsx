@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { m } from "framer-motion";
 import Link from "next/link";
+import { MEMBERSHIP } from "@/lib/constants";
 import Header from "@/components/Header";
 import BackgroundEffects from "@/components/BackgroundEffects";
 import QuizResultGate from "@/components/quiz/QuizResultGate";
@@ -303,7 +304,7 @@ export default function SociopathResultsPage() {
                     A higher concentration of the {profile.name} configuration
                     than the general population, by deliberate design. The room
                     is not safer because it&rsquo;s gentler. It&rsquo;s safer
-                    because it&rsquo;s read. $29/month. The first month is
+                    because it&rsquo;s read. {MEMBERSHIP.monthly}. The first month is
                     typically the most useful.
                   </p>
                   <Link

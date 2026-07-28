@@ -84,6 +84,40 @@ Next.js 15 (App Router) + React 19 + TypeScript. Personal brand site for Kanika 
 - **Deployment:** Railway (Nixpacks, `npx prisma generate && npm run build`). Domain `kanikarose.com`. Push to `master` auto-deploys.
 - **Storage:** `private/books/` for book files (gitignored, deployed via Railway separately, must NOT be committed). Voice notes + member avatars on Cloudflare R2 (`kanika-media` bucket, S3-compatible, via `lib/storage/r2.ts`).
 
+## 🚧 PLANNED: the monetisation reset (decided 2026-07-28, NOT SHIPPED)
+
+Everything in the pricing sections below still describes production. This block
+describes what is agreed and coming, so no session ships against the old model
+by accident. **Nothing here deploys without Sam's explicit go.**
+
+- **$29/mo is being removed.** One paid membership at **$9/mo** plus a **free
+  tier**. Existing subscribers all move DOWN to $9 with an email; nobody is
+  grandfathered at $29.
+- **Gift memberships land on the free tier when they expire**, not on the paid
+  entry price.
+- **Quiz buyers get their first month at $4.99**, replacing the $9.99 promo
+  credit (which against a $9 tier would be a free month).
+- **One paid tier only.** Above it everything is one-time: the 12 Week
+  Transformation ($149, or $199 with the book), Ask packs, coaching.
+- **Book sales are the primary revenue goal.** The program assigns the book as
+  required reading, so selling the program sells books.
+
+**Traps that bite anyone touching pricing** (full list in the plan file):
+- The $29 price has **no constant**. It is ~55 hardcoded strings, including
+  `app/terms/page.tsx:133` and `app/refund/page.tsx:75` (legal copy) and two
+  `content/posts/*.mdx`. Introduce a constant before changing anything.
+- `quiz-credit-999` (`lib/stripe-credits.ts:8`) is a Stripe coupon and
+  **`amount_off` is immutable**. A reprice needs a NEW coupon id.
+- The $39/$79 book bundles are subscriptions whose trial **auto-renews into the
+  $29 INNER_CIRCLE line**. Changing the membership price changes what they
+  renew into.
+- Coaching amounts live in three hardcoded places and are **decoupled from
+  Stripe**, so the amount shown and the amount charged can drift.
+- `REFERRER_REWARD_CENTS = 2900` is the $29 price as a number.
+
+Reasoning: `docs/WHY-29-A-MONTH.md`. Free/paid design: `docs/FREE-TIER-PLAN.md`.
+Execution ledger and lane ownership: `docs/LEDGER.md` — **read it first**.
+
 ## 💳 Stripe (live mode)
 
 All products created via Stripe API. productKeys:

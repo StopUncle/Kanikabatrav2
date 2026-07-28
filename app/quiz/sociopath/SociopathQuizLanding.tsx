@@ -1,4 +1,5 @@
 "use client";
+import { MEMBERSHIP } from "@/lib/constants";
 
 import { m } from "framer-motion";
 import Link from "next/link";
@@ -59,7 +60,7 @@ const RELATED_LINKS: Array<{
     href: "/consilium",
     title: "Join the Consilium",
     description:
-      "$29/month. Higher concentration of people with the Calculator and Full Pattern configurations than the general population, by deliberate design. The room is not safer because it's gentler. It's safer because it's read.",
+      `${MEMBERSHIP.monthly}. Higher concentration of people with the Calculator and Full Pattern configurations than the general population, by deliberate design. The room is not safer because it's gentler. It's safer because it's read.`,
     type: "Community",
   },
 ];

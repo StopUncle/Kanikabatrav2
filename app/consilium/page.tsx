@@ -5,6 +5,7 @@ import Link from "next/link";
 import Header from "@/components/Header";
 import BackgroundEffects from "@/components/BackgroundEffects";
 import { ArrowRight, Check, ShieldCheck } from "lucide-react";
+import { MEMBERSHIP } from "@/lib/constants";
 import ConsiliumSimulatorTeaser from "@/components/consilium/ConsiliumSimulatorTeaser";
 import FloatingConsiliumSeal from "@/components/consilium/FloatingConsiliumSeal";
 import ConsiliumFAQ from "@/components/consilium/ConsiliumFAQ";
@@ -151,7 +152,7 @@ export default async function InnerCircleLanding({
                   href="/consilium/apply"
                   className="inline-flex items-center justify-center gap-2 py-4 px-10 rounded-full bg-warm-gold text-deep-black font-medium text-base tracking-wider uppercase transition-all hover:bg-warm-gold/90 hover:shadow-[0_8px_24px_-4px_rgba(212,175,55,0.45)]"
                 >
-                  Join the Community, $29/month
+                  Join the Community, {MEMBERSHIP.monthly}
                   <ArrowRight size={18} />
                 </Link>
                 {/* Free taste before the paywall: a full playable scenario,
@@ -270,10 +271,10 @@ export default async function InnerCircleLanding({
               Component-by-component standalone pricing, then the
               bundled reveal. Each row names what the component
               would cost if sold separately, totals at the bottom,
-              then the actual $29/mo lands as the punch. The effect
+              then the actual monthly price lands as the punch. The effect
               is anchor-and-drop, the prospect reads $490 first and
-              metabolises the $29 against that ceiling, not against
-              "is $29 worth it on its own". The Sociopathic Dating
+              metabolises the price against that ceiling, not against
+              "is it worth it on its own". The Sociopathic Dating
               Bible is NOT in this stack, it is sold separately
               ($9.99 member price, $24.99 standalone). */}
           <div className="mb-20">
@@ -332,7 +333,7 @@ export default async function InnerCircleLanding({
 
                 {/* Total row, separated by a heavier divider so the
                     eye reads "this is the total of the rows above"
-                    before it lands on the $29 reveal. */}
+                    before it lands on the price reveal. */}
                 <div className="flex items-baseline justify-between gap-4 px-5 sm:px-7 py-4 border-t-2 border-warm-gold/30 bg-deep-black/40">
                   <p className="text-text-gray text-xs sm:text-sm uppercase tracking-[0.25em] font-light">
                     Standalone value
@@ -351,7 +352,7 @@ export default async function InnerCircleLanding({
                   </p>
                   <div className="flex items-baseline justify-center gap-2 mb-1">
                     <span className="text-5xl sm:text-6xl font-extralight text-warm-gold leading-none">
-                      $29
+                      {MEMBERSHIP.priceDisplay}
                     </span>
                     <span className="text-text-gray font-light">/ month</span>
                   </div>
@@ -359,7 +360,7 @@ export default async function InnerCircleLanding({
                     Cancel any time.
                   </p>
                   <p className="text-text-gray/60 text-[11px] mt-3 tracking-wider uppercase">
-                    Or $290/year, two months free
+                    Or {MEMBERSHIP.annual}, {MEMBERSHIP.monthsFreeOnAnnual} months free
                   </p>
                 </div>
               </div>
@@ -377,7 +378,7 @@ export default async function InnerCircleLanding({
                     Spend 7 days inside.
                   </p>
                   <p className="text-text-gray/85 font-light text-xs sm:text-sm mt-0.5 leading-relaxed">
-                    If it&apos;s not the most useful $29 you&apos;ve spent
+                    If it&apos;s not the most useful {MEMBERSHIP.priceDisplay} you&apos;ve spent
                     this year, message us for a full refund. No form, no
                     survey.
                   </p>
@@ -443,7 +444,7 @@ export default async function InnerCircleLanding({
 
           {/* Price comparison anchor.
               Kept the 3-tier bar as a secondary anchor: the value
-              stack above does the "$515 collapsed to $29" reveal,
+              stack above does the collapsed-total reveal,
               this card does the comparable-spend frame ("less than a
               single coaching session"). Two different anchor moves
               targeting two different price-shopping mental models. */}
@@ -451,7 +452,7 @@ export default async function InnerCircleLanding({
             <div className="max-w-2xl mx-auto text-center p-10 bg-deep-black/50 border border-warm-gold/25 rounded-2xl">
               <p className="text-text-gray text-sm uppercase tracking-[0.25em] mb-4">For comparison</p>
               <div className="flex items-baseline justify-center gap-2 mb-2">
-                <span className="text-5xl font-extralight text-warm-gold">$29</span>
+                <span className="text-5xl font-extralight text-warm-gold">{MEMBERSHIP.priceDisplay}</span>
                 <span className="text-text-gray font-light">/month</span>
               </div>
               <p className="text-text-gray font-light mb-6">
@@ -460,7 +461,7 @@ export default async function InnerCircleLanding({
               {/* All three cells share the same box model (border + py-2)
                   so their prices share a baseline. Cells 1-2 get a
                   transparent border that reserves the same 1px of space
-                  the highlighted $29 cell uses, without this, the
+                  the highlighted price cell uses, without this, the
                   highlighted cell sits 9px lower than the other two
                   because its border+padding expands its box. */}
               <div className="grid grid-cols-3 gap-4 mb-8 max-w-md mx-auto">
@@ -473,7 +474,7 @@ export default async function InnerCircleLanding({
                   <div className="text-text-gray text-xs">Book (Member Price)</div>
                 </div>
                 <div className="text-center border border-warm-gold/50 bg-warm-gold/5 rounded-lg py-2">
-                  <div className="text-warm-gold text-xl font-light">$29</div>
+                  <div className="text-warm-gold text-xl font-light">{MEMBERSHIP.priceDisplay}</div>
                   <div className="text-text-gray text-xs">The Consilium</div>
                 </div>
               </div>
@@ -487,7 +488,7 @@ export default async function InnerCircleLanding({
 
           {/* Closing section.
               Previously two orphaned grey body lines hanging after the
-              $29 pricing card ("Want direct 1:1 access?" and "Have
+              pricing card ("Want direct 1:1 access?" and "Have
               questions?"). A weak ending, the page asked for the
               close three times then trailed off. Consolidated into one
               quiet closing card that offers the two alternate paths

@@ -1,4 +1,5 @@
 "use client";
+import { MEMBERSHIP } from "@/lib/constants";
 
 import { useState } from "react";
 import Link from "next/link";
@@ -435,7 +436,7 @@ export default function BookPage() {
 
                 {!BOOK_INFO.isPresale && (
                   <p className="text-[11px] text-text-gray/70 leading-relaxed">
-                    Bundle covers your first month or three. Then $29/mo · cancel anytime.
+                    Bundle covers your first month or three. Then {MEMBERSHIP.monthlyShort} · cancel anytime.
                   </p>
                 )}
 
