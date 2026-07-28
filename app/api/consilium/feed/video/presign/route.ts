@@ -50,10 +50,24 @@ const EXT_TO_MIME: Record<string, string> = {
   webm: "video/webm",
 };
 
+// Posters ride the same route because they are the same act: a frame
+// lifted from the clip the caller is already uploading. They are a
+// different shape of object though, so they get their own ceiling and
+// their own prefix rather than being squeezed through the video rules.
+const POSTER_MAX_BYTES = 8 * 1024 * 1024;
+const POSTER_EXT_TO_MIME: Record<string, string> = {
+  jpg: "image/jpeg",
+  jpeg: "image/jpeg",
+  png: "image/png",
+  webp: "image/webp",
+};
+
 interface PresignRequest {
   filename?: unknown;
   size?: unknown;
   type?: unknown;
+  /** "poster" signs a still image instead of a clip. Defaults to video. */
+  kind?: unknown;
 }
 
 export async function POST(request: NextRequest) {
@@ -85,12 +99,52 @@ export async function POST(request: NextRequest) {
     const reportedType =
       typeof body.type === "string" ? body.type.split(";")[0].trim().toLowerCase() : "";
 
+    const isPoster = body.kind === "poster";
+
     if (!filename) {
       return NextResponse.json({ error: "filename is required" }, { status: 400 });
     }
     if (!Number.isFinite(size) || size <= 0) {
       return NextResponse.json({ error: "size must be a positive integer" }, { status: 400 });
     }
+
+    const rawExt = filename.split(".").pop()?.toLowerCase() ?? "";
+
+    if (isPoster) {
+      if (size > POSTER_MAX_BYTES) {
+        return NextResponse.json(
+          { error: "Poster too large (max 8MB)" },
+          { status: 400 },
+        );
+      }
+      if (!rawExt || !POSTER_EXT_TO_MIME[rawExt]) {
+        return NextResponse.json(
+          { error: "Posters must be jpg, png or webp" },
+          { status: 400 },
+        );
+      }
+      const posterType =
+        reportedType && reportedType.startsWith("image/")
+          ? reportedType
+          : POSTER_EXT_TO_MIME[rawExt];
+      const posterKey = `feed-posters/fp-${Date.now()}-${crypto
+        .randomBytes(6)
+        .toString("hex")}.${rawExt}`;
+      try {
+        const presigned = await getPresignedUploadUrl(posterKey, posterType);
+        return NextResponse.json(presigned, { status: 200 });
+      } catch (err) {
+        logger.error("[feed-video-presign] poster sign failed", err as Error, {
+          key: posterKey,
+          size,
+        });
+        return NextResponse.json(
+          { error: "Could not prepare upload. Please try again." },
+          { status: 500 },
+        );
+      }
+    }
+
     if (size > MAX_BYTES) {
       return NextResponse.json(
         { error: `File too large (max ${MAX_LABEL})` },
@@ -98,7 +152,6 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const rawExt = filename.split(".").pop()?.toLowerCase() ?? "";
     if (!rawExt || !ALLOWED_EXTENSIONS.has(rawExt)) {
       return NextResponse.json(
         { error: "Only mp4, mov, m4v, webm are supported" },

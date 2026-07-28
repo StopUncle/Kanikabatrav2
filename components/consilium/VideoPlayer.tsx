@@ -10,6 +10,19 @@ interface VideoPlayerProps {
   durationSeconds?: number | null;
 }
 
+/* Kanika films on a phone, so most clips are 9:16. The frame used to be
+   locked at 16:9, which pillarboxed every one of them: a strip of video
+   adrift in two panels of black. The frame takes the video's own shape
+   now, learned from the file's metadata, which the browser already
+   fetches because of preload="metadata". Nothing is stored and nothing
+   is cropped, so this fixes clips posted long before it shipped.
+
+   The bounds only catch pathological sources. Anything from a phone or a
+   camera lands well inside them. */
+const MIN_RATIO = 0.5; // taller than 1:2 gets held at 1:2
+const MAX_RATIO = 2.4; // wider than 12:5 gets held at 12:5
+const DEFAULT_RATIO = 16 / 9;
+
 function formatTime(seconds: number): string {
   if (!isFinite(seconds) || seconds < 0) return "";
   const m = Math.floor(seconds / 60);
@@ -37,6 +50,7 @@ export default function VideoPlayer({
 }: VideoPlayerProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [started, setStarted] = useState(false);
+  const [ratio, setRatio] = useState<number | null>(null);
 
   // Whitelist before either URL touches the DOM. A bad src would let
   // someone smuggle javascript:/data: payloads through the admin upload
@@ -66,8 +80,19 @@ export default function VideoPlayer({
 
   const durationLabel = durationSeconds ? formatTime(durationSeconds) : "";
 
+  const handleMetadata = () => {
+    const v = videoRef.current;
+    if (!v?.videoWidth || !v.videoHeight) return;
+    setRatio(
+      Math.min(MAX_RATIO, Math.max(MIN_RATIO, v.videoWidth / v.videoHeight)),
+    );
+  };
+
   return (
-    <div className="relative w-full overflow-hidden rounded-xl border border-accent-gold/15 bg-deep-black">
+    <div
+      className="relative w-full overflow-hidden rounded-xl border border-accent-gold/15 bg-deep-black"
+      style={{ aspectRatio: String(ratio ?? DEFAULT_RATIO) }}
+    >
       {/* The poster overlay only renders before first play. Once play
           starts we hand control entirely to the native <video> element so
           scrubbing, fullscreen, and AirPlay all behave normally. */}
@@ -110,7 +135,8 @@ export default function VideoPlayer({
         controls={started}
         playsInline
         preload="metadata"
-        className="w-full h-auto block bg-deep-black aspect-video"
+        onLoadedMetadata={handleMetadata}
+        className="absolute inset-0 block h-full w-full bg-deep-black object-contain"
       />
     </div>
   );

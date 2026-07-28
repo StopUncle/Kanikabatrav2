@@ -68,6 +68,7 @@ export default async function TodayPage() {
         title: true,
         createdAt: true,
         voiceNoteUrl: true,
+        videoPosterUrl: true,
       },
     }),
     prisma.gameSession.count({
@@ -164,6 +165,20 @@ export default async function TodayPage() {
               "radial-gradient(90% 120% at 75% 15%, rgba(183,110,121,0.35), transparent 55%), radial-gradient(120% 140% at 20% 100%, rgba(212,175,55,0.22), transparent 55%), linear-gradient(160deg, #211a13, #0d0b09 70%)",
           }}
         >
+          {/* The clip's own frame when it has one. Anchored high because
+              the subject of every one of these is a face, and a face sits
+              in the top third. Without one the card keeps its gradient,
+              which is a designed empty rather than a broken image. */}
+          {latestFromKanika.videoPosterUrl && (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              src={latestFromKanika.videoPosterUrl}
+              alt=""
+              aria-hidden
+              className="absolute inset-0 h-full w-full object-cover"
+              style={{ objectPosition: "center 25%" }}
+            />
+          )}
           <span
             className="absolute inset-0"
             style={{
