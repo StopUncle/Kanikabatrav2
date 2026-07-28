@@ -7,7 +7,7 @@ import BackgroundEffects from "@/components/BackgroundEffects";
 import Header from "@/components/Header";
 import StripeButton from "@/components/StripeButton";
 import CoachingLeadCapture from "@/components/coaching/CoachingLeadCapture";
-import { COACHING_PACKAGES } from "@/lib/constants";
+import { COACHING_PACKAGES, MEMBERSHIP } from "@/lib/constants";
 import { Check, ArrowRight, ChevronDown } from "lucide-react";
 
 const COACHING_FAQ = [
@@ -56,13 +56,30 @@ const COACHING_PRICE_KEYS: Record<string, string> = {
   retainer: "COACHING_RETAINER",
 };
 
-const COACHING_PRICES: Record<string, string> = {
-  "single-session": "$297",
-  clarity: "$497",
-  intensive: "$1,497",
-  career: "$2,997",
-  retainer: "$4,997",
-};
+/**
+ * Display prices, derived from the packages rather than typed again.
+ *
+ * There used to be three independent copies of these numbers: the ones in
+ * COACHING_PACKAGES, a hand-written map here that fed the buy buttons, and a
+ * third set inside the comparison table below. Nothing kept them in step, so
+ * the page could advertise one price while the button charged another, and
+ * the table could disagree with both. The Stripe price id decides what is
+ * actually charged, and that is a fourth number again, so the least this page
+ * can do is speak with one voice.
+ */
+const priceLabel = (amount: number) => `$${amount.toLocaleString()}`;
+
+const COACHING_PRICES: Record<string, string> = Object.fromEntries(
+  COACHING_PACKAGES.map((pkg) => [pkg.id, priceLabel(pkg.price)]),
+);
+
+/** The four tiers the comparison table shows. Clarity is deliberately absent. */
+const COMPARISON_IDS = [
+  "single-session",
+  "intensive",
+  "career",
+  "retainer",
+] as const;
 
 export default function CoachingPage() {
   const [openFaq, setOpenFaq] = useState<number | null>(null);
@@ -339,7 +356,14 @@ export default function CoachingPage() {
                 ["Voice notes", "—", "—", "Between calls", "Between calls"],
                 ["Focus", "Any topic", "Personal", "Professional", "Everything"],
                 ["Book included", "Yes", "Yes", "Yes", "Yes"],
-                ["Price", "$297", "$1,497", "$2,997", "$4,997"],
+                // Derived from the same map the buy buttons use. The columns
+                // are Single Session, Intensive, Career, Retainer: this table
+                // deliberately omits Clarity, so the ids are named rather
+                // than taken in order.
+                [
+                  "Price",
+                  ...COMPARISON_IDS.map((id) => COACHING_PRICES[id] ?? "—"),
+                ],
               ].map(([label, t1, t2, t3, t4], i) => (
                 <div key={i} className="grid grid-cols-5 border-t border-white/[0.06] min-w-[640px]">
                   <div className="p-3 text-text-gray/60">{label}</div>
@@ -477,7 +501,7 @@ export default function CoachingPage() {
                 href="/consilium"
                 className="text-accent-gold hover:text-accent-gold/80 text-sm transition-colors"
               >
-                Start with The Consilium, $29/mo →
+                Start with The Consilium, {MEMBERSHIP.monthlyShort} →
               </Link>
             </div>
           </m.div>
