@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { ArrowRight, Loader2, CheckCircle, BadgeCheck } from "lucide-react";
 import { catalogueStats } from "@/lib/simulator/stats";
-import { QUIZ_INFO } from "@/lib/quiz-data";
 import { MEMBERSHIP } from "@/lib/constants";
 
 const INCLUDED = [
