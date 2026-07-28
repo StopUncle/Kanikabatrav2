@@ -57,24 +57,80 @@ function formatFileSize(bytes: number): string {
  * we just leave the duration field null in that case rather than blocking
  * the upload.
  */
-function probeDuration(file: File): Promise<number | null> {
+interface Probe {
+  duration: number | null;
+  /** A frame lifted from the clip itself, to stand as its thumbnail. */
+  poster: Blob | null;
+}
+
+/**
+ * Read the clip in the browser and steal a frame from it.
+ *
+ * Videos posted without a thumbnail left the Today card as an empty
+ * gradient, which is the least inviting thing a hero can be. Railway has
+ * no ffmpeg, so the frame is taken here instead: the file is already on
+ * this machine, and a canvas draw costs nothing.
+ *
+ * The frame is taken a moment in rather than at zero, because the first
+ * frame of a phone video is usually a blur or a hand reaching away from
+ * the lens. A failure anywhere just means no poster, never a failed
+ * upload: some codecs (HEVC .mov in particular) refuse to decode in the
+ * browser, and a missing thumbnail is not worth losing a post over.
+ */
+function probeVideo(file: File): Promise<Probe> {
   return new Promise((resolve) => {
     const url = URL.createObjectURL(file);
     const v = document.createElement("video");
     v.preload = "metadata";
     v.muted = true;
+    v.playsInline = true;
     v.src = url;
-    const cleanup = () => {
+
+    let settled = false;
+    const done = (probe: Probe) => {
+      if (settled) return;
+      settled = true;
       URL.revokeObjectURL(url);
+      resolve(probe);
     };
+
+    // Some files never fire seeked. Do not hold the form hostage to them.
+    const bail = setTimeout(() => done({ duration: null, poster: null }), 8000);
+
     v.onloadedmetadata = () => {
       const d = v.duration;
-      cleanup();
-      resolve(isFinite(d) && d > 0 ? Math.round(d) : null);
+      const duration = isFinite(d) && d > 0 ? Math.round(d) : null;
+
+      if (!v.videoWidth || !v.videoHeight) {
+        clearTimeout(bail);
+        done({ duration, poster: null });
+        return;
+      }
+
+      v.onseeked = () => {
+        clearTimeout(bail);
+        try {
+          const canvas = document.createElement("canvas");
+          canvas.width = v.videoWidth;
+          canvas.height = v.videoHeight;
+          const ctx = canvas.getContext("2d");
+          if (!ctx) return done({ duration, poster: null });
+          ctx.drawImage(v, 0, 0, canvas.width, canvas.height);
+          canvas.toBlob(
+            (blob) => done({ duration, poster: blob }),
+            "image/jpeg",
+            0.82,
+          );
+        } catch {
+          done({ duration, poster: null });
+        }
+      };
+      v.currentTime = duration ? Math.min(1.2, duration * 0.1) : 0.1;
     };
+
     v.onerror = () => {
-      cleanup();
-      resolve(null);
+      clearTimeout(bail);
+      done({ duration: null, poster: null });
     };
   });
 }
@@ -89,6 +145,7 @@ export default function VideosPage() {
   const [description, setDescription] = useState("");
   const [file, setFile] = useState<File | null>(null);
   const [duration, setDuration] = useState<number | null>(null);
+  const [poster, setPoster] = useState<Blob | null>(null);
   const [answersQuestionId, setAnswersQuestionId] = useState<string | null>(null);
   const [dragOver, setDragOver] = useState(false);
   const [uploadStatus, setUploadStatus] = useState<"idle" | "success" | "error">(
@@ -183,8 +240,9 @@ export default function VideosPage() {
     }
     setFile(f);
     setUploadStatus("idle");
-    const d = await probeDuration(f);
-    setDuration(d);
+    const probe = await probeVideo(f);
+    setDuration(probe.duration);
+    setPoster(probe.poster);
   }
 
   async function handleSubmit(e: React.FormEvent) {
@@ -256,6 +314,43 @@ export default function VideosPage() {
         );
       }
 
+      // 4. The stolen frame, by the same presigned route. Wrapped whole:
+      //    a post with no thumbnail is a smaller problem than an upload
+      //    that fails after the video has already landed.
+      let posterUrl: string | null = null;
+      if (poster) {
+        try {
+          const posterPresign = await fetch(
+            "/api/consilium/feed/video/presign",
+            {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                filename: "poster.jpg",
+                size: poster.size,
+                type: "image/jpeg",
+                kind: "poster",
+              }),
+            },
+          );
+          if (posterPresign.ok) {
+            const signed = (await posterPresign.json()) as {
+              uploadUrl: string;
+              publicUrl: string;
+              contentType: string;
+            };
+            const put = await fetch(signed.uploadUrl, {
+              method: "PUT",
+              headers: { "Content-Type": signed.contentType },
+              body: poster,
+            });
+            if (put.ok) posterUrl = signed.publicUrl;
+          }
+        } catch {
+          /* No thumbnail. The card falls back to its own typography. */
+        }
+      }
+
       const postRes = await fetch("/api/consilium/feed/posts", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -264,6 +359,7 @@ export default function VideosPage() {
           content: description.trim() || title.trim(),
           type: "VIDEO",
           videoUrl: publicUrl,
+          videoPosterUrl: posterUrl,
           videoDurationSeconds: duration,
         }),
       });
@@ -297,6 +393,7 @@ export default function VideosPage() {
       setDescription("");
       setFile(null);
       setDuration(null);
+      setPoster(null);
       setAnswersQuestionId(null);
       setShowForm(false);
       fetchVideos();
@@ -427,6 +524,7 @@ export default function VideosPage() {
                       e.stopPropagation();
                       setFile(null);
                       setDuration(null);
+                      setPoster(null);
                     }}
                     className="text-text-gray hover:text-red-400 transition-colors ml-2"
                   >
