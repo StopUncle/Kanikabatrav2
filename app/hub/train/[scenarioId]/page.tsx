@@ -8,6 +8,9 @@ import {
   scenariosForTrack,
 } from "@/lib/simulator/scenarios";
 import { readTodayCheckIn } from "@/lib/checkin/db";
+import { getAccess } from "@/lib/access/tier";
+import { canPlay } from "@/lib/simulator/access";
+import UpgradeWall from "@/components/app-shell/upgrade/UpgradeWall";
 import { trackAccess } from "@/lib/simulator/track-gates";
 import type { ScenarioTrack } from "@/lib/simulator/types";
 import { resolveScenario } from "@/lib/simulator/resolve";
@@ -47,6 +50,21 @@ export default async function SimulatorPlay({
   const userId = await requireServerAuth(
     `/app/train/${scenarioId}`,
   );
+
+  // Tier gate. This is the load-bearing one: the catalog can stop drawing a
+  // card and the URL still plays, so the decision has to happen here and in
+  // /api/simulator/* rather than in whatever rendered the link.
+  //
+  // A locked chapter shows the wall in place instead of redirecting. The
+  // scenario title is the pitch, so naming it is the point; a silent bounce
+  // to the room reads as the app being broken. The run itself never starts:
+  // nothing below this line executes, and /api/simulator/* refuses too.
+  const viewerAccess = await getAccess(userId);
+  if (!canPlay(scenario, viewerAccess)) {
+    return (
+      <UpgradeWall trigger="chapter-end" nextChapterTitle={scenario.title} />
+    );
+  }
 
   // Load persisted state, null when never played.
   const [row, viewer, todayCheckIn] = await Promise.all([

@@ -18,6 +18,8 @@ import { prisma } from "@/lib/prisma";
 import { z } from "zod";
 import { getScenario, ALL_SCENARIOS } from "@/lib/simulator/scenarios";
 import { resolveScenario } from "@/lib/simulator/resolve";
+import { getAccess } from "@/lib/access/tier";
+import { canPlay } from "@/lib/simulator/access";
 import {
   badgesEarnedFromState,
   levelCompleteBadgeFor,
@@ -81,6 +83,16 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         { error: `Unknown scenario: ${body.scenarioId}` },
         { status: 404 },
+      );
+    }
+
+    // Tier gate. The runner page gates too, but a POST here is reachable
+    // without ever loading it, and this one awards XP and Standing.
+    const access = await getAccess(user.id);
+    if (!canPlay(scenario, access)) {
+      return NextResponse.json(
+        { error: "That scenario is not included on your plan" },
+        { status: 403 },
       );
     }
 

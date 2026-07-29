@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { requireAuth } from "@/lib/auth/middleware";
-import { checkMembership } from "@/lib/community/membership";
+import { getAccess, canAccessMemberOnly } from "@/lib/access/tier";
 import { ringByLevel, standingToNextRing } from "@/lib/standing/config";
 
 /**
@@ -17,8 +17,8 @@ export async function POST(request: NextRequest) {
   return requireAuth(request, async (_req, user) => {
     // Members only: without this, any logged-in account could stamp
     // initiationAt ahead of joining and skip the flow on Day 0.
-    const { isMember } = await checkMembership(user.id);
-    if (!isMember) {
+    const access = await getAccess(user.id);
+    if (!canAccessMemberOnly(access)) {
       return NextResponse.json({ error: "Membership required" }, { status: 403 });
     }
 

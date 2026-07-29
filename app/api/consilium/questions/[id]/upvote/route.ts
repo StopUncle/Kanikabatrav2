@@ -3,7 +3,7 @@ import { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import { resolveActiveUserId } from "@/lib/auth/resolve-user";
 import { getAdminUserId } from "@/lib/auth/server-auth";
-import { checkMembership } from "@/lib/community/membership";
+import { getAccess, canAccessMemberOnly } from "@/lib/access/tier";
 
 // Same dual-session resolver as the submit endpoint. Member or admin
 // can both upvote, admins testing the surface shouldn't 401.
@@ -36,8 +36,9 @@ export async function POST(
     );
   }
 
-  const m = await checkMembership(userId);
-  if (!m.isMember) return NextResponse.json({ error: "Members only" }, { status: 403 });
+  // A4 decision: MEMBER-ONLY, same as the question list it ranks.
+  const access = await getAccess(userId);
+  if (!canAccessMemberOnly(access)) return NextResponse.json({ error: "Members only" }, { status: 403 });
 
   const { id } = await params;
 

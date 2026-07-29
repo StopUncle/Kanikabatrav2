@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import { Fraunces, Instrument_Sans } from "next/font/google";
 import { requireServerAuth } from "@/lib/auth/server-auth";
-import { checkMembership } from "@/lib/community/membership";
+import { getAccess } from "@/lib/access/tier";
 import { prisma } from "@/lib/prisma";
 import TabBar from "@/components/app-shell/TabBar";
 import PhoneHandoff from "@/components/app-shell/PhoneHandoff";
@@ -14,8 +14,10 @@ import NotificationPrompt from "@/components/pwa/NotificationPrompt";
  * column (full-bleed on mobile, framed on desktop), its own type system,
  * bottom tab bar. No marketing chrome, no sidebar.
  *
- * Members arrive here from social links; the old /consilium surfaces
- * stay alive underneath until each feature is rebuilt in this skin.
+ * Open to free accounts as well as members. The shell itself gates on
+ * nothing but a session and a ban; what a given tier can actually reach is
+ * decided per surface, so a free account sees the app rather than a wall
+ * where the app used to be.
  */
 
 const fraunces = Fraunces({
@@ -48,10 +50,20 @@ export default async function AppShellLayout({
 }: {
   children: React.ReactNode;
 }) {
+  // requireServerAuth already sends anonymous visitors to login, so by here
+  // the caller is either `free` or `member`. The shell renders for both:
+  // this used to be the single gate that made /app member-only, and moving
+  // it is what turns the app into the free tier's home.
   const userId = await requireServerAuth("/app");
-  const { isMember, redirectUrl } = await checkMembership(userId);
-  if (!isMember) {
-    redirect(redirectUrl || "/consilium");
+  const access = await getAccess(userId);
+
+  // A ban is the one thing that still refuses the shell outright. It has to
+  // be checked explicitly: `checkMembership` reports a ban and a failed
+  // payment identically as SUSPENDED, and a failed payment is precisely who
+  // the free tier is for. Serving a banned account the free tier would read
+  // as an unban. Same destination as before, so nothing changes for them.
+  if (access.isBanned) {
+    redirect("/consilium");
   }
 
   const [me, baselineAttempts] = await Promise.all([
@@ -61,7 +73,13 @@ export default async function AppShellLayout({
     }),
     prisma.baselineAttempt.count({ where: { userId } }),
   ]);
-  if (me && !me.initiationAt && me.role !== "ADMIN") {
+  // Initiation is a MEMBER ceremony and `/consilium/initiation` enforces
+  // membership itself, so sending a free account there would bounce it
+  // straight back out to the sales page and the free tier would be
+  // unreachable. Members keep the ritual exactly as before; free accounts
+  // land in the app with no onboarding, which is a real gap and needs its
+  // own app-native flow rather than a redirect into the old funnel.
+  if (access.isMember && me && !me.initiationAt && me.role !== "ADMIN") {
     redirect("/consilium/initiation");
   }
 

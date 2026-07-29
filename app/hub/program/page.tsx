@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { readProgram } from "@/lib/program/read";
 import { TOTAL_WEEKS } from "@/lib/program/curriculum";
 import WeekCard from "@/components/program/WeekCard";
+import { memberGate } from "@/lib/access/guard";
 
 export const metadata = {
   title: "The 12 Weeks | Consilium",
@@ -17,6 +18,11 @@ export const metadata = {
  */
 export default async function ProgramPage() {
   const userId = await requireServerAuth("/app/program");
+  // Member-only surface. The shell no longer gates for us (A2), and this
+  // page reads its data straight from Prisma, so the gate has to be here
+  // and above the queries.
+  const gate = await memberGate(userId);
+  if (gate) return gate;
   const program = await readProgram(prisma, userId);
 
   return (

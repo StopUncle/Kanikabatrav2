@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { getAdminUserId } from "@/lib/auth/server-auth";
 import { resolveActiveUserId } from "@/lib/auth/resolve-user";
-import { checkMembership } from "@/lib/community/membership";
+import { getAccess, canAccessMemberOnly } from "@/lib/access/tier";
 import { prisma } from "@/lib/prisma";
 
 async function resolveUserId(): Promise<string | null> {
@@ -19,8 +19,9 @@ export async function POST(
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const { isMember } = await checkMembership(userId);
-  if (!isMember) {
+  // A4 decision: MEMBER-ONLY, same as the Feed it hangs off.
+  const access = await getAccess(userId);
+  if (!canAccessMemberOnly(access)) {
     return NextResponse.json({ error: "Not a member" }, { status: 403 });
   }
 

@@ -12,6 +12,7 @@ import { tierForMember } from "@/components/consilium/badge-tiers";
 import { formatPoll, pollInclude } from "@/lib/community/poll-format";
 import AppFeedPost from "@/components/app-shell/feed/AppFeedPost";
 import AppCommentSection from "@/components/app-shell/feed/AppCommentSection";
+import { memberGate } from "@/lib/access/guard";
 
 /**
  * One post with its comment thread, app skin. Same data assembly as the
@@ -42,6 +43,11 @@ export default async function AppPostDetailPage({
 }) {
   const { postId } = await params;
   const userId = await requireServerAuth(`/app/feed/${postId}`);
+  // Member-only surface. The shell no longer gates for us (A2), and this
+  // page reads its data straight from Prisma, so the gate has to be here
+  // and above the queries.
+  const gate = await memberGate(userId);
+  if (gate) return gate;
 
   const viewerGender = await getViewerGender(userId);
   const post = await prisma.feedPost.findFirst({

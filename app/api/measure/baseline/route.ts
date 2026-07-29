@@ -15,7 +15,7 @@ import { z } from "zod";
 import type { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import { requireAuth } from "@/lib/auth/middleware";
-import { checkMembership } from "@/lib/community/membership";
+import { getAccess, canAccessMemberOnly } from "@/lib/access/tier";
 import { gradeBaseline } from "@/lib/mark/baseline";
 import { BASELINE_ITEMS_VERSION } from "@/lib/mark/baseline-items";
 import { recordEncounters } from "@/lib/mark/encounters";
@@ -53,8 +53,18 @@ const Body = z.object({
 
 export async function POST(request: NextRequest) {
   return requireAuth(request, async (req, user) => {
-    const { isMember } = await checkMembership(user.id);
-    if (!isMember) {
+    // A4 decision: MEMBER-ONLY **for now, and this is the one route whose
+    // answer is not settled**. The plan wants the Baseline Read to be the
+    // free tier's strongest hook (one sitting, headline verdict only, with
+    // the blind spot list inside), but that is open decision #4 and it is
+    // not a gate change on its own: this route's response carries `reveal`,
+    // the full item-by-item teaching content, so admitting free accounts
+    // without shaping the payload would hand over the thing being sold.
+    // Shaping it needs the reveal screen in components/mark/** to render a
+    // headline-only variant, which is RETENTION's surface, not ACCESS's.
+    // So: left closed deliberately rather than half-opened. See A8.
+    const access = await getAccess(user.id);
+    if (!canAccessMemberOnly(access)) {
       return NextResponse.json(
         { error: "Membership required" },
         { status: 403 },

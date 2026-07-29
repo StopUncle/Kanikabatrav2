@@ -16,6 +16,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { requireAuth } from "@/lib/auth/middleware";
 import { resolveScenario } from "@/lib/simulator/resolve";
+import { getAccess, canAccessMemberOnly } from "@/lib/access/tier";
 import { judgeFreeformMove, JudgeInputError } from "@/lib/simulator/judge";
 import { enforceRateLimit, limits } from "@/lib/rate-limit";
 import { logger } from "@/lib/logger";
@@ -52,6 +53,20 @@ export async function POST(request: NextRequest) {
     const scenario = await resolveScenario(body.scenarioId);
     if (!scenario) {
       return NextResponse.json({ error: "Unknown scenario" }, { status: 404 });
+    }
+
+    // Member-only, and deliberately a stronger gate than canPlay: typing
+    // your own line is The Room, which the plan puts on the paid side even
+    // for a scenario the free tier can otherwise play (free gets Rehearsal,
+    // picking from the written choices). It is also the one call here that
+    // spends LLM budget per request, so an open version is a cost hole as
+    // well as a product one.
+    const access = await getAccess(user.id);
+    if (!canAccessMemberOnly(access)) {
+      return NextResponse.json(
+        { error: "Freeform is part of the Consilium" },
+        { status: 403 },
+      );
     }
 
     try {

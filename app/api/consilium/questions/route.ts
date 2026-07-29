@@ -4,7 +4,7 @@ import { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import { resolveActiveUserId } from "@/lib/auth/resolve-user";
 import { getAdminUserId } from "@/lib/auth/server-auth";
-import { checkMembership } from "@/lib/community/membership";
+import { getAccess, canAccessMemberOnly } from "@/lib/access/tier";
 import { checkAskCooldown } from "@/lib/questions/cooldown";
 import { getQuestionSettings } from "@/lib/questions/settings";
 import { logger } from "@/lib/logger";
@@ -44,8 +44,10 @@ export async function GET() {
     );
   }
 
-  const m = await checkMembership(userId);
-  if (!m.isMember) return NextResponse.json({ error: "Members only" }, { status: 403 });
+  // A4 decision: MEMBER-ONLY. Ask Kanika is access to Kanika, which is
+  // the thing that cannot scale and therefore the thing being sold.
+  const access = await getAccess(userId);
+  if (!canAccessMemberOnly(access)) return NextResponse.json({ error: "Members only" }, { status: 403 });
 
   const questions = await prisma.memberQuestion.findMany({
     where: { status: "PENDING" },
@@ -105,8 +107,8 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Members only" }, { status: 403 });
   }
 
-  const m = await checkMembership(userId);
-  if (!m.isMember) return NextResponse.json({ error: "Members only" }, { status: 403 });
+  const access = await getAccess(userId);
+  if (!canAccessMemberOnly(access)) return NextResponse.json({ error: "Members only" }, { status: 403 });
 
   let payload: z.infer<typeof submitSchema>;
   try {

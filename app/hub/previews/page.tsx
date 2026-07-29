@@ -2,6 +2,7 @@ import Link from "next/link";
 import { requireServerAuth } from "@/lib/auth/server-auth";
 import { getUpcomingPosts } from "@/lib/mdx";
 import { Clock, ArrowRight } from "lucide-react";
+import { memberGate } from "@/lib/access/guard";
 
 export const metadata = {
   title: "Previews. The Consilium | Kanika Batra",
@@ -10,7 +11,10 @@ export const metadata = {
 };
 
 export default async function PreviewsPage() {
-  await requireServerAuth("/app/previews");
+  const userId = await requireServerAuth("/app/previews");
+  // Member-only: previews are member-side reads of unpublished posts.
+  const gate = await memberGate(userId);
+  if (gate) return gate;
   const upcoming = getUpcomingPosts(60);
 
   return (

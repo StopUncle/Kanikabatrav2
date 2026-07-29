@@ -36,6 +36,8 @@ import { requireAuth } from "@/lib/auth/middleware";
 import { prisma } from "@/lib/prisma";
 import { z } from "zod";
 import { resolveScenario } from "@/lib/simulator/resolve";
+import { getAccess } from "@/lib/access/tier";
+import { canPlay } from "@/lib/simulator/access";
 import { logger } from "@/lib/logger";
 
 const ReplayBody = z.object({
@@ -59,6 +61,15 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         { error: `Unknown scenario: ${body.scenarioId}` },
         { status: 404 },
+      );
+    }
+
+    // Tier gate: a replay re-opens a run and re-credits it on completion.
+    const access = await getAccess(user.id);
+    if (!canPlay(scenario, access)) {
+      return NextResponse.json(
+        { error: "That scenario is not included on your plan" },
+        { status: 403 },
       );
     }
 

@@ -3,6 +3,7 @@ import { requireServerAuth } from "@/lib/auth/server-auth";
 import { prisma } from "@/lib/prisma";
 import { readMark, type LedgerRow } from "@/lib/mark/read";
 import { MARK_FRAME_LINE } from "@/lib/mark/verdicts";
+import { memberGate } from "@/lib/access/guard";
 
 export const metadata = {
   title: "The Mark | Consilium",
@@ -18,6 +19,11 @@ export const metadata = {
  */
 export default async function MeasurePage() {
   const userId = await requireServerAuth("/app/measure");
+  // Member-only surface. The shell no longer gates for us (A2), and this
+  // page reads its data straight from Prisma, so the gate has to be here
+  // and above the queries.
+  const gate = await memberGate(userId);
+  if (gate) return gate;
   const read = await readMark(prisma, userId);
 
   return (

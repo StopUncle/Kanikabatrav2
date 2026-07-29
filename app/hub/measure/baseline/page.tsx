@@ -6,6 +6,7 @@ import {
   redactBaselineItem,
 } from "@/lib/mark/baseline-items";
 import BaselineRunner from "@/components/mark/BaselineRunner";
+import { memberGate } from "@/lib/access/guard";
 
 export const metadata = {
   title: "The Baseline Read | Consilium",
@@ -24,6 +25,11 @@ const RETAKE_COOLDOWN_DAYS = 21;
 
 export default async function BaselineReadPage() {
   const userId = await requireServerAuth("/app/measure/baseline");
+  // Member-only surface. The shell no longer gates for us (A2), and this
+  // page reads its data straight from Prisma, so the gate has to be here
+  // and above the queries.
+  const gate = await memberGate(userId);
+  if (gate) return gate;
 
   const last = await prisma.baselineAttempt.findFirst({
     where: { userId },

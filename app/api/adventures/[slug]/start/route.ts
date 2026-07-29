@@ -5,6 +5,12 @@
  * it is returned unchanged so a re-tap on Start never resets a half-finished
  * arc. Returns the scenarioId the player should play next (current step) plus
  * the progress row. Unpublished adventures 404.
+ *
+ * A4 decision: signed-in, no membership check. Starting an arc only creates a
+ * cursor; it serves no chapter. The content gate is per chapter, in the run
+ * page and in /api/simulator/*, so a free account may start an arc whose
+ * opening chapters are free and meets the wall at the first one that is not.
+ * Gating here instead would refuse the free chapters too.
  */
 
 import { NextRequest, NextResponse } from "next/server";

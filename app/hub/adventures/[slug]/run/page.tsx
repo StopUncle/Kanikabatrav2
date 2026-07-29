@@ -2,6 +2,9 @@ import { notFound, redirect } from "next/navigation";
 import { requireServerAuth } from "@/lib/auth/server-auth";
 import { prisma } from "@/lib/prisma";
 import { getScenario } from "@/lib/simulator/scenarios";
+import { getAccess } from "@/lib/access/tier";
+import { canPlay } from "@/lib/simulator/access";
+import UpgradeWall from "@/components/app-shell/upgrade/UpgradeWall";
 import AdventureSimulatorPageClient from "@/components/adventures/AdventureSimulatorPageClient";
 import type {
   ChoiceRecord,
@@ -80,6 +83,28 @@ export default async function AdventureRun({
     // it on the detail page (which shows the chapter as "Scenario removed")
     // so the admin can fix it.
     redirect(`/app/adventures/${slug}`);
+  }
+
+  // Tier gate, per chapter, same rule as the standalone runner.
+  //
+  // An arc is a sequence of the same catalog scenarios, so this route is a
+  // second door into content /app/train/[scenarioId] already gates. Without
+  // this, a free account walks an arc straight through its member chapters:
+  // /api/simulator/* refuses to bank the run, but the prose has already been
+  // served, and the prose is the product.
+  //
+  // Gated per chapter rather than per arc so a free account can still start
+  // an arc whose opening chapters are free, and meets the wall at the first
+  // one that is not, with that chapter named.
+  const access = await getAccess(userId);
+  if (!canPlay(scenario, access)) {
+    return (
+      <UpgradeWall
+        trigger="chapter-end"
+        nextChapterTitle={scenario.title}
+        returnHref={`/app/adventures/${slug}`}
+      />
+    );
   }
 
   // Mid-run resume for this chapter only (mirrors the standalone runner).

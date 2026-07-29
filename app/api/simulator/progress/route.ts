@@ -15,6 +15,8 @@ import { prisma } from "@/lib/prisma";
 import { z } from "zod";
 import type { SimulatorState } from "@/lib/simulator/types";
 import { resolveScenario } from "@/lib/simulator/resolve";
+import { getAccess } from "@/lib/access/tier";
+import { canPlay } from "@/lib/simulator/access";
 import { replayXp } from "@/lib/simulator/engine";
 import { mergeProgress } from "@/lib/simulator/progress-merge";
 import { bumpSimulatorStreak } from "@/lib/simulator/streak";
@@ -78,6 +80,18 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         { error: `Unknown scenario: ${body.scenarioId}` },
         { status: 404 },
+      );
+    }
+
+    // Tier gate on the write path. GET is left open on purpose: it only
+    // returns this user's own saved rows, and refusing to hand someone
+    // their own history would strand progress earned before a membership
+    // lapsed rather than protect anything.
+    const access = await getAccess(user.id);
+    if (!canPlay(scenario, access)) {
+      return NextResponse.json(
+        { error: "That scenario is not included on your plan" },
+        { status: 403 },
       );
     }
 

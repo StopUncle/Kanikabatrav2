@@ -1,4 +1,5 @@
 import { requireServerAuth } from "@/lib/auth/server-auth";
+import { memberGate } from "@/lib/access/guard";
 import KanikaThread from "@/components/app-shell/KanikaThread";
 
 export const metadata = {
@@ -9,6 +10,10 @@ export const metadata = {
 export const dynamic = "force-dynamic";
 
 export default async function KanikaPage() {
-  await requireServerAuth("/app/kanika");
+  const userId = await requireServerAuth("/app/kanika");
+  // Member-only: this is direct access to Kanika, which the plan puts
+  // squarely on the paid side.
+  const gate = await memberGate(userId);
+  if (gate) return gate;
   return <KanikaThread />;
 }

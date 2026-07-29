@@ -3,7 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { resolveActiveUserIdFromRequest } from "@/lib/auth/resolve-user";
 import { getAllPosts } from "@/lib/mdx";
 import { feedPostGenderWhere } from "@/lib/community/gender-filter";
-import { checkMembership } from "@/lib/community/membership";
+import { getAccess, canAccessMemberOnly } from "@/lib/access/tier";
 import { enforceRateLimit, getClientIp } from "@/lib/rate-limit";
 import { logger } from "@/lib/logger";
 
@@ -57,11 +57,15 @@ export async function GET(request: NextRequest) {
   // included and what gender filter applies. ResolveActiveUserIdFromRequest
   // returns null for banned / tokenVersion-revoked sessions, so banned
   // users drop to the anonymous-viewer path (blog + courses only).
+  // A4 decision: NOT A GATE, leave it open. This reads membership to decide
+  // which corpora to search, not whether to answer. A free account keeps the
+  // anonymous-viewer result set (blog + courses) and simply sees no member
+  // content in results, which is the correct free-tier behaviour already.
   const viewerUserId = await resolveActiveUserIdFromRequest(request);
   let viewerIsActiveMember = false;
   if (viewerUserId) {
-    const { isMember } = await checkMembership(viewerUserId);
-    viewerIsActiveMember = isMember;
+    const access = await getAccess(viewerUserId);
+    viewerIsActiveMember = canAccessMemberOnly(access);
   }
 
   try {

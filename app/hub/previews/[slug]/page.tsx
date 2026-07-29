@@ -4,6 +4,7 @@ import { requireServerAuth } from "@/lib/auth/server-auth";
 import { getPostBySlug } from "@/lib/mdx";
 import PostContent from "@/components/blog/PostContent";
 import { ArrowLeft, Clock, Calendar } from "lucide-react";
+import { memberGate } from "@/lib/access/guard";
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -26,7 +27,10 @@ export async function generateMetadata({ params }: PageProps) {
 
 export default async function PreviewDetailPage({ params }: PageProps) {
   const { slug } = await params;
-  await requireServerAuth(`/app/previews/${slug}`);
+  const userId = await requireServerAuth(`/app/previews/${slug}`);
+  // Member-only: previews are member-side reads of unpublished posts.
+  const gate = await memberGate(userId);
+  if (gate) return gate;
 
   const post = getPostBySlug(slug);
   if (!post) notFound();

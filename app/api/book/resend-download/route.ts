@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import crypto from "crypto";
 import { optionalServerAuth } from "@/lib/auth/server-auth";
-import { checkMembership } from "@/lib/community/membership";
+import { getAccess, canAccessMemberOnly } from "@/lib/access/tier";
 import { prisma } from "@/lib/prisma";
 import { sendBookDelivery } from "@/lib/email";
 
@@ -24,8 +24,16 @@ export async function POST() {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const membership = await checkMembership(userId);
-  if (!membership.isMember || membership.status !== "ACTIVE") {
+  // A4 decision: MEMBER-ONLY, and deliberately stricter than the others.
+  // This is not a content gate, it is a perk: it rotates the download
+  // token, resets the 10-download counter and re-opens a 30-day window, so
+  // it is worth real money and is scoped to a live paying membership.
+  // Note it keeps its own `status !== "ACTIVE"` test rather than using
+  // canAccessMemberOnly alone, because a CANCELLED-but-still-paid member
+  // reads as a member everywhere else and should not be re-issuing book
+  // tokens on the way out.
+  const access = await getAccess(userId);
+  if (!canAccessMemberOnly(access) || access.status !== "ACTIVE") {
     return NextResponse.json(
       { error: "Active Consilium membership required" },
       { status: 403 },

@@ -24,6 +24,10 @@ export const ANALYTICS_EVENTS = {
   FIRST_COMMENT: "first_comment",
   /** First sighting on or after day 7. The retention checkpoint. */
   D7_RETURN: "d7_return",
+  /** The upgrade sheet was shown, carrying which trigger opened it. */
+  WALL_SHOWN: "wall_shown",
+  /** They chose a plan on the sheet and we went for a checkout session. */
+  UPGRADE_STARTED: "upgrade_started",
   /** Checkout session created, carrying monthly vs annual. */
   CHECKOUT_STARTED: "checkout_started",
   /** The install banner or sheet was shown. */

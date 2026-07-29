@@ -12,7 +12,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { Prisma } from "@prisma/client";
 import { requireAuth } from "@/lib/auth/middleware";
-import { checkMembership } from "@/lib/community/membership";
+import { getAccess, canAccessMemberOnly } from "@/lib/access/tier";
 import { prisma } from "@/lib/prisma";
 import { LAB_PERSONAS, getPersona } from "@/lib/lab/personas";
 import { LAB_DAILY_CAP, LAB_MAX_TURNS } from "@/lib/lab/engine";
@@ -33,8 +33,10 @@ async function labQuota(userId: string) {
 
 export async function GET(request: NextRequest) {
   return requireAuth(request, async (_req, user) => {
-    const { isMember } = await checkMembership(user.id);
-    if (!isMember) {
+    // A4 decision: MEMBER-ONLY. The Lab is the freeform half; a free
+    // account gets Rehearsal (picking a written line), never The Room.
+    const access = await getAccess(user.id);
+    if (!canAccessMemberOnly(access)) {
       return NextResponse.json(
         { error: "The Lab is a member feature." },
         { status: 403 },
@@ -90,8 +92,8 @@ const StartBody = z.object({
 
 export async function POST(request: NextRequest) {
   return requireAuth(request, async (req, user) => {
-    const { isMember } = await checkMembership(user.id);
-    if (!isMember) {
+    const access = await getAccess(user.id);
+    if (!canAccessMemberOnly(access)) {
       return NextResponse.json(
         { error: "The Lab is a member feature." },
         { status: 403 },

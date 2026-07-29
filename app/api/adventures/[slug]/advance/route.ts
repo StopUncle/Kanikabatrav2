@@ -12,6 +12,11 @@
  * (player clicked "Next" twice, or a network retry resent the same id), the
  * advance is treated as a no-op and the current next-scenarioId is returned.
  * Without this, a double-fire would silently skip the next chapter.
+ *
+ * A4 decision: signed-in, no membership check. This moves a cursor and hands
+ * back the next scenario's id, which is public catalog data; it serves no
+ * chapter. A free account that advances onto a member chapter is stopped by
+ * the run page, which walls and names it. Same reasoning as /start.
  */
 
 import { NextRequest, NextResponse } from "next/server";

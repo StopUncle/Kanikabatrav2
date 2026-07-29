@@ -5,6 +5,7 @@ import { memberSafeName } from "@/lib/community/privacy";
 import { tierForMember } from "@/components/consilium/badge-tiers";
 import { formatPoll, pollInclude } from "@/lib/community/poll-format";
 import AppFeedList from "@/components/app-shell/feed/AppFeedList";
+import { memberGate } from "@/lib/access/guard";
 
 export const metadata = {
   title: "Feed | Consilium",
@@ -18,6 +19,11 @@ export const metadata = {
  */
 export default async function AppFeedPage() {
   const userId = await requireServerAuth("/app/feed");
+  // Member-only surface. The shell no longer gates for us (A2), and this
+  // page reads its data straight from Prisma, so the gate has to be here
+  // and above the queries.
+  const gate = await memberGate(userId);
+  if (gate) return gate;
 
   const viewerRecord = await prisma.user.findUnique({
     where: { id: userId },

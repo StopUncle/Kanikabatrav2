@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getAdminUserId } from "@/lib/auth/server-auth";
 import { resolveActiveUserId } from "@/lib/auth/resolve-user";
 import { requireAdminSession } from "@/lib/admin/auth";
-import { checkMembership } from "@/lib/community/membership";
+import { getAccess, canAccessMemberOnly } from "@/lib/access/tier";
 import {
   getViewerGender,
   feedPostGenderWhere,
@@ -48,8 +48,11 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const { isMember } = await checkMembership(userId);
-  if (!isMember) {
+  // A4 decision: MEMBER-ONLY. The Feed is one of the two things
+  // membership actually buys (the other is Kanika); the plan gives free
+  // accounts none of it.
+  const access = await getAccess(userId);
+  if (!canAccessMemberOnly(access)) {
     return NextResponse.json({ error: "Not a member" }, { status: 403 });
   }
 
