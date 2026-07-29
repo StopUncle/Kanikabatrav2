@@ -130,3 +130,6 @@ docs/private/
 
 # Dev harness output (scripts/capture-states.ts)
 .state-capture/
+
+# Dev harness output (scripts/first-sixty.ts)
+.first-sixty/
