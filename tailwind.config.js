@@ -24,6 +24,34 @@ module.exports = {
         serif: ["Didot", "Bodoni MT", "Georgia", "serif"],
         sans: ["Helvetica Neue", "Arial", "sans-serif"],
       },
+      /**
+       * The app's type scale, named rather than measured.
+       *
+       * An audit of the app surfaces found 32 distinct font sizes in use,
+       * including pairs no one can tell apart (12 and 12.5, 13 and 13.5,
+       * 11 and 11.5). That is not a design decision repeated 32 times, it is
+       * the absence of one. These nine are the sizes the app actually needs;
+       * asking for text-app-eyebrow instead of text-[11px] means the next
+       * person reaches for a decision already made.
+       *
+       * Marketing pages are untouched by this: the keys are prefixed, so
+       * nothing outside the shell changes.
+       */
+      fontSize: {
+        "app-micro": ["9px", { lineHeight: "1.2" }],
+        "app-tiny": ["10px", { lineHeight: "1.3" }],
+        "app-eyebrow": ["11px", { lineHeight: "1.35" }],
+        "app-caption": ["12px", { lineHeight: "1.45" }],
+        "app-body": ["13px", { lineHeight: "1.55" }],
+        "app-lead": ["15px", { lineHeight: "1.5" }],
+        "app-title": ["19px", { lineHeight: "1.3" }],
+        "app-display": ["22px", { lineHeight: "1.22" }],
+        "app-hero": ["28px", { lineHeight: "1.15" }],
+      },
+      letterSpacing: {
+        "app-label": "0.26em",
+        "app-wide": "0.14em",
+      },
       animation: {
         aurora: "aurora-shift 12s ease-in-out infinite",
         "float-element": "float-element 25s infinite ease-in-out",

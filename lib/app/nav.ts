@@ -332,6 +332,13 @@ export const APP_SURFACES: AppSurface[] = [
     note: "This file, rendered. Dev harness.",
     maturity: "dev",
   },
+  {
+    href: "/app/dev/ui",
+    label: "Dev: primitives",
+    placement: "unlisted",
+    note: "The shared card, header, empty state, row and skeleton, side by side. Dev harness.",
+    maturity: "dev",
+  },
 ];
 
 /** The bottom bar, in order. Five slots including More; four are routes. */
