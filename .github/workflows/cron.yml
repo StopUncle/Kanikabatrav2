@@ -117,6 +117,7 @@ on:
           - content-freshness
           - intro-reply-nudge
           - program-unlock
+          - program-replies
 
 env:
   BASE_URL: https://kanikarose.com
@@ -166,6 +167,23 @@ jobs:
             -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" \
             -H "Content-Type: application/json" \
             --max-time 120
+
+  program-replies:
+    # The Twelve's journal replies. Shares the 15-minute schedule with the
+    # email queue; each entry's own replyDueAt (40-70 min after writing)
+    # provides the designed latency, this just picks up whatever is due.
+    if: >-
+      github.event.schedule == '*/15 * * * *' ||
+      (github.event_name == 'workflow_dispatch' &&
+       (github.event.inputs.target == 'all' || github.event.inputs.target == 'program-replies'))
+    runs-on: ubuntu-latest
+    steps:
+      - name: Hit /api/cron/program-replies
+        run: |
+          curl -fsS -X POST "$BASE_URL/api/cron/program-replies" \
+            -H "x-cron-secret: ${{ secrets.CRON_SECRET }}" \
+            -H "Content-Type: application/json" \
+            --max-time 300
 
   email-queue:
     if: >-

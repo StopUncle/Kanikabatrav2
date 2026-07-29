@@ -42,12 +42,16 @@ const day = (n: number) => new Date(Date.now() - n * 24 * 60 * 60 * 1000);
 async function setMembership(
   userId: string,
   status: "ACTIVE" | "EXPIRED" | "CANCELLED" | "SUSPENDED",
-  opts: { billingCycle?: string; expiresAt?: Date | null } = {},
+  opts: { billingCycle?: string; expiresAt?: Date | null; activatedAt?: Date } = {},
 ) {
   const data = {
     status,
     billingCycle: opts.billingCycle ?? "monthly",
     expiresAt: opts.expiresAt ?? null,
+    // Real memberships get this stamped by the Stripe webhook, and the 12
+    // Week program counts from it: a null here makes every member persona
+    // look like they never started. Default to the persona's age.
+    activatedAt: opts.activatedAt ?? new Date(),
   };
   await prisma.communityMembership.upsert({
     where: { userId },
@@ -75,7 +79,7 @@ const PERSONAS: Persona[] = [
     purpose:
       "Paid yesterday, played one scenario. First-run states with just enough data to not be empty, which is where layouts usually break.",
     build: async (userId) => {
-      await setMembership(userId, "ACTIVE");
+      await setMembership(userId, "ACTIVE", { activatedAt: day(1) });
       await prisma.user.update({
         where: { id: userId },
         data: { createdAt: day(1), lastSeenAt: new Date(), standing: 40, ringLevel: 4, initiationAt: day(1) },
@@ -91,7 +95,7 @@ const PERSONAS: Persona[] = [
     purpose:
       "A month in, mid-climb, Analyst rank, a live streak. The state most paying members are actually in.",
     build: async (userId) => {
-      await setMembership(userId, "ACTIVE");
+      await setMembership(userId, "ACTIVE", { activatedAt: day(30) });
       await prisma.user.update({
         where: { id: userId },
         data: { createdAt: day(30), lastSeenAt: new Date(), standing: 900, ringLevel: 3, initiationAt: day(30) },
@@ -113,7 +117,7 @@ const PERSONAS: Persona[] = [
     purpose:
       "Paying and gone 45 days. The single largest real cohort, and the one the winback cron targets. Nobody has ever looked at what she comes back to.",
     build: async (userId) => {
-      await setMembership(userId, "ACTIVE");
+      await setMembership(userId, "ACTIVE", { activatedAt: day(120) });
       await prisma.user.update({
         where: { id: userId },
         data: { createdAt: day(120), lastSeenAt: day(45), standing: 300, ringLevel: 3, initiationAt: day(120) },
@@ -129,7 +133,7 @@ const PERSONAS: Persona[] = [
     purpose:
       "Membership ended, account intact. Under the free tier this is a free user with history, which is a state that has never existed before.",
     build: async (userId) => {
-      await setMembership(userId, "EXPIRED", { expiresAt: day(10) });
+      await setMembership(userId, "EXPIRED", { expiresAt: day(10), activatedAt: day(200) });
       await prisma.user.update({
         where: { id: userId },
         data: { createdAt: day(200), lastSeenAt: day(11), standing: 620, ringLevel: 3, initiationAt: day(200) },
@@ -166,7 +170,7 @@ const PERSONAS: Persona[] = [
     purpose:
       "Profiler rank, long streak, deep into the climb. Catches the opposite failure: layouts that only break when the numbers get big.",
     build: async (userId) => {
-      await setMembership(userId, "ACTIVE", { billingCycle: "annual" });
+      await setMembership(userId, "ACTIVE", { billingCycle: "annual", activatedAt: day(300) });
       await prisma.user.update({
         where: { id: userId },
         data: { createdAt: day(300), lastSeenAt: new Date(), standing: 4200, ringLevel: 2, initiationAt: day(300) },

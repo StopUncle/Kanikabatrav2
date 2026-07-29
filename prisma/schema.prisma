@@ -164,6 +164,12 @@ model User {
   weekCompletions           WeekCompletion[]
   programUnlockNotices      ProgramUnlockNotice[]
   lessonViews               LessonView[]
+  // The Twelve, AI layer: the intake-and-Read enrollment, the weekly
+  // Threshold crossings, and the journal the program answers. See
+  // docs/AI-PROGRAM-SPEC.md.
+  programEnrollment         ProgramEnrollment?
+  programThresholds         ProgramThreshold[]
+  journalEntries            JournalEntry[]
   // The Board: a member's own /100 crowd score per figure, and the
   // re-score petitions they have signed. Both gated behind a free
   // account (the JWT cookie pair), one row per (figure, user).
@@ -2461,6 +2467,83 @@ model LessonView {
 
   @@unique([userId, lessonId])
   @@index([userId])
+}
+
+/// The Twelve: one enrollment per member, created at intake.
+///
+/// The four intake answers are stored as given, free text only. There is
+/// deliberately no clinical field anywhere on this model and none may be
+/// added: a member describing their situation is data they volunteered; a
+/// structured health field is a screen we administered. The distinction is
+/// load-bearing (docs/AI-PROGRAM-SPEC.md, "the intake").
+model ProgramEnrollment {
+  id              String    @id @default(cuid())
+  userId          String    @unique
+  startedAt       DateTime  @default(now())
+  /// "What is the situation you keep losing?"
+  situation       String
+  /// "Who is in it?" Names welcome; the rule is on output, not input.
+  counterpart     String
+  /// "What happened the last time it went wrong?"
+  lastFailure     String
+  /// "What do you want to be able to do in 12 weeks?"
+  goal            String
+  /// The Read: her letter, generated once at intake.
+  readLetter      String    @db.Text
+  readModel       String
+  /// Paused by "Not this week". The clock stops; the record does not.
+  pausedAt        DateTime?
+  /// The Threshold disclosure (this is AI, not Kanika, not therapy),
+  /// stamped when accepted. Enrollment cannot exist without it.
+  agreedAiTermsAt DateTime
+  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+/// One Threshold per member per week: the door texts, which door they took,
+/// and when. Gauntlet weeks (4, 8, 12) carry a single door.
+model ProgramThreshold {
+  id           String    @id @default(cuid())
+  userId       String
+  weekNumber   Int
+  /// The challenge in their nouns, standard depth. Generated when the week
+  /// opens; the fixed behaviour it wraps lives on TransformationWeek.
+  standardText String    @db.Text
+  /// The same behaviour taken further. Null on gauntlet weeks.
+  deeperText   String?   @db.Text
+  /// "standard" | "deeper" | "gauntlet". Null until crossed. Which door a
+  /// member takes in week 2 versus week 9 is the real measure of change.
+  depth        String?
+  crossedAt    DateTime?
+  createdAt    DateTime  @default(now())
+  user         User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, weekNumber])
+  @@index([userId, crossedAt])
+}
+
+/// The weekly journal: theirs, then hers. One entry per week, by design;
+/// the entry is a ritual with weight, not a chat thread.
+model JournalEntry {
+  id         String    @id @default(cuid())
+  userId     String
+  weekNumber Int
+  body       String    @db.Text
+  /// Her reply. Generated 40 to 70 minutes after the entry (replyDueAt),
+  /// because an instant reply reads as processed and a delayed one as read.
+  reply      String?   @db.Text
+  replyModel String?
+  replyDueAt DateTime
+  /// Crisis classifier tripped: no generated reply, fixed resources card,
+  /// admin flag. The classifier runs before storage, not after.
+  flagged    Boolean   @default(false)
+  /// Admin sampling: when a human last looked at this exchange.
+  reviewedAt DateTime?
+  createdAt  DateTime  @default(now())
+  user       User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, weekNumber])
+  @@index([flagged, createdAt])
+  @@index([replyDueAt])
 }
 
 /// One "your week is open" notification, sent once per member per week.

@@ -99,10 +99,17 @@ export const APP_SURFACES: AppSurface[] = [
   {
     href: "/app/program",
     memberOnly: true,
-    label: "The 12 Weeks",
+    label: "The Twelve",
     placement: "more",
     section: "You",
-    note: "Becomes a paid upsell course rather than a membership benefit.",
+    note: "Becomes a paid upsell course rather than a membership benefit. AI layer live: the Read, Thresholds, journal.",
+    maturity: "app-native",
+  },
+  {
+    href: "/app/program/intake",
+    label: "The Twelve: intake",
+    placement: "nested",
+    note: "Four questions, then the Read. Reached from /app/program only; redirects out once enrolled.",
     maturity: "app-native",
   },
   {
