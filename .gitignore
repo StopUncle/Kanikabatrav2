@@ -127,3 +127,6 @@ docs/private/
 # Local git worktrees for feature branches (subagent-driven dev)
 .worktrees/
 .qa-screenshots/
+
+# Dev harness output (scripts/capture-states.ts)
+.state-capture/
