@@ -712,7 +712,7 @@ export default function QuizResultsPage() {
                     A thank-you from Kanika
                   </p>
                   <p className="text-white font-light text-lg mb-2">
-                    Your first month of The Consilium is {MEMBERSHIP.quizFirstMonthDisplay}
+                    Your ${QUIZ_INFO.price.toFixed(2)} is credited toward The Consilium
                   </p>
                   <p className="text-text-gray text-xs mb-4 max-w-md mx-auto leading-relaxed">
                     Inside: the Dark Mirror Simulator, the classroom, voice notes, and a moderated community. Use this code at checkout, it comes off your first month.
@@ -998,7 +998,7 @@ export default function QuizResultsPage() {
                     A thank-you from Kanika
                   </p>
                   <p className="text-white font-light text-lg mb-2">
-                    Your first month of The Consilium is {MEMBERSHIP.quizFirstMonthDisplay}
+                    Your ${QUIZ_INFO.price.toFixed(2)} is credited toward The Consilium
                   </p>
                   <p className="text-text-gray text-xs mb-4 max-w-md mx-auto leading-relaxed">
                     Inside: the Dark Mirror Simulator, the classroom, voice notes, and a moderated community. Use this code at checkout, it comes off your first month.

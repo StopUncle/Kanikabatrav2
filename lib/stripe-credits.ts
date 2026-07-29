@@ -3,35 +3,27 @@ import { getStripe } from "@/lib/stripe";
 import { MEMBERSHIP } from "@/lib/constants";
 
 /**
- * The quiz buyer's reward: their first month of the Consilium at $4.99.
+ * The quiz buyer's reward: $9.99 off their first month of the Consilium,
+ * matching what they paid for the quiz.
  *
- * It used to be a flat $9.99 off, matching the quiz price. Against the old
- * $29 membership that was a third off; against $9 it would have been a free
- * month, which gives away the entry rung rather than discounting it. So the
- * coupon is now sized to land the first month exactly on $4.99, and it is
- * derived from both prices rather than typed, because a hand-typed 401 would
- * quietly become the wrong discount the moment either number moved.
+ * The amount is derived from the two prices rather than typed, so it cannot
+ * silently become the wrong discount when either moves.
  *
- * The id changed because it had to. A Stripe coupon's `amount_off` is
- * immutable: the old `quiz-credit-999` had already been redeemed twice and
- * could not be edited, only replaced. Leave it in place for anyone still
- * holding an unredeemed code against it.
+ * A Stripe coupon's `amount_off` is immutable, so repricing this can only
+ * ever mean pointing at a different coupon id, never editing this one.
  */
-const QUIZ_CREDIT_COUPON_ID = "quiz-first-month-499";
+const QUIZ_CREDIT_COUPON_ID = "quiz-credit-999";
 
 /**
- * The retired $9.99-off coupon. Codes issued against it are still honoured.
+ * The $4.99-first-month coupon, created 2026-07-28 for the $9 reset and NOT
+ * in use.
  *
- * At the time of the switch two unredeemed codes were still live, both
- * expiring within a week. Refusing them would have quietly broken a promise
- * made at the moment someone paid for the quiz, which is the worst possible
- * moment to break one. Stripe caps a discount at the invoice total, so an
- * old code now buys a free first month rather than $9.99 off $9. Two people,
- * one month, and the exposure ends when the last code expires.
- *
- * This entry can be deleted once no active promotion codes hang off it.
+ * It briefly was: the reset pointed the code at it, which was reverted on
+ * 2026-07-29 before the deploy reached customers. No promotion code was ever
+ * issued against it, so nothing is holding an unredeemed code here. When the
+ * reset ships, this id becomes the primary one above.
  */
-const QUIZ_CREDIT_LEGACY_COUPON_ID = "quiz-credit-999";
+const QUIZ_CREDIT_NEW_COUPON_ID = "quiz-first-month-499";
 const QUIZ_CREDIT_AMOUNT_CENTS = Math.round(
   (MEMBERSHIP.price - MEMBERSHIP.quizFirstMonthPrice) * 100,
 );
@@ -149,7 +141,7 @@ export async function resolveQuizCreditPromotionCode(
     const couponId = typeof coupon === "string" ? coupon : coupon?.id;
     if (
       couponId !== QUIZ_CREDIT_COUPON_ID &&
-      couponId !== QUIZ_CREDIT_LEGACY_COUPON_ID
+      couponId !== QUIZ_CREDIT_NEW_COUPON_ID
     ) {
       return null;
     }
@@ -164,12 +156,12 @@ export async function resolveQuizCreditPromotionCode(
 /**
  * What the buyer is told, as opposed to what Stripe does.
  *
- * These are not the same number and never were. Stripe applies a discount;
- * the buyer cares what they pay. While the discount happened to equal the
- * quiz price the two could be conflated, and every surface quoted the
- * discount ("your $9.99 credit"). Now the promise is a price: your first
- * month is $4.99. `discount` stays exported for anywhere that genuinely
- * needs the amount coming off.
+ * Stripe applies a discount; the buyer cares what they pay. Today those are
+ * the same story told two ways, because the credit equals the quiz price, so
+ * every surface quotes the discount: "your $9.99 credit, off your first
+ * month". `firstMonthPrice` is what that leaves them paying, and it becomes
+ * the headline promise when the reset ships and the flat $4.99 first month
+ * replaces the credit.
  */
 export const QUIZ_CREDIT = {
   /** What the buyer pays for their first month. */

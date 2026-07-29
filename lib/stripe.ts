@@ -44,18 +44,27 @@ export const STRIPE_PRICES: Record<string, string> = {
    * Display copy comes from MEMBERSHIP in lib/constants. Nothing connects
    * the two automatically, so if you change one, change the other.
    */
-  INNER_CIRCLE: "price_1TyFx2Jv9vx5CHTwBLpMLCze",
-  /** The old $29/mo price. Retained only because live subscriptions use it. */
-  INNER_CIRCLE_LEGACY_29: "price_1TJug1Jv9vx5CHTwjPYeSm7E",
+  INNER_CIRCLE: "price_1TJug1Jv9vx5CHTwjPYeSm7E",
+  /**
+   * The $9/mo price, created 2026-07-28 and NOT yet in use.
+   *
+   * It exists on the Stripe account and nothing points at it. INNER_CIRCLE
+   * briefly did, which would have charged new members $9; that was reverted
+   * on 2026-07-29 before the deploy reached customers, because the reset is
+   * agreed but not signed off to go live. Launching it means swapping this
+   * id into INNER_CIRCLE above and moving MEMBERSHIP in lib/constants to
+   * match. Do not do one without the other.
+   */
+  INNER_CIRCLE_NEW_9: "price_1TyFx2Jv9vx5CHTwBLpMLCze",
   /**
    * Annual Consilium plan. $90/year = two months free against $9/mo. Same
    * Stripe product as INNER_CIRCLE so members bill under one brand line.
    * Annual subscribers churn ~51% less than monthly (Recurly benchmark).
    * Nobody was on the old $290 annual price when it was replaced.
    */
-  INNER_CIRCLE_ANNUAL: "price_1TyFxCJv9vx5CHTwQYf1iVot",
-  /** The old $290/yr price. No subscriber ever used it. */
-  INNER_CIRCLE_ANNUAL_LEGACY_290: "price_1TY0ggJv9vx5CHTw87YoIcZn",
+  INNER_CIRCLE_ANNUAL: "price_1TY0ggJv9vx5CHTw87YoIcZn",
+  /** The $90/yr price, created 2026-07-28. Unused until the reset ships. */
+  INNER_CIRCLE_ANNUAL_NEW_90: "price_1TyFxCJv9vx5CHTwQYf1iVot",
   COACHING_SINGLE: "price_1TJug1Jv9vx5CHTw6FT0vzoW",
   COACHING_CLARITY: "price_1TN3uWJv9vx5CHTwUELJJn5E",
   COACHING_INTENSIVE: "price_1TJug2Jv9vx5CHTwiikiPESt",

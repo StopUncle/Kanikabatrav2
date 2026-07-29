@@ -75,19 +75,30 @@ export const BOOK_INFO = {
  * its prices; do not repeat it here.
  */
 export const MEMBERSHIP = {
-  /** Monthly, the standard price. Was $29 until the 2026-07-28 reset. */
-  price: 9,
-  priceDisplay: "$9",
-  monthly: "$9/month",
-  monthlyShort: "$9/mo",
-
   /**
-   * Annual. Two months free, the same ratio the $29 pricing used, so the
-   * saving reads the same way it always has.
+   * Monthly, the standard price.
+   *
+   * This is $29, which is what production has always charged. It was briefly
+   * moved to $9 on 2026-07-28 as part of the monetisation reset and reverted
+   * on 2026-07-29, before the deploy carrying it reached customers: the reset
+   * is agreed in principle but was never signed off to go live, and it needs
+   * Kanika's yes before it does.
+   *
+   * The reset itself is not undone, only its numbers. Everything that made
+   * repricing safe stays: this constant, the coaching deduplication, and the
+   * legacy Stripe ids kept alongside the new ones. Launching $9 is now an
+   * edit to this block and the two price ids in lib/stripe.ts, not another
+   * hunt through 55 strings.
    */
-  annualPrice: 90,
-  annualDisplay: "$90",
-  annual: "$90/year",
+  price: 29,
+  priceDisplay: "$29",
+  monthly: "$29/month",
+  monthlyShort: "$29/mo",
+
+  /** Annual. Two months free against the monthly price. */
+  annualPrice: 290,
+  annualDisplay: "$290",
+  annual: "$290/year",
   monthsFreeOnAnnual: 2,
   /** What annual works out to per month. Derived, never typed by hand. */
   get annualPerMonthDisplay(): string {
@@ -95,13 +106,16 @@ export const MEMBERSHIP = {
   },
 
   /**
-   * Quiz buyers' first month. Replaces the old $9.99 promo credit, which
-   * against a $9 membership would have been a free month. Kept as a real
-   * price rather than a discount so the member never sees a bill jump they
-   * were not told about.
+   * Quiz buyers' first month, after the $9.99 credit their purchase earns
+   * them. The credit is the difference between this and the standard price,
+   * derived in lib/stripe-credits rather than typed twice.
+   *
+   * When the $9 reset ships this becomes a flat $4.99 first month instead,
+   * because $9.99 off a $9 membership is a free month and gives away the
+   * entry rung rather than discounting it.
    */
-  quizFirstMonthPrice: 4.99,
-  quizFirstMonthDisplay: "$4.99",
+  quizFirstMonthPrice: 19.01,
+  quizFirstMonthDisplay: "$19.01",
 } as const;
 
 export const COACHING_PACKAGES = [

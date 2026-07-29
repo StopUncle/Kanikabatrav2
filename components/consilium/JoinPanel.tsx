@@ -4,6 +4,7 @@ import { useState } from "react";
 import { ArrowRight, Loader2, CheckCircle, BadgeCheck } from "lucide-react";
 import { catalogueStats } from "@/lib/simulator/stats";
 import { MEMBERSHIP } from "@/lib/constants";
+import { QUIZ_INFO } from "@/lib/quiz-data";
 
 const INCLUDED = [
   `The Dark Mirror Simulator, ${catalogueStats.scenarios} branching scenarios across ${catalogueStats.tracks} tracks`,
@@ -97,10 +98,10 @@ export default function JoinPanel({ creditCode }: { creditCode?: string }) {
           />
           <div>
             <p className="text-text-light text-sm font-light">
-              Your first month is {MEMBERSHIP.quizFirstMonthDisplay}
+              Your ${QUIZ_INFO.price.toFixed(2)} quiz credit is applied
             </p>
             <p className="text-text-gray/70 text-xs font-light mt-1">
-              Applied automatically at checkout, then {MEMBERSHIP.monthly}.
+              It comes off automatically at checkout. Nothing to type in.
             </p>
           </div>
         </div>
