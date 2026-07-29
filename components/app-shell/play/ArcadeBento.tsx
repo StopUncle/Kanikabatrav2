@@ -2,12 +2,16 @@ import Link from "next/link";
 import type { BentoData, BentoSquare } from "@/lib/games/bento";
 
 /**
- * The Arcade, laid out as a bento: one hero, a sliding rail of squares,
- * one strip.
+ * The Arcade, laid out as a bento: one hero, a grid of squares, one strip.
  *
- * Sizes differ on purpose. When every tile is the same size nothing is
- * important, and a screen where nothing is important reads as a menu
- * rather than a place.
+ * The squares used to be a horizontal snap rail. A rail hides half the
+ * games behind a gesture nobody is told about, and on a menu that costs
+ * more than the space it saves, so they stack into the grid instead and
+ * every game is on screen at once.
+ *
+ * The hero still spans both columns. Sizes differ on purpose: when every
+ * tile is the same size nothing is important, and a screen where nothing
+ * is important reads as a menu rather than a place.
  */
 
 const ACCENT: Record<string, string> = {
@@ -59,17 +63,12 @@ function Square({ g }: { g: BentoSquare }) {
   return (
     <Link
       href={g.href}
-      // Square, sized so two sit in the column with the third breaking
-      // the edge. A swipe only reads as a swipe when the next tile is
-      // already part visible. 40px is the two gutters plus that peek.
-      className={`relative shrink-0 snap-start overflow-hidden rounded-[20px] border border-[var(--app-line-soft)] bg-[var(--app-card)] p-4 transition-opacity active:opacity-80 ${
+      // One grid cell wide, held square by aspect-ratio so the tiles keep
+      // their shape as the column width changes.
+      className={`relative overflow-hidden rounded-[20px] border border-[var(--app-line-soft)] bg-[var(--app-card)] p-4 transition-opacity active:opacity-80 ${
         g.doneToday ? "opacity-55" : ""
       }`}
-      style={{
-        width: "calc((100% - 40px) / 2)",
-        aspectRatio: "1 / 1",
-        minWidth: 132,
-      }}
+      style={{ aspectRatio: "1 / 1" }}
     >
       <span className="absolute right-3.5 top-3.5 h-[18px] w-[18px]">
         <Glyph k={g.key} color={accent} />
@@ -148,20 +147,18 @@ export default function ArcadeBento({ data }: { data: BentoData }) {
         </span>
       </Link>
 
-      {/* The rail. Bleeds to both edges so the peek is a real peek, and
-          snaps so a flick lands square rather than halfway. */}
-      <div className="col-span-2 -mx-5 flex snap-x snap-mandatory gap-2.5 overflow-x-auto px-5 pb-0.5 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-        {squares.map((g) => (
-          <Square key={g.key} g={g} />
-        ))}
-      </div>
+      {/* The squares, two to a row. Each one is a direct grid child, so
+          they fill the row and wrap onto the next by themselves however
+          many games there are. */}
+      {squares.map((g) => (
+        <Square key={g.key} g={g} />
+      ))}
 
-      {/* The Lab: open-ended, so it gets a strip rather than a slot in a
-          grid of timed things. */}
+      {/* The Lab: open-ended, so it sits under the timed games as a full
+          width rectangle rather than taking a square among them. */}
       <Link
         href={strip.href}
-        className="col-span-2 flex items-center gap-3.5 rounded-[20px] border border-dashed px-[18px] py-[15px] transition-opacity active:opacity-80"
-        style={{ borderColor: "rgba(138,160,200,0.28)" }}
+        className="col-span-2 flex items-center gap-3.5 rounded-[20px] border border-[var(--app-line-soft)] bg-[var(--app-card)] px-[18px] py-[15px] transition-opacity active:opacity-80"
       >
         <span className="h-5 w-5 shrink-0">
           <svg
