@@ -118,6 +118,7 @@ async function capture(browser: Browser, persona: string, surfaces: typeof APP_S
       // shoot. Capped, because a surface that never settles (a ticking clock,
       // a live feed) still deserves a screenshot.
       let stable = 0;
+      let settled = false;
       let previous = -1;
       const startedAt = Date.now();
       const floor = startedAt + 1_500;
@@ -138,10 +139,16 @@ async function capture(browser: Browser, persona: string, surfaces: typeof APP_S
         // anything still thin is given the full deadline before being
         // reported as thin: patience is spent only where it might change
         // the answer, so rich pages still finish in about two seconds.
-        const looksRendered = current >= THIN;
-        if (stable >= 2 && Date.now() >= floor && looksRendered) break;
+        if (stable >= 2) settled = true;
+        // Exit early only once the page has actually rendered something.
+        // Anything still thin is given the full deadline in case it is mid
+        // fetch, but a page that is thin AND stable is simply a short page,
+        // not a broken one. Conflating those two labelled every terse screen
+        // in the app an error, which is the third time this heuristic has
+        // cried wolf.
+        if (settled && Date.now() >= floor && current >= THIN) break;
       }
-      if (Date.now() >= deadline) note = "never settled";
+      if (!settled) note = "never settled";
       textLength = (await page.evaluate(() => document.body.innerText)).trim().length;
       if (page.url() !== BASE + surface.href) note = `redirected to ${page.url().replace(BASE, "")}`;
       await page.screenshot({ path: path.join(OUT, file) });
