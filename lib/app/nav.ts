@@ -77,12 +77,12 @@ export const APP_SURFACES: AppSurface[] = [
     maturity: "app-native",
     also: ["/app/play"],
   },
+
   {
-    href: "/app/kanika",
-    label: "Kanika",
+    href: "/app/measure",
+    label: "Mark",
     placement: "tab",
-    badged: true,
-    note: "The private line. UNDER REVIEW: Sam plans to remove this from the bar; the channel is dying and the tier that replaces it is a separate premium product. Freeing this slot is the open question the dev map exists to answer.",
+    note: "Took the slot Kanika vacated. The product's claim is measured progress, so the surface that carries the proof belongs on the bar rather than three taps down, where it sat until 2026-07-28.",
     maturity: "app-native",
   },
 
@@ -149,6 +149,15 @@ export const APP_SURFACES: AppSurface[] = [
     placement: "more",
     section: "Library",
     note: "",
+    maturity: "app-native",
+  },
+  {
+    href: "/app/kanika",
+    label: "Kanika",
+    placement: "more",
+    section: "You",
+    badged: true,
+    note: "Off the bar as of 2026-07-28. The channel is dying and the tier that replaces it is a separate premium product, so it no longer earns a permanent slot. Still reachable, because members with a live thread should not lose it, and the unread count moved to the More button.",
     maturity: "app-native",
   },
   {
@@ -224,14 +233,6 @@ export const APP_SURFACES: AppSurface[] = [
     parent: "/app/train",
     note: "The live-situation tool, and the one most likely to be wanted at 11pm when nobody is thinking about Train.",
     maturity: "ported",
-  },
-  {
-    href: "/app/measure",
-    label: "The Mark",
-    placement: "nested",
-    parent: "/app/you",
-    note: "ORPHAN in practice. The strongest retention surface in the product has no top-level route.",
-    maturity: "app-native",
   },
   {
     href: "/app/measure/baseline",

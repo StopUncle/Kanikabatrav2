@@ -40,10 +40,13 @@ const ICONS: Record<string, React.ReactNode> = {
       <path d="M12 3l7 4v5c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V7z" />
     </svg>
   ),
-  "/app/kanika": (
+  // A line that goes up, and the reading it is taken against. The Mark is
+  // the only tab whose subject is a number that can fall.
+  "/app/measure": (
     <svg viewBox="0 0 24 24">
-      <path d="M3 6.5A2.5 2.5 0 0 1 5.5 4h13A2.5 2.5 0 0 1 21 6.5v11a2.5 2.5 0 0 1-2.5 2.5h-13A2.5 2.5 0 0 1 3 17.5z" />
-      <path d="M3.5 6.5l8.5 6 8.5-6" />
+      <path d="M4 19h16" />
+      <path d="M5 15.5l4.5-4.5 3.5 3.5L19 8" />
+      <circle cx="19" cy="8" r="1.6" />
     </svg>
   ),
 };
@@ -105,27 +108,18 @@ export default function TabBar() {
         <div className="flex items-center justify-around px-1 pb-[max(14px,env(safe-area-inset-bottom))] pt-2.5">
           {TAB_SURFACES.map((tab) => {
             const active = isTabActive(tab, pathname);
-            const showBadge = tab.badged && unread > 0;
             return (
               <Link
                 key={tab.href}
                 href={tab.href}
                 aria-current={active ? "page" : undefined}
-                aria-label={showBadge ? `${tab.label}, ${unread} unread` : tab.label}
+                aria-label={tab.label}
                 className={`flex w-[58px] flex-col items-center gap-1.5 text-[10px] tracking-[0.06em] transition-colors ${
                   active ? "text-[var(--app-gold)]" : "text-[var(--app-dim)]"
                 }`}
               >
                 <span className="relative h-[21px] w-[21px] [&>svg]:h-full [&>svg]:w-full [&>svg]:fill-none [&>svg]:stroke-current [&>svg]:[stroke-width:1.5]">
                   {ICONS[tab.href]}
-                  {showBadge && (
-                    <span
-                      aria-hidden
-                      className="absolute -right-1.5 -top-1 flex h-[15px] min-w-[15px] items-center justify-center rounded-full bg-[var(--app-green)] px-1 text-[9px] font-semibold tabular-nums text-[#0a0908]"
-                    >
-                      {unread > 9 ? "9+" : unread}
-                    </span>
-                  )}
                 </span>
                 {tab.label}
               </Link>
@@ -137,18 +131,30 @@ export default function TabBar() {
             onClick={() => setMoreOpen(true)}
             aria-haspopup="dialog"
             aria-expanded={moreOpen}
+            aria-label={unread > 0 ? `More, ${unread} unread from Kanika` : "More"}
             className={`flex w-[58px] flex-col items-center gap-1.5 text-[10px] tracking-[0.06em] transition-colors ${
               moreOpen || isMoreRoute
                 ? "text-[var(--app-gold)]"
                 : "text-[var(--app-dim)]"
             }`}
           >
-            <span className="h-[21px] w-[21px] [&>svg]:h-full [&>svg]:w-full [&>svg]:fill-none [&>svg]:stroke-current [&>svg]:[stroke-width:1.5]">
+            <span className="relative h-[21px] w-[21px] [&>svg]:h-full [&>svg]:w-full [&>svg]:fill-none [&>svg]:stroke-current [&>svg]:[stroke-width:1.5]">
               <svg viewBox="0 0 24 24">
                 <circle cx="5" cy="12" r="1.4" />
                 <circle cx="12" cy="12" r="1.4" />
                 <circle cx="19" cy="12" r="1.4" />
               </svg>
+              {/* Kanika left the bar but her unread count did not leave the
+                  app. Without this, a reply would arrive and nothing on
+                  screen would say so. */}
+              {unread > 0 && (
+                <span
+                  aria-hidden
+                  className="absolute -right-1.5 -top-1 flex h-[15px] min-w-[15px] items-center justify-center rounded-full bg-[var(--app-green)] px-1 text-[9px] font-semibold tabular-nums text-[#0a0908]"
+                >
+                  {unread > 9 ? "9+" : unread}
+                </span>
+              )}
             </span>
             More
           </button>

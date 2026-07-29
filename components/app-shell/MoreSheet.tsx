@@ -13,6 +13,7 @@ import {
   Mic,
   Settings,
   CalendarCheck,
+  Mail,
   X,
 } from "lucide-react";
 
@@ -35,6 +36,7 @@ const ICONS: Record<string, React.ReactNode> = {
   "/app/book": <BookOpen size={17} />,
   "/app/videos": <Video size={17} />,
   "/app/voice-notes": <Mic size={17} />,
+  "/app/kanika": <Mail size={17} />,
   "/app/profile": <Settings size={17} />,
 };
 
