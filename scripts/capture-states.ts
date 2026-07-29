@@ -32,6 +32,9 @@ const OUT = ".state-capture";
 const PASSWORD = "fixture-1234";
 const VIEWPORT = { width: 390, height: 812 };
 
+/** Below this many rendered characters, a screen is worth a second look. */
+const THIN = 400;
+
 /** Empty, typical and full. The three that differ most, unless --all. */
 const DEFAULT_PERSONAS = ["anon", "day30", "power"];
 const ALL_PERSONAS = ["anon", "day1", "day30", "dormant", "lapsed", "power"];
@@ -100,8 +103,45 @@ async function capture(browser: Browser, persona: string, surfaces: typeof APP_S
         timeout: 90_000,
       });
       status = res?.status() ?? null;
-      // Let the shell settle: fonts, the tab bar, any first paint animation.
-      await page.waitForTimeout(900);
+      // Wait until the page stops changing, rather than for a fixed time or
+      // for the network.
+      //
+      // Both of those lie. A flat 900ms caught The Lab mid-fetch and filed
+      // its loading state as an empty page. Switching to networkidle did the
+      // same thing for a subtler reason: it fires in the gap between the
+      // document loading and a client component starting its first request,
+      // so the page looks idle while it has not begun. Twice this harness
+      // reported a working screen as broken, which is worse than reporting
+      // nothing.
+      //
+      // So: sample the rendered text until two consecutive reads agree, then
+      // shoot. Capped, because a surface that never settles (a ticking clock,
+      // a live feed) still deserves a screenshot.
+      let stable = 0;
+      let previous = -1;
+      const startedAt = Date.now();
+      const floor = startedAt + 1_500;
+      const deadline = startedAt + 9_000;
+      while (Date.now() < deadline) {
+        await page.waitForTimeout(500);
+        const current = (await page.evaluate(() => document.body.innerText)).length;
+        if (current === previous && current > 0) stable++;
+        else stable = 0;
+        previous = current;
+        // The floor matters as much as the stability. A loading state is
+        // perfectly stable: "Opening the Lab" read the same at 500ms and at
+        // 1000ms, so an eager check shot the spinner and filed a working
+        // screen as broken. Nothing is judged settled before three seconds.
+        // Exit early only when the page has actually rendered something.
+        // A loading state is perfectly stable, so stability alone shot the
+        // spinner twice. The Lab's picker arrives at 4.3s in dev, and
+        // anything still thin is given the full deadline before being
+        // reported as thin: patience is spent only where it might change
+        // the answer, so rich pages still finish in about two seconds.
+        const looksRendered = current >= THIN;
+        if (stable >= 2 && Date.now() >= floor && looksRendered) break;
+      }
+      if (Date.now() >= deadline) note = "never settled";
       textLength = (await page.evaluate(() => document.body.innerText)).trim().length;
       if (page.url() !== BASE + surface.href) note = `redirected to ${page.url().replace(BASE, "")}`;
       await page.screenshot({ path: path.join(OUT, file) });
@@ -130,7 +170,7 @@ function html(shots: Shot[], personas: string[]): string {
         .map((p) => {
           const shot = group.find((g) => g.persona === p);
           if (!shot) return `<td class="miss">—</td>`;
-          const thin = shot.textLength < 400;
+          const thin = shot.textLength < THIN;
           const flag = shot.note
             ? `<span class="note">${shot.note}</span>`
             : thin
@@ -176,7 +216,15 @@ async function main() {
     ? ALL_PERSONAS
     : (arg("personas")?.split(",") ?? DEFAULT_PERSONAS);
 
-  const only = arg("surface");
+  /**
+   * Git Bash on Windows rewrites a leading-slash argument into a Windows
+   * path, so `--surface /app/lab` arrives as `C:/Program Files/Git/app/lab`
+   * and matches nothing. Recover the route from whatever it mangled it into.
+   */
+  const rawOnly = arg("surface");
+  const only = rawOnly
+    ? rawOnly.slice(Math.max(0, rawOnly.indexOf("/app")))
+    : null;
   const surfaces = APP_SURFACES.filter(
     (s) =>
       !s.href.includes("[") && // dynamic routes need an id; not generically visitable
@@ -184,7 +232,11 @@ async function main() {
       (!only || s.href.includes(only)),
   );
 
-  fs.rmSync(OUT, { recursive: true, force: true });
+  // Only clear on a full run. A filtered re-check used to wipe the whole
+  // contact sheet to re-take one screenshot, which cost 56 of them once.
+  if (!only && !arg("personas") && !process.argv.includes("--all")) {
+    fs.rmSync(OUT, { recursive: true, force: true });
+  }
   fs.mkdirSync(OUT, { recursive: true });
 
   console.log(`${surfaces.length} surfaces × ${personas.length} personas`);
@@ -199,7 +251,7 @@ async function main() {
 
   fs.writeFileSync(path.join(OUT, "index.html"), html(all, personas));
 
-  const thin = all.filter((s) => !s.note && s.textLength < 400);
+  const thin = all.filter((s) => !s.note && s.textLength < THIN);
   const broken = all.filter((s) => s.note);
   console.log(`\n${all.length} shots -> ${OUT}/index.html`);
   if (broken.length) {
@@ -207,7 +259,7 @@ async function main() {
     for (const s of broken) console.log(`  ${s.persona.padEnd(8)} ${s.href.padEnd(26)} ${s.note}`);
   }
   if (thin.length) {
-    console.log(`\n${thin.length} rendered almost nothing (under 400 chars):`);
+    console.log(`\n${thin.length} rendered almost nothing (under ${THIN} chars):`);
     for (const s of thin) console.log(`  ${s.persona.padEnd(8)} ${s.href.padEnd(26)} ${s.textLength} chars`);
   }
 }
