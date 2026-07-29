@@ -32,12 +32,12 @@ export default async function TrainPage() {
   return (
     <div className="px-5 pb-8 pt-6">
       <h1
-        className="text-[28px] font-light"
+        className="text-app-hero font-light"
         style={{ fontFamily: "var(--font-display)" }}
       >
         Train
       </h1>
-      <p className="mb-5 mt-1 text-[13px] text-[var(--app-muted)]">
+      <p className="mb-5 mt-1 text-app-body text-[var(--app-muted)]">
         Practice reads people faster than theory ever will.
       </p>
 

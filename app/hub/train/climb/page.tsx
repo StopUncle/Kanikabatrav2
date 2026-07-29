@@ -3,6 +3,7 @@ import { requireServerAuth } from "@/lib/auth/server-auth";
 import { prisma } from "@/lib/prisma";
 import { getTrainData } from "@/lib/simulator/train-data";
 import TrackLadder from "@/components/app-shell/train/TrackLadder";
+import { SectionHeader } from "@/components/app-shell/ui";
 
 export const metadata = {
   title: "The Climb | Consilium",
@@ -31,17 +32,17 @@ export default async function ClimbPage() {
       <div className="px-5">
         <Link
           href="/app/train"
-          className="text-[11px] uppercase tracking-[0.2em] text-[var(--app-dim)]"
+          className="text-app-eyebrow uppercase tracking-app-wide text-[var(--app-dim)]"
         >
           ← Train
         </Link>
         <h1
-          className="mt-2 text-[28px] font-light"
+          className="mt-2 text-app-hero font-light"
           style={{ fontFamily: "var(--font-display)" }}
         >
           The Simulator
         </h1>
-        <p className="mt-1 text-[13px] text-[var(--app-muted)]">
+        <p className="mt-1 text-app-body text-[var(--app-muted)]">
           Read a person across a whole scene.
         </p>
       </div>
@@ -65,20 +66,20 @@ export default async function ClimbPage() {
             }}
           />
           <span className="relative p-5">
-            <span className="mb-2 block text-[11px] uppercase tracking-[0.16em] text-[var(--app-gold-soft)]">
+            <span className="mb-2 block text-app-eyebrow uppercase tracking-app-wide text-[var(--app-gold-soft)]">
               {REASON_CHIP[nextUp.reason]}
             </span>
             <span
-              className="block text-[22px] leading-tight"
+              className="block text-app-display"
               style={{ fontFamily: "var(--font-display)" }}
             >
               {nextUp.title}
             </span>
             <span className="mt-2 flex items-center justify-between">
-              <span className="text-[12.5px] text-[var(--app-muted)]">
+              <span className="text-app-caption text-[var(--app-muted)]">
                 {nextUp.trackLabel}
               </span>
-              <span className="text-xs tracking-[0.1em] text-[var(--app-gold)]">
+              <span className="text-app-caption tracking-app-wide text-[var(--app-gold)]">
                 PLAY →
               </span>
             </span>
@@ -86,9 +87,7 @@ export default async function ClimbPage() {
         </Link>
       )}
 
-      <p className="mx-5 mb-1 mt-7 text-[11px] uppercase tracking-[0.26em] text-[var(--app-dim)]">
-        The climb
-      </p>
+      <SectionHeader eyebrow="The climb" className="mx-5 mb-1 mt-7" />
       <div className="mx-5">
         <TrackLadder tracks={tracks} />
       </div>
@@ -96,9 +95,7 @@ export default async function ClimbPage() {
       {/* Fresh Files */}
       {freshFiles.length > 0 && (
         <>
-          <p className="mx-5 mb-2.5 mt-7 text-[11px] uppercase tracking-[0.26em] text-[var(--app-dim)]">
-            Fresh files
-          </p>
+          <SectionHeader eyebrow="Fresh files" className="mx-5 mb-2.5 mt-7" />
           <div className="flex gap-2.5 overflow-x-auto px-5 pb-1 [scrollbar-width:none]">
             {freshFiles.map((f) => (
               <Link
@@ -107,12 +104,12 @@ export default async function ClimbPage() {
                 className="w-[200px] shrink-0 rounded-2xl border border-[var(--app-line-soft)] bg-[var(--app-card)] p-4"
               >
                 <span
-                  className="block text-[15px] leading-snug"
+                  className="block text-app-lead"
                   style={{ fontFamily: "var(--font-display)" }}
                 >
                   {f.title}
                 </span>
-                <span className="mt-1.5 line-clamp-2 block text-[11.5px] leading-relaxed text-[var(--app-dim)]">
+                <span className="mt-1.5 line-clamp-2 block text-app-caption text-[var(--app-dim)]">
                   {f.tagline}
                 </span>
               </Link>
@@ -127,7 +124,7 @@ export default async function ClimbPage() {
           the per-track ?track= views. */}
       <Link
         href="/app/train/browse"
-        className="mx-5 mt-7 block rounded-2xl border border-dashed border-[var(--app-line)] px-4 py-3.5 text-center text-[12.5px] tracking-[0.1em] text-[var(--app-dim)]"
+        className="mx-5 mt-7 block rounded-2xl border border-dashed border-[var(--app-line)] px-4 py-3.5 text-center text-app-caption tracking-app-wide text-[var(--app-dim)]"
       >
         BROWSE EVERY SCENARIO
       </Link>
