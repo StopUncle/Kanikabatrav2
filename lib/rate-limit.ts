@@ -44,18 +44,45 @@ export interface RateLimitResult {
 }
 
 /**
- * Extract a best-effort client IP from a Next.js request. Prefers
- * X-Forwarded-For (set by Railway's proxy), falls back to a literal "ip:
- * unknown" marker so rate limits still work coarsely.
+ * Extract a best-effort client IP from a Next.js request.
+ *
+ * The only thing that matters here is that the caller cannot choose their own
+ * bucket. A caller can send whatever they like in X-Forwarded-For, and a proxy
+ * APPENDS the address it actually saw rather than replacing the header, so the
+ * leftmost entry is the caller's own invention and the rightmost is the only
+ * one they cannot forge. Reading the leftmost entry, which this did until
+ * 2026-07-29, hands every limit in this file to anyone willing to vary one
+ * header: a fresh value is a fresh bucket, which made the 5/hour on the six
+ * digit admin PIN decorative.
+ *
+ * cf-connecting-ip is deliberately NOT trusted by default. Verified 2026-07-29:
+ * kanikarose.com answers with `Server: railway-edge` and no Cloudflare markers,
+ * so Railway's proxy is the only hop in front of this app and nothing sets that
+ * header on the way in. Trusting it here would hand back the same
+ * fresh-bucket-per-request bypass described above, just under a different
+ * header name. It is honoured only when TRUST_CF_CONNECTING_IP says an ingress
+ * actually sets it, and if Cloudflare is ever put in front, the rightmost
+ * forwarded hop becomes a shared Cloudflare edge and that flag becomes
+ * required rather than optional.
  */
 export function getClientIp(request: NextRequest): string {
+  if (process.env.TRUST_CF_CONNECTING_IP === "true") {
+    const cf = request.headers.get("cf-connecting-ip")?.trim();
+    if (cf) return cf;
+  }
+
   const xff = request.headers.get("x-forwarded-for");
   if (xff) {
-    // XFF may be a comma-separated list — the client IP is the first one.
-    return xff.split(",")[0].trim();
+    const hops = xff
+      .split(",")
+      .map((hop) => hop.trim())
+      .filter(Boolean);
+    const nearest = hops[hops.length - 1];
+    if (nearest) return nearest;
   }
-  const xri = request.headers.get("x-real-ip");
-  if (xri) return xri.trim();
+
+  const xri = request.headers.get("x-real-ip")?.trim();
+  if (xri) return xri;
   return "ip:unknown";
 }
 

@@ -4,6 +4,41 @@ import { optionalServerAuth } from "@/lib/auth/server-auth";
 import { checkMembership } from "@/lib/community/membership";
 import { prisma } from "@/lib/prisma";
 
+/**
+ * The metadata keys a caller is allowed to influence, and nothing else.
+ *
+ * `product_key` is deliberately absent. The webhook branches on it to decide
+ * what to fulfil and never checks the amount paid, so a caller who can set it
+ * pays for the cheapest SKU and claims the most expensive one: a $2 DONATION
+ * carrying product_key BOOK delivers the $24.99 book, and COACHING_RETAINER
+ * creates a four session record. `member_discount` is server-decided for the
+ * same reason. Both are applied after this and cannot be overridden.
+ */
+const CLIENT_METADATA_KEYS = [
+  "source",
+  "quizResultId",
+  "questions",
+  "donor_message",
+  "is_anonymous",
+  "referral_code",
+  "referee_reward",
+] as const;
+
+function clientMetadata(raw: unknown): Record<string, string> {
+  if (!raw || typeof raw !== "object") return {};
+  const input = raw as Record<string, unknown>;
+  const safe: Record<string, string> = {};
+  for (const key of CLIENT_METADATA_KEYS) {
+    const value = input[key];
+    // Stripe caps metadata values at 500 characters and rejects the request
+    // outright above it, so trim rather than hand it a session it will refuse.
+    if (typeof value === "string" && value.length > 0) {
+      safe[key] = value.slice(0, 500);
+    }
+  }
+  return safe;
+}
+
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
@@ -113,9 +148,11 @@ export async function POST(request: NextRequest) {
       cancelUrl: cancelUrl || `${baseUrl}/cancel`,
       customerEmail,
       metadata: {
+        ...clientMetadata(metadata),
+        // Server-owned, and last so they win even if the allowlist above ever
+        // grows to include one of them by mistake.
         product_key: priceKey === "BOOK" ? "BOOK" : priceKey,
         member_discount: memberDiscountApplied ? "true" : "false",
-        ...metadata,
       },
     });
 

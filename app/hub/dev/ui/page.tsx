@@ -1,3 +1,4 @@
+import { notFound } from "next/navigation";
 import {
   Card,
   EmptyState,
@@ -30,8 +31,12 @@ const SCALE = [
  * The point is comparison. A card looks fine on its own page and wrong beside
  * the card it is meant to match, and until these sat together nobody could
  * see that the app had grown five corner radii and thirty-two font sizes.
+ *
+ * Guarded like the other dev galleries: not linked from member navigation is
+ * not the same as not reachable.
  */
 export default function PrimitivesPage() {
+  if (process.env.NODE_ENV === "production") notFound();
   return (
     <div className="space-y-9 px-4 pb-16 pt-6">
       <header>
