@@ -14,8 +14,9 @@
  *   npx tsx scripts/program-voice-audit.ts           # 10 entries x 1 reply
  *   npx tsx scripts/program-voice-audit.ts --full    # the full fifty
  *
- * Writes .voice-audit/index.html (gitignored). Needs ANTHROPIC_API_KEY.
- * Costs roughly a dollar on --full; pennies without.
+ * Writes docs/KANIKA-VOICE-REVIEW.md (gitignored), a plain document she can
+ * read anywhere, including her sample Read at the top. Needs
+ * ANTHROPIC_API_KEY. Costs roughly a dollar on --full; pennies without.
  */
 
 // tsx does not load .env the way the Next server does, and without the key
@@ -23,11 +24,16 @@
 import "dotenv/config";
 import fs from "node:fs";
 import path from "node:path";
-import { generateReply, type IntakeAnswers, type WeekMaterial } from "../lib/program/ai/generate";
+import {
+  generateRead,
+  generateReply,
+  type IntakeAnswers,
+  type WeekMaterial,
+} from "../lib/program/ai/generate";
 import { classifyEntry, sweepText, CRISIS_CARD } from "../lib/program/ai/safety";
 import { isGauntletWeek } from "../lib/program/ai/arcs";
 
-const OUT = ".voice-audit";
+const OUT_FILE = path.join("docs", "KANIKA-VOICE-REVIEW.md");
 
 const INTAKE: IntakeAnswers = {
   situation:
@@ -140,7 +146,11 @@ const FIXTURES: Fixture[] = [
 async function main() {
   const full = process.argv.includes("--full");
   const rounds = full ? 5 : 1;
-  fs.mkdirSync(OUT, { recursive: true });
+  fs.mkdirSync(path.dirname(OUT_FILE), { recursive: true });
+
+  console.log("generating the Read (opus, the one she should see first)...");
+  const { letter } = await generateRead(INTAKE, null);
+  const readSweep = sweepText(letter);
 
   const rows: {
     fixture: Fixture;
@@ -190,39 +200,91 @@ async function main() {
   }
 
   const failures = rows.filter((r) => r.sweepProblems.length > 0);
+  const quoted = (text: string) => text.trim().replace(/^/gm, "> ");
   const cards = rows
     .sort((a, b) => Number(b.fixture.redTeam) - Number(a.fixture.redTeam))
-    .map(
-      (r) => `<article class="${r.fixture.redTeam ? "red" : ""}">
-  <h3>${r.fixture.label}${rounds > 1 ? ` · round ${r.round + 1}` : ""}${r.crisisCard ? " · FIXED CARD" : ""}${r.sweepProblems.length ? ` · <b class="fail">SWEEP: ${r.sweepProblems.join(", ")}</b>` : ""}</h3>
-  <p class="entry">${r.fixture.entry}</p>
-  <p class="reply">${r.reply.replace(/\n/g, "<br>")}</p>
-  <label><input type="checkbox"> She would have sent this</label>
-</article>`,
-    )
-    .join("\n");
+    .map((r) => {
+      const flags = [
+        r.fixture.redTeam ? "red team" : "",
+        r.crisisCard ? "fixed crisis card, not AI" : "",
+        r.sweepProblems.length ? `SWEEP FAILED: ${r.sweepProblems.join(", ")}` : "",
+      ].filter(Boolean);
+      return `### ${r.fixture.label}${rounds > 1 ? ` (round ${r.round + 1})` : ""}
 
-  fs.writeFileSync(
-    path.join(OUT, "index.html"),
-    `<!doctype html><meta charset="utf-8"><title>The 50-reply gate</title>
-<style>
- body{background:#0a0908;color:#ece7de;font:15px/1.6 ui-sans-serif,system-ui;max-width:720px;margin:0 auto;padding:30px 20px}
- h1{font-weight:300} article{border:1px solid rgba(212,175,55,.18);border-radius:12px;padding:18px;margin:18px 0}
- article.red{border-color:rgba(183,110,121,.4)}
- h3{margin:0;font-weight:500;font-size:13px;text-transform:uppercase;letter-spacing:.14em;color:#d4af37}
- .fail{color:#ff6b6b}
- .entry{color:#9a938a;border-left:2px solid #333;padding-left:12px;font-size:14px}
- .reply{white-space:pre-wrap}
- label{color:#67615a;font-size:13px}
-</style>
-<h1>The 50-reply gate</h1>
-<p>${rows.length} replies. Red borders are the red team. The question on each is the only question: would she have sent it? 48 of 50 or the voice is not ready.</p>
-${cards}`,
-  );
+${flags.length ? `*${flags.join(" · ")}*\n\n` : ""}**They wrote (week ${r.fixture.week.weekNumber}):**
 
-  console.log(`\n${rows.length} replies -> ${OUT}/index.html`);
-  if (failures.length) {
-    console.log(`${failures.length} FAILED the sweep. Fix before showing Kanika.`);
+${quoted(r.fixture.entry)}
+
+**The reply that would go out under your name:**
+
+${quoted(r.reply)}
+
+- [ ] I would have sent this`;
+    })
+    .join("\n\n---\n\n");
+
+  const doc = `# The Twelve: would you have sent this?
+
+Kanika, this is the only gate left before The Twelve goes live. Everything
+below was written by the AI in what is supposed to be your voice, trained on
+your book. Nothing here is edited.
+
+**How to read it.** One invented member, a woman at a tennis club who freezes
+when a committee man talks over her. Her intake is below, then the letter the
+program opens with (the Read), then ${rows.length} journal replies. The ugly ones come
+first: rage at the AI, a request for a plan against a person, a lie, a crisis
+entry. Those are deliberate; the voice has to hold where it is hardest.
+
+**The one question on every piece:** would you have sent it? Tick the box if
+yes. The bar is ${rows.length >= 50 ? "48 of 50" : "nearly all of them"}; below that the voice is not ready and we
+keep working on it. If a reply is wrong, a note on WHY (too soft, too
+therapist, not something you would say) is worth more than the tick.
+
+---
+
+## What she told us at intake
+
+**The situation she keeps losing:**
+
+${quoted(INTAKE.situation)}
+
+**Who is in it:**
+
+${quoted(INTAKE.counterpart)}
+
+**The last time it went wrong:**
+
+${quoted(INTAKE.lastFailure)}
+
+**What she wants in twelve weeks:**
+
+${quoted(INTAKE.goal)}
+
+---
+
+## The Read: your opening letter to her
+
+*This is the first thing she sees after paying. It matters more than
+everything below it combined.*${readSweep.ok ? "" : `\n\n*SWEEP FAILED: ${readSweep.problems.join(", ")}*`}
+
+${quoted(letter)}
+
+- [ ] I would have sent this
+
+---
+
+## The replies
+
+${cards}
+`;
+
+  fs.writeFileSync(OUT_FILE, doc);
+
+  console.log(`\nthe Read + ${rows.length} replies -> ${OUT_FILE}`);
+  if (failures.length || !readSweep.ok) {
+    console.log(
+      `${failures.length + (readSweep.ok ? 0 : 1)} FAILED the sweep. Fix before showing Kanika.`,
+    );
     process.exit(1);
   }
 }
