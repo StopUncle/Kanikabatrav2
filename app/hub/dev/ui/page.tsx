@@ -2,6 +2,8 @@ import { notFound } from "next/navigation";
 import {
   Card,
   EmptyState,
+  PageHeader,
+  PageShell,
   PressableRow,
   SectionHeader,
   Skeleton,
@@ -67,6 +69,29 @@ export default function PrimitivesPage() {
               </div>
             ))}
           </div>
+        </Card>
+      </section>
+
+      <section className="space-y-3">
+        <SectionHeader
+          eyebrow="Page header"
+          title="The block every surface opens with"
+        />
+        <Card tone="quiet" pad="roomy">
+          <PageShell pad="none">
+            <PageHeader
+              title="The Mark"
+              lede="Two ledgers: what you noticed, and what you missed."
+            />
+            <PageHeader
+              title="Feed"
+              action={
+                <span className="text-app-eyebrow uppercase tracking-app-wide text-[var(--app-gold-soft)]">
+                  3 new
+                </span>
+              }
+            />
+          </PageShell>
         </Card>
       </section>
 

@@ -526,6 +526,9 @@ body[data-simulator-active="true"] main {
   --app-muted: #9a938a;
   --app-dim: #67615a;
   --app-green: #7fb890;
+  --app-on-gold: #17130a;
+  --app-void: #060505;
+  --app-frame: #262220;
   /* One accent per game, so the Arcade rail reads as four different
      things rather than four gold rectangles. Steel and clay were added
      for The Lab and Adventures; violet for Receipts. All desaturated to
