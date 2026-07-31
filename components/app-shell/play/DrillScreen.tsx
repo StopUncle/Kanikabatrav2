@@ -330,7 +330,7 @@ export default function DrillScreen({
         score={drill.score}
         accuracy={drill.accuracy}
         maxCombo={drill.maxCombo}
-        standing={drill.server?.standing?.amount ?? null}
+        standing={drill.server?.standing ?? null}
         onReplay={replay}
       />
 

@@ -35,6 +35,12 @@ export interface DrillAnswer {
 export interface DrillServerResult {
   standing: {
     amount: number;
+    /** The showing-up floor inside `amount`. */
+    base: number;
+    /** Full deck at 80 percent accuracy or better. */
+    sharpBonus: number;
+    /** Full deck, every call right. */
+    perfectBonus: number;
     newStanding: number;
     /** Set only when this grant crossed a rank threshold. */
     rangUp: { fromLevel: number; toLevel: number; ringName: string } | null;

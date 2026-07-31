@@ -23,10 +23,16 @@ export default function DrillResults({
   score: number;
   accuracy: number;
   maxCombo: number;
-  standing: number | null;
+  standing: { amount: number; sharpBonus: number; perfectBonus: number } | null;
   onReplay: () => void;
 }) {
   const missed = answers.filter((a) => !a.correct);
+  const bonusParts = standing
+    ? [
+        standing.sharpBonus > 0 ? `sharp +${standing.sharpBonus}` : null,
+        standing.perfectBonus > 0 ? `perfect +${standing.perfectBonus}` : null,
+      ].filter(Boolean)
+    : [];
 
   return (
     <div className="px-5 pb-[max(28px,env(safe-area-inset-bottom))] pt-6">
@@ -46,7 +52,11 @@ export default function DrillResults({
           </p>
           <p className="mt-1.5 text-app-caption text-[var(--app-dim)]">
             {accuracy}% accuracy · best run of {maxCombo}
-            {standing !== null && standing > 0 && ` · +${standing} Standing`}
+            {standing !== null &&
+              standing.amount > 0 &&
+              ` · +${standing.amount} Standing${
+                bonusParts.length > 0 ? ` (${bonusParts.join(", ")})` : ""
+              }`}
           </p>
         </div>
         <Link

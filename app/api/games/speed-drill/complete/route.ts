@@ -20,6 +20,7 @@ import { bumpDailyStreak } from "@/lib/streak/daily";
 import { grantStanding, grantsTodayCount } from "@/lib/standing/grant";
 import { STANDING } from "@/lib/standing/config";
 import { DRILL_CARDS, DRILL_BANK } from "@/lib/games/speed-drill/content";
+import { drillStandingBreakdown } from "@/lib/games/speed-drill/scoring";
 import { recordEncounters } from "@/lib/mark/encounters";
 import { encountersFromDrillAnswers } from "@/lib/mark/sources/drill";
 import { captureServerAsync } from "@/lib/analytics/server";
@@ -159,21 +160,38 @@ export async function POST(request: NextRequest) {
       // a null field so this can never turn a saved session into a 500.
       let standing: {
         amount: number;
+        base: number;
+        sharpBonus: number;
+        perfectBonus: number;
         newStanding: number;
         rangUp: { fromLevel: number; toLevel: number; ringName: string } | null;
       } | null = null;
       try {
         const today = await grantsTodayCount(prisma, user.id, "DRILL");
         if (today < STANDING.DRILL_DAILY_CAP) {
+          // Performance bonuses only when the per-card record is present:
+          // score is server-re-derived above, so the breakdown never trusts
+          // client aggregates. Legacy aggregates-only clients keep the floor.
+          const breakdown = body.answers
+            ? drillStandingBreakdown(score, totalCards)
+            : {
+                base: STANDING.DRILL,
+                sharpBonus: 0,
+                perfectBonus: 0,
+                total: STANDING.DRILL,
+              };
           const grant = await grantStanding(prisma, {
             userId: user.id,
             source: "DRILL",
-            amount: STANDING.DRILL,
+            amount: breakdown.total,
             refId: session.id,
           });
           if (grant.granted) {
             standing = {
               amount: grant.amount,
+              base: breakdown.base,
+              sharpBonus: breakdown.sharpBonus,
+              perfectBonus: breakdown.perfectBonus,
               newStanding: grant.newStanding,
               rangUp: grant.rangUp,
             };
