@@ -103,7 +103,7 @@ export default function TabBar() {
           passing underneath it any more. */}
       <nav
         aria-label="App navigation"
-        className="relative z-40 w-full shrink-0 border-t border-[var(--app-line-soft)] bg-[#0a0908]"
+        className="relative z-40 w-full shrink-0 border-t border-[var(--app-line-soft)] bg-[var(--app-black)]"
       >
         <div className="flex items-center justify-around px-1 pb-[max(14px,env(safe-area-inset-bottom))] pt-2.5">
           {TAB_SURFACES.map((tab) => {
@@ -114,7 +114,7 @@ export default function TabBar() {
                 href={tab.href}
                 aria-current={active ? "page" : undefined}
                 aria-label={tab.label}
-                className={`flex w-[58px] flex-col items-center gap-1.5 text-[10px] tracking-[0.06em] transition-colors ${
+                className={`flex w-[58px] flex-col items-center gap-1.5 text-app-tiny tracking-[0.06em] transition-colors ${
                   active ? "text-[var(--app-gold)]" : "text-[var(--app-dim)]"
                 }`}
               >
@@ -132,7 +132,7 @@ export default function TabBar() {
             aria-haspopup="dialog"
             aria-expanded={moreOpen}
             aria-label={unread > 0 ? `More, ${unread} unread from Kanika` : "More"}
-            className={`flex w-[58px] flex-col items-center gap-1.5 text-[10px] tracking-[0.06em] transition-colors ${
+            className={`flex w-[58px] flex-col items-center gap-1.5 text-app-tiny tracking-[0.06em] transition-colors ${
               moreOpen || isMoreRoute
                 ? "text-[var(--app-gold)]"
                 : "text-[var(--app-dim)]"
@@ -150,7 +150,7 @@ export default function TabBar() {
               {unread > 0 && (
                 <span
                   aria-hidden
-                  className="absolute -right-1.5 -top-1 flex h-[15px] min-w-[15px] items-center justify-center rounded-full bg-[var(--app-green)] px-1 text-[9px] font-semibold tabular-nums text-[#0a0908]"
+                  className="absolute -right-1.5 -top-1 flex h-[15px] min-w-[15px] items-center justify-center rounded-full bg-[var(--app-green)] px-1 text-app-micro font-semibold tabular-nums text-[var(--app-on-gold)]"
                 >
                   {unread > 9 ? "9+" : unread}
                 </span>

@@ -81,7 +81,7 @@ export default function MoreSheet({
 
         {MORE_SECTIONS.map((section) => (
           <div key={section.title} className="px-5 pt-4">
-            <p className="mb-2 text-[10.5px] uppercase tracking-[0.24em] text-[var(--app-dim)]">
+            <p className="mb-2 text-app-tiny uppercase tracking-app-label text-[var(--app-dim)]">
               {section.title}
             </p>
             <div className="overflow-hidden rounded-2xl border border-[var(--app-line-soft)] bg-[var(--app-card)]">
@@ -95,7 +95,7 @@ export default function MoreSheet({
                   }`}
                 >
                   <span className="text-[var(--app-gold)]">{ICONS[item.href]}</span>
-                  <span className="flex-1 text-[14.5px]">{item.label}</span>
+                  <span className="flex-1 text-app-lead">{item.label}</span>
                   <span className="text-[var(--app-dim)]">›</span>
                 </Link>
               ))}

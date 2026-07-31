@@ -11,12 +11,20 @@
  * adding a second opinion about how a loading pulse should look.
  */
 
+import type { CSSProperties } from "react";
 import { cn } from "./cn";
 
-export function Skeleton({ className = "" }: { className?: string }) {
+export function Skeleton({
+  className = "",
+  style,
+}: {
+  className?: string;
+  style?: CSSProperties;
+}) {
   return (
     <div
       aria-hidden
+      style={style}
       className={cn(
         "animate-shimmer rounded-md bg-[var(--app-card-2)] motion-reduce:animate-none",
         className,

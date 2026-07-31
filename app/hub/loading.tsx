@@ -1,3 +1,5 @@
+import { Skeleton } from "@/components/app-shell/ui";
+
 /**
  * Shown the instant a tab is tapped, until the server sends the screen.
  *
@@ -14,20 +16,25 @@
 export default function AppLoading() {
   return (
     <div className="px-5 pt-6" aria-busy="true" aria-label="Loading">
-      <div className="h-7 w-40 animate-pulse rounded-lg bg-[var(--app-card-2)]" />
-      <div className="mt-2 h-3.5 w-56 animate-pulse rounded bg-[var(--app-card)]" />
+      <Skeleton className="h-7 w-40 rounded-lg" />
+      <Skeleton className="mt-2 h-3.5 w-56 bg-[var(--app-card)]" />
 
       <div className="mt-6 flex flex-col gap-2.5">
         {[0, 1, 2, 3].map((i) => (
           <div
             key={i}
-            className="animate-pulse rounded-2xl border border-[var(--app-line-soft)] bg-[var(--app-card)] px-4 py-[18px]"
-            // Staggered so it reads as a list arriving rather than one
-            // block flashing.
-            style={{ animationDelay: `${i * 90}ms` }}
+            className="rounded-2xl border border-[var(--app-line-soft)] bg-[var(--app-card)] px-4 py-[18px]"
           >
-            <div className="h-3.5 w-1/2 rounded bg-[var(--app-card-2)]" />
-            <div className="mt-2 h-3 w-3/4 rounded bg-[var(--app-card-2)]" />
+            {/* Staggered so it reads as a list arriving rather than one
+                block flashing. */}
+            <Skeleton
+              className="h-3.5 w-1/2"
+              style={{ animationDelay: `${i * 90}ms` }}
+            />
+            <Skeleton
+              className="mt-2 h-3 w-3/4"
+              style={{ animationDelay: `${i * 90}ms` }}
+            />
           </div>
         ))}
       </div>

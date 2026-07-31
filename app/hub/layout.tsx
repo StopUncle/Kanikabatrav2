@@ -86,7 +86,7 @@ export default async function AppShellLayout({
   return (
     <div
       data-app-shell
-      className={`${fraunces.variable} ${instrument.variable} h-[100dvh] overflow-hidden bg-[#060505]`}
+      className={`${fraunces.variable} ${instrument.variable} h-[100dvh] overflow-hidden bg-[var(--app-void)]`}
       style={{ fontFamily: "var(--font-ui)" }}
     >
       {/* On a wide screen the app sits in its phone column with the handoff
@@ -101,7 +101,7 @@ export default async function AppShellLayout({
           last row of a container that is exactly one viewport tall, it
           cannot move, and the app stops feeling like a web page. */}
       <div className="mx-auto flex h-[100dvh] w-full max-w-[430px] items-start justify-center lg:max-w-5xl lg:gap-14 lg:px-8 lg:py-10">
-        <div className="relative flex h-[100dvh] w-full max-w-[430px] shrink-0 flex-col overflow-hidden bg-[var(--app-black)] text-[var(--app-text)] lg:h-[844px] lg:rounded-[44px] lg:border lg:border-[#262220] lg:shadow-[0_30px_80px_rgba(0,0,0,0.6)]">
+        <div className="relative flex h-[100dvh] w-full max-w-[430px] shrink-0 flex-col overflow-hidden bg-[var(--app-black)] text-[var(--app-text)] lg:h-[844px] lg:rounded-[44px] lg:border lg:border-[var(--app-frame)] lg:shadow-[0_30px_80px_rgba(0,0,0,0.6)]">
           {/* min-h-0 is load-bearing: without it a flex child refuses to
               shrink below its content and the scroll never engages. */}
           <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain">
