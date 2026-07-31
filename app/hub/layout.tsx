@@ -66,12 +66,15 @@ export default async function AppShellLayout({
     redirect("/consilium");
   }
 
-  const [me, baselineAttempts] = await Promise.all([
+  const [me, baselineAttempts, completedRuns] = await Promise.all([
     prisma.user.findUnique({
       where: { id: userId },
       select: { initiationAt: true, role: true },
     }),
     prisma.baselineAttempt.count({ where: { userId } }),
+    prisma.simulatorProgress.count({
+      where: { userId, completedAt: { not: null } },
+    }),
   ]);
   // Initiation is a MEMBER ceremony and `/consilium/initiation` enforces
   // membership itself, so sending a free account there would bounce it
@@ -127,10 +130,17 @@ export default async function AppShellLayout({
       </div>
       <AnalyticsIdentify userId={userId} />
       <ServiceWorkerRegister />
-      {/* Push permission, asked only once the member has finished a Baseline
-          Read. A browser gives you one shot at this prompt, so it is spent
-          on someone with a result worth being notified about. */}
-      <NotificationPrompt unlocked={baselineAttempts > 0} />
+      {/* Push permission, asked only after an earned moment. A browser gives
+          you one shot at this prompt, so it is spent on someone invested:
+          members after their first Baseline Read, free accounts after their
+          first completed scenario. Without the free branch a free account
+          could never grant push at all (the Baseline is member-only), which
+          silently cut the whole free tier off from the streak nudge. */}
+      <NotificationPrompt
+        unlocked={
+          access.isMember ? baselineAttempts > 0 : completedRuns > 0
+        }
+      />
     </div>
   );
 }
