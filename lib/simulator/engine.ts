@@ -138,25 +138,28 @@ function xpForChoice(choice: Choice): number {
  * true at the renderer's gate. This invariant rules that class of bug
  * out at the engine level.
  */
+/**
+ * The ending bonus table. Follows outcomeRank in progress-merge.ts so a
+ * "failed" ending (rank 1, above "bad") also pays more XP than "bad"
+ * (rank 0). No current scenario uses "failed"; defensive for authors.
+ */
+export function endingBonusFor(outcome: OutcomeType): number {
+  return outcome === "good"
+    ? 50
+    : outcome === "passed" || outcome === "neutral"
+      ? 20
+      : outcome === "failed"
+        ? 10
+        : 0; // "bad"
+}
+
 function finalizeEnding(scene: Scene, state: SimulatorState): SimulatorState {
   // Idempotency guard: finalizing an already-finalized state must not
   // re-credit the ending bonus or overwrite endedAt. Complete states
   // always carry a stamped cursor, so returning unchanged is safe.
   if (isComplete(state)) return state;
   const outcome: OutcomeType = scene.outcomeType ?? "neutral";
-  // Bonus tier follows outcomeRank in lib/simulator/progress-merge.ts so
-  // a "failed" ending (rank 1, above "bad") also pays more XP than "bad"
-  // (rank 0). Without this, a "failed" ending paid 0 like "bad", which
-  // contradicted the rank ordering. No current scenario uses "failed",
-  // so this is purely defensive for future authors.
-  const endingBonus =
-    outcome === "good"
-      ? 50
-      : outcome === "passed" || outcome === "neutral"
-        ? 20
-        : outcome === "failed"
-          ? 10
-          : 0; // "bad"
+  const endingBonus = endingBonusFor(outcome);
 
   return {
     ...state,
@@ -228,6 +231,22 @@ export function replayXp(
   scenario: Scenario,
   choicesMade: ChoiceRecord[],
 ): { xp: number; finalState: SimulatorState } {
+  const detailed = replayXpDetailed(scenario, choicesMade);
+  return { xp: detailed.total, finalState: detailed.finalState };
+}
+
+/** The same replay, decomposed so the ending screen can show its math. */
+export interface XpBreakdown {
+  choiceXp: number;
+  streakBonus: number;
+  endingBonus: number;
+  total: number;
+}
+
+export function replayXpDetailed(
+  scenario: Scenario,
+  choicesMade: ChoiceRecord[],
+): XpBreakdown & { finalState: SimulatorState } {
   let state = initState(scenario);
   const validated: ChoiceRecord[] = [];
   for (const record of choicesMade) {
@@ -257,5 +276,14 @@ export function replayXp(
   // Streak bonus is computed over validated records only. Padding the
   // input with bogus optimal records past an abort point cannot inflate
   // the bonus.
-  return { xp: state.xpEarned + streakBonusXp(validated), finalState: state };
+  const endingBonus =
+    isComplete(state) && state.outcome ? endingBonusFor(state.outcome) : 0;
+  const streakBonus = streakBonusXp(validated);
+  return {
+    choiceXp: state.xpEarned - endingBonus,
+    streakBonus,
+    endingBonus,
+    total: state.xpEarned + streakBonus,
+    finalState: state,
+  };
 }

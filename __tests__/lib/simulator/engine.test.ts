@@ -8,6 +8,8 @@ import {
   optimalCount,
   streakBonusXp,
   replayXp,
+  replayXpDetailed,
+  endingBonusFor,
 } from "@/lib/simulator/engine";
 import type {
   Scenario,
@@ -376,5 +378,73 @@ describe("replayXp", () => {
     ]);
     // three optimal choices: 30 xp + 5 streak bonus
     expect(xp).toBe(35);
+  });
+});
+
+describe("replayXpDetailed", () => {
+  it("decomposes the auto-advance ending case as choices 10, streak 0, ending 50", () => {
+    const sc = scenario([
+      scene({
+        id: "s1",
+        choices: [{ id: "go", text: "go", nextSceneId: "auto1", isOptimal: true }],
+      }),
+      scene({ id: "auto1", nextSceneId: "end" }),
+      scene({ id: "end", isEnding: true, outcomeType: "good" }),
+    ]);
+    const d = replayXpDetailed(sc, [rec("s1", "go", true)]);
+    expect(d.choiceXp).toBe(10);
+    expect(d.streakBonus).toBe(0);
+    expect(d.endingBonus).toBe(50);
+    expect(d.total).toBe(60);
+    expect(d.choiceXp + d.streakBonus + d.endingBonus).toBe(d.total);
+  });
+
+  it("decomposes the streak case as choices 30, streak 5, ending 0", () => {
+    const sc = scenario([
+      scene({
+        id: "s1",
+        choices: [{ id: "a", text: "a", nextSceneId: "s2", isOptimal: true }],
+      }),
+      scene({
+        id: "s2",
+        choices: [{ id: "b", text: "b", nextSceneId: "s3", isOptimal: true }],
+      }),
+      scene({
+        id: "s3",
+        choices: [{ id: "c", text: "c", nextSceneId: "s4", isOptimal: true }],
+      }),
+      scene({ id: "s4" }),
+    ]);
+    const d = replayXpDetailed(sc, [
+      rec("s1", "a", true),
+      rec("s2", "b", true),
+      rec("s3", "c", true),
+    ]);
+    expect(d.choiceXp).toBe(30);
+    expect(d.streakBonus).toBe(5);
+    expect(d.endingBonus).toBe(0);
+    expect(d.total).toBe(35);
+  });
+
+  it("matches replayXp's total on every path", () => {
+    const sc = scenario([
+      scene({
+        id: "s1",
+        choices: [{ id: "a", text: "a", nextSceneId: "end", isOptimal: false }],
+      }),
+      scene({ id: "end", isEnding: true, outcomeType: "bad" }),
+    ]);
+    const record = [rec("s1", "a", false)];
+    expect(replayXpDetailed(sc, record).total).toBe(replayXp(sc, record).xp);
+  });
+});
+
+describe("endingBonusFor", () => {
+  it("pays the outcome-rank ladder", () => {
+    expect(endingBonusFor("good")).toBe(50);
+    expect(endingBonusFor("passed")).toBe(20);
+    expect(endingBonusFor("neutral")).toBe(20);
+    expect(endingBonusFor("failed")).toBe(10);
+    expect(endingBonusFor("bad")).toBe(0);
   });
 });

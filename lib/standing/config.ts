@@ -46,8 +46,20 @@ export const STANDING = {
   DRILL: 20,
   /** Max DRILL grants per UTC day (anti-farm). */
   DRILL_DAILY_CAP: 3,
+  /** Drill bonus for a full-deck run at 80 percent accuracy or better. */
+  DRILL_SHARP_BONUS: 5,
+  /** Drill bonus on top for a perfect full deck. */
+  DRILL_PERFECT_BONUS: 5,
   /** A Lab session brought to an end state. */
   LAB: 40,
+  /**
+   * Bonus on LAB when the judge's outcome is "held". Showing up still
+   * pays the floor; holding the line pays more, following the
+   * TELL_CORRECT_AXIS precedent: small performance bonuses on top of a
+   * guaranteed floor keep the "Standing measures showing up" law intact.
+   * The Mark alone measures skill.
+   */
+  LAB_HELD_BONUS: 20,
   /** A submitted Receipt (already quota-capped upstream). */
   RECEIPT: 15,
   /** An approved-path feed comment. */
@@ -72,6 +84,12 @@ export const STANDING = {
    * something away from the screen and come back.
    */
   PROGRAM_WEEK: 150,
+  /** Finishing a league week in the promotion band. */
+  LEAGUE_PROMOTION: 75,
+  /** Finishing first in The Detached, the top league tier. */
+  LEAGUE_CHAMPION: 150,
+  /** First time this member reaches a given ending on a scenario. */
+  ENDING_FOUND: 15,
   /** Unified-streak milestones, keyed by day count. */
   STREAK_MILESTONES: { 7: 100, 30: 500, 100: 2000 } as Record<number, number>,
 } as const;
