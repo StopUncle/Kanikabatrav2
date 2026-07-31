@@ -51,6 +51,29 @@ export interface PathStep {
   /** Short action label ("Run The Guilt Loop", "Submit one receipt"). */
   label: string;
   kind: PathStepKind;
+  /**
+   * A free-tier substitute for steps whose kind needs a member-only
+   * surface, so the sequential Path never dead-ends for a free account.
+   * Same step id, so progress survives an upgrade either way.
+   */
+  freeKind?: PathStepKind;
+  freeLabel?: string;
+  freeFraming?: string;
+}
+
+/** The kind, label, and framing this tier actually works against. */
+export function effectiveStep(
+  step: PathStep,
+  isMember: boolean,
+): { kind: PathStepKind; label: string; framing: string } {
+  if (!isMember && step.freeKind) {
+    return {
+      kind: step.freeKind,
+      label: step.freeLabel ?? step.label,
+      framing: step.freeFraming ?? step.framing,
+    };
+  }
+  return { kind: step.kind, label: step.label, framing: step.framing };
 }
 
 export interface PathChapter {
@@ -103,6 +126,10 @@ export const PATH_CHAPTERS: readonly PathChapter[] = [
         framing:
           "Lurking is watching other people train. Say one true thing under today's prompt. I read them.",
         kind: { type: "comments", count: 1 },
+        freeKind: { type: "tells", count: 2 },
+        freeLabel: "Answer a second Tell",
+        freeFraming:
+          "Two reads in two days. The eye trains on repetition, not on one lucky call.",
       },
       {
         id: "ch1-dark-mirror",
@@ -514,8 +541,9 @@ export const CHAPTER_BY_ID: Record<string, PathChapter> = Object.fromEntries(
 export function appStepHref(
   step: PathStep,
   gender: "MALE" | "FEMALE" | null,
+  isMember: boolean = true,
 ): string {
-  const k = step.kind;
+  const k = effectiveStep(step, isMember).kind;
   switch (k.type) {
     case "scenario":
       return `/app/train/${gender === "MALE" ? k.male : k.female}`;

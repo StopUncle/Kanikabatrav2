@@ -81,6 +81,7 @@ export default async function TodayPage() {
     getPathState(prisma, userId, {
       gender: viewer?.gender ?? null,
       ringLevel: viewer?.ringLevel ?? 4,
+      isMember: access.isMember,
     }),
     getTellStreak(userId),
     isDailyMissionDoneToday(prisma, userId, { isMember: access.isMember }),
@@ -298,7 +299,7 @@ export default async function TodayPage() {
       {/* Path continue card */}
       {current && (
         <Link
-          href={appStepHref(current.step, viewer?.gender ?? null)}
+          href={appStepHref(current.step, viewer?.gender ?? null, access.isMember)}
           className="mx-5 mt-4 flex items-center gap-3.5 rounded-[18px] border border-[var(--app-line)] px-[18px] py-[18px]"
           style={{
             background:

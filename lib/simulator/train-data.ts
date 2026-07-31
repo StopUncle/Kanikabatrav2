@@ -52,6 +52,8 @@ export interface TrackRung {
   isNew: boolean;
   /** Prerequisites not met yet, so it cannot be played. */
   locked: boolean;
+  /** Not on the free tier. The chrome chips it; the runner still walls. */
+  memberOnly: boolean;
 }
 
 export interface TrackSummary {
@@ -158,6 +160,7 @@ export async function getTrainData(
         inProgress: !!p && !p.completedAt,
         isNew: !!s.isNew && !p,
         locked: !isUnlocked(s.prerequisites),
+        memberOnly: s.tier !== "free",
       };
     });
 

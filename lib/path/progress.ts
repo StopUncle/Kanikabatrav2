@@ -4,6 +4,7 @@ import { STANDING } from "@/lib/standing/config";
 import { SCENARIO_BY_ID, getTrack } from "@/lib/simulator/scenarios";
 import {
   PATH_CHAPTERS,
+  effectiveStep,
   type PathChapter,
   type PathStep,
 } from "./curriculum";
@@ -76,9 +77,10 @@ interface Signals {
 function stepDone(
   step: PathStep,
   gender: "MALE" | "FEMALE",
+  isMember: boolean,
   s: Signals,
 ): boolean {
-  const k = step.kind;
+  const k = effectiveStep(step, isMember).kind;
   switch (k.type) {
     case "scenario":
       return s.completedScenarioIds.has(gender === "MALE" ? k.male : k.female);
@@ -159,8 +161,14 @@ async function readSignals(
 export async function getPathState(
   prisma: Db,
   userId: string,
-  opts: { gender: "MALE" | "FEMALE" | null; ringLevel: number },
+  opts: {
+    gender: "MALE" | "FEMALE" | null;
+    ringLevel: number;
+    /** Free accounts evaluate freeKind substitutes. Defaults to member. */
+    isMember?: boolean;
+  },
 ): Promise<PathState> {
+  const isMember = opts.isMember ?? true;
   const gender: "MALE" | "FEMALE" = opts.gender === "MALE" ? "MALE" : "FEMALE";
 
   const [progressRows, signals] = await Promise.all([
@@ -203,7 +211,7 @@ export async function getPathState(
     for (let index = 0; index < chapter.steps.length; index++) {
       const step = chapter.steps[index];
       const already = done.has(step.id);
-      const detected = already || stepDone(step, gender, signals);
+      const detected = already || stepDone(step, gender, isMember, signals);
       if (detected) {
         completedSteps++;
         if (!already) {

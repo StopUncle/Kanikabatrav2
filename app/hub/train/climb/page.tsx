@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { requireServerAuth } from "@/lib/auth/server-auth";
+import { getAccess } from "@/lib/access/tier";
 import { prisma } from "@/lib/prisma";
 import { getTrainData } from "@/lib/simulator/train-data";
 import TrackLadder from "@/components/app-shell/train/TrackLadder";
@@ -25,7 +26,10 @@ const REASON_CHIP: Record<string, string> = {
 
 export default async function ClimbPage() {
   const userId = await requireServerAuth("/app/train/climb");
-  const { nextUp, tracks, freshFiles } = await getTrainData(prisma, userId);
+  const [{ nextUp, tracks, freshFiles }, access] = await Promise.all([
+    getTrainData(prisma, userId),
+    getAccess(userId),
+  ]);
 
   return (
     <div className="pb-8 pt-6">
@@ -89,7 +93,7 @@ export default async function ClimbPage() {
 
       <SectionHeader eyebrow="The climb" className="mx-5 mb-1 mt-7" />
       <div className="mx-5">
-        <TrackLadder tracks={tracks} />
+        <TrackLadder tracks={tracks} isMember={access.isMember} />
       </div>
 
       {/* Fresh Files */}

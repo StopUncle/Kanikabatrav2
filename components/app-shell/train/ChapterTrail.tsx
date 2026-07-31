@@ -204,7 +204,8 @@ function Marker({
   );
 }
 
-function RungRow({ rung }: { rung: TrackRung }) {
+function RungRow({ rung, isMember }: { rung: TrackRung; isMember: boolean }) {
+  const chipMembers = !isMember && rung.memberOnly;
   const mark = rung.done ? "✓" : rung.inProgress ? "◆" : "○";
   const markColor = rung.done
     ? "var(--app-green)"
@@ -247,7 +248,12 @@ function RungRow({ rung }: { rung: TrackRung }) {
           Resume
         </span>
       )}
-      {!rung.inProgress && rung.isNew && (
+      {!rung.inProgress && chipMembers && (
+        <span className="shrink-0 rounded-full border border-[var(--app-gold-soft)] px-1.5 py-0.5 text-app-micro uppercase tracking-app-wide text-[var(--app-gold-soft)]">
+          Members
+        </span>
+      )}
+      {!rung.inProgress && !chipMembers && rung.isNew && (
         <span className="shrink-0 text-app-micro uppercase tracking-app-wide text-[var(--app-rose)]">
           New
         </span>
@@ -256,7 +262,13 @@ function RungRow({ rung }: { rung: TrackRung }) {
   );
 }
 
-export default function ChapterTrail({ track }: { track: TrackSummary }) {
+export default function ChapterTrail({
+  track,
+  isMember = true,
+}: {
+  track: TrackSummary;
+  isMember?: boolean;
+}) {
   const chapters = toChapters(track.rungs);
 
   // Where the member actually is: the chapter they left open, else the first
@@ -371,7 +383,7 @@ export default function ChapterTrail({ track }: { track: TrackSummary }) {
         </p>
         <div className="mt-1.5 flex flex-col">
           {chapter.rungs.map((r) => (
-            <RungRow key={r.scenarioId} rung={r} />
+            <RungRow key={r.scenarioId} rung={r} isMember={isMember} />
           ))}
         </div>
       </div>

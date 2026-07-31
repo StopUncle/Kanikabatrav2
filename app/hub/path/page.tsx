@@ -3,7 +3,8 @@ import { PageHeader, PageShell } from "@/components/app-shell/ui";
 import { requireServerAuth } from "@/lib/auth/server-auth";
 import { prisma } from "@/lib/prisma";
 import { getPathState } from "@/lib/path/progress";
-import { appStepHref } from "@/lib/path/curriculum";
+import { appStepHref, effectiveStep } from "@/lib/path/curriculum";
+import { getAccess } from "@/lib/access/tier";
 import { ringByLevel } from "@/lib/standing/config";
 
 export const metadata = {
@@ -24,14 +25,18 @@ const ACT_LABELS: Record<1 | 2 | 3, string> = {
 export default async function PathPage() {
   const userId = await requireServerAuth("/app/path");
 
-  const viewer = await prisma.user.findUnique({
-    where: { id: userId },
-    select: { gender: true, ringLevel: true },
-  });
+  const [viewer, access] = await Promise.all([
+    prisma.user.findUnique({
+      where: { id: userId },
+      select: { gender: true, ringLevel: true },
+    }),
+    getAccess(userId),
+  ]);
 
   const state = await getPathState(prisma, userId, {
     gender: viewer?.gender ?? null,
     ringLevel: viewer?.ringLevel ?? 4,
+    isMember: access.isMember,
   });
 
   let lastAct: number | null = null;
@@ -118,14 +123,18 @@ export default async function PathPage() {
 
               {isCurrent && (
                 <Link
-                  href={appStepHref(isCurrent.step, viewer?.gender ?? null)}
+                  href={appStepHref(
+                    isCurrent.step,
+                    viewer?.gender ?? null,
+                    access.isMember,
+                  )}
                   className="mt-3 block rounded-2xl border border-[var(--app-line)] bg-[var(--app-card)] px-4 py-[15px]"
                 >
                   <span className="block text-app-lead font-medium">
-                    {isCurrent.step.label}
+                    {effectiveStep(isCurrent.step, access.isMember).label}
                   </span>
                   <span className="mt-0.5 block text-xs text-[var(--app-dim)]">
-                    {isCurrent.step.framing}
+                    {effectiveStep(isCurrent.step, access.isMember).framing}
                   </span>
                   <span className="mt-3 block h-[3px] overflow-hidden rounded-full bg-[var(--app-line)]">
                     <span

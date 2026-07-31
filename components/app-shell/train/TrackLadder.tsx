@@ -89,7 +89,13 @@ function Node({ state, active }: { state: State; active: boolean }) {
   );
 }
 
-export default function TrackLadder({ tracks }: { tracks: TrackSummary[] }) {
+export default function TrackLadder({
+  tracks,
+  isMember = true,
+}: {
+  tracks: TrackSummary[];
+  isMember?: boolean;
+}) {
   // The first unfinished open track is where the member actually is, so it
   // starts expanded. Everything else is one tap away.
   const current = tracks.find((t) => stateOf(t) === "open");
@@ -174,7 +180,7 @@ export default function TrackLadder({ tracks }: { tracks: TrackSummary[] }) {
 
               {isOpen && state !== "sealed" && (
                 <div className="ml-[39px] border-l border-[var(--app-line-soft)] pl-3 pr-1">
-                  <ChapterTrail track={t} />
+                  <ChapterTrail track={t} isMember={isMember} />
                 </div>
               )}
             </li>
