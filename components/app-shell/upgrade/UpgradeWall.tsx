@@ -53,7 +53,7 @@ export default function UpgradeWall({
           href={returnHref}
           className="mt-2 block w-full py-3 text-center text-app-caption text-[var(--app-dim)]"
         >
-          {returnHref === "/app" ? "Back to Today" : "Back"}
+          {returnHref === "/app" ? "Back to Home" : "Back"}
         </Link>
       </PageShell>
       <UpgradeSheet

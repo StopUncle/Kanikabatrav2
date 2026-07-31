@@ -14,7 +14,7 @@ import {
 } from "@/lib/app/nav";
 
 /**
- * The app shell's bottom tab bar. Four destinations plus More: Today is the
+ * The app shell's bottom tab bar. Four destinations plus More: Home is the
  * action screen, Feed is Kanika's room, Train is every way to practise, and
  * Kanika is the private line (badged when she has replied). Everything else
  * lives one tap deeper in the More sheet.

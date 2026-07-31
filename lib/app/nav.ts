@@ -64,7 +64,7 @@ export const APP_SURFACES: AppSurface[] = [
   /* ---------------------------------------------------------------- tabs */
   {
     href: "/app",
-    label: "Today",
+    label: "Home",
     placement: "tab",
     note: "The action screen. What to do now, not what exists.",
     maturity: "app-native",

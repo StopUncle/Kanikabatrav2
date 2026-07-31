@@ -24,7 +24,7 @@ import { getAccess } from "@/lib/access/tier";
 import { FREE_STANDING_CEILING } from "@/lib/standing/config";
 
 export const metadata = {
-  title: "Today | Consilium",
+  title: "Home | Consilium",
 };
 
 /**
