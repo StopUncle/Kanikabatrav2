@@ -33,6 +33,12 @@ type ActiveSession = {
   maxTurns: number;
 };
 
+type LabStanding = {
+  amount: number;
+  base: number;
+  heldBonus: number;
+};
+
 type LabState = {
   personas: PersonaCard[];
   active: ActiveSession | null;
@@ -51,7 +57,12 @@ type View =
   | { kind: "catalog" }
   | { kind: "brief"; persona: PersonaCard }
   | { kind: "chat" }
-  | { kind: "score"; score: LabScore | null; personaKey: string };
+  | {
+      kind: "score";
+      score: LabScore | null;
+      personaKey: string;
+      standing: LabStanding | null;
+    };
 
 const DIFFICULTY_STYLE: Record<PersonaCard["difficulty"], string> = {
   beginner: "text-emerald-300/80 border-emerald-300/30",
@@ -234,7 +245,12 @@ export default function LabClient() {
         setChatError(data.error ?? "Could not end the session.");
         return;
       }
-      setView({ kind: "score", score: data.score, personaKey: session.personaKey });
+      setView({
+        kind: "score",
+        score: data.score,
+        personaKey: session.personaKey,
+        standing: data.standing ?? null,
+      });
       setSession(null);
     } catch {
       setChatError("Could not end the session.");
@@ -390,6 +406,19 @@ export default function LabClient() {
             >
               {OUTCOME_COPY[view.score.outcome].label}
             </p>
+            {view.standing && view.standing.amount > 0 && (
+              <div className="mt-3">
+                <p className="text-accent-gold text-[10px] uppercase tracking-[0.35em] font-light">
+                  +{view.standing.amount} Standing
+                </p>
+                {view.standing.heldBonus > 0 && (
+                  <p className="text-text-gray/60 text-[10px] uppercase tracking-[0.35em] font-light mt-1">
+                    {view.standing.base} for the session &middot; +
+                    {view.standing.heldBonus} for holding the line
+                  </p>
+                )}
+              </div>
+            )}
             <div className="mt-6 space-y-3 text-left">
               {AXIS_LABELS.map(({ key, label }) => {
                 const value = view.score ? view.score.axes[key] : 0;

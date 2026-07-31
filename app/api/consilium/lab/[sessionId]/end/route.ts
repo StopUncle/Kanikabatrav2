@@ -90,11 +90,15 @@ export async function POST(
 
       // Standing: one grant per scored session (deduped on the session id
       // so an end-request retry can't double-pay). Abandoned sessions earn
-      // nothing — the quota upstream bounds farm attempts.
-      void grantStanding(prisma, {
+      // nothing, the quota upstream bounds farm attempts. Holding the line
+      // pays a bonus on top of the showing-up floor; the verdict screen
+      // reports exactly what landed, so the grant is awaited.
+      const heldBonus =
+        score.outcome === "held" ? STANDING.LAB_HELD_BONUS : 0;
+      const grant = await grantStanding(prisma, {
         userId: user.id,
         source: "LAB",
-        amount: STANDING.LAB,
+        amount: STANDING.LAB + heldBonus,
         refId: session.id,
         dedupe: true,
       });
@@ -114,7 +118,19 @@ export async function POST(
         dedupe: true,
       });
 
-      return NextResponse.json({ score, abandoned: false });
+      return NextResponse.json({
+        score,
+        abandoned: false,
+        standing: grant.granted
+          ? {
+              amount: grant.amount,
+              base: STANDING.LAB,
+              heldBonus,
+              newStanding: grant.newStanding,
+              rangUp: grant.rangUp,
+            }
+          : null,
+      });
     } catch (err) {
       logger.error(
         "[lab] scoring failed",
