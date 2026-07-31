@@ -9,7 +9,7 @@ import { buildDailySet } from "@/lib/games/arcade";
 import { getTodaysGeneratedDrop } from "@/lib/simulator/generated";
 import { readDailyStreak } from "@/lib/streak/daily";
 import {
-  getDailyMission,
+  getDailyMissionFor,
   isDailyMissionDoneToday,
 } from "@/lib/streak/daily-mission";
 import { utcDateKey } from "@/lib/tells/streak";
@@ -62,7 +62,7 @@ export default async function TodayPage() {
     redirect("/app/welcome");
   }
 
-  const dailyMission = getDailyMission();
+  const dailyMission = getDailyMissionFor(access.isMember);
   const startOfUtcToday = new Date();
   startOfUtcToday.setUTCHours(0, 0, 0, 0);
 
@@ -83,7 +83,7 @@ export default async function TodayPage() {
       ringLevel: viewer?.ringLevel ?? 4,
     }),
     getTellStreak(userId),
-    isDailyMissionDoneToday(prisma, userId),
+    isDailyMissionDoneToday(prisma, userId, { isMember: access.isMember }),
     readDailyStreak(prisma, userId),
     access.isMember ? getTodaysGeneratedDrop() : Promise.resolve(null),
     prisma.feedPost.findFirst({
@@ -105,7 +105,7 @@ export default async function TodayPage() {
       },
     }),
     getTodaysTellRow(),
-    getDay0Checklist(prisma, userId),
+    getDay0Checklist(prisma, userId, { isMember: access.isMember }),
     readProgram(prisma, userId),
   ]);
 

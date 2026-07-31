@@ -3,38 +3,17 @@ import type { Day0Checklist } from "@/lib/day0/checklist";
 
 /**
  * The first-week checklist card on Today. Three rows, each a door;
- * ticked rows stay visible so progress reads at a glance. The parent
- * only renders this while the Day-0 window is open and something is
- * still unticked.
+ * ticked rows stay visible so progress reads at a glance. The rows come
+ * from the data layer, which owns which tier gets which items. The
+ * parent only renders this while the Day-0 window is open and something
+ * is still unticked.
  */
 export default function ChecklistCard({
   checklist,
 }: {
   checklist: Day0Checklist;
 }) {
-  const items = [
-    {
-      key: "arrival",
-      done: checklist.arrivalDone,
-      href: "/app/welcome",
-      title: "Sit the Arrival",
-      sub: "Two minutes. How this place works.",
-    },
-    {
-      key: "baseline",
-      done: checklist.baselineDone,
-      href: "/app/measure/baseline",
-      title: "Take the Baseline Read",
-      sub: "Your before-picture. You will want it later.",
-    },
-    {
-      key: "firstWord",
-      done: checklist.firstWordDone,
-      href: checklist.introHref,
-      title: "Say something in the room",
-      sub: "The tactic you fell for once. Never again.",
-    },
-  ];
+  const items = checklist.items;
 
   return (
     <section

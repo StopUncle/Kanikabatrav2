@@ -42,7 +42,7 @@ import { bumpSimulatorStreak } from "@/lib/simulator/streak";
 import { bumpDailyStreak } from "@/lib/streak/daily";
 import { grantStanding } from "@/lib/standing/grant";
 import { STANDING } from "@/lib/standing/config";
-import { getDailyMission } from "@/lib/streak/daily-mission";
+import { getDailyMissionFor } from "@/lib/streak/daily-mission";
 import { captureServerAsync } from "@/lib/analytics/server";
 import { ANALYTICS_EVENTS } from "@/lib/analytics/events";
 import { logger } from "@/lib/logger";
@@ -398,7 +398,7 @@ export async function POST(request: NextRequest) {
         });
         if (scenarioGrant.rangUp) ringUp = scenarioGrant.rangUp;
       }
-      const mission = getDailyMission();
+      const mission = getDailyMissionFor(access.isMember);
       if (mission && mission.scenarioId === body.scenarioId) {
         const missionGrant = await grantStanding(prisma, {
           userId: user.id,

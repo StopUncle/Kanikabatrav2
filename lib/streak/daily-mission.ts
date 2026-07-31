@@ -45,6 +45,10 @@ const DAILY_POOL: Scenario[] = ALL_SCENARIOS.filter(
   (s) => s.tier === "free" || s.tier === "premium",
 );
 
+// The free tier's fallback pool. On days the shared mission is premium, a
+// free account gets a deterministic mission from here instead of a wall.
+const FREE_POOL: Scenario[] = ALL_SCENARIOS.filter((s) => s.tier === "free");
+
 export interface DailyMission {
   /** YYYY-MM-DD UTC the mission is for. */
   dateKey: string;
@@ -58,11 +62,7 @@ export interface DailyMission {
   href: string;
 }
 
-/** Today's mission, deterministic per UTC day. Null only if the pool is empty. */
-export function getDailyMission(now: Date = new Date()): DailyMission | null {
-  if (DAILY_POOL.length === 0) return null;
-  const dateKey = utcDateKey(now);
-  const scenario = DAILY_POOL[hashStr(dateKey) % DAILY_POOL.length];
+function toMission(scenario: Scenario, dateKey: string): DailyMission {
   return {
     dateKey,
     scenarioId: scenario.id,
@@ -75,6 +75,34 @@ export function getDailyMission(now: Date = new Date()): DailyMission | null {
   };
 }
 
+/** Today's mission, deterministic per UTC day. Null only if the pool is empty. */
+export function getDailyMission(now: Date = new Date()): DailyMission | null {
+  if (DAILY_POOL.length === 0) return null;
+  const dateKey = utcDateKey(now);
+  return toMission(DAILY_POOL[hashStr(dateKey) % DAILY_POOL.length], dateKey);
+}
+
+/**
+ * The mission this account can actually play. Members always get the
+ * shared mission. A free account gets it too on days it happens to be
+ * free-tier (those days they join the council numbers); otherwise a
+ * deterministic pick from the free pool, same label, same +50, so the
+ * daily habit never leads with a wall.
+ */
+export function getDailyMissionFor(
+  isMember: boolean,
+  now: Date = new Date(),
+): DailyMission | null {
+  const shared = getDailyMission(now);
+  if (!shared) return null;
+  if (isMember) return shared;
+  const sharedScenario = DAILY_POOL.find((s) => s.id === shared.scenarioId);
+  if (sharedScenario?.tier === "free") return shared;
+  if (FREE_POOL.length === 0) return null;
+  const dateKey = utcDateKey(now);
+  return toMission(FREE_POOL[hashStr(dateKey) % FREE_POOL.length], dateKey);
+}
+
 /**
  * Best-effort "did this member complete today's mission today" check, derived
  * from SimulatorProgress.completedAt for the mission scenario. A member who
@@ -84,9 +112,10 @@ export function getDailyMission(now: Date = new Date()): DailyMission | null {
 export async function isDailyMissionDoneToday(
   prisma: PrismaClient,
   userId: string,
+  opts: { isMember?: boolean } = {},
   now: Date = new Date(),
 ): Promise<boolean> {
-  const mission = getDailyMission(now);
+  const mission = getDailyMissionFor(opts.isMember ?? true, now);
   if (!mission) return false;
   const progress = await prisma.simulatorProgress.findUnique({
     where: {
