@@ -54,27 +54,27 @@ export default function DailySetCard({
           color={complete ? "var(--app-green)" : "var(--app-gold)"}
           label={`${set.done} of ${set.total} done today`}
         >
-          <span className="text-[15px] tabular-nums text-[var(--app-text)]">
+          <span className="text-app-lead tabular-nums text-[var(--app-text)]">
             {set.done}
-            <span className="text-[11px] text-[var(--app-dim)]">
+            <span className="text-app-eyebrow text-[var(--app-dim)]">
               /{set.total}
             </span>
           </span>
         </ProgressRing>
 
         <span className="min-w-0 flex-1">
-          <span className="block text-[11px] uppercase tracking-[0.22em] text-[var(--app-gold-soft)]">
+          <span className="block text-app-eyebrow uppercase tracking-app-label text-[var(--app-gold-soft)]">
             Daily set
           </span>
           <span
-            className="mt-1 block text-[17px] leading-snug"
+            className="mt-1 block text-app-title leading-snug"
             style={{ fontFamily: "var(--font-display)" }}
           >
             {line}
           </span>
           {streak.current > 0 && (
             <span
-              className={`mt-1.5 flex items-center gap-1.5 text-[11.5px] ${
+              className={`mt-1.5 flex items-center gap-1.5 text-app-eyebrow ${
                 streak.atRisk ? "text-[var(--app-rose)]" : "text-[var(--app-dim)]"
               }`}
             >
@@ -87,7 +87,7 @@ export default function DailySetCard({
         </span>
 
         {!complete && set.nextHref && (
-          <span className="shrink-0 self-center text-[11px] tracking-[0.12em] text-[var(--app-gold)]">
+          <span className="shrink-0 self-center text-app-eyebrow tracking-app-wide text-[var(--app-gold)]">
             {set.done === 0 ? "START" : "NEXT"} →
           </span>
         )}

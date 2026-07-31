@@ -52,11 +52,11 @@ export default function TellScreen({ tell }: { tell: PublicTell }) {
     <div className="px-5 pb-8 pt-6">
       <div className="flex items-start justify-between">
         <div>
-          <p className="text-[11px] uppercase tracking-[0.26em] text-[var(--app-gold-soft)]">
+          <p className="text-app-eyebrow uppercase tracking-app-label text-[var(--app-gold-soft)]">
             Daily tell
           </p>
           <h1
-            className="mt-1 text-[26px] font-light leading-tight"
+            className="mt-1 text-app-hero font-light leading-tight"
             style={{ fontFamily: "var(--font-display)" }}
           >
             {TRACK_LABELS[tell.track] ?? "Read the moment"}
@@ -84,14 +84,14 @@ export default function TellScreen({ tell }: { tell: PublicTell }) {
       </div>
 
       <p
-        className="mt-7 text-[18px] leading-snug"
+        className="mt-7 text-app-title leading-snug"
         style={{ fontFamily: "var(--font-display)" }}
       >
         {tell.question}
       </p>
 
       {run.phase === "restoring" ? (
-        <p className="mt-5 text-[12.5px] text-[var(--app-dim)]">Loading...</p>
+        <p className="mt-5 text-app-caption text-[var(--app-dim)]">Loading...</p>
       ) : run.phase === "asking" ? (
         <>
           <div className="mt-4 flex flex-col gap-2.5">
@@ -104,7 +104,7 @@ export default function TellScreen({ tell }: { tell: PublicTell }) {
                   haptic("select");
                   run.pick(c.id);
                 }}
-                className={`rounded-2xl border border-[var(--app-line-soft)] bg-[var(--app-card)] p-4 text-left text-[14px] leading-snug transition-transform active:scale-[0.985] disabled:opacity-60 ${
+                className={`rounded-2xl border border-[var(--app-line-soft)] bg-[var(--app-card)] p-4 text-left text-app-lead leading-snug transition-transform active:scale-[0.985] disabled:opacity-60 ${
                   run.pickedId === c.id ? "border-[var(--app-gold)]" : ""
                 }`}
               >
@@ -113,7 +113,7 @@ export default function TellScreen({ tell }: { tell: PublicTell }) {
             ))}
           </div>
           {run.error && (
-            <p className="mt-3 text-[12.5px] text-[var(--app-rose)]">
+            <p className="mt-3 text-app-caption text-[var(--app-rose)]">
               {run.error}
             </p>
           )}

@@ -62,7 +62,7 @@ export default async function AdventureComplete({
   return (
     <main className="min-h-screen px-4 sm:px-8 py-12 max-w-3xl mx-auto">
       <header className="text-center mb-10">
-        <p className="text-warm-gold/70 uppercase tracking-[0.3em] text-xs mb-3 inline-flex items-center gap-2">
+        <p className="text-warm-gold/70 uppercase tracking-app-label text-xs mb-3 inline-flex items-center gap-2">
           <Sparkles size={11} strokeWidth={1.6} />
           Arc complete
         </p>
@@ -75,7 +75,7 @@ export default async function AdventureComplete({
       </header>
 
       <section className="mb-10 p-6 rounded-xl border border-warm-gold/20 bg-deep-black/40">
-        <p className="text-warm-gold/60 uppercase tracking-[0.3em] text-[10px] mb-4">
+        <p className="text-warm-gold/60 uppercase tracking-app-label text-app-tiny mb-4">
           The recap
         </p>
         <p className="text-text-light text-base font-light leading-relaxed whitespace-pre-wrap">
@@ -90,7 +90,7 @@ export default async function AdventureComplete({
       </section>
 
       <section className="mb-12">
-        <p className="text-warm-gold/70 uppercase tracking-[0.3em] text-[10px] mb-4">
+        <p className="text-warm-gold/70 uppercase tracking-app-label text-app-tiny mb-4">
           The journey
         </p>
         <ol className="space-y-2">
@@ -99,7 +99,7 @@ export default async function AdventureComplete({
               key={ch.id}
               className="flex items-center gap-4 p-3 rounded-lg border border-warm-gold/10 bg-deep-black/30"
             >
-              <span className="shrink-0 inline-flex items-center justify-center w-6 h-6 rounded-full bg-warm-gold/15 text-warm-gold text-[10px] tabular-nums">
+              <span className="shrink-0 inline-flex items-center justify-center w-6 h-6 rounded-full bg-warm-gold/15 text-warm-gold text-app-tiny tabular-nums">
                 {i + 1}
               </span>
               <span className="flex-1 text-white text-sm font-light truncate">
@@ -107,7 +107,7 @@ export default async function AdventureComplete({
               </span>
               {ch.outcome && (
                 <span
-                  className={`text-[10px] uppercase tracking-[0.25em] px-2 py-0.5 rounded-full ${outcomeStyles(ch.outcome)}`}
+                  className={`text-app-tiny uppercase tracking-app-label px-2 py-0.5 rounded-full ${outcomeStyles(ch.outcome)}`}
                 >
                   {ch.outcome}
                 </span>
@@ -123,7 +123,7 @@ export default async function AdventureComplete({
       <div className="flex flex-wrap gap-3 justify-center">
         <Link
           href="/app/adventures"
-          className="inline-flex items-center gap-2 py-3.5 px-8 rounded-full bg-warm-gold text-deep-black font-medium tracking-wider uppercase text-sm transition-all hover:bg-warm-gold/90 hover:shadow-[0_8px_24px_-4px_rgba(212,175,55,0.55)]"
+          className="inline-flex items-center gap-2 py-3.5 px-8 rounded-full bg-warm-gold text-deep-black font-medium tracking-wider uppercase text-sm transition-all hover:bg-warm-gold/90 hover:shadow-[0_8px_24px_-4px_var(--app-gold-soft)]"
         >
           Browse more
           <ArrowRight size={16} />
@@ -143,7 +143,7 @@ export default async function AdventureComplete({
 function Stat({ label, value }: { label: string; value: string | number }) {
   return (
     <div className="text-center p-4 rounded-lg border border-warm-gold/15 bg-deep-black/40">
-      <p className="text-warm-gold/60 uppercase tracking-[0.25em] text-[9px] mb-1">
+      <p className="text-warm-gold/60 uppercase tracking-app-label text-app-micro mb-1">
         {label}
       </p>
       <p className="text-white text-2xl font-extralight tabular-nums">{value}</p>

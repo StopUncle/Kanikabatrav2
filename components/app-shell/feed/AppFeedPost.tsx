@@ -117,13 +117,13 @@ export default function AppFeedPost({
       {/* Header row */}
       <div className="mb-2.5 flex flex-wrap items-center gap-x-2 gap-y-1.5">
         <span
-          className={`text-[13.5px] font-medium ${
+          className={`text-app-body font-medium ${
             isKanika ? "text-[var(--app-gold)]" : ""
           }`}
         >
           {post.author?.name || "Kanika"}
         </span>
-        <span className="text-[11px] text-[var(--app-dim)]">{timeAgo}</span>
+        <span className="text-app-eyebrow text-[var(--app-dim)]">{timeAgo}</span>
         {post.type === "AUTOMATED" && (
           <Chip icon={<Sparkles className="h-2.5 w-2.5" />}>Insight</Chip>
         )}
@@ -133,7 +133,7 @@ export default function AppFeedPost({
           </Chip>
         )}
         {isNew && (
-          <span className="inline-flex items-center gap-1 rounded-full bg-[rgba(127,184,144,0.12)] px-2 py-0.5 text-[9px] uppercase tracking-[0.16em] text-[var(--app-green)]">
+          <span className="inline-flex items-center gap-1 rounded-full bg-[rgba(127,184,144,0.12)] px-2 py-0.5 text-app-micro uppercase tracking-app-wide text-[var(--app-green)]">
             New
           </span>
         )}
@@ -142,7 +142,7 @@ export default function AppFeedPost({
             type="button"
             onClick={toggleCollapsed}
             aria-expanded={!isCollapsed}
-            className="ml-auto inline-flex items-center gap-1 rounded-full border border-[var(--app-line)] bg-[rgba(212,175,55,0.08)] px-2 py-0.5 text-[9px] uppercase tracking-[0.16em] text-[var(--app-gold)]"
+            className="ml-auto inline-flex items-center gap-1 rounded-full border border-[var(--app-line)] bg-[rgba(212,175,55,0.08)] px-2 py-0.5 text-app-micro uppercase tracking-app-wide text-[var(--app-gold)]"
           >
             <Pin className="h-2.5 w-2.5" />
             Pinned
@@ -154,7 +154,7 @@ export default function AppFeedPost({
           </button>
         )}
         {post.isPinned && !canCollapse && (
-          <span className="ml-auto inline-flex items-center gap-1 rounded-full border border-[var(--app-line)] bg-[rgba(212,175,55,0.08)] px-2 py-0.5 text-[9px] uppercase tracking-[0.16em] text-[var(--app-gold)]">
+          <span className="ml-auto inline-flex items-center gap-1 rounded-full border border-[var(--app-line)] bg-[rgba(212,175,55,0.08)] px-2 py-0.5 text-app-micro uppercase tracking-app-wide text-[var(--app-gold)]">
             <Pin className="h-2.5 w-2.5" />
             Pinned
           </span>
@@ -170,18 +170,18 @@ export default function AppFeedPost({
           className="block w-full text-left"
         >
           <span
-            className="block truncate text-[16px] text-[var(--app-muted)]"
+            className="block truncate text-app-lead text-[var(--app-muted)]"
             style={{ fontFamily: "var(--font-display)" }}
           >
             {post.title}
           </span>
-          <span className="text-[11px] text-[var(--app-dim)]">
+          <span className="text-app-eyebrow text-[var(--app-dim)]">
             Tap to expand
           </span>
         </button>
       ) : detail ? (
         <h1
-          className="mb-2 block text-[20px] leading-snug"
+          className="mb-2 block text-app-title leading-snug"
           style={{ fontFamily: "var(--font-display)" }}
         >
           {post.title}
@@ -189,7 +189,7 @@ export default function AppFeedPost({
       ) : (
         <Link href={`/app/feed/${post.id}`} className="mb-2 block">
           <span
-            className="block text-[18px] leading-snug"
+            className="block text-app-title leading-snug"
             style={{ fontFamily: "var(--font-display)" }}
           >
             {post.title}
@@ -200,7 +200,7 @@ export default function AppFeedPost({
       {/* Body */}
       {!isCollapsed && (
         <>
-          <div className="text-[13.5px] leading-relaxed text-[var(--app-muted)]">
+          <div className="text-app-body leading-relaxed text-[var(--app-muted)]">
             <ReactMarkdown
               remarkPlugins={[remarkGfm]}
               components={{
@@ -246,7 +246,7 @@ export default function AppFeedPost({
                   </code>
                 ),
                 h1: ({ children }) => (
-                  <h1 className="mb-1 mt-3 text-[15px] font-semibold text-[var(--app-text)]">
+                  <h1 className="mb-1 mt-3 text-app-lead font-semibold text-[var(--app-text)]">
                     {children}
                   </h1>
                 ),
@@ -303,7 +303,7 @@ export default function AppFeedPost({
               onClick={handleLike}
               disabled={isToggling}
               aria-label={liked ? "Unlike" : "Like"}
-              className="flex items-center gap-1.5 rounded-lg px-2 py-1.5 text-[13px]"
+              className="flex items-center gap-1.5 rounded-lg px-2 py-1.5 text-app-body"
             >
               <Heart
                 className={`h-[18px] w-[18px] ${
@@ -323,7 +323,7 @@ export default function AppFeedPost({
               )}
             </button>
             {detail ? (
-              <span className="flex items-center gap-1.5 rounded-lg px-2 py-1.5 text-[13px] text-[var(--app-dim)]">
+              <span className="flex items-center gap-1.5 rounded-lg px-2 py-1.5 text-app-body text-[var(--app-dim)]">
                 <MessageCircle className="h-[18px] w-[18px]" />
                 {post.commentCount > 0 && <span>{post.commentCount}</span>}
               </span>
@@ -331,7 +331,7 @@ export default function AppFeedPost({
               <Link
                 href={`/app/feed/${post.id}`}
                 aria-label="View comments"
-                className="flex items-center gap-1.5 rounded-lg px-2 py-1.5 text-[13px] text-[var(--app-dim)]"
+                className="flex items-center gap-1.5 rounded-lg px-2 py-1.5 text-app-body text-[var(--app-dim)]"
               >
                 <MessageCircle className="h-[18px] w-[18px]" />
                 {post.commentCount > 0 && <span>{post.commentCount}</span>}
@@ -352,7 +352,7 @@ function Chip({
   children: React.ReactNode;
 }) {
   return (
-    <span className="inline-flex items-center gap-1 rounded-full border border-[var(--app-line-soft)] px-2 py-0.5 text-[9px] uppercase tracking-[0.16em] text-[var(--app-gold-soft)]">
+    <span className="inline-flex items-center gap-1 rounded-full border border-[var(--app-line-soft)] px-2 py-0.5 text-app-micro uppercase tracking-app-wide text-[var(--app-gold-soft)]">
       {icon}
       {children}
     </span>

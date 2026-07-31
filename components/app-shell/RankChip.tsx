@@ -31,10 +31,10 @@ export default function RankChip({ standing, ringLevel }: Props) {
         <RingEmblem level={ringLevel} size={26} />
       </ProgressRing>
       <span className="min-w-0">
-        <span className="block text-[15px] font-medium leading-tight">
+        <span className="block text-app-lead font-medium leading-tight">
           {rank.name}
         </span>
-        <span className="mt-0.5 block text-[11.5px] tracking-[0.04em] text-[var(--app-dim)]">
+        <span className="mt-0.5 block text-app-eyebrow tracking-[0.04em] text-[var(--app-dim)]">
           {next
             ? `${next.remaining.toLocaleString()} to ${next.next.name}`
             : "Inner Circle"}

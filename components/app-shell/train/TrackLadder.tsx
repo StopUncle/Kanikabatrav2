@@ -130,7 +130,7 @@ export default function TrackLadder({ tracks }: { tracks: TrackSummary[] }) {
                 <span className="min-w-0 flex-1 pt-[1px]">
                   <span className="flex items-baseline gap-2">
                     <span
-                      className={`truncate text-[15px] ${
+                      className={`truncate text-app-lead ${
                         state === "sealed" ? "text-[var(--app-dim)]" : ""
                       }`}
                       style={{ fontFamily: "var(--font-display)" }}
@@ -138,13 +138,13 @@ export default function TrackLadder({ tracks }: { tracks: TrackSummary[] }) {
                       {t.label}
                     </span>
                     {t.newCount > 0 && state !== "sealed" && (
-                      <span className="shrink-0 text-[9.5px] uppercase tracking-[0.18em] text-[var(--app-rose)]">
+                      <span className="shrink-0 text-app-micro uppercase tracking-app-wide text-[var(--app-rose)]">
                         {t.newCount} new
                       </span>
                     )}
                   </span>
 
-                  <span className="mt-0.5 block truncate text-[11.5px] text-[var(--app-dim)]">
+                  <span className="mt-0.5 block truncate text-app-eyebrow text-[var(--app-dim)]">
                     {state === "sealed"
                       ? sealedLine(t.access.opensAtRing ?? 3)
                       : `${t.completed} of ${t.total}`}
@@ -166,7 +166,7 @@ export default function TrackLadder({ tracks }: { tracks: TrackSummary[] }) {
                 </span>
 
                 {state !== "sealed" && (
-                  <span className="shrink-0 pt-1 text-[11px] text-[var(--app-dim)]">
+                  <span className="shrink-0 pt-1 text-app-eyebrow text-[var(--app-dim)]">
                     {isOpen ? "−" : "+"}
                   </span>
                 )}

@@ -78,7 +78,7 @@ export default function AppCommentForm({
           enterKeyHint="send"
           autoCapitalize="sentences"
           autoComplete="off"
-          className="mobile-input flex-1 resize-none rounded-xl border border-[var(--app-line-soft)] bg-[var(--app-card)] px-3.5 py-2.5 text-[13.5px] text-[var(--app-text)] placeholder:text-[var(--app-dim)] focus:border-[var(--app-line)] focus:outline-none"
+          className="mobile-input flex-1 resize-none rounded-xl border border-[var(--app-line-soft)] bg-[var(--app-card)] px-3.5 py-2.5 text-app-body text-[var(--app-text)] placeholder:text-[var(--app-dim)] focus:border-[var(--app-line)] focus:outline-none"
         />
         <button
           type="submit"
@@ -91,13 +91,13 @@ export default function AppCommentForm({
       </div>
 
       {status === "pending" && (
-        <p className="mt-2 text-[11.5px] text-[var(--app-gold)]">
+        <p className="mt-2 text-app-eyebrow text-[var(--app-gold)]">
           Submitted. Kanika reviews it before it shows.
         </p>
       )}
 
       {status === "error" && (
-        <p className="mt-2 text-[11.5px] text-[var(--app-rose)]">
+        <p className="mt-2 text-app-eyebrow text-[var(--app-rose)]">
           {errorMessage}
         </p>
       )}

@@ -147,12 +147,12 @@ export default function KanikaThread() {
     <div className="flex h-full flex-col">
       <header className="shrink-0 px-5 pb-3 pt-6">
         <h1
-          className="text-[28px] font-light leading-none"
+          className="text-app-hero font-light leading-none"
           style={{ fontFamily: "var(--font-display)" }}
         >
           Kanika
         </h1>
-        <p className="mt-1 text-[13px] text-[var(--app-muted)]">
+        <p className="mt-1 text-app-body text-[var(--app-muted)]">
           A private line. Nobody else sees this.
         </p>
       </header>
@@ -184,7 +184,7 @@ export default function KanikaThread() {
 
         {crisisOpen && (
           <div className="mt-2 rounded-2xl border border-[rgba(183,110,121,0.25)] bg-[rgba(183,110,121,0.08)] px-4 py-3">
-            <p className="flex items-center gap-2 text-[11px] uppercase tracking-[0.18em] text-[var(--app-rose)]">
+            <p className="flex items-center gap-2 text-app-eyebrow uppercase tracking-app-wide text-[var(--app-rose)]">
               <LifeBuoy size={13} />
               If you need help now
             </p>
@@ -233,7 +233,7 @@ export default function KanikaThread() {
             >
               Write to Kanika
             </p>
-            <p className="mt-1.5 max-w-[16rem] text-[13px] leading-relaxed text-[var(--app-muted)]">
+            <p className="mt-1.5 max-w-[16rem] text-app-body leading-relaxed text-[var(--app-muted)]">
               Ask her something real. One message at a time, so she can answer
               properly.
             </p>
@@ -243,7 +243,7 @@ export default function KanikaThread() {
 
       <div className="shrink-0 border-t border-[var(--app-line-soft)] bg-[var(--app-black)] px-4 pb-3 pt-3">
         {error && (
-          <p className="mb-2 px-1 text-[11px] text-[var(--app-rose)]">{error}</p>
+          <p className="mb-2 px-1 text-app-eyebrow text-[var(--app-rose)]">{error}</p>
         )}
         {onCooldown ? (
           <p className="px-1 py-2 text-xs leading-relaxed text-[var(--app-dim)]">
@@ -277,7 +277,7 @@ export default function KanikaThread() {
               onClick={send}
               disabled={sending || !draft.trim()}
               aria-label="Send"
-              className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[var(--app-gold)] text-[#17130a] transition-opacity disabled:opacity-35"
+              className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[var(--app-gold)] text-[var(--app-on-gold)] transition-opacity disabled:opacity-35"
             >
               {sending ? (
                 <Loader2 size={17} className="animate-spin" />
@@ -310,7 +310,7 @@ function Bubble({ message }: { message: DM }) {
         }
       >
         {!mine && (
-          <span className="mb-1 block text-[10px] uppercase tracking-[0.18em] text-[var(--app-gold-soft)]">
+          <span className="mb-1 block text-app-tiny uppercase tracking-app-wide text-[var(--app-gold-soft)]">
             Kanika
           </span>
         )}
@@ -322,7 +322,7 @@ function Bubble({ message }: { message: DM }) {
           </p>
         )}
         <span
-          className={`mt-1 block text-[10px] tabular-nums ${
+          className={`mt-1 block text-app-tiny tabular-nums ${
             mine ? "text-right text-[var(--app-dim)]" : "text-[var(--app-gold-soft)]"
           }`}
         >

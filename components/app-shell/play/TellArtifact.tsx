@@ -13,7 +13,7 @@ import type { TellArtifact as Artifact } from "@/lib/tells/types";
 
 function Label({ children }: { children: React.ReactNode }) {
   return (
-    <p className="mb-3 text-[10.5px] uppercase tracking-[0.22em] text-[var(--app-dim)]">
+    <p className="mb-3 text-app-tiny uppercase tracking-app-label text-[var(--app-dim)]">
       {children}
     </p>
   );
@@ -33,7 +33,7 @@ export default function TellArtifact({ artifact }: { artifact: Artifact }) {
                 className={`flex ${mine ? "justify-end" : "justify-start"}`}
               >
                 <span
-                  className={`max-w-[80%] px-3.5 py-2.5 text-[14px] leading-snug ${
+                  className={`max-w-[80%] px-3.5 py-2.5 text-app-lead leading-snug ${
                     mine
                       ? "rounded-[16px] rounded-br-[5px] bg-[rgba(212,175,55,0.14)] text-[var(--app-text)]"
                       : "rounded-[16px] rounded-bl-[5px] bg-[var(--app-card-2)] text-[var(--app-text)]"
@@ -66,18 +66,18 @@ export default function TellArtifact({ artifact }: { artifact: Artifact }) {
                 <path d="M5 11a7 7 0 0 0 14 0M12 18v3" />
               </svg>
             </span>
-            <span className="text-[12.5px] text-[var(--app-muted)]">
+            <span className="text-app-caption text-[var(--app-muted)]">
               {artifact.speakerLabel}
             </span>
           </span>
           {artifact.durationLabel && (
-            <span className="text-[11.5px] tabular-nums text-[var(--app-dim)]">
+            <span className="text-app-eyebrow tabular-nums text-[var(--app-dim)]">
               {artifact.durationLabel}
             </span>
           )}
         </div>
         <p
-          className="text-[15.5px] leading-relaxed text-[var(--app-text)]"
+          className="text-app-lead leading-relaxed text-[var(--app-text)]"
           style={{ fontFamily: "var(--font-display)" }}
         >
           {artifact.transcript}
@@ -95,8 +95,8 @@ export default function TellArtifact({ artifact }: { artifact: Artifact }) {
       <p
         className={
           scene
-            ? "text-[16.5px] leading-relaxed text-[var(--app-text)]"
-            : "text-[15px] leading-relaxed text-[var(--app-text)]"
+            ? "text-app-lead leading-relaxed text-[var(--app-text)]"
+            : "text-app-lead leading-relaxed text-[var(--app-text)]"
         }
         style={scene ? { fontFamily: "var(--font-display)" } : undefined}
       >

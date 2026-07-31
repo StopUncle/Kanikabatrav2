@@ -109,7 +109,7 @@ export default function Arrival({ videoUrl, beginHref, firstName }: Props) {
               {firstName ? `You're in, ${firstName}.` : "You're in."}
             </h1>
             <p
-              className="app-rise mt-3.5 max-w-[17rem] text-[15px] leading-relaxed text-[var(--app-muted)]"
+              className="app-rise mt-3.5 max-w-[17rem] text-app-lead leading-relaxed text-[var(--app-muted)]"
               style={{ animationDelay: "0.85s" }}
             >
               This is not a quick fix. Give it time and you will start reading
@@ -134,7 +134,7 @@ export default function Arrival({ videoUrl, beginHref, firstName }: Props) {
       <button
         type="button"
         onClick={begin}
-        className="app-rise mx-7 mb-10 rounded-full bg-[var(--app-gold)] py-[17px] text-[15px] font-semibold tracking-[0.04em] text-[#17130a] shadow-[0_8px_30px_rgba(212,175,55,0.25)]"
+        className="app-rise mx-7 mb-10 rounded-full bg-[var(--app-gold)] py-[17px] text-app-lead font-semibold tracking-[0.04em] text-[var(--app-on-gold)] shadow-[0_8px_30px_rgba(212,175,55,0.25)]"
         style={{ animationDelay: playing ? "0s" : "1.15s" }}
       >
         Begin

@@ -46,7 +46,7 @@ export default async function ConsiliumTellsTodayPage() {
       <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-10">
         <div>
           <header className="mb-6">
-            <p className="text-accent-gold/70 text-[10px] uppercase tracking-[0.4em] mb-3">
+            <p className="text-accent-gold/70 text-app-tiny uppercase tracking-[0.4em] mb-3">
               Train Your Instincts
             </p>
             <h1 className="text-3xl sm:text-4xl font-extralight tracking-wider uppercase text-text-light">
@@ -59,7 +59,7 @@ export default async function ConsiliumTellsTodayPage() {
           {bonus.length > 0 && (
             <div className="mt-16 pt-10 border-t border-gray-800">
               <div className="max-w-3xl mx-auto px-4">
-                <p className="text-accent-gold/70 text-[10px] uppercase tracking-[0.4em] mb-2">
+                <p className="text-accent-gold/70 text-app-tiny uppercase tracking-[0.4em] mb-2">
                   Bonus reps
                 </p>
                 <p className="text-text-gray text-sm font-light leading-relaxed mb-2">
@@ -81,7 +81,7 @@ export default async function ConsiliumTellsTodayPage() {
 
         <aside className="space-y-6 lg:sticky lg:top-24 self-start">
           <div className="rounded-lg border border-gray-800 bg-deep-black/60 p-5">
-            <p className="text-[10px] uppercase tracking-[0.4em] text-accent-gold/70 mb-4">
+            <p className="text-app-tiny uppercase tracking-[0.4em] text-accent-gold/70 mb-4">
               Your hex
             </p>
             <div className="flex justify-center">
@@ -110,7 +110,7 @@ export default async function ConsiliumTellsTodayPage() {
           <LeagueCard />
 
           <div className="rounded-lg border border-gray-800 bg-deep-black/60 p-5 space-y-3">
-            <p className="text-[10px] uppercase tracking-[0.4em] text-accent-gold/70">
+            <p className="text-app-tiny uppercase tracking-[0.4em] text-accent-gold/70">
               Streak
             </p>
             <div className="flex items-baseline gap-2">
@@ -128,7 +128,7 @@ export default async function ConsiliumTellsTodayPage() {
           </div>
 
           <div className="rounded-lg border border-gray-800 bg-deep-black/60 p-5 space-y-2">
-            <p className="text-[10px] uppercase tracking-[0.4em] text-accent-gold/70">
+            <p className="text-app-tiny uppercase tracking-[0.4em] text-accent-gold/70">
               Total answered
             </p>
             <p className="text-2xl text-text-light font-extralight">

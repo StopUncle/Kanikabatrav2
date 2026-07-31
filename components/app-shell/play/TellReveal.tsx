@@ -43,7 +43,7 @@ export default function TellReveal({
         }}
       >
         <p
-          className="text-[19px]"
+          className="text-app-title"
           style={{
             fontFamily: "var(--font-display)",
             color: correct ? "var(--app-green)" : "var(--app-rose)",
@@ -52,11 +52,11 @@ export default function TellReveal({
           {correct ? "You saw it." : "It got past you."}
         </p>
         {outcome?.isReplay ? (
-          <p className="mt-1 text-[12px] text-[var(--app-dim)]">
+          <p className="mt-1 text-app-caption text-[var(--app-dim)]">
             You have already answered this one. Nothing counted again.
           </p>
         ) : (
-          <p className="mt-1 text-[12px] text-[var(--app-dim)]">
+          <p className="mt-1 text-app-caption text-[var(--app-dim)]">
             {outcome?.standing?.amount
               ? `+${outcome.standing.amount} Standing`
               : "Recorded."}
@@ -92,14 +92,14 @@ export default function TellReveal({
                   opacity: c.isCorrect || picked ? 1 : 0.72,
                 }}
               >
-                <p className="flex items-start gap-2 text-[14px] leading-snug">
+                <p className="flex items-start gap-2 text-app-lead leading-snug">
                   <span className="shrink-0" style={{ color: tone }}>
                     {c.isCorrect ? "✓" : picked ? "✕" : "·"}
                   </span>
                   <span>{c.text}</span>
                 </p>
                 {c.why && (
-                  <p className="mt-1.5 pl-5 text-[12px] leading-relaxed text-[var(--app-muted)]">
+                  <p className="mt-1.5 pl-5 text-app-caption leading-relaxed text-[var(--app-muted)]">
                     {c.why}
                   </p>
                 )}
@@ -111,11 +111,11 @@ export default function TellReveal({
 
       {reveal?.reveal && (
         <div className="mt-6 rounded-2xl border border-[var(--app-line)] bg-[var(--app-card)] p-4">
-          <p className="mb-2 text-[10.5px] uppercase tracking-[0.22em] text-[var(--app-gold-soft)]">
+          <p className="mb-2 text-app-tiny uppercase tracking-app-label text-[var(--app-gold-soft)]">
             Kanika&apos;s read
           </p>
           <p
-            className="text-[15px] leading-relaxed text-[var(--app-text)]"
+            className="text-app-lead leading-relaxed text-[var(--app-text)]"
             style={{ fontFamily: "var(--font-display)" }}
           >
             {reveal.reveal}
@@ -126,19 +126,19 @@ export default function TellReveal({
       <div className="mt-7 flex flex-col gap-2.5 pb-4">
         <Link
           href="/app/train"
-          className="w-full rounded-full bg-[var(--app-gold)] py-3.5 text-center text-[12.5px] font-semibold uppercase tracking-[0.16em] text-[#0a0908] transition-transform active:scale-[0.97]"
+          className="w-full rounded-full bg-[var(--app-gold)] py-3.5 text-center text-app-caption font-semibold uppercase tracking-app-wide text-[var(--app-on-gold)] transition-transform active:scale-[0.97]"
         >
           Back to Train
         </Link>
         <Link
           href={`/app/instincts/history`}
-          className="w-full py-2.5 text-center text-[12px] uppercase tracking-[0.16em] text-[var(--app-muted)]"
+          className="w-full py-2.5 text-center text-app-caption uppercase tracking-app-wide text-[var(--app-muted)]"
         >
           Every Tell you have answered
         </Link>
       </div>
 
-      <p className="pb-2 text-center text-[10.5px] text-[var(--app-dim)]">
+      <p className="pb-2 text-center text-app-tiny text-[var(--app-dim)]">
         Tell {tell.number}
       </p>
     </div>

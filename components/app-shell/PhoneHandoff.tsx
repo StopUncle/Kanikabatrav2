@@ -11,7 +11,7 @@ import Image from "next/image";
 export default function PhoneHandoff() {
   return (
     <aside className="hidden max-w-sm pt-16 lg:block">
-      <p className="text-[11px] uppercase tracking-[0.28em] text-[var(--app-gold-soft)]">
+      <p className="text-app-eyebrow uppercase tracking-app-label text-[var(--app-gold-soft)]">
         Built for your phone
       </p>
       <h2
@@ -20,7 +20,7 @@ export default function PhoneHandoff() {
       >
         Take it with you.
       </h2>
-      <p className="mt-3 text-[15px] leading-relaxed text-[var(--app-muted)]">
+      <p className="mt-3 text-app-lead leading-relaxed text-[var(--app-muted)]">
         Scan this and install it on your phone. Your streak, your scenarios,
         and Kanika&apos;s replies land where you actually are. Everything works
         here too.
@@ -36,7 +36,7 @@ export default function PhoneHandoff() {
         />
       </div>
 
-      <p className="mt-4 text-[13px] text-[var(--app-dim)]">
+      <p className="mt-4 text-app-body text-[var(--app-dim)]">
         kanikarose.com/app
       </p>
     </aside>

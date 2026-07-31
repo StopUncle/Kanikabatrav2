@@ -51,7 +51,7 @@ export default function AppCommentSection({
           <AppCommentForm postId={postId} onCommentPosted={fetchComments} />
         </div>
       ) : (
-        <p className="mb-5 text-[12.5px] text-[var(--app-dim)]">
+        <p className="mb-5 text-app-caption text-[var(--app-dim)]">
           Comments are locked on this post.
         </p>
       )}
@@ -63,13 +63,13 @@ export default function AppCommentSection({
       )}
 
       {error && (
-        <p className="py-4 text-[12.5px] text-[var(--app-rose)]">{error}</p>
+        <p className="py-4 text-app-caption text-[var(--app-rose)]">{error}</p>
       )}
 
       {!loading && !error && comments.length === 0 && (
         <div className="py-8 text-center">
           <MessageCircle className="mx-auto mb-2 h-7 w-7 text-[var(--app-dim)] opacity-60" />
-          <p className="text-[12.5px] text-[var(--app-dim)]">
+          <p className="text-app-caption text-[var(--app-dim)]">
             No comments yet. Be the first.
           </p>
         </div>

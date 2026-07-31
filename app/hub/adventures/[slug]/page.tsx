@@ -63,14 +63,14 @@ export default async function AdventureDetail({
     <main className="min-h-screen px-4 sm:px-8 py-10 max-w-3xl mx-auto">
       <Link
         href="/app/adventures"
-        className="inline-flex items-center gap-1 text-warm-gold/60 hover:text-warm-gold text-[10px] uppercase tracking-[0.3em] mb-6 transition-colors"
+        className="inline-flex items-center gap-1 text-warm-gold/60 hover:text-warm-gold text-app-tiny uppercase tracking-app-label mb-6 transition-colors"
       >
         <ArrowRight size={10} strokeWidth={1.6} className="rotate-180" />
         Adventures
       </Link>
 
       <header className="mb-8">
-        <p className="text-warm-gold/70 uppercase tracking-[0.3em] text-xs mb-3">
+        <p className="text-warm-gold/70 uppercase tracking-app-label text-xs mb-3">
           {adventure.difficulty} . {adventure.estimatedMinutes} minutes .{" "}
           {chapters.length} chapters
         </p>
@@ -88,20 +88,20 @@ export default async function AdventureDetail({
       <div className="mb-8">
         <Link
           href={ctaHref}
-          className="inline-flex items-center gap-2 py-3.5 px-8 rounded-full bg-warm-gold text-deep-black font-medium tracking-wider uppercase text-sm transition-all hover:bg-warm-gold/90 hover:shadow-[0_8px_24px_-4px_rgba(212,175,55,0.55)]"
+          className="inline-flex items-center gap-2 py-3.5 px-8 rounded-full bg-warm-gold text-deep-black font-medium tracking-wider uppercase text-sm transition-all hover:bg-warm-gold/90 hover:shadow-[0_8px_24px_-4px_var(--app-gold-soft)]"
         >
           {ctaLabel}
           <ArrowRight size={16} />
         </Link>
         {isInProgress && (
-          <p className="mt-3 text-text-gray/60 text-xs uppercase tracking-[0.25em]">
+          <p className="mt-3 text-text-gray/60 text-xs uppercase tracking-app-label">
             Step {Math.min(currentStep + 1, chapters.length)} of {chapters.length}
           </p>
         )}
       </div>
 
       <section className="mt-12">
-        <p className="text-warm-gold/70 uppercase tracking-[0.3em] text-[10px] mb-4">
+        <p className="text-warm-gold/70 uppercase tracking-app-label text-app-tiny mb-4">
           The chapters
         </p>
         <ol className="space-y-2">
@@ -118,7 +118,7 @@ export default async function AdventureDetail({
                 }`}
               >
                 <span
-                  className={`shrink-0 inline-flex items-center justify-center w-6 h-6 rounded-full text-[10px] tabular-nums ${
+                  className={`shrink-0 inline-flex items-center justify-center w-6 h-6 rounded-full text-app-tiny tabular-nums ${
                     isPast || isCompleted
                       ? "bg-warm-gold/15 text-warm-gold"
                       : isCurrent
@@ -148,13 +148,13 @@ export default async function AdventureDetail({
                     </p>
                   )}
                   {ch.missing && (
-                    <p className="text-text-gray/40 text-[10px] uppercase tracking-[0.25em] mt-0.5">
+                    <p className="text-text-gray/40 text-app-tiny uppercase tracking-app-label mt-0.5">
                       Scenario removed
                     </p>
                   )}
                 </div>
                 {!ch.missing && ch.estimatedMinutes > 0 && (
-                  <span className="shrink-0 inline-flex items-center gap-1 text-text-gray/50 text-[10px] uppercase tracking-[0.25em]">
+                  <span className="shrink-0 inline-flex items-center gap-1 text-text-gray/50 text-app-tiny uppercase tracking-app-label">
                     <Clock size={9} strokeWidth={1.6} />
                     {ch.estimatedMinutes}m
                   </span>
@@ -165,7 +165,7 @@ export default async function AdventureDetail({
         </ol>
       </section>
 
-      <p className="mt-10 inline-flex items-center gap-2 text-warm-gold/50 text-[10px] uppercase tracking-[0.3em]">
+      <p className="mt-10 inline-flex items-center gap-2 text-warm-gold/50 text-app-tiny uppercase tracking-app-label">
         <BookOpen size={11} strokeWidth={1.6} />
         Reuses scenarios from the simulator. Progress carries over.
       </p>

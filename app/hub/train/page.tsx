@@ -4,6 +4,7 @@ import { getArcadeData } from "@/lib/games/arcade";
 import { getBentoData } from "@/lib/games/bento";
 import DailySetCard from "@/components/app-shell/play/DailySetCard";
 import ArcadeBento from "@/components/app-shell/play/ArcadeBento";
+import { PageHeader, PageShell } from "@/components/app-shell/ui";
 
 export const metadata = {
   title: "Train | Consilium",
@@ -30,22 +31,17 @@ export default async function TrainPage() {
   ]);
 
   return (
-    <div className="px-5 pb-8 pt-6">
-      <h1
-        className="text-app-hero font-light"
-        style={{ fontFamily: "var(--font-display)" }}
-      >
-        Train
-      </h1>
-      <p className="mb-5 mt-1 text-app-body text-[var(--app-muted)]">
-        Practice reads people faster than theory ever will.
-      </p>
+    <PageShell>
+      <PageHeader
+        title="Train"
+        lede="Practice reads people faster than theory ever will."
+      />
 
       <DailySetCard set={set} streak={streak} href={null} />
 
       <div className="mt-6">
         <ArcadeBento data={bento} />
       </div>
-    </div>
+    </PageShell>
   );
 }

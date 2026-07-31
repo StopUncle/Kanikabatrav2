@@ -35,7 +35,7 @@ function Headline({ score }: { score: number }) {
   return (
     <>
       {shown}
-      <span className="text-[26px] text-[var(--app-dim)]">/{DRILL_CARDS}</span>
+      <span className="text-app-hero text-[var(--app-dim)]">/{DRILL_CARDS}</span>
     </>
   );
 }
@@ -118,7 +118,7 @@ export default function DrillScreen({
         </div>
 
         <div className="flex flex-1 flex-col justify-center">
-          <p className="mb-3 text-[11px] uppercase tracking-[0.26em] text-[var(--app-gold-soft)]">
+          <p className="mb-3 text-app-eyebrow uppercase tracking-app-label text-[var(--app-gold-soft)]">
             Speed drill
           </p>
           <h1
@@ -129,7 +129,7 @@ export default function DrillScreen({
             <br />
             Sixty seconds.
           </h1>
-          <p className="mt-4 max-w-[300px] text-[14px] leading-relaxed text-[var(--app-muted)]">
+          <p className="mt-4 max-w-[300px] text-app-lead leading-relaxed text-[var(--app-muted)]">
             Each card is something someone said. Call it: manipulation, or
             clean. Trust the first instinct, because in the room that is all
             you get.
@@ -139,23 +139,23 @@ export default function DrillScreen({
             <div className="mt-7 flex items-center gap-6">
               <span className="flex items-baseline gap-1.5">
                 <span
-                  className="text-[22px] tabular-nums text-[var(--app-gold)]"
+                  className="text-app-display tabular-nums text-[var(--app-gold)]"
                   style={{ fontFamily: "var(--font-display)" }}
                 >
                   {personalBest.bestScore ?? 0}/{DRILL_CARDS}
                 </span>
-                <span className="text-[10px] uppercase tracking-[0.14em] text-[var(--app-dim)]">
+                <span className="text-app-tiny uppercase tracking-app-wide text-[var(--app-dim)]">
                   your best
                 </span>
               </span>
               <span className="flex items-baseline gap-1.5">
                 <span
-                  className="text-[22px] tabular-nums text-[var(--app-text)]"
+                  className="text-app-display tabular-nums text-[var(--app-text)]"
                   style={{ fontFamily: "var(--font-display)" }}
                 >
                   {personalBest.totalSessions}
                 </span>
-                <span className="text-[10px] uppercase tracking-[0.14em] text-[var(--app-dim)]">
+                <span className="text-app-tiny uppercase tracking-app-wide text-[var(--app-dim)]">
                   plays
                 </span>
               </span>
@@ -169,7 +169,7 @@ export default function DrillScreen({
             haptic("select");
             drill.start();
           }}
-          className="w-full rounded-full bg-[var(--app-gold)] py-4 text-[13px] font-semibold uppercase tracking-[0.18em] text-[#0a0908] transition-transform active:scale-[0.97]"
+          className="w-full rounded-full bg-[var(--app-gold)] py-4 text-app-body font-semibold uppercase tracking-app-wide text-[var(--app-on-gold)] transition-transform active:scale-[0.97]"
         >
           Start
         </button>
@@ -226,14 +226,14 @@ export default function DrillScreen({
               </svg>
             </Link>
             <span
-              className={`text-[19px] tabular-nums ${
+              className={`text-app-title tabular-nums ${
                 urgent ? "text-[var(--app-rose)]" : "text-[var(--app-text)]"
               }`}
               style={{ fontFamily: "var(--font-display)" }}
             >
               {formatClock(drill.clock)}
             </span>
-            <span className="text-[12px] tabular-nums text-[var(--app-dim)]">
+            <span className="text-app-caption tabular-nums text-[var(--app-dim)]">
               {Math.min(drill.index + 1, drill.deck.length)}/{drill.deck.length}
             </span>
           </div>
@@ -253,11 +253,11 @@ export default function DrillScreen({
             a fixed overlay would escape the phone column on desktop. */}
         <div className="flex h-8 items-center justify-center">
           {drill.milestone ? (
-            <span className="app-pop-in text-[12px] uppercase tracking-[0.22em] text-[var(--app-gold)]">
+            <span className="app-pop-in text-app-caption uppercase tracking-app-label text-[var(--app-gold)]">
               {drill.milestone}
             </span>
           ) : drill.combo >= 2 ? (
-            <span className="text-[12px] uppercase tracking-[0.18em] text-[var(--app-gold-soft)]">
+            <span className="text-app-caption uppercase tracking-app-wide text-[var(--app-gold-soft)]">
               {drill.combo} in a row
             </span>
           ) : null}
@@ -266,7 +266,7 @@ export default function DrillScreen({
         <div className="flex flex-1 items-center px-6">
           <p
             key={drill.card?.id ?? drill.index}
-            className="app-rise text-[25px] leading-[1.35]"
+            className="app-rise text-app-display leading-[1.35]"
             style={{ fontFamily: "var(--font-display)" }}
           >
             {drill.card?.line}
@@ -278,7 +278,7 @@ export default function DrillScreen({
         <div className="flex h-9 items-center justify-center px-6">
           {drill.locked && drill.card && (
             <span
-              className={`app-rise text-center text-[12.5px] ${
+              className={`app-rise text-center text-app-caption ${
                 drill.locked.correct
                   ? "text-[var(--app-green)]"
                   : "text-[var(--app-rose)]"
@@ -301,7 +301,7 @@ export default function DrillScreen({
               haptic("tick");
               drill.answer(true);
             }}
-            className="rounded-2xl border border-[rgba(183,110,121,0.4)] bg-[rgba(183,110,121,0.08)] py-5 text-[12px] font-semibold uppercase tracking-[0.14em] text-[var(--app-rose)] transition-transform active:scale-[0.96] disabled:opacity-50"
+            className="rounded-2xl border border-[rgba(183,110,121,0.4)] bg-[rgba(183,110,121,0.08)] py-5 text-app-caption font-semibold uppercase tracking-app-wide text-[var(--app-rose)] transition-transform active:scale-[0.96] disabled:opacity-50"
           >
             Manipulation
           </button>
@@ -312,7 +312,7 @@ export default function DrillScreen({
               haptic("tick");
               drill.answer(false);
             }}
-            className="rounded-2xl border border-[rgba(127,184,144,0.4)] bg-[rgba(127,184,144,0.08)] py-5 text-[12px] font-semibold uppercase tracking-[0.14em] text-[var(--app-green)] transition-transform active:scale-[0.96] disabled:opacity-50"
+            className="rounded-2xl border border-[rgba(127,184,144,0.4)] bg-[rgba(127,184,144,0.08)] py-5 text-app-caption font-semibold uppercase tracking-app-wide text-[var(--app-green)] transition-transform active:scale-[0.96] disabled:opacity-50"
           >
             Clean
           </button>

@@ -25,7 +25,7 @@ export default async function AdventuresIndex() {
   return (
     <main className="min-h-screen px-4 sm:px-8 py-10 max-w-5xl mx-auto">
       <header className="mb-10">
-        <p className="text-warm-gold/70 uppercase tracking-[0.3em] text-xs mb-3">
+        <p className="text-warm-gold/70 uppercase tracking-app-label text-xs mb-3">
           The Consilium . Adventures
         </p>
         <h1 className="text-4xl sm:text-5xl font-extralight text-white mb-4 tracking-wide">
@@ -66,12 +66,12 @@ export default async function AdventuresIndex() {
                 }`}
               >
                 <div className="flex items-center justify-between mb-3">
-                  <span className="text-warm-gold/60 uppercase tracking-[0.3em] text-[10px]">
+                  <span className="text-warm-gold/60 uppercase tracking-app-label text-app-tiny">
                     {stepLabel}
                   </span>
                   <div className="flex items-center gap-2">
                     {adv.isNew && !progress && (
-                      <span className="inline-flex items-center gap-1.5 text-[9px] uppercase tracking-[0.2em] px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-300 border border-emerald-400/30">
+                      <span className="inline-flex items-center gap-1.5 text-app-micro uppercase tracking-app-label px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-300 border border-emerald-400/30">
                         <span aria-hidden className="relative inline-flex w-1.5 h-1.5">
                           <span className="absolute inset-0 rounded-full bg-emerald-400/40 animate-ping" />
                           <span className="relative inline-block w-1.5 h-1.5 rounded-full bg-emerald-400" />
@@ -100,7 +100,7 @@ export default async function AdventuresIndex() {
                 <p className="text-text-gray/80 text-sm font-light leading-relaxed mb-4">
                   {adv.tagline}
                 </p>
-                <div className="mt-auto flex items-center gap-4 text-[10px] uppercase tracking-[0.25em] text-warm-gold/50">
+                <div className="mt-auto flex items-center gap-4 text-app-tiny uppercase tracking-app-label text-warm-gold/50">
                   <span className="inline-flex items-center gap-1">
                     <Clock size={10} strokeWidth={1.6} />
                     {adv.estimatedMinutes} min
@@ -114,7 +114,7 @@ export default async function AdventuresIndex() {
         </div>
       )}
 
-      <p className="mt-10 text-center text-text-gray/50 text-xs uppercase tracking-[0.25em]">
+      <p className="mt-10 text-center text-text-gray/50 text-xs uppercase tracking-app-label">
         Each adventure reuses scenarios from the catalog. You can replay any
         single chapter from the
         <Link

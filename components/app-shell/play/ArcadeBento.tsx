@@ -76,7 +76,7 @@ function Square({ g }: { g: BentoSquare }) {
 
       {g.popular && (
         <span
-          className="absolute left-4 top-4 text-[8.5px] uppercase tracking-[0.2em]"
+          className="absolute left-4 top-4 text-app-micro uppercase tracking-app-label"
           style={{ color: accent }}
         >
           Most played
@@ -85,7 +85,7 @@ function Square({ g }: { g: BentoSquare }) {
 
       <span className="flex h-full flex-col justify-end">
         <span
-          className="text-[30px] leading-none"
+          className="text-app-hero leading-none"
           style={{
             fontFamily: "var(--font-display)",
             color: accent,
@@ -94,10 +94,10 @@ function Square({ g }: { g: BentoSquare }) {
         >
           {g.doneToday ? "✓" : g.numeral}
         </span>
-        <span className="mt-2 block text-[13.5px] font-medium leading-tight">
+        <span className="mt-2 block text-app-body font-medium leading-tight">
           {g.name}
         </span>
-        <span className="mt-0.5 block truncate text-[11px] text-[var(--app-dim)]">
+        <span className="mt-0.5 block truncate text-app-eyebrow text-[var(--app-dim)]">
           {g.doneToday ? "Done today" : g.meta}
         </span>
       </span>
@@ -124,23 +124,23 @@ export default function ArcadeBento({ data }: { data: BentoData }) {
         <span className="flex h-full flex-col justify-between p-[18px]">
           <span className="flex items-start justify-between gap-3">
             <span
-              className="text-[9.5px] uppercase tracking-[0.3em]"
+              className="text-app-micro uppercase tracking-app-label"
               style={{ color: "var(--game-scenario)" }}
             >
               {hero.title}
             </span>
-            <span className="shrink-0 text-[9.5px] uppercase tracking-[0.2em] text-[var(--app-dim)]">
+            <span className="shrink-0 text-app-micro uppercase tracking-app-label text-[var(--app-dim)]">
               {hero.meta}
             </span>
           </span>
           <span>
             <span
-              className="block text-[25px] leading-[1.15]"
+              className="block text-app-display leading-[1.15]"
               style={{ fontFamily: "var(--font-display)" }}
             >
               {hero.fragment}
             </span>
-            <span className="mt-2 block text-[12px] text-[var(--app-muted)]">
+            <span className="mt-2 block text-app-caption text-[var(--app-muted)]">
               {hero.blurb}
             </span>
           </span>
@@ -175,13 +175,13 @@ export default function ArcadeBento({ data }: { data: BentoData }) {
           </svg>
         </span>
         <span className="min-w-0 flex-1">
-          <span className="block text-[13.5px] font-medium">{strip.name}</span>
-          <span className="mt-0.5 block truncate text-[11.5px] text-[var(--app-dim)]">
+          <span className="block text-app-body font-medium">{strip.name}</span>
+          <span className="mt-0.5 block truncate text-app-eyebrow text-[var(--app-dim)]">
             {strip.line}
           </span>
         </span>
         <span
-          className="shrink-0 text-[10px] uppercase tracking-[0.2em]"
+          className="shrink-0 text-app-tiny uppercase tracking-app-label"
           style={{ color: "var(--game-lab)" }}
         >
           {strip.cta}

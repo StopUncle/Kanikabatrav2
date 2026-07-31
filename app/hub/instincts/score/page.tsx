@@ -69,7 +69,7 @@ export default async function ConsiliumInstinctsScorePage() {
         </Link>
 
         <header className="mb-10">
-          <p className="text-accent-gold/70 text-[10px] uppercase tracking-[0.4em] mb-3">
+          <p className="text-accent-gold/70 text-app-tiny uppercase tracking-[0.4em] mb-3">
             Your Hex
           </p>
           <h1 className="text-3xl sm:text-4xl font-extralight tracking-wider uppercase text-text-light mb-2">
@@ -88,14 +88,14 @@ export default async function ConsiliumInstinctsScorePage() {
 
           <div className="space-y-6">
             <div className="rounded-lg border border-gray-800 bg-deep-black/60 p-5">
-              <p className="text-[10px] uppercase tracking-[0.4em] text-accent-gold/70 mb-3">
+              <p className="text-app-tiny uppercase tracking-[0.4em] text-accent-gold/70 mb-3">
                 Composite
               </p>
               <div className="flex items-baseline gap-3">
                 <span className="text-4xl text-text-light font-extralight">
                   {overall}
                 </span>
-                <span className={`text-sm uppercase tracking-[0.3em] ${tier(overall).color}`}>
+                <span className={`text-sm uppercase tracking-app-label ${tier(overall).color}`}>
                   {tier(overall).label}
                 </span>
               </div>
@@ -120,14 +120,14 @@ export default async function ConsiliumInstinctsScorePage() {
                     className="rounded-lg border border-gray-800 bg-deep-black/40 p-4"
                   >
                     <div className="flex items-baseline justify-between mb-1">
-                      <p className="text-text-light text-sm uppercase tracking-[0.3em]">
+                      <p className="text-text-light text-sm uppercase tracking-app-label">
                         {AXIS_LABELS[axis]}
                       </p>
                       <p className="flex items-baseline gap-3">
                         <span className="text-accent-gold text-lg font-extralight">
                           {v}
                         </span>
-                        <span className={`text-[10px] uppercase tracking-[0.3em] ${t.color}`}>
+                        <span className={`text-app-tiny uppercase tracking-app-label ${t.color}`}>
                           {t.label}
                         </span>
                       </p>

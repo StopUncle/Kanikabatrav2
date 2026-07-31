@@ -116,7 +116,7 @@ export default async function AppPostDetailPage({
     <div className="px-5 pb-8 pt-6">
       <Link
         href="/app/feed"
-        className="mb-4 inline-flex items-center gap-1.5 text-[13px] text-[var(--app-dim)]"
+        className="mb-4 inline-flex items-center gap-1.5 text-app-body text-[var(--app-dim)]"
       >
         <ArrowLeft className="h-4 w-4" />
         Feed
@@ -126,7 +126,7 @@ export default async function AppPostDetailPage({
 
       <section className="mt-6">
         <h2
-          className="mb-4 text-[18px] font-light"
+          className="mb-4 text-app-title font-light"
           style={{ fontFamily: "var(--font-display)" }}
         >
           Comments

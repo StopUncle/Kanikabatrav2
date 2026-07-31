@@ -110,13 +110,13 @@ export default async function TodayPage() {
           ringLevel={viewer?.ringLevel ?? 4}
         />
         <div
-          className="flex items-center gap-2 text-[15px] font-medium"
+          className="flex items-center gap-2 text-app-lead font-medium"
           aria-label={`${dailyStreak.current}-day streak`}
         >
           <svg viewBox="0 0 16 16" className="h-4 w-4">
             <path
               d="M8 1c1 2.6 4 3.8 4 7.2A4.2 4.2 0 0 1 8 12.5 4.2 4.2 0 0 1 4 8.2C4 6.4 5.2 5.4 5.6 4c.9.8 1.2 1.5 1.2 2.6C7.8 5.4 8 3.4 8 1z"
-              fill="#d4af37"
+              fill="var(--app-gold)"
             />
           </svg>
           {dailyStreak.current}
@@ -135,20 +135,20 @@ export default async function TodayPage() {
           className="mb-4 block rounded-[18px] border border-[var(--app-gold)]/30 bg-[var(--app-gold)]/[0.05] px-[18px] py-4"
         >
           <div className="flex items-baseline justify-between gap-3">
-            <p className="text-[10px] uppercase tracking-[0.22em] text-[var(--app-gold)]">
+            <p className="text-app-tiny uppercase tracking-app-label text-[var(--app-gold)]">
               Week {program.actionable.weekNumber} of 12
             </p>
-            <p className="shrink-0 text-[11px] tracking-[0.1em] text-[var(--app-gold)]">
+            <p className="shrink-0 text-app-eyebrow tracking-app-wide text-[var(--app-gold)]">
               OPEN →
             </p>
           </div>
           <p
-            className="mt-1.5 text-[19px] leading-tight"
+            className="mt-1.5 text-app-title leading-tight"
             style={{ fontFamily: "var(--font-display)" }}
           >
             {program.actionable.title}
           </p>
-          <p className="mt-1.5 text-[12.5px] leading-relaxed text-[var(--app-muted)]">
+          <p className="mt-1.5 text-app-caption leading-relaxed text-[var(--app-muted)]">
             {program.actionable.lede}
           </p>
         </Link>
@@ -189,23 +189,23 @@ export default async function TodayPage() {
           {latestFromKanika.voiceNoteUrl && (
             <span className="absolute left-1/2 top-[34%] flex h-16 w-16 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-[rgba(212,175,55,0.7)] bg-[rgba(10,9,8,0.55)] backdrop-blur-sm">
               <svg width="20" height="20" viewBox="0 0 20 20">
-                <path d="M6 3.5v13l11-6.5z" fill="#d4af37" />
+                <path d="M6 3.5v13l11-6.5z" fill="var(--app-gold)" />
               </svg>
             </span>
           )}
           <span className="relative p-5">
-            <span className="mb-2 block text-[11px] uppercase tracking-[0.16em] text-[var(--app-gold-soft)]">
+            <span className="mb-2 block text-app-eyebrow uppercase tracking-app-wide text-[var(--app-gold-soft)]">
               {latestFromKanika.voiceNoteUrl
                 ? "New voice note"
                 : "New from Kanika"}
             </span>
             <span
-              className="block text-[23px] font-normal leading-tight"
+              className="block text-app-display font-normal leading-tight"
               style={{ fontFamily: "var(--font-display)" }}
             >
               {latestFromKanika.title}
             </span>
-            <span className="mt-1.5 block text-[12.5px] text-[var(--app-muted)]">
+            <span className="mt-1.5 block text-app-caption text-[var(--app-muted)]">
               Kanika ·{" "}
               {latestFromKanika.createdAt.toLocaleDateString("en-US", {
                 month: "short",
@@ -217,7 +217,7 @@ export default async function TodayPage() {
       )}
 
       {/* Today's moves */}
-      <p className="mx-5 mb-2.5 text-[11px] uppercase tracking-[0.26em] text-[var(--app-dim)]">
+      <p className="mx-5 mb-2.5 text-app-eyebrow uppercase tracking-app-label text-[var(--app-dim)]">
         Today
       </p>
       <div className="mx-5 flex flex-col gap-2.5">
@@ -269,23 +269,23 @@ export default async function TodayPage() {
           }}
         >
           <span className="min-w-0 flex-1">
-            <span className="mb-1.5 block text-[11px] uppercase tracking-[0.2em] text-[var(--app-gold-soft)]">
+            <span className="mb-1.5 block text-app-eyebrow uppercase tracking-app-label text-[var(--app-gold-soft)]">
               The Path · Chapter {current.chapter.number}
             </span>
             <span
-              className="block truncate text-[17px]"
+              className="block truncate text-app-title"
               style={{ fontFamily: "var(--font-display)" }}
             >
               {current.chapter.title}
             </span>
-            <span className="mt-3 block h-[3px] overflow-hidden rounded-full bg-[rgba(212,175,55,0.15)]">
+            <span className="mt-3 block h-[3px] overflow-hidden rounded-full bg-[var(--app-line)]">
               <span
                 className="block h-full rounded-full bg-[var(--app-gold)]"
                 style={{ width: `${pathPct}%` }}
               />
             </span>
           </span>
-          <span className="shrink-0 text-xs tracking-[0.1em] text-[var(--app-gold)]">
+          <span className="shrink-0 text-xs tracking-app-wide text-[var(--app-gold)]">
             CONTINUE →
           </span>
         </Link>

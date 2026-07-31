@@ -105,17 +105,17 @@ export default function InstallSheet() {
               strokeWidth="4"
               fill="none"
             />
-            <circle cx="48" cy="48" r="6" fill="#d4af37" />
+            <circle cx="48" cy="48" r="6" fill="var(--app-gold)" />
           </svg>
         </span>
         <div>
           <h3
-            className="text-[19px]"
+            className="text-app-title"
             style={{ fontFamily: "var(--font-display)" }}
           >
             Keep it on your phone
           </h3>
-          <p className="mt-1 text-[13px] leading-relaxed text-[var(--app-muted)]">
+          <p className="mt-1 text-app-body leading-relaxed text-[var(--app-muted)]">
             {isIOS
               ? "Tap Share, then Add to Home Screen. One tap from then on."
               : "One tap from your home screen. Your streak, your scenarios, no browser."}
@@ -128,7 +128,7 @@ export default function InstallSheet() {
           <button
             type="button"
             onClick={dismiss}
-            className="flex-1 rounded-full bg-[var(--app-gold)] py-3.5 text-center text-sm font-semibold text-[#17130a]"
+            className="flex-1 rounded-full bg-[var(--app-gold)] py-3.5 text-center text-sm font-semibold text-[var(--app-on-gold)]"
           >
             Got it
           </button>
@@ -137,7 +137,7 @@ export default function InstallSheet() {
             <button
               type="button"
               onClick={install}
-              className="flex-1 rounded-full bg-[var(--app-gold)] py-3.5 text-center text-sm font-semibold text-[#17130a]"
+              className="flex-1 rounded-full bg-[var(--app-gold)] py-3.5 text-center text-sm font-semibold text-[var(--app-on-gold)]"
             >
               Add to Home Screen
             </button>

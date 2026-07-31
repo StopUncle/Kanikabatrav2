@@ -107,7 +107,7 @@ function Marker({
 }) {
   const gold = "var(--app-gold)";
   const base =
-    "relative flex h-[34px] w-[34px] items-center justify-center rounded-full text-[12px] tabular-nums transition-transform active:scale-95";
+    "relative flex h-[34px] w-[34px] items-center justify-center rounded-full text-app-caption tabular-nums transition-transform active:scale-95";
 
   if (chapter.done) {
     return (
@@ -215,11 +215,11 @@ function RungRow({ rung }: { rung: TrackRung }) {
   if (rung.locked) {
     return (
       <span className="flex items-center gap-3 px-1 py-2.5 opacity-45">
-        <span className="w-4 shrink-0 text-center text-[10px]">🔒</span>
-        <span className="min-w-0 flex-1 truncate text-[13.5px]">
+        <span className="w-4 shrink-0 text-center text-app-tiny">🔒</span>
+        <span className="min-w-0 flex-1 truncate text-app-body">
           {rung.title}
         </span>
-        <span className="shrink-0 text-[9.5px] uppercase tracking-[0.18em] text-[var(--app-dim)]">
+        <span className="shrink-0 text-app-micro uppercase tracking-app-wide text-[var(--app-dim)]">
           Locked
         </span>
       </span>
@@ -234,21 +234,21 @@ function RungRow({ rung }: { rung: TrackRung }) {
       }`}
     >
       <span
-        className="w-4 shrink-0 text-center text-[10px]"
+        className="w-4 shrink-0 text-center text-app-tiny"
         style={{ color: markColor }}
       >
         {mark}
       </span>
-      <span className="min-w-0 flex-1 truncate text-[13.5px]">
+      <span className="min-w-0 flex-1 truncate text-app-body">
         {rung.title}
       </span>
       {rung.inProgress && (
-        <span className="shrink-0 text-[9.5px] uppercase tracking-[0.18em] text-[var(--app-gold)]">
+        <span className="shrink-0 text-app-micro uppercase tracking-app-wide text-[var(--app-gold)]">
           Resume
         </span>
       )}
       {!rung.inProgress && rung.isNew && (
-        <span className="shrink-0 text-[9.5px] uppercase tracking-[0.18em] text-[var(--app-rose)]">
+        <span className="shrink-0 text-app-micro uppercase tracking-app-wide text-[var(--app-rose)]">
           New
         </span>
       )}
@@ -271,7 +271,7 @@ export default function ChapterTrail({ track }: { track: TrackSummary }) {
 
   if (chapters.length === 0) {
     return (
-      <p className="py-2 text-[12px] text-[var(--app-dim)]">
+      <p className="py-2 text-app-caption text-[var(--app-dim)]">
         Nothing in this track yet.
       </p>
     );
@@ -311,7 +311,7 @@ export default function ChapterTrail({ track }: { track: TrackSummary }) {
             <path
               d={trailPath(0, lastDone)}
               fill="none"
-              stroke="rgba(212,175,55,0.55)"
+              stroke="var(--app-gold-soft)"
               strokeWidth="2"
               strokeLinecap="round"
               vectorEffect="non-scaling-stroke"
@@ -354,19 +354,19 @@ export default function ChapterTrail({ track }: { track: TrackSummary }) {
       </div>
 
       <div className="mt-1 border-t border-[var(--app-line-soft)] pt-3">
-        <p className="text-[10px] uppercase tracking-[0.24em] text-[var(--app-gold-soft)]">
+        <p className="text-app-tiny uppercase tracking-app-label text-[var(--app-gold-soft)]">
           Chapter {selected + 1}
           {selected === current && chapters.length > 1 && (
             <span className="text-[var(--app-dim)]"> · you are here</span>
           )}
         </p>
         <p
-          className="mt-1 text-[16px] leading-tight"
+          className="mt-1 text-app-lead leading-tight"
           style={{ fontFamily: "var(--font-display)" }}
         >
           {named?.title ?? chapter.rungs[0]?.title}
         </p>
-        <p className="mt-1 text-[12.5px] leading-relaxed text-[var(--app-muted)]">
+        <p className="mt-1 text-app-caption leading-relaxed text-[var(--app-muted)]">
           {named?.blurb || chapter.rungs[0]?.tagline}
         </p>
         <div className="mt-1.5 flex flex-col">

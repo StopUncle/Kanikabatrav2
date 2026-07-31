@@ -65,34 +65,34 @@ function Locked({ nextAvailableAt }: { nextAvailableAt: Date }) {
   });
   return (
     <div className="flex min-h-full flex-col px-6 pb-10 pt-16">
-      <p className="text-[10px] uppercase tracking-[0.28em] text-[var(--app-gold-soft)]">
+      <p className="text-app-tiny uppercase tracking-app-label text-[var(--app-gold-soft)]">
         The Baseline Read
       </p>
       <h1
-        className="mt-3 text-[28px] font-light leading-tight"
+        className="mt-3 text-app-hero font-light leading-tight"
         style={{ fontFamily: "var(--font-display)" }}
       >
         You have already read this one.
       </h1>
-      <p className="mt-4 text-[15px] leading-relaxed text-[var(--app-muted)]">
+      <p className="mt-4 text-app-lead leading-relaxed text-[var(--app-muted)]">
         The same twelve rooms open again on {when}. Taking it more often
         than that measures how well you remember twelve items, which is
         not the thing worth knowing.
       </p>
-      <p className="mt-3.5 text-[15px] leading-relaxed text-[var(--app-muted)]">
+      <p className="mt-3.5 text-app-lead leading-relaxed text-[var(--app-muted)]">
         Between now and then, the daily reps are what move it.
       </p>
 
       <div className="mt-auto flex flex-col gap-3 pt-10">
         <Link
           href="/app/measure"
-          className="w-full rounded-full bg-[var(--app-gold)] py-[16px] text-center text-[15px] font-semibold text-[#17130a]"
+          className="w-full rounded-full bg-[var(--app-gold)] py-[16px] text-center text-app-lead font-semibold text-[var(--app-on-gold)]"
         >
           See The Mark
         </Link>
         <Link
           href="/app/train"
-          className="w-full text-center text-[13px] text-[var(--app-dim)]"
+          className="w-full text-center text-app-body text-[var(--app-dim)]"
         >
           Train instead
         </Link>

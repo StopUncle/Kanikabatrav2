@@ -27,7 +27,7 @@ export default async function InstinctsHistoryPage() {
         </Link>
 
         <header className="mb-10">
-          <p className="text-accent-gold/70 text-[10px] uppercase tracking-[0.4em] mb-3">
+          <p className="text-accent-gold/70 text-app-tiny uppercase tracking-[0.4em] mb-3">
             History
           </p>
           <h1 className="text-3xl sm:text-4xl font-extralight tracking-wider uppercase text-text-light mb-2">
@@ -77,7 +77,7 @@ export default async function InstinctsHistoryPage() {
                     </p>
                   </div>
                   <span
-                    className={`text-xs uppercase tracking-[0.3em] ${
+                    className={`text-xs uppercase tracking-app-label ${
                       r.scoreImpact > 0
                         ? "text-emerald-400"
                         : r.scoreImpact < 0
@@ -90,7 +90,7 @@ export default async function InstinctsHistoryPage() {
                   </span>
                   <Link
                     href={`/tells/${r.tell.slug}`}
-                    className="text-[10px] uppercase tracking-[0.3em] text-text-gray hover:text-accent-gold"
+                    className="text-app-tiny uppercase tracking-app-label text-text-gray hover:text-accent-gold"
                   >
                     Open
                   </Link>

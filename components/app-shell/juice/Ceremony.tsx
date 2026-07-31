@@ -70,8 +70,8 @@ function ActionButton({
   innerRef?: React.Ref<HTMLAnchorElement & HTMLButtonElement>;
 }) {
   const className = primary
-    ? "block w-full rounded-full bg-[var(--app-gold)] px-6 py-3.5 text-center text-[13px] font-semibold uppercase tracking-[0.16em] text-[#0a0908] transition-transform active:scale-[0.97]"
-    : "block w-full px-6 py-2.5 text-center text-[12px] uppercase tracking-[0.16em] text-[var(--app-muted)] transition-colors active:text-[var(--app-text)]";
+    ? "block w-full rounded-full bg-[var(--app-gold)] px-6 py-3.5 text-center text-app-body font-semibold uppercase tracking-app-wide text-[var(--app-on-gold)] transition-transform active:scale-[0.97]"
+    : "block w-full px-6 py-2.5 text-center text-app-caption uppercase tracking-app-wide text-[var(--app-muted)] transition-colors active:text-[var(--app-text)]";
 
   const handle = () => {
     action.onClick?.();
@@ -232,7 +232,7 @@ export default function Ceremony({
       >
         {eyebrow && (
           <p
-            className="app-rise mb-3 text-[11px] uppercase tracking-[0.26em] text-[var(--app-gold-soft)]"
+            className="app-rise mb-3 text-app-eyebrow uppercase tracking-app-label text-[var(--app-gold-soft)]"
             style={rise(BEAT.headline)}
           >
             {eyebrow}
@@ -251,7 +251,7 @@ export default function Ceremony({
 
         {subline && (
           <p
-            className="app-rise mt-3 text-[13.5px] leading-relaxed text-[var(--app-muted)]"
+            className="app-rise mt-3 text-app-body leading-relaxed text-[var(--app-muted)]"
             style={rise(BEAT.subline)}
           >
             {subline}
@@ -266,7 +266,7 @@ export default function Ceremony({
 
         {voice && (
           <p
-            className="app-rise mt-6 text-[14px] italic leading-relaxed text-[var(--app-rose)]"
+            className="app-rise mt-6 text-app-lead italic leading-relaxed text-[var(--app-rose)]"
             style={{ ...rise(BEAT.voice), fontFamily: "var(--font-display)" }}
           >
             {voice}

@@ -24,22 +24,22 @@ export default async function TellPage() {
   if (!tell) {
     return (
       <div className="px-5 pb-8 pt-6">
-        <p className="text-[11px] uppercase tracking-[0.26em] text-[var(--app-gold-soft)]">
+        <p className="text-app-eyebrow uppercase tracking-app-label text-[var(--app-gold-soft)]">
           Daily tell
         </p>
         <h1
-          className="mt-1 text-[26px] font-light leading-tight"
+          className="mt-1 text-app-hero font-light leading-tight"
           style={{ fontFamily: "var(--font-display)" }}
         >
           Being prepared.
         </h1>
-        <p className="mt-3 text-[13.5px] leading-relaxed text-[var(--app-muted)]">
+        <p className="mt-3 text-app-body leading-relaxed text-[var(--app-muted)]">
           There is no Tell published for today yet. Nothing you did. Check back
           later, or go and run the drill.
         </p>
         <Link
           href="/app/play/drill"
-          className="mt-6 inline-block rounded-full bg-[var(--app-gold)] px-6 py-3 text-[12.5px] font-semibold uppercase tracking-[0.16em] text-[#0a0908]"
+          className="mt-6 inline-block rounded-full bg-[var(--app-gold)] px-6 py-3 text-app-caption font-semibold uppercase tracking-app-wide text-[var(--app-on-gold)]"
         >
           Run the drill
         </Link>

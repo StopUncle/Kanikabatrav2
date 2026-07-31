@@ -27,13 +27,13 @@ export default function Move({ href, title, sub, cta = "GO", done, icon }: Props
         {icon}
       </span>
       <span className="min-w-0 flex-1">
-        <span className="block truncate text-[14.5px] font-medium">{title}</span>
+        <span className="block truncate text-app-lead font-medium">{title}</span>
         <span className="mt-0.5 block truncate text-xs text-[var(--app-dim)]">
           {sub}
         </span>
       </span>
       <span
-        className={`shrink-0 text-xs tracking-[0.1em] ${
+        className={`shrink-0 text-xs tracking-app-wide ${
           done ? "text-[var(--app-green)]" : "text-[var(--app-gold)]"
         }`}
       >

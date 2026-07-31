@@ -32,7 +32,7 @@ export default async function ReceiptsPage() {
     <div className="min-h-screen px-4 py-10 sm:py-14">
       <div className="max-w-3xl mx-auto">
         <header className="mb-10">
-          <p className="text-accent-gold/70 text-[10px] uppercase tracking-[0.4em] mb-3">
+          <p className="text-accent-gold/70 text-app-tiny uppercase tracking-[0.4em] mb-3">
             Receipts
           </p>
           <h1 className="text-3xl sm:text-4xl font-extralight tracking-wider uppercase text-text-light mb-3">

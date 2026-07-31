@@ -55,7 +55,7 @@ export default function StatTile({
 
   const number = (
     <p
-      className="text-[24px] font-light tabular-nums"
+      className="text-app-display font-light tabular-nums"
       style={{ fontFamily: "var(--font-display)", color }}
     >
       {shown.toLocaleString(undefined, {
@@ -63,7 +63,7 @@ export default function StatTile({
         maximumFractionDigits: decimals,
       })}
       {suffix && (
-        <span className="text-[15px] text-[var(--app-dim)]">{suffix}</span>
+        <span className="text-app-lead text-[var(--app-dim)]">{suffix}</span>
       )}
     </p>
   );
@@ -84,11 +84,11 @@ export default function StatTile({
       ) : (
         number
       )}
-      <p className="mt-1 text-[11px] leading-tight text-[var(--app-dim)]">
+      <p className="mt-1 text-app-eyebrow leading-tight text-[var(--app-dim)]">
         {label}
       </p>
       {hint && (
-        <p className="mt-0.5 text-[10px] leading-tight text-[var(--app-dim)] opacity-70">
+        <p className="mt-0.5 text-app-tiny leading-tight text-[var(--app-dim)] opacity-70">
           {hint}
         </p>
       )}

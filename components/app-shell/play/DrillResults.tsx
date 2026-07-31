@@ -32,19 +32,19 @@ export default function DrillResults({
     <div className="px-5 pb-[max(28px,env(safe-area-inset-bottom))] pt-6">
       <div className="flex items-start justify-between">
         <div>
-          <p className="text-[11px] uppercase tracking-[0.26em] text-[var(--app-gold-soft)]">
+          <p className="text-app-eyebrow uppercase tracking-app-label text-[var(--app-gold-soft)]">
             Speed drill
           </p>
           <p
-            className="mt-1 text-[30px] font-light leading-none"
+            className="mt-1 text-app-hero font-light leading-none"
             style={{ fontFamily: "var(--font-display)" }}
           >
             {score}
-            <span className="text-[19px] text-[var(--app-dim)]">
+            <span className="text-app-title text-[var(--app-dim)]">
               /{answers.length}
             </span>
           </p>
-          <p className="mt-1.5 text-[12px] text-[var(--app-dim)]">
+          <p className="mt-1.5 text-app-caption text-[var(--app-dim)]">
             {accuracy}% accuracy · best run of {maxCombo}
             {standing !== null && standing > 0 && ` · +${standing} Standing`}
           </p>
@@ -70,7 +70,7 @@ export default function DrillResults({
         <>
           {/* Not "what got through": half of these are the opposite error,
               a clean line you called manipulation. Both are misreads. */}
-          <p className="mb-2.5 mt-8 text-[11px] uppercase tracking-[0.26em] text-[var(--app-dim)]">
+          <p className="mb-2.5 mt-8 text-app-eyebrow uppercase tracking-app-label text-[var(--app-dim)]">
             The ones you missed
           </p>
           <div className="flex flex-col gap-2.5">
@@ -80,14 +80,14 @@ export default function DrillResults({
                 className="rounded-2xl border border-[rgba(183,110,121,0.22)] bg-[var(--app-card)] p-4"
               >
                 <p
-                  className="text-[15px] leading-snug"
+                  className="text-app-lead leading-snug"
                   style={{ fontFamily: "var(--font-display)" }}
                 >
                   {a.card.line}
                 </p>
                 {/* The truth is colour-coded by what the line actually was,
                     so "Clean" never wears the tactic accent. */}
-                <p className="mt-2 text-[11.5px] text-[var(--app-muted)]">
+                <p className="mt-2 text-app-eyebrow text-[var(--app-muted)]">
                   <span
                     style={{
                       color: a.card.manipulative
@@ -107,12 +107,12 @@ export default function DrillResults({
       ) : (
         <div className="mt-8 rounded-2xl border border-[rgba(127,184,144,0.25)] bg-[var(--app-card)] p-5 text-center">
           <p
-            className="text-[17px]"
+            className="text-app-title"
             style={{ fontFamily: "var(--font-display)" }}
           >
             Nothing got through.
           </p>
-          <p className="mt-1.5 text-[12.5px] text-[var(--app-muted)]">
+          <p className="mt-1.5 text-app-caption text-[var(--app-muted)]">
             Ten for ten. Come back tomorrow and do it tired.
           </p>
         </div>
@@ -122,13 +122,13 @@ export default function DrillResults({
         <button
           type="button"
           onClick={onReplay}
-          className="w-full rounded-full bg-[var(--app-gold)] py-3.5 text-[12.5px] font-semibold uppercase tracking-[0.16em] text-[#0a0908] transition-transform active:scale-[0.97]"
+          className="w-full rounded-full bg-[var(--app-gold)] py-3.5 text-app-caption font-semibold uppercase tracking-app-wide text-[var(--app-on-gold)] transition-transform active:scale-[0.97]"
         >
           Run it again
         </button>
         <Link
           href="/app/train"
-          className="w-full py-2.5 text-center text-[12px] uppercase tracking-[0.16em] text-[var(--app-muted)]"
+          className="w-full py-2.5 text-center text-app-caption uppercase tracking-app-wide text-[var(--app-muted)]"
         >
           Back to Train
         </Link>

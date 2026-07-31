@@ -75,7 +75,7 @@ export default async function PreviewDetailPage({ params }: PageProps) {
       <div className="mb-6 rounded-2xl border border-warm-gold/30 bg-warm-gold/5 px-5 py-4">
         <div className="flex items-center gap-2 mb-1.5">
           <Clock size={14} strokeWidth={1.5} className="text-warm-gold" />
-          <p className="text-[10px] uppercase tracking-[0.3em] text-warm-gold font-medium">
+          <p className="text-app-tiny uppercase tracking-app-label text-warm-gold font-medium">
             Members Only · Preview
           </p>
         </div>
@@ -95,7 +95,7 @@ export default async function PreviewDetailPage({ params }: PageProps) {
 
       {/* Title + meta */}
       <header className="mb-8 pb-6 border-b border-warm-gold/15">
-        <div className="flex items-center gap-3 text-[10px] uppercase tracking-[0.22em] text-text-gray/70 mb-4 flex-wrap">
+        <div className="flex items-center gap-3 text-app-tiny uppercase tracking-app-label text-text-gray/70 mb-4 flex-wrap">
           <span className="text-warm-gold/90">{post.frontmatter.category}</span>
           <span className="text-text-gray/40">·</span>
           <span>{post.readingTime}</span>

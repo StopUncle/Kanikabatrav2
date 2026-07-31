@@ -24,7 +24,7 @@ export default async function PreviewsPage() {
     <div className="max-w-3xl mx-auto px-3 sm:px-4 py-6 sm:py-10 lg:py-14">
       {/* Heading */}
       <header className="mb-10">
-        <p className="text-warm-gold/90 uppercase tracking-[0.3em] text-xs sm:text-sm mb-3">
+        <p className="text-warm-gold/90 uppercase tracking-app-label text-xs sm:text-sm mb-3">
           Consilium · Early Access
         </p>
         <h1 className="text-3xl sm:text-4xl font-extralight tracking-wider uppercase gradient-text-gold mb-3">
@@ -71,7 +71,7 @@ export default async function PreviewsPage() {
               >
                 {/* Meta row */}
                 <div className="flex items-center gap-3 mb-3 flex-wrap">
-                  <span className="inline-flex items-center gap-1.5 text-[10px] uppercase tracking-[0.22em] text-warm-gold bg-warm-gold/10 border border-warm-gold/30 rounded-full px-2.5 py-1 font-medium">
+                  <span className="inline-flex items-center gap-1.5 text-app-tiny uppercase tracking-app-label text-warm-gold bg-warm-gold/10 border border-warm-gold/30 rounded-full px-2.5 py-1 font-medium">
                     <Clock size={11} strokeWidth={1.75} />
                     {daysOut === 0
                       ? "Goes public today"
@@ -79,10 +79,10 @@ export default async function PreviewsPage() {
                         ? "Goes public tomorrow"
                         : `Goes public in ${daysOut} days · ${dateLabel}`}
                   </span>
-                  <span className="text-[10px] uppercase tracking-[0.18em] text-text-gray/60">
+                  <span className="text-app-tiny uppercase tracking-app-wide text-text-gray/60">
                     {post.frontmatter.category}
                   </span>
-                  <span className="text-[10px] text-text-gray/50">
+                  <span className="text-app-tiny text-text-gray/50">
                     {post.readingTime}
                   </span>
                 </div>
@@ -98,7 +98,7 @@ export default async function PreviewsPage() {
                 </p>
 
                 {/* CTA */}
-                <span className="inline-flex items-center gap-1.5 text-xs text-warm-gold/80 group-hover:text-warm-gold transition-colors tracking-[0.15em] uppercase">
+                <span className="inline-flex items-center gap-1.5 text-xs text-warm-gold/80 group-hover:text-warm-gold transition-colors tracking-app-wide uppercase">
                   Read now
                   <ArrowRight
                     size={12}
