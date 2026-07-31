@@ -39,8 +39,10 @@ export default function DailySetCard({
 
   let line: string;
   if (set.total === 0) line = "Nothing to train today. Rare, and not your doing.";
-  else if (complete) line = "Both done. Today is banked.";
-  else if (set.done === 0) line = "Two games, two minutes.";
+  else if (complete)
+    line = set.total === 1 ? "Done. Today is banked." : "Both done. Today is banked.";
+  else if (set.done === 0)
+    line = set.total === 1 ? "One game, one minute." : "Two games, two minutes.";
   else line = `One left: ${set.nextTitle}.`;
 
   const body = (

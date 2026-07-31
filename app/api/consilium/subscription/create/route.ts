@@ -53,8 +53,31 @@ export async function POST(request: NextRequest) {
     }
 
     if (membership?.status === "SUSPENDED") {
+      // A payment-suspended or paused member still has a live Stripe
+      // subscription in dunning. The honest fix is the billing portal:
+      // updating the card lets Stripe's retry fire invoice.payment_succeeded,
+      // which already reactivates the membership. Creating a second
+      // subscription here would double-bill them.
+      const recoverable =
+        (membership.suspendReason === "payment-failed" ||
+          membership.suspendReason === "payment-paused" ||
+          membership.suspendReason === "member-requested-pause") &&
+        membership.paypalSubscriptionId?.startsWith("ST-");
+      if (recoverable) {
+        return NextResponse.json(
+          {
+            error:
+              "Your membership is still here. The last payment did not go through.",
+            action: "portal",
+          },
+          { status: 409 },
+        );
+      }
       return NextResponse.json(
-        { error: "Membership suspended" },
+        {
+          error:
+            "Your membership is suspended. Contact Kanika@kanikarose.com and we will sort it out.",
+        },
         { status: 403 },
       );
     }

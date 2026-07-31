@@ -89,6 +89,9 @@ export default function UpgradeSheet({
   const [cycle, setCycle] = useState<"annual" | "monthly">("annual");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  // Set when the server says the member still has a live subscription in
+  // dunning. The fix is their card, not a second checkout.
+  const [paymentProblem, setPaymentProblem] = useState(false);
 
   // Report the wall once per opening, with the trigger that caused it. This
   // is the number the free tier is judged on: which moment converts.
@@ -121,7 +124,14 @@ export default function UpgradeSheet({
       const data = (await res.json()) as {
         checkoutUrl?: string;
         error?: string;
+        action?: string;
       };
+      if (res.status === 409 && data.action === "portal") {
+        setPaymentProblem(true);
+        setError(data.error ?? null);
+        setBusy(false);
+        return;
+      }
       if (!res.ok || !data.checkoutUrl) {
         // Stay on the sheet and say so. Bouncing someone out of the app at
         // the moment they tried to pay is worse than the error itself.
@@ -130,6 +140,26 @@ export default function UpgradeSheet({
         return;
       }
       window.location.href = data.checkoutUrl;
+    } catch {
+      setError("That did not go through. Try again in a moment.");
+      setBusy(false);
+    }
+  }
+
+  async function openPortal() {
+    setBusy(true);
+    capture(ANALYTICS_EVENTS.UPGRADE_STARTED, { trigger, path: "portal" });
+    try {
+      const res = await fetch("/api/consilium/subscription/portal", {
+        method: "POST",
+      });
+      const data = (await res.json()) as { url?: string; error?: string };
+      if (!res.ok || !data.url) {
+        setError(data.error || "That did not go through. Try again in a moment.");
+        setBusy(false);
+        return;
+      }
+      window.location.href = data.url;
     } catch {
       setError("That did not go through. Try again in a moment.");
       setBusy(false);
@@ -177,6 +207,33 @@ export default function UpgradeSheet({
             ))}
           </ul>
 
+          {paymentProblem ? (
+            <div className="mt-6">
+              <p className="text-[13.5px] leading-relaxed text-[var(--app-muted)]">
+                Your membership is still here. The last payment did not go
+                through, so the fix is your card, not a new checkout.
+              </p>
+              <button
+                type="button"
+                onClick={openPortal}
+                disabled={busy}
+                className="mt-4 w-full rounded-full bg-[var(--app-gold)] px-5 py-3.5 text-[13px] uppercase tracking-app-wide text-[var(--app-on-gold)] disabled:opacity-60"
+              >
+                {busy ? "One moment" : "Fix payment"}
+              </button>
+              {error && (
+                <p className="mt-3 text-[12.5px] text-[var(--app-rose)]">{error}</p>
+              )}
+              <button
+                type="button"
+                onClick={onClose}
+                className="mt-2 w-full py-3 text-[12.5px] text-[var(--app-dim)]"
+              >
+                Not now
+              </button>
+            </div>
+          ) : (
+            <>
           {/* Annual first and pre-selected, monthly beneath it. */}
           <div className="mt-6 flex flex-col gap-2">
             <button
@@ -235,6 +292,8 @@ export default function UpgradeSheet({
           >
             Not now
           </button>
+            </>
+          )}
         </div>
       </div>
     </div>

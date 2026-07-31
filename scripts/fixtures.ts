@@ -137,6 +137,30 @@ const PERSONAS: Persona[] = [
     },
   },
   {
+    key: "suspended",
+    name: "Sasha Suspended",
+    purpose:
+      "Card failed, membership suspended, Stripe subscription still in dunning. The account the portal recovery path exists for.",
+    build: async (userId) => {
+      const data = {
+        status: "SUSPENDED" as const,
+        billingCycle: "monthly",
+        expiresAt: day(-20),
+        suspendReason: "payment-failed",
+        paypalSubscriptionId: `ST-fixture-${userId.slice(0, 8)}`,
+      };
+      await prisma.communityMembership.upsert({
+        where: { userId },
+        create: { userId, ...data },
+        update: data,
+      });
+      await prisma.user.update({
+        where: { id: userId },
+        data: { createdAt: day(90), lastSeenAt: day(2), standing: 480, ringLevel: 3, initiationAt: day(90) },
+      });
+    },
+  },
+  {
     key: "power",
     name: "Vera Veteran",
     purpose:
