@@ -1,7 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { verifyCronSecret } from "@/lib/cron-auth";
 import { prisma } from "@/lib/prisma";
-import { buildDormantReengagementEmailEntry } from "@/lib/email-sequences";
+import {
+  buildDormantReengagementEmailEntry,
+  buildFreeDormantEmailEntry,
+} from "@/lib/email-sequences";
 
 /**
  * Cron: dormant-member re-engagement.
@@ -114,12 +117,79 @@ export async function POST(request: NextRequest) {
       sent++;
     }
 
+    // Free-tier pass. Same 14-day dormancy bar, but only for accounts
+    // that actually used the app (sat the Arrival or played at least
+    // once): a registrant who never came in gets the onboarding drip,
+    // not a "come back" for a place they never were. Free accounts have
+    // no membership row to stamp a cooldown on, so the dedupe reads
+    // this sequence's own EmailQueue rows inside the cooldown window.
+    const freeCandidates = await prisma.user.findMany({
+      where: {
+        isBot: false,
+        isTrainingBot: false,
+        isBanned: false,
+        OR: [
+          { arrivalAt: { not: null } },
+          { dailyStreakLastDate: { not: null } },
+        ],
+        NOT: { communityMembership: { status: "ACTIVE" } },
+      },
+      select: {
+        email: true,
+        name: true,
+        lastSeenAt: true,
+        createdAt: true,
+      },
+    });
+
+    const recentFreeSends = await prisma.emailQueue.findMany({
+      where: {
+        sequence: "free-dormant-reengagement",
+        createdAt: { gte: cooldownCutoff },
+      },
+      select: { recipientEmail: true },
+    });
+    const recentFreeSet = new Set(
+      recentFreeSends.map((r) => r.recipientEmail.toLowerCase()),
+    );
+
+    let freeScanned = 0;
+    let freeSent = 0;
+    let freeSkippedCooldown = 0;
+    let freeSkippedRecent = 0;
+
+    for (const u of freeCandidates) {
+      freeScanned++;
+      if (!u.email) continue;
+      const email = u.email.toLowerCase();
+
+      const lastTouch = u.lastSeenAt ?? u.createdAt;
+      if (lastTouch >= dormancyCutoff) {
+        freeSkippedRecent++;
+        continue;
+      }
+      if (recentFreeSet.has(email)) {
+        freeSkippedCooldown++;
+        continue;
+      }
+
+      await prisma.emailQueue.create({
+        data: buildFreeDormantEmailEntry(email, u.name || "there"),
+      });
+      recentFreeSet.add(email);
+      freeSent++;
+    }
+
     return NextResponse.json({
       success: true,
       scanned,
       sent,
       skippedCooldown,
       skippedRecent,
+      freeScanned,
+      freeSent,
+      freeSkippedCooldown,
+      freeSkippedRecent,
     });
   } catch (error) {
     console.error("[cron/dormant-member] error:", error);

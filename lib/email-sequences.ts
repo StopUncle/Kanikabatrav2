@@ -3724,3 +3724,65 @@ export function buildFreeOnboardingDrip(
     },
   ];
 }
+
+// ============================================================
+// Free-tier dormant re-engagement, single-shot.
+//
+// Triggered by /api/cron/dormant-member for free accounts that
+// actually used the app (sat the Arrival or played at least once)
+// and then went dark for 14+ days. The member cron stamps its
+// cooldown on the membership row; free accounts have none, so the
+// cron dedupes against this sequence's own EmailQueue rows.
+// ============================================================
+
+function buildFreeDormantEmail(name: string): string {
+  const appUrl = freeAppUrl("dormant-mission");
+
+  const body = `
+    <p style="color: #f5f0ed; font-size: 16px; margin: 0 0 20px 0; line-height: 1.7;">
+      ${esc(name)},
+    </p>
+
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 20px 0; font-size: 15px;">
+      Haven&rsquo;t seen you in the app in a bit. No guilt-trip, life has rhythms; just a flag in case it slipped off your radar.
+    </p>
+
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 20px 0; font-size: 15px;">
+      Nothing you built is gone. Your Standing held exactly where you left it, and there is a fresh mission waiting today, two minutes, one scene.
+    </p>
+
+    <table role="presentation" cellspacing="0" cellpadding="0" border="0" style="margin: 0 0 25px 0;">
+      <tr>
+        <td bgcolor="#d4af37" style="border-radius: 8px;">
+          <a href="${appUrl}" style="display: inline-block; padding: 14px 32px; color: #0a0a0a; text-decoration: none; font-size: 14px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase;">
+            Pick it back up
+          </a>
+        </td>
+      </tr>
+    </table>
+
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0; font-size: 15px;">
+      One scene or one Speed Drill restarts the rhythm. If the timing&rsquo;s just bad, that&rsquo;s a real answer too; the door stays open.
+    </p>`;
+
+  return emailShell("Your Standing held", "The Consilium", body);
+}
+
+export function buildFreeDormantEmailEntry(
+  recipientEmail: string,
+  recipientName: string,
+): EmailQueueEntry {
+  return {
+    recipientEmail,
+    recipientName,
+    sequence: "free-dormant-reengagement",
+    step: 1,
+    subject: "Your Standing held",
+    htmlBody: withMarketingFooter(
+      buildFreeDormantEmail(recipientName),
+      recipientEmail,
+    ),
+    scheduledAt: new Date(),
+    metadata: { ...MARKETING_META, type: "free-dormant-reengage" },
+  };
+}
