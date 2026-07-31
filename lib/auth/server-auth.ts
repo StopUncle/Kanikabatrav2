@@ -146,7 +146,7 @@ export async function requireServerAuth(redirectPath: string): Promise<string> {
     return "dev-admin";
   }
 
-  redirect(`/login?redirect=${redirectPath}`);
+  redirect(`/login?redirect=${encodeURIComponent(redirectPath)}`);
 }
 
 /**

@@ -6,6 +6,7 @@ import { generateTokenPair } from "@/lib/auth/jwt";
 import { CreateUserData } from "@/lib/auth/types";
 import { enforceRateLimit, getClientIp, limits } from "@/lib/rate-limit";
 import { prisma } from "@/lib/prisma";
+import { sendFreeWelcome } from "@/lib/email";
 import {
   buildAttributionRecord,
   type AttributionPayload,
@@ -72,6 +73,11 @@ export async function POST(request: NextRequest) {
     } catch (err) {
       console.error("[register] attribution stamp failed:", err);
     }
+
+    // The free welcome. Fire and forget: the email points them at the
+    // app they are already being redirected into, so a send failure
+    // costs nothing the product has not already given them.
+    void sendFreeWelcome(user.email).catch(() => {});
 
     // Generate tokens, embed tokenVersion (0 for new users) so password
     // resets and logouts can invalidate them immediately.

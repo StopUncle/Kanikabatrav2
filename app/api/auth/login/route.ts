@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { markSeen } from "@/lib/analytics/seen";
+import { captureServerAsync } from "@/lib/analytics/server";
+import { ANALYTICS_EVENTS } from "@/lib/analytics/events";
 import { PrismaUserDatabase } from "@/lib/auth/prisma-database";
 import { generateTokenPair } from "@/lib/auth/jwt";
 import { LoginCredentials } from "@/lib/auth/types";
@@ -88,6 +90,7 @@ export async function POST(request: NextRequest) {
     // user is signing in cold. Non-blocking. markSeen also notices the
     // first return on or after day 7 and reports it once.
     void markSeen(user.id);
+    captureServerAsync(user.id, ANALYTICS_EVENTS.LOGIN);
 
     return response;
   } catch (error: unknown) {

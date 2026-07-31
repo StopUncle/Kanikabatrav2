@@ -1413,7 +1413,12 @@ export const sendQuizResults = async (
 // were removed when the application gate came out (2026-04-19).
 // ============================================
 
-const luxuryEmailShell = (innerHtml: string, headerTitle: string, headerSub: string): string => `
+const luxuryEmailShell = (
+  innerHtml: string,
+  headerTitle: string,
+  headerSub: string,
+  preheader: string = "A thank-you from Kanika, one month inside The Consilium, on the house.",
+): string => `
   <!DOCTYPE html>
   <html lang="en" style="background-color: #1a0d11;">
   <head>
@@ -1465,7 +1470,7 @@ const luxuryEmailShell = (innerHtml: string, headerTitle: string, headerSub: str
     <!-- Hidden preheader, shows as snippet preview next to subject in most
          inbox lists. Burns 90 NBSPs so other quoted content doesn't leak in. -->
     <div style="display: none; max-height: 0; overflow: hidden; opacity: 0; visibility: hidden; mso-hide: all; font-size: 1px; line-height: 1px; color: #1a0d11;">
-      A thank-you from Kanika, one month inside The Consilium, on the house.
+      ${preheader}
       &#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;
     </div>
     <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" bgcolor="#1a0d11" style="background-color: #1a0d11; width: 100%;">
@@ -1880,6 +1885,62 @@ export const sendInnerCircleWelcomeNewUser = async (
     to: userEmail,
     subject: "Welcome to The Consilium, set your password",
     html: luxuryEmailShell(inner, "Welcome", "Your account is ready"),
+  });
+};
+
+export const sendFreeWelcome = async (userEmail: string): Promise<boolean> => {
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://kanikarose.com";
+  const appUrl = `${baseUrl}/app`;
+
+  const inner = `
+    <p style="color: #f5f0ed; font-size: 18px; margin: 0 0 20px 0; line-height: 1.6;">
+      You made an account. Here is what that actually gets you, today, for nothing.
+    </p>
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 12px 0; font-size: 15px;">
+      <span style="color: #d4af37;">The Simulator's opening scenarios.</span>
+      Branching conversations where you practice reading manipulation while it is happening.
+    </p>
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 12px 0; font-size: 15px;">
+      <span style="color: #d4af37;">The Speed Drill.</span>
+      Sixty seconds. Ten lines. Call each one manipulative or clean.
+    </p>
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 25px 0; font-size: 15px;">
+      <span style="color: #d4af37;">The Daily Tell.</span>
+      One read a day, streaks kept, and Kanika explains what every wrong answer looked like from the inside.
+    </p>
+    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="margin: 0 0 25px 0;">
+      <tr>
+        <td align="center">
+          <table role="presentation" cellspacing="0" cellpadding="0" border="0">
+            <tr>
+              <td bgcolor="#d4af37" style="border-radius: 50px;" align="center">
+                <a href="${appUrl}" target="_blank" style="display: inline-block; color: #050511; padding: 18px 50px; text-decoration: none; font-weight: 700; font-size: 16px; letter-spacing: 1px; text-transform: uppercase; border-radius: 50px;">Open the app</a>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 25px 0; font-size: 15px;">
+      Open it on your phone and add it to your home screen. It installs like an app because it is one.
+    </p>
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 25px 0; font-size: 14px;">
+      Some doors inside are gold-locked: the Feed, Kanika's voice notes, the Mark, The 12 Weeks. That is the membership. You will see the locks when you reach them.
+    </p>
+    <p style="color: #f5f0ed; line-height: 1.8; margin: 0; font-size: 15px;">
+      &mdash; Kanika
+    </p>
+  `;
+
+  return await sendEmail({
+    to: userEmail,
+    subject: "Your account is live. Here is what it opens.",
+    html: luxuryEmailShell(
+      inner,
+      "Welcome",
+      "The Consilium, free tier",
+      "The Simulator, the Speed Drill and the Daily Tell are open. Here is where.",
+    ),
   });
 };
 

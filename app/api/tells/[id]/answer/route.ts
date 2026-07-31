@@ -16,6 +16,8 @@ import {
   staleCredentialResponse,
 } from "@/lib/tells/auth-context";
 import { recordAnswer, RecordAnswerInputError } from "@/lib/tells/db";
+import { captureServerAsync } from "@/lib/analytics/server";
+import { ANALYTICS_EVENTS } from "@/lib/analytics/events";
 import { prisma } from "@/lib/prisma";
 import { bumpDailyStreak } from "@/lib/streak/daily";
 import { grantStanding } from "@/lib/standing/grant";
@@ -92,6 +94,9 @@ export async function POST(
       // and open the rank-up ceremony off `rangUp`. A grant failure degrades
       // to a null field and never costs the member their recorded answer.
       if (!result.isReplay) {
+        captureServerAsync(uid, ANALYTICS_EVENTS.TELL_ANSWERED, {
+          correct: result.correct,
+        });
         const axisBonus = result.correct
           ? Object.keys(result.axesImpact).length * STANDING.TELL_CORRECT_AXIS
           : 0;

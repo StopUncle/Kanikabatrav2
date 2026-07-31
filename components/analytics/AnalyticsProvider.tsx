@@ -38,6 +38,17 @@ function AnalyticsRouteReporter() {
     if (pathname === "/app/welcome") {
       capture(ANALYTICS_EVENTS.ARRIVAL_VIEWED);
     }
+
+    if (pathname === "/app" || pathname.startsWith("/app/")) {
+      try {
+        if (!sessionStorage.getItem("kb-app-entered")) {
+          sessionStorage.setItem("kb-app-entered", "1");
+          capture(ANALYTICS_EVENTS.APP_ENTERED);
+        }
+      } catch {
+        /* private-mode storage refusals should not break navigation */
+      }
+    }
   }, [pathname, searchParams]);
 
   return null;

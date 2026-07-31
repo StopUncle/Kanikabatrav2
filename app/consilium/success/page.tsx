@@ -84,7 +84,7 @@ function SuccessContent() {
                 Your seat is confirmed. The courses, feed, and council are yours.
               </p>
               <Link
-                href="/consilium/feed"
+                href="/app"
                 className="inline-flex items-center gap-2 py-4 px-10 rounded-full text-deep-black font-medium tracking-wider uppercase transition-all hover:shadow-lg"
                 style={{
                   background: "linear-gradient(135deg, #720921, #6366f1)",
@@ -114,7 +114,7 @@ function SuccessContent() {
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <Link
-                  href="/consilium/feed"
+                  href="/app"
                   className="inline-flex items-center gap-2 py-3 px-8 rounded-full bg-accent-gold/10 border border-accent-gold/30 text-accent-gold font-medium hover:bg-accent-gold/20 transition-colors"
                 >
                   Try Entering <ArrowRight className="w-4 h-4" />

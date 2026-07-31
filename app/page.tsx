@@ -255,6 +255,16 @@ export default function Home() {
                 Explore Private Coaching &rarr;
               </Link>
             </p>
+            <p className="text-center text-text-gray/60 text-sm mt-3 font-light">
+              Or start free.{" "}
+              <Link
+                href="/register"
+                className="text-accent-gold hover:text-accent-gold/80 transition-colors"
+              >
+                Create an account
+              </Link>{" "}
+              and train in the app before you spend a dollar.
+            </p>
           </div>
         </section>
 

@@ -59,7 +59,7 @@ export default async function InitiationPage({
   ]);
 
   if (user?.initiationAt) {
-    redirect("/consilium/chamber");
+    redirect("/app");
   }
 
   // A completed scenario anywhere in their history means they know the

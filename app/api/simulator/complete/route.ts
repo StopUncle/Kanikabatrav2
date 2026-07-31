@@ -43,6 +43,8 @@ import { bumpDailyStreak } from "@/lib/streak/daily";
 import { grantStanding } from "@/lib/standing/grant";
 import { STANDING } from "@/lib/standing/config";
 import { getDailyMission } from "@/lib/streak/daily-mission";
+import { captureServerAsync } from "@/lib/analytics/server";
+import { ANALYTICS_EVENTS } from "@/lib/analytics/events";
 import { logger } from "@/lib/logger";
 
 const CompleteBody = z.object({
@@ -417,6 +419,14 @@ export async function POST(request: NextRequest) {
         source: "SCENARIO",
         encounters: encountersFromScenarioRun(scenario, body.choicesMade),
         dedupe: true,
+      });
+
+      captureServerAsync(user.id, ANALYTICS_EVENTS.SCENARIO_COMPLETED, {
+        scenarioId: body.scenarioId,
+        outcome: safeOutcome,
+        xpEarned: safeXp,
+        firstCompletion: wasFirstCompletion,
+        markRecorded: markWritten > 0,
       });
 
       return NextResponse.json({

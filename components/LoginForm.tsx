@@ -8,6 +8,7 @@ import { z } from "zod";
 import { m } from "framer-motion";
 import { Eye, EyeOff, Mail, Lock, LogIn } from "lucide-react";
 import { migrateLocalStreakIfPresent } from "@/lib/tells/migrate-streak-client";
+import { identify } from "@/lib/analytics/client";
 
 const loginSchema = z.object({
   email: z.string().email("Invalid email address"),
@@ -62,12 +63,15 @@ export default function LoginForm() {
       // Fire-and-forget, never blocks the redirect.
       migrateLocalStreakIfPresent();
 
-      // Login successful. Explicit returnTo wins; otherwise ACTIVE
-      // members land in the Chamber (the member home), everyone else
-      // on the dashboard.
-      router.push(
-        returnTo || (result.isActiveMember ? "/app" : "/dashboard"),
-      );
+      // Merge this browser's anonymous analytics person into the account.
+      if (result.user?.id) {
+        identify(result.user.id);
+      }
+
+      // Login successful. Explicit returnTo wins; otherwise everyone
+      // lands in the app. It is the free tier's home as much as the
+      // member's, and the per-surface gates handle the difference.
+      router.push(returnTo || "/app");
       router.refresh();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Login failed");

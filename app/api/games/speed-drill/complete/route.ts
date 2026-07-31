@@ -22,6 +22,8 @@ import { STANDING } from "@/lib/standing/config";
 import { DRILL_CARDS, DRILL_BANK } from "@/lib/games/speed-drill/content";
 import { recordEncounters } from "@/lib/mark/encounters";
 import { encountersFromDrillAnswers } from "@/lib/mark/sources/drill";
+import { captureServerAsync } from "@/lib/analytics/server";
+import { ANALYTICS_EVENTS } from "@/lib/analytics/events";
 import { logger } from "@/lib/logger";
 
 const CompleteBody = z.object({
@@ -195,6 +197,12 @@ export async function POST(request: NextRequest) {
           dedupe: true,
         });
       }
+
+      captureServerAsync(user.id, ANALYTICS_EVENTS.DRILL_COMPLETED, {
+        score,
+        accuracy,
+        tier: body.tier,
+      });
 
       return NextResponse.json({ session, streak, standing });
     } catch (err) {

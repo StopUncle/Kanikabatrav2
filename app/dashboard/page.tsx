@@ -337,6 +337,34 @@ export default async function DashboardPage() {
             />
           </section>
 
+          {/* THE APP — the daily training ground, free tier included */}
+          <section className="mb-16">
+            <SectionHead label="The app" caption="Your daily training ground" />
+            <div className="rounded-3xl border border-warm-gold/40 bg-warm-gold/[0.04] p-8 sm:p-10">
+              <div className="flex flex-col sm:flex-row sm:items-center gap-6 sm:justify-between">
+                <div>
+                  <h2
+                    className="text-2xl sm:text-3xl font-extralight tracking-wider uppercase mb-3"
+                    style={IMPERIAL_GOLD}
+                  >
+                    The Consilium App
+                  </h2>
+                  <p className="text-text-gray text-base leading-relaxed max-w-xl">
+                    The Simulator, the Speed Drill, the Daily Tell. On your
+                    phone or right here, and the opening scenarios cost
+                    nothing.
+                  </p>
+                </div>
+                <Link
+                  href="/app"
+                  className="inline-flex shrink-0 items-center gap-2 rounded-full bg-warm-gold px-8 py-3.5 text-xs font-medium uppercase tracking-[0.25em] text-deep-black transition-colors hover:bg-warm-gold/90"
+                >
+                  Open the app
+                </Link>
+              </div>
+            </div>
+          </section>
+
           {/* PRIMARY ASSESSMENT — Dark Mirror hero */}
           <section className="mb-16">
             <SectionHead
@@ -488,10 +516,8 @@ export default async function DashboardPage() {
                     ? "Your chamber, the Path, the simulator, Kanika's room. Active."
                     : "Voice notes, courses, daily threads. Apply to enter the council."
                 }
-                cta={memberStatus === "ACTIVE" ? "Enter the Chamber" : "Apply"}
-                href={
-                  memberStatus === "ACTIVE" ? "/consilium/chamber" : "/consilium"
-                }
+                cta={memberStatus === "ACTIVE" ? "Open the app" : "Apply"}
+                href={memberStatus === "ACTIVE" ? "/app" : "/consilium"}
                 accent={memberStatus === "ACTIVE"}
               />
               <DeptTile
@@ -715,7 +741,7 @@ function MemberChip({
   if (status === "ACTIVE") {
     return (
       <Link
-        href="/consilium/chamber"
+        href="/app"
         className="inline-flex items-center gap-2.5 px-4 py-2 rounded-full border border-warm-gold/40 bg-warm-gold/[0.06] text-warm-gold text-[11px] uppercase tracking-[0.3em] hover:bg-warm-gold/10 transition-colors"
       >
         <span className="w-1.5 h-1.5 rounded-full bg-warm-gold animate-pulse" />

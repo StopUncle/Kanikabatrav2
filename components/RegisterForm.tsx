@@ -9,6 +9,7 @@ import { m } from "framer-motion";
 import { Eye, EyeOff, Mail, Lock, UserPlus } from "lucide-react";
 import { getAttributionForSubmit } from "@/lib/attribution";
 import { migrateLocalStreakIfPresent } from "@/lib/tells/migrate-streak-client";
+import { identify } from "@/lib/analytics/client";
 
 const registerSchema = z
   .object({
@@ -74,8 +75,15 @@ export default function RegisterForm() {
       // Fire-and-forget, never blocks the redirect.
       migrateLocalStreakIfPresent();
 
-      // Registration successful, redirect to returnTo or dashboard
-      router.push(returnTo || "/dashboard");
+      // Merge this browser's anonymous analytics person into the account
+      // the server-side signup event was recorded against.
+      if (result.user?.id) {
+        identify(result.user.id);
+      }
+
+      // Registration successful. Explicit returnTo wins; otherwise the
+      // app is the free tier's home, so that is where a new account goes.
+      router.push(returnTo || "/app");
       router.refresh();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Registration failed");

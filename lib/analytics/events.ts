@@ -12,6 +12,20 @@
 export const ANALYTICS_EVENTS = {
   /** Account created. Free, no membership yet. */
   SIGNUP: "signup",
+  /** Session started with credentials. Server-side, per login. */
+  LOGIN: "login",
+  /**
+   * First navigation into /app this browser session. Guarded by
+   * sessionStorage, so it fires once per tab-session and undercounts
+   * multi-tab use, which is fine for funnel purposes.
+   */
+  APP_ENTERED: "app_entered",
+  /** A scenario run reached an ending. Carries outcome and first-run flag. */
+  SCENARIO_COMPLETED: "scenario_completed",
+  /** A Speed Drill run was saved. Carries score and accuracy. */
+  DRILL_COMPLETED: "drill_completed",
+  /** A Daily Tell was answered and scored. Replays do not fire. */
+  TELL_ANSWERED: "tell_answered",
   /** Consilium checkout completed. The moment they become a member. */
   MEMBER_ACTIVATED: "member_activated",
   /** The Arrival screen rendered. */
