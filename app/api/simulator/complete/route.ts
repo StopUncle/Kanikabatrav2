@@ -34,7 +34,7 @@ import type {
   OutcomeType,
   ChoiceRecord,
 } from "@/lib/simulator/types";
-import { replayXp } from "@/lib/simulator/engine";
+import { replayXpDetailed } from "@/lib/simulator/engine";
 import { mergeProgress } from "@/lib/simulator/progress-merge";
 import { recordEncounters } from "@/lib/mark/encounters";
 import { encountersFromScenarioRun } from "@/lib/mark/sources/scenario";
@@ -120,8 +120,8 @@ export async function POST(request: NextRequest) {
     // See /api/simulator/progress for the same rationale, the server
     // owns the engine, so it computes the truth and never trusts the
     // client number beyond it.
-    const authoritative = replayXp(scenario, body.choicesMade);
-    const safeXp = Math.min(body.xpEarned, authoritative.xp);
+    const authoritative = replayXpDetailed(scenario, body.choicesMade);
+    const safeXp = Math.min(body.xpEarned, authoritative.total);
 
     const state: SimulatorState = {
       scenarioId: body.scenarioId,
@@ -411,6 +411,31 @@ export async function POST(request: NextRequest) {
         if (missionGrant.rangUp) ringUp = missionGrant.rangUp;
       }
 
+      // Ending bounty: a replay that reaches an ending this member has
+      // never seen pays a small flat grant, so exploring the tree is worth
+      // something after the first completion already paid its XP. First
+      // completions never double-dip (their ending's value is inside the
+      // first-completion grant above). The prefixed refId under the
+      // (userId, source, refId) unique index makes retries single-pay.
+      let endingBounty: { amount: number } | null = null;
+      const priorEndings = existingRow?.endingsReached ?? [];
+      const payBounty =
+        !wasFirstCompletion && !priorEndings.includes(body.currentSceneId);
+      if (payBounty) {
+        const bountyGrant = await grantStanding(prisma, {
+          userId: user.id,
+          source: "SCENARIO",
+          amount: STANDING.ENDING_FOUND,
+          refId: `ending:${body.scenarioId}:${body.currentSceneId}`,
+          dedupe: true,
+          isMember: access.isMember,
+        });
+        if (bountyGrant.granted) {
+          endingBounty = { amount: bountyGrant.amount };
+          if (bountyGrant.rangUp) ringUp = bountyGrant.rangUp;
+        }
+      }
+
       // The Mark: every graded choice point this run faced for the first
       // time becomes ledger evidence. Deduped per (scenario, scene), so a
       // replay of a known branch writes nothing while a new branch still
@@ -440,6 +465,17 @@ export async function POST(request: NextRequest) {
         ringUp,
         // True when this run added evidence to the member's Mark.
         markRecorded: markWritten > 0,
+        // Server-authoritative decomposition of the run's XP. The ending
+        // screen only shows it when the parts sum to what the counter
+        // shows, so a clamped run never displays contradictory math.
+        xpBreakdown: {
+          choiceXp: authoritative.choiceXp,
+          streakBonus: authoritative.streakBonus,
+          endingBonus: authoritative.endingBonus,
+          total: authoritative.total,
+        },
+        // Non-null when this replay found an ending never reached before.
+        endingBounty,
       });
     } catch (err) {
       logger.error("[simulator-complete] failed", err as Error, {

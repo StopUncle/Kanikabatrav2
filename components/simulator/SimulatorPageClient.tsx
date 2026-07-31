@@ -79,6 +79,17 @@ export default function SimulatorPageClient({
   // True when the completion wrote new Mark evidence; drives one quiet
   // line on the ending screen.
   const [markRecorded, setMarkRecorded] = useState(false);
+  // Server-authoritative XP decomposition and never-seen-ending bounty
+  // from the completion response; both forwarded to the ending screen.
+  const [xpBreakdown, setXpBreakdown] = useState<{
+    choiceXp: number;
+    streakBonus: number;
+    endingBonus: number;
+    total: number;
+  } | null>(null);
+  const [endingBounty, setEndingBounty] = useState<{ amount: number } | null>(
+    null,
+  );
   // Track the "best-to-date" across the session so a second replay
   // in the same tab compares against the run that just finished, not
   // the previousBest prop frozen at page load. Initial value mirrors
@@ -141,6 +152,8 @@ export default function SimulatorPageClient({
     setUnlockedThisRun([]);
     setRingUp(null);
     setMarkRecorded(false);
+    setXpBreakdown(null);
+    setEndingBounty(null);
 
     // Update the session's best-to-date if this run exceeded it.
     // A subsequent in-session replay sees this as the new baseline so
@@ -175,6 +188,13 @@ export default function SimulatorPageClient({
           newlyEarnedKeys: string[];
           ringUp: RingUpPayload | null;
           markRecorded?: boolean;
+          xpBreakdown?: {
+            choiceXp: number;
+            streakBonus: number;
+            endingBonus: number;
+            total: number;
+          } | null;
+          endingBounty?: { amount: number } | null;
         };
         // Show ALL earned badges on the ending screen (visual reward), even
         // if duplicates so replays still feel rewarding. Uniqueness is
@@ -185,6 +205,8 @@ export default function SimulatorPageClient({
         setUnlockedThisRun(data.newlyEarnedKeys);
         setRingUp(data.ringUp ?? null);
         setMarkRecorded(data.markRecorded ?? false);
+        setXpBreakdown(data.xpBreakdown ?? null);
+        setEndingBounty(data.endingBounty ?? null);
         // Refresh server components so the index page reflects new state
         // when the user returns.
         router.refresh();
@@ -212,6 +234,8 @@ export default function SimulatorPageClient({
         endingCta={endingCta}
         exitHref={exitHref}
         markRecorded={markRecorded}
+        xpBreakdown={xpBreakdown}
+        endingBounty={endingBounty}
       />
       <AchievementToast unlocks={unlockedThisRun} />
       <RingUpCeremony ringUp={ringUp} onDismiss={() => setRingUp(null)} />

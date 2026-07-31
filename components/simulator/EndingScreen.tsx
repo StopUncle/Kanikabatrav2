@@ -13,6 +13,7 @@ import { RotateCcw, ArrowRight, Award, BookOpen, Star } from "lucide-react";
 import type { Scene, Scenario, SimulatorState } from "@/lib/simulator/types";
 import { BADGE_BY_KEY } from "@/lib/simulator/badges";
 import { computeStars, masteryPercent } from "@/lib/simulator/stars";
+import { STANDING } from "@/lib/standing/config";
 import CouncilTodayCard from "./CouncilTodayCard";
 import EndingsCatalog from "./EndingsCatalog";
 
@@ -87,6 +88,20 @@ type Props = {
    * between the Measure and the reward layer.
    */
   markRecorded?: boolean;
+  /**
+   * Server-authoritative decomposition of the run's XP. Only rendered
+   * when its total matches the counter above it, so a clamped run never
+   * shows math that contradicts the number the player is looking at.
+   */
+  xpBreakdown?: {
+    choiceXp: number;
+    streakBonus: number;
+    endingBonus: number;
+    total: number;
+  } | null;
+  /** Non-null when this replay reached an ending never seen before and
+   *  the server paid the bounty. */
+  endingBounty?: { amount: number } | null;
   onRestart: () => void;
 };
 
@@ -123,9 +138,27 @@ export default function EndingScreen({
   previousBest = null,
   seenEndingIds = [],
   markRecorded = false,
+  xpBreakdown = null,
+  endingBounty = null,
   onRestart,
 }: Props) {
   const outcome = state.outcome ?? scene.outcomeType ?? "neutral";
+
+  const breakdownParts = xpBreakdown
+    ? [
+        xpBreakdown.choiceXp > 0 ? `Choices +${xpBreakdown.choiceXp}` : null,
+        xpBreakdown.streakBonus > 0
+          ? `Streak +${xpBreakdown.streakBonus}`
+          : null,
+        xpBreakdown.endingBonus > 0
+          ? `Ending +${xpBreakdown.endingBonus}`
+          : null,
+      ].filter((p): p is string => p !== null)
+    : [];
+  const showBreakdown =
+    xpBreakdown !== null &&
+    xpBreakdown.total === state.xpEarned &&
+    breakdownParts.length > 0;
 
   // Endings catalog data. The total list comes straight off the scenario
   // (stays in sync with content); the seen set is prior-run history plus
@@ -268,6 +301,19 @@ export default function EndingScreen({
         {/* XP earned, count-up animation */}
         <XpCounter target={state.xpEarned} />
 
+        {/* Where the number came from. Server math only; hidden whenever
+            the parts would not sum to the counter above. */}
+        {showBreakdown && (
+          <m.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.6, delay: 2.2 }}
+            className="mb-6 -mt-2 text-[11px] uppercase tracking-[0.3em] text-text-gray/70"
+          >
+            {breakdownParts.join(" · ")}
+          </m.p>
+        )}
+
         {/* Previous-best comparison. Only on replays. Calls out a new
             record with a gold "NEW BEST" badge, otherwise shows the
             prior best XP so the run feels meaningful even when the
@@ -297,6 +343,19 @@ export default function EndingScreen({
               </span>
             )}
           </m.div>
+        )}
+
+        {/* Ending bounty. Only when the server actually paid, so a free
+            member at the ceiling never sees a promise that didn't land. */}
+        {endingBounty && endingBounty.amount > 0 && (
+          <m.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.6, delay: 3.0 }}
+            className="mb-8 -mt-2 text-[11px] uppercase tracking-[0.3em] text-accent-gold/80"
+          >
+            New ending found · +{endingBounty.amount} Standing
+          </m.p>
         )}
 
         {/* One quiet line when the run fed the Measure. No numbers: the
@@ -417,6 +476,11 @@ export default function EndingScreen({
             endings={allEndings}
             seenIds={seenEndings}
             delay={2.3}
+            bountyLine={
+              hideFailureBlog
+                ? undefined
+                : `Each new ending pays +${STANDING.ENDING_FOUND} Standing`
+            }
           />
         )}
 

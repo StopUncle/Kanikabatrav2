@@ -56,6 +56,15 @@ export default function AdventureSimulatorPageClient({
   const [badgesEarned, setBadgesEarned] = useState<string[]>([]);
   const [unlockedThisRun, setUnlockedThisRun] = useState<string[]>([]);
   const [ringUp, setRingUp] = useState<RingUpPayload | null>(null);
+  const [xpBreakdown, setXpBreakdown] = useState<{
+    choiceXp: number;
+    streakBonus: number;
+    endingBonus: number;
+    total: number;
+  } | null>(null);
+  const [endingBounty, setEndingBounty] = useState<{ amount: number } | null>(
+    null,
+  );
   const [bestToDate, setBestToDate] = useState<PreviousBest | null>(previousBest);
 
   useEffect(() => {
@@ -93,6 +102,8 @@ export default function AdventureSimulatorPageClient({
       setBadgesEarned([]);
       setUnlockedThisRun([]);
       setRingUp(null);
+      setXpBreakdown(null);
+      setEndingBounty(null);
       setBestToDate((prev) => {
         if (!prev || state.xpEarned > prev.xpEarned) {
           return {
@@ -133,10 +144,19 @@ export default function AdventureSimulatorPageClient({
             allEarnedKeys: string[];
             newlyEarnedKeys: string[];
             ringUp: RingUpPayload | null;
+            xpBreakdown?: {
+              choiceXp: number;
+              streakBonus: number;
+              endingBonus: number;
+              total: number;
+            } | null;
+            endingBounty?: { amount: number } | null;
           };
           setBadgesEarned(data.allEarnedKeys);
           setUnlockedThisRun(data.newlyEarnedKeys);
           setRingUp(data.ringUp ?? null);
+          setXpBreakdown(data.xpBreakdown ?? null);
+          setEndingBounty(data.endingBounty ?? null);
         }
         router.refresh();
       } catch {
@@ -166,6 +186,8 @@ export default function AdventureSimulatorPageClient({
         nextScenarioHref={nextScenarioHref}
         badgesEarned={badgesEarned}
         exitHref={`/app/adventures/${adventureSlug}`}
+        xpBreakdown={xpBreakdown}
+        endingBounty={endingBounty}
       />
       <AdventureChapterBanner label={stepLabel} title={adventureTitle} />
       <AchievementToast unlocks={unlockedThisRun} />

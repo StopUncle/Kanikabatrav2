@@ -18,10 +18,17 @@ export default function EndingsCatalog({
   endings,
   seenIds,
   delay = 0,
+  bountyLine,
 }: {
   endings: EndingEntry[];
   seenIds: string[];
   delay?: number;
+  /**
+   * One quiet line under the counter when paths remain, naming what an
+   * unfound ending pays. Omitted on surfaces that must stay free of
+   * economy copy, like the public demo.
+   */
+  bountyLine?: string;
 }) {
   const reduceMotion = useReducedMotion();
   if (endings.length === 0) return null;
@@ -42,6 +49,11 @@ export default function EndingsCatalog({
           {foundCount} of {endings.length}
         </span>
       </p>
+      {bountyLine && foundCount < endings.length && (
+        <p className="-mt-1 text-[10px] uppercase tracking-[0.3em] text-text-gray/60">
+          {bountyLine}
+        </p>
+      )}
       <div className="w-full max-w-md flex flex-col gap-2">
         {endings.map((e) => {
           const isSeen = seen.has(e.id);

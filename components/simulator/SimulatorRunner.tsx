@@ -122,6 +122,15 @@ type Props = {
   seenEndingIds?: string[];
   /** True when this completion wrote Mark evidence. Forwarded to EndingScreen. */
   markRecorded?: boolean;
+  /** Server XP decomposition. Forwarded to EndingScreen. */
+  xpBreakdown?: {
+    choiceXp: number;
+    streakBonus: number;
+    endingBonus: number;
+    total: number;
+  } | null;
+  /** Bounty paid for a never-seen ending. Forwarded to EndingScreen. */
+  endingBounty?: { amount: number } | null;
 };
 
 export default function SimulatorRunner({
@@ -137,6 +146,8 @@ export default function SimulatorRunner({
   previousBest = null,
   seenEndingIds = [],
   markRecorded = false,
+  xpBreakdown = null,
+  endingBounty = null,
 }: Props) {
   const [state, setState] = useState<SimulatorState>(
     initialState ?? initState(scenario),
@@ -794,6 +805,8 @@ export default function SimulatorRunner({
             previousBest={previousBest}
             seenEndingIds={seenEndingIds}
             markRecorded={markRecorded}
+            xpBreakdown={xpBreakdown}
+            endingBounty={endingBounty}
             onRestart={restart}
           />
         </AnimatePresence>
