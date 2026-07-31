@@ -7,6 +7,7 @@ import { CreateUserData } from "@/lib/auth/types";
 import { enforceRateLimit, getClientIp, limits } from "@/lib/rate-limit";
 import { prisma } from "@/lib/prisma";
 import { sendFreeWelcome } from "@/lib/email";
+import { buildFreeOnboardingDrip } from "@/lib/email-sequences";
 import {
   buildAttributionRecord,
   type AttributionPayload,
@@ -78,6 +79,18 @@ export async function POST(request: NextRequest) {
     // app they are already being redirected into, so a send failure
     // costs nothing the product has not already given them.
     void sendFreeWelcome(user.email).catch(() => {});
+
+    // The two-touch onboarding drip rides the email queue (day 2, day 7).
+    // The Stripe webhook cancels any pending rows the moment this account
+    // becomes a member, so a fresh subscriber never gets free-tier copy.
+    void prisma.emailQueue
+      .createMany({
+        data: buildFreeOnboardingDrip(
+          user.email.toLowerCase(),
+          user.name || "there",
+        ),
+      })
+      .catch(() => {});
 
     // Generate tokens, embed tokenVersion (0 for new users) so password
     // resets and logouts can invalidate them immediately.

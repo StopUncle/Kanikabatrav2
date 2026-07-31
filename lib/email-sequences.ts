@@ -3602,3 +3602,125 @@ export function buildQuizResultDrip(
     metadata: meta,
   }));
 }
+
+// ============================================================
+// Free-tier onboarding drip, two touches.
+//
+// Enqueued by /api/auth/register right after the instant welcome
+// email. The welcome sells the door; these two protect the habit:
+// day 2 lands while the first session is still warm, day 7 lands
+// where week-one habits either set or die. Both are cancelled by
+// the Stripe webhook the moment the account becomes a member, so
+// a fresh subscriber never gets free-tier copy.
+// ============================================================
+
+function freeAppUrl(content: string): string {
+  const params = new URLSearchParams({
+    utm_source: "email",
+    utm_medium: "email",
+    utm_campaign: "free-onboarding",
+    utm_content: content,
+  });
+  return `${baseUrl}/app?${params.toString()}`;
+}
+
+function buildFreeOnboardingStep1(name: string): string {
+  const appUrl = freeAppUrl("day2-mission");
+
+  const body = `
+    <p style="color: #f5f0ed; font-size: 16px; margin: 0 0 20px 0; line-height: 1.7;">
+      ${esc(name)},
+    </p>
+
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 20px 0; font-size: 15px;">
+      There is a fresh mission in the app today. There is one every day; that is the whole design. Two minutes, one scene, and the day is banked.
+    </p>
+
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 25px 0; font-size: 15px;">
+      Day two is where a streak either starts or doesn&rsquo;t. The people who get sharp at reading a room are not the ones who binged once; they are the ones who showed up twice.
+    </p>
+
+    <table role="presentation" cellspacing="0" cellpadding="0" border="0" style="margin: 0 0 25px 0;">
+      <tr>
+        <td bgcolor="#d4af37" style="border-radius: 8px;">
+          <a href="${appUrl}" style="display: inline-block; padding: 14px 32px; color: #0a0a0a; text-decoration: none; font-size: 14px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase;">
+            Play today&rsquo;s mission
+          </a>
+        </td>
+      </tr>
+    </table>
+
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0; font-size: 15px;">
+      The Speed Drill and the daily Tell are in there too, both about a minute each. Any of the three keeps the streak alive.
+    </p>`;
+
+  return emailShell("Your streak is waiting", "The Consilium", body);
+}
+
+function buildFreeOnboardingStep2(name: string): string {
+  const appUrl = freeAppUrl("day7-standing");
+
+  const body = `
+    <p style="color: #f5f0ed; font-size: 16px; margin: 0 0 20px 0; line-height: 1.7;">
+      ${esc(name)},
+    </p>
+
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 20px 0; font-size: 15px;">
+      One week since you made the account. Everything you have done in the app since then has been counted: every scenario, every drill, every Tell earned Standing, and Standing only ever goes up.
+    </p>
+
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 20px 0; font-size: 15px;">
+      A week of showing up is usually enough to reach Analyst, the second rank. Open the app and check where you stand; if the ring is close, one session tips it.
+    </p>
+
+    <table role="presentation" cellspacing="0" cellpadding="0" border="0" style="margin: 0 0 25px 0;">
+      <tr>
+        <td bgcolor="#d4af37" style="border-radius: 8px;">
+          <a href="${appUrl}" style="display: inline-block; padding: 14px 32px; color: #0a0a0a; text-decoration: none; font-size: 14px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase;">
+            See your Standing
+          </a>
+        </td>
+      </tr>
+    </table>
+
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0; font-size: 15px;">
+      Some rooms in the app are members-only; that is where the feed, the voice notes and the full curriculum live. No pressure from here. The free floor is real, and it is yours for as long as you want it.
+    </p>`;
+
+  return emailShell("One week in", "The Consilium", body);
+}
+
+export function buildFreeOnboardingDrip(
+  recipientEmail: string,
+  recipientName: string,
+): EmailQueueEntry[] {
+  const now = new Date();
+  return [
+    {
+      recipientEmail,
+      recipientName,
+      sequence: "free-onboarding",
+      step: 1,
+      subject: "Your streak is waiting",
+      htmlBody: withMarketingFooter(
+        buildFreeOnboardingStep1(recipientName),
+        recipientEmail,
+      ),
+      scheduledAt: addDays(now, 2),
+      metadata: { ...MARKETING_META, type: "day2-habit" },
+    },
+    {
+      recipientEmail,
+      recipientName,
+      sequence: "free-onboarding",
+      step: 2,
+      subject: "One week in",
+      htmlBody: withMarketingFooter(
+        buildFreeOnboardingStep2(recipientName),
+        recipientEmail,
+      ),
+      scheduledAt: addDays(now, 7),
+      metadata: { ...MARKETING_META, type: "day7-standing" },
+    },
+  ];
+}
