@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { verifyCronSecret } from "@/lib/cron-auth";
 import { sendPushToUser } from "@/lib/push";
-import { getDailyMission } from "@/lib/streak/daily-mission";
+import { getDailyMission, getDailyMissionFor } from "@/lib/streak/daily-mission";
 import { logger } from "@/lib/logger";
 
 /**
@@ -64,15 +64,27 @@ export async function POST(request: NextRequest) {
     const yesterday = new Date(now);
     yesterday.setUTCDate(yesterday.getUTCDate() - 1);
     const yesterdayKey = utcDateKey(yesterday);
-    const mission = getDailyMission(now);
+    // The mission differs by tier on days the shared pick is premium, so
+    // both are resolved once and chosen per user below.
+    const memberMission = getDailyMission(now);
+    const freeMission = getDailyMissionFor(false, now);
 
-    // Member count is small; fetch active humans and filter in code so the
+    // Cohort count is small; fetch humans and filter in code so the
     // "hasn't played today" check (including never-played nulls) is exact.
+    // Free accounts qualify once they have ever played (a streak date
+    // exists): the nudge protects a habit, so someone who never started
+    // one has nothing to protect and would only be spammed. Push delivery
+    // still requires a granted permission, which free accounts earn at
+    // their first completed scenario.
     const members = await prisma.user.findMany({
       where: {
         isBot: false,
         isTrainingBot: false,
-        communityMembership: { status: "ACTIVE" },
+        isBanned: false,
+        OR: [
+          { communityMembership: { status: "ACTIVE" } },
+          { dailyStreakLastDate: { not: null } },
+        ],
       },
       select: {
         id: true,
@@ -80,6 +92,7 @@ export async function POST(request: NextRequest) {
         dailyStreakLastDate: true,
         lastSeenAt: true,
         pushPreferences: true,
+        communityMembership: { select: { status: true } },
       },
     });
 
@@ -123,19 +136,26 @@ export async function POST(request: NextRequest) {
       const atRisk =
         m.dailyStreakCurrent > 0 && m.dailyStreakLastDate === yesterdayKey;
 
+      // Free accounts are pointed at the mission they can actually play,
+      // so the nudge never leads with a wall.
+      const mission =
+        m.communityMembership?.status === "ACTIVE"
+          ? memberMission
+          : freeMission;
+
       const payload = atRisk
         ? {
             title: `Your ${m.dailyStreakCurrent}-day streak breaks tonight`,
             body: mission
               ? `Keep it alive. Today's mission: ${mission.title}`
               : "Play today before midnight to keep it alive.",
-            url: mission?.href ?? "/consilium/simulator",
+            url: mission?.href ?? "/app/train",
             tag: "daily-streak",
           }
         : {
             title: "Today's mission is ready",
             body: mission ? mission.title : "A fresh scenario is waiting.",
-            url: mission?.href ?? "/consilium/simulator",
+            url: mission?.href ?? "/app/train",
             tag: "daily-streak",
           };
 
