@@ -57,20 +57,20 @@ export default function RankHero({
         </ProgressRing>
 
         <div className="min-w-0 flex-1">
-          <p className="text-[11px] uppercase tracking-[0.22em] text-[var(--app-gold-soft)]">
+          <p className="text-app-eyebrow uppercase tracking-app-label text-[var(--app-gold-soft)]">
             Your rank
           </p>
           <p
-            className="mt-0.5 text-[26px] leading-tight"
+            className="mt-0.5 text-app-hero leading-tight"
             style={{ fontFamily: "var(--font-display)" }}
           >
             {rank.name}
           </p>
-          <p className="mt-2 text-[12.5px] tabular-nums text-[var(--app-text)]">
+          <p className="mt-2 text-app-caption tabular-nums text-[var(--app-text)]">
             {shownStanding.toLocaleString()}
             <span className="text-[var(--app-dim)]"> Standing</span>
           </p>
-          <p className="mt-0.5 text-[11.5px] text-[var(--app-dim)]">
+          <p className="mt-0.5 text-app-eyebrow text-[var(--app-dim)]">
             {next
               ? `${next.remaining.toLocaleString()} to ${next.next.name}`
               : "The innermost ring"}

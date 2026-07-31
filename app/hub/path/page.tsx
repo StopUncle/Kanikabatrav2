@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { PageHeader, PageShell } from "@/components/app-shell/ui";
 import { requireServerAuth } from "@/lib/auth/server-auth";
 import { prisma } from "@/lib/prisma";
 import { getPathState } from "@/lib/path/progress";
@@ -36,16 +37,11 @@ export default async function PathPage() {
   let lastAct: number | null = null;
 
   return (
-    <div className="px-5 pb-8 pt-6">
-      <h1
-        className="text-[28px] font-light"
-        style={{ fontFamily: "var(--font-display)" }}
-      >
-        Your path
-      </h1>
-      <p className="mb-6 mt-1 text-[13px] text-[var(--app-muted)]">
-        {state.sealedCount} of {state.chapters.length} chapters sealed
-      </p>
+    <PageShell>
+      <PageHeader
+        title="Your path"
+        lede={`${state.sealedCount} of ${state.chapters.length} chapters sealed`}
+      />
 
       <div className="relative pl-[30px]">
         <span
@@ -68,7 +64,7 @@ export default async function PathPage() {
           return (
             <div key={c.chapter.id} className="relative pb-7">
               {actHeader && (
-                <p className="mb-3 text-[10.5px] uppercase tracking-[0.22em] text-[var(--app-dim)]">
+                <p className="mb-3 text-app-tiny uppercase tracking-app-label text-[var(--app-dim)]">
                   {actHeader}
                 </p>
               )}
@@ -83,7 +79,7 @@ export default async function PathPage() {
                 }`}
                 style={{ top: actHeader ? 34 : 4 }}
               />
-              <p className="mb-0.5 text-[10.5px] uppercase tracking-[0.22em] text-[var(--app-dim)]">
+              <p className="mb-0.5 text-app-tiny uppercase tracking-app-label text-[var(--app-dim)]">
                 Chapter {c.chapter.number}
                 {c.status === "active" ? " · now" : ""}
               </p>
@@ -125,13 +121,13 @@ export default async function PathPage() {
                   href={appStepHref(isCurrent.step, viewer?.gender ?? null)}
                   className="mt-3 block rounded-2xl border border-[var(--app-line)] bg-[var(--app-card)] px-4 py-[15px]"
                 >
-                  <span className="block text-[14.5px] font-medium">
+                  <span className="block text-app-lead font-medium">
                     {isCurrent.step.label}
                   </span>
                   <span className="mt-0.5 block text-xs text-[var(--app-dim)]">
                     {isCurrent.step.framing}
                   </span>
-                  <span className="mt-3 block h-[3px] overflow-hidden rounded-full bg-[rgba(212,175,55,0.15)]">
+                  <span className="mt-3 block h-[3px] overflow-hidden rounded-full bg-[var(--app-line)]">
                     <span
                       className="block h-full rounded-full bg-[var(--app-gold)]"
                       style={{
@@ -145,6 +141,6 @@ export default async function PathPage() {
           );
         })}
       </div>
-    </div>
+    </PageShell>
   );
 }

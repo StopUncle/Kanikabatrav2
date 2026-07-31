@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { PageHeader, PageShell } from "@/components/app-shell/ui";
 import { requireServerAuth } from "@/lib/auth/server-auth";
 import { prisma } from "@/lib/prisma";
 import { QUIZ_REGISTRY } from "@/lib/quiz-registry";
@@ -22,16 +23,11 @@ export default async function QuizzesPage() {
   });
 
   return (
-    <div className="px-5 pb-8 pt-6">
-      <h1
-        className="text-[28px] font-light"
-        style={{ fontFamily: "var(--font-display)" }}
-      >
-        Quizzes
-      </h1>
-      <p className="mb-5 mt-1 text-[13px] text-[var(--app-muted)]">
-        Calibrated instruments, not magazine filler.
-      </p>
+    <PageShell>
+      <PageHeader
+        title="Quizzes"
+        lede="Calibrated instruments, not magazine filler."
+      />
 
       {latest && (
         <Link
@@ -43,11 +39,11 @@ export default async function QuizzesPage() {
           }}
         >
           <span className="min-w-0 flex-1">
-            <span className="mb-1 block text-[11px] uppercase tracking-[0.2em] text-[var(--app-gold-soft)]">
+            <span className="mb-1 block text-app-eyebrow uppercase tracking-app-label text-[var(--app-gold-soft)]">
               Your latest result
             </span>
             <span
-              className="block text-[16px]"
+              className="block text-app-lead"
               style={{ fontFamily: "var(--font-display)" }}
             >
               Dark Mirror ·{" "}
@@ -72,12 +68,12 @@ export default async function QuizzesPage() {
           >
             <span className="flex items-baseline justify-between gap-3">
               <span
-                className="truncate text-[16px]"
+                className="truncate text-app-lead"
                 style={{ fontFamily: "var(--font-display)" }}
               >
                 {q.title}
               </span>
-              <span className="shrink-0 text-[11px] tabular-nums text-[var(--app-dim)]">
+              <span className="shrink-0 text-app-eyebrow tabular-nums text-[var(--app-dim)]">
                 {q.minutes} min
               </span>
             </span>
@@ -87,6 +83,6 @@ export default async function QuizzesPage() {
           </Link>
         ))}
       </div>
-    </div>
+    </PageShell>
   );
 }

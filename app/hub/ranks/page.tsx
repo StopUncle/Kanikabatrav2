@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { EmptyState, PageHeader, PageShell } from "@/components/app-shell/ui";
 import { requireServerAuth } from "@/lib/auth/server-auth";
 import {
   getLeaderboard,
@@ -31,16 +32,11 @@ export default async function RanksPage({
   ]);
 
   return (
-    <div className="px-5 pb-8 pt-6">
-      <h1
-        className="text-[28px] font-light"
-        style={{ fontFamily: "var(--font-display)" }}
-      >
-        Leaderboards
-      </h1>
-      <p className="mb-5 mt-1 text-[13px] text-[var(--app-muted)]">
-        Earned in the open. Nobody is placed here.
-      </p>
+    <PageShell>
+      <PageHeader
+        title="Leaderboards"
+        lede="Earned in the open. Nobody is placed here."
+      />
 
       <div className="mb-5 flex rounded-full border border-[var(--app-line-soft)] p-1">
         <Tab href="/app/ranks" active={board === "standing"}>
@@ -54,10 +50,10 @@ export default async function RanksPage({
       {board === "standing" && standing && (
         <>
           {standing.top.length === 0 ? (
-            <p className="rounded-2xl border border-[var(--app-line-soft)] bg-[var(--app-card)] px-4 py-6 text-center text-[13px] leading-relaxed text-[var(--app-muted)]">
-              The board is empty because Standing just launched. Everyone
-              starts from zero; whoever shows up first owns it.
-            </p>
+            <EmptyState
+              line="The board is empty because Standing just launched."
+              hint="Everyone starts from zero; whoever shows up first owns it."
+            />
           ) : (
             <div className="overflow-hidden rounded-2xl border border-[var(--app-line-soft)] bg-[var(--app-card)]">
               {standing.top.map((e, i) => (
@@ -107,7 +103,7 @@ export default async function RanksPage({
           )}
         </>
       )}
-    </div>
+    </PageShell>
   );
 }
 
@@ -125,7 +121,7 @@ function Tab({
       href={href}
       className={`flex-1 rounded-full py-2 text-center text-xs tracking-[0.08em] transition-colors ${
         active
-          ? "bg-[rgba(212,175,55,0.12)] text-[var(--app-gold)]"
+          ? "bg-[var(--app-line)] text-[var(--app-gold)]"
           : "text-[var(--app-dim)]"
       }`}
     >
@@ -156,7 +152,7 @@ function Row({
       } ${isViewer ? "bg-[rgba(212,175,55,0.07)]" : ""}`}
     >
       <span
-        className={`w-7 shrink-0 text-center text-[13px] tabular-nums ${
+        className={`w-7 shrink-0 text-center text-app-body tabular-nums ${
           rank <= 3
             ? "font-semibold text-[var(--app-gold)]"
             : "text-[var(--app-dim)]"
@@ -166,17 +162,17 @@ function Row({
         {rank}
       </span>
       <span className="min-w-0 flex-1">
-        <span className="block truncate text-[14px] font-medium">
+        <span className="block truncate text-app-lead font-medium">
           {name}
           {isViewer && (
-            <span className="ml-2 text-[10px] uppercase tracking-[0.14em] text-[var(--app-gold-soft)]">
+            <span className="ml-2 text-app-tiny uppercase tracking-app-wide text-[var(--app-gold-soft)]">
               You
             </span>
           )}
         </span>
-        <span className="block text-[11px] text-[var(--app-dim)]">{sub}</span>
+        <span className="block text-app-eyebrow text-[var(--app-dim)]">{sub}</span>
       </span>
-      <span className="shrink-0 text-[13px] tabular-nums text-[var(--app-muted)]">
+      <span className="shrink-0 text-app-body tabular-nums text-[var(--app-muted)]">
         {value}
       </span>
     </div>
@@ -194,18 +190,18 @@ function PinnedViewer({
 }) {
   return (
     <div className="mt-3 flex items-center gap-3 rounded-2xl border border-[var(--app-line)] bg-[rgba(212,175,55,0.07)] px-4 py-3">
-      <span className="w-7 shrink-0 text-center text-[13px] tabular-nums text-[var(--app-gold)]">
+      <span className="w-7 shrink-0 text-center text-app-body tabular-nums text-[var(--app-gold)]">
         {rank}
       </span>
       <span className="min-w-0 flex-1">
-        <span className="block truncate text-[14px] font-medium">
+        <span className="block truncate text-app-lead font-medium">
           {name}
-          <span className="ml-2 text-[10px] uppercase tracking-[0.14em] text-[var(--app-gold-soft)]">
+          <span className="ml-2 text-app-tiny uppercase tracking-app-wide text-[var(--app-gold-soft)]">
             You
           </span>
         </span>
       </span>
-      <span className="shrink-0 text-[13px] tabular-nums text-[var(--app-muted)]">
+      <span className="shrink-0 text-app-body tabular-nums text-[var(--app-muted)]">
         {value}
       </span>
     </div>

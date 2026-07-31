@@ -22,10 +22,10 @@ export default function StandingBreakdown({
   return (
     <section>
       <div className="mb-2.5 flex items-baseline justify-between">
-        <p className="text-[11px] uppercase tracking-[0.26em] text-[var(--app-dim)]">
+        <p className="text-app-eyebrow uppercase tracking-app-label text-[var(--app-dim)]">
           Where it came from
         </p>
-        <p className="text-[11px] tabular-nums text-[var(--app-dim)]">
+        <p className="text-app-eyebrow tabular-nums text-[var(--app-dim)]">
           {total.toLocaleString()} in 30 days
         </p>
       </div>
@@ -34,10 +34,10 @@ export default function StandingBreakdown({
         {top.map((s) => (
           <div key={s.source}>
             <div className="mb-1 flex items-baseline justify-between">
-              <span className="text-[12.5px] text-[var(--app-text)]">
+              <span className="text-app-caption text-[var(--app-text)]">
                 {s.label}
               </span>
-              <span className="text-[11.5px] tabular-nums text-[var(--app-dim)]">
+              <span className="text-app-eyebrow tabular-nums text-[var(--app-dim)]">
                 {s.amount.toLocaleString()}
               </span>
             </div>

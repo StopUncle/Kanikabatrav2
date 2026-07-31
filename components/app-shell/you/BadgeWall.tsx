@@ -21,9 +21,9 @@ const RARITY: Record<string, { ring: string; text: string; fill: string }> = {
     fill: "rgba(214,214,222,0.09)",
   },
   gold: {
-    ring: "rgba(212,175,55,0.55)",
+    ring: "var(--app-gold-soft)",
     text: "var(--app-gold)",
-    fill: "rgba(212,175,55,0.12)",
+    fill: "var(--app-line)",
   },
   obsidian: {
     ring: "rgba(165,180,252,0.5)",
@@ -46,7 +46,7 @@ function Medallion({ badge }: { badge: WallBadge }) {
     >
       <span
         aria-hidden
-        className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-[12px]"
+        className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-app-caption"
         style={{
           border: `1px solid ${badge.earned ? tone.ring : "var(--app-line-soft)"}`,
           color: badge.earned ? tone.text : "var(--app-dim)",
@@ -56,12 +56,12 @@ function Medallion({ badge }: { badge: WallBadge }) {
       </span>
       <span className="min-w-0 flex-1">
         <span
-          className="block text-[13.5px] font-medium leading-snug"
+          className="block text-app-body font-medium leading-snug"
           style={{ color: badge.earned ? "var(--app-text)" : "var(--app-muted)" }}
         >
           {badge.name}
         </span>
-        <span className="mt-0.5 block text-[11.5px] leading-relaxed text-[var(--app-dim)]">
+        <span className="mt-0.5 block text-app-eyebrow leading-relaxed text-[var(--app-dim)]">
           {badge.earned ? badge.description : (badge.hint ?? "Not yet found.")}
         </span>
       </span>
@@ -75,17 +75,17 @@ export default function BadgeWall({ wall }: { wall: Wall }) {
   return (
     <section>
       <div className="mb-2.5 flex items-baseline justify-between">
-        <p className="text-[11px] uppercase tracking-[0.26em] text-[var(--app-dim)]">
+        <p className="text-app-eyebrow uppercase tracking-app-label text-[var(--app-dim)]">
           Badges
         </p>
-        <p className="text-[11px] tabular-nums text-[var(--app-dim)]">
+        <p className="text-app-eyebrow tabular-nums text-[var(--app-dim)]">
           {wall.earned} of {wall.total}
         </p>
       </div>
 
       {wall.earned === 0 ? (
         <div className="rounded-2xl border border-[var(--app-line-soft)] bg-[var(--app-card)] p-4">
-          <p className="text-[13.5px] leading-relaxed text-[var(--app-muted)]">
+          <p className="text-app-body leading-relaxed text-[var(--app-muted)]">
             None yet. They come from scenarios: the endings you reach, the
             tactics you name, the ones you walk out of.
           </p>
@@ -96,7 +96,7 @@ export default function BadgeWall({ wall }: { wall: Wall }) {
             .filter((g) => g.earned > 0)
             .map((group) => (
               <div key={group.category}>
-                <p className="mb-2 text-[11.5px] text-[var(--app-muted)]">
+                <p className="mb-2 text-app-eyebrow text-[var(--app-muted)]">
                   {group.label}
                   <span className="text-[var(--app-dim)]">
                     {" "}

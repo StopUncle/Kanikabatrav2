@@ -49,16 +49,16 @@ export default function ActivityGrid({
   if (liveDays < MIN_DAYS_TO_DRAW) {
     return (
       <section>
-        <p className="mb-2.5 text-[11px] uppercase tracking-[0.26em] text-[var(--app-dim)]">
+        <p className="mb-2.5 text-app-eyebrow uppercase tracking-app-label text-[var(--app-dim)]">
           Showing up
         </p>
         <div className="rounded-2xl border border-[var(--app-line-soft)] bg-[var(--app-card)] p-4">
-          <p className="text-[13.5px] leading-relaxed text-[var(--app-muted)]">
+          <p className="text-app-body leading-relaxed text-[var(--app-muted)]">
             {activeDays === 0
               ? "Nothing on the board yet. Anything you do today starts it."
               : `${activeDays} ${activeDays === 1 ? "day" : "days"} on the board so far.`}
           </p>
-          <p className="mt-1.5 text-[11.5px] leading-relaxed text-[var(--app-dim)]">
+          <p className="mt-1.5 text-app-eyebrow leading-relaxed text-[var(--app-dim)]">
             The grid appears once there are a couple of weeks to draw.
           </p>
         </div>
@@ -75,10 +75,10 @@ export default function ActivityGrid({
   return (
     <section>
       <div className="mb-2.5 flex items-baseline justify-between">
-        <p className="text-[11px] uppercase tracking-[0.26em] text-[var(--app-dim)]">
+        <p className="text-app-eyebrow uppercase tracking-app-label text-[var(--app-dim)]">
           Showing up
         </p>
-        <p className="text-[11px] tabular-nums text-[var(--app-dim)]">
+        <p className="text-app-eyebrow tabular-nums text-[var(--app-dim)]">
           {activeDays} {activeDays === 1 ? "day" : "days"} in {weeks} weeks
         </p>
       </div>
@@ -122,7 +122,7 @@ export default function ActivityGrid({
           ))}
         </div>
 
-        <p className="mt-3 text-[11px] leading-relaxed text-[var(--app-dim)]">
+        <p className="mt-3 text-app-eyebrow leading-relaxed text-[var(--app-dim)]">
           Every square is a day you earned something new. Replays do not light
           a day up, which is the point.
         </p>

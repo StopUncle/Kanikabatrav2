@@ -1,4 +1,5 @@
 import { requireServerAuth } from "@/lib/auth/server-auth";
+import { PageHeader, PageShell } from "@/components/app-shell/ui";
 import { prisma } from "@/lib/prisma";
 import ManageSubscriptionButton from "@/app/consilium/(member)/profile/ManageSubscriptionButton";
 import NotificationPreferences from "@/app/consilium/(member)/profile/NotificationPreferences";
@@ -61,20 +62,15 @@ export default async function AppProfilePage() {
         : "text-[var(--app-dim)]";
 
   return (
-    <div className="px-5 pb-8 pt-6">
-      <h1
-        className="text-[28px] font-light"
-        style={{ fontFamily: "var(--font-display)" }}
-      >
-        Profile
-      </h1>
-      <p className="mb-6 mt-1 text-[13px] text-[var(--app-muted)]">
-        Your identity, your seat, your settings.
-      </p>
+    <PageShell>
+      <PageHeader
+        title="Profile"
+        lede="Your identity, your seat, your settings."
+      />
 
       {/* Identity */}
       <section className="mb-4 rounded-[18px] border border-[var(--app-line)] bg-[var(--app-card)] p-[18px]">
-        <p className="mb-3 text-[11px] uppercase tracking-[0.22em] text-[var(--app-gold-soft)]">
+        <p className="mb-3 text-app-eyebrow uppercase tracking-app-label text-[var(--app-gold-soft)]">
           Identity
         </p>
         <IdentityRow label="Display name" value={handle} />
@@ -82,7 +78,7 @@ export default async function AppProfilePage() {
         {user?.gender && (
           <IdentityRow label="Chamber" value={user.gender.toLowerCase()} />
         )}
-        <p className="mt-3 border-t border-[var(--app-line-soft)] pt-3 text-[11.5px] text-[var(--app-dim)]">
+        <p className="mt-3 border-t border-[var(--app-line-soft)] pt-3 text-app-eyebrow text-[var(--app-dim)]">
           To change your email or display name, open the{" "}
           <a href="/dashboard" className="text-[var(--app-gold)]">
             Dashboard
@@ -93,21 +89,21 @@ export default async function AppProfilePage() {
 
       {/* The seat */}
       <section className="mb-4 rounded-[18px] border border-[var(--app-line)] bg-[var(--app-card)] p-[18px]">
-        <p className="mb-3 text-[11px] uppercase tracking-[0.22em] text-[var(--app-gold-soft)]">
+        <p className="mb-3 text-app-eyebrow uppercase tracking-app-label text-[var(--app-gold-soft)]">
           Your seat
         </p>
         <p
-          className={`text-[13px] uppercase tracking-[0.18em] ${statusColor}`}
+          className={`text-app-body uppercase tracking-app-wide ${statusColor}`}
         >
           {membership?.status ?? "Inactive"}
         </p>
         {joinedLabel && (
-          <p className="mt-2 text-[13px] text-[var(--app-muted)]">
+          <p className="mt-2 text-app-body text-[var(--app-muted)]">
             Joined {joinedLabel}
           </p>
         )}
         {renewsLabel && (
-          <p className="mt-1 text-[13px] text-[var(--app-muted)]">
+          <p className="mt-1 text-app-body text-[var(--app-muted)]">
             Renews {renewsLabel}
             {membership?.billingCycle && (
               <span className="capitalize text-[var(--app-dim)]">
@@ -127,12 +123,12 @@ export default async function AppProfilePage() {
 
       {/* Notifications */}
       <section className="rounded-[18px] border border-[var(--app-line)] bg-[var(--app-card)] p-[18px]">
-        <p className="mb-3 text-[11px] uppercase tracking-[0.22em] text-[var(--app-gold-soft)]">
+        <p className="mb-3 text-app-eyebrow uppercase tracking-app-label text-[var(--app-gold-soft)]">
           What pings your phone
         </p>
         <NotificationPreferences />
       </section>
-    </div>
+    </PageShell>
   );
 }
 
@@ -147,11 +143,11 @@ function IdentityRow({
 }) {
   return (
     <div className="flex items-center justify-between gap-4 py-1.5">
-      <span className="text-[11px] uppercase tracking-[0.18em] text-[var(--app-dim)]">
+      <span className="text-app-eyebrow uppercase tracking-app-wide text-[var(--app-dim)]">
         {label}
       </span>
       <span
-        className={`truncate text-[13.5px] ${
+        className={`truncate text-app-body ${
           muted ? "text-[var(--app-dim)]" : ""
         }`}
       >

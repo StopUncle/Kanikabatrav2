@@ -17,7 +17,7 @@ export default function RankLadder({
 }) {
   return (
     <section>
-      <p className="mb-2.5 text-[11px] uppercase tracking-[0.26em] text-[var(--app-dim)]">
+      <p className="mb-2.5 text-app-eyebrow uppercase tracking-app-label text-[var(--app-dim)]">
         The ranks
       </p>
       <div className="overflow-hidden rounded-2xl border border-[var(--app-line-soft)] bg-[var(--app-card)]">
@@ -48,7 +48,7 @@ export default function RankLadder({
               />
               <span className="min-w-0 flex-1">
                 <span
-                  className="block text-[14.5px]"
+                  className="block text-app-lead"
                   style={{
                     color: current
                       ? "var(--app-gold)"
@@ -59,13 +59,13 @@ export default function RankLadder({
                 >
                   {r.name}
                   {current && (
-                    <span className="ml-2 text-[10px] uppercase tracking-[0.16em] text-[var(--app-gold-soft)]">
+                    <span className="ml-2 text-app-tiny uppercase tracking-app-wide text-[var(--app-gold-soft)]">
                       you are here
                     </span>
                   )}
                 </span>
               </span>
-              <span className="shrink-0 text-[11.5px] tabular-nums text-[var(--app-dim)]">
+              <span className="shrink-0 text-app-eyebrow tabular-nums text-[var(--app-dim)]">
                 {r.threshold === 0
                   ? "the door"
                   : `${r.threshold.toLocaleString()}`}
@@ -74,7 +74,7 @@ export default function RankLadder({
           );
         })}
       </div>
-      <p className="mt-2 px-1 text-[11px] leading-relaxed text-[var(--app-dim)]">
+      <p className="mt-2 px-1 text-app-eyebrow leading-relaxed text-[var(--app-dim)]">
         Standing only goes up. It measures showing up, not skill, and the
         Inner Circle is a job with duties rather than a badge.
       </p>

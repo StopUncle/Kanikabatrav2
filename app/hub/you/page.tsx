@@ -12,6 +12,7 @@ import ActivityGrid from "@/components/app-shell/you/ActivityGrid";
 import StandingBreakdown from "@/components/app-shell/you/StandingBreakdown";
 import BadgeWall from "@/components/app-shell/you/BadgeWall";
 import RankLadder from "@/components/app-shell/you/RankLadder";
+import { PageHeader, PageShell } from "@/components/app-shell/ui";
 
 export const metadata = {
   title: "You | Consilium",
@@ -65,16 +66,13 @@ export default async function YouPage() {
     : null;
 
   return (
-    <div className="px-5 pb-8 pt-6">
-      <h1
-        className="text-[28px] font-light"
-        style={{ fontFamily: "var(--font-display)" }}
-      >
-        {viewer?.displayName || "You"}
-      </h1>
-      <p className="mb-5 mt-1 text-[13px] text-[var(--app-muted)]">
-        {memberSince ? `Here since ${memberSince}.` : "Measured. Earned. Yours."}
-      </p>
+    <PageShell>
+      <PageHeader
+        title={viewer?.displayName || "You"}
+        lede={
+          memberSince ? `Here since ${memberSince}.` : "Measured. Earned. Yours."
+        }
+      />
 
       <RankHero standing={standing} ringLevel={ringLevel} />
 
@@ -189,6 +187,6 @@ export default async function YouPage() {
           }
         />
       </div>
-    </div>
+    </PageShell>
   );
 }
