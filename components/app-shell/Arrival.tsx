@@ -12,6 +12,11 @@ import InstallSheet from "./InstallSheet";
  * The welcome video is the highest-leverage asset in the flow, so the screen
  * is built to hold it the moment it exists and to stay honest when it does
  * not: no video, no dead player, just the door.
+ *
+ * Begin stamps arrivalAt server-side for every tier, which is what ticks
+ * the Day-0 row. Members go on to the Baseline Read; free accounts go
+ * straight into their first scenario, picked by the gender ask below
+ * (members answered the same question in the Initiation).
  */
 
 const SEEN_KEY = "consilium-arrival-seen-v1";
@@ -19,22 +24,44 @@ const SEEN_KEY = "consilium-arrival-seen-v1";
 type Props = {
   /** Kanika's welcome video, when one is configured. */
   videoUrl: string | null;
-  /** Where Begin sends them. Currently the Baseline Read. */
+  /** Where Begin sends a member. Currently the Baseline Read. */
   beginHref: string;
   firstName: string | null;
+  /** Free tier: Begin routes to the first spine scenario instead. */
+  freeTier?: boolean;
+  /** Ask the two-option gender question (free accounts without one). */
+  askGender?: boolean;
 };
 
-export default function Arrival({ videoUrl, beginHref, firstName }: Props) {
+const FREE_BEGIN: Record<string, string> = {
+  FEMALE: "/app/train/mission-1-1",
+  MALE: "/app/train/d1-frame-challenge",
+};
+
+export default function Arrival({
+  videoUrl,
+  beginHref,
+  firstName,
+  freeTier = false,
+  askGender = false,
+}: Props) {
   const router = useRouter();
   const [playing, setPlaying] = useState(false);
+  const [gender, setGender] = useState<"MALE" | "FEMALE" | null>(null);
 
   function begin() {
     try {
       window.localStorage.setItem(SEEN_KEY, String(Date.now()));
     } catch {
-      /* private mode: the server flag still governs the gate */
+      /* private mode: the server stamp below still governs */
     }
-    router.push(beginHref);
+    void fetch("/api/arrival/complete", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(gender ? { gender } : {}),
+    }).catch(() => {});
+    const target = freeTier ? FREE_BEGIN[gender ?? "FEMALE"] : beginHref;
+    router.push(target);
   }
 
   return (
@@ -115,6 +142,46 @@ export default function Arrival({ videoUrl, beginHref, firstName }: Props) {
               This is not a quick fix. Give it time and you will start reading
               people you used to misread.
             </p>
+
+            {askGender && (
+              <div
+                className="app-rise mt-8"
+                style={{ animationDelay: "1s" }}
+              >
+                <p className="text-app-eyebrow uppercase tracking-app-label text-[var(--app-dim)]">
+                  I am
+                </p>
+                <div className="mt-3 flex justify-center gap-2.5">
+                  <button
+                    type="button"
+                    onClick={() => setGender("FEMALE")}
+                    aria-pressed={gender === "FEMALE"}
+                    className={`rounded-full border px-6 py-2.5 text-app-body transition-colors ${
+                      gender === "FEMALE"
+                        ? "border-[var(--app-gold)] bg-[var(--app-gold)]/10 text-[var(--app-gold)]"
+                        : "border-[var(--app-line)] text-[var(--app-muted)]"
+                    }`}
+                  >
+                    Woman
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setGender("MALE")}
+                    aria-pressed={gender === "MALE"}
+                    className={`rounded-full border px-6 py-2.5 text-app-body transition-colors ${
+                      gender === "MALE"
+                        ? "border-[var(--app-gold)] bg-[var(--app-gold)]/10 text-[var(--app-gold)]"
+                        : "border-[var(--app-line)] text-[var(--app-muted)]"
+                    }`}
+                  >
+                    Man
+                  </button>
+                </div>
+                <p className="mt-2 text-app-micro text-[var(--app-dim)]">
+                  Decides the content track. Skipping keeps the default.
+                </p>
+              </div>
+            )}
 
             {videoUrl && (
               <button

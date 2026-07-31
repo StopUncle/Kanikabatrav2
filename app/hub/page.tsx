@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import { requireServerAuth } from "@/lib/auth/server-auth";
 import { prisma } from "@/lib/prisma";
 import { getPathState } from "@/lib/path/progress";
@@ -37,10 +38,29 @@ export default async function TodayPage() {
   const [viewer, access] = await Promise.all([
     prisma.user.findUnique({
       where: { id: userId },
-      select: { gender: true, standing: true, ringLevel: true },
+      select: {
+        gender: true,
+        standing: true,
+        ringLevel: true,
+        arrivalAt: true,
+        createdAt: true,
+      },
     }),
     getAccess(userId),
   ]);
+
+  // A fresh free account gets the Arrival once. Members are handled by
+  // the layout's initiation redirect; this lives here rather than in the
+  // layout because the layout wraps /app/welcome and would loop.
+  const WEEK_MS = 7 * 24 * 60 * 60 * 1000;
+  if (
+    !access.isMember &&
+    viewer &&
+    !viewer.arrivalAt &&
+    Date.now() - viewer.createdAt.getTime() < WEEK_MS
+  ) {
+    redirect("/app/welcome");
+  }
 
   const dailyMission = getDailyMission();
   const startOfUtcToday = new Date();

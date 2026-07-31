@@ -29,6 +29,10 @@ model User {
   // /consilium/initiation. Distinct from onboardingSeenAt, which belongs
   // to the pre-Rings tour and dies with it.
   initiationAt              DateTime?
+  // When the account sat the Arrival (the app's welcome screen). Stamped
+  // by /api/arrival/complete for every tier; free accounts with this
+  // null and a fresh createdAt are routed to /app/welcome once.
+  arrivalAt                 DateTime?
   // Best-effort "last seen" stamp. Written by /api/auth/refresh
   // (fires roughly every 15min for any active session) and by
   // /api/auth/login. Read only by /api/cron/dormant-member to
