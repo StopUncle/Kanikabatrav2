@@ -76,6 +76,13 @@ export const STANDING = {
   STREAK_MILESTONES: { 7: 100, 30: 500, 100: 2000 } as Record<number, number>,
 } as const;
 
+/**
+ * Where free-tier Standing stops: the Analyst threshold. Derived from the
+ * ring table so the ceiling and the rank can never drift apart. The
+ * upgrade sheet's standing-frozen copy promises exactly this line.
+ */
+export const FREE_STANDING_CEILING = RINGS.find((r) => r.level === 3)!.threshold;
+
 /** Resolve the rank a lifetime-Standing total earns. */
 export function ringForStanding(standing: number): RingDef {
   let ring: RingDef = RINGS[0];

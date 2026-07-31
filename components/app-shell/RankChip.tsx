@@ -12,9 +12,11 @@ import { ringByLevel, standingToNextRing } from "@/lib/standing/config";
 type Props = {
   standing: number;
   ringLevel: number;
+  /** Free tier at the Analyst ceiling; the You page carries the pitch. */
+  atCap?: boolean;
 };
 
-export default function RankChip({ standing, ringLevel }: Props) {
+export default function RankChip({ standing, ringLevel, atCap = false }: Props) {
   const rank = ringByLevel(ringLevel);
   const next = standingToNextRing(standing);
 
@@ -34,10 +36,16 @@ export default function RankChip({ standing, ringLevel }: Props) {
         <span className="block text-app-lead font-medium leading-tight">
           {rank.name}
         </span>
-        <span className="mt-0.5 block text-app-eyebrow tracking-[0.04em] text-[var(--app-dim)]">
-          {next
-            ? `${next.remaining.toLocaleString()} to ${next.next.name}`
-            : "Inner Circle"}
+        <span
+          className={`mt-0.5 block text-app-eyebrow tracking-[0.04em] ${
+            atCap ? "text-[var(--app-gold-soft)]" : "text-[var(--app-dim)]"
+          }`}
+        >
+          {atCap
+            ? "At the free ceiling"
+            : next
+              ? `${next.remaining.toLocaleString()} to ${next.next.name}`
+              : "Inner Circle"}
         </span>
       </span>
     </Link>

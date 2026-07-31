@@ -394,6 +394,7 @@ export async function POST(request: NextRequest) {
           amount: safeXp * STANDING.SCENARIO_XP_MULTIPLIER,
           refId: body.scenarioId,
           dedupe: true,
+          isMember: access.isMember,
         });
         if (scenarioGrant.rangUp) ringUp = scenarioGrant.rangUp;
       }
@@ -405,6 +406,7 @@ export async function POST(request: NextRequest) {
           amount: STANDING.DAILY_MISSION_BONUS,
           refId: mission.dateKey,
           dedupe: true,
+          isMember: access.isMember,
         });
         if (missionGrant.rangUp) ringUp = missionGrant.rangUp;
       }

@@ -1,8 +1,10 @@
 "use client";
 
+import { useState } from "react";
 import RingEmblem from "@/components/rings/RingEmblem";
 import ProgressRing from "@/components/app-shell/juice/ProgressRing";
 import Sheen from "@/components/app-shell/juice/Sheen";
+import UpgradeSheet from "@/components/app-shell/upgrade/UpgradeSheet";
 import { useCountUp } from "@/lib/hooks/use-count-up";
 import { ringByLevel, standingToNextRing } from "@/lib/standing/config";
 
@@ -17,12 +19,16 @@ import { ringByLevel, standingToNextRing } from "@/lib/standing/config";
 export default function RankHero({
   standing,
   ringLevel,
+  atFreeCeiling = false,
 }: {
   standing: number;
   ringLevel: number;
+  /** Free tier at the Analyst ceiling: the number holds until membership. */
+  atFreeCeiling?: boolean;
 }) {
   const rank = ringByLevel(ringLevel);
   const next = standingToNextRing(standing);
+  const [sheetOpen, setSheetOpen] = useState(false);
 
   let pct = 1;
   if (next) {
@@ -70,13 +76,28 @@ export default function RankHero({
             {shownStanding.toLocaleString()}
             <span className="text-[var(--app-dim)]"> Standing</span>
           </p>
-          <p className="mt-0.5 text-app-eyebrow text-[var(--app-dim)]">
-            {next
-              ? `${next.remaining.toLocaleString()} to ${next.next.name}`
-              : "The innermost ring"}
-          </p>
+          {atFreeCeiling ? (
+            <button
+              type="button"
+              onClick={() => setSheetOpen(true)}
+              className="mt-0.5 text-left text-app-eyebrow text-[var(--app-gold-soft)] underline decoration-[var(--app-gold-soft)]/40 underline-offset-2"
+            >
+              Your standing holds here on the free tier
+            </button>
+          ) : (
+            <p className="mt-0.5 text-app-eyebrow text-[var(--app-dim)]">
+              {next
+                ? `${next.remaining.toLocaleString()} to ${next.next.name}`
+                : "The innermost ring"}
+            </p>
+          )}
         </div>
       </div>
+      <UpgradeSheet
+        open={sheetOpen}
+        trigger="standing-frozen"
+        onClose={() => setSheetOpen(false)}
+      />
     </div>
   );
 }

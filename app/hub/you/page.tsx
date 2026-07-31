@@ -1,5 +1,7 @@
 import { requireServerAuth } from "@/lib/auth/server-auth";
 import { prisma } from "@/lib/prisma";
+import { getAccess } from "@/lib/access/tier";
+import { FREE_STANDING_CEILING } from "@/lib/standing/config";
 import { readDailyStreak } from "@/lib/streak/daily";
 import { readMark } from "@/lib/mark/read";
 import { getStandingActivity } from "@/lib/standing/activity";
@@ -34,7 +36,7 @@ export const metadata = {
 export default async function YouPage() {
   const userId = await requireServerAuth("/app/you");
 
-  const [viewer, dailyStreak, simStats, mark, activity, wall] =
+  const [viewer, dailyStreak, simStats, mark, activity, wall, access] =
     await Promise.all([
       prisma.user.findUnique({
         where: { id: userId },
@@ -53,10 +55,12 @@ export default async function YouPage() {
       readMark(prisma, userId),
       getStandingActivity(prisma, userId),
       getBadgeWall(prisma, userId),
+      getAccess(userId),
     ]);
 
   const standing = viewer?.standing ?? 0;
   const ringLevel = viewer?.ringLevel ?? 4;
+  const atFreeCeiling = !access.isMember && standing >= FREE_STANDING_CEILING;
 
   const memberSince = viewer?.createdAt
     ? viewer.createdAt.toLocaleDateString("en-US", {
@@ -74,7 +78,11 @@ export default async function YouPage() {
         }
       />
 
-      <RankHero standing={standing} ringLevel={ringLevel} />
+      <RankHero
+        standing={standing}
+        ringLevel={ringLevel}
+        atFreeCeiling={atFreeCeiling}
+      />
 
       <div className="mb-7 mt-3 grid grid-cols-3 gap-2.5">
         <StatTile

@@ -24,10 +24,11 @@ export type UpgradeTrigger =
   | "chapter-end"
   /** Standing hit the free ceiling and stopped moving. */
   | "standing-frozen"
-  /** The Mark named that a blind spot exists. */
-  | "mark-verdict"
   /** A locked tab or More row was tapped, or a member-only URL was opened. */
   | "locked-nav";
+// A "mark-verdict" trigger was written and never fired: the Measure is
+// fully walled for free accounts, so no honest moment exists. Its home,
+// if one ever ships, is a free Baseline reveal.
 
 type Props = {
   open: boolean;
@@ -52,10 +53,7 @@ function headlineFor(
     return next ? `${next} is already written.` : "The next chapter is already written.";
   }
   if (trigger === "standing-frozen") return "Your standing stops here.";
-  if (trigger === "locked-nav") {
-    return surface ? `${surface} is open inside.` : "That room is open inside.";
-  }
-  return "The read goes further than this.";
+  return surface ? `${surface} is open inside.` : "That room is open inside.";
 }
 
 function sublineFor(trigger: UpgradeTrigger): string {
@@ -65,10 +63,7 @@ function sublineFor(trigger: UpgradeTrigger): string {
   if (trigger === "standing-frozen") {
     return "Analyst is as far as the free tier counts. The ranks above it keep moving.";
   }
-  if (trigger === "locked-nav") {
-    return "Everything on this bar unlocks with one membership. Pick up where the free tier stops.";
-  }
-  return "The verdict names that a blind spot is there. Inside, it is named and drilled.";
+  return "Everything on this bar unlocks with one membership. Pick up where the free tier stops.";
 }
 
 /** What continues. Never a list of what is missing. */

@@ -1,5 +1,5 @@
 import type { Prisma, PrismaClient, StandingSource } from "@prisma/client";
-import { ringForStanding } from "./config";
+import { FREE_STANDING_CEILING, ringForStanding } from "./config";
 import { notifyRankUp } from "@/lib/push/rank-up";
 
 /**
@@ -30,6 +30,25 @@ export interface GrantResult {
    * skip the marker on failure so the grant can retry on the next pass.
    */
   failed?: boolean;
+  /** True when the free-tier ceiling swallowed some or all of the grant. */
+  capped?: boolean;
+}
+
+/**
+ * The live-membership half of checkMembership's state machine, kept pure
+ * so this module never imports next/headers. checkMembership stays the
+ * authority for pages; this only answers "does Standing keep moving".
+ */
+function isLiveMembershipRow(
+  row: { status: string; expiresAt: Date | null } | null,
+): boolean {
+  if (!row) return false;
+  if (row.status === "ACTIVE") return true;
+  return (
+    row.status === "CANCELLED" &&
+    row.expiresAt !== null &&
+    row.expiresAt > new Date()
+  );
 }
 
 const NO_GRANT: GrantResult = {
@@ -56,10 +75,15 @@ export async function grantStanding(
      * a no-op instead of double-paying.
      */
     dedupe?: boolean;
+    /**
+     * Skips the membership lookup near the ceiling when the caller has
+     * already resolved access. Omitting it is always safe.
+     */
+    isMember?: boolean;
   },
 ): Promise<GrantResult> {
-  const { userId, source, amount, refId, dedupe } = opts;
-  if (amount <= 0) return NO_GRANT;
+  const { userId, source, amount: requested, refId, dedupe } = opts;
+  if (requested <= 0) return NO_GRANT;
 
   try {
     if (dedupe && refId) {
@@ -68,6 +92,37 @@ export async function grantStanding(
         select: { id: true },
       });
       if (existing) return NO_GRANT;
+    }
+
+    // The free ceiling: Standing holds at Analyst until there is a live
+    // membership behind it. Checked only when this grant could cross the
+    // line, and failing OPEN on any lookup error, because blocking a
+    // member's earn over a hiccup is worse than a free account briefly
+    // passing the cap.
+    let amount = requested;
+    const current = await prisma.user.findUnique({
+      where: { id: userId },
+      select: { standing: true },
+    });
+    if (current && current.standing + requested > FREE_STANDING_CEILING) {
+      let member = opts.isMember;
+      if (member === undefined) {
+        try {
+          const row = await prisma.communityMembership.findUnique({
+            where: { userId },
+            select: { status: true, expiresAt: true },
+          });
+          member = isLiveMembershipRow(row);
+        } catch {
+          member = true;
+        }
+      }
+      if (!member) {
+        amount = Math.max(0, FREE_STANDING_CEILING - current.standing);
+        if (amount === 0) {
+          return { ...NO_GRANT, newStanding: current.standing, capped: true };
+        }
+      }
     }
 
     try {
@@ -122,6 +177,7 @@ export async function grantStanding(
       newStanding: updated.standing,
       ringLevel: ring.level,
       rangUp,
+      capped: amount < requested || undefined,
     };
   } catch (err) {
     console.error("[standing] grant failed (non-fatal):", err);

@@ -61,12 +61,12 @@ describe("memberGate", () => {
     mockAccess.mockResolvedValue(access());
 
     const gate = (await memberGate("u1", {
-      trigger: "mark-verdict",
+      trigger: "standing-frozen",
       returnHref: "/app/feed",
     })) as React.ReactElement;
 
     expect(gate.props).toMatchObject({
-      trigger: "mark-verdict",
+      trigger: "standing-frozen",
       returnHref: "/app/feed",
     });
   });
