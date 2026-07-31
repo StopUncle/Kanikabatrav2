@@ -76,6 +76,9 @@ export default function SimulatorPageClient({
   // Non-null when the completion that just resolved crossed a ring
   // threshold; drives the full-screen ceremony over the ending screen.
   const [ringUp, setRingUp] = useState<RingUpPayload | null>(null);
+  // True when the completion wrote new Mark evidence; drives one quiet
+  // line on the ending screen.
+  const [markRecorded, setMarkRecorded] = useState(false);
   // Track the "best-to-date" across the session so a second replay
   // in the same tab compares against the run that just finished, not
   // the previousBest prop frozen at page load. Initial value mirrors
@@ -137,6 +140,7 @@ export default function SimulatorPageClient({
     setBadgesEarned([]);
     setUnlockedThisRun([]);
     setRingUp(null);
+    setMarkRecorded(false);
 
     // Update the session's best-to-date if this run exceeded it.
     // A subsequent in-session replay sees this as the new baseline so
@@ -170,6 +174,7 @@ export default function SimulatorPageClient({
           allEarnedKeys: string[];
           newlyEarnedKeys: string[];
           ringUp: RingUpPayload | null;
+          markRecorded?: boolean;
         };
         // Show ALL earned badges on the ending screen (visual reward), even
         // if duplicates so replays still feel rewarding. Uniqueness is
@@ -179,6 +184,7 @@ export default function SimulatorPageClient({
         // same key array gets no popup, which is what players want.
         setUnlockedThisRun(data.newlyEarnedKeys);
         setRingUp(data.ringUp ?? null);
+        setMarkRecorded(data.markRecorded ?? false);
         // Refresh server components so the index page reflects new state
         // when the user returns.
         router.refresh();
@@ -205,6 +211,7 @@ export default function SimulatorPageClient({
         seenEndingIds={seenEndingIds}
         endingCta={endingCta}
         exitHref={exitHref}
+        markRecorded={markRecorded}
       />
       <AchievementToast unlocks={unlockedThisRun} />
       <RingUpCeremony ringUp={ringUp} onDismiss={() => setRingUp(null)} />

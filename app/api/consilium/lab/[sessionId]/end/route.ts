@@ -24,6 +24,8 @@ import {
 import { bumpDailyStreak } from "@/lib/streak/daily";
 import { grantStanding } from "@/lib/standing/grant";
 import { STANDING } from "@/lib/standing/config";
+import { recordEncounters } from "@/lib/mark/encounters";
+import { encountersFromLabScore } from "@/lib/mark/sources/lab";
 import { logger } from "@/lib/logger";
 
 export async function POST(
@@ -94,6 +96,21 @@ export async function POST(
         source: "LAB",
         amount: STANDING.LAB,
         refId: session.id,
+        dedupe: true,
+      });
+
+      // The Mark: a held session counts as catching the persona's
+      // signature tactics, a played session as missing them, a mixed
+      // verdict writes nothing. Deduped on the session id so an end
+      // retry cannot double-write. recordEncounters never throws.
+      await recordEncounters(prisma, {
+        userId: user.id,
+        source: "LAB",
+        encounters: encountersFromLabScore(
+          session.personaKey,
+          session.id,
+          score.outcome,
+        ),
         dedupe: true,
       });
 

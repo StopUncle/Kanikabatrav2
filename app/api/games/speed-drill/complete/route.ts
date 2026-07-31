@@ -19,7 +19,9 @@ import { bumpGamesStreak } from "@/lib/games/status";
 import { bumpDailyStreak } from "@/lib/streak/daily";
 import { grantStanding, grantsTodayCount } from "@/lib/standing/grant";
 import { STANDING } from "@/lib/standing/config";
-import { DRILL_CARDS } from "@/lib/games/speed-drill/content";
+import { DRILL_CARDS, DRILL_BANK } from "@/lib/games/speed-drill/content";
+import { recordEncounters } from "@/lib/mark/encounters";
+import { encountersFromDrillAnswers } from "@/lib/mark/sources/drill";
 import { logger } from "@/lib/logger";
 
 const CompleteBody = z.object({
@@ -34,7 +36,24 @@ const CompleteBody = z.object({
   durationSec: z.number().int().min(0).max(300),
   /** Difficulty tier used for the draw. 1=warm-up, 2=sharp, 3=ruthless. */
   tier: z.union([z.literal(1), z.literal(2), z.literal(3)]).default(2),
+  /**
+   * Per-card record of the run. Optional so a cached client that only
+   * sends aggregates still saves its session; when present, the server
+   * re-derives score and accuracy from it and feeds the Mark.
+   */
+  answers: z
+    .array(
+      z.object({
+        cardId: z.string().min(1).max(40),
+        picked: z.boolean(),
+        answerMs: z.number().int().min(0).max(60_000).optional(),
+      }),
+    )
+    .max(DRILL_CARDS)
+    .optional(),
 });
+
+const CARD_BY_ID = new Map(DRILL_BANK.map((card) => [card.id, card]));
 
 export async function POST(request: NextRequest) {
   return requireAuth(request, async (req, user) => {
@@ -52,19 +71,51 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // With a per-card record, the server owns the truth: every card must
+    // exist in the bank, appear once, and score is re-derived from the
+    // bank's answer key. The client aggregates must agree or the payload
+    // is rejected as tampered.
+    let score = body.score;
+    let totalCards = body.totalCards;
+    if (body.answers) {
+      const ids = new Set(body.answers.map((a) => a.cardId));
+      if (ids.size !== body.answers.length) {
+        return NextResponse.json(
+          { error: "duplicate cards in answers" },
+          { status: 400 },
+        );
+      }
+      for (const a of body.answers) {
+        if (!CARD_BY_ID.has(a.cardId)) {
+          return NextResponse.json(
+            { error: `unknown card: ${a.cardId}` },
+            { status: 400 },
+          );
+        }
+      }
+      totalCards = body.answers.length;
+      score = body.answers.filter(
+        (a) => a.picked === CARD_BY_ID.get(a.cardId)?.manipulative,
+      ).length;
+      if (score !== body.score || totalCards !== body.totalCards) {
+        return NextResponse.json(
+          { error: "aggregates disagree with answers" },
+          { status: 400 },
+        );
+      }
+    }
+
     // Server-side accuracy. Trust this column, not the client's value.
     const accuracy =
-      body.totalCards > 0
-        ? Math.round((body.score / body.totalCards) * 100)
-        : 0;
+      totalCards > 0 ? Math.round((score / totalCards) * 100) : 0;
 
     try {
       const session = await prisma.gameSession.create({
         data: {
           userId: user.id,
           gameKey: "speed-drill",
-          score: body.score,
-          totalCards: body.totalCards,
+          score,
+          totalCards,
           accuracy,
           maxCombo: body.maxCombo,
           durationSec: body.durationSec,
@@ -131,6 +182,18 @@ export async function POST(request: NextRequest) {
           "drill standing grant failed",
           err instanceof Error ? err : undefined,
         );
+      }
+
+      // The Mark: the first time a member ever faces a mapped card is the
+      // read that counts. Deduped per card id, correctness re-derived
+      // from the bank inside the mapper. recordEncounters never throws.
+      if (body.answers) {
+        await recordEncounters(prisma, {
+          userId: user.id,
+          source: "DRILL",
+          encounters: encountersFromDrillAnswers(body.answers),
+          dedupe: true,
+        });
       }
 
       return NextResponse.json({ session, streak, standing });

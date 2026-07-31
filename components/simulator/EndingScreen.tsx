@@ -81,6 +81,12 @@ type Props = {
    * own ending as still-unseen (the client list predates this run).
    */
   seenEndingIds?: string[];
+  /**
+   * True when this completion wrote new evidence to the member's Mark.
+   * Rendered as one quiet sentence, never a number, per the separation
+   * between the Measure and the reward layer.
+   */
+  markRecorded?: boolean;
   onRestart: () => void;
 };
 
@@ -116,6 +122,7 @@ export default function EndingScreen({
   hideFailureBlog = false,
   previousBest = null,
   seenEndingIds = [],
+  markRecorded = false,
   onRestart,
 }: Props) {
   const outcome = state.outcome ?? scene.outcomeType ?? "neutral";
@@ -290,6 +297,20 @@ export default function EndingScreen({
               </span>
             )}
           </m.div>
+        )}
+
+        {/* One quiet line when the run fed the Measure. No numbers: the
+            Mark speaks in sentences on its own page, and this is only a
+            pointer that the session counted as evidence. */}
+        {markRecorded && (
+          <m.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.6, delay: 3.1 }}
+            className="mb-8 -mt-2 text-[11px] uppercase tracking-[0.3em] text-text-gray/60"
+          >
+            This run added evidence to your Mark
+          </m.p>
         )}
 
         {/* "The Council today" compare card. Self-suppressing: only

@@ -2272,6 +2272,7 @@ enum MarkSource {
   SCENARIO
   LAB
   RECEIPT
+  DRILL
 }
 
 /// One graded moment: a tagged item the member either caught or did not.

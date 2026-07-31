@@ -36,7 +36,7 @@ export default async function MeasurePage() {
       {!read.baseline && read.totalEncounters === 0 ? (
         <EmptyState
           line="There is nothing to read yet."
-          hint="Start with the Baseline Read and this fills in from there."
+          hint="Start with the Baseline Read. After that, every scenario, drill, Tell and Lab session you face in here adds to the record."
           action={{
             label: "Take the Baseline Read",
             href: "/app/measure/baseline",

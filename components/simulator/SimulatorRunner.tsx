@@ -120,6 +120,8 @@ type Props = {
    * EndingScreen for the endings catalog. Empty on a first-ever play.
    */
   seenEndingIds?: string[];
+  /** True when this completion wrote Mark evidence. Forwarded to EndingScreen. */
+  markRecorded?: boolean;
 };
 
 export default function SimulatorRunner({
@@ -134,6 +136,7 @@ export default function SimulatorRunner({
   hideFailureBlog = false,
   previousBest = null,
   seenEndingIds = [],
+  markRecorded = false,
 }: Props) {
   const [state, setState] = useState<SimulatorState>(
     initialState ?? initState(scenario),
@@ -790,6 +793,7 @@ export default function SimulatorRunner({
             hideFailureBlog={hideFailureBlog}
             previousBest={previousBest}
             seenEndingIds={seenEndingIds}
+            markRecorded={markRecorded}
             onRestart={restart}
           />
         </AnimatePresence>

@@ -27,6 +27,8 @@ export interface DrillAnswer {
   card: DrillCard;
   picked: boolean;
   correct: boolean;
+  /** Time from the card appearing to the call, in ms. */
+  answerMs: number;
 }
 
 /** What the completion endpoint hands back, when it hands anything back. */
@@ -126,6 +128,7 @@ export function useSpeedDrill(): SpeedDrillState {
 
   const timers = useRef<ReturnType<typeof setTimeout>[]>([]);
   const flashTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const cardShownAtRef = useRef(0);
   const later = useCallback((fn: () => void, ms: number) => {
     timers.current.push(setTimeout(fn, ms));
   }, []);
@@ -164,6 +167,7 @@ export function useSpeedDrill(): SpeedDrillState {
     setClock(DRILL_SECONDS);
     const startedAt = Date.now();
     setRunStartedAt(startedAt);
+    cardShownAtRef.current = startedAt;
     const id = setInterval(() => {
       const elapsed = Math.floor((Date.now() - startedAt) / 1000);
       const remaining = DRILL_SECONDS - elapsed;
@@ -200,9 +204,10 @@ export function useSpeedDrill(): SpeedDrillState {
       const card = deck[index];
       if (!card) return;
       const correct = picked === card.manipulative;
+      const answerMs = Math.min(60_000, Date.now() - cardShownAtRef.current);
 
       setLocked({ picked, correct });
-      setAnswers((prev) => [...prev, { card, picked, correct }]);
+      setAnswers((prev) => [...prev, { card, picked, correct, answerMs }]);
 
       setFlash(correct ? "gold" : "burgundy");
       if (flashTimer.current) clearTimeout(flashTimer.current);
@@ -224,7 +229,10 @@ export function useSpeedDrill(): SpeedDrillState {
       later(() => {
         setLocked(null);
         if (index >= deck.length - 1) setPhase("results");
-        else setIndex((i) => i + 1);
+        else {
+          setIndex((i) => i + 1);
+          cardShownAtRef.current = Date.now();
+        }
       }, FLASH_MS);
     },
     [locked, phase, deck, index, combo, later],
@@ -269,6 +277,11 @@ export function useSpeedDrill(): SpeedDrillState {
             maxCombo,
             durationSec,
             tier: DEFAULT_TIER,
+            answers: answers.map((a) => ({
+              cardId: a.card.id,
+              picked: a.picked,
+              answerMs: a.answerMs,
+            })),
           }),
         });
         if (!res.ok) return;

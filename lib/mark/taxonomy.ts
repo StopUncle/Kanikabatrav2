@@ -46,7 +46,13 @@ export const OPERATOR_KEYS = [
 export type Operator = (typeof OPERATOR_KEYS)[number];
 
 /** Where a graded moment came from. Mirrors the MarkSource enum. */
-export type MarkSource = "BASELINE" | "TELL" | "SCENARIO" | "LAB" | "RECEIPT";
+export type MarkSource =
+  | "BASELINE"
+  | "TELL"
+  | "SCENARIO"
+  | "LAB"
+  | "RECEIPT"
+  | "DRILL";
 
 /** Member-facing names. Plain nouns, no clinical framing. */
 export const TACTIC_LABELS: Record<Tactic, string> = {

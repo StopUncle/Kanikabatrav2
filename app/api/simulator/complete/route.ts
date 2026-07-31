@@ -36,6 +36,8 @@ import type {
 } from "@/lib/simulator/types";
 import { replayXp } from "@/lib/simulator/engine";
 import { mergeProgress } from "@/lib/simulator/progress-merge";
+import { recordEncounters } from "@/lib/mark/encounters";
+import { encountersFromScenarioRun } from "@/lib/mark/sources/scenario";
 import { bumpSimulatorStreak } from "@/lib/simulator/streak";
 import { bumpDailyStreak } from "@/lib/streak/daily";
 import { grantStanding } from "@/lib/standing/grant";
@@ -405,6 +407,18 @@ export async function POST(request: NextRequest) {
         if (missionGrant.rangUp) ringUp = missionGrant.rangUp;
       }
 
+      // The Mark: every graded choice point this run faced for the first
+      // time becomes ledger evidence. Deduped per (scenario, scene), so a
+      // replay of a known branch writes nothing while a new branch still
+      // counts. recordEncounters never throws; a ledger hiccup cannot
+      // break the completion.
+      const markWritten = await recordEncounters(prisma, {
+        userId: user.id,
+        source: "SCENARIO",
+        encounters: encountersFromScenarioRun(scenario, body.choicesMade),
+        dedupe: true,
+      });
+
       return NextResponse.json({
         success: true,
         allEarnedKeys: earnedKeys, // every badge the run would earn
@@ -412,6 +426,8 @@ export async function POST(request: NextRequest) {
         // Non-null when this completion crossed a ring threshold; the
         // client uses it to fire the ring-up ceremony.
         ringUp,
+        // True when this run added evidence to the member's Mark.
+        markRecorded: markWritten > 0,
       });
     } catch (err) {
       logger.error("[simulator-complete] failed", err as Error, {
