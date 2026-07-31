@@ -24,7 +24,11 @@ import { getAccess, canAccessMemberOnly } from "./tier";
  */
 export async function memberGate(
   userId: string,
-  opts: { trigger?: UpgradeTrigger; returnHref?: string } = {},
+  opts: {
+    trigger?: UpgradeTrigger;
+    returnHref?: string;
+    surfaceLabel?: string;
+  } = {},
 ): Promise<React.ReactNode | null> {
   const access = await getAccess(userId);
   if (canAccessMemberOnly(access)) return null;
@@ -32,6 +36,7 @@ export async function memberGate(
     <UpgradeWall
       trigger={opts.trigger ?? "chapter-end"}
       returnHref={opts.returnHref ?? "/app"}
+      surfaceLabel={opts.surfaceLabel}
     />
   );
 }

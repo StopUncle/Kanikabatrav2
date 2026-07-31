@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import { Fraunces, Instrument_Sans } from "next/font/google";
 import { requireServerAuth } from "@/lib/auth/server-auth";
-import { getAccess } from "@/lib/access/tier";
+import { getAccess, canAccessMemberOnly } from "@/lib/access/tier";
 import { prisma } from "@/lib/prisma";
 import TabBar from "@/components/app-shell/TabBar";
 import PhoneHandoff from "@/components/app-shell/PhoneHandoff";
@@ -107,7 +107,10 @@ export default async function AppShellLayout({
           <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain">
             {children}
           </div>
-          <TabBar />
+          {/* Resolved server-side and passed as a plain boolean, so the
+              locked state is in the SSR HTML: a member never flashes locks
+              and a free account never flashes an open bar. */}
+          <TabBar isMember={canAccessMemberOnly(access)} />
           {/* Overlay host for ceremonies and floaters. It lives inside the
               column so portalled content keeps the [data-app-shell] tokens.
               Absolute against the shell now that the shell is a fixed-size

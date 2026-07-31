@@ -4,11 +4,13 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import MoreSheet from "./MoreSheet";
+import UpgradeSheet from "./upgrade/UpgradeSheet";
 import {
   TAB_SURFACES,
   MORE_ACTIVE_PREFIXES,
   FULL_SCREEN_ROUTES,
   isTabActive,
+  type AppSurface,
 } from "@/lib/app/nav";
 
 /**
@@ -51,10 +53,19 @@ const ICONS: Record<string, React.ReactNode> = {
   ),
 };
 
-export default function TabBar() {
+export default function TabBar({ isMember }: { isMember: boolean }) {
   const pathname = usePathname();
   const [moreOpen, setMoreOpen] = useState(false);
   const [unread, setUnread] = useState(0);
+  // The locked surface whose pitch is currently up. Tapping a locked entry
+  // opens the sheet in place rather than navigating: the server would only
+  // send back a wall over an empty room, a round trip later.
+  const [lockedSurface, setLockedSurface] = useState<AppSurface | null>(null);
+
+  const isLocked = useCallback(
+    (s: AppSurface) => Boolean(s.memberOnly) && !isMember,
+    [isMember],
+  );
 
   const onKanika = pathname.startsWith("/app/kanika");
 
@@ -108,18 +119,43 @@ export default function TabBar() {
         <div className="flex items-center justify-around px-1 pb-[max(14px,env(safe-area-inset-bottom))] pt-2.5">
           {TAB_SURFACES.map((tab) => {
             const active = isTabActive(tab, pathname);
+            const locked = isLocked(tab);
             return (
               <Link
                 key={tab.href}
                 href={tab.href}
+                onClick={
+                  locked
+                    ? (e) => {
+                        e.preventDefault();
+                        setLockedSurface(tab);
+                      }
+                    : undefined
+                }
                 aria-current={active ? "page" : undefined}
-                aria-label={tab.label}
+                aria-label={locked ? `${tab.label}, members only` : tab.label}
                 className={`flex w-[58px] flex-col items-center gap-1.5 text-app-tiny tracking-[0.06em] transition-colors ${
                   active ? "text-[var(--app-gold)]" : "text-[var(--app-dim)]"
-                }`}
+                } ${locked ? "opacity-60" : ""}`}
               >
                 <span className="relative h-[21px] w-[21px] [&>svg]:h-full [&>svg]:w-full [&>svg]:fill-none [&>svg]:stroke-current [&>svg]:[stroke-width:1.5]">
                   {ICONS[tab.href]}
+                  {/* The lock sits where the unread badge would: visible
+                      before the tap, so the wall never arrives unannounced. */}
+                  {locked && (
+                    <span
+                      aria-hidden
+                      className="absolute -right-1 -top-0.5 block h-[10px] w-[10px]"
+                    >
+                      <svg
+                        viewBox="0 0 24 24"
+                        className="h-full w-full fill-none stroke-[var(--app-gold-soft)] [stroke-width:2.5]"
+                      >
+                        <rect x="4" y="10.5" width="16" height="10" rx="2.5" />
+                        <path d="M8 10.5V8a4 4 0 018 0v2.5" />
+                      </svg>
+                    </span>
+                  )}
                 </span>
                 {tab.label}
               </Link>
@@ -161,7 +197,18 @@ export default function TabBar() {
         </div>
       </nav>
 
-      <MoreSheet open={moreOpen} onClose={() => setMoreOpen(false)} />
+      <MoreSheet
+        open={moreOpen}
+        onClose={() => setMoreOpen(false)}
+        isMember={isMember}
+        onLockedTap={setLockedSurface}
+      />
+      <UpgradeSheet
+        open={lockedSurface !== null}
+        trigger="locked-nav"
+        surfaceLabel={lockedSurface?.label}
+        onClose={() => setLockedSurface(null)}
+      />
     </>
   );
 }

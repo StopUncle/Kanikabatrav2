@@ -51,6 +51,13 @@ export interface AppSurface {
   also?: string[];
   /** Renders an unread count (the Kanika thread). */
   badged?: boolean;
+  /**
+   * Requires a live membership. This flag and the page's own memberGate()
+   * call travel as a pair: the chrome reads it to lock the entry before the
+   * tap, the page still gates the render for deep links. Setting one without
+   * the other means either an unlabelled wall or an unenforced lock.
+   */
+  memberOnly?: boolean;
 }
 
 export const APP_SURFACES: AppSurface[] = [
@@ -64,6 +71,7 @@ export const APP_SURFACES: AppSurface[] = [
   },
   {
     href: "/app/feed",
+    memberOnly: true,
     label: "Feed",
     placement: "tab",
     note: "Kanika's room. The only surface where she speaks to everyone at once.",
@@ -80,6 +88,7 @@ export const APP_SURFACES: AppSurface[] = [
 
   {
     href: "/app/measure",
+    memberOnly: true,
     label: "Mark",
     placement: "tab",
     note: "Took the slot Kanika vacated. The product's claim is measured progress, so the surface that carries the proof belongs on the bar rather than three taps down, where it sat until 2026-07-28.",
@@ -89,6 +98,7 @@ export const APP_SURFACES: AppSurface[] = [
   /* ------------------------------------------------------- the More sheet */
   {
     href: "/app/program",
+    memberOnly: true,
     label: "The 12 Weeks",
     placement: "more",
     section: "You",
@@ -137,6 +147,7 @@ export const APP_SURFACES: AppSurface[] = [
   },
   {
     href: "/app/videos",
+    memberOnly: true,
     label: "Videos",
     placement: "more",
     section: "Library",
@@ -145,6 +156,7 @@ export const APP_SURFACES: AppSurface[] = [
   },
   {
     href: "/app/voice-notes",
+    memberOnly: true,
     label: "Voice notes",
     placement: "more",
     section: "Library",
@@ -153,6 +165,7 @@ export const APP_SURFACES: AppSurface[] = [
   },
   {
     href: "/app/kanika",
+    memberOnly: true,
     label: "Kanika",
     placement: "more",
     section: "You",
@@ -220,6 +233,7 @@ export const APP_SURFACES: AppSurface[] = [
   },
   {
     href: "/app/lab",
+    memberOnly: true,
     label: "The Lab",
     placement: "nested",
     parent: "/app/train",
@@ -228,6 +242,7 @@ export const APP_SURFACES: AppSurface[] = [
   },
   {
     href: "/app/receipts",
+    memberOnly: true,
     label: "Receipts",
     placement: "nested",
     parent: "/app/train",
@@ -236,6 +251,7 @@ export const APP_SURFACES: AppSurface[] = [
   },
   {
     href: "/app/measure/baseline",
+    memberOnly: true,
     label: "The Baseline Read",
     placement: "nested",
     parent: "/app/measure",
@@ -268,6 +284,7 @@ export const APP_SURFACES: AppSurface[] = [
   },
   {
     href: "/app/previews",
+    memberOnly: true,
     label: "Previews",
     placement: "nested",
     parent: "/app/feed",
@@ -292,6 +309,7 @@ export const APP_SURFACES: AppSurface[] = [
   },
   {
     href: "/app/feed/[postId]",
+    memberOnly: true,
     label: "Post thread",
     placement: "unlisted",
     note: "Entered from the feed.",
@@ -306,6 +324,7 @@ export const APP_SURFACES: AppSurface[] = [
   },
   {
     href: "/app/previews/[slug]",
+    memberOnly: true,
     label: "Preview post",
     placement: "unlisted",
     note: "Entered from previews.",

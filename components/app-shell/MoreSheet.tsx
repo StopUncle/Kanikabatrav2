@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 import Link from "next/link";
-import { MORE_SECTIONS } from "@/lib/app/nav";
+import { MORE_SECTIONS, type AppSurface } from "@/lib/app/nav";
 import {
   Route,
   User,
@@ -43,9 +43,13 @@ const ICONS: Record<string, React.ReactNode> = {
 export default function MoreSheet({
   open,
   onClose,
+  isMember,
+  onLockedTap,
 }: {
   open: boolean;
   onClose: () => void;
+  isMember: boolean;
+  onLockedTap: (surface: AppSurface) => void;
 }) {
   useEffect(() => {
     if (!open) return;
@@ -85,20 +89,43 @@ export default function MoreSheet({
               {section.title}
             </p>
             <div className="overflow-hidden rounded-2xl border border-[var(--app-line-soft)] bg-[var(--app-card)]">
-              {section.items.map((item, i) => (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  onClick={onClose}
-                  className={`flex items-center gap-3.5 px-4 py-3.5 ${
-                    i > 0 ? "border-t border-[var(--app-line-soft)]" : ""
-                  }`}
-                >
-                  <span className="text-[var(--app-gold)]">{ICONS[item.href]}</span>
-                  <span className="flex-1 text-app-lead">{item.label}</span>
-                  <span className="text-[var(--app-dim)]">›</span>
-                </Link>
-              ))}
+              {section.items.map((item, i) => {
+                const locked = Boolean(item.memberOnly) && !isMember;
+                return (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    onClick={
+                      locked
+                        ? (e) => {
+                            e.preventDefault();
+                            onClose();
+                            onLockedTap(item);
+                          }
+                        : onClose
+                    }
+                    aria-label={locked ? `${item.label}, members only` : undefined}
+                    className={`flex items-center gap-3.5 px-4 py-3.5 ${
+                      i > 0 ? "border-t border-[var(--app-line-soft)]" : ""
+                    }`}
+                  >
+                    {/* The icon keeps its gold on a locked row. The lock is
+                        information, not a punishment; the row should still
+                        look worth wanting. */}
+                    <span className="text-[var(--app-gold)]">{ICONS[item.href]}</span>
+                    <span className={`flex-1 text-app-lead ${locked ? "opacity-60" : ""}`}>
+                      {item.label}
+                    </span>
+                    {locked ? (
+                      <span className="rounded-full border border-[var(--app-gold-soft)] px-1.5 py-0.5 text-app-micro uppercase tracking-app-wide text-[var(--app-gold-soft)]">
+                        Members
+                      </span>
+                    ) : (
+                      <span className="text-[var(--app-dim)]">›</span>
+                    )}
+                  </Link>
+                );
+              })}
             </div>
           </div>
         ))}

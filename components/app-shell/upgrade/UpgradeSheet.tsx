@@ -25,7 +25,9 @@ export type UpgradeTrigger =
   /** Standing hit the free ceiling and stopped moving. */
   | "standing-frozen"
   /** The Mark named that a blind spot exists. */
-  | "mark-verdict";
+  | "mark-verdict"
+  /** A locked tab or More row was tapped, or a member-only URL was opened. */
+  | "locked-nav";
 
 type Props = {
   open: boolean;
@@ -37,13 +39,22 @@ type Props = {
    * rather than the default.
    */
   nextChapterTitle?: string | null;
+  /** The locked surface's label, when the trigger is locked-nav. */
+  surfaceLabel?: string | null;
 };
 
-function headlineFor(trigger: UpgradeTrigger, next?: string | null): string {
+function headlineFor(
+  trigger: UpgradeTrigger,
+  next?: string | null,
+  surface?: string | null,
+): string {
   if (trigger === "chapter-end") {
     return next ? `${next} is already written.` : "The next chapter is already written.";
   }
   if (trigger === "standing-frozen") return "Your standing stops here.";
+  if (trigger === "locked-nav") {
+    return surface ? `${surface} is open inside.` : "That room is open inside.";
+  }
   return "The read goes further than this.";
 }
 
@@ -53,6 +64,9 @@ function sublineFor(trigger: UpgradeTrigger): string {
   }
   if (trigger === "standing-frozen") {
     return "Analyst is as far as the free tier counts. The ranks above it keep moving.";
+  }
+  if (trigger === "locked-nav") {
+    return "Everything on this bar unlocks with one membership. Pick up where the free tier stops.";
   }
   return "The verdict names that a blind spot is there. Inside, it is named and drilled.";
 }
@@ -70,6 +84,7 @@ export default function UpgradeSheet({
   onClose,
   trigger,
   nextChapterTitle,
+  surfaceLabel,
 }: Props) {
   const [cycle, setCycle] = useState<"annual" | "monthly">("annual");
   const [busy, setBusy] = useState(false);
@@ -147,7 +162,7 @@ export default function UpgradeSheet({
             className="mt-2 text-[24px] leading-[1.15]"
             style={{ fontFamily: "var(--font-display)" }}
           >
-            {headlineFor(trigger, nextChapterTitle)}
+            {headlineFor(trigger, nextChapterTitle, surfaceLabel)}
           </h2>
           <p className="mt-2 text-[13.5px] leading-relaxed text-[var(--app-muted)]">
             {sublineFor(trigger)}
