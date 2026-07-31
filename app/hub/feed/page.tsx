@@ -6,6 +6,7 @@ import { tierForMember } from "@/components/consilium/badge-tiers";
 import { formatPoll, pollInclude } from "@/lib/community/poll-format";
 import AppFeedList from "@/components/app-shell/feed/AppFeedList";
 import { memberGate } from "@/lib/access/guard";
+import { EmptyState, PageHeader, PageShell } from "@/components/app-shell/ui";
 
 export const metadata = {
   title: "Feed | Consilium",
@@ -22,7 +23,10 @@ export default async function AppFeedPage() {
   // Member-only surface. The shell no longer gates for us (A2), and this
   // page reads its data straight from Prisma, so the gate has to be here
   // and above the queries.
-  const gate = await memberGate(userId);
+  const gate = await memberGate(userId, {
+    trigger: "locked-nav",
+    surfaceLabel: "Feed",
+  });
   if (gate) return gate;
 
   const viewerRecord = await prisma.user.findUnique({
@@ -100,28 +104,23 @@ export default async function AppFeedPage() {
   }));
 
   return (
-    <div className="px-5 pb-8 pt-6">
-      <h1
-        className="text-[28px] font-light"
-        style={{ fontFamily: "var(--font-display)" }}
-      >
-        Feed
-      </h1>
-      <p className="mb-5 mt-1 text-[13px] text-[var(--app-muted)]">
-        Kanika&apos;s room. Posts, voice notes, and the talk under them.
-      </p>
+    <PageShell>
+      <PageHeader
+        title="Feed"
+        lede="Kanika's room. Posts, voice notes, and the talk under them."
+      />
 
       {formatted.length === 0 ? (
-        <p className="rounded-2xl border border-[var(--app-line-soft)] bg-[var(--app-card)] px-4 py-8 text-center text-[13px] text-[var(--app-muted)]">
-          Nothing here yet. New posts land here the moment Kanika shares
-          something.
-        </p>
+        <EmptyState
+          line="Nothing here yet."
+          hint="New posts land here the moment Kanika shares something."
+        />
       ) : (
         <AppFeedList
           initialPosts={formatted}
           initialNextCursor={initialNextCursor}
         />
       )}
-    </div>
+    </PageShell>
   );
 }

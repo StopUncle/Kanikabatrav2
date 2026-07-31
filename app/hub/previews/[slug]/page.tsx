@@ -29,7 +29,10 @@ export default async function PreviewDetailPage({ params }: PageProps) {
   const { slug } = await params;
   const userId = await requireServerAuth(`/app/previews/${slug}`);
   // Member-only: previews are member-side reads of unpublished posts.
-  const gate = await memberGate(userId);
+  const gate = await memberGate(userId, {
+    trigger: "locked-nav",
+    surfaceLabel: "Previews",
+  });
   if (gate) return gate;
 
   const post = getPostBySlug(slug);

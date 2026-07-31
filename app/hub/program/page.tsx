@@ -4,6 +4,7 @@ import { readProgram } from "@/lib/program/read";
 import { TOTAL_WEEKS } from "@/lib/program/curriculum";
 import WeekCard from "@/components/program/WeekCard";
 import { memberGate } from "@/lib/access/guard";
+import { EmptyState, PageHeader, PageShell } from "@/components/app-shell/ui";
 
 export const metadata = {
   title: "The 12 Weeks | Consilium",
@@ -21,43 +22,39 @@ export default async function ProgramPage() {
   // Member-only surface. The shell no longer gates for us (A2), and this
   // page reads its data straight from Prisma, so the gate has to be here
   // and above the queries.
-  const gate = await memberGate(userId);
+  const gate = await memberGate(userId, {
+    trigger: "locked-nav",
+    surfaceLabel: "The 12 Weeks",
+  });
   if (gate) return gate;
   const program = await readProgram(prisma, userId);
 
   return (
-    <div className="px-5 pb-8 pt-6">
-      <h1
-        className="text-[28px] font-light"
-        style={{ fontFamily: "var(--font-display)" }}
-      >
-        The 12 Weeks
-      </h1>
-      <p className="mb-5 mt-1 text-[13px] text-[var(--app-muted)]">
-        One week at a time. Read it, watch it, then go and do the thing.
-      </p>
+    <PageShell>
+      <PageHeader
+        title="The 12 Weeks"
+        lede="One week at a time. Read it, watch it, then go and do the thing."
+      />
 
       {!program.enrolled ? (
-        <p className="rounded-2xl border border-[var(--app-line-soft)] bg-[var(--app-card)] px-4 py-8 text-center text-[13px] text-[var(--app-muted)]">
-          The program opens with your membership.
-        </p>
+        <EmptyState line="The program opens with your membership." />
       ) : program.weeks.length === 0 ? (
-        <p className="rounded-2xl border border-[var(--app-line-soft)] bg-[var(--app-card)] px-4 py-8 text-center text-[13px] text-[var(--app-muted)]">
-          Week one lands shortly. You will get a notification the moment it
-          opens.
-        </p>
+        <EmptyState
+          line="Week one lands shortly."
+          hint="You will get a notification the moment it opens."
+        />
       ) : (
         <>
           <div className="mb-5 rounded-2xl border border-[var(--app-line)] bg-[var(--app-card)] px-4 py-3.5">
             <div className="flex items-baseline justify-between">
-              <p className="text-[10px] uppercase tracking-[0.22em] text-[var(--app-gold-soft)]">
+              <p className="text-app-tiny uppercase tracking-app-label text-[var(--app-gold-soft)]">
                 Your progress
               </p>
-              <p className="text-[12px] text-[var(--app-dim)]">
+              <p className="text-app-caption text-[var(--app-dim)]">
                 {program.completedCount} of {TOTAL_WEEKS} done
               </p>
             </div>
-            <div className="mt-2.5 h-[3px] overflow-hidden rounded-full bg-[rgba(212,175,55,0.15)]">
+            <div className="mt-2.5 h-[3px] overflow-hidden rounded-full bg-[var(--app-line)]">
               <div
                 className="h-full rounded-full bg-[var(--app-gold)]"
                 style={{
@@ -80,6 +77,6 @@ export default async function ProgramPage() {
           </div>
         </>
       )}
-    </div>
+    </PageShell>
   );
 }

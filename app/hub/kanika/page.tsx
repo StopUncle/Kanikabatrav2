@@ -13,7 +13,10 @@ export default async function KanikaPage() {
   const userId = await requireServerAuth("/app/kanika");
   // Member-only: this is direct access to Kanika, which the plan puts
   // squarely on the paid side.
-  const gate = await memberGate(userId);
+  const gate = await memberGate(userId, {
+    trigger: "locked-nav",
+    surfaceLabel: "Kanika",
+  });
   if (gate) return gate;
   return <KanikaThread />;
 }

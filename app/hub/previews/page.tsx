@@ -13,7 +13,10 @@ export const metadata = {
 export default async function PreviewsPage() {
   const userId = await requireServerAuth("/app/previews");
   // Member-only: previews are member-side reads of unpublished posts.
-  const gate = await memberGate(userId);
+  const gate = await memberGate(userId, {
+    trigger: "locked-nav",
+    surfaceLabel: "Previews",
+  });
   if (gate) return gate;
   const upcoming = getUpcomingPosts(60);
 

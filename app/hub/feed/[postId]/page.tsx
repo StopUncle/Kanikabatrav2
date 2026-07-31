@@ -46,7 +46,10 @@ export default async function AppPostDetailPage({
   // Member-only surface. The shell no longer gates for us (A2), and this
   // page reads its data straight from Prisma, so the gate has to be here
   // and above the queries.
-  const gate = await memberGate(userId);
+  const gate = await memberGate(userId, {
+    trigger: "locked-nav",
+    surfaceLabel: "Feed",
+  });
   if (gate) return gate;
 
   const viewerGender = await getViewerGender(userId);

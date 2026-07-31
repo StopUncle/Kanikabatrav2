@@ -19,7 +19,10 @@ export const metadata = {
  */
 export default async function LabPage() {
   const userId = await requireServerAuth("/app/lab");
-  const gate = await memberGate(userId);
+  const gate = await memberGate(userId, {
+    trigger: "locked-nav",
+    surfaceLabel: "The Lab",
+  });
   if (gate) return gate;
 
   return <LabClient />;

@@ -1,9 +1,9 @@
-import Link from "next/link";
 import { requireServerAuth } from "@/lib/auth/server-auth";
 import { prisma } from "@/lib/prisma";
 import { readMark, type LedgerRow } from "@/lib/mark/read";
 import { MARK_FRAME_LINE } from "@/lib/mark/verdicts";
 import { memberGate } from "@/lib/access/guard";
+import { EmptyState, PageHeader, PageShell } from "@/components/app-shell/ui";
 
 export const metadata = {
   title: "The Mark | Consilium",
@@ -22,47 +22,38 @@ export default async function MeasurePage() {
   // Member-only surface. The shell no longer gates for us (A2), and this
   // page reads its data straight from Prisma, so the gate has to be here
   // and above the queries.
-  const gate = await memberGate(userId);
+  const gate = await memberGate(userId, {
+    trigger: "locked-nav",
+    surfaceLabel: "The Mark",
+  });
   if (gate) return gate;
   const read = await readMark(prisma, userId);
 
   return (
-    <div className="px-5 pb-8 pt-6">
-      <h1
-        className="text-[28px] font-light"
-        style={{ fontFamily: "var(--font-display)" }}
-      >
-        The Mark
-      </h1>
-      <p className="mb-6 mt-1.5 text-[13px] leading-relaxed text-[var(--app-muted)]">
-        {MARK_FRAME_LINE}
-      </p>
+    <PageShell>
+      <PageHeader title="The Mark" lede={MARK_FRAME_LINE} />
 
       {!read.baseline && read.totalEncounters === 0 ? (
-        <div className="rounded-[18px] border border-[var(--app-line)] bg-[var(--app-card)] p-[18px]">
-          <p className="text-[14.5px] leading-relaxed text-[var(--app-muted)]">
-            There is nothing to read yet. Start with the Baseline Read and
-            this fills in from there.
-          </p>
-          <Link
-            href="/app/measure/baseline"
-            className="mt-4 inline-block rounded-full bg-[var(--app-gold)] px-5 py-2.5 text-[13.5px] font-semibold text-[#17130a]"
-          >
-            Take the Baseline Read
-          </Link>
-        </div>
+        <EmptyState
+          line="There is nothing to read yet."
+          hint="Start with the Baseline Read and this fills in from there."
+          action={{
+            label: "Take the Baseline Read",
+            href: "/app/measure/baseline",
+          }}
+        />
       ) : (
         <>
           {read.insights.length > 0 && (
             <section className="mb-7 rounded-[18px] border border-[var(--app-line)] bg-[var(--app-card)] p-[18px]">
-              <p className="mb-3 text-[11px] uppercase tracking-[0.22em] text-[var(--app-gold-soft)]">
+              <p className="mb-3 text-app-eyebrow uppercase tracking-app-label text-[var(--app-gold-soft)]">
                 The thing worth knowing
               </p>
               <div className="flex flex-col gap-2.5">
                 {read.insights.map((line) => (
                   <p
                     key={line}
-                    className="text-[15px] font-light leading-relaxed text-[var(--app-text)]"
+                    className="text-app-lead font-light leading-relaxed text-[var(--app-text)]"
                   >
                     {line}
                   </p>
@@ -83,7 +74,7 @@ export default async function MeasurePage() {
           />
 
           {read.baseline && (
-            <p className="mt-7 text-center text-[12.5px] leading-relaxed text-[var(--app-dim)]">
+            <p className="mt-7 text-center text-app-caption leading-relaxed text-[var(--app-dim)]">
               Last Baseline Read{" "}
               {read.baseline.takenAt.toLocaleDateString("en-AU", {
                 day: "numeric",
@@ -96,7 +87,7 @@ export default async function MeasurePage() {
           )}
         </>
       )}
-    </div>
+    </PageShell>
   );
 }
 
@@ -112,12 +103,12 @@ function Ledger({
   return (
     <section className="mb-7">
       <h2
-        className="text-[19px] font-light"
+        className="text-app-title font-light"
         style={{ fontFamily: "var(--font-display)" }}
       >
         {title}
       </h2>
-      <p className="mb-3.5 mt-1 text-[12.5px] text-[var(--app-dim)]">
+      <p className="mb-3.5 mt-1 text-app-caption text-[var(--app-dim)]">
         {caption}
       </p>
       <ul className="flex flex-col gap-2">
@@ -132,7 +123,7 @@ function Ledger({
           >
             <div className="flex items-baseline justify-between gap-3">
               <p
-                className={`text-[14.5px] font-medium ${
+                className={`text-app-lead font-medium ${
                   row.state === "UNTESTED"
                     ? "text-[var(--app-dim)]"
                     : "text-[var(--app-text)]"
@@ -141,13 +132,13 @@ function Ledger({
                 {row.label}
               </p>
               {row.state === "EARLY" && (
-                <span className="shrink-0 text-[10px] uppercase tracking-[0.18em] text-[var(--app-gold-soft)]">
+                <span className="shrink-0 text-app-tiny uppercase tracking-app-wide text-[var(--app-gold-soft)]">
                   Early read
                 </span>
               )}
             </div>
             <p
-              className={`mt-1 text-[13.5px] leading-relaxed ${
+              className={`mt-1 text-app-body leading-relaxed ${
                 row.state === "UNTESTED"
                   ? "text-[var(--app-dim)]"
                   : "text-[var(--app-muted)]"
