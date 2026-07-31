@@ -18,6 +18,9 @@ import RankChip from "@/components/app-shell/RankChip";
 import Move from "@/components/app-shell/Move";
 import DailySetCard from "@/components/app-shell/play/DailySetCard";
 import ChecklistCard from "@/components/day0/ChecklistCard";
+import MembershipTodayCard from "@/components/app-shell/upgrade/MembershipTodayCard";
+import { getAccess } from "@/lib/access/tier";
+import { FREE_STANDING_CEILING } from "@/lib/standing/config";
 
 export const metadata = {
   title: "Today | Consilium",
@@ -31,10 +34,13 @@ export const metadata = {
 export default async function TodayPage() {
   const userId = await requireServerAuth("/app");
 
-  const viewer = await prisma.user.findUnique({
-    where: { id: userId },
-    select: { gender: true, standing: true, ringLevel: true },
-  });
+  const [viewer, access] = await Promise.all([
+    prisma.user.findUnique({
+      where: { id: userId },
+      select: { gender: true, standing: true, ringLevel: true },
+    }),
+    getAccess(userId),
+  ]);
 
   const dailyMission = getDailyMission();
   const startOfUtcToday = new Date();
@@ -59,7 +65,7 @@ export default async function TodayPage() {
     getTellStreak(userId),
     isDailyMissionDoneToday(prisma, userId),
     readDailyStreak(prisma, userId),
-    getTodaysGeneratedDrop(),
+    access.isMember ? getTodaysGeneratedDrop() : Promise.resolve(null),
     prisma.feedPost.findFirst({
       where: { author: { role: "ADMIN" } },
       orderBy: { createdAt: "desc" },
@@ -108,6 +114,10 @@ export default async function TodayPage() {
         <RankChip
           standing={viewer?.standing ?? 0}
           ringLevel={viewer?.ringLevel ?? 4}
+          atCap={
+            !access.isMember &&
+            (viewer?.standing ?? 0) >= FREE_STANDING_CEILING
+          }
         />
         <div
           className="flex items-center gap-2 text-app-lead font-medium"
@@ -257,6 +267,13 @@ export default async function TodayPage() {
           />
         )}
       </div>
+
+      {/* The membership, pitched by invitation. Free accounts only. */}
+      {!access.isMember && (
+        <div className="mx-5 mt-4">
+          <MembershipTodayCard />
+        </div>
+      )}
 
       {/* Path continue card */}
       {current && (

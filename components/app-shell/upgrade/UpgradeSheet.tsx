@@ -25,7 +25,9 @@ export type UpgradeTrigger =
   /** Standing hit the free ceiling and stopped moving. */
   | "standing-frozen"
   /** A locked tab or More row was tapped, or a member-only URL was opened. */
-  | "locked-nav";
+  | "locked-nav"
+  /** The standing membership card on Today, opened by choice, not a wall. */
+  | "today-card";
 // A "mark-verdict" trigger was written and never fired: the Measure is
 // fully walled for free accounts, so no honest moment exists. Its home,
 // if one ever ships, is a free Baseline reveal.
@@ -53,6 +55,7 @@ function headlineFor(
     return next ? `${next} is already written.` : "The next chapter is already written.";
   }
   if (trigger === "standing-frozen") return "Your standing stops here.";
+  if (trigger === "today-card") return "The whole thing is already built.";
   return surface ? `${surface} is open inside.` : "That room is open inside.";
 }
 
@@ -62,6 +65,9 @@ function sublineFor(trigger: UpgradeTrigger): string {
   }
   if (trigger === "standing-frozen") {
     return "Analyst is as far as the free tier counts. The ranks above it keep moving.";
+  }
+  if (trigger === "today-card") {
+    return "Every track, the Lab, Kanika's room, the Mark. One membership opens all of it.";
   }
   return "Everything on this bar unlocks with one membership. Pick up where the free tier stops.";
 }
