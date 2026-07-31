@@ -24,6 +24,9 @@
 
 import { prisma } from "@/lib/prisma";
 import { sendPushToUser } from "@/lib/push";
+import { grantStanding } from "@/lib/standing/grant";
+import { STANDING } from "@/lib/standing/config";
+import { TOP_TIER_ORDER } from "./tiers";
 
 interface ResolveResult {
   leaguesResolved: number;
@@ -64,11 +67,11 @@ export async function resolveLeagues(opts: {
       resolvedAt: null,
       weekKey: { lt: opts.cutoffWeekKey },
     },
-    select: { id: true, tierName: true, weekKey: true },
+    select: { id: true, tierName: true, tierOrder: true, weekKey: true },
   });
 
   for (const league of leagues) {
-    const breakdown = await resolveOne(league.id);
+    const breakdown = await resolveOne(league);
     result.leaguesResolved++;
     result.membersRanked += breakdown.ranked;
     result.promoted += breakdown.promoted;
@@ -88,7 +91,12 @@ interface OneResult {
   botSwap: boolean;
 }
 
-async function resolveOne(leagueId: string): Promise<OneResult> {
+async function resolveOne(league: {
+  id: string;
+  tierOrder: number;
+  weekKey: string;
+}): Promise<OneResult> {
+  const leagueId = league.id;
   const memberships = await prisma.leagueMembership.findMany({
     where: { leagueId },
     select: {
@@ -177,6 +185,38 @@ async function resolveOne(leagueId: string): Promise<OneResult> {
     });
   });
 
+  // Standing for the week's result, granted OUTSIDE the transaction so
+  // a grant hiccup can never unwind a finalised league. Promotion pays
+  // a flat bonus; finishing #1 in the top tier pays the champion bonus
+  // on top. The week-keyed refIds under the (userId, source, refId)
+  // unique index make a cron re-run single-pay, and a member sits in
+  // exactly one league per week so the key cannot collide across
+  // brackets. Bots are already excluded from the notify list.
+  for (const n of notify) {
+    try {
+      if (n.outcome === "PROMOTED") {
+        await grantStanding(prisma, {
+          userId: n.userId,
+          source: "TELL",
+          amount: STANDING.LEAGUE_PROMOTION,
+          refId: `league-promo:${league.weekKey}`,
+          dedupe: true,
+        });
+      }
+      if (league.tierOrder === TOP_TIER_ORDER && n.rank === 1) {
+        await grantStanding(prisma, {
+          userId: n.userId,
+          source: "TELL",
+          amount: STANDING.LEAGUE_CHAMPION,
+          refId: `league-champ:${league.weekKey}`,
+          dedupe: true,
+        });
+      }
+    } catch {
+      // Best-effort: the resolution is the load-bearing artefact.
+    }
+  }
+
   // Weekly return trigger: tell each member how they finished. The
   // strongest recurring loop in Instincts, silent until now. Fire-and-
   // forget; per-member so the copy matches their outcome.
@@ -184,7 +224,7 @@ async function resolveOne(leagueId: string): Promise<OneResult> {
     notify.map((n) => {
       const copy =
         n.outcome === "PROMOTED"
-          ? { title: "You were promoted", body: `You finished #${n.rank} and moved up a league.` }
+          ? { title: "You were promoted", body: `You finished #${n.rank} and moved up a league. +${STANDING.LEAGUE_PROMOTION} Standing.` }
           : n.outcome === "DEMOTED"
             ? { title: "This week's league result", body: `You finished #${n.rank}. New week, fresh bracket, climb back up.` }
             : { title: "You held your league", body: `You finished #${n.rank}. Hold the line again this week.` };
