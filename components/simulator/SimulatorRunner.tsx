@@ -1168,6 +1168,7 @@ export default function SimulatorRunner({
                 emotion={isSpeaker ? currentLine?.emotion : c.defaultEmotion}
                 intensity={isSpeaker ? 1 : 0.72}
                 role="solo"
+                pulseKey={isSpeaker ? lineIndex : undefined}
               />
             );
           })()
@@ -1188,28 +1189,48 @@ export default function SimulatorRunner({
                       side === "left"
                         ? "left-0 sm:left-8"
                         : "right-0 sm:right-8"
-                    } z-0`}
+                    } z-0 flex flex-col items-center gap-1.5`}
                   >
+                    {/* Bust crop: same footprint, more face. Right-side
+                        cast mirrors so every figure is lit from the
+                        scene's center, one key light for the shot. */}
                     <CharacterSilhouette
                       character={c}
                       emotion={c.defaultEmotion}
                       intensity={0.65}
                       role="supporting"
+                      variant="bust"
+                      mirror={side === "right"}
                     />
+                    {/* Name chip. Group scenes shouldn't lean on dialog
+                        attribution alone to keep the cast straight. */}
+                    <span className="text-[9px] uppercase tracking-[0.3em] text-text-gray/50 font-light">
+                      {c.name}
+                    </span>
                   </div>
                 );
               })}
-            {/* Active speaker, centered, forward */}
+            {/* Active speaker, centered, forward. The wrapper is keyed
+                on WHO is speaking: a handoff steps the new speaker in
+                from slightly back and small, the turn-taking made
+                visible. Line-to-line advances by the same speaker do
+                not retrigger it. */}
             {activeCharacter && (
-              <div className="relative z-10">
+              <m.div
+                key={activeCharacter.id}
+                className="relative z-10"
+                initial={{ scale: 0.9, y: 8, opacity: 0.6 }}
+                animate={{ scale: 1, y: 0, opacity: 1 }}
+                transition={{ duration: 0.32, ease: [0.22, 1, 0.36, 1] }}
+              >
                 <CharacterSilhouette
-                  key={activeCharacter.id}
                   character={activeCharacter}
                   emotion={currentLine?.emotion}
                   intensity={1}
                   role="speaker"
+                  pulseKey={lineIndex}
                 />
-              </div>
+              </m.div>
             )}
           </div>
         )}
