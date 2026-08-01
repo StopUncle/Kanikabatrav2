@@ -154,12 +154,15 @@ export default async function SimulatorPlay({
     ? Array.from(new Set(row.endingsReached))
     : [];
 
-  // "Next scenario" link, whatever comes after this one in ALL_SCENARIOS.
-  const currentIdx = ALL_SCENARIOS.findIndex((s) => s.id === scenario.id);
-  const next = currentIdx >= 0 ? ALL_SCENARIOS[currentIdx + 1] : undefined;
-  // Into the app, not the legacy runner: finishing a scenario and being
-  // handed to the old skin for the next one undoes the whole point.
-  const nextHref = next ? `/app/train/${next.id}` : null;
+  // Finishing routes through the map, not straight into the next scenario.
+  // One extra tap, and in exchange the member watches the path grow, the
+  // stars land, and the next door open: the loop casual games are built
+  // on. Generated scenarios have no place on the map but the climb still
+  // reads as home, so they take the same road without the ceremony.
+  const isStatic = ALL_SCENARIOS.some((s) => s.id === scenario.id);
+  const nextHref = isStatic
+    ? `/app/train/climb?cleared=${encodeURIComponent(scenario.id)}`
+    : "/app/train/climb";
 
   return (
     <SimulatorPageClient

@@ -92,15 +92,21 @@ function Node({ state, active }: { state: State; active: boolean }) {
 export default function TrackLadder({
   tracks,
   isMember = true,
+  initialOpenTrack = null,
+  celebrateScenarioId = null,
 }: {
   tracks: TrackSummary[];
   isMember?: boolean;
+  /** Open this track on mount (the victory lap lands on the track it cleared). */
+  initialOpenTrack?: string | null;
+  /** Forwarded to the open track's trail; plays the lap once. */
+  celebrateScenarioId?: string | null;
 }) {
   // The first unfinished open track is where the member actually is, so it
   // starts expanded. Everything else is one tap away.
   const current = tracks.find((t) => stateOf(t) === "open");
   const [openTrack, setOpenTrack] = useState<string | null>(
-    current?.track ?? null,
+    initialOpenTrack ?? current?.track ?? null,
   );
 
   return (
@@ -151,9 +157,19 @@ export default function TrackLadder({
                   </span>
 
                   <span className="mt-0.5 block truncate text-app-eyebrow text-[var(--app-dim)]">
-                    {state === "sealed"
-                      ? sealedLine(t.access.opensAtRing ?? 3)
-                      : `${t.completed} of ${t.total}`}
+                    {state === "sealed" ? (
+                      sealedLine(t.access.opensAtRing ?? 3)
+                    ) : (
+                      <>
+                        {t.completed} of {t.total}
+                        {t.starsEarned > 0 && (
+                          <span className="text-[var(--app-gold-soft)]">
+                            {" "}
+                            · {t.starsEarned}★
+                          </span>
+                        )}
+                      </>
+                    )}
                   </span>
 
                   {/* Progress hairline, open tracks only. A bar under a
@@ -180,7 +196,13 @@ export default function TrackLadder({
 
               {isOpen && state !== "sealed" && (
                 <div className="ml-[39px] border-l border-[var(--app-line-soft)] pl-3 pr-1">
-                  <ChapterTrail track={t} isMember={isMember} />
+                  <ChapterTrail
+                    track={t}
+                    isMember={isMember}
+                    celebrateScenarioId={
+                      t.track === initialOpenTrack ? celebrateScenarioId : null
+                    }
+                  />
                 </div>
               )}
             </li>

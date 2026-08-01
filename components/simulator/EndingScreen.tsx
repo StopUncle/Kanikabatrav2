@@ -584,12 +584,16 @@ export default function EndingScreen({
 }
 
 function NextScenarioButton({ href }: { href: string }) {
+  // Routing through the climb map is the victory lap; the label should
+  // promise the map, not another scenario. Adventures and other flows
+  // still pass direct scenario links and keep the old label.
+  const toClimb = href.startsWith("/app/train/climb");
   return (
     <Link
       href={href}
       className="inline-flex items-center justify-center gap-2 px-8 py-3 bg-accent-gold text-deep-black font-medium tracking-wider uppercase text-sm rounded-full hover:bg-accent-gold/90 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-gold focus-visible:ring-offset-2 focus-visible:ring-offset-deep-black"
     >
-      Next Scenario
+      {toClimb ? "Continue the climb" : "Next Scenario"}
       <ArrowRight size={16} strokeWidth={1.5} />
     </Link>
   );

@@ -13,6 +13,8 @@ import {
   type TrackAccess,
 } from "@/lib/simulator/track-gates";
 import type { ScenarioTrack } from "@/lib/simulator/types";
+import { computeStarsFromJson, type StarRating } from "@/lib/simulator/stars";
+import type { OutcomeType } from "@/lib/simulator/types";
 
 /**
  * Data assembly for the Train screen: the recommendation-first view of the
@@ -54,6 +56,11 @@ export interface TrackRung {
   locked: boolean;
   /** Not on the free tier. The chrome chips it; the runner still walls. */
   memberOnly: boolean;
+  /**
+   * The best run's star rating, 0 until completed. Same math the ending
+   * screen uses, so the map and the verdict never disagree.
+   */
+  stars: StarRating;
 }
 
 export interface TrackSummary {
@@ -75,6 +82,9 @@ export interface TrackSummary {
    * so the trail names its chapters rather than numbering them.
    */
   levelTitles: Record<number, { title: string; blurb: string }>;
+  /** Sum of rung stars, against a ceiling of 3 per scenario. */
+  starsEarned: number;
+  starsPossible: number;
 }
 
 export interface NextUp {
@@ -100,7 +110,12 @@ export async function getTrainData(
     prisma.simulatorProgress.findMany({
       where: { userId },
       orderBy: { startedAt: "desc" },
-      select: { scenarioId: true, completedAt: true },
+      select: {
+        scenarioId: true,
+        completedAt: true,
+        outcome: true,
+        choicesMade: true,
+      },
     }),
     prisma.user.findUnique({
       where: { id: userId },
@@ -151,18 +166,26 @@ export async function getTrainData(
     }
     const rungs: TrackRung[] = list.map((s) => {
       const p = progressByScenario.get(s.id);
+      const done = completedIds.has(s.id);
       return {
         scenarioId: s.id,
         title: s.title,
         tagline: s.tagline,
         level: s.level,
-        done: completedIds.has(s.id),
+        done,
         inProgress: !!p && !p.completedAt,
         isNew: !!s.isNew && !p,
         locked: !isUnlocked(s.prerequisites),
         memberOnly: s.tier !== "free",
+        stars: done
+          ? computeStarsFromJson(
+              (p?.outcome as OutcomeType | null) ?? null,
+              p?.choicesMade,
+            )
+          : 0,
       };
     });
+    const starsEarned = rungs.reduce((sum, r) => sum + r.stars, 0);
 
     return {
       track: t,
@@ -179,6 +202,8 @@ export async function getTrainData(
       newCount,
       rungs,
       levelTitles: levelTitlesForTrack(t),
+      starsEarned,
+      starsPossible: list.length * 3,
     };
   });
 

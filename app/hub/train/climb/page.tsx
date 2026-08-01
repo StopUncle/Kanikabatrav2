@@ -24,12 +24,27 @@ const REASON_CHIP: Record<string, string> = {
   start: "Start here",
 };
 
-export default async function ClimbPage() {
+export default async function ClimbPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ cleared?: string }>;
+}) {
   const userId = await requireServerAuth("/app/train/climb");
-  const [{ nextUp, tracks, freshFiles }, access] = await Promise.all([
-    getTrainData(prisma, userId),
-    getAccess(userId),
-  ]);
+  const [{ nextUp, tracks, freshFiles }, access, { cleared }] =
+    await Promise.all([
+      getTrainData(prisma, userId),
+      getAccess(userId),
+      searchParams,
+    ]);
+
+  // The victory lap. Arriving with ?cleared= means the member just beat
+  // that scenario and was routed back through the map: open its track and
+  // let the trail play the ceremony. Generated scenarios have no track, so
+  // this quietly finds nothing and the map opens as normal.
+  const clearedTrack = cleared
+    ? (tracks.find((t) => t.rungs.some((r) => r.scenarioId === cleared))
+        ?.track ?? null)
+    : null;
 
   return (
     <div className="pb-8 pt-6">
@@ -93,7 +108,12 @@ export default async function ClimbPage() {
 
       <SectionHeader eyebrow="The climb" className="mx-5 mb-1 mt-7" />
       <div className="mx-5">
-        <TrackLadder tracks={tracks} isMember={access.isMember} />
+        <TrackLadder
+          tracks={tracks}
+          isMember={access.isMember}
+          initialOpenTrack={clearedTrack}
+          celebrateScenarioId={clearedTrack ? (cleared ?? null) : null}
+        />
       </div>
 
       {/* Fresh Files */}
