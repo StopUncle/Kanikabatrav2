@@ -367,10 +367,13 @@ pricing), Tier 4 #13 certification tier + #15 off-site (Sam/PR).
 
 ### Simulator play modes (Story / Gauntlet, built 2026-08-01)
 
-Two per-run modes, toggle on the scenario intro. Gauntlet is members-only hard
-mode: tactical reads withheld until the ending debrief, a 10s clock on every
-choice (expiry = "hesitated" = streak break, never auto-picks), shuffled
-choices, and a server-paid +50% XP bonus. Full design: `docs/SIMULATOR-MODES-PLAN.md`.
+Two per-run modes, toggle on the scenario intro. **Story = the authored
+prompts as tappable cards** (no freeform composer anywhere in story).
+**Gauntlet = members-only hard mode: the freeform composer alone** (the LLM
+judge resolves against authored choices it never shows), tactical reads
+withheld until the ending debrief, a 30s clock on every choice (expiry =
+"hesitated" = streak break, never auto-picks), and a server-paid +50% XP
+bonus. Full design: `docs/SIMULATOR-MODES-PLAN.md`.
 Enforcement is server-side in `/api/simulator/complete` (a free account
 claiming gauntlet is scored as story). Migration
 `20260801120000_add_simulator_play_mode` adds `SimulatorProgress.mode` +

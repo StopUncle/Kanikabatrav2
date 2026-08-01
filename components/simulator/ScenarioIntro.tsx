@@ -30,9 +30,9 @@ type Props = {
 };
 
 const MODE_COPY: Record<PlayMode, string> = {
-  story: "Guided. Kanika's reads appear as you play.",
+  story: "Guided. Pick your move from the options; the reads appear as you play.",
   gauntlet:
-    "Hard mode. No reads until the end, a clock on every choice, bonus pay.",
+    "Hard mode. Write your own moves, no options, no reads until the end, a clock running, bonus pay.",
 };
 
 /**

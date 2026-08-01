@@ -12,6 +12,12 @@ type Props = {
   choices: Choice[];
   /** Plays a resolved authored choice (freeform-mapped or tapped card). */
   onResolve: (choice: Choice) => void;
+  /**
+   * Gauntlet: no "see the options" scaffold. Writing the move IS the
+   * hard mode; the authored choices exist only for the judge to resolve
+   * against, never on screen.
+   */
+  hideOptions?: boolean;
 };
 
 type Phase =
@@ -37,6 +43,7 @@ export default function FreeformMove({
   sceneId,
   choices,
   onResolve,
+  hideOptions = false,
 }: Props) {
   const [phase, setPhase] = useState<Phase>({ kind: "compose" });
   const [text, setText] = useState("");
@@ -75,10 +82,14 @@ export default function FreeformMove({
       setPhase({ kind: "read", choice, read: data.read });
     } catch {
       if (!mountedRef.current) return;
-      setError("Connection dropped. Try again, or see the options.");
+      setError(
+        hideOptions
+          ? "Connection dropped. Try again."
+          : "Connection dropped. Try again, or see the options.",
+      );
       setPhase({ kind: "compose" });
     }
-  }, [text, scenarioId, sceneId, choices]);
+  }, [text, scenarioId, sceneId, choices, hideOptions]);
 
   // The read: Kanika's voice on what the move just did.
   if (phase.kind === "read") {
@@ -189,7 +200,10 @@ export default function FreeformMove({
 
       {/* The authored options, demoted to an opt-in scaffold. Confident
           players never open it; a stuck player taps once to see the
-          shape of the available moves and can play one directly. */}
+          shape of the available moves and can play one directly.
+          Hidden entirely in gauntlet: no scaffold in the hard mode. */}
+      {hideOptions ? null : (
+      <>
       <div className="mt-4 text-center">
         <button
           onClick={() => setShowOptions((v) => !v)}
@@ -219,6 +233,8 @@ export default function FreeformMove({
           </m.div>
         )}
       </AnimatePresence>
+      </>
+      )}
     </div>
   );
 }

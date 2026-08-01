@@ -39,6 +39,7 @@ import ScenarioIntro from "./ScenarioIntro";
 import ChoiceTimer from "./ChoiceTimer";
 import ChoicePopularityReveal from "./ChoicePopularityReveal";
 import FreeformMove from "./FreeformMove";
+import ChoiceCards from "./ChoiceCards";
 import DialogTranscript from "./DialogTranscript";
 
 /**
@@ -202,23 +203,6 @@ function buildDebrief(
   return { reads, feedback };
 }
 
-/** Deterministic per-run shuffle so a refresh cannot re-roll the order. */
-function seededShuffle<T>(items: readonly T[], seedText: string): T[] {
-  let h = 2166136261;
-  for (let i = 0; i < seedText.length; i++) {
-    h ^= seedText.charCodeAt(i);
-    h = Math.imul(h, 16777619);
-  }
-  const out = [...items];
-  for (let i = out.length - 1; i > 0; i--) {
-    h ^= h << 13;
-    h ^= h >>> 17;
-    h ^= h << 5;
-    const j = Math.abs(h) % (i + 1);
-    [out[i], out[j]] = [out[j], out[i]];
-  }
-  return out;
-}
 
 export default function SimulatorRunner({
   scenario,
@@ -249,9 +233,6 @@ export default function SimulatorRunner({
   // restart; consulted (not cleared) by pickChoice so a scene revisited
   // via a different branch keeps its record for this run.
   const hesitatedScenesRef = useRef<Set<string>>(new Set());
-  // Per-run shuffle seed. A refresh mid-run re-rolls it, which is
-  // acceptable: the order was never information, only anti-metagaming.
-  const shuffleSeedRef = useRef(`${Math.random()}`);
   const [gauntletUpsellOpen, setGauntletUpsellOpen] = useState(false);
 
   // Pre-game intro overlay, shown on a fresh run (never on a
@@ -633,7 +614,6 @@ export default function SimulatorRunner({
   const restart = useCallback(() => {
     completeFiredRef.current = false;
     hesitatedScenesRef.current = new Set();
-    shuffleSeedRef.current = `${Math.random()}`;
     setState(initState(scenario));
     setLineIndex(0);
     setStreak(0);
@@ -1352,12 +1332,13 @@ export default function SimulatorRunner({
               )}
               {/* Choice timer. Story: `mood: danger` scenes only, 12s,
                   purely felt pressure. Gauntlet: every choice scene,
-                  10s, and expiry marks the eventual pick as hesitated
-                  (streak-chain break). Neither variant ever auto-picks. */}
+                  30s to write a move, and expiry marks the eventual
+                  pick as hesitated (streak-chain break). Neither
+                  variant ever auto-picks. */}
               {gauntlet ? (
                 <ChoiceTimer
                   resetKey={scene.id}
-                  durationMs={10_000}
+                  durationMs={30_000}
                   onExpire={() => {
                     hesitatedScenesRef.current.add(scene.id);
                   }}
@@ -1365,27 +1346,32 @@ export default function SimulatorRunner({
               ) : scene.mood === "danger" ? (
                 <ChoiceTimer resetKey={scene.id} />
               ) : null}
-              {/* Writing your own move is the hero interaction; the
-                  authored choices live inside the composer as an opt-in
-                  "see the options" scaffold. Both resolve to a real
-                  Choice via pickChoice, so the engine path is identical.
-                  Keyed per scene: an in-flight judge from a previous
-                  scene unmounts with its confirm button, so a stale
-                  choice can never be applied to the wrong scene. */}
-              <FreeformMove
-                key={`freeform-${scene.id}`}
-                scenarioId={scenario.id}
-                sceneId={scene.id}
-                choices={
-                  gauntlet
-                    ? seededShuffle(
-                        scene.choices,
-                        `${shuffleSeedRef.current}:${scene.id}`,
-                      )
-                    : scene.choices
-                }
-                onResolve={pickChoice}
-              />
+              {/* The mode split. Story plays the authored prompts as
+                  tappable cards, nothing to type. Gauntlet is the
+                  composer alone: write the move in your own words, no
+                  options to lean on; the judge resolves it against the
+                  authored choices it never shows. Both paths land in
+                  pickChoice, so XP, streaks, replays, and server
+                  validation are identical. Keyed per scene: an
+                  in-flight judge from a previous scene unmounts with
+                  its confirm button, so a stale choice can never be
+                  applied to the wrong scene. */}
+              {gauntlet ? (
+                <FreeformMove
+                  key={`freeform-${scene.id}`}
+                  scenarioId={scenario.id}
+                  sceneId={scene.id}
+                  choices={scene.choices}
+                  onResolve={pickChoice}
+                  hideOptions
+                />
+              ) : (
+                <ChoiceCards
+                  key={`cards-${scene.id}`}
+                  choices={scene.choices}
+                  onPick={pickChoice}
+                />
+              )}
             </m.div>
           ) : currentLine ? (
             <DialogBox

@@ -73,7 +73,7 @@ function sublineFor(trigger: UpgradeTrigger): string {
     return "Every track, the Lab, Kanika's room, the Mark. One membership opens all of it.";
   }
   if (trigger === "gauntlet") {
-    return "No reads, a clock on every choice, and bonus pay for holding your nerve. Members only.";
+    return "You write your own moves. No options, no reads, a clock running, and bonus pay for holding your nerve. Members only.";
   }
   return "Everything on this bar unlocks with one membership. Pick up where the free tier stops.";
 }
