@@ -199,14 +199,6 @@ export const APP_SURFACES: AppSurface[] = [
     maturity: "app-native",
   },
   {
-    href: "/app/train/browse",
-    label: "Browse every scenario",
-    placement: "nested",
-    parent: "/app/train/climb",
-    note: "The reference index behind the climb. Still the old skin, 835 lines.",
-    maturity: "ported",
-  },
-  {
     href: "/app/train/achievements",
     label: "Achievements",
     placement: "nested",
@@ -400,4 +392,33 @@ export function isTabActive(surface: AppSurface, pathname: string): boolean {
   if (surface.href === "/app") return pathname === "/app";
   if (pathname.startsWith(surface.href)) return true;
   return (surface.also ?? []).some((p) => pathname.startsWith(p));
+}
+
+/**
+ * Where the global back control should lead from a given path, or null
+ * to hide it. Derived from the surface map rather than browser history:
+ * a deep link or a refresh has no useful history, and "up" in the app's
+ * own structure is the promise a back button should keep.
+ *
+ * Hidden on the tab roots (the bar IS the navigation there) and on
+ * full-screen ceremonies that own the whole display.
+ */
+export function backTargetFor(pathname: string): string | null {
+  const path = pathname.replace(/\/+$/, "") || "/app";
+  if (TAB_SURFACES.some((t) => t.href === path)) return null;
+  if (FULL_SCREEN_ROUTES.includes(path)) return null;
+
+  let best: AppSurface | null = null;
+  for (const s of APP_SURFACES) {
+    if (path === s.href || path.startsWith(`${s.href}/`)) {
+      if (!best || s.href.length > best.href.length) best = s;
+    }
+  }
+  if (!best) return path.startsWith("/app/") ? "/app" : null;
+  // Deeper than the surface itself (a scenario under /app/train, a post
+  // under the feed): up is the surface.
+  if (best.href !== path) return best.href;
+  if (best.parent) return best.parent;
+  // More-sheet and unlisted surfaces hang off home.
+  return "/app";
 }

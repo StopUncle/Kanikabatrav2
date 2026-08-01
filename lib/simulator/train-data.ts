@@ -12,7 +12,7 @@ import {
   spineTracks,
   type TrackAccess,
 } from "@/lib/simulator/track-gates";
-import type { ScenarioTrack } from "@/lib/simulator/types";
+import type { Difficulty, ScenarioTrack } from "@/lib/simulator/types";
 import { computeStarsFromJson, type StarRating } from "@/lib/simulator/stars";
 import type { OutcomeType } from "@/lib/simulator/types";
 
@@ -61,6 +61,9 @@ export interface TrackRung {
    * screen uses, so the map and the verdict never disagree.
    */
   stars: StarRating;
+  /** Best XP across runs, 0 until played. The map's "previous score". */
+  xpEarned: number;
+  difficulty: Difficulty;
 }
 
 export interface TrackSummary {
@@ -100,6 +103,17 @@ export interface TrainData {
   /** Open tracks first (spine leading), sealed tracks last, soonest-opening first. */
   tracks: TrackSummary[];
   freshFiles: { scenarioId: string; title: string; tagline: string }[];
+  /**
+   * Everything the daily check-in card needs. Assembled here because the
+   * card moved to the climb when the old browse catalog was retired, and
+   * this module already holds the progress rows the card's per-track
+   * Start CTA is derived from.
+   */
+  checkin: {
+    gender: "MALE" | "FEMALE" | null;
+    initial: { situation: string; recommendedTrack: string } | null;
+    nextByTrack: Record<string, { id: string; title: string } | null>;
+  };
 }
 
 export async function getTrainData(
@@ -115,6 +129,7 @@ export async function getTrainData(
         completedAt: true,
         outcome: true,
         choicesMade: true,
+        xpEarned: true,
       },
     }),
     prisma.user.findUnique({
@@ -183,6 +198,8 @@ export async function getTrainData(
               p?.choicesMade,
             )
           : 0,
+        xpEarned: p?.xpEarned ?? 0,
+        difficulty: s.difficulty,
       };
     });
     const starsEarned = rungs.reduce((sum, r) => sum + r.stars, 0);
@@ -271,11 +288,27 @@ export async function getTrainData(
     (a, b) => (b.access.opensAtRing ?? 0) - (a.access.opensAtRing ?? 0),
   );
 
+  const nextByTrack: Record<string, { id: string; title: string } | null> = {};
+  for (const t of VALID_TRACKS) {
+    const s = nextInTrack(t);
+    nextByTrack[t] = s ? { id: s.id, title: s.title } : null;
+  }
+
   return {
     nextUp,
     tracks: [...open, ...sealed],
     freshFiles: generated
       .slice(0, 10)
       .map(({ scenarioId, title, tagline }) => ({ scenarioId, title, tagline })),
+    checkin: {
+      gender: (gender as "MALE" | "FEMALE" | null) ?? null,
+      initial: checkIn
+        ? {
+            situation: checkIn.situation,
+            recommendedTrack: checkIn.recommendedTrack,
+          }
+        : null,
+      nextByTrack,
+    },
   };
 }

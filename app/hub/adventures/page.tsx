@@ -118,7 +118,7 @@ export default async function AdventuresIndex() {
         Each adventure reuses scenarios from the catalog. You can replay any
         single chapter from the
         <Link
-          href="/app/train/browse"
+          href="/app/train/climb"
           className="text-warm-gold/70 hover:text-warm-gold ml-1 transition-colors"
         >
           simulator

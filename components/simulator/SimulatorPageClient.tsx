@@ -274,7 +274,7 @@ export default function SimulatorPageClient({
     <SimulatorErrorBoundary
       scenarioId={scenario.id}
       currentSceneIdRef={currentSceneIdRef}
-      exitHref={exitHref ?? "/app/train/browse"}
+      exitHref={exitHref ?? "/app/train/climb"}
     >
       <SimulatorRunner
         scenario={scenario}

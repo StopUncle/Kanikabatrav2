@@ -211,7 +211,7 @@ export default function SimulatorRunner({
   onComplete,
   nextScenarioHref,
   badgesEarned,
-  exitHref = "/app/train/browse",
+  exitHref = "/app/train/climb",
   endingCta,
   hideFailureBlog = false,
   previousBest = null,

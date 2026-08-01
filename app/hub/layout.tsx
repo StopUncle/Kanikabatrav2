@@ -4,6 +4,7 @@ import { requireServerAuth } from "@/lib/auth/server-auth";
 import { getAccess, canAccessMemberOnly } from "@/lib/access/tier";
 import { prisma } from "@/lib/prisma";
 import TabBar from "@/components/app-shell/TabBar";
+import BackBar from "@/components/app-shell/BackBar";
 import PhoneHandoff from "@/components/app-shell/PhoneHandoff";
 import ServiceWorkerRegister from "@/components/pwa/ServiceWorkerRegister";
 import AnalyticsIdentify from "@/components/analytics/AnalyticsIdentify";
@@ -108,6 +109,7 @@ export default async function AppShellLayout({
           {/* min-h-0 is load-bearing: without it a flex child refuses to
               shrink below its content and the scroll never engages. */}
           <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain">
+            <BackBar />
             {children}
           </div>
           {/* Resolved server-side and passed as a plain boolean, so the

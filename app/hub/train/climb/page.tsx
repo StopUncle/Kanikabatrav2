@@ -1,4 +1,6 @@
 import Link from "next/link";
+import DailyCheckInCard from "@/components/consilium/DailyCheckInCard";
+import type { SituationKey } from "@/lib/checkin/situations";
 import { requireServerAuth } from "@/lib/auth/server-auth";
 import { getAccess } from "@/lib/access/tier";
 import { prisma } from "@/lib/prisma";
@@ -30,7 +32,7 @@ export default async function ClimbPage({
   searchParams: Promise<{ cleared?: string }>;
 }) {
   const userId = await requireServerAuth("/app/train/climb");
-  const [{ nextUp, tracks, freshFiles }, access, { cleared }] =
+  const [{ nextUp, tracks, freshFiles, checkin }, access, { cleared }] =
     await Promise.all([
       getTrainData(prisma, userId),
       getAccess(userId),
@@ -49,12 +51,6 @@ export default async function ClimbPage({
   return (
     <div className="pb-8 pt-6">
       <div className="px-5">
-        <Link
-          href="/app/train"
-          className="text-app-eyebrow uppercase tracking-app-wide text-[var(--app-dim)]"
-        >
-          ← Train
-        </Link>
         <h1
           className="mt-2 text-app-hero font-light"
           style={{ fontFamily: "var(--font-display)" }}
@@ -106,6 +102,22 @@ export default async function ClimbPage({
         </Link>
       )}
 
+      {/* The daily check-in, rehomed from the retired browse catalog. */}
+      <div className="mx-5 mt-6">
+        <DailyCheckInCard
+          gender={checkin.gender}
+          nextByTrack={checkin.nextByTrack}
+          initial={
+            checkin.initial
+              ? {
+                  situation: checkin.initial.situation as SituationKey,
+                  recommendedTrack: checkin.initial.recommendedTrack,
+                }
+              : null
+          }
+        />
+      </div>
+
       <SectionHeader eyebrow="The climb" className="mx-5 mb-1 mt-7" />
       <div className="mx-5">
         <TrackLadder
@@ -142,16 +154,6 @@ export default async function ClimbPage({
         </>
       )}
 
-      {/* The climb walks a track a chapter at a time, which is the right
-          default and a bad way to find one specific scenario. The old flat
-          catalog stays reachable for that, and it is the only surface with
-          the per-track ?track= views. */}
-      <Link
-        href="/app/train/browse"
-        className="mx-5 mt-7 block rounded-2xl border border-dashed border-[var(--app-line)] px-4 py-3.5 text-center text-app-caption tracking-app-wide text-[var(--app-dim)]"
-      >
-        BROWSE EVERY SCENARIO
-      </Link>
     </div>
   );
 }

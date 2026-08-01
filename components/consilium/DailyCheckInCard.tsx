@@ -1,7 +1,7 @@
 "use client";
 
 /**
- * Daily Check-In card. Sits at the top of /app/train/browse.
+ * Daily Check-In card. Sits at the top of the climb.
  *
  * Two states:
  *   - Empty (today, no answer yet): "Where are you today?" + 9 chips.

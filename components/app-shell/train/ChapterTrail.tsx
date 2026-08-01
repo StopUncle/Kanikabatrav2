@@ -2,10 +2,12 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
-import { m } from "framer-motion";
+import { m, AnimatePresence } from "framer-motion";
 import { useRouter } from "next/navigation";
+import { ArrowRight } from "lucide-react";
 import { useReducedMotion } from "@/lib/hooks/use-reduced-motion";
 import type { TrackRung, TrackSummary } from "@/lib/simulator/train-data";
+import type { Difficulty } from "@/lib/simulator/types";
 
 /**
  * A track's scenarios as terrain, not inventory.
@@ -14,21 +16,19 @@ import type { TrackRung, TrackSummary } from "@/lib/simulator/train-data";
  * The main track is 32 of them, which is a wall no member reads. They already
  * arrive in chapters though: `level` groups two to four scenarios that belong
  * together. So the trail plots chapters, winding down the screen, and the
- * chapter you tap opens underneath it. Sixteen chapters take six rows where
- * thirty-two rows used to go, and the shape carries what a list could not:
- * ground behind you in gold, ground ahead in grey, and you somewhere on it.
+ * chapter you tap opens a sheet with everything a decision needs: the name,
+ * the difficulty, your stars, your best score, and the door in.
  *
  * The map is choreographed, not decorated:
  *   - nodes cascade in on open, and the one you should play breathes
+ *   - open chapters wear their difficulty as an icon: the eye (easy), the
+ *     dagger (medium), the flame (hard), the crown (the boss chapter at a
+ *     track's end)
  *   - completed chapters carry their stars; full-star chapters glint
  *   - arriving from a clear (?cleared=) plays the victory lap once:
  *     stars slam onto the cleared chapter, the gold path draws itself
  *     forward, and the door it opened pops
  * Every animation is transform/opacity and honors reduced-motion.
- *
- * The chapters come named. Every track has shipped written level titles and
- * blurbs since the old catalog, they were just never carried into the app.
- * A scenario's own tagline stands in if a level was never given one.
  */
 
 const COLS = 3;
@@ -48,7 +48,15 @@ interface Chapter {
   inProgress: boolean;
   starsEarned: number;
   starsMax: number;
+  bestXp: number;
+  difficulty: Difficulty;
 }
+
+const DIFFICULTY_RANK: Record<Difficulty, number> = {
+  beginner: 0,
+  intermediate: 1,
+  advanced: 2,
+};
 
 function toChapters(rungs: TrackRung[]): Chapter[] {
   const byLevel = new Map<number, TrackRung[]>();
@@ -68,7 +76,99 @@ function toChapters(rungs: TrackRung[]): Chapter[] {
       inProgress: list.some((r) => r.inProgress),
       starsEarned: list.reduce((sum, r) => sum + r.stars, 0),
       starsMax: list.length * 3,
+      bestXp: list.reduce((sum, r) => sum + r.xpEarned, 0),
+      difficulty: list.reduce<Difficulty>(
+        (acc, r) =>
+          DIFFICULTY_RANK[r.difficulty] > DIFFICULTY_RANK[acc]
+            ? r.difficulty
+            : acc,
+        "beginner",
+      ),
     }));
+}
+
+/** The chapter's tier on the map: the boss crown outranks its difficulty. */
+type Tier = "easy" | "medium" | "hard" | "boss";
+
+function tierOf(chapter: Chapter, index: number, count: number): Tier {
+  if (index === count - 1) return "boss";
+  if (chapter.difficulty === "advanced") return "hard";
+  if (chapter.difficulty === "intermediate") return "medium";
+  return "easy";
+}
+
+const TIER_LABEL: Record<Tier, string> = {
+  easy: "Easy",
+  medium: "Medium",
+  hard: "Hard",
+  boss: "Boss",
+};
+
+/** Hard runs warm toward the house rose; everything else stays gold. */
+const TIER_COLOR: Record<Tier, string> = {
+  easy: "var(--app-gold-soft)",
+  medium: "var(--app-gold)",
+  hard: "var(--app-rose)",
+  boss: "var(--app-gold)",
+};
+
+/**
+ * The level iconography, drawn in the house line style. The eye you watch
+ * with, the dagger you parry, the flame you walk through, the crown you
+ * take. All stroke-based so they inherit their tier's color.
+ */
+function TierIcon({
+  tier,
+  size = 15,
+  color,
+}: {
+  tier: Tier;
+  size?: number;
+  color?: string;
+}) {
+  const stroke = color ?? TIER_COLOR[tier];
+  const common = {
+    width: size,
+    height: size,
+    viewBox: "0 0 24 24",
+    fill: "none",
+    stroke,
+    strokeWidth: 1.8,
+    strokeLinecap: "round" as const,
+    strokeLinejoin: "round" as const,
+    "aria-hidden": true,
+  };
+  if (tier === "easy") {
+    return (
+      <svg {...common}>
+        <path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12Z" />
+        <circle cx="12" cy="12" r="2.6" />
+      </svg>
+    );
+  }
+  if (tier === "medium") {
+    return (
+      <svg {...common}>
+        <path d="M12 2.5v13" />
+        <path d="M8.5 6.5 12 2.5l3.5 4" />
+        <path d="M7 15.5h10" />
+        <path d="M12 15.5V21" />
+        <path d="M10 21h4" />
+      </svg>
+    );
+  }
+  if (tier === "hard") {
+    return (
+      <svg {...common}>
+        <path d="M12 2.5c1 3-3.5 4.5-3.5 8a3.5 3.5 0 0 0 7 0c0-1.2-.5-2.2-1-3 2.5 1 4 3.2 4 6a6.5 6.5 0 0 1-13 0c0-5.5 4.5-7.5 6.5-11Z" />
+      </svg>
+    );
+  }
+  return (
+    <svg {...common}>
+      <path d="M3.5 8.5 7 12l5-6.5L17 12l3.5-3.5V17a1.5 1.5 0 0 1-1.5 1.5H5A1.5 1.5 0 0 1 3.5 17V8.5Z" />
+    </svg>
+  );
 }
 
 /** Serpentine: even rows run left to right, odd rows run back. */
@@ -109,13 +209,7 @@ function trailPath(from: number, to: number): string {
 const STAR_PATH =
   "M12 2l2.9 6.2 6.6.7-4.9 4.5 1.3 6.5L12 16.7 6.1 19.9l1.3-6.5L2.5 8.9l6.6-.7z";
 
-function Star({
-  filled,
-  size = 8,
-}: {
-  filled: boolean;
-  size?: number;
-}) {
+function Star({ filled, size = 8 }: { filled: boolean; size?: number }) {
   return (
     <svg viewBox="0 0 24 24" width={size} height={size} aria-hidden>
       <path
@@ -179,23 +273,23 @@ function ChapterStars({
 
 function Marker({
   chapter,
+  tier,
   index,
   isCurrent,
-  isSelected,
   isNextLocked,
   breathe,
 }: {
   chapter: Chapter;
+  tier: Tier;
   index: number;
   isCurrent: boolean;
-  isSelected: boolean;
   /** The one closed door in front of the member. The rest are just distance. */
   isNextLocked: boolean;
   breathe: boolean;
 }) {
   const gold = "var(--app-gold)";
   const base =
-    "relative flex h-[34px] w-[34px] items-center justify-center rounded-full text-app-caption tabular-nums";
+    "relative flex h-[34px] w-[34px] items-center justify-center rounded-full";
 
   if (chapter.done) {
     const fullStars = chapter.starsEarned >= chapter.starsMax;
@@ -240,14 +334,12 @@ function Marker({
       return (
         <span
           className="flex h-[34px] w-[34px] items-center justify-center"
-          style={{ opacity: isSelected ? 1 : 0.65 }}
+          style={{ opacity: 0.65 }}
         >
           <span
             className="h-[11px] w-[11px] rounded-full border"
             style={{
-              borderColor: isSelected
-                ? "var(--app-gold-soft)"
-                : "rgba(236,231,222,0.16)",
+              borderColor: "rgba(236,231,222,0.16)",
               background: "var(--app-black)",
             }}
           />
@@ -284,34 +376,41 @@ function Marker({
     );
   }
 
+  const tierColor = TIER_COLOR[tier];
   return (
     <m.span
       className={base}
       style={{
-        border: `${isCurrent ? 2 : 1}px solid ${
-          isCurrent ? gold : "var(--app-line)"
+        border: `${isCurrent || tier === "boss" ? 2 : 1}px solid ${
+          isCurrent ? gold : tier === "boss" ? gold : "var(--app-line)"
         }`,
         background: "var(--app-black)",
-        color: isCurrent ? gold : "var(--app-dim)",
-        boxShadow: isSelected ? "0 0 0 4px rgba(212,175,55,0.12)" : undefined,
       }}
-      animate={
-        isCurrent && breathe ? { scale: [1, 1.07, 1] } : { scale: 1 }
-      }
-      transition={{ duration: 2.6, repeat: Infinity, ease: "easeInOut" }}
+      animate={isCurrent && breathe ? { scale: [1, 1.08, 1] } : { scale: 1 }}
+      transition={{ duration: 2.4, repeat: Infinity, ease: "easeInOut" }}
     >
-      {/* The beacon. Every casual game marks "play me" the same way for a
-          reason: a slow pulse reads before any label does. */}
+      {/* The beacon. Two layers: a tight halo and a wide soft glow, both
+          breathing with the node. Every casual game marks "play me" the
+          same way for a reason: a pulse reads before any label does. */}
       {isCurrent && breathe && (
-        <m.span
-          aria-hidden
-          className="absolute -inset-2 rounded-full"
-          style={{ background: "rgba(212,175,55,0.14)" }}
-          animate={{ opacity: [0.2, 0.55, 0.2], scale: [0.9, 1.08, 0.9] }}
-          transition={{ duration: 2.6, repeat: Infinity, ease: "easeInOut" }}
-        />
+        <>
+          <m.span
+            aria-hidden
+            className="absolute -inset-2 rounded-full"
+            style={{ background: "rgba(212,175,55,0.22)" }}
+            animate={{ opacity: [0.35, 0.8, 0.35], scale: [0.9, 1.1, 0.9] }}
+            transition={{ duration: 2.4, repeat: Infinity, ease: "easeInOut" }}
+          />
+          <m.span
+            aria-hidden
+            className="absolute -inset-5 rounded-full blur-md"
+            style={{ background: "rgba(212,175,55,0.18)" }}
+            animate={{ opacity: [0.25, 0.6, 0.25], scale: [0.85, 1.12, 0.85] }}
+            transition={{ duration: 2.4, repeat: Infinity, ease: "easeInOut" }}
+          />
+        </>
       )}
-      {index + 1}
+      <TierIcon tier={tier} color={isCurrent ? gold : tierColor} />
       {chapter.hasNew && (
         <span
           className="absolute -right-0.5 -top-0.5 h-[7px] w-[7px] rounded-full"
@@ -376,7 +475,14 @@ function RungRow({ rung, isMember }: { rung: TrackRung; isMember: boolean }) {
       </span>
       {/* The ladder inside the checkmark: a 1-star clear is an invitation,
           not a trophy. Done rows show what the run was worth. */}
-      {rung.done && <RungStars stars={rung.stars} />}
+      {rung.done && (
+        <span className="flex shrink-0 items-center gap-2">
+          <span className="text-app-micro tabular-nums text-[var(--app-dim)]">
+            {rung.xpEarned} XP
+          </span>
+          <RungStars stars={rung.stars} />
+        </span>
+      )}
       {rung.inProgress && (
         <span className="shrink-0 text-app-micro uppercase tracking-app-wide text-[var(--app-gold)]">
           Resume
@@ -393,6 +499,169 @@ function RungRow({ rung, isMember }: { rung: TrackRung; isMember: boolean }) {
         </span>
       )}
     </Link>
+  );
+}
+
+/**
+ * The level sheet. Tapping a node opens this instead of navigating: the
+ * name, the tier, your stars and best score, the scenarios inside, and
+ * one gold door in. Locked chapters open it too, and say what opens them.
+ */
+function ChapterSheet({
+  chapter,
+  tier,
+  index,
+  named,
+  isMember,
+  onClose,
+}: {
+  chapter: Chapter;
+  tier: Tier;
+  index: number;
+  named: { title: string; blurb: string } | undefined;
+  isMember: boolean;
+  onClose: () => void;
+}) {
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+    };
+    document.addEventListener("keydown", onKey);
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.removeEventListener("keydown", onKey);
+      document.body.style.overflow = "";
+    };
+  }, [onClose]);
+
+  // The door in: the run you left open, else the first fresh scenario,
+  // else replay the chapter from the top.
+  const playRung = chapter.locked
+    ? null
+    : (chapter.rungs.find((r) => r.inProgress && !r.locked) ??
+      chapter.rungs.find((r) => !r.done && !r.locked) ??
+      chapter.rungs.find((r) => !r.locked) ??
+      null);
+
+  const filled = chapter.done
+    ? Math.max(
+        1,
+        Math.round((3 * chapter.starsEarned) / Math.max(1, chapter.starsMax)),
+      )
+    : 0;
+
+  return (
+    <m.div
+      className="fixed inset-0 z-[70] flex items-end justify-center sm:items-center"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.2 }}
+      role="dialog"
+      aria-modal="true"
+      aria-label={`Chapter ${index + 1}`}
+    >
+      <button
+        type="button"
+        aria-label="Close"
+        onClick={onClose}
+        className="absolute inset-0 bg-black/70 backdrop-blur-[2px]"
+      />
+      <m.div
+        className="relative w-full max-w-md rounded-t-3xl border border-b-0 border-[var(--app-line-soft)] bg-[var(--app-card)] px-5 pb-[max(20px,env(safe-area-inset-bottom))] pt-5 sm:rounded-3xl sm:border-b"
+        initial={{ y: 48, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        exit={{ y: 48, opacity: 0 }}
+        transition={{ type: "spring", stiffness: 380, damping: 34 }}
+      >
+        <span
+          aria-hidden
+          className="mx-auto mb-4 block h-1 w-9 rounded-full bg-[var(--app-line)] sm:hidden"
+        />
+
+        <div className="flex items-start gap-3.5">
+          <span
+            className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border"
+            style={{
+              borderColor:
+                tier === "hard" ? "rgba(183,110,121,0.5)" : "var(--app-gold-soft)",
+              background: "var(--app-black)",
+            }}
+          >
+            <TierIcon tier={tier} size={19} />
+          </span>
+          <div className="min-w-0 flex-1">
+            <p className="text-app-tiny uppercase tracking-app-label text-[var(--app-gold-soft)]">
+              Chapter {index + 1} ·{" "}
+              <span
+                style={{
+                  color:
+                    tier === "hard" ? "var(--app-rose)" : "var(--app-gold-soft)",
+                }}
+              >
+                {TIER_LABEL[tier]}
+              </span>
+              {chapter.locked && (
+                <span className="text-[var(--app-dim)]"> · Locked</span>
+              )}
+            </p>
+            <p
+              className="mt-0.5 text-app-lead leading-tight"
+              style={{ fontFamily: "var(--font-display)" }}
+            >
+              {named?.title ?? chapter.rungs[0]?.title}
+            </p>
+          </div>
+        </div>
+
+        <p className="mt-2.5 text-app-caption leading-relaxed text-[var(--app-muted)]">
+          {named?.blurb || chapter.rungs[0]?.tagline}
+        </p>
+
+        {/* The record: stars and best score, only once there is one. */}
+        {chapter.done && (
+          <div className="mt-3.5 flex items-center gap-3 rounded-2xl border border-[var(--app-line-soft)] bg-[var(--app-black)] px-3.5 py-2.5">
+            <span className="flex gap-[3px]">
+              {[0, 1, 2].map((i) => (
+                <Star key={i} filled={i < filled} size={13} />
+              ))}
+            </span>
+            <span className="text-app-caption text-[var(--app-muted)]">
+              {chapter.starsEarned} of {chapter.starsMax}★
+            </span>
+            <span className="ml-auto text-app-caption tabular-nums text-[var(--app-gold-soft)]">
+              Best {chapter.bestXp} XP
+            </span>
+          </div>
+        )}
+
+        {chapter.locked ? (
+          <p className="mt-3.5 text-app-caption text-[var(--app-dim)]">
+            Clear the chapter before this one and the door opens.
+          </p>
+        ) : (
+          <div className="mt-2 flex flex-col">
+            {chapter.rungs.map((r) => (
+              <RungRow key={r.scenarioId} rung={r} isMember={isMember} />
+            ))}
+          </div>
+        )}
+
+        {playRung && (
+          <Link
+            href={`/app/train/${playRung.scenarioId}`}
+            className="mt-4 flex items-center justify-center gap-2 rounded-full bg-[var(--app-gold)] py-3.5 text-app-caption font-medium uppercase tracking-app-wide text-[#0a0908] active:scale-[0.98]"
+          >
+            {playRung.inProgress
+              ? "Resume"
+              : chapter.done
+                ? "Replay chapter"
+                : "Play"}
+            <ArrowRight size={14} strokeWidth={2} />
+          </Link>
+        )}
+      </m.div>
+    </m.div>
   );
 }
 
@@ -435,7 +704,7 @@ export default function ChapterTrail({
   const current =
     started >= 0 ? started : standing >= 0 ? standing : chapters.length - 1;
 
-  const [selected, setSelected] = useState(lapIdx >= 0 ? lapIdx : current);
+  const [openIdx, setOpenIdx] = useState<number | null>(null);
   const [lap, setLap] = useState<LapPhase>(lapIdx >= 0 ? "idle" : "done");
   const nodeRefs = useRef<(HTMLButtonElement | null)[]>([]);
 
@@ -496,8 +765,7 @@ export default function ChapterTrail({
   const staticGoldTo = lapDrawsPath ? lapIdx - 1 : lastDone;
   const celebrating = lapIdx >= 0 && lap !== "done";
 
-  const chapter = chapters[selected];
-  const named = track.levelTitles[chapter.level];
+  const sheet = openIdx !== null ? chapters[openIdx] : null;
 
   return (
     <div className="py-1">
@@ -559,6 +827,7 @@ export default function ChapterTrail({
           {chapters.map((c, i) => {
             const { row, col } = place(i);
             const done = c.rungs.filter((r) => r.done).length;
+            const tier = tierOf(c, i, chapters.length);
             const isLapNode = i === lapIdx;
             const isUnlockNode =
               celebrating && lapIdx >= 0 && i === lapIdx + 1 && !c.locked;
@@ -569,11 +838,11 @@ export default function ChapterTrail({
                   nodeRefs.current[i] = el;
                 }}
                 type="button"
-                onClick={() => setSelected(i)}
+                onClick={() => setOpenIdx(i)}
                 style={{ gridColumn: col + 1, gridRow: row + 1 }}
                 className="flex h-full w-full items-center justify-center"
-                aria-label={`Chapter ${i + 1}, ${done} of ${c.rungs.length} done`}
-                aria-pressed={selected === i}
+                aria-label={`Chapter ${i + 1}, ${TIER_LABEL[tier]}, ${done} of ${c.rungs.length} done`}
+                aria-haspopup="dialog"
                 initial={
                   reducedMotion ? false : { opacity: 0, scale: 0.5, y: 8 }
                 }
@@ -584,9 +853,7 @@ export default function ChapterTrail({
                   stiffness: 380,
                   damping: 26,
                 }}
-                whileTap={
-                  reducedMotion ? undefined : { scale: 0.85 }
-                }
+                whileTap={reducedMotion ? undefined : { scale: 0.85 }}
               >
                 <m.span
                   className="relative"
@@ -601,9 +868,9 @@ export default function ChapterTrail({
                 >
                   <Marker
                     chapter={c}
+                    tier={tier}
                     index={i}
                     isCurrent={i === current}
-                    isSelected={selected === i}
                     isNextLocked={i === nextLocked}
                     breathe={!reducedMotion}
                   />
@@ -621,28 +888,19 @@ export default function ChapterTrail({
         </div>
       </div>
 
-      <div className="mt-1 border-t border-[var(--app-line-soft)] pt-3">
-        <p className="text-app-tiny uppercase tracking-app-label text-[var(--app-gold-soft)]">
-          Chapter {selected + 1}
-          {selected === current && chapters.length > 1 && (
-            <span className="text-[var(--app-dim)]"> · you are here</span>
-          )}
-        </p>
-        <p
-          className="mt-1 text-app-lead leading-tight"
-          style={{ fontFamily: "var(--font-display)" }}
-        >
-          {named?.title ?? chapter.rungs[0]?.title}
-        </p>
-        <p className="mt-1 text-app-caption leading-relaxed text-[var(--app-muted)]">
-          {named?.blurb || chapter.rungs[0]?.tagline}
-        </p>
-        <div className="mt-1.5 flex flex-col">
-          {chapter.rungs.map((r) => (
-            <RungRow key={r.scenarioId} rung={r} isMember={isMember} />
-          ))}
-        </div>
-      </div>
+      <AnimatePresence>
+        {sheet && openIdx !== null && (
+          <ChapterSheet
+            key={`sheet-${openIdx}`}
+            chapter={sheet}
+            tier={tierOf(sheet, openIdx, chapters.length)}
+            index={openIdx}
+            named={track.levelTitles[sheet.level]}
+            isMember={isMember}
+            onClose={() => setOpenIdx(null)}
+          />
+        )}
+      </AnimatePresence>
     </div>
   );
 }

@@ -125,11 +125,11 @@ export default async function SimulatorAchievementsPage() {
   return (
     <div className="max-w-5xl mx-auto px-3 sm:px-4 py-6 sm:py-10 lg:py-14">
       <Link
-        href="/app/train/browse"
+        href="/app/train/climb"
         className="inline-flex items-center gap-2 text-sm text-text-gray hover:text-warm-gold transition-colors mb-6"
       >
         <ArrowLeft size={14} />
-        Back to the scenario list
+        Back to the climb
       </Link>
 
       <header className="text-center mb-12">
