@@ -1,9 +1,13 @@
 import { requireServerAuth } from "@/lib/auth/server-auth";
 import { prisma } from "@/lib/prisma";
-import { readMark, type LedgerRow } from "@/lib/mark/read";
+import { readMark } from "@/lib/mark/read";
 import { MARK_FRAME_LINE } from "@/lib/mark/verdicts";
 import { memberGate } from "@/lib/access/guard";
 import { EmptyState, PageHeader, PageShell } from "@/components/app-shell/ui";
+import {
+  MarkLedger,
+  MarkScoreCard,
+} from "@/components/app-shell/measure/MarkBars";
 
 export const metadata = {
   title: "The Mark | Consilium",
@@ -44,6 +48,8 @@ export default async function MeasurePage() {
         />
       ) : (
         <>
+          <MarkScoreCard overall={read.overall} coverage={read.coverage} />
+
           {read.insights.length > 0 && (
             <section className="mb-7 rounded-[18px] border border-[var(--app-line)] bg-[var(--app-card)] p-[18px]">
               <p className="mb-3 text-app-eyebrow uppercase tracking-app-label text-[var(--app-gold-soft)]">
@@ -62,12 +68,12 @@ export default async function MeasurePage() {
             </section>
           )}
 
-          <Ledger
+          <MarkLedger
             title="By tactic"
             caption="What is being run on you."
             rows={read.tactics}
           />
-          <Ledger
+          <MarkLedger
             title="By who is running it"
             caption="The same move lands differently depending on who makes it."
             rows={read.operators}
@@ -88,67 +94,5 @@ export default async function MeasurePage() {
         </>
       )}
     </PageShell>
-  );
-}
-
-function Ledger({
-  title,
-  caption,
-  rows,
-}: {
-  title: string;
-  caption: string;
-  rows: LedgerRow[];
-}) {
-  return (
-    <section className="mb-7">
-      <h2
-        className="text-app-title font-light"
-        style={{ fontFamily: "var(--font-display)" }}
-      >
-        {title}
-      </h2>
-      <p className="mb-3.5 mt-1 text-app-caption text-[var(--app-dim)]">
-        {caption}
-      </p>
-      <ul className="flex flex-col gap-2">
-        {rows.map((row) => (
-          <li
-            key={row.key}
-            className={`rounded-2xl border border-[var(--app-line-soft)] px-4 py-3.5 ${
-              row.state === "UNTESTED"
-                ? "bg-transparent"
-                : "bg-[var(--app-card)]"
-            }`}
-          >
-            <div className="flex items-baseline justify-between gap-3">
-              <p
-                className={`text-app-lead font-medium ${
-                  row.state === "UNTESTED"
-                    ? "text-[var(--app-dim)]"
-                    : "text-[var(--app-text)]"
-                }`}
-              >
-                {row.label}
-              </p>
-              {row.state === "EARLY" && (
-                <span className="shrink-0 text-app-tiny uppercase tracking-app-wide text-[var(--app-gold-soft)]">
-                  Early read
-                </span>
-              )}
-            </div>
-            <p
-              className={`mt-1 text-app-body leading-relaxed ${
-                row.state === "UNTESTED"
-                  ? "text-[var(--app-dim)]"
-                  : "text-[var(--app-muted)]"
-              }`}
-            >
-              {row.sentence}
-            </p>
-          </li>
-        ))}
-      </ul>
-    </section>
   );
 }

@@ -59,8 +59,14 @@ export interface LedgerRow {
   /** Null while untested, so no caller can accidentally render a guess. */
   rate: number | null;
   state: CellState;
-  /** The only thing a member ever sees. Never a number, never a score. */
+  /** The verdict in words; the bars carry the numbers. */
   sentence: string;
+  /**
+   * Percentage-point movement: the last 30 days against the record
+   * before them. Null until BOTH windows hold enough answers to compare
+   * (the honesty rule again; a two-answer week is not a trend).
+   */
+  delta: number | null;
 }
 
 export interface BlindSpot {
@@ -77,6 +83,21 @@ export interface BlindSpot {
 
 export interface MarkRead {
   totalEncounters: number;
+  /**
+   * The headline: the Mark score. Catch rate across every graded moment,
+   * recency-weighted (45-day half-life) so it reads who the member is
+   * NOW rather than averaging this month against last year. Movement is
+   * the last 30 days against the record before them. Null until the
+   * record can speak at all.
+   */
+  overall: { seen: number; rate: number | null; delta: number | null };
+  /** How broadly the record has actually tested them. */
+  coverage: {
+    tactics: number;
+    tacticsTotal: number;
+    operators: number;
+    operatorsTotal: number;
+  };
   tactics: LedgerRow[];
   operators: LedgerRow[];
   /** The cross-cell lines, the ones worth the whole exercise. */
@@ -93,13 +114,53 @@ export interface MarkRead {
 interface Tally {
   seen: number;
   caught: number;
+  /** The two comparison windows behind the +/- movement chip. */
+  recentSeen: number;
+  recentCaught: number;
+  priorSeen: number;
+  priorCaught: number;
 }
 
-function bump(map: Map<string, Tally>, key: string, correct: boolean): void {
-  const t = map.get(key) ?? { seen: 0, caught: 0 };
+/** Minimum answers PER WINDOW before a movement chip renders. */
+const MIN_PER_WINDOW = 3;
+
+function bump(
+  map: Map<string, Tally>,
+  key: string,
+  correct: boolean,
+  recent: boolean,
+): void {
+  const t =
+    map.get(key) ??
+    ({
+      seen: 0,
+      caught: 0,
+      recentSeen: 0,
+      recentCaught: 0,
+      priorSeen: 0,
+      priorCaught: 0,
+    } satisfies Tally);
   t.seen += 1;
   if (correct) t.caught += 1;
+  if (recent) {
+    t.recentSeen += 1;
+    if (correct) t.recentCaught += 1;
+  } else {
+    t.priorSeen += 1;
+    if (correct) t.priorCaught += 1;
+  }
   map.set(key, t);
+}
+
+/** Percentage points of movement, or null when either window is thin. */
+function deltaFor(t: Tally | undefined): number | null {
+  if (!t) return null;
+  if (t.recentSeen < MIN_PER_WINDOW || t.priorSeen < MIN_PER_WINDOW) {
+    return null;
+  }
+  return Math.round(
+    (t.recentCaught / t.recentSeen - t.priorCaught / t.priorSeen) * 100,
+  );
 }
 
 function stateFor(seen: number): CellState {
@@ -126,17 +187,32 @@ function buildRow(
       rate: null,
       state,
       sentence: untestedSentence(seen),
+      delta: null,
     };
   }
   const rate = caught / seen;
-  return { key, label, seen, caught, rate, state, sentence: sentenceFor(rate) };
+  return {
+    key,
+    label,
+    seen,
+    caught,
+    rate,
+    state,
+    sentence: sentenceFor(rate),
+    delta: deltaFor(tally),
+  };
 }
 
 export async function readMark(db: Db, userId: string): Promise<MarkRead> {
   const [rows, lastBaseline, baselineCount] = await Promise.all([
     db.markEncounter.findMany({
       where: { userId },
-      select: { tactic: true, operatorType: true, correct: true },
+      select: {
+        tactic: true,
+        operatorType: true,
+        correct: true,
+        createdAt: true,
+      },
       orderBy: { createdAt: "desc" },
       take: MAX_ROWS,
     }),
@@ -151,19 +227,36 @@ export async function readMark(db: Db, userId: string): Promise<MarkRead> {
   const byTactic = new Map<string, Tally>();
   const byOperator = new Map<string, Tally>();
   const byCell = new Map<string, Tally>();
+  const overallTally = new Map<string, Tally>();
+  const now = Date.now();
+  const windowStart = new Date(now - 30 * 24 * 60 * 60 * 1000);
+  // The score's memory. Each graded moment loses half its weight every
+  // 45 days, so the headline tracks current form and a member who
+  // improves actually watches the number move.
+  const HALF_LIFE_DAYS = 45;
+  let weightedSeen = 0;
+  let weightedCaught = 0;
 
   for (const row of rows) {
+    const recent = row.createdAt >= windowStart;
+    const ageDays = (now - row.createdAt.getTime()) / 86_400_000;
+    const weight = Math.pow(0.5, ageDays / HALF_LIFE_DAYS);
+    weightedSeen += weight;
+    if (row.correct) weightedCaught += weight;
     // Rows carrying a label the taxonomy no longer knows are dropped
     // rather than rendered. Silence beats a cell nobody can name. A row
     // feeds only the ledgers it actually carries a label for, so an
     // operator-only item counts once, in the right place.
     const tactic = asTactic(row.tactic);
     const operator = asOperator(row.operatorType);
-    if (tactic) bump(byTactic, tactic, row.correct);
-    if (operator) bump(byOperator, operator, row.correct);
+    if (tactic) bump(byTactic, tactic, row.correct, recent);
+    if (operator) bump(byOperator, operator, row.correct, recent);
     if (tactic && operator) {
-      bump(byCell, `${tactic}|${operator}`, row.correct);
+      bump(byCell, `${tactic}|${operator}`, row.correct, recent);
     }
+    // Every graded moment counts once toward the headline, whether it
+    // carries one label or two.
+    bump(overallTally, "all", row.correct, recent);
   }
 
   const tactics = TACTIC_KEYS.map((t) =>
@@ -180,8 +273,26 @@ export async function readMark(db: Db, userId: string): Promise<MarkRead> {
   const insights = buildInsights(byTactic, byCell);
   const blindSpots = buildBlindSpots(tactics, lastBaseline?.answers ?? null);
 
+  const all = overallTally.get("all");
+  const overall = {
+    seen: all?.seen ?? 0,
+    rate:
+      all && all.seen >= MIN_TO_SPEAK && weightedSeen > 0
+        ? weightedCaught / weightedSeen
+        : null,
+    delta: deltaFor(all),
+  };
+  const coverage = {
+    tactics: tactics.filter((r) => r.state !== "UNTESTED").length,
+    tacticsTotal: TACTIC_KEYS.length,
+    operators: operators.filter((r) => r.state !== "UNTESTED").length,
+    operatorsTotal: OPERATOR_KEYS.length,
+  };
+
   return {
     totalEncounters: rows.length,
+    overall,
+    coverage,
     tactics,
     operators,
     insights,
