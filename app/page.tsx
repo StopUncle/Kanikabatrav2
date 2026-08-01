@@ -113,7 +113,7 @@ export default function Home() {
             the membership get me?" in one glance. Lives ABOVE the simulator
             teaser so visitors understand the product before being
             asked to feel one feature of it. */}
-        <ConsiliumOverview />
+        <ConsiliumOverview stats={catalogueStats} />
 
         {/* PRIMARY #2 (continued). Live simulator demo. Now framed as
             the flagship feature inside the Consilium, not a separate

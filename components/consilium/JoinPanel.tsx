@@ -2,12 +2,12 @@
 
 import { useState } from "react";
 import { ArrowRight, Loader2, CheckCircle, BadgeCheck } from "lucide-react";
-import { catalogueStats } from "@/lib/simulator/stats";
+import type { CatalogueStats } from "@/lib/simulator/stats";
 import { MEMBERSHIP } from "@/lib/constants";
 import { QUIZ_INFO } from "@/lib/quiz-data";
 
-const INCLUDED = [
-  `The Dark Mirror Simulator, ${catalogueStats.scenarios} branching scenarios across ${catalogueStats.tracks} tracks`,
+const includedLines = (stats: CatalogueStats) => [
+  `The Dark Mirror Simulator, ${stats.scenarios} branching scenarios across ${stats.tracks} tracks`,
   "Full course library, dark psychology, pattern recognition, career strategy",
   "Voice notes from Kanika, raw, unfiltered, members-only",
   "Daily psychology drops + discussion prompts",
@@ -39,7 +39,14 @@ type BillingCycle = "monthly" | "annual";
  * month than against a year. The toggle still works, this only changes
  * which plan they see first.
  */
-export default function JoinPanel({ creditCode }: { creditCode?: string }) {
+export default function JoinPanel({
+  creditCode,
+  stats,
+}: {
+  creditCode?: string;
+  stats: CatalogueStats;
+}) {
+  const included = includedLines(stats);
   const [cycle, setCycle] = useState<BillingCycle>(
     creditCode ? "monthly" : "annual",
   );
@@ -154,7 +161,7 @@ export default function JoinPanel({ creditCode }: { creditCode?: string }) {
       </p>
 
       <ul className="space-y-3 mb-8">
-        {INCLUDED.map((item) => (
+        {included.map((item) => (
           <li key={item} className="flex items-start gap-3">
             <CheckCircle
               size={16}

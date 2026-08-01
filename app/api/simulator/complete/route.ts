@@ -27,6 +27,7 @@ import {
 import {
   evaluateAchievements,
   eventsObserved,
+  getAchievementToastMeta,
   type AchievementProgressSnapshot,
 } from "@/lib/simulator/achievements";
 import type {
@@ -460,6 +461,10 @@ export async function POST(request: NextRequest) {
         success: true,
         allEarnedKeys: earnedKeys, // every badge the run would earn
         newlyEarnedKeys: newKeys, // only the ones not previously held
+        // Display meta for the new unlocks, resolved here so the toast
+        // never has to import the achievement catalogue (which drags
+        // every scenario's prose into the client bundle).
+        newlyEarnedMeta: newKeys.map(getAchievementToastMeta),
         // Non-null when this completion crossed a ring threshold; the
         // client uses it to fire the ring-up ceremony.
         ringUp,

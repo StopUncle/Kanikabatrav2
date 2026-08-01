@@ -22,7 +22,7 @@ import {
   getSituation,
   type SituationKey,
 } from "@/lib/checkin/situations";
-import { TRACK_META } from "@/lib/simulator/scenarios";
+import { TRACK_META } from "@/lib/simulator/track-meta";
 import type { ScenarioTrack } from "@/lib/simulator/types";
 
 interface Props {

@@ -31,6 +31,13 @@ const CATALOGUE_STATS = {
 export const catalogueStats = CATALOGUE_STATS;
 
 /**
+ * Shape of the catalogue numbers for client components. They receive the
+ * stats as props from a server parent; importing `catalogueStats` itself
+ * from client code would bundle every scenario into the page.
+ */
+export type CatalogueStats = typeof CATALOGUE_STATS;
+
+/**
  * Human-facing rounded scenarios count. "52 scenarios" reads more
  * catalogue-like than "54" once scenarios keep shipping; this keeps the
  * stats line feeling stable across deploys.

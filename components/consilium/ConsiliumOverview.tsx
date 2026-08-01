@@ -5,7 +5,7 @@ import Link from "next/link";
 import { m } from "framer-motion";
 import { Check, ShieldCheck, ArrowRight } from "lucide-react";
 import FloatingConsiliumSeal from "@/components/consilium/FloatingConsiliumSeal";
-import { catalogueStats } from "@/lib/simulator/stats";
+import type { CatalogueStats } from "@/lib/simulator/stats";
 
 /**
  * Homepage section that pitches The Consilium with the same energy the
@@ -26,14 +26,18 @@ import { catalogueStats } from "@/lib/simulator/stats";
  * Words "community" and "membership" appear front-and-centre so the
  * brand name "The Consilium" doesn't have to do the explaining alone.
  */
-export default function ConsiliumOverview() {
+export default function ConsiliumOverview({
+  stats,
+}: {
+  stats: CatalogueStats;
+}) {
   // What's inside, with concrete numbers and dollar anchors. Book is
   // not bundled, that's a separate purchase. Member-only pricing on
   // it is listed last as the discount benefit, not as inclusion.
   const inside = [
     {
       title: "The Dark Mirror Simulator",
-      detail: `${catalogueStats.scenarios} branching scenarios · ${catalogueStats.scenes} scenes · ${catalogueStats.tacticsTaught} manipulation tactics · ${catalogueStats.redFlagsTaught} red flags catalogued`,
+      detail: `${stats.scenarios} branching scenarios · ${stats.scenes} scenes · ${stats.tacticsTaught} manipulation tactics · ${stats.redFlagsTaught} red flags catalogued`,
       value: "Members only",
     },
     {
@@ -182,7 +186,7 @@ export default function ConsiliumOverview() {
             {/* Feature blocks */}
             <div className="space-y-3">
               {[
-                `${catalogueStats.scenes} branching scenes inside the Dark Mirror Simulator. Every choice has a consequence`,
+                `${stats.scenes} branching scenes inside the Dark Mirror Simulator. Every choice has a consequence`,
                 "Ask Kanika, one question a day, answered by voice or video in your feed",
                 "60 daily psychology drops + 28 themed discussion prompts",
                 "Voice notes from Kanika, raw insights you won't hear anywhere else",

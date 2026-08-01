@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
+import type { AchievementToastMeta } from "@/lib/simulator/achievements";
 import type {
   Scenario,
   SimulatorState,
@@ -72,7 +73,9 @@ export default function SimulatorPageClient({
   // `badgesEarned` (which is all earned, replay-inclusive, for the
   // ending grid) so replays of an already-unlocked scenario don't
   // re-fire the toast.
-  const [unlockedThisRun, setUnlockedThisRun] = useState<string[]>([]);
+  const [unlockedThisRun, setUnlockedThisRun] = useState<
+    AchievementToastMeta[]
+  >([]);
   // Non-null when the completion that just resolved crossed a ring
   // threshold; drives the full-screen ceremony over the ending screen.
   const [ringUp, setRingUp] = useState<RingUpPayload | null>(null);
@@ -186,6 +189,7 @@ export default function SimulatorPageClient({
         const data = (await res.json()) as {
           allEarnedKeys: string[];
           newlyEarnedKeys: string[];
+          newlyEarnedMeta?: AchievementToastMeta[];
           ringUp: RingUpPayload | null;
           markRecorded?: boolean;
           xpBreakdown?: {
@@ -202,7 +206,7 @@ export default function SimulatorPageClient({
         setBadgesEarned(data.allEarnedKeys);
         // Toast only on first-time unlocks, a replay that re-earns the
         // same key array gets no popup, which is what players want.
-        setUnlockedThisRun(data.newlyEarnedKeys);
+        setUnlockedThisRun(data.newlyEarnedMeta ?? []);
         setRingUp(data.ringUp ?? null);
         setMarkRecorded(data.markRecorded ?? false);
         setXpBreakdown(data.xpBreakdown ?? null);

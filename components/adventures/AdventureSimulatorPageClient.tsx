@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
+import type { AchievementToastMeta } from "@/lib/simulator/achievements";
 import type {
   Scenario,
   SimulatorState,
@@ -54,7 +55,9 @@ export default function AdventureSimulatorPageClient({
 }: Props) {
   const router = useRouter();
   const [badgesEarned, setBadgesEarned] = useState<string[]>([]);
-  const [unlockedThisRun, setUnlockedThisRun] = useState<string[]>([]);
+  const [unlockedThisRun, setUnlockedThisRun] = useState<
+    AchievementToastMeta[]
+  >([]);
   const [ringUp, setRingUp] = useState<RingUpPayload | null>(null);
   const [xpBreakdown, setXpBreakdown] = useState<{
     choiceXp: number;
@@ -143,6 +146,7 @@ export default function AdventureSimulatorPageClient({
           const data = (await completeRes.json()) as {
             allEarnedKeys: string[];
             newlyEarnedKeys: string[];
+            newlyEarnedMeta?: AchievementToastMeta[];
             ringUp: RingUpPayload | null;
             xpBreakdown?: {
               choiceXp: number;
@@ -153,7 +157,7 @@ export default function AdventureSimulatorPageClient({
             endingBounty?: { amount: number } | null;
           };
           setBadgesEarned(data.allEarnedKeys);
-          setUnlockedThisRun(data.newlyEarnedKeys);
+          setUnlockedThisRun(data.newlyEarnedMeta ?? []);
           setRingUp(data.ringUp ?? null);
           setXpBreakdown(data.xpBreakdown ?? null);
           setEndingBounty(data.endingBounty ?? null);

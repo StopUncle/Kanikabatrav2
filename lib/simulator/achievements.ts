@@ -1099,6 +1099,23 @@ export function getAchievementMeta(slug: string): AchievementMeta {
 }
 
 /**
+ * The JSON-safe slice of AchievementMeta the unlock toast renders.
+ * Sent over the wire by the complete API so the toast never imports
+ * this module (whose catalogue drags every scenario into the bundle).
+ * `progress.current` is a function and would not survive serialization,
+ * hence the explicit pick.
+ */
+export type AchievementToastMeta = Pick<
+  AchievementMeta,
+  "slug" | "name" | "description" | "icon" | "rarity"
+>;
+
+export function getAchievementToastMeta(slug: string): AchievementToastMeta {
+  const { slug: s, name, description, icon, rarity } = getAchievementMeta(slug);
+  return { slug: s, name, description, icon, rarity };
+}
+
+/**
  * Known? Use when filtering "real" catalogue entries out of a set that
  * might include legacy or unregistered keys (e.g. male-track scenarios
  * whose badges haven't been registered in badges.ts yet — their earned

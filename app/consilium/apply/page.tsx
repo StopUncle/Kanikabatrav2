@@ -3,6 +3,7 @@ import { optionalServerAuth } from "@/lib/auth/server-auth";
 import { prisma } from "@/lib/prisma";
 import BackgroundEffects from "@/components/BackgroundEffects";
 import JoinPanel from "@/components/consilium/JoinPanel";
+import { catalogueStats } from "@/lib/simulator/stats";
 import SocialProofTicker from "@/components/consilium/SocialProofTicker";
 import { XCircle } from "lucide-react";
 
@@ -129,7 +130,7 @@ export default async function JoinPage({
 
         <SocialProofTicker className="mb-6" />
 
-        <JoinPanel creditCode={validCreditCode || undefined} />
+        <JoinPanel creditCode={validCreditCode || undefined} stats={catalogueStats} />
       </div>
     </div>
   );

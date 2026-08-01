@@ -26,10 +26,9 @@ import {
   Skull,
 } from "lucide-react";
 import { useReducedMotion } from "@/lib/hooks/use-reduced-motion";
-import {
-  getAchievementMeta,
-  type AchievementMeta,
-  type AchievementRarity,
+import type {
+  AchievementToastMeta,
+  AchievementRarity,
 } from "@/lib/simulator/achievements";
 import type { SimulatorBadgeDef } from "@/lib/simulator/badges";
 
@@ -69,12 +68,13 @@ function iconFor(name: SimulatorBadgeDef["icon"], color: string) {
 
 type AchievementToastProps = {
   /**
-   * Slugs of newly-earned achievements from the current run. Component
-   * resolves them to AchievementMeta internally. Passing the same list
-   * twice in a row will replay the toasts; parent should feed new
-   * references only for actually-new unlocks.
+   * Newly-earned achievements from the current run, resolved to display
+   * meta by the server (the complete API), so this component never
+   * imports the achievement catalogue. Passing the same list twice in a
+   * row will replay the toasts; parent should feed new references only
+   * for actually-new unlocks.
    */
-  unlocks: string[];
+  unlocks: AchievementToastMeta[];
   /** Ms each toast stays on screen. Default 3800. */
   durationMs?: number;
 };
@@ -85,15 +85,15 @@ export default function AchievementToast({
 }: AchievementToastProps) {
   const reduceMotion = useReducedMotion();
 
-  // Resolve once per unlocks-list identity. We dedupe so the same slug
-  // doesn't double-pop if the parent rerenders with a stable array.
-  const queue = useMemo<AchievementMeta[]>(() => {
+  // Dedupe once per unlocks-list identity so the same slug doesn't
+  // double-pop if the parent rerenders with a stable array.
+  const queue = useMemo<AchievementToastMeta[]>(() => {
     const seen = new Set<string>();
-    const out: AchievementMeta[] = [];
-    for (const slug of unlocks) {
-      if (seen.has(slug)) continue;
-      seen.add(slug);
-      out.push(getAchievementMeta(slug));
+    const out: AchievementToastMeta[] = [];
+    for (const meta of unlocks) {
+      if (seen.has(meta.slug)) continue;
+      seen.add(meta.slug);
+      out.push(meta);
     }
     return out;
   }, [unlocks]);
