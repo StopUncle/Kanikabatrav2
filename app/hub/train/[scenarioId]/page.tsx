@@ -168,6 +168,15 @@ export default async function SimulatorPlay({
       previousBest={previousBest}
       nextScenarioHref={nextHref}
       seenEndingIds={seenEndingIds}
+      allowGauntlet={viewerAccess.isMember}
+      // Resuming a run keeps the mode it was started in. A member who
+      // lapsed mid-gauntlet resumes in story; the server would refuse
+      // gauntlet pay anyway, so the UI should not promise it.
+      initialMode={
+        initialState && row?.mode === "gauntlet" && viewerAccess.isMember
+          ? "gauntlet"
+          : undefined
+      }
       // Members enter runs from the app's Train screen now; leaving a run
       // must land back there, not on the legacy catalog.
       exitHref="/app/train"

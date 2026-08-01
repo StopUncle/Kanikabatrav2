@@ -76,6 +76,14 @@ export type ImmersionTrigger =
 export type ShakePreset = "shock" | "threat" | "revelation";
 
 export type OutcomeType = "good" | "neutral" | "bad" | "passed" | "failed";
+
+/**
+ * Per-run play mode. Story is the guided default: tactical reads inline,
+ * timer only where authored. Gauntlet is the members-only hard mode:
+ * reads withheld until the ending, a clock on every choice, shuffled
+ * choice order, and a server-paid bonus on completion.
+ */
+export type PlayMode = "story" | "gauntlet";
 export type Gender = "male" | "female" | "non-binary";
 
 export interface Character {
@@ -237,6 +245,13 @@ export interface ChoiceRecord {
   choiceId: string;
   wasOptimal: boolean;
   timestamp: string;
+  /**
+   * Gauntlet only: the choice clock ran out before the player picked.
+   * The pick still counts (the timer never chooses for anyone), but a
+   * hesitated choice breaks the streak chain. Absent in story mode and
+   * on non-hesitated picks, so legacy records need no backfill.
+   */
+  hesitated?: boolean;
 }
 
 /** Runtime state machine state. */

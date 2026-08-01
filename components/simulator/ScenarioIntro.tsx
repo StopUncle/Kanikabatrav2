@@ -1,8 +1,8 @@
 "use client";
 
 import { m, AnimatePresence } from "framer-motion";
-import { Play, RotateCcw, Users, Clock, Target } from "lucide-react";
-import type { Scenario, OutcomeType } from "@/lib/simulator/types";
+import { Play, RotateCcw, Users, Clock, Target, Lock } from "lucide-react";
+import type { Scenario, OutcomeType, PlayMode } from "@/lib/simulator/types";
 
 type Props = {
   scenario: Scenario;
@@ -13,6 +13,26 @@ type Props = {
     completedAt: string;
   } | null;
   onBegin: () => void;
+  /**
+   * Play-mode toggle. Undefined hides the control entirely (public
+   * demo, adventures, initiation). When set, a Story/Gauntlet
+   * segmented switch renders above the Begin button.
+   */
+  mode?: PlayMode;
+  onModeChange?: (mode: PlayMode) => void;
+  /**
+   * True for free-tier viewers: the Gauntlet chip renders with a lock
+   * and taps route to `onLockedGauntletTap` (the upgrade sheet)
+   * instead of switching.
+   */
+  gauntletLocked?: boolean;
+  onLockedGauntletTap?: () => void;
+};
+
+const MODE_COPY: Record<PlayMode, string> = {
+  story: "Guided. Kanika's reads appear as you play.",
+  gauntlet:
+    "Hard mode. No reads until the end, a clock on every choice, bonus pay.",
 };
 
 /**
@@ -39,6 +59,10 @@ export default function ScenarioIntro({
   show,
   previousBest = null,
   onBegin,
+  mode,
+  onModeChange,
+  gauntletLocked = false,
+  onLockedGauntletTap,
 }: Props) {
   const isReplay = !!previousBest;
   const bestLabel =
@@ -137,6 +161,58 @@ export default function ScenarioIntro({
                 </span>
               )}
             </m.div>
+
+            {/* Play-mode switch. Story is the guided default; Gauntlet
+                withholds the reads and puts a clock on every choice.
+                Free tier sees Gauntlet locked; the tap opens the
+                upgrade sheet instead of switching. */}
+            {mode && onModeChange && (
+              <m.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.6, delay: 1.2 }}
+                className="mb-8 relative"
+              >
+                <div
+                  role="radiogroup"
+                  aria-label="Play mode"
+                  className="inline-flex rounded-full border border-white/12 bg-deep-black/70 p-1"
+                >
+                  {(["story", "gauntlet"] as const).map((m2) => {
+                    const active = mode === m2;
+                    const locked = m2 === "gauntlet" && gauntletLocked;
+                    return (
+                      <button
+                        key={m2}
+                        type="button"
+                        role="radio"
+                        aria-checked={active}
+                        onClick={() => {
+                          if (locked) {
+                            onLockedGauntletTap?.();
+                            return;
+                          }
+                          onModeChange(m2);
+                        }}
+                        className={`inline-flex items-center gap-1.5 px-5 py-2 rounded-full text-[11px] uppercase tracking-[0.25em] transition-colors ${
+                          active
+                            ? "bg-accent-gold text-deep-black font-medium"
+                            : "text-text-gray hover:text-white"
+                        } ${locked ? "opacity-60" : ""}`}
+                      >
+                        {locked && <Lock size={10} strokeWidth={2} />}
+                        {m2 === "story" ? "Story" : "Gauntlet"}
+                      </button>
+                    );
+                  })}
+                </div>
+                <p className="text-text-gray/60 text-xs font-light mt-2.5 max-w-sm mx-auto">
+                  {gauntletLocked && mode === "story"
+                    ? "Gauntlet is a members' room. " + MODE_COPY.story
+                    : MODE_COPY[mode]}
+                </p>
+              </m.div>
+            )}
 
             {/* Previous-best callout on replays. Drawn like a quiet
                 scoreboard so the player feels they're returning to

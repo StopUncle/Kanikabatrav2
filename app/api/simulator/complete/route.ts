@@ -62,12 +62,14 @@ const CompleteBody = z.object({
         choiceId: z.string(),
         wasOptimal: z.boolean(),
         timestamp: z.string(),
+        hesitated: z.boolean().optional(),
       }),
     )
     .max(500),
   xpEarned: z.number().int().min(0).max(10_000),
   outcome: z.enum(["good", "neutral", "bad", "passed", "failed"]),
   endedAt: z.string(),
+  mode: z.enum(["story", "gauntlet"]).optional(),
 });
 
 export async function POST(request: NextRequest) {
@@ -117,12 +119,26 @@ export async function POST(request: NextRequest) {
     // (good=4 > bad=0), defeating mergeProgress's best-of guarantee.
     const safeOutcome: OutcomeType = endingScene.outcomeType ?? "neutral";
 
+    // Gauntlet is a members' room, enforced here regardless of what the
+    // client claims: a free account posting mode=gauntlet is silently
+    // scored as story rather than rejected (their run was still real).
+    const isGauntlet = body.mode === "gauntlet" && access.isMember;
+
     // Anti-cheat: recompute XP from the claimed choicesMade and clamp.
     // See /api/simulator/progress for the same rationale, the server
     // owns the engine, so it computes the truth and never trusts the
-    // client number beyond it.
+    // client number beyond it. Hesitated flags in choicesMade feed the
+    // streak math (streakBonusXp resets the chain on them), so a
+    // gauntlet client that hesitated replays to the same number here.
     const authoritative = replayXpDetailed(scenario, body.choicesMade);
-    const safeXp = Math.min(body.xpEarned, authoritative.total);
+    const clampedXp = Math.min(body.xpEarned, authoritative.total);
+
+    // Gauntlet pay: half again on top of the validated run XP, computed
+    // from the clamped number so a tampered claim cannot inflate the
+    // bonus either. Rides into everything downstream: the progress row,
+    // the leaderboard, and the Standing grant multiplier.
+    const gauntletPayAmount = isGauntlet ? Math.round(clampedXp * 0.5) : 0;
+    const safeXp = clampedXp + gauntletPayAmount;
 
     const state: SimulatorState = {
       scenarioId: body.scenarioId,
@@ -187,10 +203,18 @@ export async function POST(request: NextRequest) {
       const createWithEndings = {
         ...create,
         endingsReached: [body.currentSceneId],
+        mode: isGauntlet ? "gauntlet" : "story",
+        ...(isGauntlet ? { gauntletClearedAt: new Date() } : {}),
       };
       const updateWithEndings = {
         ...update,
         endingsReached: { push: body.currentSceneId },
+        mode: isGauntlet ? "gauntlet" : "story",
+        // First gauntlet clear stamps once and stays: the catalog mark
+        // is "has beaten this on Gauntlet", not "last run was one".
+        ...(isGauntlet && !existingRow?.gauntletClearedAt
+          ? { gauntletClearedAt: new Date() }
+          : {}),
       };
 
       // Persist progress + badges in one round-trip.
@@ -455,6 +479,7 @@ export async function POST(request: NextRequest) {
         xpEarned: safeXp,
         firstCompletion: wasFirstCompletion,
         markRecorded: markWritten > 0,
+        mode: isGauntlet ? "gauntlet" : "story",
       });
 
       return NextResponse.json({
@@ -481,6 +506,11 @@ export async function POST(request: NextRequest) {
         },
         // Non-null when this replay found an ending never reached before.
         endingBounty,
+        // Non-null when the run was a member gauntlet: the hard-mode
+        // bonus already included in the persisted XP, broken out so the
+        // ending screen can show where it came from.
+        gauntletPay:
+          gauntletPayAmount > 0 ? { amount: gauntletPayAmount } : null,
       });
     } catch (err) {
       logger.error("[simulator-complete] failed", err as Error, {

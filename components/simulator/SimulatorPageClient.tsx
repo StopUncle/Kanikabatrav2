@@ -7,6 +7,7 @@ import type {
   Scenario,
   SimulatorState,
   OutcomeType,
+  PlayMode,
 } from "@/lib/simulator/types";
 import SimulatorRunner from "./SimulatorRunner";
 import AchievementToast from "./AchievementToast";
@@ -46,7 +47,18 @@ type Props = {
   endingCta?: React.ReactNode;
   /** Where the runner's exit X navigates. Defaults to the catalog. */
   exitHref?: string;
+  /**
+   * Story/Gauntlet toggle policy. Undefined hides the toggle entirely
+   * (public demo, initiation, adventures). True = member, both modes.
+   * False = free tier: the toggle shows with Gauntlet locked, and taps
+   * on it open the upgrade sheet.
+   */
+  allowGauntlet?: boolean;
+  /** Mid-run resume: the mode the interrupted run was started in. */
+  initialMode?: PlayMode;
 };
+
+const MODE_STORAGE_KEY = "kb-sim-mode";
 
 /**
  * Thin client wrapper around SimulatorRunner that handles persistence.
@@ -66,8 +78,38 @@ export default function SimulatorPageClient({
   seenEndingIds = [],
   endingCta,
   exitHref,
+  allowGauntlet,
+  initialMode,
 }: Props) {
   const router = useRouter();
+  // Story until proven otherwise. The saved preference loads in an
+  // effect rather than the initializer so server and first client
+  // render agree (no hydration mismatch); the intro fades in slowly
+  // enough that the swap is invisible.
+  const [mode, setMode] = useState<PlayMode>(initialMode ?? "story");
+  useEffect(() => {
+    if (initialMode || allowGauntlet !== true) return;
+    try {
+      if (localStorage.getItem(MODE_STORAGE_KEY) === "gauntlet") {
+        setMode("gauntlet");
+      }
+    } catch {
+      /* private mode etc.; story is a fine default */
+    }
+  }, [initialMode, allowGauntlet]);
+
+  const handleModeChange = useCallback(
+    (next: PlayMode) => {
+      if (next === "gauntlet" && allowGauntlet !== true) return;
+      setMode(next);
+      try {
+        localStorage.setItem(MODE_STORAGE_KEY, next);
+      } catch {
+        /* preference just won't stick */
+      }
+    },
+    [allowGauntlet],
+  );
   const [badgesEarned, setBadgesEarned] = useState<string[]>([]);
   // Newly-earned-this-run keys drive the corner toast. Separate from
   // `badgesEarned` (which is all earned, replay-inclusive, for the
@@ -91,6 +133,9 @@ export default function SimulatorPageClient({
     total: number;
   } | null>(null);
   const [endingBounty, setEndingBounty] = useState<{ amount: number } | null>(
+    null,
+  );
+  const [gauntletPay, setGauntletPay] = useState<{ amount: number } | null>(
     null,
   );
   // Track the "best-to-date" across the session so a second replay
@@ -137,12 +182,13 @@ export default function SimulatorPageClient({
           xpEarned: state.xpEarned,
           outcome: state.outcome ?? null,
           endedAt: state.endedAt ?? null,
+          mode,
         }),
       }).catch(() => {
         // Silent, client is authoritative during the run
       });
     },
-    [],
+    [mode],
   );
 
   const handleComplete = useCallback(async (state: SimulatorState) => {
@@ -157,6 +203,7 @@ export default function SimulatorPageClient({
     setMarkRecorded(false);
     setXpBreakdown(null);
     setEndingBounty(null);
+    setGauntletPay(null);
 
     // Update the session's best-to-date if this run exceeded it.
     // A subsequent in-session replay sees this as the new baseline so
@@ -183,6 +230,7 @@ export default function SimulatorPageClient({
           xpEarned: state.xpEarned,
           outcome: state.outcome,
           endedAt: state.endedAt,
+          mode,
         }),
       });
       if (res.ok) {
@@ -192,6 +240,7 @@ export default function SimulatorPageClient({
           newlyEarnedMeta?: AchievementToastMeta[];
           ringUp: RingUpPayload | null;
           markRecorded?: boolean;
+          gauntletPay?: { amount: number } | null;
           xpBreakdown?: {
             choiceXp: number;
             streakBonus: number;
@@ -211,6 +260,7 @@ export default function SimulatorPageClient({
         setMarkRecorded(data.markRecorded ?? false);
         setXpBreakdown(data.xpBreakdown ?? null);
         setEndingBounty(data.endingBounty ?? null);
+        setGauntletPay(data.gauntletPay ?? null);
         // Refresh server components so the index page reflects new state
         // when the user returns.
         router.refresh();
@@ -218,7 +268,7 @@ export default function SimulatorPageClient({
     } catch {
       // Silent
     }
-  }, [router]);
+  }, [router, mode]);
 
   return (
     <SimulatorErrorBoundary
@@ -240,6 +290,12 @@ export default function SimulatorPageClient({
         markRecorded={markRecorded}
         xpBreakdown={xpBreakdown}
         endingBounty={endingBounty}
+        mode={allowGauntlet === undefined ? undefined : mode}
+        onModeChange={
+          allowGauntlet === undefined ? undefined : handleModeChange
+        }
+        gauntletLocked={allowGauntlet === false}
+        gauntletPay={gauntletPay}
       />
       <AchievementToast unlocks={unlockedThisRun} />
       <RingUpCeremony ringUp={ringUp} onDismiss={() => setRingUp(null)} />

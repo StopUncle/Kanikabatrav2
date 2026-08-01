@@ -27,7 +27,9 @@ export type UpgradeTrigger =
   /** A locked tab or More row was tapped, or a member-only URL was opened. */
   | "locked-nav"
   /** The standing membership card on Today, opened by choice, not a wall. */
-  | "today-card";
+  | "today-card"
+  /** The Gauntlet chip on a scenario intro, tapped by a free account. */
+  | "gauntlet";
 // A "mark-verdict" trigger was written and never fired: the Measure is
 // fully walled for free accounts, so no honest moment exists. Its home,
 // if one ever ships, is a free Baseline reveal.
@@ -56,6 +58,7 @@ function headlineFor(
   }
   if (trigger === "standing-frozen") return "Your standing stops here.";
   if (trigger === "today-card") return "The whole thing is already built.";
+  if (trigger === "gauntlet") return "The Gauntlet plays for keeps.";
   return surface ? `${surface} is open inside.` : "That room is open inside.";
 }
 
@@ -68,6 +71,9 @@ function sublineFor(trigger: UpgradeTrigger): string {
   }
   if (trigger === "today-card") {
     return "Every track, the Lab, Kanika's room, the Mark. One membership opens all of it.";
+  }
+  if (trigger === "gauntlet") {
+    return "No reads, a clock on every choice, and bonus pay for holding your nerve. Members only.";
   }
   return "Everything on this bar unlocks with one membership. Pick up where the free tier stops.";
 }

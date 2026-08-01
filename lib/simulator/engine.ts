@@ -83,6 +83,7 @@ export function applyChoice(
   scenario: Scenario,
   state: SimulatorState,
   choiceId: string,
+  opts?: { hesitated?: boolean },
 ): SimulatorState {
   const scene = currentScene(scenario, state);
   if (!scene) throw new Error(`Unknown scene: ${state.currentSceneId}`);
@@ -99,6 +100,7 @@ export function applyChoice(
     choiceId: choice.id,
     wasOptimal: choice.isOptimal === true,
     timestamp: new Date().toISOString(),
+    ...(opts?.hesitated ? { hesitated: true } : {}),
   };
 
   const xpDelta = xpForChoice(choice);
@@ -197,7 +199,10 @@ export function streakBonusXp(choicesMade: ChoiceRecord[]): number {
   let bonus = 0;
   let run = 0;
   for (const c of choicesMade) {
-    if (c.wasOptimal) {
+    // A hesitated pick (gauntlet clock expired) breaks the chain even
+    // when the choice itself was optimal. Right under pressure still
+    // pays the choice XP; it just doesn't compound.
+    if (c.wasOptimal && !c.hesitated) {
       run += 1;
       if (run === 3) bonus += 5;
       else if (run === 5) bonus += 10;

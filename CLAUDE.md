@@ -365,6 +365,19 @@ pricing), Tier 4 #13 certification tier + #15 off-site (Sam/PR).
 
 ## 🔧 Outstanding High-Value TODO
 
+### Simulator play modes (Story / Gauntlet, built 2026-08-01)
+
+Two per-run modes, toggle on the scenario intro. Gauntlet is members-only hard
+mode: tactical reads withheld until the ending debrief, a 10s clock on every
+choice (expiry = "hesitated" = streak break, never auto-picks), shuffled
+choices, and a server-paid +50% XP bonus. Full design: `docs/SIMULATOR-MODES-PLAN.md`.
+Enforcement is server-side in `/api/simulator/complete` (a free account
+claiming gauntlet is scored as story). Migration
+`20260801120000_add_simulator_play_mode` adds `SimulatorProgress.mode` +
+`gauntletClearedAt`; apply to prod BEFORE deploying referencing code.
+Phases B-D of the plan (silhouette life, group staging, sound) are designed
+but not built.
+
 ### Simulator (post-2026-05-08 hardening pass)
 - [ ] **Engine unit tests.** `lib/simulator/engine.ts` is 100% pure functions, never exercised by a test. Jest is already wired (`package.json:13`). A ~150-line `engine.test.ts` should cover: `autoAdvance` reaching an ending via direct `nextSceneId`; `autoAdvance` no-op on terminal scenes / self-loops / missing `nextSceneId`; `applyChoice` reaching an ending via `choice.nextSceneId`; `replayXp` draining the auto-advance chain and crediting ending bonus; `replayXp` aborting on stale records and ignoring padding past the abort; `finalizeEnding` stamping `currentSceneId` even when the caller forgets. Locks in the 2026-05-08 hardening pass.
 - [ ] **Immersion polish (runner-side).** Surface streak bonus in real-time (pulse on 3rd/5th/7th optimal); subtle audio cue on `DialogTone: "tactical"` lines; verify auto-advance scenes hold long enough to read; on replay, dim already-seen endings in the catalog. All require touching `SimulatorRunner.tsx` and friends, which are large UI files, allocate a dedicated session.

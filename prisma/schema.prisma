@@ -1326,6 +1326,12 @@ model SimulatorProgress {
   // meta-achievement in `lib/simulator/achievements.ts`. Stays 0 for
   // in-progress rows; ticks to 1 on first completion, 2 on second, etc.
   completionCount Int       @default(0)
+  // "story" | "gauntlet": the mode of the current (or latest) run, so a
+  // mid-run resume restores the hard mode it was started in.
+  mode            String    @default("story")
+  // Stamped once on the first gauntlet completion; the catalog's
+  // "cleared on Gauntlet" mark. Never cleared by later story runs.
+  gauntletClearedAt DateTime?
   // Distinct ending sceneIds the user has reached on this scenario across
   // all their replays. Length vs scenes.filter(isEnding).length renders
   // the "X / Y endings found" counter on catalog cards. Each replay adds

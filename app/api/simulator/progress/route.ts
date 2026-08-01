@@ -34,12 +34,14 @@ const ProgressBody = z.object({
         choiceId: z.string(),
         wasOptimal: z.boolean(),
         timestamp: z.string(),
+        hesitated: z.boolean().optional(),
       }),
     )
     .max(500),
   xpEarned: z.number().int().min(0).max(10_000),
   outcome: z.enum(["good", "neutral", "bad", "passed", "failed"]).nullable().optional(),
   endedAt: z.string().nullable().optional(),
+  mode: z.enum(["story", "gauntlet"]).optional(),
 });
 
 export async function GET(request: NextRequest) {
@@ -142,6 +144,11 @@ export async function POST(request: NextRequest) {
         endedAt: null,
       });
 
+      // The run's play mode rides mid-run saves so a resume restores it.
+      // Story when unsent (legacy clients). No membership check here:
+      // the flag only matters at /complete, which enforces the gate
+      // before paying anything.
+      const mode = body.mode ?? "story";
       const saved = await prisma.simulatorProgress.upsert({
         where: {
           userId_scenarioId: { userId: user.id, scenarioId: body.scenarioId },
@@ -150,8 +157,9 @@ export async function POST(request: NextRequest) {
           userId: user.id,
           scenarioId: body.scenarioId,
           ...create,
+          mode,
         },
-        update,
+        update: { ...update, mode },
       });
 
       // Daily-streak bump. Fire-and-forget, a failure here must not 500

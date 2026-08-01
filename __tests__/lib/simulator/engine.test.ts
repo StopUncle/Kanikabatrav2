@@ -279,6 +279,22 @@ describe("streakBonusXp", () => {
     ];
     expect(streakBonusXp(choices)).toBe(0);
   });
+
+  it("breaks the chain on a hesitated optimal (gauntlet clock expiry)", () => {
+    const choices = [
+      rec("s", "a", true),
+      rec("s", "b", true),
+      { ...rec("s", "c", true), hesitated: true }, // right, but too late
+      rec("s", "d", true),
+      rec("s", "e", true),
+    ];
+    expect(streakBonusXp(choices)).toBe(0);
+  });
+
+  it("legacy records without the flag keep their streaks", () => {
+    const choices = Array.from({ length: 3 }, () => rec("s", "c", true));
+    expect(streakBonusXp(choices)).toBe(5);
+  });
 });
 
 describe("progressDepth / optimalCount", () => {

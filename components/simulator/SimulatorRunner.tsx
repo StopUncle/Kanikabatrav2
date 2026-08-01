@@ -13,7 +13,10 @@ import type {
   Choice,
   DialogLine,
   Character,
+  PlayMode,
+  Scene,
 } from "@/lib/simulator/types";
+import UpgradeSheet from "@/components/app-shell/upgrade/UpgradeSheet";
 import {
   applyChoice,
   autoAdvance,
@@ -131,7 +134,91 @@ type Props = {
   } | null;
   /** Bounty paid for a never-seen ending. Forwarded to EndingScreen. */
   endingBounty?: { amount: number } | null;
+  /**
+   * Play mode for this run. Controlled by the page client so the mode
+   * rides every persistence POST. Undefined = story with the toggle
+   * hidden (public demo, adventures, initiation).
+   */
+  mode?: PlayMode;
+  onModeChange?: (mode: PlayMode) => void;
+  /** Free tier: Gauntlet renders locked, taps open the upgrade sheet. */
+  gauntletLocked?: boolean;
+  /** Server-paid gauntlet bonus XP. Forwarded to EndingScreen. */
+  gauntletPay?: { amount: number } | null;
 };
+
+/**
+ * Mode-aware view of a scene's dialog. Gauntlet withholds the tactical
+ * reads (Kanika-voice pattern analysis) during play; they return at the
+ * ending as the debrief. Only explicit `tone: "tactical"` is withheld,
+ * matching the renderer's own register rule. Achievement events still
+ * count: the server derives them from the visited path, never from what
+ * was rendered.
+ */
+function dialogFor(scene: Scene | null, gauntlet: boolean): DialogLine[] {
+  if (!scene?.dialog) return [];
+  if (!gauntlet) return scene.dialog;
+  return scene.dialog.filter((l) => l.tone !== "tactical");
+}
+
+/**
+ * The gauntlet ending debrief: every tactical read along the path the
+ * player actually took, in visit order, plus the authored feedback on
+ * the choices they made. Auto-advance pass-through scenes aren't in
+ * choicesMade, matching the same visited-path rule the achievements
+ * evaluator uses.
+ */
+function buildDebrief(
+  scenario: Scenario,
+  state: SimulatorState,
+): { reads: string[]; feedback: { choice: string; text: string }[] } {
+  const sceneById = new Map(scenario.scenes.map((s) => [s.id, s]));
+  const orderedIds: string[] = [scenario.startSceneId];
+  for (const r of state.choicesMade) {
+    if (orderedIds[orderedIds.length - 1] !== r.sceneId) {
+      orderedIds.push(r.sceneId);
+    }
+  }
+  if (orderedIds[orderedIds.length - 1] !== state.currentSceneId) {
+    orderedIds.push(state.currentSceneId);
+  }
+  const seen = new Set<string>();
+  const reads: string[] = [];
+  for (const id of orderedIds) {
+    if (seen.has(id)) continue;
+    seen.add(id);
+    const s = sceneById.get(id);
+    if (!s?.dialog) continue;
+    for (const l of s.dialog) {
+      if (l.tone === "tactical") reads.push(l.text);
+    }
+  }
+  const feedback: { choice: string; text: string }[] = [];
+  for (const r of state.choicesMade) {
+    const s = sceneById.get(r.sceneId);
+    const c = s?.choices?.find((c2) => c2.id === r.choiceId);
+    if (c?.feedback) feedback.push({ choice: c.text, text: c.feedback });
+  }
+  return { reads, feedback };
+}
+
+/** Deterministic per-run shuffle so a refresh cannot re-roll the order. */
+function seededShuffle<T>(items: readonly T[], seedText: string): T[] {
+  let h = 2166136261;
+  for (let i = 0; i < seedText.length; i++) {
+    h ^= seedText.charCodeAt(i);
+    h = Math.imul(h, 16777619);
+  }
+  const out = [...items];
+  for (let i = out.length - 1; i > 0; i--) {
+    h ^= h << 13;
+    h ^= h >>> 17;
+    h ^= h << 5;
+    const j = Math.abs(h) % (i + 1);
+    [out[i], out[j]] = [out[j], out[i]];
+  }
+  return out;
+}
 
 export default function SimulatorRunner({
   scenario,
@@ -148,11 +235,24 @@ export default function SimulatorRunner({
   markRecorded = false,
   xpBreakdown = null,
   endingBounty = null,
+  mode,
+  onModeChange,
+  gauntletLocked = false,
+  gauntletPay = null,
 }: Props) {
   const [state, setState] = useState<SimulatorState>(
     initialState ?? initState(scenario),
   );
   const [lineIndex, setLineIndex] = useState(0);
+  const gauntlet = mode === "gauntlet";
+  // Scenes whose choice clock expired before the pick landed. Cleared on
+  // restart; consulted (not cleared) by pickChoice so a scene revisited
+  // via a different branch keeps its record for this run.
+  const hesitatedScenesRef = useRef<Set<string>>(new Set());
+  // Per-run shuffle seed. A refresh mid-run re-rolls it, which is
+  // acceptable: the order was never information, only anti-metagaming.
+  const shuffleSeedRef = useRef(`${Math.random()}`);
+  const [gauntletUpsellOpen, setGauntletUpsellOpen] = useState(false);
 
   // Pre-game intro overlay, shown on a fresh run (never on a
   // mid-run resume, since the player is already deep in). Mid-run
@@ -243,7 +343,7 @@ export default function SimulatorRunner({
         !sceneNow.isEnding &&
         !!sceneNow.choices &&
         sceneNow.choices.length > 0 &&
-        lineIndex >= (sceneNow.dialog?.length ?? 0);
+        lineIndex >= dialogFor(sceneNow, gauntlet).length;
       if (atEnding || choicesOut || showIntro || showTranscript) return;
       e.preventDefault();
       // Route through the same lock as taps so a held-down key can't
@@ -252,7 +352,7 @@ export default function SimulatorRunner({
     }
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [scenario, state, lineIndex, showIntro, showTranscript]);
+  }, [scenario, state, lineIndex, showIntro, showTranscript, gauntlet]);
   // Dopamine state. XP floater + optimal-streak tracking
   const [xpFloat, setXpFloat] = useState<{
     id: number;
@@ -340,17 +440,21 @@ export default function SimulatorRunner({
   const [choicesSettled, setChoicesSettled] = useState(false);
 
   const scene = currentScene(scenario, state);
-  const totalLines = scene?.dialog?.length ?? 0;
+  // Every dialog index below runs against the mode-aware view, so the
+  // gauntlet's withheld reads simply don't exist as far as line
+  // stepping, echoes, transcript, and skip targets are concerned.
+  const sceneDialog = dialogFor(scene, gauntlet);
+  const totalLines = sceneDialog.length;
   // currentLine is undefined when lineIndex has been bumped PAST the
   // final dialog line, that's the signal that the player has read
   // all the dialog and we're now showing choices (or auto-advancing).
-  const currentLine: DialogLine | undefined = scene?.dialog?.[lineIndex];
+  const currentLine: DialogLine | undefined = sceneDialog[lineIndex];
   // The line that was on-screen immediately before the choices appeared.
   // Shown as an echo above the choice cards so the player can see what
   // they are replying to. Always resolves to the final dialog line of
   // the scene when choices are active (lineIndex >= totalLines).
   const lastDialogLine: DialogLine | undefined =
-    totalLines > 0 ? scene?.dialog?.[totalLines - 1] : undefined;
+    totalLines > 0 ? sceneDialog[totalLines - 1] : undefined;
   const isLastLine = lineIndex === totalLines - 1;
   // Only show choices once the player has clicked PAST the last dialog
   // line. The previous logic flipped showChoices the moment we landed
@@ -408,7 +512,7 @@ export default function SimulatorRunner({
 
   const advanceLine = useCallback(() => {
     if (!scene) return;
-    const lines = scene.dialog?.length ?? 0;
+    const lines = dialogFor(scene, gauntlet).length;
 
     // Still inside the dialog, step to the next line.
     if (lineIndex < lines - 1) {
@@ -436,7 +540,7 @@ export default function SimulatorRunner({
     if (scene.choices && scene.choices.length > 0) return;
     setState((prev) => autoAdvance(scenario, prev));
     setLineIndex(0);
-  }, [scene, scenario, lineIndex]);
+  }, [scene, scenario, lineIndex, gauntlet]);
 
   const pickChoice = useCallback(
     (choice: Choice) => {
@@ -466,7 +570,15 @@ export default function SimulatorRunner({
       // optimal choices in a row = +5 XP, five = +10, seven = +15.
       // Non-optimal choice resets the streak (but doesn't punish XP
       // further than the base 0/3).
-      const nextStreak = choice.isOptimal === true ? streak + 1 : 0;
+      //
+      // Gauntlet: a pick made after the choice clock expired counts as
+      // hesitated. It still pays its choice XP, but the chain breaks,
+      // mirroring streakBonusXp in the engine so the server replays to
+      // the same number.
+      const hesitated =
+        gauntlet && hesitatedScenesRef.current.has(state.currentSceneId);
+      const nextStreak =
+        choice.isOptimal === true && !hesitated ? streak + 1 : 0;
       const streakBonus =
         nextStreak === 3
           ? 5
@@ -508,18 +620,20 @@ export default function SimulatorRunner({
       });
 
       setState((prev) => {
-        const next = applyChoice(scenario, prev, choice.id);
+        const next = applyChoice(scenario, prev, choice.id, { hesitated });
         return streakBonus > 0
           ? { ...next, xpEarned: next.xpEarned + streakBonus }
           : next;
       });
       setLineIndex(0);
     },
-    [scenario, streak, state.currentSceneId, popularityRates],
+    [scenario, streak, state.currentSceneId, popularityRates, gauntlet],
   );
 
   const restart = useCallback(() => {
     completeFiredRef.current = false;
+    hesitatedScenesRef.current = new Set();
+    shuffleSeedRef.current = `${Math.random()}`;
     setState(initState(scenario));
     setLineIndex(0);
     setStreak(0);
@@ -710,7 +824,7 @@ export default function SimulatorRunner({
     // Only arm the detector for non-ending dialog scenes. Endings have
     // their own UI; intro is gated separately.
     if (!scene || scene.isEnding) return;
-    const totalDialogLines = scene.dialog?.length ?? 0;
+    const totalDialogLines = dialogFor(scene, gauntlet).length;
     stuckCheckTimerRef.current = setInterval(() => {
       // Hard suppress: the player has already told us they're fine.
       if (stuckDismissedRef.current) return;
@@ -753,7 +867,7 @@ export default function SimulatorRunner({
       setLineIndex(0);
       return;
     }
-    setLineIndex(scene.dialog?.length ?? 0);
+    setLineIndex(dialogFor(scene, gauntlet).length);
     setShowStuckRecovery(false);
     stuckDismissedRef.current = true;
     try {
@@ -771,7 +885,7 @@ export default function SimulatorRunner({
     } catch {
       // non-fatal
     }
-  }, [scene, scenario]);
+  }, [scene, scenario, gauntlet]);
 
   if (!scene) {
     // Unknown scene id, bad data or tampered state. Fail gracefully.
@@ -807,6 +921,9 @@ export default function SimulatorRunner({
             markRecorded={markRecorded}
             xpBreakdown={xpBreakdown}
             endingBounty={endingBounty}
+            gauntlet={gauntlet}
+            gauntletPay={gauntletPay}
+            debrief={gauntlet ? buildDebrief(scenario, state) : null}
             onRestart={restart}
           />
         </AnimatePresence>
@@ -846,10 +963,7 @@ export default function SimulatorRunner({
   // playtesters reported. `skipDialogToChoices` already handles the
   // no-choices branch (autoAdvance), so we just lift the gate.
   const inDialogPhase =
-    !showIntro &&
-    !showChoices &&
-    !scene.isEnding &&
-    (scene.dialog?.length ?? 0) > 0;
+    !showIntro && !showChoices && !scene.isEnding && totalLines > 0;
 
   const game = (
     <div
@@ -893,6 +1007,15 @@ export default function SimulatorRunner({
         show={showIntro}
         previousBest={previousBest}
         onBegin={() => setShowIntro(false)}
+        mode={mode}
+        onModeChange={onModeChange}
+        gauntletLocked={gauntletLocked}
+        onLockedGauntletTap={() => setGauntletUpsellOpen(true)}
+      />
+      <UpgradeSheet
+        open={gauntletUpsellOpen}
+        trigger="gauntlet"
+        onClose={() => setGauntletUpsellOpen(false)}
       />
 
       {/* Emergency skip-to-choices affordance.
@@ -931,7 +1054,7 @@ export default function SimulatorRunner({
       <DialogTranscript
         open={showTranscript}
         lines={
-          scene?.dialog?.slice(0, Math.min(lineIndex, totalLines)) ?? []
+          sceneDialog.slice(0, Math.min(lineIndex, totalLines))
         }
         characterById={characterById}
         onClose={() => setShowTranscript(false)}
@@ -1206,12 +1329,21 @@ export default function SimulatorRunner({
                   </p>
                 </div>
               )}
-              {/* Soft choice timer, only on `mood: danger` scenes. Fills
-                  a slim 12s bar above the cards; never auto-picks. The
-                  timer is a felt-pressure tool, not a mechanic. */}
-              {scene.mood === "danger" && (
+              {/* Choice timer. Story: `mood: danger` scenes only, 12s,
+                  purely felt pressure. Gauntlet: every choice scene,
+                  10s, and expiry marks the eventual pick as hesitated
+                  (streak-chain break). Neither variant ever auto-picks. */}
+              {gauntlet ? (
+                <ChoiceTimer
+                  resetKey={scene.id}
+                  durationMs={10_000}
+                  onExpire={() => {
+                    hesitatedScenesRef.current.add(scene.id);
+                  }}
+                />
+              ) : scene.mood === "danger" ? (
                 <ChoiceTimer resetKey={scene.id} />
-              )}
+              ) : null}
               {/* Writing your own move is the hero interaction; the
                   authored choices live inside the composer as an opt-in
                   "see the options" scaffold. Both resolve to a real
@@ -1223,7 +1355,14 @@ export default function SimulatorRunner({
                 key={`freeform-${scene.id}`}
                 scenarioId={scenario.id}
                 sceneId={scene.id}
-                choices={scene.choices}
+                choices={
+                  gauntlet
+                    ? seededShuffle(
+                        scene.choices,
+                        `${shuffleSeedRef.current}:${scene.id}`,
+                      )
+                    : scene.choices
+                }
                 onResolve={pickChoice}
               />
             </m.div>

@@ -102,6 +102,19 @@ type Props = {
   /** Non-null when this replay reached an ending never seen before and
    *  the server paid the bounty. */
   endingBounty?: { amount: number } | null;
+  /** True when this run was played in Gauntlet mode. */
+  gauntlet?: boolean;
+  /** Server-paid Gauntlet bonus XP, rendered like the ending bounty. */
+  gauntletPay?: { amount: number } | null;
+  /**
+   * Gauntlet debrief: the tactical reads withheld during play, plus the
+   * authored feedback on the choices actually made. This is where the
+   * hard mode teaches; during the run it only tested.
+   */
+  debrief?: {
+    reads: string[];
+    feedback: { choice: string; text: string }[];
+  } | null;
   onRestart: () => void;
 };
 
@@ -140,6 +153,9 @@ export default function EndingScreen({
   markRecorded = false,
   xpBreakdown = null,
   endingBounty = null,
+  gauntlet = false,
+  gauntletPay = null,
+  debrief = null,
   onRestart,
 }: Props) {
   const outcome = state.outcome ?? scene.outcomeType ?? "neutral";
@@ -356,6 +372,65 @@ export default function EndingScreen({
           >
             New ending found · +{endingBounty.amount} Standing
           </m.p>
+        )}
+
+        {/* Gauntlet pay. Separate from the XP breakdown on purpose: the
+            counter above shows what the run itself earned, and this line
+            is the server's hard-mode bonus on top of it. */}
+        {gauntletPay && gauntletPay.amount > 0 && (
+          <m.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.6, delay: 3.0 }}
+            className="mb-8 -mt-2 text-[11px] uppercase tracking-[0.3em] text-accent-gold/80"
+          >
+            Gauntlet pay · +{gauntletPay.amount} XP
+          </m.p>
+        )}
+
+        {/* Gauntlet debrief. The reads that were withheld during play
+            and the authored feedback on the picks actually made. Placed
+            before the catalog and CTAs: the lesson is the payoff of the
+            hard mode, not an appendix. */}
+        {gauntlet && debrief && (debrief.reads.length > 0 || debrief.feedback.length > 0) && (
+          <m.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, delay: 3.2 }}
+            className="mb-10 max-w-xl mx-auto text-left"
+          >
+            <p className="text-accent-gold/70 text-[10px] uppercase tracking-[0.35em] mb-4 text-center">
+              The reads you played without
+            </p>
+            {debrief.reads.length > 0 && (
+              <ul className="space-y-3 mb-6">
+                {debrief.reads.map((read, i) => (
+                  <li
+                    key={`read-${i}`}
+                    className="relative pl-5 text-sm font-light leading-relaxed text-white/75"
+                  >
+                    <span
+                      aria-hidden
+                      className="absolute left-0 top-1 bottom-1 w-[3px] rounded-full bg-accent-gold/40"
+                    />
+                    {read}
+                  </li>
+                ))}
+              </ul>
+            )}
+            {debrief.feedback.length > 0 && (
+              <div className="space-y-4">
+                {debrief.feedback.map((f, i) => (
+                  <div key={`fb-${i}`} className="text-sm font-light">
+                    <p className="text-text-gray/70 italic mb-1">
+                      &ldquo;{f.choice}&rdquo;
+                    </p>
+                    <p className="text-white/70 leading-relaxed">{f.text}</p>
+                  </div>
+                ))}
+              </div>
+            )}
+          </m.div>
         )}
 
         {/* One quiet line when the run fed the Measure. No numbers: the
