@@ -64,6 +64,8 @@ export const MODEL_PRICING_MICROS: Record<
   "claude-sonnet-4-6-20250929": { inputPerM: 3_000_000, outputPerM: 15_000_000 },
   "claude-haiku-4-5-20251001": { inputPerM: 1_000_000, outputPerM: 5_000_000 },
   "claude-opus-4-8": { inputPerM: 5_000_000, outputPerM: 25_000_000 },
+  "claude-sonnet-5": { inputPerM: 3_000_000, outputPerM: 15_000_000 },
+  "claude-opus-5": { inputPerM: 5_000_000, outputPerM: 25_000_000 },
 };
 
 const FALLBACK_PRICING = MODEL_PRICING_MICROS["claude-sonnet-4-6-20250929"];
