@@ -84,8 +84,8 @@ export default function HandleClaim({
           Public profile
         </p>
         <p className="text-text-light text-sm font-light leading-relaxed mb-4">
-          Claim a handle and share your hex. Drop the link in a tweet, a
-          DM, or a TikTok bio.
+          Claim a handle and share your player card: rank, stats, Mark
+          score, hex. Drop the link in a tweet, a DM, or a TikTok bio.
         </p>
         <div className="flex flex-col sm:flex-row gap-2">
           <div className="flex items-center bg-deep-black/40 border border-gray-800 rounded px-3 py-2 text-sm text-text-gray flex-1">

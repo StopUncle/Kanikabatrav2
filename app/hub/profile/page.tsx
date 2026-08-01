@@ -3,6 +3,7 @@ import { PageHeader, PageShell } from "@/components/app-shell/ui";
 import { prisma } from "@/lib/prisma";
 import ManageSubscriptionButton from "@/app/consilium/(member)/profile/ManageSubscriptionButton";
 import NotificationPreferences from "@/app/consilium/(member)/profile/NotificationPreferences";
+import HandleClaim from "@/components/tells/HandleClaim";
 
 export const metadata = {
   title: "Profile | Consilium",
@@ -25,6 +26,8 @@ export default async function AppProfilePage() {
         name: true,
         email: true,
         gender: true,
+        handle: true,
+        profilePublic: true,
       },
     }),
     prisma.communityMembership.findUnique({
@@ -119,6 +122,23 @@ export default async function AppProfilePage() {
             <ManageSubscriptionButton />
           </div>
         )}
+      </section>
+
+      {/* The player card. The toggle that publishes stats, the Mark
+          band, the climb, and the hex at /u/[handle]. Off by default;
+          the same switch that has always governed the public hex. */}
+      <section className="mb-4 rounded-[18px] border border-[var(--app-line)] bg-[var(--app-card)] p-[18px]">
+        <p className="mb-1 text-app-eyebrow uppercase tracking-app-label text-[var(--app-gold-soft)]">
+          Player card
+        </p>
+        <p className="mb-3 text-app-caption leading-relaxed text-[var(--app-muted)]">
+          A public page with your rank, stats, stars, Mark score, and hex.
+          Only what you have built; your blind spots stay yours.
+        </p>
+        <HandleClaim
+          initialHandle={user?.handle ?? null}
+          initialPublic={user?.profilePublic ?? false}
+        />
       </section>
 
       {/* Notifications */}

@@ -7,6 +7,20 @@ import BackgroundEffects from "@/components/BackgroundEffects";
 import InstinctsHex from "@/components/tells/InstinctsHex";
 import { prisma } from "@/lib/prisma";
 import { AXIS_KEYS, AXIS_LABELS } from "@/lib/tells/types";
+import { ringByLevel } from "@/lib/standing/config";
+import { readMark } from "@/lib/mark/read";
+import { computeStarsFromJson } from "@/lib/simulator/stars";
+import { ALL_SCENARIOS, scenariosForTrack, TRACK_META } from "@/lib/simulator/scenarios";
+import { VALID_TRACKS } from "@/lib/simulator/train-data";
+import type { OutcomeType } from "@/lib/simulator/types";
+import {
+  PublicMarkPanel,
+  StatTiles,
+  TrackBars,
+  type PlayerStats,
+  type PublicMark,
+  type TrackProgress,
+} from "@/components/profile/PlayerCardSections";
 
 export const dynamic = "force-dynamic";
 
@@ -32,10 +46,106 @@ async function loadProfile(handle: string) {
       displayName: true,
       profilePublic: true,
       instinctScore: true,
+      createdAt: true,
+      ringLevel: true,
       tellStreak: { select: { currentDays: true, longestDays: true } },
     },
   });
   return user;
+}
+
+/**
+ * The card's numbers, assembled only for public profiles. The card is a
+ * flex: what the member has built. Their blind spots and per-tactic
+ * weaknesses never leave their own Mark page.
+ */
+async function loadCard(
+  userId: string,
+  streakDays: number,
+  memberSince: Date,
+  ringLevel: number,
+) {
+  const [progress, badges, mark] = await Promise.all([
+    prisma.simulatorProgress.findMany({
+      where: { userId, completedAt: { not: null } },
+      select: {
+        scenarioId: true,
+        xpEarned: true,
+        outcome: true,
+        choicesMade: true,
+        gauntletClearedAt: true,
+      },
+    }),
+    prisma.simulatorBadge.count({ where: { userId } }),
+    readMark(prisma, userId),
+  ]);
+
+  const staticIds = new Set(ALL_SCENARIOS.map((s) => s.id));
+  const completedIds = new Set(progress.map((p) => p.scenarioId));
+  let simulatorXp = 0;
+  let starsEarned = 0;
+  let gauntletClears = 0;
+  for (const p of progress) {
+    simulatorXp += p.xpEarned;
+    if (p.gauntletClearedAt) gauntletClears += 1;
+    if (staticIds.has(p.scenarioId)) {
+      starsEarned += computeStarsFromJson(
+        (p.outcome as OutcomeType | null) ?? null,
+        p.choicesMade,
+      );
+    }
+  }
+
+  const stats: PlayerStats = {
+    ringName: ringByLevel(ringLevel).name,
+    memberSince: memberSince.toLocaleDateString("en-US", {
+      month: "long",
+      year: "numeric",
+    }),
+    simulatorXp,
+    starsEarned,
+    scenariosCleared: progress.length,
+    gauntletClears,
+    badges,
+    streakDays,
+  };
+
+  const publicMark: PublicMark | null =
+    mark.overall.rate === null
+      ? null
+      : {
+          pct: Math.round(mark.overall.rate * 100),
+          band: bandFor(Math.round(mark.overall.rate * 100)),
+          tacticsTested: mark.coverage.tactics,
+          tacticsTotal: mark.coverage.tacticsTotal,
+          operatorsTested: mark.coverage.operators,
+          operatorsTotal: mark.coverage.operatorsTotal,
+          sharpestAgainst: mark.tactics
+            .filter((r) => r.state === "SETTLED" && (r.rate ?? 0) >= 0.8)
+            .sort((a, b) => (b.rate ?? 0) - (a.rate ?? 0))
+            .slice(0, 2)
+            .map((r) => r.label),
+        };
+
+  const tracks: TrackProgress[] = VALID_TRACKS.map((t) => {
+    const list = scenariosForTrack(t);
+    const completed = list.filter((s) => completedIds.has(s.id)).length;
+    return { label: TRACK_META[t].label, completed, total: list.length };
+  })
+    .filter((t) => t.completed > 0)
+    .sort((a, b) => b.completed / b.total - a.completed / a.total)
+    .slice(0, 5);
+
+  return { stats, publicMark, tracks };
+}
+
+/** Same bands the member's own Mark page uses. */
+function bandFor(pct: number): string {
+  if (pct >= 90) return "Ghost";
+  if (pct >= 80) return "Hard to play";
+  if (pct >= 65) return "Guarded";
+  if (pct >= 50) return "Easy read";
+  return "Open target";
 }
 
 export async function generateMetadata({
@@ -83,6 +193,13 @@ export default async function UserProfilePage({ params }: PageParams) {
   // of a private profile by returning a different status code.
   if (!user || !user.profilePublic) notFound();
 
+  const { stats, publicMark, tracks } = await loadCard(
+    user.id,
+    user.tellStreak?.currentDays ?? 0,
+    user.createdAt,
+    user.ringLevel,
+  );
+
   const score = user.instinctScore ?? {
     read: 1000,
     spot: 1000,
@@ -113,15 +230,36 @@ export default async function UserProfilePage({ params }: PageParams) {
       <Header />
       <main className="relative z-10 min-h-screen pt-28 pb-16">
         <div className="max-w-4xl mx-auto px-4">
-          <header className="text-center mb-12">
+          <header className="text-center mb-10">
             <p className="text-accent-gold/70 text-[10px] uppercase tracking-[0.4em] mb-3">
-              Train Your Instincts &middot; Public profile
+              The Consilium &middot; Player card
             </p>
             <h1 className="text-3xl sm:text-4xl font-extralight tracking-wider text-text-light mb-2">
               {displayName}
             </h1>
             <p className="text-text-gray text-sm">@{user.handle}</p>
+            <div className="mt-4 flex flex-wrap items-center justify-center gap-3">
+              {stats.ringName && (
+                <span className="rounded-full border border-accent-gold/50 bg-accent-gold/[0.08] px-4 py-1.5 text-[10px] uppercase tracking-[0.3em] text-accent-gold">
+                  {stats.ringName}
+                </span>
+              )}
+              <span className="text-[10px] uppercase tracking-[0.3em] text-text-gray/70">
+                On the record since {stats.memberSince}
+              </span>
+            </div>
           </header>
+
+          {/* The flex wall: what they have built, counted up in front of
+              whoever they sent the link to. */}
+          <div className="mb-10">
+            <StatTiles stats={stats} />
+          </div>
+
+          <div className="mb-10 grid gap-5 lg:grid-cols-2">
+            {publicMark && <PublicMarkPanel mark={publicMark} />}
+            <TrackBars tracks={tracks} />
+          </div>
 
           <div className="grid lg:grid-cols-[1fr_1fr] gap-10 items-start">
             <div className="flex justify-center">
