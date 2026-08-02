@@ -3,24 +3,12 @@
 import { useEffect } from "react";
 import Link from "next/link";
 import { MORE_SECTIONS, type AppSurface } from "@/lib/app/nav";
-import {
-  Route,
-  User,
-  Trophy,
-  Brain,
-  BookOpen,
-  Video,
-  Mic,
-  Settings,
-  CalendarCheck,
-  Mail,
-  X,
-} from "lucide-react";
+import { Mail, Settings, X } from "lucide-react";
 
 /**
- * The More sheet: everything that earns a place in the app but not a place on
- * the tab bar. Slides up from the bottom, closes on backdrop, Escape, or any
- * navigation.
+ * The More sheet, slimmed to what Home's explore rails do not carry: the
+ * Kanika thread and account surfaces. Slides up from the bottom, closes on
+ * backdrop, Escape, or any navigation.
  */
 
 /**
@@ -28,14 +16,6 @@ import {
  * group it sits in; this owns how each row looks.
  */
 const ICONS: Record<string, React.ReactNode> = {
-  "/app/program": <CalendarCheck size={17} />,
-  "/app/path": <Route size={17} />,
-  "/app/you": <User size={17} />,
-  "/app/ranks": <Trophy size={17} />,
-  "/app/quizzes": <Brain size={17} />,
-  "/app/book": <BookOpen size={17} />,
-  "/app/videos": <Video size={17} />,
-  "/app/voice-notes": <Mic size={17} />,
   "/app/kanika": <Mail size={17} />,
   "/app/profile": <Settings size={17} />,
 };

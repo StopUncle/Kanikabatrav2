@@ -18,7 +18,7 @@ export function notifyRankUp(
   void sendPushToUser(userId, "rankUp", {
     title: `You made ${rank.ringName}`,
     body: "New rank. Come and see what opened.",
-    url: "/app/you",
+    url: "/consilium/profile",
     tag: `rank-up-${rank.toLevel}`,
   }).catch(() => {
     /* best effort, never surfaces to the member */

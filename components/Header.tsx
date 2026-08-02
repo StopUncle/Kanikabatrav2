@@ -179,7 +179,7 @@ const Header = () => {
                     "enter a separate space". Signed-in accounts go
                     straight into the app; strangers get the sales page. */}
                 <Link
-                  href={isLoggedIn ? "/app" : "/consilium"}
+                  href={isLoggedIn ? "/consilium/feed" : "/consilium"}
                   className={`group relative inline-flex items-center gap-1.5 pl-4 pr-3 py-1.5 rounded-full border text-[11px] tracking-[0.22em] uppercase transition-all duration-300 whitespace-nowrap ${
                     isConsiliumActive
                       ? "text-deep-black bg-warm-gold border-warm-gold shadow-[0_0_20px_-4px_rgba(212,175,55,0.55)]"
@@ -305,7 +305,7 @@ const Header = () => {
               commercial destination, so it shouldn't be buried under
               seven secondary links. */}
           <Link
-            href={isLoggedIn ? "/app" : "/consilium"}
+            href={isLoggedIn ? "/consilium/feed" : "/consilium"}
             onClick={() => setIsMenuOpen(false)}
             className={`group relative flex items-center justify-between px-5 py-4 rounded-full border transition-all duration-300 ${
               isConsiliumActive

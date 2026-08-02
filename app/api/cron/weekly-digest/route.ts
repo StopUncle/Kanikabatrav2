@@ -394,7 +394,7 @@ async function sendVerdictPush(
   const delivered = await sendPushToUser(userId, "weeklyVerdict", {
     title: "Your week, read back to you",
     body,
-    url: "/app/you",
+    url: "/consilium/profile",
     tag: "weekly-verdict",
   });
   return delivered > 0;

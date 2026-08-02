@@ -12,6 +12,11 @@ import type {
  */
 interface Props {
   mission: DailyMission;
+  /**
+   * Where the card's tap lands. Passed in rather than derived, because this
+   * card renders in both shells and they do not share a runner path.
+   */
+  href: string;
   doneToday: boolean;
   /** Effective unified streak (0 once lapsed). */
   streakCurrent: number;
@@ -24,6 +29,7 @@ interface Props {
 
 export default function DailyMissionCard({
   mission,
+  href,
   doneToday,
   streakCurrent,
   atRisk,
@@ -77,7 +83,7 @@ export default function DailyMissionCard({
         </div>
       ) : (
         <Link
-          href={mission.href}
+          href={href}
           className="mt-4 inline-flex items-center gap-2 rounded-full border border-warm-gold/40 bg-warm-gold/10 px-4 py-2 text-sm text-warm-gold transition-colors hover:bg-warm-gold/20"
         >
           {atRisk && streakCurrent > 0

@@ -89,6 +89,7 @@ export default function TodayBlock({
       {mission && (
         <DailyMissionCard
           mission={mission}
+          href={`/consilium/simulator/${mission.scenarioId}?mission=1`}
           doneToday={missionDone}
           streakCurrent={streakCurrent}
           atRisk={atRisk}

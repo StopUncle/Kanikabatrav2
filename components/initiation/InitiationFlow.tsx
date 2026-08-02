@@ -520,7 +520,7 @@ function PlacementStep() {
         <button
           type="button"
           onClick={() => {
-            router.push("/app/welcome");
+            router.push("/consilium/feed");
             router.refresh();
           }}
           className="px-8 py-3 rounded-full bg-warm-gold text-deep-black font-medium hover:bg-warm-gold/90 transition-colors"

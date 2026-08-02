@@ -149,13 +149,13 @@ export async function POST(request: NextRequest) {
             body: mission
               ? `Keep it alive. Today's mission: ${mission.title}`
               : "Play today before midnight to keep it alive.",
-            url: mission?.href ?? "/app/train",
+            url: mission ? `/consilium/simulator/${mission.scenarioId}?mission=1` : "/consilium/simulator",
             tag: "daily-streak",
           }
         : {
             title: "Today's mission is ready",
             body: mission ? mission.title : "A fresh scenario is waiting.",
-            url: mission?.href ?? "/app/train",
+            url: mission ? `/consilium/simulator/${mission.scenarioId}?mission=1` : "/consilium/simulator",
             tag: "daily-streak",
           };
 

@@ -16,7 +16,7 @@ export default function manifest(): MetadataRoute.Manifest {
     short_name: "Consilium",
     description:
       "Read people better. Daily scenarios, Kanika's room, and your rank.",
-    start_url: "/app",
+    start_url: "/consilium/feed",
     scope: "/",
     display: "standalone",
     orientation: "portrait",
@@ -45,22 +45,22 @@ export default function manifest(): MetadataRoute.Manifest {
     ],
     shortcuts: [
       {
-        name: "Today",
-        short_name: "Today",
-        description: "Today's moves and your next step",
-        url: "/app",
+        name: "Feed",
+        short_name: "Feed",
+        description: "Today at the Council",
+        url: "/consilium/feed",
       },
       {
-        name: "Train",
-        short_name: "Train",
+        name: "Simulator",
+        short_name: "Simulator",
         description: "Scenarios, drills, and the Lab",
-        url: "/app/train",
+        url: "/consilium/simulator",
       },
       {
         name: "Message Kanika",
         short_name: "Kanika",
         description: "Your private line",
-        url: "/app/kanika",
+        url: "/consilium/messages",
       },
     ],
   };

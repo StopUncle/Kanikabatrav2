@@ -41,6 +41,7 @@ import ChoicePopularityReveal from "./ChoicePopularityReveal";
 import FreeformMove from "./FreeformMove";
 import ChoiceCards from "./ChoiceCards";
 import DialogTranscript from "./DialogTranscript";
+import { useShellRoutes } from "@/lib/shell-routes";
 
 /**
  * Decide whether the last-line echo above the choices should render.
@@ -211,7 +212,7 @@ export default function SimulatorRunner({
   onComplete,
   nextScenarioHref,
   badgesEarned,
-  exitHref = "/app/train/climb",
+  exitHref: exitHrefProp,
   endingCta,
   hideFailureBlog = false,
   previousBest = null,
@@ -228,6 +229,11 @@ export default function SimulatorRunner({
     initialState ?? initState(scenario),
   );
   const [lineIndex, setLineIndex] = useState(0);
+  // Leaving a run lands on the catalog of whichever shell the run is being
+  // played in. Callers that have somewhere better to send the player (an
+  // adventure's overview, say) pass it explicitly.
+  const routes = useShellRoutes();
+  const exitHref = exitHrefProp ?? routes.catalog;
   const gauntlet = mode === "gauntlet";
   // Scenes whose choice clock expired before the pick landed. Cleared on
   // restart; consulted (not cleared) by pickChoice so a scene revisited

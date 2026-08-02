@@ -81,9 +81,9 @@ export default function RegisterForm() {
         identify(result.user.id);
       }
 
-      // Registration successful. Explicit returnTo wins; otherwise the
-      // app is the free tier's home, so that is where a new account goes.
-      router.push(returnTo || "/app");
+      // Registration successful. Explicit returnTo wins; otherwise a new
+      // account starts on the dashboard. The app is sealed.
+      router.push(returnTo || "/dashboard");
       router.refresh();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Registration failed");

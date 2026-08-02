@@ -110,7 +110,9 @@ export async function POST(request: NextRequest) {
       const delivered = await sendPushToUser(m.userId, "programUnlock", {
         title: `Week ${week} is open`,
         body: `${info.title}. ${info.lede}`,
-        url: "/app/program",
+        // The Twelve has no /consilium home, so while the app is sealed this
+        // lands on the feed rather than a door the member cannot open.
+        url: "/consilium/feed",
         tag: `program-week-${week}`,
       }).catch(() => 0);
       if (delivered > 0) pushed++;

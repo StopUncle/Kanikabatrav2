@@ -68,10 +68,12 @@ export default function LoginForm() {
         identify(result.user.id);
       }
 
-      // Login successful. Explicit returnTo wins; otherwise everyone
-      // lands in the app. It is the free tier's home as much as the
-      // member's, and the per-surface gates handle the difference.
-      router.push(returnTo || "/app");
+      // Login successful. Explicit returnTo wins; otherwise active members
+      // land in the Consilium and everyone else on the dashboard. The app
+      // is sealed, so it is nobody's landing page.
+      router.push(
+        returnTo || (result.isActiveMember ? "/consilium/feed" : "/dashboard"),
+      );
       router.refresh();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Login failed");

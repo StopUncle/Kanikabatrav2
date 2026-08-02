@@ -11,6 +11,7 @@ import type {
 import SimulatorRunner from "@/components/simulator/SimulatorRunner";
 import AchievementToast from "@/components/simulator/AchievementToast";
 import SimulatorErrorBoundary from "@/components/simulator/SimulatorErrorBoundary";
+import { useShellRoutes } from "@/lib/shell-routes";
 import RingUpCeremony, {
   type RingUpPayload,
 } from "@/components/rings/RingUpCeremony";
@@ -54,6 +55,7 @@ export default function AdventureSimulatorPageClient({
   adventureTitle,
 }: Props) {
   const router = useRouter();
+  const routes = useShellRoutes();
   const [badgesEarned, setBadgesEarned] = useState<string[]>([]);
   const [unlockedThisRun, setUnlockedThisRun] = useState<
     AchievementToastMeta[]
@@ -173,13 +175,13 @@ export default function AdventureSimulatorPageClient({
   // The ending screen's "Next Scenario" link routes back into the run
   // dispatcher, which reads the freshly-advanced AdventureProgress row
   // and either renders the next chapter or redirects to /complete.
-  const nextScenarioHref = `/app/adventures/${adventureSlug}/run`;
+  const nextScenarioHref = routes.adventureRun(adventureSlug);
 
   return (
     <SimulatorErrorBoundary
       scenarioId={scenario.id}
       currentSceneIdRef={currentSceneIdRef}
-      exitHref={`/app/adventures/${adventureSlug}`}
+      exitHref={routes.adventure(adventureSlug)}
     >
       <SimulatorRunner
         scenario={scenario}
@@ -189,7 +191,7 @@ export default function AdventureSimulatorPageClient({
         onComplete={handleComplete}
         nextScenarioHref={nextScenarioHref}
         badgesEarned={badgesEarned}
-        exitHref={`/app/adventures/${adventureSlug}`}
+        exitHref={routes.adventure(adventureSlug)}
         xpBreakdown={xpBreakdown}
         endingBounty={endingBounty}
       />

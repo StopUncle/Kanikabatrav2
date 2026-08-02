@@ -59,7 +59,7 @@ export async function POST(request: NextRequest) {
 
     const baseUrl =
       process.env.NEXT_PUBLIC_BASE_URL || "https://kanikarose.com";
-    const postUrl = `${baseUrl}/app/feed/${prompt.id}`;
+    const postUrl = `${baseUrl}/consilium/feed/${prompt.id}`;
     const rows = unanswered
       .map((c) => {
         const who = escapeHtml(

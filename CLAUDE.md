@@ -354,6 +354,87 @@ pricing), Tier 4 #13 certification tier + #15 off-site (Sam/PR).
 - **Typography:** Headers uppercase, extra-light to thin, wide tracking. Body light weight. Gold gradient for emphasis.
 - Mobile-first, dark mode only.
 
+## 🎞 Motion and character
+
+**Live reference: `/app/dev/motion`** (dev only). Three tiers side by side,
+ordered by cost rather than by looks, so a motion decision gets made by
+comparing instead of arguing.
+
+**What the stack can do today, unaided:**
+
+| Tier | Tech | Ceiling | Cost |
+|---|---|---|---|
+| 1 | Pure CSS | Staggered entrances, breathing borders, multi-layer idle flicker, scale-driven fills, asymmetric press curves | Free. Compositor only |
+| 2 | `framer-motion@10` (already a dependency) | Shared element transitions, spring counters, SVG `pathLength` draw-on, velocity-aware drag sheets | ~0kb new |
+| 3 | Hand-written WebGL2 | Signed-distance-field characters with computed rim light and live state, domain-warped noise cinematics | One triangle, one draw call, no asset |
+
+Rules that hold across all three: **transform and opacity only** (anything
+touching width, top, or box-shadow leaves tier 1 and starts costing frames);
+**no `filter: blur()` on mobile**; every looping animation gates on
+`useReducedMotion()`; WebGL caps DPR at 2 and parks its raf loop off screen.
+
+**Hard limits of tier 3, proven not assumed.** SDFs give form and light, never
+features. There is no face, no eye contact, no mouth. Timing derived from sine
+waves cannot match a designer's hand-keyed glance. And a shader cannot make the
+same character look like themselves twice, which is an asset-pipeline problem
+rather than a rendering one.
+
+**DECIDED 2026-08-01: no photoreal faces.** A composite was built and rejected
+on sight: a generated portrait as a texture with the shader adding breath,
+parallax, a travelling rim light and a channel-split tell. It worked
+technically and Sam does not want it, so photographic cast art is off the
+table. The direction that survived is drawn, computed, and abstract. Anything
+proposing generated headshots for characters is relitigating a settled call.
+
+Two findings worth keeping from the attempt. **Character consistency does not
+work yet**: feeding a portrait back through `fal-ai/flux/dev/image-to-image` at
+strength 0.42 asking only for a change of expression returns the right
+expression on a visibly different person. **And image generation runs over the
+fal REST API, not MCP** if it is ever needed for marketing or covers. Both
+global MCP image servers are dead ends: `mcp-image` still holds the literal
+placeholder `PASTE_GEMINI_KEY_HERE`, and the global `fal-ai` entry runs
+`uvx --from fal-mcp-server fal-mcp`, which crashes on import (`'Server' object
+has no attribute 'list_tools'`, an MCP SDK version mismatch) and exposes zero
+tools. The working key lives in `~/.claude.json` at
+`mcpServers['fal-ai'].env.FAL_KEY`; read it from there and POST to
+`https://fal.run/<model>` with an `Authorization: Key <key>` header.
+`fal-ai/flux-pro/v1.1-ultra` is the model that produced usable results. Never
+print the key into a transcript.
+
+**What Sam picked, 2026-08-01.** Two things, from opposite ends of the cost
+ladder, which is the useful signal: the **shimmer bar** (tier 1, `ml-fill`
+scaleX plus `ml-shimmer` translateX, pure CSS, no JS, no dependency) and the
+**manipulation-detected cinematic** (tier 3, domain-warped fBm in a fragment
+shader with a framer-motion per-letter stagger on top). Neither ships an asset.
+That is the through-line to hold: motion that is computed, not downloaded.
+
+**To raise the ceiling, in value-per-cost order:**
+
+1. **Rive** (`@rive-app/react-canvas`). The single biggest jump. Rigged 2D with
+   real state machines, kilobyte files, 60fps on a phone, driven from code by
+   one line. This is what turns a silhouette into a character who reacts.
+   Needs a licence for commercial use and someone to author the rigs.
+2. **A 2D artist, or generated art used as reference for drawn work.** With
+   photoreal off the table (see the decision above), the way to a face is
+   illustration: stylised, flat, on-brand, and rig-able. Generation is still
+   useful upstream as mood and pose reference, never as the shipped pixel.
+3. **Character consistency tooling** (a LoRA or a face-reference model),
+   only if drawn art ever needs a generated pipeline behind it. Measured, not
+   assumed: see the finding above. Forty characters across eight emotions
+   each is the real problem, and one good image does not touch it.
+4. **A motion designer, or Lottie**. `lottie-web` costs ~250kb but accepts
+   After Effects output directly, which is the only way to get performance a
+   human keyed rather than a formula derived.
+5. **Three.js / React Three Fiber** for real 3D: depth, camera moves, lighting
+   rigs. ~150kb and a genuine step up in complexity. Only worth it if the
+   product wants scenes rather than portraits.
+6. **The existing Blender pipeline** at `Apps/Animation-project` in the
+   monorepo. Blender to baked sprite sheets or glTF is the seam between asset
+   creation and this runtime, and it is already half built.
+7. **A real mid-range Android to test on.** Every performance claim above is
+   reasoned from what the property touches, not measured on the device that
+   actually struggles.
+
 ## 🛠 Development Guidelines
 
 - TypeScript strict, no `any`.

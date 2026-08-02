@@ -21,6 +21,7 @@ import VideoPlayer from "./VideoPlayer";
 import MemberBadge from "./MemberBadge";
 import FeedPollCard from "./FeedPollCard";
 import type { FormattedPoll } from "@/lib/community/poll-format";
+import { useShellRoutes } from "@/lib/shell-routes";
 
 interface FeedPostAuthor {
   id: string;
@@ -73,6 +74,7 @@ function pinnedExpandKey(post: { id: string; createdAt: string }): string {
 }
 
 export default function FeedPost({ post, isDetail = false, isNew = false }: FeedPostProps) {
+  const routes = useShellRoutes();
   const [liked, setLiked] = useState(post.isLiked);
   const [likeCount, setLikeCount] = useState(post.likeCount);
   const [isToggling, setIsToggling] = useState(false);
@@ -271,7 +273,7 @@ export default function FeedPost({ post, isDetail = false, isNew = false }: Feed
         </h3>
       ) : (
         <Link
-          href={`/app/feed/${post.id}`}
+          href={routes.feedPost(post.id)}
           className="block mb-2 hover:text-accent-gold transition-colors"
         >
           <h3 className="text-base sm:text-lg font-medium text-text-light hover:text-accent-gold transition-colors">
@@ -342,7 +344,7 @@ export default function FeedPost({ post, isDetail = false, isNew = false }: Feed
         </ReactMarkdown>
         {shouldTruncate && (
           <Link
-            href={`/app/feed/${post.id}`}
+            href={routes.feedPost(post.id)}
             className="text-accent-gold hover:text-accent-gold/80 ml-1 inline-block"
           >
             Read more
@@ -403,7 +405,7 @@ export default function FeedPost({ post, isDetail = false, isNew = false }: Feed
         </button>
 
         <Link
-          href={`/app/feed/${post.id}`}
+          href={routes.feedPost(post.id)}
           aria-label="View comments"
           className="flex items-center gap-1.5 text-sm text-text-gray/50 hover:text-accent-gold transition-colors px-2 py-2 -mx-2 rounded-lg active:bg-accent-gold/10 tap-target"
         >

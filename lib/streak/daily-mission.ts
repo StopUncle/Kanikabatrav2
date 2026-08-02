@@ -58,8 +58,6 @@ export interface DailyMission {
   level: number;
   track: ScenarioTrack;
   estimatedMinutes: number;
-  /** Deep link into the runner, tagged so we can attribute mission starts. */
-  href: string;
 }
 
 function toMission(scenario: Scenario, dateKey: string): DailyMission {
@@ -71,7 +69,6 @@ function toMission(scenario: Scenario, dateKey: string): DailyMission {
     level: scenario.level,
     track: getTrack(scenario),
     estimatedMinutes: scenario.estimatedMinutes,
-    href: `/app/train/${scenario.id}?mission=1`,
   };
 }
 

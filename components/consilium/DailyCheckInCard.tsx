@@ -24,6 +24,7 @@ import {
 } from "@/lib/checkin/situations";
 import { TRACK_META } from "@/lib/simulator/track-meta";
 import type { ScenarioTrack } from "@/lib/simulator/types";
+import { useShellRoutes } from "@/lib/shell-routes";
 
 interface Props {
   /** User gender, drives the reason copy for gender-aware buckets. */
@@ -43,6 +44,7 @@ interface Props {
 }
 
 export default function DailyCheckInCard({ gender, initial, nextByTrack }: Props) {
+  const routes = useShellRoutes();
   const [current, setCurrent] = useState<{
     situation: SituationKey;
     recommendedTrack: string;
@@ -129,8 +131,8 @@ export default function DailyCheckInCard({ gender, initial, nextByTrack }: Props
                     <Link
                       href={
                         nextScenario
-                          ? `/app/train/${nextScenario.id}`
-                          : trackMeta.href
+                          ? routes.scenario(nextScenario.id)
+                          : routes.catalog
                       }
                       className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-warm-gold text-deep-black text-sm font-medium tracking-[0.2em] uppercase transition-all hover:bg-warm-gold/90 hover:shadow-[0_6px_20px_-4px_rgba(212,175,55,0.5)]"
                     >
@@ -144,7 +146,7 @@ export default function DailyCheckInCard({ gender, initial, nextByTrack }: Props
                     </Link>
                     {nextScenario && (
                       <Link
-                        href={trackMeta.href}
+                        href={routes.catalog}
                         className="text-text-gray/60 hover:text-warm-gold text-[10px] uppercase tracking-[0.25em] transition-colors"
                       >
                         View the track

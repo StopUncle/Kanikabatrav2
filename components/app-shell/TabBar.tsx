@@ -15,9 +15,9 @@ import {
 
 /**
  * The app shell's bottom tab bar. Four destinations plus More: Home is the
- * action screen, Feed is Kanika's room, Train is every way to practise, and
- * Kanika is the private line (badged when she has replied). Everything else
- * lives one tap deeper in the More sheet.
+ * front page (action zone plus explore rails), Feed is Kanika's room, Train
+ * is every way to practise, Mark is the reading. More holds only account
+ * surfaces now that Home carries discovery.
  */
 
 /**
@@ -134,7 +134,7 @@ export default function TabBar({ isMember }: { isMember: boolean }) {
                 }
                 aria-current={active ? "page" : undefined}
                 aria-label={locked ? `${tab.label}, members only` : tab.label}
-                className={`flex w-[58px] flex-col items-center gap-1.5 text-app-tiny tracking-[0.06em] transition-colors ${
+                className={`flex w-[62px] flex-col items-center gap-1.5 text-[11.5px] tracking-[0.06em] transition-colors ${
                   active ? "text-[var(--app-gold)]" : "text-[var(--app-dim)]"
                 } ${locked ? "opacity-60" : ""}`}
               >
@@ -168,7 +168,7 @@ export default function TabBar({ isMember }: { isMember: boolean }) {
             aria-haspopup="dialog"
             aria-expanded={moreOpen}
             aria-label={unread > 0 ? `More, ${unread} unread from Kanika` : "More"}
-            className={`flex w-[58px] flex-col items-center gap-1.5 text-app-tiny tracking-[0.06em] transition-colors ${
+            className={`flex w-[62px] flex-col items-center gap-1.5 text-[11.5px] tracking-[0.06em] transition-colors ${
               moreOpen || isMoreRoute
                 ? "text-[var(--app-gold)]"
                 : "text-[var(--app-dim)]"

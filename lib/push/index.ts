@@ -174,7 +174,7 @@ export async function sendPushToUser(
     badge: payload.icon || "/images/kanikarose-logo.png",
     tag: payload.tag,
     requireInteraction: payload.requireInteraction ?? false,
-    data: { url: payload.url || "/app/feed" },
+    data: { url: payload.url || "/consilium/feed" },
   });
 
   let delivered = 0;

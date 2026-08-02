@@ -254,7 +254,7 @@ async function claimAction(formData: FormData): Promise<void> {
   if (!claimerInitiated?.initiationAt) {
     redirect("/consilium/initiation?claimed=1");
   }
-  redirect("/app");
+  redirect("/consilium/feed?claimed=1");
 }
 
 /**

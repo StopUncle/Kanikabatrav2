@@ -24,12 +24,24 @@
 export type Placement =
   /** Bottom tab bar. Five slots, no more. */
   | "tab"
+  /** A card on Home's explore rails. One scroll away, zero taps deep. */
+  | "home"
   /** The More sheet, one tap deeper. */
   | "more"
   /** Reached from inside a parent surface, on purpose. */
   | "nested"
   /** Deliberately unreachable from navigation (runners, dev, one-shots). */
   | "unlisted";
+
+/** The explore sections on Home, in render order. */
+export const HOME_SECTION_ORDER = [
+  "Test yourself",
+  "Train",
+  "From Kanika",
+  "Your standing",
+] as const;
+
+export type HomeSection = (typeof HOME_SECTION_ORDER)[number];
 
 export type Maturity = "app-native" | "ported" | "stub" | "dev";
 
@@ -39,6 +51,12 @@ export interface AppSurface {
   placement: Placement;
   /** Which group in the More sheet. Only meaningful when placement is "more". */
   section?: "You" | "Library" | "Account";
+  /**
+   * A card on Home's explore rails. Surfaces placed "home" live here and
+   * nowhere else; nested surfaces (the Train toys) can carry it as well,
+   * appearing both inside their parent and on Home.
+   */
+  home?: { section: HomeSection; hook: string };
   /** The surface this hangs off. Only meaningful when placement is "nested". */
   parent?: string;
   /** Why it lives where it lives. Required, including for "unlisted". */
@@ -66,7 +84,7 @@ export const APP_SURFACES: AppSurface[] = [
     href: "/app",
     label: "Home",
     placement: "tab",
-    note: "The action screen. What to do now, not what exists.",
+    note: "Was 'Today'. Two zones now: the action screen on top (what to do now), the explore rails below (what exists). The shop window the app never had.",
     maturity: "app-native",
   },
   {
@@ -95,14 +113,17 @@ export const APP_SURFACES: AppSurface[] = [
     maturity: "app-native",
   },
 
-  /* ------------------------------------------------------- the More sheet */
+  /* ------------------------------------------------------ the Home rails */
   {
     href: "/app/program",
     memberOnly: true,
     label: "The Twelve",
-    placement: "more",
-    section: "You",
-    note: "Becomes a paid upsell course rather than a membership benefit. AI layer live: the Read, Thresholds, journal.",
+    placement: "home",
+    home: {
+      section: "Your standing",
+      hook: "The 12 week transformation.",
+    },
+    note: "Becomes a paid upsell course rather than a membership benefit. AI layer live: the Read, Thresholds, journal. On Home twice when a week is live: the actionable card in zone 1 and this rail card; the rail card is the always-there front door.",
     maturity: "app-native",
   },
   {
@@ -115,40 +136,55 @@ export const APP_SURFACES: AppSurface[] = [
   {
     href: "/app/path",
     label: "The Path",
-    placement: "more",
-    section: "You",
+    placement: "home",
+    home: {
+      section: "Your standing",
+      hook: "The curriculum, chapter by chapter.",
+    },
     note: "OVERLAPS with /app/you and /app/program: three surfaces all answering 'where am I up to'. Needs collapsing.",
     maturity: "app-native",
   },
   {
     href: "/app/you",
     label: "Your progress",
-    placement: "more",
-    section: "You",
+    placement: "home",
+    home: {
+      section: "Your standing",
+      hook: "Rank, streaks, badges, your Mark.",
+    },
     note: "Rank, standing, streaks, badges, and the Mark panel.",
     maturity: "app-native",
   },
   {
     href: "/app/ranks",
     label: "Leaderboards",
-    placement: "more",
-    section: "You",
+    placement: "home",
+    home: {
+      section: "Your standing",
+      hook: "Where you sit against the room.",
+    },
     note: "Standing and Simulator XP behind one toggle.",
     maturity: "app-native",
   },
   {
     href: "/app/quizzes",
     label: "Quizzes",
-    placement: "more",
-    section: "You",
-    note: "The instrument suite, plus the member's latest result.",
+    placement: "home",
+    home: {
+      section: "Test yourself",
+      hook: "Calibrated instruments, not magazine filler. Find out where you actually sit.",
+    },
+    note: "The instrument suite, plus the member's latest result. The only card in its Home section on purpose: it renders full width, because the quizzes are the most shareable thing the app owns.",
     maturity: "app-native",
   },
   {
     href: "/app/book",
     label: "The book",
-    placement: "more",
-    section: "Library",
+    placement: "home",
+    home: {
+      section: "From Kanika",
+      hook: "The Sociopathic Dating Bible, member price.",
+    },
     note: "Member price and re-download.",
     maturity: "ported",
   },
@@ -156,8 +192,11 @@ export const APP_SURFACES: AppSurface[] = [
     href: "/app/videos",
     memberOnly: true,
     label: "Videos",
-    placement: "more",
-    section: "Library",
+    placement: "home",
+    home: {
+      section: "From Kanika",
+      hook: "Kanika on camera.",
+    },
     note: "",
     maturity: "app-native",
   },
@@ -165,8 +204,11 @@ export const APP_SURFACES: AppSurface[] = [
     href: "/app/voice-notes",
     memberOnly: true,
     label: "Voice notes",
-    placement: "more",
-    section: "Library",
+    placement: "home",
+    home: {
+      section: "From Kanika",
+      hook: "Her voice, members only.",
+    },
     note: "",
     maturity: "app-native",
   },
@@ -195,7 +237,11 @@ export const APP_SURFACES: AppSurface[] = [
     label: "The Simulator",
     placement: "nested",
     parent: "/app/train",
-    note: "The Simulator's own menu. Opened from the hero tile in Train.",
+    home: {
+      section: "Train",
+      hook: "Live scenarios, scored. The climb.",
+    },
+    note: "The Simulator's own menu. Opened from the hero tile in Train, and from the Train rail on Home.",
     maturity: "app-native",
   },
   {
@@ -211,6 +257,10 @@ export const APP_SURFACES: AppSurface[] = [
     label: "Speed Drill",
     placement: "nested",
     parent: "/app/train",
+    home: {
+      section: "Train",
+      hook: "Ten reads against the clock.",
+    },
     note: "Owns the whole screen; the tab bar hides itself here.",
     maturity: "app-native",
   },
@@ -219,6 +269,10 @@ export const APP_SURFACES: AppSurface[] = [
     label: "Daily Tell",
     placement: "nested",
     parent: "/app/train",
+    home: {
+      section: "Train",
+      hook: "One tell a day. Keep the streak.",
+    },
     note: "",
     maturity: "app-native",
   },
@@ -227,6 +281,10 @@ export const APP_SURFACES: AppSurface[] = [
     label: "Adventures",
     placement: "nested",
     parent: "/app/train",
+    home: {
+      section: "Train",
+      hook: "Multi-chapter arcs.",
+    },
     note: "Multi-chapter arcs.",
     maturity: "ported",
   },
@@ -236,6 +294,10 @@ export const APP_SURFACES: AppSurface[] = [
     label: "The Lab",
     placement: "nested",
     parent: "/app/train",
+    home: {
+      section: "Train",
+      hook: "Freeform sparring with the AI.",
+    },
     note: "Freeform sparring, one session a day.",
     maturity: "ported",
   },
@@ -245,7 +307,11 @@ export const APP_SURFACES: AppSurface[] = [
     label: "Receipts",
     placement: "nested",
     parent: "/app/train",
-    note: "The live-situation tool, and the one most likely to be wanted at 11pm when nobody is thinking about Train.",
+    home: {
+      section: "Train",
+      hook: "Paste a message. Get the read.",
+    },
+    note: "The live-situation tool, and the one most likely to be wanted at 11pm when nobody is thinking about Train. The Home rail card exists for exactly that member.",
     maturity: "ported",
   },
   {
@@ -351,6 +417,13 @@ export const APP_SURFACES: AppSurface[] = [
     maturity: "dev",
   },
   {
+    href: "/app/dev/motion",
+    label: "Dev: motion lab",
+    placement: "unlisted",
+    note: "Three tiers of animation ordered by cost, not by looks. Dev harness.",
+    maturity: "dev",
+  },
+  {
     href: "/app/dev/ui",
     label: "Dev: primitives",
     placement: "unlisted",
@@ -361,6 +434,27 @@ export const APP_SURFACES: AppSurface[] = [
 
 /** The bottom bar, in order. Five slots including More; four are routes. */
 export const TAB_SURFACES = APP_SURFACES.filter((s) => s.placement === "tab");
+
+/**
+ * Home's explore rails, grouped and ordered. A surface appears here by
+ * carrying a `home` field, whatever its placement: "home" surfaces live only
+ * here, nested ones (the Train toys) appear both here and in their parent.
+ */
+export const HOME_SECTIONS: {
+  title: HomeSection;
+  items: AppSurface[];
+}[] = HOME_SECTION_ORDER.map((title) => ({
+  title,
+  items: APP_SURFACES.filter((s) => s.home?.section === title),
+})).filter((group) => group.items.length > 0);
+
+/**
+ * Paths that light the Home tab. A member browsing a surface they opened
+ * from a Home rail is still, as far as the bar is concerned, at home.
+ */
+export const HOME_ACTIVE_PREFIXES = APP_SURFACES.filter(
+  (s) => s.placement === "home",
+).map((s) => s.href);
 
 /** The More sheet, grouped, in section order. */
 export const MORE_SECTIONS: {
@@ -389,7 +483,12 @@ export const MORE_ACTIVE_PREFIXES = APP_SURFACES.filter(
 export const FULL_SCREEN_ROUTES = ["/app/welcome", "/app/play/drill"];
 
 export function isTabActive(surface: AppSurface, pathname: string): boolean {
-  if (surface.href === "/app") return pathname === "/app";
+  if (surface.href === "/app") {
+    return (
+      pathname === "/app" ||
+      HOME_ACTIVE_PREFIXES.some((p) => pathname.startsWith(p))
+    );
+  }
   if (pathname.startsWith(surface.href)) return true;
   return (surface.also ?? []).some((p) => pathname.startsWith(p));
 }

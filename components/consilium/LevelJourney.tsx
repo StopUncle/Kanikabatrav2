@@ -16,6 +16,7 @@ import {
   Star,
 } from "lucide-react";
 import type { Scenario } from "@/lib/simulator/types";
+import { useShellRoutes } from "@/lib/shell-routes";
 
 /**
  * Game-feel catalog for the Dark Mirror Simulator.
@@ -188,6 +189,7 @@ function ScenarioCard({
   node: ScenarioNode;
   isNextUp: boolean;
 }) {
+  const routes = useShellRoutes();
   const v = statusVisual(node.status);
   const { scenario: s, status, prerequisiteTitles } = node;
 
@@ -313,7 +315,7 @@ function ScenarioCard({
     return <div aria-disabled>{inner}</div>;
   }
   return (
-    <Link href={`/app/train/${s.id}`} className="group block">
+    <Link href={routes.scenario(s.id)} className="group block">
       {inner}
     </Link>
   );
@@ -386,6 +388,7 @@ export default function LevelJourney({
   completedCount,
   trackXp,
 }: LevelJourneyProps) {
+  const routes = useShellRoutes();
   const completionPct = Math.round((completedCount / totalScenarios) * 100);
 
   return (
@@ -417,7 +420,7 @@ export default function LevelJourney({
           </div>
           {nextUp && nextUp.status !== "locked" && (
             <Link
-              href={`/app/train/${nextUp.scenario.id}`}
+              href={routes.scenario(nextUp.scenario.id)}
               className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-full bg-warm-gold text-deep-black font-medium text-sm tracking-wider uppercase transition-all hover:bg-warm-gold/90 hover:shadow-[0_8px_24px_-4px_rgba(212,175,55,0.55)] shrink-0"
             >
               {nextUp.status === "in-progress" ? "Resume" : "Play Next"}

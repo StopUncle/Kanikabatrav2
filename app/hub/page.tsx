@@ -22,17 +22,20 @@ import ChecklistCard from "@/components/day0/ChecklistCard";
 import MembershipTodayCard from "@/components/app-shell/upgrade/MembershipTodayCard";
 import { getAccess } from "@/lib/access/tier";
 import { FREE_STANDING_CEILING } from "@/lib/standing/config";
+import HomeExplore from "@/components/app-shell/home/HomeExplore";
 
 export const metadata = {
   title: "Home | Consilium",
 };
 
 /**
- * Today: the app shell home. Header (rank + streak), the hero card
- * (latest from Kanika; becomes the weekly session once the video
- * pipeline exists), today's moves, and the Path continue card.
+ * Home: the app shell's front page, in two zones. The action zone first:
+ * header (rank + streak), the hero card (latest from Kanika; becomes the
+ * weekly session once the video pipeline exists), today's moves, the Path
+ * continue card. Then the explore zone: every surface the app owns, as
+ * rails, driven by the nav config.
  */
-export default async function TodayPage() {
+export default async function HomePage() {
   const userId = await requireServerAuth("/app");
 
   const [viewer, access] = await Promise.all([
@@ -169,7 +172,7 @@ export default async function TodayPage() {
             <p className="text-app-tiny uppercase tracking-app-label text-[var(--app-gold)]">
               Week {program.actionable.weekNumber} of 12
             </p>
-            <p className="shrink-0 text-app-eyebrow tracking-app-wide text-[var(--app-gold)]">
+            <p className="shrink-0 text-[12.5px] tracking-app-wide text-[var(--app-gold)]">
               OPEN →
             </p>
           </div>
@@ -323,11 +326,13 @@ export default async function TodayPage() {
               />
             </span>
           </span>
-          <span className="shrink-0 text-xs tracking-app-wide text-[var(--app-gold)]">
+          <span className="shrink-0 text-[13px] tracking-app-wide text-[var(--app-gold)]">
             CONTINUE →
           </span>
         </Link>
       )}
+
+      <HomeExplore />
     </div>
   );
 }

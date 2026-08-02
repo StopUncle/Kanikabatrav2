@@ -19,7 +19,8 @@ import { APP_SURFACES, type AppSurface, type Placement } from "@/lib/app/nav";
 
 const GROUPS: { key: Placement; title: string; blurb: string }[] = [
   { key: "tab", title: "The bar", blurb: "Four routes plus More. No more slots exist." },
-  { key: "more", title: "The More sheet", blurb: "One tap deeper. Grouped." },
+  { key: "home", title: "The Home rails", blurb: "Cards on Home's explore zone. One scroll away." },
+  { key: "more", title: "The More sheet", blurb: "One tap deeper. Account surfaces only." },
   { key: "nested", title: "Inside another surface", blurb: "Reached from a parent, on purpose." },
   { key: "unlisted", title: "Unlisted", blurb: "Runners, one-shots and dev harnesses." },
 ];
@@ -35,6 +36,7 @@ const MATURITY_COLOR: Record<AppSurface["maturity"], string> = {
 function depthOf(surface: AppSurface, all: AppSurface[]): number {
   if (surface.href === "/app") return 0;
   if (surface.placement === "tab") return 1;
+  if (surface.placement === "home") return 1;
   if (surface.placement === "more") return 2;
   if (surface.placement === "unlisted") return 99;
   let depth = 1;

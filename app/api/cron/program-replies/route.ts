@@ -72,7 +72,9 @@ export async function POST(request: NextRequest) {
       await sendPushToUser(entry.userId, "questionAnswered", {
         title: "She read your entry",
         body: `Week ${entry.weekNumber}. Her reply is in your journal.`,
-        url: "/app/program",
+        // The Twelve has no /consilium home, so while the app is sealed this
+        // lands on the feed rather than a door the member cannot open.
+        url: "/consilium/feed",
       }).catch(() => 0);
     } catch (err) {
       failures.push(`${entry.id}: ${err instanceof Error ? err.message : "unknown"}`);

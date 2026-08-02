@@ -24,6 +24,7 @@ import {
 import StreakBadge from "./StreakBadge";
 import TellEmailCapture from "./TellEmailCapture";
 import ShareResultButton from "./ShareResultButton";
+import { useShellRoutes } from "@/lib/shell-routes";
 
 interface ServerAnswerResult {
   correct: boolean;
@@ -435,6 +436,7 @@ function TellRevealView({
   surface: "public" | "member";
   shareUrl: string;
 }) {
+  const routes = useShellRoutes();
   return (
     <div className="mt-10 space-y-8">
       <div className="flex items-center gap-3 pb-4 border-b border-gray-800">
@@ -547,19 +549,19 @@ function TellRevealView({
         ) : (
           <div className="flex flex-col sm:flex-row gap-3">
             <a
-              href="/app/instincts/score"
+              href={routes.instinctsScore}
               className="inline-flex items-center justify-center px-6 py-3 rounded-full border border-accent-gold/40 text-accent-gold font-medium tracking-wider uppercase text-xs hover:bg-accent-gold/10 transition-all"
             >
               Your hex
             </a>
             <a
-              href="/app/instincts/history"
+              href={routes.instinctsHistory}
               className="inline-flex items-center justify-center px-6 py-3 rounded-full border border-gray-700 text-text-light font-medium tracking-wider uppercase text-xs hover:border-accent-gold/40 transition-all"
             >
               History
             </a>
             <a
-              href="/app/receipts"
+              href={routes.receipts}
               className="inline-flex items-center justify-center px-6 py-3 rounded-full border border-gray-700 text-text-light font-medium tracking-wider uppercase text-xs hover:border-accent-gold/40 transition-all"
             >
               Receipts

@@ -12,6 +12,7 @@ import type {
 import SimulatorRunner from "./SimulatorRunner";
 import AchievementToast from "./AchievementToast";
 import SimulatorErrorBoundary from "./SimulatorErrorBoundary";
+import { useShellRoutes } from "@/lib/shell-routes";
 import RingUpCeremony, {
   type RingUpPayload,
 } from "@/components/rings/RingUpCeremony";
@@ -82,6 +83,7 @@ export default function SimulatorPageClient({
   initialMode,
 }: Props) {
   const router = useRouter();
+  const routes = useShellRoutes();
   // Story until proven otherwise. The saved preference loads in an
   // effect rather than the initializer so server and first client
   // render agree (no hydration mismatch); the intro fades in slowly
@@ -274,7 +276,7 @@ export default function SimulatorPageClient({
     <SimulatorErrorBoundary
       scenarioId={scenario.id}
       currentSceneIdRef={currentSceneIdRef}
-      exitHref={exitHref ?? "/app/train/climb"}
+      exitHref={exitHref ?? routes.catalog}
     >
       <SimulatorRunner
         scenario={scenario}

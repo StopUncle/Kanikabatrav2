@@ -33,7 +33,7 @@ export default function Move({ href, title, sub, cta = "GO", done, icon }: Props
         </span>
       </span>
       <span
-        className={`shrink-0 text-xs tracking-app-wide ${
+        className={`shrink-0 text-[13px] tracking-app-wide ${
           done ? "text-[var(--app-green)]" : "text-[var(--app-gold)]"
         }`}
       >
