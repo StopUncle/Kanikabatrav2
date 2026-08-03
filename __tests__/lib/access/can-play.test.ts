@@ -3,9 +3,11 @@ import type { Access } from "@/lib/access/tier";
 
 const free: Access = {
   tier: "free", userId: "u", isMember: false, isBanned: false,
-  status: null, membership: null, reason: null,
+  status: null, membership: null, pactEntitled: false, reason: null,
 };
-const member: Access = { ...free, tier: "member", isMember: true };
+const member: Access = {
+  ...free, tier: "member", isMember: true, pactEntitled: true,
+};
 
 describe("canPlay", () => {
   it("free account may play a tier:free catalog scenario", () => {

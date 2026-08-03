@@ -3786,3 +3786,152 @@ export function buildFreeDormantEmailEntry(
     metadata: { ...MARKETING_META, type: "free-dormant-reengage" },
   };
 }
+
+// ============================================================
+// The Blood Pact.
+//
+// Three small sequences, all queued from server paths that already
+// exist: abandonment from the create route (mirrors consilium),
+// welcome from the Stripe webhook, winback from the broken-pact
+// path. Voice rule: the pact is theirs, not ours. Every email talks
+// about their record and their signature, never about "your
+// subscription".
+// ============================================================
+
+function pactUrl(path: string, content: string): string {
+  const params = new URLSearchParams({
+    utm_source: "email",
+    utm_medium: "email",
+    utm_campaign: "blood-pact",
+    utm_content: content,
+  });
+  return `${baseUrl}${path}?${params.toString()}`;
+}
+
+function buildPactWelcomeEmail(name: string): string {
+  const body = `
+    <p style="color: #f5f0ed; font-size: 16px; margin: 0 0 20px 0; line-height: 1.7;">
+      ${esc(name)}, it is signed.
+    </p>
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 20px 0; font-size: 15px;">
+      Week one is already running. One challenge, one honest entry in the journal, and the first mark on a record that never forgets. That is the whole practice. It compounds.
+    </p>
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 25px 0; font-size: 15px;">
+      The week ends seven days from your signature, to the hour. Do not save it for the last night.
+    </p>
+    ${goldButton("Open week one", pactUrl("/app/pact/week", "welcome-week-1"))}
+  `;
+  return emailShell("The pact is signed", "Week one is running", body);
+}
+
+export function buildPactWelcomeEntry(
+  recipientEmail: string,
+  recipientName: string,
+): EmailQueueEntry {
+  return {
+    recipientEmail,
+    recipientName,
+    sequence: "pact-welcome",
+    step: 1,
+    subject: "It is signed. Week one is running.",
+    htmlBody: buildPactWelcomeEmail(recipientName),
+    scheduledAt: new Date(),
+    metadata: { type: "pact-welcome" },
+  };
+}
+
+function buildPactAbandonStep1(name: string): string {
+  const body = `
+    <p style="color: #f5f0ed; font-size: 16px; margin: 0 0 20px 0; line-height: 1.7;">
+      ${esc(name)}, you read the oath.
+    </p>
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 25px 0; font-size: 15px;">
+      You picked a track and you stopped at the signature. That hesitation is not nothing; it is exactly the muscle the Pact trains. One challenge a week, in your own hand, on a record that keeps the truth either way.
+    </p>
+    ${goldButton("Finish signing", pactUrl("/app/pact", "abandon-1"))}
+  `;
+  return emailShell("The pact is still open", "Your track is waiting", body);
+}
+
+function buildPactAbandonStep2(name: string): string {
+  const body = `
+    <p style="color: #f5f0ed; font-size: 16px; margin: 0 0 20px 0; line-height: 1.7;">
+      ${esc(name)}, last note on this.
+    </p>
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 25px 0; font-size: 15px;">
+      The Pact costs less than a coffee a week and asks more of you than most things that cost a hundred times that. If the answer is no, that is a clean answer. If the answer was "not yet", this is the door.
+    </p>
+    ${goldButton("Sign the pact", pactUrl("/app/pact", "abandon-2"))}
+  `;
+  return emailShell("Last note on the pact", "Then this door closes quietly", body);
+}
+
+export function buildPactAbandonmentDrip(
+  recipientEmail: string,
+  recipientName: string,
+): EmailQueueEntry[] {
+  const now = new Date();
+  return [
+    {
+      recipientEmail,
+      recipientName,
+      sequence: "pact-cart-abandonment",
+      step: 1,
+      subject: "You stopped at the signature",
+      htmlBody: withMarketingFooter(
+        buildPactAbandonStep1(recipientName),
+        recipientEmail,
+      ),
+      scheduledAt: addHours(now, 1),
+      metadata: { ...MARKETING_META, type: "soft-touch" },
+    },
+    {
+      recipientEmail,
+      recipientName,
+      sequence: "pact-cart-abandonment",
+      step: 2,
+      subject: "Last note on the pact",
+      htmlBody: withMarketingFooter(
+        buildPactAbandonStep2(recipientName),
+        recipientEmail,
+      ),
+      scheduledAt: addHours(now, 24),
+      metadata: { ...MARKETING_META, type: "close" },
+    },
+  ];
+}
+
+function buildPactWinbackEmail(name: string): string {
+  const body = `
+    <p style="color: #f5f0ed; font-size: 16px; margin: 0 0 20px 0; line-height: 1.7;">
+      ${esc(name)}, the record kept everything.
+    </p>
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 20px 0; font-size: 15px;">
+      Your pact is marked broken, and it stays that way; that was the deal, and it is what makes the kept weeks mean something. Nothing was erased.
+    </p>
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 25px 0; font-size: 15px;">
+      When you are ready, a new pact signs beside the old one, scars in view. Most people never come back to a record that saw them break. The ones who do are building something different.
+    </p>
+    ${goldButton("Look at the record", pactUrl("/app/pact/record", "winback-1"))}
+  `;
+  return emailShell("The record remembers", "And it is still yours", body);
+}
+
+export function buildPactWinbackEntry(
+  recipientEmail: string,
+  recipientName: string,
+): EmailQueueEntry {
+  return {
+    recipientEmail,
+    recipientName,
+    sequence: "pact-winback",
+    step: 1,
+    subject: "The record kept everything",
+    htmlBody: withMarketingFooter(
+      buildPactWinbackEmail(recipientName),
+      recipientEmail,
+    ),
+    scheduledAt: addDays(new Date(), 3),
+    metadata: { ...MARKETING_META, type: "winback" },
+  };
+}

@@ -10,8 +10,17 @@ jest.mock("@/lib/community/membership", () => ({
   checkMembership: jest.fn(),
 }));
 
+jest.mock("@/lib/pact/membership", () => ({
+  checkPactMembership: jest.fn(),
+}));
+
+import { checkPactMembership } from "@/lib/pact/membership";
+
 const mockCheck = checkMembership as jest.MockedFunction<typeof checkMembership>;
 const mockUser = prisma.user.findUnique as jest.Mock;
+const mockPact = checkPactMembership as jest.MockedFunction<
+  typeof checkPactMembership
+>;
 
 /**
  * getAccess is the predicate the whole free tier gates on, so the cases that
@@ -32,6 +41,7 @@ function membershipCheck(over: Partial<Awaited<ReturnType<typeof checkMembership
 beforeEach(() => {
   jest.clearAllMocks();
   mockUser.mockResolvedValue({ isBanned: false });
+  mockPact.mockResolvedValue({ entitled: false, status: null, membership: null });
 });
 
 describe("getAccess", () => {
@@ -99,6 +109,48 @@ describe("getAccess", () => {
 
     const access = await getAccess("u5");
 
+    expect(access.isBanned).toBe(true);
+    expect(canAccessMemberOnly(access)).toBe(false);
+  });
+
+  it("returns member for a live Blood Pact with no consilium membership", async () => {
+    mockCheck.mockResolvedValue(membershipCheck());
+    mockPact.mockResolvedValue({
+      entitled: true,
+      status: "ACTIVE",
+      membership: null,
+    });
+
+    const access = await getAccess("p1");
+
+    expect(access.tier).toBe("member");
+    expect(access.isMember).toBe(true);
+    expect(access.pactEntitled).toBe(true);
+  });
+
+  it("marks a consilium member pact-entitled without querying the pact", async () => {
+    // The inclusion decision: an active $29 member gets the Pact for free,
+    // and resolving them must not cost a pact lookup.
+    mockCheck.mockResolvedValue(membershipCheck({ isMember: true, status: "ACTIVE" }));
+
+    const access = await getAccess("p2");
+
+    expect(access.pactEntitled).toBe(true);
+    expect(mockPact).not.toHaveBeenCalled();
+  });
+
+  it("refuses a banned account the pact door", async () => {
+    mockCheck.mockResolvedValue(membershipCheck({ status: "SUSPENDED" }));
+    mockUser.mockResolvedValue({ isBanned: true });
+    mockPact.mockResolvedValue({
+      entitled: true,
+      status: "ACTIVE",
+      membership: null,
+    });
+
+    const access = await getAccess("p3");
+
+    expect(access.tier).toBe("free");
     expect(access.isBanned).toBe(true);
     expect(canAccessMemberOnly(access)).toBe(false);
   });

@@ -85,6 +85,16 @@ export const STRIPE_PRICES: Record<string, string> = {
   // scripts/create-donation-product.ts for the canonical create-once
   // command that produced these IDs.
   DONATION: "price_1TQiacJv9vx5CHTweR3SpX3k",
+  /**
+   * The Blood Pact. $4.99/week or $149/year, no monthly on purpose: weekly
+   * matches the product's cadence and annual is the commitment move.
+   * IDs are empty until scripts/create-pact-product.ts is run against the
+   * live account (Sam runs it; it is a live Stripe write). The create route
+   * refuses checkout while these are unset, so shipping this file first is
+   * safe.
+   */
+  PACT_WEEKLY: "",
+  PACT_ANNUAL: "",
 };
 
 export const STRIPE_PUBLISHABLE_KEY = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!;

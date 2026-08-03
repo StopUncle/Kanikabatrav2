@@ -1,14 +1,15 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { MEMBERSHIP } from "@/lib/constants";
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { PACT_PRICING } from "@/lib/pact/presets";
 import { capture } from "@/lib/analytics/client";
 import { ANALYTICS_EVENTS } from "@/lib/analytics/events";
 
 /**
  * The wall, as a bottom sheet in the app skin.
  *
- * One sheet, three entry points. Each passes its trigger so the funnel can
+ * One sheet, several entry points. Each passes its trigger so the funnel can
  * tell which moment actually converts, and so the opening line can name the
  * specific thing that continues rather than a generic pitch.
  *
@@ -17,6 +18,12 @@ import { ANALYTICS_EVENTS } from "@/lib/analytics/events";
  * a refusal, and a refusal at the exact moment someone is enjoying
  * themselves is the fastest way to end the session. Nothing here claims an
  * outcome either. Skills, never results.
+ *
+ * Since the Blood Pact became the app's paid tier, this sheet does not run
+ * checkout. The Pact is signed, not bought: preset, oath, signature, then
+ * payment, and that ceremony lives at /app/pact. The sheet's job is to name
+ * the moment and hand the member to the door. Billing-cycle choice and the
+ * dunning path live on the door page with the rest of the flow.
  */
 
 export type UpgradeTrigger =
@@ -70,19 +77,19 @@ function sublineFor(trigger: UpgradeTrigger): string {
     return "Analyst is as far as the free tier counts. The ranks above it keep moving.";
   }
   if (trigger === "today-card") {
-    return "Every track, the Lab, Kanika's room, the Mark. One membership opens all of it.";
+    return "Every track, the Lab, Kanika's room, the Mark. The Pact opens all of it.";
   }
   if (trigger === "gauntlet") {
-    return "You write your own moves. No options, no reads, a clock running, and bonus pay for holding your nerve. Members only.";
+    return "You write your own moves. No options, no reads, a clock running, and bonus pay for holding your nerve. Pact only.";
   }
-  return "Everything on this bar unlocks with one membership. Pick up where the free tier stops.";
+  return "Everything on this bar unlocks when you sign. Pick up where the free tier stops.";
 }
 
 /** What continues. Never a list of what is missing. */
 const CONTINUES = [
+  "One challenge a week, on your track, and a record that never forgets.",
   "Every chapter of every track, not just the first.",
   "The Room: say it in your own words, and find out what that costs you.",
-  "The 12 Week Transformation, included.",
   "Kanika: the voice notes, the answers, the feed.",
 ];
 
@@ -93,12 +100,7 @@ export default function UpgradeSheet({
   nextChapterTitle,
   surfaceLabel,
 }: Props) {
-  const [cycle, setCycle] = useState<"annual" | "monthly">("annual");
-  const [busy, setBusy] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  // Set when the server says the member still has a live subscription in
-  // dunning. The fix is their card, not a second checkout.
-  const [paymentProblem, setPaymentProblem] = useState(false);
+  const router = useRouter();
 
   // Report the wall once per opening, with the trigger that caused it. This
   // is the number the free tier is judged on: which moment converts.
@@ -118,59 +120,10 @@ export default function UpgradeSheet({
 
   if (!open) return null;
 
-  async function start() {
-    setBusy(true);
-    setError(null);
-    capture(ANALYTICS_EVENTS.UPGRADE_STARTED, { trigger, billing_cycle: cycle });
-    try {
-      const res = await fetch("/api/consilium/subscription/create", {
-        method: "POST",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify({ billingCycle: cycle }),
-      });
-      const data = (await res.json()) as {
-        checkoutUrl?: string;
-        error?: string;
-        action?: string;
-      };
-      if (res.status === 409 && data.action === "portal") {
-        setPaymentProblem(true);
-        setError(data.error ?? null);
-        setBusy(false);
-        return;
-      }
-      if (!res.ok || !data.checkoutUrl) {
-        // Stay on the sheet and say so. Bouncing someone out of the app at
-        // the moment they tried to pay is worse than the error itself.
-        setError(data.error || "That did not go through. Try again in a moment.");
-        setBusy(false);
-        return;
-      }
-      window.location.href = data.checkoutUrl;
-    } catch {
-      setError("That did not go through. Try again in a moment.");
-      setBusy(false);
-    }
-  }
-
-  async function openPortal() {
-    setBusy(true);
-    capture(ANALYTICS_EVENTS.UPGRADE_STARTED, { trigger, path: "portal" });
-    try {
-      const res = await fetch("/api/consilium/subscription/portal", {
-        method: "POST",
-      });
-      const data = (await res.json()) as { url?: string; error?: string };
-      if (!res.ok || !data.url) {
-        setError(data.error || "That did not go through. Try again in a moment.");
-        setBusy(false);
-        return;
-      }
-      window.location.href = data.url;
-    } catch {
-      setError("That did not go through. Try again in a moment.");
-      setBusy(false);
-    }
+  function goToDoor() {
+    capture(ANALYTICS_EVENTS.UPGRADE_STARTED, { trigger, path: "pact-door" });
+    onClose();
+    router.push("/app/pact");
   }
 
   return (
@@ -178,7 +131,7 @@ export default function UpgradeSheet({
       className="fixed inset-0 z-50"
       role="dialog"
       aria-modal="true"
-      aria-label="Join the Consilium"
+      aria-label="The Blood Pact"
     >
       <button
         type="button"
@@ -193,7 +146,7 @@ export default function UpgradeSheet({
 
         <div className="px-5 pt-3">
           <p className="text-[10.5px] uppercase tracking-[0.26em] text-[var(--app-gold)]">
-            The Consilium
+            The Blood Pact
           </p>
           <h2
             className="mt-2 text-[24px] leading-[1.15]"
@@ -214,82 +167,17 @@ export default function UpgradeSheet({
             ))}
           </ul>
 
-          {paymentProblem ? (
-            <div className="mt-6">
-              <p className="text-[13.5px] leading-relaxed text-[var(--app-muted)]">
-                Your membership is still here. The last payment did not go
-                through, so the fix is your card, not a new checkout.
-              </p>
-              <button
-                type="button"
-                onClick={openPortal}
-                disabled={busy}
-                className="mt-4 w-full rounded-full bg-[var(--app-gold)] px-5 py-3.5 text-[13px] uppercase tracking-app-wide text-[var(--app-on-gold)] disabled:opacity-60"
-              >
-                {busy ? "One moment" : "Fix payment"}
-              </button>
-              {error && (
-                <p className="mt-3 text-[12.5px] text-[var(--app-rose)]">{error}</p>
-              )}
-              <button
-                type="button"
-                onClick={onClose}
-                className="mt-2 w-full py-3 text-[12.5px] text-[var(--app-dim)]"
-              >
-                Not now
-              </button>
-            </div>
-          ) : (
-            <>
-          {/* Annual first and pre-selected, monthly beneath it. */}
-          <div className="mt-6 flex flex-col gap-2">
-            <button
-              type="button"
-              onClick={() => setCycle("annual")}
-              aria-pressed={cycle === "annual"}
-              className={`flex items-center justify-between rounded-2xl border px-4 py-3.5 text-left ${
-                cycle === "annual"
-                  ? "border-[var(--app-gold)] bg-[var(--app-card)]"
-                  : "border-[var(--app-line-soft)]"
-              }`}
-            >
-              <span>
-                <span className="block text-[14px]">{MEMBERSHIP.annual}</span>
-                <span className="mt-0.5 block text-[11.5px] text-[var(--app-dim)]">
-                  {MEMBERSHIP.annualPerMonthDisplay} a month, {MEMBERSHIP.monthsFreeOnAnnual} months free
-                </span>
-              </span>
-              <span className="text-[10px] uppercase tracking-[0.18em] text-[var(--app-gold)]">
-                Best
-              </span>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => setCycle("monthly")}
-              aria-pressed={cycle === "monthly"}
-              className={`flex items-center justify-between rounded-2xl border px-4 py-3.5 text-left ${
-                cycle === "monthly"
-                  ? "border-[var(--app-gold)] bg-[var(--app-card)]"
-                  : "border-[var(--app-line-soft)]"
-              }`}
-            >
-              <span className="text-[14px]">{MEMBERSHIP.monthly}</span>
-              <span className="text-[11.5px] text-[var(--app-dim)]">Cancel anytime</span>
-            </button>
-          </div>
-
-          {error && (
-            <p className="mt-3 text-[12.5px] text-[var(--app-rose)]">{error}</p>
-          )}
+          <p className="mt-5 text-[12.5px] text-[var(--app-dim)]">
+            {PACT_PRICING.weeklyDisplay}, or {PACT_PRICING.annualDisplay}.
+            Signed, not subscribed: it starts with your name.
+          </p>
 
           <button
             type="button"
-            onClick={start}
-            disabled={busy}
-            className="mt-5 w-full rounded-full bg-[var(--app-gold)] px-5 py-3.5 text-[13px] uppercase tracking-[0.16em] text-black disabled:opacity-60"
+            onClick={goToDoor}
+            className="mt-5 w-full rounded-full bg-[var(--app-gold)] px-5 py-3.5 text-[13px] uppercase tracking-[0.16em] text-black"
           >
-            {busy ? "One moment" : "Continue the climb"}
+            See the Pact
           </button>
 
           <button
@@ -299,8 +187,6 @@ export default function UpgradeSheet({
           >
             Not now
           </button>
-            </>
-          )}
         </div>
       </div>
     </div>

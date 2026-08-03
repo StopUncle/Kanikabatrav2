@@ -40,6 +40,9 @@ const FREE: Record<string, string> = {
   "/play": "The arcade room. Games are the free tier's retention loop.",
   "/play/drill": "Speed Drill: free.",
   "/play/tell": "Daily Tell: free.",
+  "/pact": "The Pact's door IS the sell. Signed members are redirected to /pact/week, which gates.",
+  "/pact/sign": "The oath and the signature come BEFORE payment by design; the seal action is what charges.",
+  "/pact/sealed": "Stripe's return URL. Gating it would wall the ceremony over a webhook race.",
 };
 
 /**

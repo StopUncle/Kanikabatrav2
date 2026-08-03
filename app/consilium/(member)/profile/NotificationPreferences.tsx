@@ -9,7 +9,8 @@ type Category =
   | "mention"
   | "broadcast"
   | "dailyTell"
-  | "dailyStreak";
+  | "dailyStreak"
+  | "pactWeek";
 
 const CATEGORIES: Array<{
   id: Category;
@@ -52,6 +53,12 @@ const CATEGORIES: Array<{
     id: "broadcast",
     label: "Broadcast announcements",
     blurb: "Big-deal announcements from Kanika. Off by default — opt in if you want them.",
+  },
+  {
+    id: "pactWeek",
+    label: "Blood Pact week",
+    blurb:
+      "Your new week opening, once a week. Only fires if you have signed a pact.",
   },
 ];
 

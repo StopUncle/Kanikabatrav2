@@ -36,7 +36,8 @@ export type PushCategory =
   | "weeklyVerdict"
   | "rankUp"
   | "programUnlock"
-  | "directMessage";
+  | "directMessage"
+  | "pactWeek";
 
 export interface PushPayload {
   title: string;
@@ -91,6 +92,10 @@ const DEFAULT_OPT_IN: Record<PushCategory, boolean> = {
   // the highest-signal notification a member can get; the whole point is they
   // hear about it. They can still opt out per-category.
   directMessage: true,
+  // A new Blood Pact week opening (and the old one resolving). Default-ON:
+  // it is the product's heartbeat, once a week, and a pact whose weeks
+  // arrive silently is a subscription, not a commitment.
+  pactWeek: true,
 };
 
 let configured = false;

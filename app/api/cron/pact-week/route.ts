@@ -1,0 +1,154 @@
+/**
+ * POST /api/cron/pact-week
+ *
+ * Daily. Two passes over the Blood Pact:
+ *
+ *   1. Resolve: any week that ended while still "open" becomes a scar.
+ *      The same write happens lazily in lib/pact/read.ts when a member
+ *      looks, so this pass is for the members who did not look, which is
+ *      exactly who the scar is about.
+ *   2. Advance: members whose derived week number has moved get their new
+ *      PactEntry row and one push. The entry row doubles as the dedupe:
+ *      if it already exists (the member visited first and the lazy read
+ *      created it), there is nothing to announce, because they saw it.
+ *
+ * Idempotent by construction; a manual workflow_dispatch re-run is
+ * harmless.
+ */
+
+import { NextResponse, type NextRequest } from "next/server";
+import { verifyCronSecret } from "@/lib/cron-auth";
+import { prisma } from "@/lib/prisma";
+import { sendPushToUser } from "@/lib/push";
+import { logger } from "@/lib/logger";
+import { currentWeekFor, cycleWeekFor, weekEndsAt } from "@/lib/pact/read";
+
+export const dynamic = "force-dynamic";
+
+function isLive(
+  m: { status: string; expiresAt: Date | null } | null,
+  now: Date,
+): boolean {
+  if (!m) return false;
+  if (m.status === "ACTIVE") return !m.expiresAt || m.expiresAt > now;
+  if (m.status === "CANCELLED") return !!m.expiresAt && m.expiresAt > now;
+  return false;
+}
+
+export async function POST(request: NextRequest) {
+  if (!verifyCronSecret(request)) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  try {
+    const now = new Date();
+
+    const scarred = await prisma.pactEntry.updateMany({
+      where: { status: "open", weekEndsAt: { lt: now } },
+      data: { status: "scarred" },
+    });
+
+    const [pacts, published] = await Promise.all([
+      prisma.pact.findMany({
+        where: { brokenAt: null },
+        select: {
+          id: true,
+          userId: true,
+          preset: true,
+          signedAt: true,
+          user: {
+            select: {
+              pactMembership: { select: { status: true, expiresAt: true } },
+              communityMembership: {
+                select: { status: true, expiresAt: true },
+              },
+            },
+          },
+        },
+      }),
+      prisma.pactWeek.findMany({
+        where: { isPublished: true },
+        select: { preset: true, cycleWeek: true, title: true },
+      }),
+    ]);
+    const challengeTitle = new Map(
+      published.map((w) => [`${w.preset}:${w.cycleWeek}`, w.title]),
+    );
+
+    let advanced = 0;
+    let pushed = 0;
+    let dormantBilling = 0;
+
+    for (const p of pacts) {
+      // A pact whose billing has lapsed stops advancing rather than
+      // stacking silent scars: SUSPENDED and EXPIRED members find their
+      // week where they left it. The pact only BREAKS via the webhook.
+      const entitled =
+        isLive(p.user.pactMembership, now) ||
+        isLive(p.user.communityMembership, now);
+      if (!entitled) {
+        dormantBilling++;
+        continue;
+      }
+
+      const weekNumber = currentWeekFor(p, now);
+      if (weekNumber < 1) continue;
+
+      const existing = await prisma.pactEntry.findUnique({
+        where: { pactId_weekNumber: { pactId: p.id, weekNumber } },
+        select: { id: true },
+      });
+      if (existing) continue;
+
+      // Claim first, push second: a repeated push is worse than a lost one.
+      await prisma.pactEntry.create({
+        data: {
+          pactId: p.id,
+          userId: p.userId,
+          weekNumber,
+          weekEndsAt: weekEndsAt(p, weekNumber),
+        },
+      });
+      advanced++;
+
+      const prev = weekNumber > 1
+        ? await prisma.pactEntry.findUnique({
+            where: {
+              pactId_weekNumber: { pactId: p.id, weekNumber: weekNumber - 1 },
+            },
+            select: { status: true },
+          })
+        : null;
+      const title =
+        challengeTitle.get(`${p.preset}:${cycleWeekFor(weekNumber)}`) ??
+        "This week's challenge is waiting.";
+      const body =
+        prev?.status === "scarred"
+          ? `Last week scarred. ${title}`
+          : title;
+
+      const delivered = await sendPushToUser(p.userId, "pactWeek", {
+        title: `Week ${weekNumber} is open`,
+        body,
+        url: "/app/pact/week",
+        tag: `pact-week-${weekNumber}`,
+      }).catch(() => 0);
+      if (delivered > 0) pushed++;
+    }
+
+    return NextResponse.json({
+      ok: true,
+      pacts: pacts.length,
+      scarred: scarred.count,
+      advanced,
+      pushed,
+      dormantBilling,
+    });
+  } catch (err) {
+    logger.error(
+      "[pact-week] failed",
+      err instanceof Error ? err : new Error(String(err)),
+    );
+    return NextResponse.json({ error: "Internal error" }, { status: 500 });
+  }
+}

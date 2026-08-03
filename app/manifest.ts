@@ -1,11 +1,13 @@
 import type { MetadataRoute } from "next";
 
 /**
- * PWA manifest for the Consilium app.
+ * PWA manifest, shared by both cohorts.
  *
- * Installed members land in the app shell at /app, not on a website page.
- * Scope stays root so a member who follows a link to an older surface stays
- * inside the installed window rather than getting kicked to the browser.
+ * One manifest cannot branch per user, so start_url and every shortcut
+ * point at /start, the cohort router: active Consilium members land on
+ * /consilium/feed, everyone else lands in the app at /app. Scope stays
+ * root so a member who follows a link to an older surface stays inside
+ * the installed window rather than getting kicked to the browser.
  *
  * Icons are pre-rendered from the logo into /public/icons (192, 512, a
  * padded maskable for Android's circular crop, and the iOS touch icon).
@@ -16,7 +18,7 @@ export default function manifest(): MetadataRoute.Manifest {
     short_name: "Consilium",
     description:
       "Read people better. Daily scenarios, Kanika's room, and your rank.",
-    start_url: "/consilium/feed",
+    start_url: "/start",
     scope: "/",
     display: "standalone",
     orientation: "portrait",
@@ -43,24 +45,14 @@ export default function manifest(): MetadataRoute.Manifest {
         purpose: "maskable",
       },
     ],
+    // One shortcut, cohort-safe. The old trio deep-linked /consilium/*,
+    // which for a free app account is three doors into a sales page.
     shortcuts: [
       {
-        name: "Feed",
-        short_name: "Feed",
-        description: "Today at the Council",
-        url: "/consilium/feed",
-      },
-      {
-        name: "Simulator",
-        short_name: "Simulator",
-        description: "Scenarios, drills, and the Lab",
-        url: "/consilium/simulator",
-      },
-      {
-        name: "Message Kanika",
-        short_name: "Kanika",
-        description: "Your private line",
-        url: "/consilium/messages",
+        name: "Open",
+        short_name: "Open",
+        description: "Pick up where you left off",
+        url: "/start",
       },
     ],
   };

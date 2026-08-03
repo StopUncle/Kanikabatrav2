@@ -4,20 +4,24 @@ import {
   checkMembership,
   type MembershipCheck,
 } from "@/lib/community/membership";
+import { checkPactMembership } from "@/lib/pact/membership";
 
 /**
  * Who is asking.
  *
  * - `anon`   no session at all. Send them to login.
  * - `free`   signed in, no live membership. Gets the free tier.
- * - `member` a live Consilium membership, or an admin previewing one.
+ * - `member` a live Consilium membership OR a live Blood Pact subscription,
+ *            or an admin previewing one.
  *
  * This is the single predicate the app gates on. It wraps `checkMembership`
- * rather than replacing it: that function owns the membership state machine
+ * rather than replacing it: that function owns the consilium state machine
  * (lazy expiry, the CANCELLED-but-still-paid window, the APPROVED grace
- * period) and all of it still applies. What changes is the answer for
- * "authenticated, not a member", which used to be a redirect and is now a
- * tier.
+ * period) and all of it still applies. The Blood Pact adds a second door to
+ * the same tier via `checkPactMembership`, checked only when consilium says
+ * no: an active $29 member is entitled to everything the Pact unlocks
+ * without a second subscription (decided 2026-08-02), so consilium
+ * membership short-circuits the pact query entirely.
  */
 export type AccessTier = "anon" | "free" | "member";
 
@@ -44,6 +48,14 @@ export interface Access {
   isBanned: boolean;
   status: MembershipStatus | null;
   membership: MembershipCheck["membership"];
+  /**
+   * The caller may use Blood Pact surfaces without paying again. True for a
+   * live pact subscription AND for a live consilium membership (which
+   * includes the Pact). Entitlement is billing only: whether they have
+   * actually signed a pact (chosen a preset, drawn the signature) is a Pact
+   * row, read by the pact pages themselves.
+   */
+  pactEntitled: boolean;
   /** Why access is limited, when there is something worth showing. */
   reason: string | null;
 }
@@ -56,6 +68,7 @@ function anon(): Access {
     isBanned: false,
     status: null,
     membership: null,
+    pactEntitled: false,
     reason: null,
   };
 }
@@ -90,6 +103,7 @@ export async function getAccess(userId: string | null): Promise<Access> {
       isBanned: false,
       status: check.status,
       membership: check.membership,
+      pactEntitled: true,
       reason: null,
     };
   }
@@ -98,18 +112,37 @@ export async function getAccess(userId: string | null): Promise<Access> {
   // status. `checkMembership` returns SUSPENDED for a ban AND for a failed
   // payment, and tells them apart only by whether it set a redirectUrl,
   // which is presentation detail and far too fragile to gate access on.
-  const user = await prisma.user.findUnique({
-    where: { id: userId },
-    select: { isBanned: true },
-  });
+  // The pact check rides in the same round trip.
+  const [user, pact] = await Promise.all([
+    prisma.user.findUnique({
+      where: { id: userId },
+      select: { isBanned: true },
+    }),
+    checkPactMembership(userId),
+  ]);
+  const isBanned = user?.isBanned ?? false;
+
+  if (pact.entitled && !isBanned) {
+    return {
+      tier: "member",
+      userId,
+      isMember: true,
+      isBanned: false,
+      status: check.status,
+      membership: check.membership,
+      pactEntitled: true,
+      reason: null,
+    };
+  }
 
   return {
     tier: "free",
     userId,
     isMember: false,
-    isBanned: user?.isBanned ?? false,
+    isBanned,
     status: check.status,
     membership: check.membership,
+    pactEntitled: false,
     reason: check.reason ?? null,
   };
 }

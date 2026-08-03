@@ -170,6 +170,12 @@ model User {
   programEnrollment         ProgramEnrollment?
   programThresholds         ProgramThreshold[]
   journalEntries            JournalEntry[]
+  // The Blood Pact: pactMembership is the billing row (at most one live
+  // subscription); pacts are the covenants themselves, kept forever so
+  // scars survive re-signing.
+  pactMembership            PactMembership?
+  pacts                     Pact[]
+  pactEntries               PactEntry[]
   // The Board: a member's own /100 crowd score per figure, and the
   // re-score petitions they have signed. Both gated behind a free
   // account (the JWT cookie pair), one row per (figure, user).
@@ -879,6 +885,106 @@ model CommunityMembership {
   @@index([paypalSubscriptionId])
 }
 
+// The Blood Pact: the paid commitment product on the new app (/app).
+// Billing lives on PactMembership (one live subscription per user,
+// mirroring CommunityMembership so the Stripe webhook branch stays a
+// near-copy of the Consilium one). The covenant itself lives on Pact so a
+// broken pact's record survives re-signing: scars are permanent, and a new
+// pact is a new row beside the old one, never an overwrite.
+model PactMembership {
+  id                   String           @id @default(cuid())
+  userId               String           @unique
+  status               MembershipStatus @default(PENDING)
+  stripeSubscriptionId String?          @unique
+  billingCycle         String           @default("weekly") // "weekly" | "annual"
+  activatedAt          DateTime?
+  expiresAt            DateTime?
+  cancelledAt          DateTime?
+  suspendedAt          DateTime?
+  suspendReason        String?
+  createdAt            DateTime         @default(now())
+  updatedAt            DateTime         @updatedAt
+  user                 User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([status])
+  @@index([stripeSubscriptionId])
+}
+
+model Pact {
+  id            String      @id @default(cuid())
+  userId        String
+  // The nth pact this user has signed. A broken pact keeps its row and its
+  // scars; re-signing creates number+1. The active pact is the newest row
+  // with brokenAt null.
+  number        Int
+  preset        String // "confidence" | "fear-anxiety" | "relationships"
+  signedAt      DateTime    @default(now())
+  // Stroke points from the signing canvas, kept small. The signature is
+  // ceremony, not identity: never used for anything but drawing it back.
+  signatureData Json?
+  // The member's own three goals, written before signing: the change, the
+  // proof, the cost they stop paying. Array of exactly three strings.
+  // Set once at signing, never edited: the pact is signed against THESE.
+  goals         Json?
+  // Stamped when the subscription ends (cancel, refund, expiry). Seals the
+  // record read-only. Never cleared.
+  brokenAt      DateTime?
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+  user          User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  entries       PactEntry[]
+
+  @@unique([userId, number])
+  @@index([userId, brokenAt])
+}
+
+// Authored challenge library, one row per preset per week of the ramp
+// cycle. Content is written last; rows ship unpublished and nothing is
+// announced until enough weeks are published (the runway rule).
+model PactWeek {
+  id            String   @id @default(cuid())
+  preset        String
+  cycleWeek     Int // 1..cycle length; intensity ramps inside a 4-week cycle
+  title         String
+  challenge     String   @db.Text
+  journalPrompt String   @db.Text
+  intensity     Int      @default(1)
+  isPublished   Boolean  @default(false)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@unique([preset, cycleWeek])
+}
+
+// One row per member-week, created when the week opens. journalBody is
+// private and never leaves; publicBody is the separate optional share box
+// and the ONLY text that can ever appear on the wall.
+model PactEntry {
+  id          String    @id @default(cuid())
+  pactId      String
+  userId      String
+  weekNumber  Int
+  status      String    @default("open") // "open" | "kept" | "scarred"
+  journalBody String?   @db.Text
+  publicBody  String?   @db.Text
+  sharedAt    DateTime?
+  aiReply     String?   @db.Text
+  replyDueAt  DateTime?
+  flagged     Boolean   @default(false)
+  // Derived at creation (pact.signedAt + weekNumber * 7d) and stored so the
+  // resolve cron can query overdue open weeks by index instead of loading
+  // every pact to recompute the drip.
+  weekEndsAt  DateTime
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  pact        Pact      @relation(fields: [pactId], references: [id], onDelete: Cascade)
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([pactId, weekNumber])
+  @@index([userId])
+  @@index([status, weekEndsAt])
+}
+
 model FeedPost {
   id                   String           @id @default(cuid())
   authorId             String?
@@ -1313,28 +1419,28 @@ model CommentReport {
 // for replay analytics, add a separate SimulatorRun table that this one
 // summarizes.
 model SimulatorProgress {
-  id              String    @id @default(cuid())
-  userId          String
-  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  scenarioId      String
-  currentSceneId  String
+  id                String    @id @default(cuid())
+  userId            String
+  user              User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  scenarioId        String
+  currentSceneId    String
   // Full ordered list of choices as a JSON array of
   // { sceneId, choiceId, wasOptimal, timestamp }. Cheaper than a
   // join-table and we never query across users' choice history.
-  choicesMade     Json      @default("[]")
-  xpEarned        Int       @default(0)
-  startedAt       DateTime  @default(now())
-  completedAt     DateTime?
+  choicesMade       Json      @default("[]")
+  xpEarned          Int       @default(0)
+  startedAt         DateTime  @default(now())
+  completedAt       DateTime?
   // "good" | "neutral" | "bad" — null until an ending is reached.
-  outcome         String?
+  outcome           String?
   // Incremented by /api/simulator/complete every time a run reaches
   // an ending, including replays. Used by the `three-time-reader`
   // meta-achievement in `lib/simulator/achievements.ts`. Stays 0 for
   // in-progress rows; ticks to 1 on first completion, 2 on second, etc.
-  completionCount Int       @default(0)
+  completionCount   Int       @default(0)
   // "story" | "gauntlet": the mode of the current (or latest) run, so a
   // mid-run resume restores the hard mode it was started in.
-  mode            String    @default("story")
+  mode              String    @default("story")
   // Stamped once on the first gauntlet completion; the catalog's
   // "cleared on Gauntlet" mark. Never cleared by later story runs.
   gauntletClearedAt DateTime?
@@ -1343,7 +1449,7 @@ model SimulatorProgress {
   // the "X / Y endings found" counter on catalog cards. Each replay adds
   // its endSceneId only if it isn't already in the array — so it's a set,
   // not a log. Empty until first completion.
-  endingsReached  String[]  @default([])
+  endingsReached    String[]  @default([])
 
   @@unique([userId, scenarioId])
   @@index([userId])

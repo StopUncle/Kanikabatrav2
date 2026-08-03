@@ -5,6 +5,16 @@ import { stripe } from "@/lib/stripe";
 import { prisma } from "@/lib/prisma";
 import { sendBookDelivery, sendInnerCircleWelcomeNewUser, sendMembershipRenewed, sendMembershipSuspended, sendMembershipCancelled } from "@/lib/email";
 import { createQuizConsiliumCredit } from "@/lib/stripe-credits";
+import {
+  handlePactCheckoutCompleted,
+  handlePactInvoiceFailed,
+  handlePactInvoicePaid,
+  handlePactRefund,
+  handlePactSubscriptionDeleted,
+  handlePactSubscriptionPaused,
+  handlePactSubscriptionUpdated,
+  isPactProductKey,
+} from "@/lib/pact/billing";
 import jwt from "jsonwebtoken";
 import crypto from "crypto";
 
@@ -788,6 +798,28 @@ export async function POST(request: NextRequest) {
                 err,
               ),
             );
+        } else if (isPactProductKey(productKey)) {
+          // The Blood Pact. Lifecycle lives in lib/pact/billing.ts; the
+          // branch here only unpacks the session. No account creation:
+          // pact checkout starts behind requireAuth inside the app.
+          const subscriptionId = session.subscription as string;
+          if (!subscriptionId) {
+            console.error(
+              "[stripe-webhook] PACT checkout has no subscription id",
+              { sessionId, productKey },
+            );
+            break;
+          }
+          await handlePactCheckoutCompleted({
+            email,
+            name: name || null,
+            sessionId,
+            subscriptionId,
+            productKey,
+            amount,
+            metadataUserId: session.metadata?.userId ?? null,
+            preset: session.metadata?.pact_preset ?? "",
+          });
         } else if (
           productKey === "INNER_CIRCLE" ||
           productKey === "INNER_CIRCLE_ANNUAL"
@@ -1099,14 +1131,11 @@ export async function POST(request: NextRequest) {
         const subscriptionId = invoice.subscription as string;
         if (!subscriptionId) break;
 
-        const membership = await prisma.communityMembership.findFirst({
-          where: { paypalSubscriptionId: `ST-${subscriptionId}` },
-        });
-        if (!membership) break;
-
         // Prefer the line-item period (which reflects the actual billing
         // interval) over the invoice-level period. Fall back to subscription
-        // lookup, then finally +1 month if all else fails.
+        // lookup, then finally +1 month if all else fails. Computed before
+        // the membership lookup because the Pact fallthrough below needs the
+        // same date.
         let newExpiresAt: Date | null = null;
         const lineEnd = invoice.lines?.data?.[0]?.period?.end;
         if (lineEnd) {
@@ -1129,6 +1158,15 @@ export async function POST(request: NextRequest) {
         if (!newExpiresAt) {
           newExpiresAt = new Date();
           newExpiresAt.setMonth(newExpiresAt.getMonth() + 1);
+        }
+
+        const membership = await prisma.communityMembership.findFirst({
+          where: { paypalSubscriptionId: `ST-${subscriptionId}` },
+        });
+        if (!membership) {
+          // Not a consilium subscription; maybe a Blood Pact one.
+          await handlePactInvoicePaid(subscriptionId, newExpiresAt);
+          break;
         }
 
         // Idempotency: if the existing expiresAt is already at or past the
@@ -1201,6 +1239,11 @@ export async function POST(request: NextRequest) {
         const membership = await prisma.communityMembership.findFirst({
           where: { paypalSubscriptionId: `ST-${subscription.id}` },
         });
+        if (!membership) {
+          // Not consilium; a Blood Pact deletion breaks the pact (the scar).
+          await handlePactSubscriptionDeleted(subscription.id);
+          break;
+        }
         if (membership) {
           await prisma.communityMembership.update({
             where: { id: membership.id },
@@ -1269,6 +1312,10 @@ export async function POST(request: NextRequest) {
         const membership = await prisma.communityMembership.findFirst({
           where: { paypalSubscriptionId: `ST-${subscription.id}` },
         });
+        if (!membership) {
+          await handlePactSubscriptionPaused(subscription.id);
+          break;
+        }
         if (membership) {
           await prisma.communityMembership.update({
             where: { id: membership.id },
@@ -1304,7 +1351,7 @@ export async function POST(request: NextRequest) {
         const membership = await prisma.communityMembership.findFirst({
           where: { paypalSubscriptionId: `ST-${subscription.id}` },
         });
-        if (membership) {
+        {
           const willCancel = !!subscription.cancel_at_period_end;
           const subAny = subscription as unknown as {
             current_period_end?: number;
@@ -1315,6 +1362,14 @@ export async function POST(request: NextRequest) {
             subAny.items?.data?.[0]?.current_period_end;
           const periodEndMs =
             typeof periodEndSec === "number" ? periodEndSec * 1000 : null;
+          if (!membership) {
+            await handlePactSubscriptionUpdated(
+              subscription.id,
+              willCancel,
+              periodEndMs,
+            );
+            break;
+          }
           // Only advance expiry. `.updated` fires for many mutations and can
           // arrive out of order; without this guard a stale event could
           // shorten a member's paid-through date (the renewal handler has the
@@ -1418,6 +1473,24 @@ export async function POST(request: NextRequest) {
         // Find the membership via the userId on the purchase, or via
         // email lookup if userId is null (e.g. auto-created accounts).
         const meta = purchase.metadata as Record<string, string> | null;
+
+        // A refunded pact ends the same way a deleted subscription does:
+        // membership cancelled, scar stamped.
+        if (meta?.productKey && isPactProductKey(meta.productKey)) {
+          const pactUser = purchase.userId
+            ? await prisma.user.findUnique({ where: { id: purchase.userId } })
+            : await prisma.user.findUnique({
+                where: { email: purchase.customerEmail },
+              });
+          if (pactUser) {
+            await handlePactRefund(pactUser.id);
+            console.log(
+              `[stripe-webhook] cancelled pact for refunded ${meta.productKey} user ${pactUser.email}`,
+            );
+          }
+          break;
+        }
+
         const grantsConsilium =
           meta?.productKey === "INNER_CIRCLE" ||
           meta?.productKey === "INNER_CIRCLE_ANNUAL" ||
@@ -1463,6 +1536,10 @@ export async function POST(request: NextRequest) {
         const membership = await prisma.communityMembership.findFirst({
           where: { paypalSubscriptionId: `ST-${subscriptionId}` },
         });
+        if (!membership) {
+          await handlePactInvoiceFailed(subscriptionId);
+          break;
+        }
         if (membership && membership.status === "ACTIVE") {
           await prisma.communityMembership.update({
             where: { id: membership.id },

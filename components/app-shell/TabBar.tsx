@@ -51,6 +51,12 @@ const ICONS: Record<string, React.ReactNode> = {
       <circle cx="19" cy="8" r="1.6" />
     </svg>
   ),
+  // A drop, mid-fall. The pact is signed in it.
+  "/app/pact": (
+    <svg viewBox="0 0 24 24">
+      <path d="M12 3.5c3.2 4.1 6 7.3 6 10.5a6 6 0 01-12 0c0-3.2 2.8-6.4 6-10.5z" />
+    </svg>
+  ),
 };
 
 export default function TabBar({ isMember }: { isMember: boolean }) {

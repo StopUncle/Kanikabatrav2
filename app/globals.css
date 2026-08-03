@@ -539,6 +539,11 @@ body[data-simulator-active="true"] main {
   --game-lab: #8aa0c8;
   --game-adventures: #c98f6a;
   --game-receipts: #9d8ec0;
+  /* The Blood Pact's accent pair. Blood is the signature and the scar;
+     the dried variant is for records of it. Used ONLY on pact surfaces,
+     so the intensity stays theirs. */
+  --pact-blood: #8c1f2f;
+  --pact-blood-dried: #56141f;
 }
 /* The public marketing footer has no place inside the app shell. */
 body:has([data-app-shell]) footer {

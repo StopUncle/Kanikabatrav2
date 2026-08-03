@@ -15,6 +15,8 @@ import {
 import { utcDateKey } from "@/lib/tells/streak";
 import { getDay0Checklist } from "@/lib/day0/checklist";
 import { readProgram } from "@/lib/program/read";
+import { readPact } from "@/lib/pact/read";
+import { presetLabel } from "@/lib/pact/presets";
 import RankChip from "@/components/app-shell/RankChip";
 import Move from "@/components/app-shell/Move";
 import DailySetCard from "@/components/app-shell/play/DailySetCard";
@@ -80,6 +82,7 @@ export default async function HomePage() {
     todaysTell,
     day0,
     program,
+    pact,
   ] = await Promise.all([
     getPathState(prisma, userId, {
       gender: viewer?.gender ?? null,
@@ -111,6 +114,7 @@ export default async function HomePage() {
     getTodaysTellRow(),
     getDay0Checklist(prisma, userId, { isMember: access.isMember }),
     readProgram(prisma, userId),
+    readPact(userId),
   ]);
 
   const tellDoneToday = tellStreak?.lastTellDate === utcDateKey();
@@ -156,6 +160,75 @@ export default async function HomePage() {
           {dailyStreak.current}
         </div>
       </div>
+
+      {/* The hero. The Pact is the app's one paid product and its heartbeat,
+          so its card outranks everything else in the action zone. Three
+          states, one slot: the live week for a signed member, the scarred
+          re-sign door for a broken one, the sell for everyone else. */}
+      {pact.pact ? (
+        <Link
+          href="/app/pact/week"
+          className="mx-5 mb-4 block rounded-[22px] border border-[var(--pact-blood)]/50 px-[18px] py-5"
+          style={{
+            background:
+              "radial-gradient(120% 140% at 80% 0%, rgba(140,31,47,0.22), transparent 55%), linear-gradient(160deg, #1a1012, #0d0b09 70%)",
+          }}
+        >
+          <div className="flex items-baseline justify-between gap-3">
+            <p className="text-app-tiny uppercase tracking-app-label text-[var(--pact-blood)]">
+              The Pact · Week {pact.weekNumber} ·{" "}
+              {presetLabel(pact.pact.preset)}
+            </p>
+            <p className="shrink-0 text-[12.5px] tracking-app-wide text-[var(--app-gold)]">
+              OPEN →
+            </p>
+          </div>
+          <p
+            className="mt-1.5 text-app-title leading-tight"
+            style={{ fontFamily: "var(--font-display)" }}
+          >
+            {pact.entry?.status === "kept"
+              ? "Kept. It is on the record."
+              : (pact.challenge?.title ?? "This week is open.")}
+          </p>
+          <p className="mt-1.5 text-app-caption leading-relaxed text-[var(--app-muted)]">
+            {pact.entry?.status === "kept"
+              ? "Write the week down while it is still warm."
+              : "One challenge. One honest entry. The record is watching."}
+          </p>
+        </Link>
+      ) : (
+        <Link
+          href="/app/pact"
+          className="mx-5 mb-4 block rounded-[22px] border border-[var(--pact-blood)]/50 px-[18px] py-5"
+          style={{
+            background:
+              "radial-gradient(120% 140% at 80% 0%, rgba(140,31,47,0.22), transparent 55%), linear-gradient(160deg, #1a1012, #0d0b09 70%)",
+          }}
+        >
+          <div className="flex items-baseline justify-between gap-3">
+            <p className="text-app-tiny uppercase tracking-app-label text-[var(--pact-blood)]">
+              The Blood Pact
+            </p>
+            <p className="shrink-0 text-[12.5px] tracking-app-wide text-[var(--app-gold)]">
+              {pact.pastPacts.length > 0 ? "SIGN AGAIN →" : "SEE IT →"}
+            </p>
+          </div>
+          <p
+            className="mt-1.5 text-app-title leading-tight"
+            style={{ fontFamily: "var(--font-display)" }}
+          >
+            {pact.pastPacts.length > 0
+              ? "The record remembers. Sign anyway."
+              : "All the benefits of psychopathy, and none of the liabilities."}
+          </p>
+          <p className="mt-1.5 text-app-caption leading-relaxed text-[var(--app-muted)]">
+            {pact.pastPacts.length > 0
+              ? "One challenge a week, signed in your own hand, on a record that never forgets."
+              : "Learn what she was born knowing. One challenge a week, signed in your own hand."}
+          </p>
+        </Link>
+      )}
 
       {/* First week: shown until the window closes or all three are done */}
       {day0 && <ChecklistCard checklist={day0} />}

@@ -134,3 +134,8 @@ docs/private/
 # Dev harness output (scripts/first-sixty.ts)
 .first-sixty/
 .voice-audit/
+
+# Local experiments, not part of this app
+/dark-mirror-app/
+/design-lab/
+/marketing/

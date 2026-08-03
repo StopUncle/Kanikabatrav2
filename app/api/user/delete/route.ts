@@ -1,3 +1,4 @@
+import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 import { resolveActiveUserIdFromRequest } from "@/lib/auth/resolve-user";
 import { prisma } from "@/lib/prisma";
@@ -56,10 +57,27 @@ export async function DELETE(request: NextRequest) {
       }
     }
 
+    // Same for a Blood Pact subscription. A user can hold both.
+    const pact = await prisma.pactMembership.findUnique({
+      where: { userId: userId },
+      select: { stripeSubscriptionId: true, status: true },
+    });
+    if (pact?.stripeSubscriptionId && pact.status === "ACTIVE") {
+      try {
+        await stripe.subscriptions.cancel(pact.stripeSubscriptionId);
+      } catch (err) {
+        console.error(
+          "[user/delete] failed to cancel Pact subscription:",
+          err,
+        );
+      }
+    }
+
     await prisma.user.delete({
       where: { id: userId },
     });
 
+    const cookieStore = await cookies();
     cookieStore.delete("accessToken");
     cookieStore.delete("refreshToken");
 

@@ -347,6 +347,69 @@ post). ~20 new posts + 2 new pillars. Remaining (not built): Tier 3 #11 product 
 wins (blocked on assets: workbook PDF, Honeytrap manuscript+price, ASK voice-pack
 pricing), Tier 4 #13 certification tier + #15 off-site (Sam/PR).
 
+## 🩸 The Blood Pact (BUILT 2026-08-03, NOT DEPLOYED)
+
+The app's hero product: a paid weekly-challenge commitment. Sam approved the
+full plan (`~/.claude/plans/parsed-sniffing-plum.md`); phases 1-4 are built,
+locally verified, and committed on master (2026-08-03), NOT deployed.
+
+**Positioning (Sam's call 2026-08-03):** tagline "All the benefits of
+psychopathy, and none of the liabilities.", subtitle "Learn what she was
+born knowing." Live on the Pact door + hub hero, fresh-signer state only.
+The 36-week content spine is `docs/TRANSFORMATION-36-WEEK.md` (gitignored,
+local): three acts of twelve, one reading + one challenge per week, Act
+boundaries at weeks 12/24/36, Act III is the old Part II doubled.
+
+**Product:** $4.99/week or $149/year (no monthly). Member picks a preset
+(confidence / fear-anxiety / relationships), TICKS the four oath lines
+(checkboxes, all required), WRITES three goals (structured slots: the
+change / the proof / the cost, per-preset suggestions as placeholders,
+stored set-once on `Pact.goals`, rendered on the record and the break
+screen), DRAWS a signature (canvas, strokes stored on
+`Pact.signatureData`), pays, gets one challenge a week with a private
+journal (+ a SEPARATE optional public box, wall ships later). Missed week
+= permanent scar. Cancel = pact broken, record sealed read-only, re-sign
+creates pact number+1 beside the scars.
+**Active Consilium members are pact-entitled for free** (decided
+2026-08-02); they sign via `/api/pact/sign` with no checkout.
+
+**Architecture:** `PactMembership` (billing, mirrors CommunityMembership),
+`Pact` (covenant, survives re-signing), `PactWeek` (authored challenges per
+preset per 4-week cycle slot, ALL content still unwritten, ships
+unpublished), `PactEntry` (member-week: status open/kept/scarred, journal).
+Drip is derived (`lib/pact/read.ts`, same pattern as `lib/program/read.ts`),
+lazily materialised: read scars overdue weeks + opens the current entry, the
+daily cron (`/api/cron/pact-week`, 08:20 UTC) does the same for members who
+did not look and sends the `pactWeek` push. Crisis classifier
+(`lib/program/ai/safety.ts`) runs on every journal write, fails closed.
+Webhook lifecycle lives in `lib/pact/billing.ts` (thin fallthrough call
+sites in the Stripe webhook when no CommunityMembership matches the sub).
+
+**The app is OPEN again** (Sam's explicit call, supersedes the 2026-08-02
+seal): any signed-in account enters `/app`, banned users are refused at the
+layout. Cohort routing via `/start` (manifest start_url + shortcuts point
+there): active Consilium → `/consilium/feed`, everyone else → `/app`.
+Login/register land non-consilium users on `/app`. `/consilium` itself
+untouched. `getAccess` tier "member" now = consilium OR live pact
+(`Access.pactEntitled`). UpgradeSheet no longer checkouts inline; it routes
+to `/app/pact` (the ceremony IS the checkout).
+
+**Before this deploys, in order:**
+1. `DATABASE_URL=<prod> npx prisma migrate deploy` (migrations
+   `20260803000000_add_blood_pact` + `20260803010000_add_pact_goals`)
+   BEFORE the code.
+2. Sam runs `STRIPE_SECRET_KEY=sk_live_... npx tsx
+   scripts/create-pact-product.ts` (live Stripe write) and pastes the two
+   price ids into `STRIPE_PRICES.PACT_WEEKLY/PACT_ANNUAL`. Until then the
+   create route returns 503 "The Pact is not open yet".
+3. Challenge content: seed `PactWeek` rows (LAST, per Sam; nothing
+   announces while unpublished, the week page has a graceful fallback).
+
+**Not built yet:** Phase 5 wall (`publicBody` + `sharedAt` already stored),
+Phase 6 AI replies (reuse the program reply engine), admin runway view,
+`/api/user/delete` was FIXED (C10 cookieStore bug) + extended to cancel
+pact subs.
+
 ## 🎨 Design System
 
 - **Logo:** `KBSpinLogo` (sm/md/lg/xl, optional spin animation).

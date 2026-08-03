@@ -86,6 +86,10 @@ on:
     # intro comments that are 2-3 days old with no reply from her yet.
     # The reply guarantee ("I read every single one") depends on it.
     - cron: '30 11 * * *'
+    # Blood Pact week turnover, daily at 08:20 UTC, beside program-unlock
+    # in the pre-insight window. Scars overdue open weeks, opens the new
+    # week for members whose derived week number advanced, one push each.
+    - cron: '20 8 * * *'
   workflow_dispatch:
     # Allow manual triggering from the GitHub Actions UI. Useful for
     # testing or firing a cron out-of-band without waiting for the next
@@ -118,6 +122,7 @@ on:
           - intro-reply-nudge
           - program-unlock
           - program-replies
+          - pact-week
 
 env:
   BASE_URL: https://kanikarose.com
@@ -449,3 +454,19 @@ jobs:
       - name: Hit /api/cron/program-unlock
         run: |
           curl -fsS -X POST "$BASE_URL/api/cron/program-unlock"             -H "x-cron-secret: ${{ secrets.CRON_SECRET }}"             -H "Content-Type: application/json"             --max-time 120
+
+  pact-week:
+    # Daily 08:20 UTC. Both passes are idempotent (scar guarded on status,
+    # advance deduped on the entry row), so a manual re-run is safe.
+    if: >-
+      github.event.schedule == '20 8 * * *' ||
+      (github.event_name == 'workflow_dispatch' &&
+       (github.event.inputs.target == 'all' || github.event.inputs.target == 'pact-week'))
+    runs-on: ubuntu-latest
+    steps:
+      - name: Hit /api/cron/pact-week
+        run: |
+          curl -fsS -X POST "$BASE_URL/api/cron/pact-week" \
+            -H "x-cron-secret: ${{ secrets.CRON_SECRET }}" \
+            -H "Content-Type: application/json" \
+            --max-time 120

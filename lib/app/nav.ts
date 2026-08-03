@@ -113,6 +113,63 @@ export const APP_SURFACES: AppSurface[] = [
     maturity: "app-native",
   },
 
+  {
+    href: "/app/pact",
+    label: "Pact",
+    placement: "tab",
+    note: "The hero. The fifth slot was held empty until something earned it; the Blood Pact is the app's one paid product, so its door lives on the bar for everyone. Not memberOnly on purpose: the door page IS the sell, and the week/record surfaces behind it gate themselves.",
+    maturity: "app-native",
+    also: ["/app/pact/week", "/app/pact/record", "/app/pact/journal"],
+  },
+  {
+    href: "/app/pact/week",
+    memberOnly: true,
+    label: "This week",
+    placement: "nested",
+    parent: "/app/pact",
+    note: "The live week: challenge, keep, journal. The door redirects an active pact here, so for a signed member the tab lands on this.",
+    maturity: "app-native",
+  },
+  {
+    href: "/app/pact/record",
+    memberOnly: true,
+    label: "The record",
+    placement: "nested",
+    parent: "/app/pact",
+    note: "Kept weeks and scars, plus past pacts. Also the evidence screen the break flow shows before it lets you break.",
+    maturity: "app-native",
+  },
+  {
+    href: "/app/pact/journal",
+    memberOnly: true,
+    label: "Pact journal",
+    placement: "nested",
+    parent: "/app/pact",
+    note: "Past private entries and replies. Private by definition; the wall only ever sees the separate share box.",
+    maturity: "app-native",
+  },
+  {
+    href: "/app/pact/sign",
+    label: "The signing",
+    placement: "unlisted",
+    note: "The ceremony: oath, signature, payment. Reached from the door only; full screen, no tab bar.",
+    maturity: "app-native",
+  },
+  {
+    href: "/app/pact/sealed",
+    label: "Sealed",
+    placement: "unlisted",
+    note: "Checkout return + the seal ceremony. Reached from Stripe's success redirect or the free-entitlement sign call, never from navigation.",
+    maturity: "app-native",
+  },
+  {
+    href: "/app/pact/break",
+    label: "Breaking the pact",
+    placement: "unlisted",
+    note: "The cancel interstitial. Reached from the record only, on purpose: breaking starts by looking at what breaks.",
+    maturity: "app-native",
+  },
+
   /* ------------------------------------------------------ the Home rails */
   {
     href: "/app/program",
@@ -480,7 +537,12 @@ export const MORE_ACTIVE_PREFIXES = APP_SURFACES.filter(
 ).map((s) => s.href);
 
 /** Screens that own the whole display and hide the tab bar. */
-export const FULL_SCREEN_ROUTES = ["/app/welcome", "/app/play/drill"];
+export const FULL_SCREEN_ROUTES = [
+  "/app/welcome",
+  "/app/play/drill",
+  "/app/pact/sign",
+  "/app/pact/sealed",
+];
 
 export function isTabActive(surface: AppSurface, pathname: string): boolean {
   if (surface.href === "/app") {

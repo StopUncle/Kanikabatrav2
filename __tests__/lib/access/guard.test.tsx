@@ -26,6 +26,7 @@ function access(over: Partial<Awaited<ReturnType<typeof getAccess>>> = {}) {
     isBanned: false,
     status: null,
     membership: null,
+    pactEntitled: false,
     reason: null,
     ...over,
   };

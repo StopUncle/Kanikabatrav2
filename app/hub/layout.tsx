@@ -15,14 +15,16 @@ import NotificationPrompt from "@/components/pwa/NotificationPrompt";
  * column (full-bleed on mobile, framed on desktop), its own type system,
  * bottom tab bar. No marketing chrome, no sidebar.
  *
- * SEALED. The app is not open yet, and admins are the only accounts that
- * can reach it. It went live by accident: surfaces were ported here and
- * /consilium was left pointing at them, so members walked into a shell
- * nobody had opened. The member product is /consilium until that call is
- * made deliberately. Opening the app means removing this gate and, with
- * it, re-pointing the doors listed in the cutover notes: the manifest's
- * start_url, the cron push destinations, and the /consilium entry
- * redirects. Deleting this block alone gets members a half-wired app.
+ * OPEN (2026-08-02, Sam's explicit call, ending the 2026-08-02 seal): any
+ * signed-in account may enter. Free accounts get the free tier; the Blood
+ * Pact is the app's paid tier; active Consilium members count as Pact
+ * members (lib/access/tier.ts) but their product remains /consilium, which
+ * this opening does not touch. Cohort routing lives at /start: active
+ * Consilium lands on /consilium/feed, everyone else lands here. The
+ * previous accidental opening happened because surfaces were ported while
+ * /consilium still pointed at them; this one re-points the doors on
+ * purpose (manifest start_url, entry redirects) and leaves the consilium
+ * crons aimed at /consilium where their audience lives.
  */
 
 const fraunces = Fraunces({
@@ -58,24 +60,20 @@ export default async function AppShellLayout({
   const userId = await requireServerAuth("/app");
   const access = await getAccess(userId);
 
-  const [me, baselineAttempts, completedRuns] = await Promise.all([
-    prisma.user.findUnique({
-      where: { id: userId },
-      select: { initiationAt: true, role: true },
-    }),
+  const [baselineAttempts, completedRuns] = await Promise.all([
     prisma.baselineAttempt.count({ where: { userId } }),
     prisma.simulatorProgress.count({
       where: { userId, completedAt: { not: null } },
     }),
   ]);
 
-  // The seal. Anyone who is not an admin belongs on /consilium, and lands
-  // there rather than on an error, because as far as a member is concerned
-  // this shell does not exist yet. Checked after the queries above so the
-  // gate reads next to the role it depends on, and in the layout so it
-  // covers every surface underneath without each page repeating it.
-  if (me?.role !== "ADMIN") {
-    redirect("/consilium/feed");
+  // The one refusal the shell makes itself. getAccess reports a banned
+  // account as tier "free" so it can be told apart from "logged out"; the
+  // enforcement is here, per the contract in lib/access/tier.ts. Sent to
+  // the public site, not /login: they hold a valid session, and a login
+  // redirect would just loop them back.
+  if (access.isBanned) {
+    redirect("/");
   }
 
   return (
