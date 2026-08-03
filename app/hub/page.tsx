@@ -197,7 +197,7 @@ export default async function HomePage() {
           <p className="mt-1.5 text-app-caption leading-relaxed text-[var(--app-muted)]">
             {pact.entry?.status === "kept"
               ? "Write the week down while it is still warm."
-              : "One challenge. One honest entry. The record is watching."}
+              : "For those who want to control their lives rather than life controlling them."}
           </p>
         </Link>
       ) : PACT_LAUNCHED ? (
