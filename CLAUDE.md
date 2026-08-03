@@ -90,13 +90,17 @@ Everything in the pricing sections below still describes production. This block
 describes what is agreed and coming, so no session ships against the old model
 by accident. **Nothing here deploys without Sam's explicit go.**
 
-- **$29/mo is being removed.** One paid membership at **$9/mo** plus a **free
-  tier**. Existing subscribers all move DOWN to $9 with an email; nobody is
-  grandfathered at $29.
+- **$29/mo is being removed.** One paid membership at **$19.99/mo** plus a
+  **free tier**. (Was $9/mo; Sam repriced the reset to $19.99 on 2026-08-03.
+  The M5 live Stripe prices created at $9/$90 are now obsolete: a NEW pair
+  is needed at $19.99/annual before launch.) Existing subscribers all move
+  DOWN to $19.99 with an email; nobody is grandfathered at $29.
 - **Gift memberships land on the free tier when they expire**, not on the paid
   entry price.
-- **Quiz buyers get their first month at $4.99**, replacing the $9.99 promo
-  credit (which against a $9 tier would be a free month).
+- **Quiz buyers' first month: decision needed at $19.99.** The old $9.99
+  credit now works again ($10 first month); keeping the $4.99 first month
+  instead needs a new $15.00-off coupon (the $4.01 `quiz-first-month-499`
+  coupon is sized for the $9 tier and immutable).
 - **One paid tier only.** Above it everything is one-time: the 12 Week
   Transformation ($149, or $199 with the book), Ask packs, coaching.
 - **Book sales are the primary revenue goal.** The program assigns the book as
@@ -347,11 +351,19 @@ post). ~20 new posts + 2 new pillars. Remaining (not built): Tier 3 #11 product 
 wins (blocked on assets: workbook PDF, Honeytrap manuscript+price, ASK voice-pack
 pricing), Tier 4 #13 certification tier + #15 off-site (Sam/PR).
 
-## 🩸 The Blood Pact (BUILT 2026-08-03, NOT DEPLOYED)
+## 🩸 The Blood Pact (DEPLOYED DARK 2026-08-03)
 
 The app's hero product: a paid weekly-challenge commitment. Sam approved the
-full plan (`~/.claude/plans/parsed-sniffing-plum.md`); phases 1-4 are built,
-locally verified, and committed on master (2026-08-03), NOT deployed.
+full plan (`~/.claude/plans/parsed-sniffing-plum.md`); phases 1-4 built,
+verified, and DEPLOYED to prod 2026-08-03 (commits `6a525cb`..`194930b`,
+both migrations applied to prod first). **Gate direction (Sam's call,
+supersedes the first dark deploy): the Pact is fully VISIBLE inside the
+app (`PACT_LAUNCHED = true`: tab, hub hero, UpgradeSheet). The APP is
+what has no entry point: manifest start_url, login and register all land
+on the old Consilium/dashboard, and /app is reached by typing the URL
+only, until Sam declares the app complete.** Motion/status polish is in
+(`docs/PACT-MOTION-PLAN.md`, all five phases; shared WebGL hook now at
+`lib/motion/gl.ts`).
 
 **Positioning (Sam's call 2026-08-03):** tagline "All the benefits of
 psychopathy, and none of the liabilities.", subtitle "Learn what she was

@@ -197,7 +197,7 @@ export default function WeekClient({
           </svg>
           <span>
             <span className="block text-app-eyebrow uppercase tracking-app-label text-[var(--app-dim)]">
-              Required reading
+              This week&apos;s reading
             </span>
             <span className="mt-0.5 block text-[13.5px] text-[var(--app-text)]">
               {challenge.readingLabel}

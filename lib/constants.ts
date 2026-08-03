@@ -86,9 +86,13 @@ export const MEMBERSHIP = {
    *
    * The reset itself is not undone, only its numbers. Everything that made
    * repricing safe stays: this constant, the coaching deduplication, and the
-   * legacy Stripe ids kept alongside the new ones. Launching $9 is now an
-   * edit to this block and the two price ids in lib/stripe.ts, not another
-   * hunt through 55 strings.
+   * legacy Stripe ids kept alongside the new ones. Launching the reset is
+   * now an edit to this block and the two price ids in lib/stripe.ts, not
+   * another hunt through 55 strings.
+   *
+   * Reset target REPRICED 2026-08-03 (Sam): the reset lands at $19.99/mo,
+   * not $9. The live Stripe prices created for $9/$90 are obsolete; a new
+   * monthly/annual pair is needed at the new price before the reset ships.
    */
   price: 29,
   priceDisplay: "$29",
@@ -110,9 +114,9 @@ export const MEMBERSHIP = {
    * them. The credit is the difference between this and the standard price,
    * derived in lib/stripe-credits rather than typed twice.
    *
-   * When the $9 reset ships this becomes a flat $4.99 first month instead,
-   * because $9.99 off a $9 membership is a free month and gives away the
-   * entry rung rather than discounting it.
+   * Open decision for the $19.99 reset (see LEDGER 2026-08-03): the $9.99
+   * credit works again at that tier ($10 first month), or a new $15.00-off
+   * coupon keeps the $4.99 first month. Sam picks when the reset ships.
    */
   quizFirstMonthPrice: 19.01,
   quizFirstMonthDisplay: "$19.01",
