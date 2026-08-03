@@ -218,23 +218,48 @@ export default async function HomePage() {
             <p className="text-app-tiny uppercase tracking-app-label text-[var(--pact-blood)]">
               The Blood Pact
             </p>
-            <p className="shrink-0 text-[12.5px] tracking-app-wide text-[var(--app-gold)]">
-              {pact.pastPacts.length > 0 ? "SIGN AGAIN →" : "SEE IT →"}
-            </p>
+            {pact.pastPacts.length > 0 && (
+              <p className="shrink-0 text-[12.5px] tracking-app-wide text-[var(--app-gold)]">
+                SIGN AGAIN →
+              </p>
+            )}
           </div>
-          <p
-            className="mt-1.5 text-app-title leading-tight"
-            style={{ fontFamily: "var(--font-display)" }}
-          >
-            {pact.pastPacts.length > 0
-              ? "The record remembers. Sign anyway."
-              : "All the benefits of psychopathy, and none of the liabilities."}
-          </p>
-          <p className="mt-1.5 text-app-caption leading-relaxed text-[var(--app-muted)]">
-            {pact.pastPacts.length > 0
-              ? "One challenge a week, signed in your own hand, on a record that never forgets."
-              : "For those committed to ruthless transformation. One challenge a week, signed in your own hand."}
-          </p>
+          {pact.pastPacts.length > 0 ? (
+            <>
+              <p
+                className="mt-1.5 text-app-title leading-tight"
+                style={{ fontFamily: "var(--font-display)" }}
+              >
+                The record remembers. Sign anyway.
+              </p>
+              <p className="mt-1.5 text-app-caption leading-relaxed text-[var(--app-muted)]">
+                One challenge a week, signed in your own hand, on a record
+                that never forgets.
+              </p>
+            </>
+          ) : (
+            <>
+              {/* The tagline stays on the door; the card only whispers who
+                  this is for and hands over the button. */}
+              <p
+                className="mt-2 text-app-lead leading-snug"
+                style={{ fontFamily: "var(--font-display)" }}
+              >
+                For those committed to ruthless transformation.
+              </p>
+              <span className="relative mt-4 block w-full overflow-hidden rounded-full bg-[var(--pact-blood)] px-5 py-3.5 text-center text-[13px] uppercase tracking-[0.16em] text-[var(--app-text)]">
+                <span
+                  aria-hidden
+                  className="pact-shimmer pointer-events-none absolute inset-0"
+                  style={{
+                    background:
+                      "linear-gradient(105deg, transparent 42%, rgba(255, 235, 220, 0.16) 50%, transparent 58%)",
+                  }}
+                />
+                Make the blood pact
+              </span>
+            </>
+          )}
         </Link>
       ) : null}
 
