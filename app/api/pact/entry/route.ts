@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { requireAuth } from "@/lib/auth/middleware";
 import { prisma } from "@/lib/prisma";
 import { readPact } from "@/lib/pact/read";
+import { ensurePactWeekThread } from "@/lib/pact/thread";
 import { classifyEntry, CRISIS_CARD } from "@/lib/program/ai/safety";
 
 const MAX_JOURNAL_CHARS = 8000;
@@ -82,13 +83,70 @@ export async function POST(request: NextRequest) {
       },
     });
 
+    // The shared note goes through to the feed: one comment on the week's
+    // thread, tracked by id so an edit updates in place and a retraction
+    // (or a flag) removes it. The comment lands APPROVED because it has
+    // already passed the classifier and was shared on purpose; admin
+    // comment moderation can still take it down, which SetNulls the link.
+    const wantShared = share && !!publicBody && !flagged;
+    const existingCommentId = read.entry.feedCommentId;
+    let feedPostId: string | null = null;
+
+    if (wantShared) {
+      feedPostId = await ensurePactWeekThread(prisma, read.entry.weekNumber);
+      if (feedPostId) {
+        const updated = existingCommentId
+          ? await prisma.feedComment.updateMany({
+              where: { id: existingCommentId },
+              data: { content: publicBody },
+            })
+          : { count: 0 };
+        if (updated.count === 0) {
+          const [comment] = await prisma.$transaction([
+            prisma.feedComment.create({
+              data: {
+                postId: feedPostId,
+                authorId: user.id,
+                content: publicBody,
+                status: "APPROVED",
+              },
+              select: { id: true },
+            }),
+            prisma.feedPost.update({
+              where: { id: feedPostId },
+              data: { commentCount: { increment: 1 } },
+            }),
+          ]);
+          await prisma.pactEntry.update({
+            where: { id: read.entry.id },
+            data: { feedCommentId: comment.id },
+          });
+        }
+      }
+    } else if (existingCommentId) {
+      const comment = await prisma.feedComment.findUnique({
+        where: { id: existingCommentId },
+        select: { id: true, postId: true },
+      });
+      if (comment) {
+        await prisma.$transaction([
+          prisma.feedComment.delete({ where: { id: comment.id } }),
+          prisma.feedPost.update({
+            where: { id: comment.postId },
+            data: { commentCount: { decrement: 1 } },
+          }),
+        ]);
+      }
+    }
+
     if (flagged) {
       return NextResponse.json({ success: true, flagged: true, card: CRISIS_CARD });
     }
     return NextResponse.json({
       success: true,
       flagged: false,
-      shared: share && !!publicBody,
+      shared: wantShared,
+      feedPostId: wantShared ? feedPostId : null,
     });
   });
 }

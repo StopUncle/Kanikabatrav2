@@ -24,6 +24,8 @@ export interface WeekEntryView {
   shared: boolean;
   flagged: boolean;
   aiReply: string | null;
+  /** The feed thread the shared note landed on, when it has. */
+  feedPostId: string | null;
 }
 
 export default function WeekClient({
@@ -52,13 +54,17 @@ export default function WeekClient({
   const [journal, setJournal] = useState(entry.journalBody ?? "");
   const [publicNote, setPublicNote] = useState(entry.publicBody ?? "");
   const [share, setShare] = useState(entry.shared);
+  const [feedPostId, setFeedPostId] = useState(entry.feedPostId);
   const [saved, setSaved] = useState(!!entry.journalBody);
+  // A written week rests in its saved view; the composer is something you
+  // step back into on purpose, not the default state of the page.
+  const [editing, setEditing] = useState(!entry.journalBody);
   const [crisisCard, setCrisisCard] = useState<string | null>(null);
   const [busy, setBusy] = useState<"keep" | "save" | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [now, setNow] = useState(() => Date.now());
   const [justKept, setJustKept] = useState(false);
-  const [savedFlash, setSavedFlash] = useState(false);
+  const [justSaved, setJustSaved] = useState(false);
 
   useEffect(() => {
     const id = window.setInterval(() => setNow(Date.now()), 60_000);
@@ -118,16 +124,20 @@ export default function WeekClient({
         error?: string;
         flagged?: boolean;
         card?: string;
+        feedPostId?: string | null;
       };
       if (!res.ok) {
         setError(data.error || "That did not save. Try again.");
       } else if (data.flagged && data.card) {
         setCrisisCard(data.card);
         setSaved(true);
+        setEditing(false);
       } else {
         setSaved(true);
-        setSavedFlash(true);
-        window.setTimeout(() => setSavedFlash(false), 2100);
+        setEditing(false);
+        setJustSaved(true);
+        setFeedPostId(data.feedPostId ?? null);
+        window.setTimeout(() => setJustSaved(false), 2600);
         haptic("tick");
       }
     } catch {
@@ -294,71 +304,126 @@ export default function WeekClient({
           {challenge.journalPrompt}
         </p>
       )}
-      <textarea
-        value={journal}
-        onChange={(e) => setJournal(e.target.value)}
-        rows={6}
-        maxLength={8000}
-        placeholder="Nobody reads this. That is what makes it worth writing."
-        className="mt-2 w-full resize-none rounded-2xl border border-[var(--app-line)] bg-[var(--app-card)] px-4 py-3.5 text-[14px] leading-relaxed text-[var(--app-text)] outline-none placeholder:text-[var(--app-dim)] focus:border-[var(--app-gold-soft)]"
-      />
 
-      {crisisCard ? (
+      {!editing && saved ? (
+        /* The saved view. The entry rests here between edits so the page
+           reads as a record, not a form waiting to be filled again. */
+        <div className="mt-3 rounded-2xl border border-[var(--app-line)] bg-[var(--app-card)] px-4 py-4">
+          <div className="flex items-center gap-3">
+            <span
+              className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-[var(--app-gold-soft)] ${
+                justSaved ? "pact-mark-in" : ""
+              }`}
+            >
+              <svg
+                viewBox="0 0 24 24"
+                className="h-[18px] w-[18px] fill-none stroke-[var(--app-gold)] [stroke-width:2]"
+                aria-hidden
+              >
+                <path
+                  d="M5 12.5l4.5 4.5L19 7.5"
+                  pathLength={1}
+                  className={justSaved ? "pact-draw" : undefined}
+                  style={justSaved ? { animationDelay: "120ms" } : undefined}
+                />
+              </svg>
+            </span>
+            <p
+              className={`text-[12.5px] uppercase tracking-[0.16em] text-[var(--app-gold)] ${
+                justSaved ? "app-rise" : ""
+              }`}
+              style={justSaved ? { animationDelay: "300ms" } : undefined}
+              role="status"
+            >
+              Week {weekNumber} updated. It is on the record.
+            </p>
+          </div>
+          <p className="mt-3.5 whitespace-pre-line text-[14px] leading-relaxed text-[var(--app-text)]">
+            {journal}
+          </p>
+          {share && publicNote.trim() && (
+            feedPostId ? (
+              <Link
+                href={`/app/feed/${feedPostId}`}
+                className="mt-3 block text-app-micro uppercase tracking-app-label text-[var(--app-gold)]"
+              >
+                Your note is on the feed · see it
+              </Link>
+            ) : (
+              <p className="mt-3 text-app-micro uppercase tracking-app-label text-[var(--app-dim)]">
+                Your note is on the feed
+              </p>
+            )
+          )}
+          <button
+            type="button"
+            onClick={() => setEditing(true)}
+            className="mt-4 w-full rounded-full border border-[var(--app-line)] px-5 py-3 text-[12.5px] uppercase tracking-[0.16em] text-[var(--app-muted)] transition-transform active:scale-[0.97]"
+          >
+            Edit the entry
+          </button>
+        </div>
+      ) : (
+        <>
+          <textarea
+            value={journal}
+            onChange={(e) => setJournal(e.target.value)}
+            rows={6}
+            maxLength={8000}
+            placeholder="Nobody reads this. That is what makes it worth writing."
+            className="mt-2 w-full resize-none rounded-2xl border border-[var(--app-line)] bg-[var(--app-card)] px-4 py-3.5 text-[14px] leading-relaxed text-[var(--app-text)] outline-none placeholder:text-[var(--app-dim)] focus:border-[var(--app-gold-soft)]"
+          />
+
+          {!crisisCard && saved && (
+            <div className="mt-5 rounded-2xl border border-[var(--app-line-soft)] px-4 py-4">
+              <p className="text-app-eyebrow uppercase tracking-app-label text-[var(--app-dim)]">
+                Share a line · optional, public
+              </p>
+              <p className="mt-1 text-app-micro leading-relaxed text-[var(--app-dim)]">
+                A separate note for the feed. Your journal stays private
+                whatever you write here.
+              </p>
+              <textarea
+                value={publicNote}
+                onChange={(e) => setPublicNote(e.target.value)}
+                rows={3}
+                maxLength={2000}
+                placeholder="What would you tell the others about this week?"
+                className="mt-2 w-full resize-none rounded-xl border border-[var(--app-line-soft)] bg-[var(--app-card)] px-3.5 py-3 text-[13.5px] leading-relaxed outline-none placeholder:text-[var(--app-dim)] focus:border-[var(--app-gold-soft)]"
+              />
+              <label className="mt-2 flex items-center gap-2.5 text-[12.5px] text-[var(--app-muted)]">
+                <input
+                  type="checkbox"
+                  checked={share}
+                  onChange={(e) => setShare(e.target.checked)}
+                  className="h-4 w-4 accent-[var(--pact-blood)]"
+                />
+                Put this note on the feed
+              </label>
+            </div>
+          )}
+
+          <button
+            type="button"
+            onClick={save}
+            disabled={busy === "save" || !journal.trim()}
+            className="mt-4 w-full rounded-full border border-[var(--app-line)] bg-[var(--app-card)] px-5 py-3.5 text-[13px] uppercase tracking-[0.16em] text-[var(--app-text)] transition-transform active:scale-[0.97] disabled:opacity-40"
+          >
+            {busy === "save" ? "Sealing it" : saved ? "Update the week" : "Save the week"}
+          </button>
+        </>
+      )}
+
+      {crisisCard && (
         <div className="mt-4 rounded-2xl border border-[var(--app-line)] bg-[var(--app-card-2)] px-4 py-4">
           <p className="whitespace-pre-line text-[13.5px] leading-relaxed text-[var(--app-text)]">
             {crisisCard}
           </p>
         </div>
-      ) : (
-        saved && (
-          <div className="mt-5 rounded-2xl border border-[var(--app-line-soft)] px-4 py-4">
-            <p className="text-app-eyebrow uppercase tracking-app-label text-[var(--app-dim)]">
-              Share a line · optional, public
-            </p>
-            <p className="mt-1 text-app-micro leading-relaxed text-[var(--app-dim)]">
-              A separate note for the wall. Your journal stays private
-              whatever you write here.
-            </p>
-            <textarea
-              value={publicNote}
-              onChange={(e) => setPublicNote(e.target.value)}
-              rows={3}
-              maxLength={2000}
-              placeholder="What would you tell the others about this week?"
-              className="mt-2 w-full resize-none rounded-xl border border-[var(--app-line-soft)] bg-[var(--app-card)] px-3.5 py-3 text-[13.5px] leading-relaxed outline-none placeholder:text-[var(--app-dim)] focus:border-[var(--app-gold-soft)]"
-            />
-            <label className="mt-2 flex items-center gap-2.5 text-[12.5px] text-[var(--app-muted)]">
-              <input
-                type="checkbox"
-                checked={share}
-                onChange={(e) => setShare(e.target.checked)}
-                className="h-4 w-4 accent-[var(--pact-blood)]"
-              />
-              Put this note on the wall
-            </label>
-          </div>
-        )
       )}
 
       {error && (
         <p className="mt-3 text-[12.5px] text-[var(--app-rose)]">{error}</p>
-      )}
-
-      <button
-        type="button"
-        onClick={save}
-        disabled={busy === "save" || !journal.trim()}
-        className="mt-4 w-full rounded-full border border-[var(--app-line)] bg-[var(--app-card)] px-5 py-3.5 text-[13px] uppercase tracking-[0.16em] text-[var(--app-text)] transition-transform active:scale-[0.97] disabled:opacity-40"
-      >
-        {busy === "save" ? "Sealing it" : saved ? "Update the week" : "Save the week"}
-      </button>
-      {savedFlash && (
-        <p
-          className="pact-flash mt-2 text-center text-app-micro uppercase tracking-app-label text-[var(--app-gold)]"
-          role="status"
-        >
-          On the record.
-        </p>
       )}
     </div>
   );

@@ -1,4 +1,5 @@
 import { redirect } from "next/navigation";
+import { prisma } from "@/lib/prisma";
 import { requireServerAuth } from "@/lib/auth/server-auth";
 import { memberGate } from "@/lib/access/guard";
 import { readPact } from "@/lib/pact/read";
@@ -23,6 +24,17 @@ export default async function PactWeekPage() {
   if (!read.pact || !read.entry || !read.weekEndsAt) {
     redirect("/app/pact");
   }
+
+  // Where the shared note lives on the feed, so the saved view can link
+  // straight to the week's thread instead of the top of the feed.
+  const feedPostId = read.entry.feedCommentId
+    ? (
+        await prisma.feedComment.findUnique({
+          where: { id: read.entry.feedCommentId },
+          select: { postId: true },
+        })
+      )?.postId ?? null
+    : null;
 
   return (
     <PageShell>
@@ -50,6 +62,7 @@ export default async function PactWeekPage() {
           shared: read.entry.sharedAt !== null,
           flagged: read.entry.flagged,
           aiReply: read.entry.aiReply,
+          feedPostId,
         }}
       />
     </PageShell>
