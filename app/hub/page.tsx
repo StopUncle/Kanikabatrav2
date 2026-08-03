@@ -16,7 +16,7 @@ import { utcDateKey } from "@/lib/tells/streak";
 import { getDay0Checklist } from "@/lib/day0/checklist";
 import { readProgram } from "@/lib/program/read";
 import { readPact } from "@/lib/pact/read";
-import { presetLabel } from "@/lib/pact/presets";
+import { presetLabel, PACT_LAUNCHED } from "@/lib/pact/presets";
 import RankChip from "@/components/app-shell/RankChip";
 import Move from "@/components/app-shell/Move";
 import DailySetCard from "@/components/app-shell/play/DailySetCard";
@@ -164,7 +164,10 @@ export default async function HomePage() {
       {/* The hero. The Pact is the app's one paid product and its heartbeat,
           so its card outranks everything else in the action zone. Three
           states, one slot: the live week for a signed member, the scarred
-          re-sign door for a broken one, the sell for everyone else. */}
+          re-sign door for a broken one, the sell for everyone else. While
+          the Pact is dark (PACT_LAUNCHED false) the sell state renders
+          nothing: a signed member keeps their week card, everyone else sees
+          no trace. */}
       {pact.pact ? (
         <Link
           href="/app/pact/week"
@@ -197,7 +200,7 @@ export default async function HomePage() {
               : "One challenge. One honest entry. The record is watching."}
           </p>
         </Link>
-      ) : (
+      ) : PACT_LAUNCHED ? (
         <Link
           href="/app/pact"
           className="relative mx-5 mb-4 block rounded-[22px] border border-[var(--pact-blood)]/50 px-[18px] py-5"
@@ -233,7 +236,7 @@ export default async function HomePage() {
               : "Learn what she was born knowing. One challenge a week, signed in your own hand."}
           </p>
         </Link>
-      )}
+      ) : null}
 
       {/* First week: shown until the window closes or all three are done */}
       {day0 && <ChecklistCard checklist={day0} />}

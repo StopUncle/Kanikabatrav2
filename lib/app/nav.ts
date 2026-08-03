@@ -21,6 +21,8 @@
  *   to agree about it.
  */
 
+import { PACT_LAUNCHED } from "@/lib/pact/presets";
+
 export type Placement =
   /** Bottom tab bar. Five slots, no more. */
   | "tab"
@@ -490,7 +492,10 @@ export const APP_SURFACES: AppSurface[] = [
 ];
 
 /** The bottom bar, in order. Five slots including More; four are routes. */
-export const TAB_SURFACES = APP_SURFACES.filter((s) => s.placement === "tab");
+export const TAB_SURFACES = APP_SURFACES.filter(
+  (s) =>
+    s.placement === "tab" && (PACT_LAUNCHED || !s.href.startsWith("/app/pact")),
+);
 
 /**
  * Home's explore rails, grouped and ordered. A surface appears here by

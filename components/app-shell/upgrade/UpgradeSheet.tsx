@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { PACT_PRICING } from "@/lib/pact/presets";
+import { PACT_LAUNCHED, PACT_PRICING } from "@/lib/pact/presets";
 import { capture } from "@/lib/analytics/client";
 import { ANALYTICS_EVENTS } from "@/lib/analytics/events";
 
@@ -77,17 +77,25 @@ function sublineFor(trigger: UpgradeTrigger): string {
     return "Analyst is as far as the free tier counts. The ranks above it keep moving.";
   }
   if (trigger === "today-card") {
-    return "Every track, the Lab, Kanika's room, the Mark. The Pact opens all of it.";
+    return PACT_LAUNCHED
+      ? "Every track, the Lab, Kanika's room, the Mark. The Pact opens all of it."
+      : "Every track, the Lab, Kanika's room, the Mark. Membership opens all of it.";
   }
   if (trigger === "gauntlet") {
-    return "You write your own moves. No options, no reads, a clock running, and bonus pay for holding your nerve. Pact only.";
+    return PACT_LAUNCHED
+      ? "You write your own moves. No options, no reads, a clock running, and bonus pay for holding your nerve. Pact only."
+      : "You write your own moves. No options, no reads, a clock running, and bonus pay for holding your nerve. Members only.";
   }
-  return "Everything on this bar unlocks when you sign. Pick up where the free tier stops.";
+  return PACT_LAUNCHED
+    ? "Everything on this bar unlocks when you sign. Pick up where the free tier stops."
+    : "Everything on this bar unlocks with membership. Pick up where the free tier stops.";
 }
 
 /** What continues. Never a list of what is missing. */
 const CONTINUES = [
-  "One challenge a week, on your track, and a record that never forgets.",
+  ...(PACT_LAUNCHED
+    ? ["One challenge a week, on your track, and a record that never forgets."]
+    : []),
   "Every chapter of every track, not just the first.",
   "The Room: say it in your own words, and find out what that costs you.",
   "Kanika: the voice notes, the answers, the feed.",
@@ -121,9 +129,15 @@ export default function UpgradeSheet({
   if (!open) return null;
 
   function goToDoor() {
-    capture(ANALYTICS_EVENTS.UPGRADE_STARTED, { trigger, path: "pact-door" });
+    // While the Pact is dark, the working membership is the Consilium and
+    // its one-click join page is the door. Same moment, older product.
+    const path = PACT_LAUNCHED ? "/app/pact" : "/consilium/apply";
+    capture(ANALYTICS_EVENTS.UPGRADE_STARTED, {
+      trigger,
+      path: PACT_LAUNCHED ? "pact-door" : "consilium-apply",
+    });
     onClose();
-    router.push("/app/pact");
+    router.push(path);
   }
 
   return (
@@ -131,7 +145,7 @@ export default function UpgradeSheet({
       className="fixed inset-0 z-50"
       role="dialog"
       aria-modal="true"
-      aria-label="The Blood Pact"
+      aria-label={PACT_LAUNCHED ? "The Blood Pact" : "Membership"}
     >
       <button
         type="button"
@@ -146,7 +160,7 @@ export default function UpgradeSheet({
 
         <div className="px-5 pt-3">
           <p className="text-[10.5px] uppercase tracking-[0.26em] text-[var(--app-gold)]">
-            The Blood Pact
+            {PACT_LAUNCHED ? "The Blood Pact" : "The Consilium"}
           </p>
           <h2
             className="mt-2 text-[24px] leading-[1.15]"
@@ -168,8 +182,9 @@ export default function UpgradeSheet({
           </ul>
 
           <p className="mt-5 text-[12.5px] text-[var(--app-dim)]">
-            {PACT_PRICING.weeklyDisplay}, or {PACT_PRICING.annualDisplay}.
-            Signed, not subscribed: it starts with your name.
+            {PACT_LAUNCHED
+              ? `${PACT_PRICING.weeklyDisplay}, or ${PACT_PRICING.annualDisplay}. Signed, not subscribed: it starts with your name.`
+              : "$29 a month. Cancel any time."}
           </p>
 
           <button
@@ -177,7 +192,7 @@ export default function UpgradeSheet({
             onClick={goToDoor}
             className="mt-5 w-full rounded-full bg-[var(--app-gold)] px-5 py-3.5 text-[13px] uppercase tracking-[0.16em] text-black"
           >
-            See the Pact
+            {PACT_LAUNCHED ? "See the Pact" : "Join the Consilium"}
           </button>
 
           <button

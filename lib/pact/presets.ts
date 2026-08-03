@@ -108,6 +108,17 @@ export function parsePactGoals(value: unknown): string[] | null {
 }
 
 /**
+ * The launch switch. False = the Pact is deployed dark: every page and API
+ * works at its URL (so it can be verified in production), but nothing in
+ * the UI leads there. No tab, no hub hero, no upgrade-sheet routing. Flip
+ * to true, one line, when Sam confirms it all works. The tab is hidden for
+ * everyone while dark; a member who already holds a live pact still gets
+ * their week card on Home, because hiding a signed member's own pact would
+ * be a different and worse decision.
+ */
+export const PACT_LAUNCHED = false;
+
+/**
  * Display copy only. The amounts Stripe actually charges live on the price
  * objects behind STRIPE_PRICES.PACT_WEEKLY / PACT_ANNUAL; nothing connects
  * the two automatically, so if one changes, change the other.
