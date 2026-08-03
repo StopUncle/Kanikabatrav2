@@ -65,7 +65,7 @@ export default function AppFeedList({
     setError(null);
     try {
       const res = await fetch(
-        `/api/consilium/feed/posts?cursor=${encodeURIComponent(cursor)}`,
+        `/api/consilium/feed/posts?cursor=${encodeURIComponent(cursor)}&pact=1`,
       );
       if (!res.ok) throw new Error(`Failed to load (${res.status})`);
       const data = (await res.json()) as {

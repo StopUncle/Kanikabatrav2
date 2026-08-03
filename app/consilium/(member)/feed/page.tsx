@@ -36,7 +36,9 @@ export default async function FeedPage({
   // The daily loop (mission, tell, streak, drop) lives on the Chamber
   // now; this page only loads the posts.
   const rows = await prisma.feedPost.findMany({
-      where: genderWhere,
+      // Member pact notes live on the app feed; this page stays Kanika's
+      // room, so they are filtered here and in the pager (no pact param).
+      where: { ...genderWhere, type: { not: "PACT_NOTE" } },
       take: PAGE_SIZE + 1,
       orderBy: [{ isPinned: "desc" }, { createdAt: "desc" }],
       include: {

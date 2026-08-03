@@ -70,11 +70,20 @@ export async function GET(request: NextRequest) {
   const viewerGender = await getViewerGender(userId);
   const genderWhere = feedPostGenderWhere(viewerGender);
 
+  // Member pact notes belong to the app feed. The old consilium feed is
+  // Kanika's room and stays that way, so its pager (no pact param) never
+  // sees them; the app pager opts in with pact=1.
+  const includePactNotes = request.nextUrl.searchParams.get("pact") === "1";
+  const pactWhere = includePactNotes
+    ? {}
+    : { type: { not: "PACT_NOTE" as const } };
+
   const PAGE_SIZE = 20;
   // Fetch PAGE_SIZE + 1 so we can detect hasMore without a second query.
   const rows = await prisma.feedPost.findMany({
     where: {
       ...genderWhere,
+      ...pactWhere,
       isPinned: false,
       createdAt: { lt: cursorDate },
     },
