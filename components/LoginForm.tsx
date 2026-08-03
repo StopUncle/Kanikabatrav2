@@ -68,12 +68,11 @@ export default function LoginForm() {
         identify(result.user.id);
       }
 
-      // Login successful. Explicit returnTo wins; otherwise the cohort
-      // split: active Consilium members land in the Consilium, everyone
-      // else lands in the open app, where the free tier and the Blood
-      // Pact live. The old /dashboard landing survives only via returnTo.
+      // Login successful. Explicit returnTo wins; otherwise active members
+      // land in the Consilium and everyone else on the dashboard. The app
+      // is sealed, so it is nobody's landing page.
       router.push(
-        returnTo || (result.isActiveMember ? "/consilium/feed" : "/app"),
+        returnTo || (result.isActiveMember ? "/consilium/feed" : "/dashboard"),
       );
       router.refresh();
     } catch (err) {

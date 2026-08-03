@@ -82,9 +82,8 @@ export default function RegisterForm() {
       }
 
       // Registration successful. Explicit returnTo wins; otherwise a new
-      // account starts in the open app: the free tier is the front door
-      // and the Blood Pact is the product it sells.
-      router.push(returnTo || "/app");
+      // account starts on the dashboard. The app is sealed.
+      router.push(returnTo || "/dashboard");
       router.refresh();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Registration failed");

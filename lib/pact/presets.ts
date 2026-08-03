@@ -108,15 +108,14 @@ export function parsePactGoals(value: unknown): string[] | null {
 }
 
 /**
- * The launch switch. False = the Pact is deployed dark: every page and API
- * works at its URL (so it can be verified in production), but nothing in
- * the UI leads there. No tab, no hub hero, no upgrade-sheet routing. Flip
- * to true, one line, when Sam confirms it all works. The tab is hidden for
- * everyone while dark; a member who already holds a live pact still gets
- * their week card on Home, because hiding a signed member's own pact would
- * be a different and worse decision.
+ * The launch switch, inverted from its first meaning on Sam's call
+ * (2026-08-03): the Pact is fully visible INSIDE the app (tab, hub hero,
+ * upgrade sheet), and it is the APP that has no entry point. The manifest,
+ * login and register all land on the old Consilium/dashboard until the app
+ * is declared complete; /app is reached by URL only. Flipping this to
+ * false re-darkens the Pact inside the app if that is ever needed.
  */
-export const PACT_LAUNCHED = false;
+export const PACT_LAUNCHED = true;
 
 /**
  * Display copy only. The amounts Stripe actually charges live on the price
