@@ -621,3 +621,62 @@ body:has([data-app-shell]) footer {
     opacity: 0;
   }
 }
+
+/* The Pact: marks draw themselves, status breathes, the door catches light.
+   Every path using .pact-draw sets pathLength={1} so the dash math is unit. */
+@keyframes pact-draw {
+  to { stroke-dashoffset: 0; }
+}
+@keyframes pact-mark-in {
+  from { opacity: 0; transform: scale(0.82); }
+  to { opacity: 1; transform: scale(1); }
+}
+@keyframes pact-breathe {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.45; }
+}
+@keyframes pact-flash {
+  0% { opacity: 0; transform: translateY(4px); }
+  15% { opacity: 1; transform: translateY(0); }
+  80% { opacity: 1; }
+  100% { opacity: 0; }
+}
+@keyframes pact-shimmer {
+  0% { transform: translate3d(-100%, 0, 0); }
+  55%, 100% { transform: translate3d(100%, 0, 0); }
+}
+[data-app-shell] .pact-draw {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: pact-draw 0.6s cubic-bezier(0.22, 0.9, 0.3, 1) both;
+}
+[data-app-shell] .pact-mark-in {
+  animation: pact-mark-in 0.5s cubic-bezier(0.22, 0.9, 0.3, 1) both;
+}
+[data-app-shell] .pact-breathe {
+  animation: pact-breathe 2.8s ease-in-out infinite;
+}
+[data-app-shell] .pact-flash {
+  animation: pact-flash 2s ease-out both;
+}
+[data-app-shell] .pact-shimmer {
+  animation: pact-shimmer 3.4s ease-in-out infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  [data-app-shell] .pact-draw {
+    stroke-dasharray: none;
+    stroke-dashoffset: 0;
+    animation: none;
+  }
+  [data-app-shell] .pact-mark-in {
+    animation-duration: 0.01ms;
+    animation-delay: 0ms !important;
+  }
+  [data-app-shell] .pact-breathe,
+  [data-app-shell] .pact-shimmer {
+    animation: none;
+  }
+  [data-app-shell] .pact-flash {
+    animation: none;
+  }
+}

@@ -56,6 +56,8 @@ export interface CeremonyProps {
   children?: React.ReactNode;
   /** Fired with the burst. Pass null for silence. Default "moment". */
   haptic?: HapticPattern | null;
+  /** A full-bleed layer between the veil and the card, e.g. a live canvas. */
+  backdrop?: React.ReactNode;
 }
 
 function ActionButton({
@@ -111,6 +113,7 @@ export default function Ceremony({
   secondary,
   children,
   haptic: hapticPattern = "moment",
+  backdrop,
 }: CeremonyProps) {
   const host = useAppOverlay();
   const reducedMotion = useReducedMotion();
@@ -221,6 +224,16 @@ export default function Ceremony({
             "radial-gradient(125% 90% at 50% 44%, #100d0b 0%, #070605 55%, #040303 100%)",
         }}
       />
+
+      {backdrop != null && (
+        <span
+          aria-hidden
+          className="app-veil-in absolute inset-0"
+          style={{ animationDelay: `${at(BEAT.veil)}ms`, animationDuration: "1.1s" }}
+        >
+          {backdrop}
+        </span>
+      )}
 
       {burst && (
         <EmberBurst active={burstOn} onDone={() => setBurstOn(false)} />

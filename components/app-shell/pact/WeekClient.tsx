@@ -54,20 +54,25 @@ export default function WeekClient({
   const [busy, setBusy] = useState<"keep" | "save" | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [now, setNow] = useState(() => Date.now());
+  const [justKept, setJustKept] = useState(false);
+  const [savedFlash, setSavedFlash] = useState(false);
 
   useEffect(() => {
     const id = window.setInterval(() => setNow(Date.now()), 60_000);
     return () => window.clearInterval(id);
   }, []);
 
+  const msLeft = new Date(endsAtIso).getTime() - now;
   const remaining = useMemo(() => {
-    const ms = new Date(endsAtIso).getTime() - now;
-    if (ms <= 0) return "The week is closing";
-    const days = Math.floor(ms / 86_400_000);
-    const hours = Math.floor((ms % 86_400_000) / 3_600_000);
+    if (msLeft <= 0) return "The week is closing";
+    const days = Math.floor(msLeft / 86_400_000);
+    const hours = Math.floor((msLeft % 86_400_000) / 3_600_000);
     if (days > 0) return `${days}d ${hours}h left in this week`;
     return `${hours}h left in this week`;
-  }, [endsAtIso, now]);
+  }, [msLeft]);
+  // The last day of an open week is the one place the information itself
+  // gets a pulse. Kept weeks have nothing left to be pressed about.
+  const closing = status === "open" && msLeft > 0 && msLeft < 86_400_000;
 
   async function keep() {
     if (busy) return;
@@ -80,7 +85,9 @@ export default function WeekClient({
         setError(data.error || "That did not go through.");
       } else {
         setStatus("kept");
-        haptic("success");
+        setJustKept(true);
+        // The haptic lands with the stamp, not with the network.
+        window.setTimeout(() => haptic("success"), 350);
         router.refresh();
       }
     } catch {
@@ -116,6 +123,8 @@ export default function WeekClient({
         setSaved(true);
       } else {
         setSaved(true);
+        setSavedFlash(true);
+        window.setTimeout(() => setSavedFlash(false), 2100);
         haptic("tick");
       }
     } catch {
@@ -145,7 +154,15 @@ export default function WeekClient({
       >
         {challenge ? challenge.title : "This week is being written."}
       </h1>
-      <p className="mt-1 text-app-caption text-[var(--app-dim)]">{remaining}</p>
+      <p
+        className={
+          closing
+            ? "pact-breathe mt-1 text-app-caption text-[var(--pact-blood)]"
+            : "mt-1 text-app-caption text-[var(--app-dim)]"
+        }
+      >
+        {remaining}
+      </p>
 
       <div className="mt-5 rounded-2xl border border-[var(--app-line)] bg-[var(--app-card)] px-4 py-4">
         {challenge ? (
@@ -159,13 +176,54 @@ export default function WeekClient({
         )}
 
         {status === "kept" ? (
-          <p className="mt-4 text-[13px] uppercase tracking-[0.16em] text-[var(--app-gold)]">
-            Kept. It is on the record.
-          </p>
+          <div className="mt-4 flex items-center gap-3">
+            <span
+              className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-[var(--app-gold-soft)] ${
+                justKept ? "pact-mark-in" : ""
+              }`}
+            >
+              <svg
+                viewBox="0 0 24 24"
+                className="h-5 w-5 fill-none stroke-[var(--app-gold)] [stroke-width:2]"
+                aria-hidden
+              >
+                <path
+                  d="M5 12.5l4.5 4.5L19 7.5"
+                  pathLength={1}
+                  className={justKept ? "pact-draw" : undefined}
+                  style={justKept ? { animationDelay: "150ms" } : undefined}
+                />
+              </svg>
+            </span>
+            <p
+              className={`text-[13px] uppercase tracking-[0.16em] text-[var(--app-gold)] ${
+                justKept ? "app-rise" : ""
+              }`}
+              style={justKept ? { animationDelay: "350ms" } : undefined}
+            >
+              Kept. It is on the record.
+            </p>
+          </div>
         ) : status === "scarred" ? (
-          <p className="mt-4 text-[13px] uppercase tracking-[0.16em] text-[var(--pact-blood)]">
-            This week scarred.
-          </p>
+          <div className="mt-4 flex items-center gap-3">
+            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-[var(--pact-blood-dried)]">
+              <svg
+                viewBox="0 0 24 24"
+                className="h-5 w-5 fill-none stroke-[var(--pact-blood)] [stroke-width:2]"
+                aria-hidden
+              >
+                <path
+                  d="M6 6l12 12M18 6L6 18"
+                  pathLength={1}
+                  className="pact-draw"
+                  style={{ animationDelay: "200ms", animationDuration: "0.8s" }}
+                />
+              </svg>
+            </span>
+            <p className="text-[13px] uppercase tracking-[0.16em] text-[var(--pact-blood)]">
+              This week scarred.
+            </p>
+          </div>
         ) : (
           <button
             type="button"
@@ -242,8 +300,16 @@ export default function WeekClient({
         disabled={busy === "save" || !journal.trim()}
         className="mt-4 w-full rounded-full border border-[var(--app-line)] bg-[var(--app-card)] px-5 py-3.5 text-[13px] uppercase tracking-[0.16em] text-[var(--app-text)] transition-transform active:scale-[0.97] disabled:opacity-40"
       >
-        {busy === "save" ? "One moment" : saved ? "Update the week" : "Save the week"}
+        {busy === "save" ? "Sealing it" : saved ? "Update the week" : "Save the week"}
       </button>
+      {savedFlash && (
+        <p
+          className="pact-flash mt-2 text-center text-app-micro uppercase tracking-app-label text-[var(--app-gold)]"
+          role="status"
+        >
+          On the record.
+        </p>
+      )}
     </div>
   );
 }

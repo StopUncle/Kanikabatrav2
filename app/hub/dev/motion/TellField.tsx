@@ -3,7 +3,7 @@
 import { useRef, useState } from "react";
 import { AnimatePresence, animate, motion } from "framer-motion";
 import { useReducedMotion } from "@/lib/hooks/use-reduced-motion";
-import { useGlSketch, type UniformBag } from "./gl";
+import { useGlSketch, type UniformBag } from "@/lib/motion/gl";
 
 /**
  * Tier three, part two: the moment the app names what just happened.

@@ -65,6 +65,18 @@ export default function SignCeremony({
     setError(null);
     haptic("moment");
     const trimmedGoals = goals.map((g) => g.trim());
+    // Both paths stash: the paid path needs it to attach after the webhook,
+    // and the sealed ceremony replays the hand from it either way. On the
+    // entitled path the later attach is a set-once no-op.
+    try {
+      window.sessionStorage.setItem(
+        SIGNATURE_STASH_KEY,
+        JSON.stringify({ signatureData: strokes, goals: trimmedGoals }),
+      );
+    } catch {
+      // Storage full or blocked: the pact still signs, just without the
+      // replay on the seal. The record shows the drawn signature anyway.
+    }
     try {
       if (entitled) {
         const res = await fetch("/api/pact/sign", {
@@ -86,16 +98,8 @@ export default function SignCeremony({
         return;
       }
 
-      // Paid path: stash the hand and the goals, then hand over to Stripe.
-      try {
-        window.sessionStorage.setItem(
-          SIGNATURE_STASH_KEY,
-          JSON.stringify({ signatureData: strokes, goals: trimmedGoals }),
-        );
-      } catch {
-        // Storage full or blocked: the pact still signs, just without the
-        // drawn signature and goals attached. The record shows the seal.
-      }
+      // Paid path: the stash above rides through Stripe and is attached
+      // from the sealed page once the webhook has created the pact.
       capture(ANALYTICS_EVENTS.CHECKOUT_STARTED, {
         product_key: cycle === "annual" ? "PACT_ANNUAL" : "PACT_WEEKLY",
         pact_preset: preset,

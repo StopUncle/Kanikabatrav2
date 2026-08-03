@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { animate } from "framer-motion";
 import { useReducedMotion } from "@/lib/hooks/use-reduced-motion";
-import { useGlSketch, type UniformBag } from "./gl";
+import { useGlSketch, type UniformBag } from "@/lib/motion/gl";
 import { CINEMATIC_HEADER } from "./toon";
 import { Aside, Label } from "./TierOne";
 

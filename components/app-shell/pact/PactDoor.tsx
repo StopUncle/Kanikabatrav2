@@ -141,8 +141,18 @@ export default function PactDoor({
         type="button"
         onClick={proceed}
         disabled={!preset}
-        className="mt-6 w-full rounded-full bg-[var(--pact-blood)] px-5 py-3.5 text-[13px] uppercase tracking-[0.16em] text-[var(--app-text)] transition-transform active:scale-[0.97] disabled:opacity-40"
+        className="relative mt-6 w-full overflow-hidden rounded-full bg-[var(--pact-blood)] px-5 py-3.5 text-[13px] uppercase tracking-[0.16em] text-[var(--app-text)] transition-transform active:scale-[0.97] disabled:opacity-40"
       >
+        {preset && (
+          <span
+            aria-hidden
+            className="pact-shimmer pointer-events-none absolute inset-0"
+            style={{
+              background:
+                "linear-gradient(105deg, transparent 42%, rgba(255, 235, 220, 0.16) 50%, transparent 58%)",
+            }}
+          />
+        )}
         {rejoining ? "Sign a new pact" : "Sign the pact"}
       </button>
 

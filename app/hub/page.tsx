@@ -200,12 +200,17 @@ export default async function HomePage() {
       ) : (
         <Link
           href="/app/pact"
-          className="mx-5 mb-4 block rounded-[22px] border border-[var(--pact-blood)]/50 px-[18px] py-5"
+          className="relative mx-5 mb-4 block rounded-[22px] border border-[var(--pact-blood)]/50 px-[18px] py-5"
           style={{
             background:
               "radial-gradient(120% 140% at 80% 0%, rgba(140,31,47,0.22), transparent 55%), linear-gradient(160deg, #1a1012, #0d0b09 70%)",
           }}
         >
+          <span
+            aria-hidden
+            className="pact-breathe pointer-events-none absolute inset-0 rounded-[22px] border border-[var(--pact-blood)]"
+            style={{ animationDuration: "3.8s" }}
+          />
           <div className="flex items-baseline justify-between gap-3">
             <p className="text-app-tiny uppercase tracking-app-label text-[var(--pact-blood)]">
               The Blood Pact

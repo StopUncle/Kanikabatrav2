@@ -93,7 +93,7 @@ export default function BreakClient({
 
       {signature && (
         <div className="mt-5 rounded-2xl border border-[var(--app-line)] bg-[var(--app-card)] px-4 py-2">
-          <SignatureView strokes={signature} />
+          <SignatureView strokes={signature} animate />
           <p className="pb-2 text-center text-app-micro uppercase tracking-app-label text-[var(--app-dim)]">
             You signed this, against those
           </p>

@@ -13,27 +13,40 @@ export const metadata = {
   title: "The record | Consilium",
 };
 
-function WeekMark({ status }: { status: string }) {
+function WeekMark({ status, index }: { status: string; index: number }) {
+  // The wall arrives left to right, and each mark's stroke draws itself a
+  // beat after its tile lands. All CSS; reduced motion collapses to static.
+  const tileDelay = { animationDelay: `${index * 45}ms` };
+  const strokeDelay = { animationDelay: `${index * 45 + 180}ms` };
   if (status === "kept") {
     return (
-      <span className="flex h-9 w-9 items-center justify-center rounded-lg border border-[var(--app-gold-soft)] bg-[var(--app-card)] text-[var(--app-gold)]">
+      <span
+        className="pact-mark-in flex h-9 w-9 items-center justify-center rounded-lg border border-[var(--app-gold-soft)] bg-[var(--app-card)] text-[var(--app-gold)]"
+        style={tileDelay}
+      >
         <svg viewBox="0 0 24 24" className="h-4 w-4 fill-none stroke-current [stroke-width:2]">
-          <path d="M5 12.5l4.5 4.5L19 7.5" />
+          <path d="M5 12.5l4.5 4.5L19 7.5" pathLength={1} className="pact-draw" style={strokeDelay} />
         </svg>
       </span>
     );
   }
   if (status === "scarred") {
     return (
-      <span className="flex h-9 w-9 items-center justify-center rounded-lg border border-[var(--pact-blood-dried)] bg-[var(--app-card)] text-[var(--pact-blood)]">
+      <span
+        className="pact-mark-in flex h-9 w-9 items-center justify-center rounded-lg border border-[var(--pact-blood-dried)] bg-[var(--app-card)] text-[var(--pact-blood)]"
+        style={tileDelay}
+      >
         <svg viewBox="0 0 24 24" className="h-4 w-4 fill-none stroke-current [stroke-width:2]">
-          <path d="M6 6l12 12M18 6L6 18" />
+          <path d="M6 6l12 12M18 6L6 18" pathLength={1} className="pact-draw" style={strokeDelay} />
         </svg>
       </span>
     );
   }
   return (
-    <span className="h-9 w-9 rounded-lg border border-dashed border-[var(--app-line-soft)]" />
+    <span
+      className="pact-mark-in h-9 w-9 rounded-lg border border-dashed border-[var(--app-line-soft)]"
+      style={tileDelay}
+    />
   );
 }
 
@@ -100,6 +113,7 @@ export default async function PactRecordPage() {
         <div className="rounded-2xl border border-[var(--app-line)] bg-[var(--app-card)] px-4 py-2">
           <SignatureView
             strokes={read.pact.signatureData as SignatureStrokes}
+            animate
           />
           <p className="pb-2 text-center text-app-micro uppercase tracking-app-label text-[var(--app-dim)]">
             Signed {read.pact.signedAt.toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })}
@@ -120,15 +134,15 @@ export default async function PactRecordPage() {
           </div>
 
           <div className="mt-3 flex flex-wrap gap-2">
-            {read.entries.map((e) => (
-              <WeekMark key={e.id} status={e.status} />
+            {read.entries.map((e, i) => (
+              <WeekMark key={e.id} status={e.status} index={i} />
             ))}
           </div>
         </>
       )}
 
       {read.pastPacts.length > 0 && (
-        <>
+        <div className="app-rise" style={{ animationDelay: "500ms" }}>
           <p className="mt-8 text-app-eyebrow uppercase tracking-app-label text-[var(--app-dim)]">
             Broken pacts
           </p>
@@ -164,7 +178,7 @@ export default async function PactRecordPage() {
               </div>
             ))}
           </div>
-        </>
+        </div>
       )}
 
       {read.pact ? (
