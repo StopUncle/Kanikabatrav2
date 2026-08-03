@@ -38,8 +38,14 @@ export function presetLabel(key: string): string {
   return PACT_PRESETS.find((p) => p.key === key)?.label ?? key;
 }
 
-/** Challenges ramp inside a repeating cycle of this many weeks. */
-export const PACT_CYCLE_WEEKS = 4;
+/**
+ * Challenges repeat after this many weeks. Twelve, not four (raised
+ * 2026-08-03, Sam's call): a full act of the 36 week arc per preset, so a
+ * weekly-billed member sees a quarter of content before any repeat, and
+ * the repeat lands on a person the quarter has changed. Intensity still
+ * ramps in four-week waves inside the twelve.
+ */
+export const PACT_CYCLE_WEEKS = 12;
 
 /**
  * The three goal slots every pact is signed against. Structured on purpose:
