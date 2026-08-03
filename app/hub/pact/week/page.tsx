@@ -37,6 +37,9 @@ export default async function PactWeekPage() {
                 challenge: read.challenge.challenge,
                 journalPrompt: read.challenge.journalPrompt,
                 intensity: read.challenge.intensity,
+                readingLabel: read.challenge.readingLabel,
+                readingWhy: read.challenge.readingWhy,
+                voiceNoteUrl: read.challenge.voiceNoteUrl,
               }
             : null
         }

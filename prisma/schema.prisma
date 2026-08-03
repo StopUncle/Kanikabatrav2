@@ -949,6 +949,14 @@ model PactWeek {
   challenge     String   @db.Text
   journalPrompt String   @db.Text
   intensity     Int      @default(1)
+  // Required reading: assigned, never enforced. The scar is for the act,
+  // not the homework. readingWhy is written in Kanika's voice.
+  readingLabel  String?
+  readingWhy    String?  @db.Text
+  // Kanika's weekly voice note, recorded once per cycle slot, evergreen
+  // because drip is per-member. R2 URL, same storage as consilium notes.
+  voiceNoteUrl  String?
+  voiceNoteDurationSeconds Int?
   isPublished   Boolean  @default(false)
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt

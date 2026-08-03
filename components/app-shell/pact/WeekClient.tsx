@@ -41,6 +41,9 @@ export default function WeekClient({
     challenge: string;
     journalPrompt: string;
     intensity: number;
+    readingLabel: string | null;
+    readingWhy: string | null;
+    voiceNoteUrl: string | null;
   } | null;
   entry: WeekEntryView;
 }) {
@@ -163,6 +166,53 @@ export default function WeekClient({
       >
         {remaining}
       </p>
+
+      {/* The ritual order: her voice opens the week, the reading arms it,
+          the challenge closes it. Both rows vanish cleanly when unset. */}
+      {challenge?.voiceNoteUrl && (
+        <div className="mt-4 rounded-2xl border border-[var(--app-line)] bg-[var(--app-card)] px-4 py-3.5">
+          <p className="text-app-eyebrow uppercase tracking-app-label text-[var(--app-gold)]">
+            Kanika, on this week
+          </p>
+          <audio
+            controls
+            preload="none"
+            src={challenge.voiceNoteUrl}
+            className="mt-2 w-full"
+          />
+        </div>
+      )}
+
+      {challenge?.readingLabel && (
+        <Link
+          href="/app/book"
+          className="mt-4 flex items-start gap-3 rounded-2xl border border-[var(--app-line)] bg-[var(--app-card)] px-4 py-3.5"
+        >
+          <svg
+            viewBox="0 0 24 24"
+            className="mt-0.5 h-[18px] w-[18px] shrink-0 fill-none stroke-[var(--app-gold)] [stroke-width:1.6]"
+            aria-hidden
+          >
+            <path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15.5H6.5A2.5 2.5 0 0 0 4 21V5.5ZM4 18.5A2.5 2.5 0 0 1 6.5 16H20" />
+          </svg>
+          <span>
+            <span className="block text-app-eyebrow uppercase tracking-app-label text-[var(--app-dim)]">
+              Required reading
+            </span>
+            <span className="mt-0.5 block text-[13.5px] text-[var(--app-text)]">
+              {challenge.readingLabel}
+            </span>
+            {challenge.readingWhy && (
+              <span
+                className="mt-1 block text-[12.5px] italic leading-snug text-[var(--app-muted)]"
+                style={{ fontFamily: "var(--font-display)" }}
+              >
+                {challenge.readingWhy}
+              </span>
+            )}
+          </span>
+        </Link>
+      )}
 
       <div className="mt-5 rounded-2xl border border-[var(--app-line)] bg-[var(--app-card)] px-4 py-4">
         {challenge ? (
