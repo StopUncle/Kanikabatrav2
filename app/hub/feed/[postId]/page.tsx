@@ -9,6 +9,7 @@ import {
 import { prisma } from "@/lib/prisma";
 import { memberSafeName } from "@/lib/community/privacy";
 import { tierForMember } from "@/components/consilium/badge-tiers";
+import { maskPactAuthor, pactNoteMeta } from "@/lib/pact/note";
 import { formatPoll, pollInclude } from "@/lib/community/poll-format";
 import AppFeedPost from "@/components/app-shell/feed/AppFeedPost";
 import AppCommentSection from "@/components/app-shell/feed/AppCommentSection";
@@ -99,17 +100,21 @@ export default async function AppPostDetailPage({
     isLiked: post.likes.length > 0,
     createdAt: post.createdAt.toISOString(),
     poll: formatPoll(post.poll, userId),
-    author: post.author
-      ? {
-          id: post.author.id,
-          name: memberSafeName(post.author),
-          role: post.author.role,
-          tier: tierForMember({
+    pactWeek: pactNoteMeta(post.metadata)?.weekNumber ?? null,
+    author: maskPactAuthor(
+      post.metadata,
+      post.author
+        ? {
+            id: post.author.id,
+            name: memberSafeName(post.author),
             role: post.author.role,
-            activatedAt: post.author.communityMembership?.activatedAt ?? null,
-          }),
-        }
-      : null,
+            tier: tierForMember({
+              role: post.author.role,
+              activatedAt: post.author.communityMembership?.activatedAt ?? null,
+            }),
+          }
+        : null,
+    ),
   };
 
   return (

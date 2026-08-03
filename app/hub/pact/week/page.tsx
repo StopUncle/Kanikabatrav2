@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { requireServerAuth } from "@/lib/auth/server-auth";
 import { memberGate } from "@/lib/access/guard";
 import { readPact } from "@/lib/pact/read";
+import { pactNoteMeta } from "@/lib/pact/note";
 import { PageShell } from "@/components/app-shell/ui";
 import WeekClient from "@/components/app-shell/pact/WeekClient";
 
@@ -25,16 +26,15 @@ export default async function PactWeekPage() {
     redirect("/app/pact");
   }
 
-  // Where the shared note lives on the feed, so the saved view can link
-  // straight to the week's thread instead of the top of the feed.
-  const feedPostId = read.entry.feedCommentId
-    ? (
-        await prisma.feedComment.findUnique({
-          where: { id: read.entry.feedCommentId },
-          select: { postId: true },
-        })
-      )?.postId ?? null
+  // The shared note's own post, when there is one: the saved view links
+  // to it, and its metadata carries the member's anonymity choice.
+  const notePost = read.entry.feedPostId
+    ? await prisma.feedPost.findUnique({
+        where: { id: read.entry.feedPostId },
+        select: { id: true, metadata: true },
+      })
     : null;
+  const noteMeta = pactNoteMeta(notePost?.metadata);
 
   return (
     <PageShell>
@@ -62,7 +62,8 @@ export default async function PactWeekPage() {
           shared: read.entry.sharedAt !== null,
           flagged: read.entry.flagged,
           aiReply: read.entry.aiReply,
-          feedPostId,
+          feedPostId: notePost?.id ?? null,
+          sharedAnonymously: noteMeta?.anonymous ?? false,
         }}
       />
     </PageShell>

@@ -49,6 +49,8 @@ export interface FeedPostData {
   author: FeedPostAuthor | null;
   /** One-tap poll (currently attached to daily discussion prompts). */
   poll?: FormattedPoll | null;
+  /** Set on PACT_NOTE posts: which pact week the note came from. */
+  pactWeek?: number | null;
 }
 
 interface FeedPostProps {

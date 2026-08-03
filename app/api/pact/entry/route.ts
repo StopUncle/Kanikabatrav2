@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from "next/server";
 import { requireAuth } from "@/lib/auth/middleware";
 import { prisma } from "@/lib/prisma";
 import { readPact } from "@/lib/pact/read";
-import { ensurePactWeekThread } from "@/lib/pact/thread";
 import { classifyEntry, CRISIS_CARD } from "@/lib/program/ai/safety";
 
 const MAX_JOURNAL_CHARS = 8000;
@@ -22,6 +21,7 @@ export async function POST(request: NextRequest) {
       journalBody?: unknown;
       publicBody?: unknown;
       share?: unknown;
+      anonymous?: unknown;
     } | null;
 
     const journalBody =
@@ -29,6 +29,7 @@ export async function POST(request: NextRequest) {
     const publicBody =
       typeof body?.publicBody === "string" ? body.publicBody.trim() : "";
     const share = body?.share === true;
+    const anonymous = body?.anonymous === true;
 
     if (!journalBody) {
       return NextResponse.json({ error: "Write the week first" }, { status: 400 });
@@ -83,60 +84,53 @@ export async function POST(request: NextRequest) {
       },
     });
 
-    // The shared note goes through to the feed: one comment on the week's
-    // thread, tracked by id so an edit updates in place and a retraction
-    // (or a flag) removes it. The comment lands APPROVED because it has
-    // already passed the classifier and was shared on purpose; admin
-    // comment moderation can still take it down, which SetNulls the link.
+    // The shared note goes through to the feed as the member's own small
+    // post (type PACT_NOTE), under their name or Anonymous as they chose.
+    // Tracked by id so an edit updates the same post and a retraction (or
+    // a crisis flag) removes it. The real authorId is stored either way;
+    // anonymity is applied when the post is serialized, never by dropping
+    // the author. Admin post moderation can still take it down, which
+    // SetNulls the link.
     const wantShared = share && !!publicBody && !flagged;
-    const existingCommentId = read.entry.feedCommentId;
+    const existingPostId = read.entry.feedPostId;
     let feedPostId: string | null = null;
 
+    const noteData = {
+      title: `Pact week ${read.entry.weekNumber}`,
+      content: publicBody,
+      metadata: {
+        pactNote: true,
+        weekNumber: read.entry.weekNumber,
+        anonymous,
+      },
+    };
+
     if (wantShared) {
-      feedPostId = await ensurePactWeekThread(prisma, read.entry.weekNumber);
-      if (feedPostId) {
-        const updated = existingCommentId
-          ? await prisma.feedComment.updateMany({
-              where: { id: existingCommentId },
-              data: { content: publicBody },
-            })
-          : { count: 0 };
-        if (updated.count === 0) {
-          const [comment] = await prisma.$transaction([
-            prisma.feedComment.create({
-              data: {
-                postId: feedPostId,
-                authorId: user.id,
-                content: publicBody,
-                status: "APPROVED",
-              },
-              select: { id: true },
-            }),
-            prisma.feedPost.update({
-              where: { id: feedPostId },
-              data: { commentCount: { increment: 1 } },
-            }),
-          ]);
-          await prisma.pactEntry.update({
-            where: { id: read.entry.id },
-            data: { feedCommentId: comment.id },
-          });
-        }
+      const updated = existingPostId
+        ? await prisma.feedPost.updateMany({
+            where: { id: existingPostId },
+            data: noteData,
+          })
+        : { count: 0 };
+      if (updated.count > 0) {
+        feedPostId = existingPostId;
+      } else {
+        const post = await prisma.feedPost.create({
+          data: {
+            ...noteData,
+            type: "PACT_NOTE",
+            authorId: user.id,
+          },
+          select: { id: true },
+        });
+        await prisma.pactEntry.update({
+          where: { id: read.entry.id },
+          data: { feedPostId: post.id },
+        });
+        feedPostId = post.id;
       }
-    } else if (existingCommentId) {
-      const comment = await prisma.feedComment.findUnique({
-        where: { id: existingCommentId },
-        select: { id: true, postId: true },
-      });
-      if (comment) {
-        await prisma.$transaction([
-          prisma.feedComment.delete({ where: { id: comment.id } }),
-          prisma.feedPost.update({
-            where: { id: comment.postId },
-            data: { commentCount: { decrement: 1 } },
-          }),
-        ]);
-      }
+    } else if (existingPostId) {
+      await prisma.feedPost.deleteMany({ where: { id: existingPostId } });
     }
 
     if (flagged) {

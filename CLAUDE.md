@@ -417,10 +417,19 @@ to `/app/pact` (the ceremony IS the checkout).
 3. Challenge content: seed `PactWeek` rows (LAST, per Sam; nothing
    announces while unpublished, the week page has a graceful fallback).
 
-**Not built yet:** Phase 5 wall (`publicBody` + `sharedAt` already stored),
-Phase 6 AI replies (reuse the program reply engine), admin runway view,
-`/api/user/delete` was FIXED (C10 cookieStore bug) + extended to cancel
-pact subs.
+**Sharing (supersedes the Phase 5 wall, Sam 2026-08-03):** the optional
+public note posts to the FEED as the member's own small `PACT_NOTE`
+FeedPost, week-coloured, under their name or Anonymous (choice in
+metadata; real `authorId` always stored, masked at serialization via
+`lib/pact/note.ts` `maskPactAuthor`, applied in ALL five feed
+serializers, old consilium included). `PactEntry.feedPostId` (SetNull
+FK) tracks it: edit updates in place, retraction or crisis flag deletes
+it. The week screen has a saved view (read-only entry + drawn check +
+"Week N updated", Edit reopens the composer).
+
+**Not built yet:** Phase 6 AI replies (reuse the program reply engine),
+admin runway view. `/api/user/delete` was FIXED (C10 cookieStore bug) +
+extended to cancel pact subs.
 
 ## 🎨 Design System
 

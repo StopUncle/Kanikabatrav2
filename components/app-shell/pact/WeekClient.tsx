@@ -24,8 +24,9 @@ export interface WeekEntryView {
   shared: boolean;
   flagged: boolean;
   aiReply: string | null;
-  /** The feed thread the shared note landed on, when it has. */
+  /** The shared note's own post on the feed, when it has one. */
   feedPostId: string | null;
+  sharedAnonymously: boolean;
 }
 
 export default function WeekClient({
@@ -54,6 +55,7 @@ export default function WeekClient({
   const [journal, setJournal] = useState(entry.journalBody ?? "");
   const [publicNote, setPublicNote] = useState(entry.publicBody ?? "");
   const [share, setShare] = useState(entry.shared);
+  const [anonymous, setAnonymous] = useState(entry.sharedAnonymously);
   const [feedPostId, setFeedPostId] = useState(entry.feedPostId);
   const [saved, setSaved] = useState(!!entry.journalBody);
   // A written week rests in its saved view; the composer is something you
@@ -118,6 +120,7 @@ export default function WeekClient({
           journalBody: journal,
           publicBody: publicNote,
           share,
+          anonymous,
         }),
       });
       const data = (await res.json()) as {
@@ -380,8 +383,8 @@ export default function WeekClient({
                 Share a line · optional, public
               </p>
               <p className="mt-1 text-app-micro leading-relaxed text-[var(--app-dim)]">
-                A separate note for the feed. Your journal stays private
-                whatever you write here.
+                A separate note that posts to the feed as its own post. Your
+                journal stays private whatever you write here.
               </p>
               <textarea
                 value={publicNote}
@@ -398,8 +401,34 @@ export default function WeekClient({
                   onChange={(e) => setShare(e.target.checked)}
                   className="h-4 w-4 accent-[var(--pact-blood)]"
                 />
-                Put this note on the feed
+                Post this note to the feed
               </label>
+              {share && (
+                <div className="mt-2.5 flex gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setAnonymous(false)}
+                    className={`rounded-full border px-3.5 py-1.5 text-[11.5px] uppercase tracking-[0.14em] transition-colors ${
+                      !anonymous
+                        ? "border-[var(--app-gold-soft)] text-[var(--app-gold)]"
+                        : "border-[var(--app-line-soft)] text-[var(--app-dim)]"
+                    }`}
+                  >
+                    Under my name
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setAnonymous(true)}
+                    className={`rounded-full border px-3.5 py-1.5 text-[11.5px] uppercase tracking-[0.14em] transition-colors ${
+                      anonymous
+                        ? "border-[var(--app-gold-soft)] text-[var(--app-gold)]"
+                        : "border-[var(--app-line-soft)] text-[var(--app-dim)]"
+                    }`}
+                  >
+                    Anonymous
+                  </button>
+                </div>
+              )}
             </div>
           )}
 

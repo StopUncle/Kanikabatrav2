@@ -8,6 +8,7 @@ import FeedPost from "@/components/consilium/FeedPost";
 import FeedCommentSection from "@/components/consilium/FeedCommentSection";
 import { ArrowLeft } from "lucide-react";
 import { tierForMember } from "@/components/consilium/badge-tiers";
+import { maskPactAuthor, pactNoteMeta } from "@/lib/pact/note";
 import { formatPoll, pollInclude } from "@/lib/community/poll-format";
 
 export async function generateMetadata({ params }: { params: Promise<{ postId: string }> }) {
@@ -74,18 +75,22 @@ export default async function PostDetailPage({ params }: { params: Promise<{ pos
     isLiked: post.likes.length > 0,
     createdAt: post.createdAt.toISOString(),
     poll: formatPoll(post.poll, userId),
-    author: post.author
-      ? {
-          id: post.author.id,
-          name: memberSafeName(post.author),
-          role: post.author.role,
-          tier: tierForMember({
+    pactWeek: pactNoteMeta(post.metadata)?.weekNumber ?? null,
+    author: maskPactAuthor(
+      post.metadata,
+      post.author
+        ? {
+            id: post.author.id,
+            name: memberSafeName(post.author),
             role: post.author.role,
-            activatedAt:
-              post.author.communityMembership?.activatedAt ?? null,
-          }),
-        }
-      : null,
+            tier: tierForMember({
+              role: post.author.role,
+              activatedAt:
+                post.author.communityMembership?.activatedAt ?? null,
+            }),
+          }
+        : null,
+    ),
   };
 
   return (

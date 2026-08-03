@@ -18,6 +18,7 @@ import VoiceNotePlayer from "@/components/consilium/VoiceNotePlayer";
 import VideoPlayer from "@/components/consilium/VideoPlayer";
 import FeedPollCard from "@/components/consilium/FeedPollCard";
 import type { FeedPostData } from "@/components/consilium/FeedPost";
+import { pactWeekColor } from "@/lib/pact/note";
 
 /**
  * A feed post in the app skin. Same behaviour as the old card (optimistic
@@ -105,6 +106,81 @@ export default function AppFeedPost({
   const timeAgo = formatDistanceToNow(new Date(post.createdAt), {
     addSuffix: true,
   });
+
+  // A member's shared pact note: a smaller card in the week's colour,
+  // under their name or Anonymous. The note IS the content; no title,
+  // no markdown, no collapse machinery.
+  if (post.type === "PACT_NOTE") {
+    const weekColor = pactWeekColor(post.pactWeek ?? 0);
+    return (
+      <article
+        className="rounded-xl border border-[var(--app-line-soft)] bg-[var(--app-card)] py-3 pl-3.5 pr-3.5"
+        style={{ borderLeft: `3px solid ${weekColor}` }}
+      >
+        <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
+          <span className="text-[13px] font-medium text-[var(--app-text)]">
+            {post.author?.name || "Anonymous"}
+          </span>
+          <span
+            className="rounded-full px-2 py-0.5 text-app-micro uppercase tracking-app-wide"
+            style={{
+              color: weekColor,
+              backgroundColor: `${weekColor}1f`,
+            }}
+          >
+            Week {post.pactWeek ?? "?"}
+          </span>
+          <span className="text-app-eyebrow text-[var(--app-dim)]">
+            {timeAgo}
+          </span>
+        </div>
+        <p className="mt-1.5 whitespace-pre-wrap text-[13.5px] leading-relaxed text-[var(--app-muted)]">
+          {post.content}
+        </p>
+        <div className="mt-2 flex items-center gap-1">
+          <button
+            type="button"
+            onClick={handleLike}
+            disabled={isToggling}
+            aria-label={liked ? "Unlike" : "Like"}
+            className="flex items-center gap-1.5 rounded-lg px-1.5 py-1 text-app-caption"
+          >
+            <Heart
+              className={`h-4 w-4 ${
+                liked
+                  ? "fill-[var(--app-gold)] text-[var(--app-gold)]"
+                  : "text-[var(--app-dim)]"
+              }`}
+            />
+            {likeCount > 0 && (
+              <span
+                className={
+                  liked ? "text-[var(--app-gold)]" : "text-[var(--app-dim)]"
+                }
+              >
+                {likeCount}
+              </span>
+            )}
+          </button>
+          {detail ? (
+            <span className="flex items-center gap-1.5 rounded-lg px-1.5 py-1 text-app-caption text-[var(--app-dim)]">
+              <MessageCircle className="h-4 w-4" />
+              {post.commentCount > 0 && <span>{post.commentCount}</span>}
+            </span>
+          ) : (
+            <Link
+              href={`/app/feed/${post.id}`}
+              aria-label="View comments"
+              className="flex items-center gap-1.5 rounded-lg px-1.5 py-1 text-app-caption text-[var(--app-dim)]"
+            >
+              <MessageCircle className="h-4 w-4" />
+              {post.commentCount > 0 && <span>{post.commentCount}</span>}
+            </Link>
+          )}
+        </div>
+      </article>
+    );
+  }
 
   return (
     <article

@@ -261,6 +261,8 @@ enum FeedPostType {
   DISCUSSION_PROMPT
   AUTOMATED
   VIDEO
+  // A member's shared pact note: their own small post on the feed.
+  PACT_NOTE
 }
 
 enum CommentStatus {
@@ -979,11 +981,11 @@ model PactEntry {
   aiReply     String?   @db.Text
   replyDueAt  DateTime?
   flagged     Boolean   @default(false)
-  // The shared note's comment on the week's feed thread. Tracked so an
-  // edited share updates the same comment and a retracted share removes
-  // it. SetNull, not cascade: an admin deleting the comment moderates the
-  // feed without touching the member's private entry.
-  feedCommentId String? @unique
+  // The shared note's post on the feed (type PACT_NOTE). Tracked so an
+  // edited share updates the same post and a retracted share removes it.
+  // SetNull, not cascade: an admin deleting the post moderates the feed
+  // without touching the member's private entry.
+  feedPostId  String?   @unique
   // Derived at creation (pact.signedAt + weekNumber * 7d) and stored so the
   // resolve cron can query overdue open weeks by index instead of loading
   // every pact to recompute the drip.
@@ -992,7 +994,7 @@ model PactEntry {
   updatedAt   DateTime  @updatedAt
   pact        Pact      @relation(fields: [pactId], references: [id], onDelete: Cascade)
   user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  feedComment FeedComment? @relation(fields: [feedCommentId], references: [id], onDelete: SetNull)
+  feedPost    FeedPost? @relation(fields: [feedPostId], references: [id], onDelete: SetNull)
 
   @@unique([pactId, weekNumber])
   @@index([userId])
@@ -1022,6 +1024,7 @@ model FeedPost {
   botActions           BotAction[]      @relation("BotActionsOnPost")
   answersQuestions     MemberQuestion[] @relation("QuestionAnswers")
   poll                 FeedPostPoll?
+  pactEntry            PactEntry?
 
   @@index([authorId])
   @@index([type])
@@ -1130,7 +1133,6 @@ model FeedComment {
   children  FeedComment[]   @relation("CommentThread")
   likes     CommentLike[]
   reports   CommentReport[]
-  pactEntry PactEntry?
 
   @@index([postId])
   @@index([authorId])
