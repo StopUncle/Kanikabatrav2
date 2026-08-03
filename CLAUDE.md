@@ -365,9 +365,11 @@ only, until Sam declares the app complete.** Motion/status polish is in
 (`docs/PACT-MOTION-PLAN.md`, all five phases; shared WebGL hook now at
 `lib/motion/gl.ts`).
 
-**Positioning (Sam's call 2026-08-03):** tagline "All the benefits of
-psychopathy, and none of the liabilities.", subtitle "Learn what she was
-born knowing." Live on the Pact door + hub hero, fresh-signer state only.
+**Positioning (Sam's call 2026-08-03, subtitle revised same day):**
+tagline "All the benefits of psychopathy, and none of the liabilities.",
+subtitle "For those committed to ruthless transformation." (also the
+live-pact week-card caption), door CTA "Make the blood pact". Live on
+the Pact door + hub hero, fresh-signer state only.
 The 36-week content spine is `docs/TRANSFORMATION-36-WEEK.md` (gitignored,
 local): three acts of twelve, one reading + one challenge per week, Act
 boundaries at weeks 12/24/36, Act III is the old Part II doubled.

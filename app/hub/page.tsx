@@ -197,7 +197,7 @@ export default async function HomePage() {
           <p className="mt-1.5 text-app-caption leading-relaxed text-[var(--app-muted)]">
             {pact.entry?.status === "kept"
               ? "Write the week down while it is still warm."
-              : "For those who want to control their lives rather than life controlling them."}
+              : "For those committed to ruthless transformation."}
           </p>
         </Link>
       ) : PACT_LAUNCHED ? (
@@ -233,7 +233,7 @@ export default async function HomePage() {
           <p className="mt-1.5 text-app-caption leading-relaxed text-[var(--app-muted)]">
             {pact.pastPacts.length > 0
               ? "One challenge a week, signed in your own hand, on a record that never forgets."
-              : "Learn what she was born knowing. One challenge a week, signed in your own hand."}
+              : "For those committed to ruthless transformation. One challenge a week, signed in your own hand."}
           </p>
         </Link>
       ) : null}

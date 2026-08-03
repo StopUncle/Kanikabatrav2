@@ -48,7 +48,7 @@ export default function PactDoor({
       </h1>
       {!rejoining && (
         <p className="mt-2 text-[13px] uppercase tracking-[0.14em] text-[var(--app-gold)]">
-          Learn what she was born knowing.
+          For those committed to ruthless transformation.
         </p>
       )}
       <p className="mt-2 text-app-body leading-relaxed text-[var(--app-muted)]">
@@ -153,7 +153,7 @@ export default function PactDoor({
             }}
           />
         )}
-        {rejoining ? "Sign a new pact" : "Sign the pact"}
+        {rejoining ? "Sign a new pact" : "Make the blood pact"}
       </button>
 
       <p className="mt-4 text-app-micro leading-relaxed text-[var(--app-dim)]">
