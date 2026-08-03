@@ -247,16 +247,27 @@ export default async function HomePage() {
               >
                 For those committed to ruthless transformation.
               </p>
-              <span className="relative mt-4 block w-full overflow-hidden rounded-full bg-[var(--pact-blood)] px-5 py-3.5 text-center text-[13px] uppercase tracking-[0.16em] text-[var(--app-text)]">
+              <span className="relative mt-4 block">
+                {/* The glow is its own layer so only opacity animates. */}
                 <span
                   aria-hidden
-                  className="pact-shimmer pointer-events-none absolute inset-0"
+                  className="pact-breathe pointer-events-none absolute inset-0 rounded-full"
                   style={{
-                    background:
-                      "linear-gradient(105deg, transparent 42%, rgba(255, 235, 220, 0.16) 50%, transparent 58%)",
+                    boxShadow: "0 0 28px rgba(179, 41, 60, 0.5)",
+                    animationDuration: "3.8s",
                   }}
                 />
-                Make the blood pact
+                <span className="relative block w-full overflow-hidden rounded-full bg-[var(--pact-blood)] px-5 py-3.5 text-center text-[13px] uppercase tracking-[0.16em] text-[var(--app-text)]">
+                  <span
+                    aria-hidden
+                    className="pact-shimmer pointer-events-none absolute inset-0"
+                    style={{
+                      background:
+                        "linear-gradient(105deg, transparent 42%, rgba(255, 235, 220, 0.16) 50%, transparent 58%)",
+                    }}
+                  />
+                  Make the blood pact
+                </span>
               </span>
             </>
           )}
