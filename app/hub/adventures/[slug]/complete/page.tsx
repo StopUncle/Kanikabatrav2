@@ -60,16 +60,19 @@ export default async function AdventureComplete({
   });
 
   return (
-    <main className="min-h-screen px-4 sm:px-8 py-12 max-w-3xl mx-auto">
-      <header className="text-center mb-10">
-        <p className="text-warm-gold/70 uppercase tracking-app-label text-xs mb-3 inline-flex items-center gap-2">
+    <main className="px-5 pb-8 pt-6">
+      <header className="mb-8 text-center">
+        <p className="mb-2 inline-flex items-center gap-2 text-app-tiny uppercase tracking-app-label text-[var(--app-gold)] opacity-70">
           <Sparkles size={11} strokeWidth={1.6} />
           Arc complete
         </p>
-        <h1 className="text-4xl sm:text-5xl font-extralight text-white mb-4 tracking-wide">
+        <h1
+          className="mb-2 text-app-hero font-light text-[var(--app-text)]"
+          style={{ fontFamily: "var(--font-display)" }}
+        >
           {adventure.title}
         </h1>
-        <p className="text-warm-gold/85 text-lg font-light italic">
+        <p className="text-app-body italic text-[var(--app-gold)] opacity-85">
           {adventure.tagline}
         </p>
       </header>
@@ -83,7 +86,7 @@ export default async function AdventureComplete({
         </p>
       </section>
 
-      <section className="mb-10 grid grid-cols-3 gap-4">
+      <section className="mb-8 grid grid-cols-3 gap-2.5">
         <Stat label="Total XP" value={totalXp.toLocaleString()} />
         <Stat label="Chapters" value={chapters.length} />
         <Stat label="Optimal endings" value={`${goodEndings} / ${chapters.length}`} />
@@ -142,11 +145,11 @@ export default async function AdventureComplete({
 
 function Stat({ label, value }: { label: string; value: string | number }) {
   return (
-    <div className="text-center p-4 rounded-lg border border-warm-gold/15 bg-deep-black/40">
-      <p className="text-warm-gold/60 uppercase tracking-app-label text-app-micro mb-1">
+    <div className="rounded-2xl border border-warm-gold/15 bg-deep-black/40 p-3 text-center">
+      <p className="mb-1 text-app-micro uppercase tracking-app-label text-warm-gold/60">
         {label}
       </p>
-      <p className="text-white text-2xl font-extralight tabular-nums">{value}</p>
+      <p className="text-app-title font-light tabular-nums text-white">{value}</p>
     </div>
   );
 }

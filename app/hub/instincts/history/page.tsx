@@ -1,14 +1,15 @@
 import Link from "next/link";
 import type { Metadata } from "next";
-import { ArrowLeft, Check, X } from "lucide-react";
+import { Check, X } from "lucide-react";
 import { requireServerAuth } from "@/lib/auth/server-auth";
 import { getResponseHistory } from "@/lib/tells/db";
+import { EmptyState, PageHeader, PageShell } from "@/components/app-shell/ui";
 import { TRACK_LABELS, type InstinctTrack } from "@/lib/tells/types";
 
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  title: "Your History | Train Your Instincts",
+  title: "Tell history | Consilium",
   description: "Every Tell you have answered, with your score per axis.",
 };
 
@@ -17,94 +18,67 @@ export default async function InstinctsHistoryPage() {
   const responses = await getResponseHistory(userId, { limit: 60 });
 
   return (
-    <div className="min-h-screen px-4 py-10 sm:py-14">
-      <div className="max-w-4xl mx-auto">
-        <Link
-          href="/app/instincts/today"
-          className="inline-flex items-center gap-2 text-text-gray hover:text-accent-gold transition-colors text-sm mb-8"
-        >
-          <ArrowLeft size={14} /> Today
-        </Link>
+    <PageShell>
+      <PageHeader
+        title="Every Tell, every answer"
+        lede="Most recent first. Re-reading the misses is where the rating moves."
+      />
 
-        <header className="mb-10">
-          <p className="text-accent-gold/70 text-app-tiny uppercase tracking-[0.4em] mb-3">
-            History
-          </p>
-          <h1 className="text-3xl sm:text-4xl font-extralight tracking-wider uppercase text-text-light mb-2">
-            Every Tell, every answer
-          </h1>
-          <p className="text-text-gray text-sm sm:text-base font-light max-w-2xl">
-            Most recent first. Re-reading the misses is where the rating moves.
-          </p>
-        </header>
-
-        {responses.length === 0 ? (
-          <div className="rounded-lg border border-gray-800 bg-deep-black/40 p-10 text-center">
-            <p className="text-text-gray font-light text-sm">
-              No answers yet. Today&rsquo;s Tell is sitting at the top of
-              the dashboard.
-            </p>
-            <Link
-              href="/app/instincts/today"
-              className="inline-block mt-6 px-5 py-2.5 rounded-full bg-accent-gold text-deep-black font-medium tracking-wider uppercase text-xs hover:bg-accent-gold/90"
-            >
-              Today&rsquo;s Tell
-            </Link>
-          </div>
-        ) : (
-          <div className="rounded-lg border border-gray-800 overflow-hidden">
-            <ul className="divide-y divide-gray-800">
-              {responses.map((r) => (
-                <li
-                  key={r.id}
-                  className="flex items-center gap-4 px-4 py-3.5 hover:bg-deep-black/40"
+      {responses.length === 0 ? (
+        <EmptyState line="No answers yet. Today's Tell is waiting." />
+      ) : (
+        <div className="overflow-hidden rounded-2xl border border-[var(--app-line-soft)]">
+          <ul className="divide-y divide-[var(--app-line-soft)]">
+            {responses.map((r) => (
+              <li
+                key={r.id}
+                className="flex items-center gap-3 px-3.5 py-3 active:bg-[var(--app-card)]"
+              >
+                <span className="shrink-0">
+                  {r.isCorrect ? (
+                    <Check size={15} className="text-[var(--app-green)]" />
+                  ) : (
+                    <X size={15} className="text-[var(--app-rose)]" />
+                  )}
+                </span>
+                <div className="min-w-0 flex-1">
+                  <p className="truncate text-app-body text-[var(--app-text)]">
+                    {r.tell.question}
+                  </p>
+                  <p className="mt-0.5 text-app-tiny text-[var(--app-dim)]">
+                    Tell {String(r.tell.number).padStart(3, "0")} &middot;{" "}
+                    {TRACK_LABELS[r.tell.track as InstinctTrack]} &middot;{" "}
+                    {r.answeredAt.toISOString().slice(0, 10)}
+                  </p>
+                </div>
+                <span
+                  className={`text-app-caption tabular-nums ${
+                    r.scoreImpact > 0
+                      ? "text-[var(--app-green)]"
+                      : r.scoreImpact < 0
+                        ? "text-[var(--app-rose)]"
+                        : "text-[var(--app-dim)]"
+                  }`}
                 >
-                  <span className="flex-shrink-0">
-                    {r.isCorrect ? (
-                      <Check size={16} className="text-emerald-400" />
-                    ) : (
-                      <X size={16} className="text-accent-burgundy" />
-                    )}
-                  </span>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-text-light text-sm font-light truncate">
-                      {r.tell.question}
-                    </p>
-                    <p className="text-text-gray text-xs mt-0.5">
-                      Tell {String(r.tell.number).padStart(3, "0")} &middot;{" "}
-                      {TRACK_LABELS[r.tell.track as InstinctTrack]} &middot;{" "}
-                      {r.answeredAt.toISOString().slice(0, 10)}
-                    </p>
-                  </div>
-                  <span
-                    className={`text-xs uppercase tracking-app-label ${
-                      r.scoreImpact > 0
-                        ? "text-emerald-400"
-                        : r.scoreImpact < 0
-                          ? "text-accent-burgundy"
-                          : "text-text-gray/60"
-                    }`}
-                  >
-                    {r.scoreImpact > 0 ? "+" : ""}
-                    {r.scoreImpact}
-                  </span>
-                  <Link
-                    href={`/tells/${r.tell.slug}`}
-                    className="text-app-tiny uppercase tracking-app-label text-text-gray hover:text-accent-gold"
-                  >
-                    Open
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-        )}
+                  {r.scoreImpact > 0 ? "+" : ""}
+                  {r.scoreImpact}
+                </span>
+                <Link
+                  href={`/tells/${r.tell.slug}`}
+                  className="text-app-tiny uppercase tracking-app-label text-[var(--app-dim)] active:text-[var(--app-gold)]"
+                >
+                  Open
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
 
-        <p className="text-text-gray/50 text-xs mt-6">
-          Showing the last {responses.length} scored response
-          {responses.length === 1 ? "" : "s"}. Replays do not appear here.
-        </p>
-      </div>
-    </div>
+      <p className="mt-5 text-app-micro text-[var(--app-dim)]">
+        Showing the last {responses.length} scored response
+        {responses.length === 1 ? "" : "s"}. Replays do not appear here.
+      </p>
+    </PageShell>
   );
 }

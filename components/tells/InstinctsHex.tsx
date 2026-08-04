@@ -85,7 +85,9 @@ export default function InstinctsHex({
       height={size}
       role="img"
       aria-label="Your instinct hexagon"
-      className="overflow-visible"
+      // max-w-full + h-auto let the hex shrink with a narrow container
+      // (the 430px app column) instead of overflowing at its fixed size.
+      className="overflow-visible max-w-full h-auto"
     >
       {/* Background rings */}
       {ringRatios.map((ratio) => (

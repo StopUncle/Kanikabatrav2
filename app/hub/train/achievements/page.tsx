@@ -123,22 +123,23 @@ export default async function SimulatorAchievementsPage() {
     .sort((a, b) => b.pct - a.pct)[0];
 
   return (
-    <div className="max-w-5xl mx-auto px-3 sm:px-4 py-6 sm:py-10 lg:py-14">
+    <div className="px-5 pb-8 pt-6">
       <Link
         href="/app/train/climb"
-        className="inline-flex items-center gap-2 text-sm text-text-gray hover:text-warm-gold transition-colors mb-6"
+        className="mb-5 inline-flex items-center gap-2 text-app-caption text-[var(--app-dim)] active:text-[var(--app-gold)]"
       >
         <ArrowLeft size={14} />
         Back to the climb
       </Link>
 
-      <header className="text-center mb-12">
-        <p className="text-warm-gold/90 uppercase tracking-[0.3em] text-sm mb-3">
+      <header className="mb-8 text-center">
+        <p className="mb-2 text-app-tiny uppercase tracking-app-label text-[var(--app-gold)] opacity-80">
           Dark Mirror · Accolades
         </p>
         <h1
-          className="text-4xl sm:text-5xl md:text-6xl font-extralight tracking-wider uppercase mb-4"
+          className="mb-3 text-app-hero font-light uppercase tracking-wide"
           style={{
+            fontFamily: "var(--font-display)",
             background:
               "linear-gradient(135deg, #f3d98a 0%, #d4af37 50%, #9c7a1f 100%)",
             WebkitBackgroundClip: "text",
@@ -148,12 +149,12 @@ export default async function SimulatorAchievementsPage() {
         >
           Achievements
         </h1>
-        <div className="w-16 h-px bg-warm-gold/50 mx-auto mb-6" />
-        <p className="text-text-gray max-w-xl mx-auto font-light leading-relaxed">
+        <div className="mx-auto mb-4 h-px w-16 bg-warm-gold/50" />
+        <p className="text-app-body leading-relaxed text-[var(--app-muted)]">
           Cross-scenario accolades. Your scenario badges still live on each
           mission; these recognize the patterns across the whole game.
         </p>
-        <p className="mt-4 text-sm text-warm-gold/80 tracking-wide">
+        <p className="mt-3 text-app-caption tracking-app-wide text-[var(--app-gold)] opacity-80">
           {earnedCount} of {ACHIEVEMENTS.length} earned
         </p>
       </header>
@@ -178,7 +179,7 @@ export default async function SimulatorAchievementsPage() {
         </div>
       )}
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5">
+      <div className="grid grid-cols-1 gap-3">
         {ACHIEVEMENTS.map((ach) => {
           const earned = ach.isEarned(snapshot);
           const progress = ach.progress ? ach.progress(snapshot) : null;

@@ -191,7 +191,9 @@ export default function TellPlayer({
   const shareUrl = `https://kanikarose.com/tells?n=${String(tell.number).padStart(3, "0")}&track=${encodeURIComponent(TRACK_LABELS[tell.track])}&r=${isCorrect ? "correct" : "missed"}`;
 
   return (
-    <div className="max-w-3xl mx-auto px-4 py-12">
+    // The app shell's PageShell already owns the gutter and vertical
+    // rhythm, so inside [data-app-shell] this root sheds its own.
+    <div className="max-w-3xl mx-auto px-4 py-12 [[data-app-shell]_&]:px-0 [[data-app-shell]_&]:py-0">
       <div className="mb-6">
         <StreakBadge state={streak} hydrated={hydrated} delta={delta} />
       </div>
@@ -200,7 +202,7 @@ export default function TellPlayer({
 
       <TellArtifactView artifact={tell.artifact} />
 
-      <h2 className="text-text-light text-lg sm:text-xl font-light mt-10 mb-5 leading-snug">
+      <h2 className="text-text-light text-lg sm:text-xl font-light mt-10 mb-5 leading-snug [[data-app-shell]_&]:text-lg">
         {tell.question}
       </h2>
 
@@ -246,7 +248,7 @@ function TellHeader({ tell }: { tell: PublicTell }) {
         Tell {String(tell.number).padStart(3, "0")} &middot;{" "}
         {TRACK_LABELS[tell.track]}
       </p>
-      <h1 className="text-2xl sm:text-3xl font-extralight tracking-wider uppercase text-text-light">
+      <h1 className="text-2xl sm:text-3xl font-extralight tracking-wider uppercase text-text-light [[data-app-shell]_&]:text-2xl">
         Today&rsquo;s Tell
       </h1>
       <div className="mt-3 flex items-center gap-2 text-[10px] uppercase tracking-[0.3em] text-text-gray">
@@ -277,13 +279,13 @@ function TellHeader({ tell }: { tell: PublicTell }) {
 function TellArtifactView({ artifact }: { artifact: TellArtifact }) {
   if (artifact.kind === "voicemail") {
     return (
-      <div className="rounded-lg border border-gray-800 bg-deep-black/60 p-6 sm:p-8">
+      <div className="rounded-lg border border-gray-800 bg-deep-black/60 p-6 sm:p-8 [[data-app-shell]_&]:p-5">
         <div className="flex items-center justify-between text-[10px] uppercase tracking-[0.3em] text-text-gray mb-4">
           <span>Voicemail &middot; {artifact.speakerLabel}</span>
           {artifact.durationLabel && <span>{artifact.durationLabel}</span>}
         </div>
         <p
-          className="text-text-light leading-relaxed font-light text-base sm:text-lg"
+          className="text-text-light leading-relaxed font-light text-base sm:text-lg [[data-app-shell]_&]:text-base"
           style={{ fontFamily: "Georgia, serif" }}
         >
           &ldquo;{artifact.transcript}&rdquo;
@@ -294,7 +296,7 @@ function TellArtifactView({ artifact }: { artifact: TellArtifact }) {
 
   if (artifact.kind === "text-exchange") {
     return (
-      <div className="rounded-lg border border-gray-800 bg-deep-black/60 p-5 sm:p-7">
+      <div className="rounded-lg border border-gray-800 bg-deep-black/60 p-5 sm:p-7 [[data-app-shell]_&]:p-5">
         {artifact.label && (
           <p className="text-[10px] uppercase tracking-[0.3em] text-text-gray mb-4">
             {artifact.label}
@@ -320,14 +322,14 @@ function TellArtifactView({ artifact }: { artifact: TellArtifact }) {
 
   // paragraph or scene
   return (
-    <div className="rounded-lg border border-gray-800 bg-deep-black/60 p-6 sm:p-8">
+    <div className="rounded-lg border border-gray-800 bg-deep-black/60 p-6 sm:p-8 [[data-app-shell]_&]:p-5">
       {artifact.label && (
         <p className="text-[10px] uppercase tracking-[0.3em] text-text-gray mb-4">
           {artifact.label}
         </p>
       )}
       <p
-        className="text-text-light leading-relaxed font-light text-base sm:text-lg"
+        className="text-text-light leading-relaxed font-light text-base sm:text-lg [[data-app-shell]_&]:text-base"
         style={{ fontFamily: "Georgia, serif" }}
       >
         {artifact.text}
@@ -503,7 +505,7 @@ function TellRevealView({
           Kanika&rsquo;s read
         </p>
         <p
-          className="text-text-light text-base sm:text-lg font-light leading-relaxed"
+          className="text-text-light text-base sm:text-lg font-light leading-relaxed [[data-app-shell]_&]:text-base"
           style={{ fontFamily: "Georgia, serif" }}
         >
           {reveal.reveal}
@@ -522,7 +524,7 @@ function TellRevealView({
         {surface === "public" ? (
           <div className="space-y-5">
             <TellEmailCapture />
-            <div className="flex flex-col sm:flex-row gap-3">
+            <div className="flex flex-col sm:flex-row gap-3 [[data-app-shell]_&]:flex-col">
               <ShareResultButton
                 url={shareUrl}
                 title="Today's Tell"
@@ -547,7 +549,7 @@ function TellRevealView({
             </div>
           </div>
         ) : (
-          <div className="flex flex-col sm:flex-row gap-3">
+          <div className="flex flex-col sm:flex-row gap-3 [[data-app-shell]_&]:flex-col">
             <a
               href={routes.instinctsScore}
               className="inline-flex items-center justify-center px-6 py-3 rounded-full border border-accent-gold/40 text-accent-gold font-medium tracking-wider uppercase text-xs hover:bg-accent-gold/10 transition-all"

@@ -547,7 +547,7 @@ export default function LabClient() {
           <FlaskConical size={12} aria-hidden />
           The Lab
         </p>
-        <h1 className="text-white font-extralight text-2xl sm:text-3xl mt-2 uppercase tracking-wide">
+        <h1 className="text-white font-extralight text-2xl sm:text-3xl mt-2 uppercase tracking-wide [[data-app-shell]_&]:text-2xl">
           Live Sparring
         </h1>
         <p className="text-text-gray/70 font-light text-sm mt-3 max-w-md mx-auto">
@@ -564,7 +564,10 @@ export default function LabClient() {
         )}
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      {/* Inside the 430px app column the sm: breakpoint still fires on a
+          desktop viewport, which crammed two persona columns into phone
+          width. One column whenever the shell is the container. */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 [[data-app-shell]_&]:grid-cols-1">
         {state?.personas.map((p) => (
           <button
             key={p.key}

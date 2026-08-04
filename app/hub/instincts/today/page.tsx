@@ -5,6 +5,7 @@ import { requireServerAuth } from "@/lib/auth/server-auth";
 import TellPlayer from "@/components/tells/TellPlayer";
 import InstinctsHex from "@/components/tells/InstinctsHex";
 import LeagueCard from "@/components/tells/LeagueCard";
+import { PageHeader, PageShell } from "@/components/app-shell/ui";
 import {
   getBonusTells,
   getInstinctScore,
@@ -17,7 +18,7 @@ import { redactTell } from "@/lib/tells/types";
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  title: "Today's Tell | Train Your Instincts",
+  title: "Today's Tell | Consilium",
   description: "Your daily Tell, score, and streak.",
 };
 
@@ -42,105 +43,94 @@ export default async function ConsiliumTellsTodayPage() {
       : [];
 
   return (
-    <div className="min-h-screen px-4 py-10 sm:py-14">
-      <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-10">
-        <div>
-          <header className="mb-6">
-            <p className="text-accent-gold/70 text-app-tiny uppercase tracking-[0.4em] mb-3">
-              Train Your Instincts
-            </p>
-            <h1 className="text-3xl sm:text-4xl font-extralight tracking-wider uppercase text-text-light">
-              Today
-            </h1>
-          </header>
+    <PageShell>
+      <PageHeader title="Today's Tell" />
 
-          <TellPlayer tell={redactTell(tell)} surface="member" />
+      <TellPlayer tell={redactTell(tell)} surface="member" />
 
-          {bonus.length > 0 && (
-            <div className="mt-16 pt-10 border-t border-gray-800">
-              <div className="max-w-3xl mx-auto px-4">
-                <p className="text-accent-gold/70 text-app-tiny uppercase tracking-[0.4em] mb-2">
-                  Bonus reps
-                </p>
-                <p className="text-text-gray text-sm font-light leading-relaxed mb-2">
-                  Two more Tells you have not seen. Half the rating
-                  weight, full streak credit.
-                </p>
-              </div>
-              {bonus.map((b) => (
-                <div
-                  key={b.id}
-                  className="mt-10 pt-10 border-t border-gray-800/50"
-                >
-                  <TellPlayer tell={redactTell(b)} surface="member" />
-                </div>
-              ))}
-            </div>
-          )}
+      <div className="mt-8 flex flex-col gap-3">
+        <div className="rounded-2xl border border-[var(--app-line-soft)] bg-[var(--app-card)] p-4">
+          <p className="mb-3 text-app-tiny uppercase tracking-app-label text-[var(--app-gold)] opacity-70">
+            Your hex
+          </p>
+          <div className="flex justify-center">
+            <InstinctsHex score={score} size={280} showLabels={true} />
+          </div>
+          <Link
+            href="/app/instincts/score"
+            className="mt-4 flex items-center justify-between text-app-body text-[var(--app-text)] active:text-[var(--app-gold)]"
+          >
+            <span>Full breakdown</span>
+            <ChevronRight size={16} />
+          </Link>
+          <Link
+            href="/app/instincts/history"
+            className="mt-2.5 flex items-center justify-between text-app-body text-[var(--app-muted)] active:text-[var(--app-gold)]"
+          >
+            <span>History</span>
+            <ChevronRight size={16} />
+          </Link>
         </div>
 
-        <aside className="space-y-6 lg:sticky lg:top-24 self-start">
-          <div className="rounded-lg border border-gray-800 bg-deep-black/60 p-5">
-            <p className="text-app-tiny uppercase tracking-[0.4em] text-accent-gold/70 mb-4">
-              Your hex
-            </p>
-            <div className="flex justify-center">
-              <InstinctsHex
-                score={score}
-                size={260}
-                showLabels={true}
-              />
-            </div>
-            <Link
-              href="/app/instincts/score"
-              className="mt-5 flex items-center justify-between text-text-light hover:text-accent-gold transition-colors text-sm"
+        <LeagueCard />
+
+        <div className="rounded-2xl border border-[var(--app-line-soft)] bg-[var(--app-card)] p-4">
+          <p className="mb-2 text-app-tiny uppercase tracking-app-label text-[var(--app-gold)] opacity-70">
+            Streak
+          </p>
+          <div className="flex items-baseline gap-2">
+            <span
+              className="text-app-hero font-light text-[var(--app-gold)] tabular-nums"
+              style={{ fontFamily: "var(--font-display)" }}
             >
-              <span>Full breakdown</span>
-              <ChevronRight size={16} />
-            </Link>
-            <Link
-              href="/app/instincts/history"
-              className="mt-3 flex items-center justify-between text-text-gray hover:text-accent-gold transition-colors text-sm"
-            >
-              <span>History</span>
-              <ChevronRight size={16} />
-            </Link>
+              {streak?.currentDays ?? 0}
+            </span>
+            <span className="text-app-body text-[var(--app-muted)]">
+              {(streak?.currentDays ?? 0) === 1 ? "day" : "days"}
+            </span>
           </div>
+          <p className="mt-1.5 text-app-caption text-[var(--app-dim)]">
+            Longest: {streak?.longestDays ?? 0} &middot; Freezes left this
+            week: {streak?.freezesAvail ?? 1}
+          </p>
+        </div>
 
-          <LeagueCard />
-
-          <div className="rounded-lg border border-gray-800 bg-deep-black/60 p-5 space-y-3">
-            <p className="text-app-tiny uppercase tracking-[0.4em] text-accent-gold/70">
-              Streak
-            </p>
-            <div className="flex items-baseline gap-2">
-              <span className="text-3xl text-accent-gold font-extralight">
-                {streak?.currentDays ?? 0}
-              </span>
-              <span className="text-text-gray text-sm">
-                {(streak?.currentDays ?? 0) === 1 ? "day" : "days"}
-              </span>
-            </div>
-            <p className="text-text-gray text-xs">
-              Longest: {streak?.longestDays ?? 0} &middot; Freezes left this
-              week: {streak?.freezesAvail ?? 1}
-            </p>
-          </div>
-
-          <div className="rounded-lg border border-gray-800 bg-deep-black/60 p-5 space-y-2">
-            <p className="text-app-tiny uppercase tracking-[0.4em] text-accent-gold/70">
-              Total answered
-            </p>
-            <p className="text-2xl text-text-light font-extralight">
-              {score.totalAnswered}
-            </p>
-            <p className="text-text-gray text-xs leading-relaxed">
-              Each answer adjusts your axis ratings via Elo. The first
-              thirty answers move the needle harder, then it stabilises.
-            </p>
-          </div>
-        </aside>
+        <div className="rounded-2xl border border-[var(--app-line-soft)] bg-[var(--app-card)] p-4">
+          <p className="mb-2 text-app-tiny uppercase tracking-app-label text-[var(--app-gold)] opacity-70">
+            Total answered
+          </p>
+          <p
+            className="text-app-title font-light text-[var(--app-text)] tabular-nums"
+            style={{ fontFamily: "var(--font-display)" }}
+          >
+            {score.totalAnswered}
+          </p>
+          <p className="mt-1.5 text-app-caption leading-relaxed text-[var(--app-dim)]">
+            Each answer adjusts your axis ratings via Elo. The first thirty
+            answers move the needle harder, then it stabilises.
+          </p>
+        </div>
       </div>
-    </div>
+
+      {bonus.length > 0 && (
+        <div className="mt-8 border-t border-[var(--app-line-soft)] pt-6">
+          <p className="mb-1 text-app-tiny uppercase tracking-app-label text-[var(--app-gold)] opacity-70">
+            Bonus reps
+          </p>
+          <p className="mb-2 text-app-body text-[var(--app-muted)]">
+            Two more Tells you have not seen. Half the rating weight, full
+            streak credit.
+          </p>
+          {bonus.map((b) => (
+            <div
+              key={b.id}
+              className="mt-6 border-t border-[var(--app-line-soft)] pt-6"
+            >
+              <TellPlayer tell={redactTell(b)} surface="member" />
+            </div>
+          ))}
+        </div>
+      )}
+    </PageShell>
   );
 }

@@ -60,27 +60,22 @@ export default async function AdventureDetail({
       : "Begin the arc";
 
   return (
-    <main className="min-h-screen px-4 sm:px-8 py-10 max-w-3xl mx-auto">
-      <Link
-        href="/app/adventures"
-        className="inline-flex items-center gap-1 text-warm-gold/60 hover:text-warm-gold text-app-tiny uppercase tracking-app-label mb-6 transition-colors"
-      >
-        <ArrowRight size={10} strokeWidth={1.6} className="rotate-180" />
-        Adventures
-      </Link>
-
-      <header className="mb-8">
-        <p className="text-warm-gold/70 uppercase tracking-app-label text-xs mb-3">
+    <main className="px-5 pb-8 pt-6">
+      <header className="mb-6">
+        <p className="mb-2 text-app-tiny uppercase tracking-app-label text-[var(--app-gold)] opacity-70">
           {adventure.difficulty} . {adventure.estimatedMinutes} minutes .{" "}
           {chapters.length} chapters
         </p>
-        <h1 className="text-4xl sm:text-5xl font-extralight text-white mb-4 tracking-wide">
+        <h1
+          className="mb-2 text-app-hero font-light text-[var(--app-text)]"
+          style={{ fontFamily: "var(--font-display)" }}
+        >
           {adventure.title}
         </h1>
-        <p className="text-warm-gold/85 text-lg sm:text-xl font-light italic mb-6">
+        <p className="mb-4 text-app-body italic text-[var(--app-gold)] opacity-85">
           {adventure.tagline}
         </p>
-        <p className="text-text-gray text-base font-light leading-relaxed whitespace-pre-wrap">
+        <p className="whitespace-pre-wrap text-app-body leading-relaxed text-[var(--app-muted)]">
           {adventure.description}
         </p>
       </header>
