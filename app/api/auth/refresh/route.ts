@@ -41,6 +41,14 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // A ban bumps tokenVersion, so the check above catches tokens minted
+    // before it. This catches the rest: every other refresh path checks
+    // isBanned, and without it this route would keep renewing a session
+    // for an account the rest of the app refuses to serve.
+    if (user.isBanned) {
+      return NextResponse.json({ error: "Account suspended" }, { status: 403 });
+    }
+
     const tokenPayload = {
       userId: user.id,
       email: user.email,

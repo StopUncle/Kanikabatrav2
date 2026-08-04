@@ -146,7 +146,19 @@ function ResetPasswordFormInner() {
                 animate={{ opacity: 1, x: 0 }}
                 className="p-4 bg-red-900/50 border border-red-500 rounded-lg text-red-200 text-sm"
               >
-                {error}
+                <p>{error}</p>
+                {/* The way out. A rejected token (expired, or cancelled by
+                    a sign-out) used to leave the page offering only "Sign
+                    in", which is no use to someone who just proved they
+                    cannot sign in. Same affordance the missing-token
+                    state already had. */}
+                <button
+                  type="button"
+                  onClick={() => router.push("/forgot-password")}
+                  className="mt-2 underline underline-offset-4 text-red-100 hover:text-white transition-colors"
+                >
+                  Request a new reset link
+                </button>
               </m.div>
             )}
 

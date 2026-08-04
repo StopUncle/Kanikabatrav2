@@ -42,6 +42,23 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Refuse a banned account here, at the door, and say so.
+    // Without this the password check passes, a fresh cookie pair is
+    // issued, and the ban is only enforced on the next page render
+    // (lib/auth/server-auth.ts), which bounces them to /login?banned=1.
+    // Nothing reads that param, so the user saw a working sign-in
+    // followed by an unexplained ejection, forever.
+    if (user.isBanned) {
+      return NextResponse.json(
+        {
+          error:
+            user.banReason?.trim() ||
+            "This account has been suspended. Reply to any email from us if you think that is a mistake.",
+        },
+        { status: 403 },
+      );
+    }
+
     // Generate tokens, embed tokenVersion so password resets and logouts
     // invalidate outstanding tokens immediately.
     const tokens = generateTokenPair({

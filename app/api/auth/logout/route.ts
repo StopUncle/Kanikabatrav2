@@ -41,6 +41,19 @@ export async function POST(request: NextRequest) {
       path: "/",
     });
 
+    // The admin session is a separate credential, accepted on its own by
+    // lib/auth/middleware.ts and lib/auth/server-auth.ts, and checked
+    // against neither tokenVersion nor isBanned. Leaving it behind meant
+    // an admin who logged out on a shared machine was still an admin to
+    // whoever sat down next.
+    response.cookies.set("admin_session", "", {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      maxAge: 0,
+      path: "/",
+    });
+
     return response;
   } catch (error: unknown) {
     console.error("Logout error:", error);

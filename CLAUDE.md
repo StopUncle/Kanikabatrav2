@@ -76,7 +76,7 @@ Next.js 15 (App Router) + React 19 + TypeScript. Personal brand site for Kanika 
 **Stack:**
 - Next.js 15 + React 19 + Tailwind 3 (custom dark luxury theme)
 - PostgreSQL on Railway (prod), Prisma 6 ORM
-- **Auth (members):** JWT cookie pair (`accessToken` 15m + `refreshToken` 7d), httpOnly + secure + sameSite=strict
+- **Auth (members):** JWT cookie pair (`accessToken` 15m + `refreshToken` 7d), httpOnly + secure + sameSite=lax (all six writers agree; this said `strict` for months and was never true). Session tokens carry no `type` claim and `lib/auth/jwt.ts` **refuses any token that has one**, because the password-reset token is signed with the same `JWT_SECRET` and was otherwise usable as a session cookie.
 - **Auth (admin):** 6-digit PIN → JWT `admin_session` cookie (24h, httpOnly). All admin endpoints verify via `requireAdminSession()` from `lib/admin/auth.ts`.
 - **Payments:** Stripe (live mode). PayPal removed April 2026.
 - **Email:** Resend preferred → Nodemailer SMTP fallback. Sequenced campaigns via `EmailQueue` table, processor at `/api/admin/email-queue/process`, fired every 15 min by `.github/workflows/cron.yml`.
@@ -558,10 +558,11 @@ but not built.
 
 ### Bugs
 - [ ] **Token refresh race** in `components/dashboard/DashboardClient.tsx:112-131` — concurrent 401s spawn multiple `/api/auth/refresh`. Add singleton refresh promise.
-- [ ] **Password reset tokens** never invalidated; replayable until JWT expiry. Add single-use tracking.
-- [ ] **Forgot-password timing leak** — make timing-equal between known/unknown emails.
+- [ ] **Reset link cancelled by signing out.** `reset-password` enforces single use via `tokenVersion`, which logout also bumps, so signing out invalidates your own unused reset link. The message no longer claims the link was "already used", but the real fix is to persist a per-token id and stop overloading `tokenVersion`. Needs a migration.
+- [ ] **Forgot-password timing leak** — make timing-equal between known/unknown emails. Login has the same shape (bcrypt runs only for a known email, so latency answers "does this account exist"); a dummy compare fixes both.
 - [ ] **Email template HTML escaping** — sanitize user-supplied strings.
-- [ ] **Rate limiting** — none on `/api/auth/login`, `/api/auth/forgot-password`, `/api/admin/auth`, `/api/inner-circle/feed/[postId]/comments`. (Register IS rate-limited.)
+- [ ] **Rate limiting** — `/api/inner-circle/feed/[postId]/comments` is still open. (login, register, forgot-password, reset-password, and admin PIN are all rate-limited via `lib/rate-limit.ts`.)
+- [ ] **`fetchWithRefresh` retry contract is dead.** It only retries when a 401 body carries `retry: true`, and `createAuthResponse` (`lib/auth/middleware.ts:125`) never sets it. Harmless today because `authenticateUser` refreshes internally, but the safety net does not exist.
 
 ### Engagement (surfaced 2026-04-25)
 - [ ] **Feed participation still low** (4% lifetime comment rate as of the April audit; 2026-05-29 pulse: 58 active human members, only 15 seen in 7d — dormancy, not deadness). Seed Kanika's first comment on each prompt to remove "who goes first" friction.

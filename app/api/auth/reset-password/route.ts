@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import jwt from "jsonwebtoken";
 import { prisma } from "@/lib/prisma";
 import { hashPassword } from "@/lib/auth/password";
+import { enforceRateLimit, getClientIp, limits } from "@/lib/rate-limit";
 import { logger } from "@/lib/logger";
 
 function getJwtSecret(): string {
@@ -27,6 +28,15 @@ interface ResetTokenPayload {
 
 export async function POST(request: NextRequest) {
   try {
+    // Rate limit before any work: every request carrying a valid token
+    // reaches bcrypt at cost 12, so this bounds both token guessing and
+    // the CPU a single leaked link can burn.
+    const rateLimited = await enforceRateLimit(
+      limits.authReset,
+      getClientIp(request),
+    );
+    if (rateLimited) return rateLimited;
+
     const body = await request.json();
     const { token, password } = body as { token: string; password: string };
 
@@ -80,9 +90,20 @@ export async function POST(request: NextRequest) {
     // Single-use check: if the token was issued against an older
     // tokenVersion, it's been used already (or superseded by a later reset).
     // Legacy tokens with no `v` field are rejected to force a fresh request.
+    //
+    // The wording stays vague about WHICH of those happened on purpose,
+    // because tokenVersion is also bumped by signing out: a user who
+    // requests a reset and then logs out of a stale session elsewhere
+    // invalidates their own unused link, and telling them it was "already
+    // used" sends them hunting for an intruder. Making the link genuinely
+    // single-use without this side effect needs its own id persisted per
+    // token, which is a schema change; until then, say less.
     if (payload.v === undefined || payload.v !== user.tokenVersion) {
       return NextResponse.json(
-        { error: "This reset link has already been used. Request a new one." },
+        {
+          error:
+            "This reset link is no longer valid. Signing out or resetting again cancels an older link. Request a new one.",
+        },
         { status: 400 },
       );
     }

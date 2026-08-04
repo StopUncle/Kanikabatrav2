@@ -219,6 +219,12 @@ export const limits = {
   authRegister: { action: "auth:register", max: 3, windowMs: 60_000 },
   /** Forgot password: 3 per 10 min per email */
   authForgot: { action: "auth:forgot-password", max: 3, windowMs: 10 * 60_000 },
+  /**
+   * Reset password: 5 per 10 min per IP. Looser than forgot-password
+   * because a legitimate user can fumble the confirm field, tight enough
+   * that token guessing and repeated bcrypt work are both bounded.
+   */
+  authReset: { action: "auth:reset-password", max: 5, windowMs: 10 * 60_000 },
   /** Admin PIN: 5 per hour per IP (brute force is the real risk) */
   adminPin: { action: "admin:auth", max: 5, windowMs: 60 * 60_000 },
   /** Feed comments: 10 per hour per user */

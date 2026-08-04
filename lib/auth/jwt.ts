@@ -39,14 +39,42 @@ const JWT_REFRESH_SECRET = getJwtRefreshSecret();
 export interface JWTPayload {
   userId: string;
   email: string;
-  // Token version — embedded at sign time, checked on verify against
+  // Token version, embedded at sign time, checked on verify against
   // the user's current tokenVersion. Bumped on password reset and
   // logout to invalidate all outstanding tokens. Optional for backward
   // compat with tokens signed before this was added (they'll expire
   // naturally within their TTL).
   v?: number;
+  /**
+   * Purpose marker carried by NON-session tokens. Session tokens never
+   * set it; the password-reset token does (type: "password-reset"), and
+   * it is signed with this same JWT_SECRET. See assertSessionToken.
+   */
+  type?: string;
   iat?: number;
   exp?: number;
+}
+
+/**
+ * Refuse any token that declares a purpose.
+ *
+ * The password-reset token is signed with JWT_SECRET, the same secret
+ * that signs access tokens, so before this check a reset link WAS a
+ * session: paste the token from the emailed URL in as an accessToken
+ * cookie and you were that user for the token's full hour, without
+ * changing the password and without leaving them any signal.
+ * /api/auth/reset-password already refuses the reverse direction by
+ * requiring type === "password-reset"; this is the missing half.
+ *
+ * Deliberately keyed on the presence of the claim rather than on a
+ * required type: "access" value, so no session signed before this
+ * existed gets invalidated. Nobody is logged out by this change.
+ */
+function assertSessionToken(payload: JWTPayload): JWTPayload {
+  if (payload.type !== undefined) {
+    throw new Error("Not a session token");
+  }
+  return payload;
 }
 
 export interface TokenPair {
@@ -81,7 +109,7 @@ export function generateTokenPair(
 // Verify access token
 export function verifyAccessToken(token: string): JWTPayload {
   try {
-    return jwt.verify(token, JWT_SECRET) as JWTPayload;
+    return assertSessionToken(jwt.verify(token, JWT_SECRET) as JWTPayload);
   } catch (_error) {
     throw new Error("Invalid access token");
   }
@@ -90,7 +118,9 @@ export function verifyAccessToken(token: string): JWTPayload {
 // Verify refresh token
 export function verifyRefreshToken(token: string): JWTPayload {
   try {
-    return jwt.verify(token, JWT_REFRESH_SECRET) as JWTPayload;
+    return assertSessionToken(
+      jwt.verify(token, JWT_REFRESH_SECRET) as JWTPayload,
+    );
   } catch (_error) {
     throw new Error("Invalid refresh token");
   }

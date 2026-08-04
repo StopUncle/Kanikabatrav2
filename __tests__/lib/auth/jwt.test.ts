@@ -1,3 +1,4 @@
+import jwt from "jsonwebtoken";
 import {
   generateAccessToken,
   generateRefreshToken,
@@ -111,6 +112,59 @@ describe("JWT Utilities", () => {
 
       expect(payload.exp).toBeDefined();
       expect(payload.iat).toBeDefined();
+    });
+  });
+
+  /**
+   * The password-reset token is signed with the same JWT_SECRET as an
+   * access token (app/api/auth/forgot-password/route.ts). Before the
+   * verifiers refused a `type` claim, pasting the token out of a reset
+   * email into an accessToken cookie authenticated you as that user for
+   * the token's full hour. These tests exist so nobody removes the check.
+   */
+  describe("non-session tokens are refused", () => {
+    const secret =
+      process.env.JWT_SECRET || "dev-only-secret-do-not-use-in-production";
+    const refreshSecret =
+      process.env.JWT_REFRESH_SECRET ||
+      "dev-only-refresh-secret-do-not-use-in-production";
+
+    it("rejects a password-reset token as an access token", () => {
+      const resetToken = jwt.sign(
+        { userId: "user-123", type: "password-reset", v: 0 },
+        secret,
+        { expiresIn: "1h" },
+      );
+
+      expect(() => verifyAccessToken(resetToken)).toThrow();
+    });
+
+    it("rejects any token carrying a type claim as a refresh token", () => {
+      const typed = jwt.sign(
+        { userId: "user-123", type: "password-reset", v: 0 },
+        refreshSecret,
+        { expiresIn: "1h" },
+      );
+
+      expect(() => verifyRefreshToken(typed)).toThrow();
+    });
+
+    it("still accepts a real session token", () => {
+      const payload = verifyAccessToken(generateAccessToken(testPayload));
+
+      expect(payload.userId).toBe("user-123");
+    });
+
+    it("still accepts a legacy token signed before tokenVersion existed", () => {
+      // No `v`, no `type`. These were live when the check landed and must
+      // not be invalidated by it: the fix logs nobody out.
+      const legacy = jwt.sign(
+        { userId: "legacy-user", email: "legacy@example.com" },
+        secret,
+        { expiresIn: "15m" },
+      );
+
+      expect(verifyAccessToken(legacy).userId).toBe("legacy-user");
     });
   });
 });
