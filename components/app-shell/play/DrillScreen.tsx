@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { ChevronLeft } from "lucide-react";
 import {
   DRILL_CARDS,
   DRILL_SECONDS,
@@ -105,15 +106,16 @@ export default function DrillScreen({
   if (drill.phase === "intro") {
     return (
       <div className="flex min-h-full flex-col px-6 pb-[max(24px,env(safe-area-inset-bottom))] pt-6">
-        <div className="flex justify-end">
+        {/* The shell's BackBar hides on full-screen routes, so the intro
+            carries its own, in the same shape members already know. */}
+        <div className="flex">
           <Link
             href="/app/train"
-            aria-label="Close"
-            className="flex h-9 w-9 items-center justify-center rounded-full text-[var(--app-dim)]"
+            aria-label="Back to Train"
+            className="-ml-2.5 inline-flex items-center gap-0.5 rounded-full px-2.5 py-1.5 text-app-caption uppercase tracking-app-wide text-[var(--app-dim)] transition-colors active:bg-[var(--app-card-2)] active:text-[var(--app-text)]"
           >
-            <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="1.6">
-              <path d="M6 6l12 12M18 6L6 18" />
-            </svg>
+            <ChevronLeft size={15} strokeWidth={2} aria-hidden />
+            Back
           </Link>
         </div>
 
