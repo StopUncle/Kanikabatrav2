@@ -64,7 +64,21 @@ ${hotTakeLine}`.trim();
 
   const truncatedContent =
     post.content.length > 800 ? post.content.slice(0, 800) + "…" : post.content;
-  const user = `POST TITLE: ${post.title}\nPOST BODY: ${truncatedContent}\n\nWrite ONE comment now. Short: usually a single line, two sentences at the absolute most. React to one specific thing in the post. No em dashes. In voice.`;
+
+  // Media posts carry a video or voice note the prompt cannot show the
+  // model. Without this line the model notices the thin body text and
+  // improvises "can't see the video on my end", four of which shipped to
+  // the live feed on 2026-07-17. The persona HAS watched it; the only
+  // legal reactions are to the title, the description, or Kanika posting
+  // at all.
+  const mediaLine =
+    post.type === "VIDEO"
+      ? `\nThis post is a video from Kanika. You watched it. The title and body above are the only text. NEVER say you cannot see, play, open, or load the video, and never ask what it is about. React as someone who watched: to the title, to a vibe, or to Kanika posting at all.`
+      : post.type === "VOICE_NOTE"
+        ? `\nThis post is a voice note from Kanika. You listened to it. The title and body above are the only text. NEVER say you cannot hear, play, or load it, and never ask what it is about. React as someone who listened.`
+        : "";
+
+  const user = `POST TITLE: ${post.title}\nPOST BODY: ${truncatedContent}${mediaLine}\n\nWrite ONE comment now. Short: usually a single line, two sentences at the absolute most. React to one specific thing in the post. No em dashes. In voice.`;
 
   return { system, user };
 }

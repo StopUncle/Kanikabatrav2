@@ -7,6 +7,18 @@ const SELF_REVEAL_PATTERNS = [
   /\bi cannot (provide|generate)/i,
 ];
 
+// A bot claiming it cannot see the video is the AI admitting it never
+// watched anything, in public. The media nouns keep this from eating
+// legitimate persona lines like "they can't play the wounded card".
+const MEDIA_COMPLAINT_PATTERNS = [
+  /\b(can'?t|cannot|can not|unable to) (see|watch|play|open|view|hear|load) (the |this |that |your |a )?(vid\b|video|clip|audio|voice|note|link|it\b)/i,
+  /\b(video|vid|clip|audio|voice note|link) (is |seems )?(broken|not working|not loading|missing)/i,
+  /\b(won'?t|doesn'?t|isn'?t|not) load(ing)?\b/i,
+  /\bon my end\b/i,
+  /\blink broken\b/i,
+  /\bwhat'?s (the|it) (topic|about)\b/i,
+];
+
 const LURKER_PATTERNS = [
   /\bgreat post\b/i,
   /\bthanks for sharing\b/i,
@@ -65,6 +77,9 @@ export function validateBotComment(text: string, priorOnPost: string[]): GuardRe
 
   for (const re of SELF_REVEAL_PATTERNS) {
     if (re.test(trimmed)) return { ok: false, reason: "ai-self-reveal" };
+  }
+  for (const re of MEDIA_COMPLAINT_PATTERNS) {
+    if (re.test(trimmed)) return { ok: false, reason: "media-complaint" };
   }
   for (const re of LURKER_PATTERNS) {
     if (re.test(trimmed)) return { ok: false, reason: "lurker-opener" };
