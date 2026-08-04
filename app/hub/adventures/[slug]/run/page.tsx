@@ -130,7 +130,11 @@ export default async function AdventureRun({
   const stepLabel = `Step ${progress.currentStep + 1} of ${adventure.scenarioIds.length}`;
 
   return (
+    // Keyed by chapter: the "Next chapter" CTA navigates back into this
+    // dispatcher, and the key change is what remounts the runner on the
+    // new scenario instead of leaving the old ending screen's state up.
     <AdventureSimulatorPageClient
+      key={scenarioId}
       scenario={scenario}
       initialState={initialState}
       adventureSlug={adventure.slug}

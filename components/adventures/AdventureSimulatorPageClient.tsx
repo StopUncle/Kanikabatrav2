@@ -1,7 +1,8 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { useRouter } from "next/navigation";
+import Link from "next/link";
+import { ArrowRight } from "lucide-react";
 import type { AchievementToastMeta } from "@/lib/simulator/achievements";
 import type {
   Scenario,
@@ -54,7 +55,6 @@ export default function AdventureSimulatorPageClient({
   stepLabel,
   adventureTitle,
 }: Props) {
-  const router = useRouter();
   const routes = useShellRoutes();
   const [badgesEarned, setBadgesEarned] = useState<string[]>([]);
   const [unlockedThisRun, setUnlockedThisRun] = useState<
@@ -164,18 +164,27 @@ export default function AdventureSimulatorPageClient({
           setXpBreakdown(data.xpBreakdown ?? null);
           setEndingBounty(data.endingBounty ?? null);
         }
-        router.refresh();
+        // No router.refresh() here, on purpose. The run page keys this
+        // component by scenario id, so a refresh would re-run the
+        // dispatcher (cursor already advanced), swap in the next
+        // chapter, and yank the ending screen out from under the
+        // player before they've read it.
       } catch {
         // Silent. Run state remains visible to the player.
       }
     },
-    [adventureSlug, router],
+    [adventureSlug],
   );
 
-  // The ending screen's "Next Scenario" link routes back into the run
-  // dispatcher, which reads the freshly-advanced AdventureProgress row
-  // and either renders the next chapter or redirects to /complete.
-  const nextScenarioHref = routes.adventureRun(adventureSlug);
+  // The "Next chapter" CTA routes back into the run dispatcher, which
+  // reads the freshly-advanced AdventureProgress row and either renders
+  // the next chapter or redirects to /complete. The completed scenario
+  // id rides along as a query param so the URL differs from the one the
+  // player is on: a Link to the exact current URL is a no-op that keeps
+  // the runner's React state, which is how this button used to do
+  // nothing at all. A changed URL forces a real navigation, and the
+  // scenario-keyed page remounts the runner on the new chapter.
+  const nextChapterHref = `${routes.adventureRun(adventureSlug)}?c=${encodeURIComponent(scenario.id)}`;
 
   return (
     <SimulatorErrorBoundary
@@ -189,11 +198,19 @@ export default function AdventureSimulatorPageClient({
         previousBest={bestToDate}
         onStateChange={handleStateChange}
         onComplete={handleComplete}
-        nextScenarioHref={nextScenarioHref}
         badgesEarned={badgesEarned}
         exitHref={routes.adventure(adventureSlug)}
         xpBreakdown={xpBreakdown}
         endingBounty={endingBounty}
+        endingCta={
+          <Link
+            href={nextChapterHref}
+            className="inline-flex items-center justify-center gap-2 px-8 py-3 bg-accent-gold text-deep-black font-medium tracking-wider uppercase text-sm rounded-full hover:bg-accent-gold/90 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-gold focus-visible:ring-offset-2 focus-visible:ring-offset-deep-black"
+          >
+            Next chapter
+            <ArrowRight size={16} strokeWidth={1.5} />
+          </Link>
+        }
       />
       <AdventureChapterBanner label={stepLabel} title={adventureTitle} />
       <AchievementToast unlocks={unlockedThisRun} />
