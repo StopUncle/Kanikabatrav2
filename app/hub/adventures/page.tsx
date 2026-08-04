@@ -2,13 +2,15 @@ import Link from "next/link";
 import { requireServerAuth } from "@/lib/auth/server-auth";
 import { prisma } from "@/lib/prisma";
 import { ArrowRight, Check, Clock } from "lucide-react";
+import { EmptyState, PageHeader, PageShell } from "@/components/app-shell/ui";
 
 export const metadata = {
-  title: "Adventures. The Dark Mirror | Kanika Batra",
+  title: "Adventures | Consilium",
   description:
     "Multi-scenario arcs. One narrative thread, played across five to seven chapters. Pick a journey.",
 };
 
+/** The adventure index in the app skin: one column of doors, app tokens. */
 export default async function AdventuresIndex() {
   const userId = await requireServerAuth("/app/adventures");
 
@@ -23,29 +25,16 @@ export default async function AdventuresIndex() {
   const progressByAdventure = new Map(progresses.map((p) => [p.adventureId, p]));
 
   return (
-    <main className="min-h-screen px-4 sm:px-8 py-10 max-w-5xl mx-auto">
-      <header className="mb-10">
-        <p className="text-warm-gold/70 uppercase tracking-app-label text-xs mb-3">
-          The Consilium . Adventures
-        </p>
-        <h1 className="text-4xl sm:text-5xl font-extralight text-white mb-4 tracking-wide">
-          Pick a <span className="text-warm-gold">journey</span>
-        </h1>
-        <p className="text-text-gray text-base sm:text-lg font-light max-w-2xl leading-relaxed">
-          A curated arc of five to seven scenarios played as one continuous
-          story. Progress saves between chapters. Step in once a day, finish
-          across a week.
-        </p>
-      </header>
+    <PageShell>
+      <PageHeader
+        title="Adventures"
+        lede="Five to seven scenarios as one continuous story. Progress saves between chapters: step in once a day, finish across a week."
+      />
 
       {adventures.length === 0 ? (
-        <div className="p-8 rounded-xl border border-warm-gold/15 bg-deep-black/40 text-center">
-          <p className="text-text-gray/70 text-sm font-light">
-            No adventures published yet. Check back soon.
-          </p>
-        </div>
+        <EmptyState line="No adventures published yet. Check back soon." />
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div className="flex flex-col gap-3">
           {adventures.map((adv) => {
             const progress = progressByAdventure.get(adv.id);
             const total = adv.scenarioIds.length;
@@ -59,22 +48,22 @@ export default async function AdventuresIndex() {
               <Link
                 key={adv.id}
                 href={`/app/adventures/${adv.slug}`}
-                className={`group relative flex flex-col p-6 rounded-xl border bg-deep-black/40 transition-all hover:-translate-y-0.5 ${
+                className={`group flex flex-col rounded-2xl border p-4 transition-colors active:bg-[var(--app-card-2)] ${
                   isCompleted
-                    ? "border-warm-gold/10 opacity-70 hover:opacity-100 hover:border-warm-gold/30"
-                    : "border-warm-gold/15 hover:border-warm-gold/50 hover:bg-warm-gold/[0.04]"
+                    ? "border-[var(--app-line-soft)] bg-transparent opacity-70"
+                    : "border-[var(--app-line)] bg-[var(--app-card)]"
                 }`}
               >
-                <div className="flex items-center justify-between mb-3">
-                  <span className="text-warm-gold/60 uppercase tracking-app-label text-app-tiny">
+                <div className="mb-2 flex items-center justify-between">
+                  <span className="text-app-tiny uppercase tracking-app-label text-[var(--app-gold)] opacity-70">
                     {stepLabel}
                   </span>
                   <div className="flex items-center gap-2">
                     {adv.isNew && !progress && (
-                      <span className="inline-flex items-center gap-1.5 text-app-micro uppercase tracking-app-label px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-300 border border-emerald-400/30">
-                        <span aria-hidden className="relative inline-flex w-1.5 h-1.5">
-                          <span className="absolute inset-0 rounded-full bg-emerald-400/40 animate-ping" />
-                          <span className="relative inline-block w-1.5 h-1.5 rounded-full bg-emerald-400" />
+                      <span className="inline-flex items-center gap-1.5 rounded-full border border-emerald-400/30 bg-emerald-500/10 px-2 py-0.5 text-app-micro uppercase tracking-app-label text-emerald-300">
+                        <span aria-hidden className="relative inline-flex h-1.5 w-1.5">
+                          <span className="absolute inset-0 animate-ping rounded-full bg-emerald-400/40" />
+                          <span className="relative inline-block h-1.5 w-1.5 rounded-full bg-emerald-400" />
                         </span>
                         New
                       </span>
@@ -83,29 +72,32 @@ export default async function AdventuresIndex() {
                       <Check
                         size={14}
                         strokeWidth={1.8}
-                        className="text-warm-gold/70"
+                        className="text-[var(--app-gold)] opacity-70"
                       />
                     ) : (
                       <ArrowRight
                         size={14}
                         strokeWidth={1.6}
-                        className="text-warm-gold/40 group-hover:text-warm-gold group-hover:translate-x-0.5 transition-all"
+                        className="text-[var(--app-dim)]"
                       />
                     )}
                   </div>
                 </div>
-                <h2 className="text-white text-xl font-light tracking-wide mb-2">
+                <h2
+                  className="mb-1 text-app-title font-light text-[var(--app-text)]"
+                  style={{ fontFamily: "var(--font-display)" }}
+                >
                   {adv.title}
                 </h2>
-                <p className="text-text-gray/80 text-sm font-light leading-relaxed mb-4">
+                <p className="mb-3 text-app-body text-[var(--app-muted)]">
                   {adv.tagline}
                 </p>
-                <div className="mt-auto flex items-center gap-4 text-app-tiny uppercase tracking-app-label text-warm-gold/50">
+                <div className="mt-auto flex items-center gap-3 text-app-tiny uppercase tracking-app-label text-[var(--app-dim)]">
                   <span className="inline-flex items-center gap-1">
                     <Clock size={10} strokeWidth={1.6} />
                     {adv.estimatedMinutes} min
                   </span>
-                  <span>.</span>
+                  <span aria-hidden>.</span>
                   <span>{adv.difficulty}</span>
                 </div>
               </Link>
@@ -114,17 +106,17 @@ export default async function AdventuresIndex() {
         </div>
       )}
 
-      <p className="mt-10 text-center text-text-gray/50 text-xs uppercase tracking-app-label">
-        Each adventure reuses scenarios from the catalog. You can replay any
-        single chapter from the
+      <p className="mt-8 text-center text-app-caption text-[var(--app-dim)]">
+        Each adventure reuses scenarios from the catalog. Replay any single
+        chapter from the{" "}
         <Link
           href="/app/train/climb"
-          className="text-warm-gold/70 hover:text-warm-gold ml-1 transition-colors"
+          className="text-[var(--app-gold)] opacity-80 transition-opacity active:opacity-100"
         >
           simulator
         </Link>
         .
       </p>
-    </main>
+    </PageShell>
   );
 }
