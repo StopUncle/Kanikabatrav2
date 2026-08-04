@@ -15,7 +15,7 @@ import {
 import { RECEIPTS_SYSTEM_PROMPT, buildUserMessage } from "./prompt";
 import { logger } from "@/lib/logger";
 
-const RECEIPTS_MODEL = "claude-sonnet-4-6-20250929";
+const RECEIPTS_MODEL = "claude-sonnet-4-6";
 
 export interface CallReceiptsOptions {
   /** Model id to call. Defaults to Sonnet (the paid member tier). The free

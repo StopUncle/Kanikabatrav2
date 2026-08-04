@@ -1,13 +1,14 @@
 import type { Metadata } from "next";
 import { requireServerAuth } from "@/lib/auth/server-auth";
 import { getReceiptsQuota, listReceipts } from "@/lib/receipts/db";
-import ReceiptsClient from "@/components/receipts/ReceiptsClient";
+import AppReceiptsClient from "@/components/app-shell/receipts/AppReceiptsClient";
 import { memberGate } from "@/lib/access/guard";
+import { PageHeader, PageShell } from "@/components/app-shell/ui";
 
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  title: "Receipts | Train Your Instincts",
+  title: "Receipts | Consilium",
   description:
     "Paste a message exchange. Get the read in Kanika's voice. Member-only.",
 };
@@ -29,41 +30,28 @@ export default async function ReceiptsPage() {
   ]);
 
   return (
-    <div className="min-h-screen px-4 py-10 sm:py-14">
-      <div className="max-w-3xl mx-auto">
-        <header className="mb-10">
-          <p className="text-accent-gold/70 text-app-tiny uppercase tracking-[0.4em] mb-3">
-            Receipts
-          </p>
-          <h1 className="text-3xl sm:text-4xl font-extralight tracking-wider uppercase text-text-light mb-3">
-            Paste it. Read it.
-          </h1>
-          <p className="text-text-gray text-sm sm:text-base font-light max-w-2xl leading-relaxed">
-            Paste a message, drop a screenshot, or do both. You&rsquo;ll get
-            a 3-section read in Kanika&rsquo;s voice: what they&rsquo;re
-            doing, what they want, and the structurally clean response.
-            Trained on Kanika&rsquo;s frameworks. Your input is not stored,
-            only the read is saved.
-          </p>
-        </header>
+    <PageShell>
+      <PageHeader
+        title="Receipts"
+        lede="Paste a message or drop a screenshot. You get a 3-section read in Kanika's voice: what they're doing, what they want, and the clean response."
+      />
 
-        <ReceiptsClient
-          initialItems={items.map((i) => ({
-            id: i.id,
-            label: i.label,
-            response: i.response,
-            createdAt: i.createdAt.toISOString(),
-          }))}
-          initialQuota={quota}
-        />
+      <AppReceiptsClient
+        initialItems={items.map((i) => ({
+          id: i.id,
+          label: i.label,
+          response: i.response,
+          createdAt: i.createdAt.toISOString(),
+        }))}
+        initialQuota={quota}
+      />
 
-        <p className="text-text-gray/50 text-xs mt-12 leading-relaxed">
-          Receipts is pattern recognition training. Not medical, legal,
-          or therapeutic advice. Not a substitute for professional
-          evaluation. If you are in immediate distress, call 988 (US) or
-          your local crisis line.
-        </p>
-      </div>
-    </div>
+      <p className="mt-8 text-app-micro leading-relaxed text-[var(--app-dim)]">
+        Receipts is pattern recognition training. Not medical, legal, or
+        therapeutic advice. Not a substitute for professional evaluation. If
+        you are in immediate distress, call 988 (US) or your local crisis
+        line.
+      </p>
+    </PageShell>
   );
 }
