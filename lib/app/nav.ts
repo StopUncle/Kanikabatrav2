@@ -78,6 +78,13 @@ export interface AppSurface {
    * the other means either an unlabelled wall or an unenforced lock.
    */
   memberOnly?: boolean;
+  /**
+   * A tab root redirects here, so this is where the tab actually lands and
+   * the shell treats it as a root: no back control. Without this, back on
+   * the pact week pointed at the door, the door redirected a signed member
+   * straight back to the week, and the button did nothing at all.
+   */
+  tabLanding?: boolean;
 }
 
 export const APP_SURFACES: AppSurface[] = [
@@ -129,7 +136,8 @@ export const APP_SURFACES: AppSurface[] = [
     label: "This week",
     placement: "nested",
     parent: "/app/pact",
-    note: "The live week: challenge, keep, journal. The door redirects an active pact here, so for a signed member the tab lands on this.",
+    tabLanding: true,
+    note: "The live week: challenge, keep, journal. The door redirects an active pact here, so for a signed member the tab lands on this and it behaves as the tab root.",
     maturity: "app-native",
   },
   {
@@ -137,8 +145,8 @@ export const APP_SURFACES: AppSurface[] = [
     memberOnly: true,
     label: "The record",
     placement: "nested",
-    parent: "/app/pact",
-    note: "Kept weeks and scars, plus past pacts. Also the evidence screen the break flow shows before it lets you break.",
+    parent: "/app/pact/week",
+    note: "Kept weeks and scars, plus past pacts. Also the evidence screen the break flow shows before it lets you break. Up is the week, not the door: the door redirects signed members, and only signed members get here.",
     maturity: "app-native",
   },
   {
@@ -146,8 +154,8 @@ export const APP_SURFACES: AppSurface[] = [
     memberOnly: true,
     label: "Pact journal",
     placement: "nested",
-    parent: "/app/pact",
-    note: "Past private entries and replies. Private by definition; the wall only ever sees the separate share box.",
+    parent: "/app/pact/week",
+    note: "Past private entries and replies. Private by definition; the wall only ever sees the separate share box. Up is the week for the same reason as the record.",
     maturity: "app-native",
   },
   {
@@ -573,6 +581,7 @@ export function backTargetFor(pathname: string): string | null {
   const path = pathname.replace(/\/+$/, "") || "/app";
   if (TAB_SURFACES.some((t) => t.href === path)) return null;
   if (FULL_SCREEN_ROUTES.includes(path)) return null;
+  if (APP_SURFACES.some((s) => s.href === path && s.tabLanding)) return null;
 
   let best: AppSurface | null = null;
   for (const s of APP_SURFACES) {
