@@ -1259,25 +1259,23 @@ export default function SimulatorRunner({
             el.scrollHeight - el.scrollTop - el.clientHeight < 24,
           );
         }}
-        // justify-start when choices are showing so the echo + first
-        // card top-anchor and the scroll position starts at the TOP.
-        // With justify-end, an overflowing 4-choice stack landed the
-        // player at the bottom of the scroll — they had to scroll UP
-        // to see what they were replying to. justify-end is kept for
-        // the dialog phase so a single dialog line reads cinematically
-        // near the bottom of the screen.
-        // Alignment is driven purely by the settle flag, which only
-        // changes after an exit completes (see onExitComplete). So the
-        // column stays bottom-anchored while a dialog line is exiting AND
-        // while the composer is exiting, killing the bottom<->top jump in
-        // both directions. Settled composer centers when it fits, and
-        // top-anchors (scroll-safe) only when expanded options overflow.
+        // justify-end holds the dialog phase near the bottom of the
+        // screen, where a single line reads cinematically. It flips only
+        // after an exit completes (see onExitComplete), so the column
+        // stays bottom-anchored while a dialog line or composer is
+        // exiting, killing the bottom<->top jump in both directions.
+        //
+        // The choices phase is justify-start with my-auto ON THE CHILD:
+        // auto margins center the stack when it fits and collapse to
+        // zero when it overflows, so the top card always stays
+        // reachable by scroll. The previous version chose between
+        // justify-center and justify-start from a measured overflow
+        // flag; the measurement could not see content growing inside a
+        // fixed-height container (expanding a card's tactic text), and
+        // a centered overflowing column clips its top above the scroll
+        // edge, unreachable. CSS decides now, so it cannot go stale.
         className={`absolute inset-x-0 bottom-16 sm:bottom-20 z-[35] flex flex-col items-center ${
-          !choicesSettled
-            ? "justify-end"
-            : isChoicesOverflowing
-              ? "justify-start"
-              : "justify-center"
+          choicesSettled ? "justify-start" : "justify-end"
         } gap-3 sm:gap-5 px-4 h-[calc(100dvh-180px)] overflow-y-auto [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden`}
       >
         {/* One AnimatePresence with mode="wait" so the dialog→choices
@@ -1302,12 +1300,12 @@ export default function SimulatorRunner({
               to find an already-revealed first line. */}
           {showIntro ? null : showChoices && scene.choices ? (
             <m.div
-              // Container flips to justify-start when choices are
-              // showing, so the wrapper sits naturally at the top of
-              // the play area without needing mb-auto. Top-anchored +
-              // overflow-y-auto means the scroll starts at the top —
-              // player reads top-down, scrolls DOWN if there's more.
-              className="w-full max-w-2xl mx-auto"
+              // my-auto centers the stack when it fits the play area
+              // and top-anchors it when it overflows (auto margins
+              // collapse to zero under overflow), so the scroll always
+              // starts at the top: player reads top-down, scrolls DOWN
+              // if there's more.
+              className="my-auto w-full max-w-2xl mx-auto"
               key={`choices-wrap-${scene.id}`}
               initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
