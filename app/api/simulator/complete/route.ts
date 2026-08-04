@@ -469,7 +469,9 @@ export async function POST(request: NextRequest) {
       const markWritten = await recordEncounters(prisma, {
         userId: user.id,
         source: "SCENARIO",
-        encounters: encountersFromScenarioRun(scenario, body.choicesMade),
+        encounters: encountersFromScenarioRun(scenario, body.choicesMade, {
+          gauntlet: isGauntlet,
+        }),
         dedupe: true,
       });
 

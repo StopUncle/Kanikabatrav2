@@ -30,6 +30,11 @@ export interface EncounterInput {
   /** The originating row: tellId, baseline item id, scenarioId. */
   sourceId?: string | null;
   answerMs?: number | null;
+  /**
+   * Difficulty weight from lib/mark/weights.ts. Omitted means 1, a
+   * standard item. Always set server-side, never taken from the client.
+   */
+  weight?: number;
 }
 
 export async function recordEncounters(
@@ -77,6 +82,7 @@ export async function recordEncounters(
         source,
         sourceId: e.sourceId ?? null,
         answerMs: e.answerMs ?? null,
+        weight: e.weight ?? 1,
       })),
     });
     return result.count;

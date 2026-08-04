@@ -181,6 +181,22 @@ describe("encountersFromScenarioRun", () => {
       [],
     );
   });
+
+  it("weights by difficulty, and gauntlet runs prove more", () => {
+    expect(
+      encountersFromScenarioRun(makeScenario(), [record("s1", "a")])[0].weight,
+    ).toBe(0.6);
+
+    const advanced = makeScenario({ difficulty: "advanced" });
+    expect(
+      encountersFromScenarioRun(advanced, [record("s1", "a")])[0].weight,
+    ).toBe(1.5);
+    expect(
+      encountersFromScenarioRun(advanced, [record("s1", "a")], {
+        gauntlet: true,
+      })[0].weight,
+    ).toBe(1.5 * 1.25);
+  });
 });
 
 describe("drill mapper", () => {
@@ -205,6 +221,8 @@ describe("drill mapper", () => {
       correct: true,
       sourceId: "m-gaslight",
       answerMs: 1200,
+      // m-gaslight is a tier 2 card, the standard band.
+      weight: 1,
     });
   });
 });
@@ -220,6 +238,7 @@ describe("lab mapper", () => {
     const held = encountersFromLabScore("guilt-weaver", "sess-1", "held");
     expect(held).toHaveLength(3);
     expect(held.every((e) => e.correct)).toBe(true);
+    expect(held.every((e) => e.weight === 1.5)).toBe(true);
     expect(held.every((e) => e.operatorType === "COVERT_NARCISSIST")).toBe(
       true,
     );

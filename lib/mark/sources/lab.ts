@@ -1,5 +1,6 @@
 import type { EncounterInput } from "../encounters";
 import type { Operator, Tactic } from "../taxonomy";
+import { LAB_WEIGHT } from "../weights";
 
 /**
  * Lab sessions as Mark evidence.
@@ -51,5 +52,6 @@ export function encountersFromLabScore(
     operatorType: marks.operatorType,
     correct,
     sourceId: sessionId,
+    weight: LAB_WEIGHT,
   }));
 }

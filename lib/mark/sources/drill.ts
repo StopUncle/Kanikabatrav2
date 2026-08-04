@@ -1,6 +1,7 @@
 import { DRILL_BANK } from "@/lib/games/speed-drill/content";
 import type { EncounterInput } from "../encounters";
 import type { Tactic } from "../taxonomy";
+import { DRILL_TIER_WEIGHT } from "../weights";
 
 /**
  * Speed Drill answers as Mark evidence.
@@ -69,6 +70,7 @@ export function encountersFromDrillAnswers(
       correct: answer.picked === card.manipulative,
       sourceId: answer.cardId,
       answerMs: answer.answerMs ?? null,
+      weight: DRILL_TIER_WEIGHT[card.tier],
     });
   }
 

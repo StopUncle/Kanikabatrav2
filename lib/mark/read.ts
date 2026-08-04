@@ -42,6 +42,16 @@ const CROSS_CELL_CEILING = 0.5;
 const BLIND_SPOT_CEILING = 0.6;
 const MAX_BLIND_SPOTS = 4;
 /**
+ * The phantom record behind the headline score. Before the real record
+ * exists, the score behaves as if PRIOR_ANSWERS standard answers were
+ * already on the books at PRIOR_RATE. Five perfect answers on day one
+ * therefore read in the low sixties, not at 100, and the prior fades to
+ * nothing as genuine evidence accumulates. The honesty rule, applied to
+ * the number itself: a thin record cannot certify a sharp read.
+ */
+const PRIOR_ANSWERS = 8;
+const PRIOR_RATE = 0.35;
+/**
  * Ledger rows read per member. A daily answerer takes a year to reach
  * 400, so this only ever bites on a bot or a bug, and it fails safe:
  * the most recent encounters are the ones that describe them now.
@@ -56,7 +66,10 @@ export interface LedgerRow {
   /** Encounters logged. Shown verbatim when the cell is untested. */
   seen: number;
   caught: number;
-  /** Null while untested, so no caller can accidentally render a guess. */
+  /**
+   * Difficulty-weighted catch rate. Null while untested, so no caller
+   * can accidentally render a guess.
+   */
   rate: number | null;
   state: CellState;
   /** The verdict in words; the bars carry the numbers. */
@@ -85,10 +98,13 @@ export interface MarkRead {
   totalEncounters: number;
   /**
    * The headline: the Mark score. Catch rate across every graded moment,
-   * recency-weighted (45-day half-life) so it reads who the member is
-   * NOW rather than averaging this month against last year. Movement is
-   * the last 30 days against the record before them. Null until the
-   * record can speak at all.
+   * weighted twice over: by recency (45-day half-life, so it reads who
+   * the member is NOW) and by difficulty (advanced material moves it
+   * more than beginner cards). A phantom record of average answers is
+   * folded in, so a thin record reads modest and the member earns their
+   * way up as real evidence accumulates. Movement is the last 30 days
+   * against the record before them. Null until the record can speak at
+   * all.
    */
   overall: { seen: number; rate: number | null; delta: number | null };
   /** How broadly the record has actually tested them. */
@@ -114,6 +130,14 @@ export interface MarkRead {
 interface Tally {
   seen: number;
   caught: number;
+  /**
+   * The same counts, difficulty-weighted (lib/mark/weights.ts). Rates
+   * divide these, so catching advanced material moves a cell more than
+   * catching a beginner card. Raw counts still gate when a cell speaks:
+   * volume decides whether there is a verdict, weight decides what it is.
+   */
+  wSeen: number;
+  wCaught: number;
   /** The two comparison windows behind the +/- movement chip. */
   recentSeen: number;
   recentCaught: number;
@@ -129,12 +153,15 @@ function bump(
   key: string,
   correct: boolean,
   recent: boolean,
+  weight: number,
 ): void {
   const t =
     map.get(key) ??
     ({
       seen: 0,
       caught: 0,
+      wSeen: 0,
+      wCaught: 0,
       recentSeen: 0,
       recentCaught: 0,
       priorSeen: 0,
@@ -142,6 +169,8 @@ function bump(
     } satisfies Tally);
   t.seen += 1;
   if (correct) t.caught += 1;
+  t.wSeen += weight;
+  if (correct) t.wCaught += weight;
   if (recent) {
     t.recentSeen += 1;
     if (correct) t.recentCaught += 1;
@@ -169,6 +198,21 @@ function stateFor(seen: number): CellState {
   return "UNTESTED";
 }
 
+/**
+ * The headline number from the weighted tallies: catch rate with the
+ * phantom record folded in. Pure so the maths is unit-testable without
+ * a database.
+ */
+export function markScore(
+  weightedCaught: number,
+  weightedSeen: number,
+): number {
+  return (
+    (weightedCaught + PRIOR_ANSWERS * PRIOR_RATE) /
+    (weightedSeen + PRIOR_ANSWERS)
+  );
+}
+
 function buildRow(
   key: string,
   label: string,
@@ -190,7 +234,9 @@ function buildRow(
       delta: null,
     };
   }
-  const rate = caught / seen;
+  // Difficulty-weighted: the bar answers "how good is the read", and a
+  // read proven on advanced material is worth more of the bar.
+  const rate = tally && tally.wSeen > 0 ? tally.wCaught / tally.wSeen : 0;
   return {
     key,
     label,
@@ -211,6 +257,7 @@ export async function readMark(db: Db, userId: string): Promise<MarkRead> {
         tactic: true,
         operatorType: true,
         correct: true,
+        weight: true,
         createdAt: true,
       },
       orderBy: { createdAt: "desc" },
@@ -240,23 +287,25 @@ export async function readMark(db: Db, userId: string): Promise<MarkRead> {
   for (const row of rows) {
     const recent = row.createdAt >= windowStart;
     const ageDays = (now - row.createdAt.getTime()) / 86_400_000;
-    const weight = Math.pow(0.5, ageDays / HALF_LIFE_DAYS);
-    weightedSeen += weight;
-    if (row.correct) weightedCaught += weight;
+    // The headline weighs each moment twice over: recency (current form)
+    // times difficulty (what the moment actually proved).
+    const recency = Math.pow(0.5, ageDays / HALF_LIFE_DAYS);
+    weightedSeen += recency * row.weight;
+    if (row.correct) weightedCaught += recency * row.weight;
     // Rows carrying a label the taxonomy no longer knows are dropped
     // rather than rendered. Silence beats a cell nobody can name. A row
     // feeds only the ledgers it actually carries a label for, so an
     // operator-only item counts once, in the right place.
     const tactic = asTactic(row.tactic);
     const operator = asOperator(row.operatorType);
-    if (tactic) bump(byTactic, tactic, row.correct, recent);
-    if (operator) bump(byOperator, operator, row.correct, recent);
+    if (tactic) bump(byTactic, tactic, row.correct, recent, row.weight);
+    if (operator) bump(byOperator, operator, row.correct, recent, row.weight);
     if (tactic && operator) {
-      bump(byCell, `${tactic}|${operator}`, row.correct, recent);
+      bump(byCell, `${tactic}|${operator}`, row.correct, recent, row.weight);
     }
     // Every graded moment counts once toward the headline, whether it
     // carries one label or two.
-    bump(overallTally, "all", row.correct, recent);
+    bump(overallTally, "all", row.correct, recent, row.weight);
   }
 
   const tactics = TACTIC_KEYS.map((t) =>
@@ -277,8 +326,8 @@ export async function readMark(db: Db, userId: string): Promise<MarkRead> {
   const overall = {
     seen: all?.seen ?? 0,
     rate:
-      all && all.seen >= MIN_TO_SPEAK && weightedSeen > 0
-        ? weightedCaught / weightedSeen
+      all && all.seen >= MIN_TO_SPEAK
+        ? markScore(weightedCaught, weightedSeen)
         : null,
     delta: deltaFor(all),
   };
@@ -325,8 +374,8 @@ function buildInsights(
     const overall = byTactic.get(tactic);
     if (!overall || overall.seen < MIN_TO_SETTLE) continue;
 
-    const overallRate = overall.caught / overall.seen;
-    const cellRate = cell.caught / cell.seen;
+    const overallRate = overall.wCaught / overall.wSeen;
+    const cellRate = cell.wCaught / cell.wSeen;
     if (overallRate < CROSS_TACTIC_FLOOR) continue;
     if (cellRate > CROSS_CELL_CEILING) continue;
 

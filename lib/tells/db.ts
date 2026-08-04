@@ -16,6 +16,7 @@
 import { prisma } from "@/lib/prisma";
 import { Prisma } from "@prisma/client";
 import { recordEncounters } from "@/lib/mark/encounters";
+import { tellDifficultyWeight } from "@/lib/mark/weights";
 import { asOperator, asTactic } from "@/lib/mark/taxonomy";
 import {
   AXIS_KEYS,
@@ -420,6 +421,7 @@ export async function recordAnswer(
           correct: isCorrect,
           sourceId: tellRow.id,
           answerMs: args.answerMs,
+          weight: tellDifficultyWeight(tellRow.difficulty),
         },
       ],
     });

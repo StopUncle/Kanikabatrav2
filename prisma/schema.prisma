@@ -2438,6 +2438,10 @@ model MarkEncounter {
   /// `source`, the dedupe key that keeps a replay from counting twice.
   sourceId     String?
   answerMs     Int?
+  /// How much this moment weighs in the ledger's averages. 1 is a
+  /// standard-difficulty item; harder evidence counts for more. Set by
+  /// the source mappers in lib/mark/weights.ts, never by the client.
+  weight       Float      @default(1)
   createdAt    DateTime   @default(now())
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)

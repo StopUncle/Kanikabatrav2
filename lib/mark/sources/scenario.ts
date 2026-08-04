@@ -1,6 +1,10 @@
 import type { ChoiceRecord, Scenario } from "@/lib/simulator/types";
 import type { EncounterInput } from "../encounters";
 import type { Operator, Tactic } from "../taxonomy";
+import {
+  GAUNTLET_WEIGHT_MULTIPLIER,
+  SCENARIO_DIFFICULTY_WEIGHT,
+} from "../weights";
 
 /**
  * Simulator runs as Mark evidence.
@@ -85,9 +89,14 @@ export function resolveScenarioMarkCell(
 export function encountersFromScenarioRun(
   scenario: Scenario,
   choicesMade: ChoiceRecord[],
+  opts?: { gauntlet?: boolean },
 ): EncounterInput[] {
   const cell = resolveScenarioMarkCell(scenario);
   if (!cell) return [];
+
+  const weight =
+    SCENARIO_DIFFICULTY_WEIGHT[scenario.difficulty] *
+    (opts?.gauntlet ? GAUNTLET_WEIGHT_MULTIPLIER : 1);
 
   const sceneById = new Map(scenario.scenes.map((s) => [s.id, s]));
   const seenScenes = new Set<string>();
@@ -108,6 +117,7 @@ export function encountersFromScenarioRun(
       operatorType: cell.operatorType,
       correct: chosen.isOptimal === true,
       sourceId: `${scenario.id}:${record.sceneId}`,
+      weight,
     });
   }
 
