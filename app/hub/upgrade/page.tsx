@@ -1,0 +1,151 @@
+import Link from "next/link";
+import { requireServerAuth } from "@/lib/auth/server-auth";
+import { getAccess } from "@/lib/access/tier";
+import { PACT_PRICING, PACT_LAUNCHED } from "@/lib/pact/presets";
+import { MEMBERSHIP } from "@/lib/constants";
+import { PageShell, PageHeader } from "@/components/app-shell/ui";
+
+export const metadata = {
+  title: "Plans | Consilium",
+  description: "The Blood Pact and the Consilium, side by side.",
+};
+
+/**
+ * The ladder on one page. Two rungs, their prices, and what each opens,
+ * with the viewer's own rung named. Deliberately ungated: a member seeing
+ * their plan laid out is reassurance; a free account seeing both is the
+ * clearest pitch the app can make. Every claim here mirrors the
+ * UpgradeSheet's lists so the two surfaces can never promise different
+ * products.
+ */
+
+const PACT_OPENS = [
+  "One challenge a week, on your track, and a record that never forgets.",
+  "Every chapter of every track, not just the first.",
+  "The Room: say it in your own words, and find out what that costs you.",
+  "The Mark: your reads, measured, and a record that holds you to them.",
+];
+
+const CONSILIUM_OPENS = [
+  "Everything the Pact opens, included.",
+  "The feed: her posts, drops, and prompts, every morning.",
+  "Ask Kanika: one question a day, answered by voice or video.",
+  "Voice notes and videos, for members only.",
+  "The book at $9.99 instead of $24.99.",
+];
+
+function BenefitList({ items }: { items: string[] }) {
+  return (
+    <ul className="mt-4 flex flex-col gap-2.5">
+      {items.map((line) => (
+        <li key={line} className="flex gap-2.5 text-[13px] leading-snug">
+          <span className="mt-[7px] h-1 w-1 shrink-0 rounded-full bg-[var(--app-gold)]" />
+          <span>{line}</span>
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+function PlanBadge({ label }: { label: string }) {
+  return (
+    <span className="rounded-full border border-[var(--app-gold-soft)] px-2 py-0.5 text-app-micro uppercase tracking-app-wide text-[var(--app-gold-soft)]">
+      {label}
+    </span>
+  );
+}
+
+export default async function PlansPage() {
+  const userId = await requireServerAuth("/app/upgrade");
+  const access = await getAccess(userId);
+
+  const onPact = access.tier === "pact";
+  const onConsilium = access.isMember;
+
+  return (
+    <PageShell>
+      <PageHeader
+        title="Two ways in"
+        lede="The Pact buys the training. The Consilium buys everything the Pact does, plus Kanika herself."
+      />
+
+      {/* The Blood Pact */}
+      {PACT_LAUNCHED && (
+        <section
+          className="mt-6 rounded-[22px] border border-[var(--pact-blood)]/50 px-[18px] py-5"
+          style={{
+            background:
+              "radial-gradient(120% 140% at 80% 0%, rgba(140,31,47,0.18), transparent 55%), linear-gradient(160deg, #1a1012, #0d0b09 70%)",
+          }}
+        >
+          <div className="flex items-baseline justify-between gap-3">
+            <p className="text-app-tiny uppercase tracking-app-label text-[var(--pact-blood)]">
+              The Blood Pact
+            </p>
+            {(onPact || onConsilium) && (
+              <PlanBadge label={onPact ? "Your plan" : "Included"} />
+            )}
+          </div>
+          <h2
+            className="mt-1.5 text-app-title leading-tight"
+            style={{ fontFamily: "var(--font-display)" }}
+          >
+            The training, signed for.
+          </h2>
+          <p className="mt-2 text-[13px] text-[var(--app-dim)]">
+            {PACT_PRICING.weeklyDisplay}, or {PACT_PRICING.annualDisplay} (
+            {PACT_PRICING.annualSaveLine}).
+          </p>
+          <BenefitList items={PACT_OPENS} />
+          <Link
+            href="/app/pact"
+            className="mt-5 block w-full rounded-full bg-[var(--pact-blood)] px-5 py-3.5 text-center text-[13px] uppercase tracking-[0.16em] text-[var(--app-text)]"
+          >
+            {onPact || onConsilium ? "Open the Pact" : "See the Pact"}
+          </Link>
+        </section>
+      )}
+
+      {/* The Consilium */}
+      <section className="mt-4 rounded-[22px] border border-[var(--app-gold)]/35 bg-[var(--app-gold)]/[0.05] px-[18px] py-5">
+        <div className="flex items-baseline justify-between gap-3">
+          <p className="text-app-tiny uppercase tracking-app-label text-[var(--app-gold)]">
+            The Consilium
+          </p>
+          {onConsilium && <PlanBadge label="Your plan" />}
+        </div>
+        <h2
+          className="mt-1.5 text-app-title leading-tight"
+          style={{ fontFamily: "var(--font-display)" }}
+        >
+          Everything, including Kanika.
+        </h2>
+        <p className="mt-2 text-[13px] text-[var(--app-dim)]">
+          {MEMBERSHIP.priceDisplay} a month, or {MEMBERSHIP.annualDisplay} a
+          year. Cancel any time.
+        </p>
+        <BenefitList items={CONSILIUM_OPENS} />
+        {onConsilium ? (
+          <Link
+            href="/consilium/feed"
+            className="mt-5 block w-full rounded-full bg-[var(--app-gold)] px-5 py-3.5 text-center text-[13px] uppercase tracking-[0.16em] text-black"
+          >
+            Open the Consilium
+          </Link>
+        ) : (
+          <Link
+            href="/consilium/apply"
+            className="mt-5 block w-full rounded-full bg-[var(--app-gold)] px-5 py-3.5 text-center text-[13px] uppercase tracking-[0.16em] text-black"
+          >
+            Join the Consilium
+          </Link>
+        )}
+      </section>
+
+      <p className="mt-5 pb-8 text-center text-app-caption text-[var(--app-dim)]">
+        Everything you have done on the free tier carries over, whichever
+        rung you take.
+      </p>
+    </PageShell>
+  );
+}

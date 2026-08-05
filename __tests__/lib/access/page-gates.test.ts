@@ -43,6 +43,7 @@ const FREE: Record<string, string> = {
   "/pact": "The Pact's door IS the sell. Signed members are redirected to /pact/week, which gates.",
   "/pact/sign": "The oath and the signature come BEFORE payment by design; the seal action is what charges.",
   "/pact/sealed": "Stripe's return URL. Gating it would wall the ceremony over a webhook race.",
+  "/upgrade": "The plans page. Showing both rungs and their prices IS the pitch; a member sees their own plan named.",
 };
 
 /**

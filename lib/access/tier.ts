@@ -128,11 +128,28 @@ export async function getAccess(userId: string | null): Promise<Access> {
   const [user, pact] = await Promise.all([
     prisma.user.findUnique({
       where: { id: userId },
-      select: { isBanned: true },
+      select: { isBanned: true, role: true },
     }),
     checkPactMembership(userId),
   ]);
   const isBanned = user?.isBanned ?? false;
+
+  // The owner walks their own halls. checkMembership already treats the
+  // admin COOKIE as a member preview, but an admin signed in as a plain
+  // user (their phone, the installed PWA) carries no admin cookie and was
+  // walled out of the app they run. Role outranks subscription state.
+  if (user?.role === "ADMIN" && !isBanned) {
+    return {
+      tier: "member",
+      userId,
+      isMember: true,
+      isBanned: false,
+      status: "ACTIVE",
+      membership: check.membership,
+      pactEntitled: true,
+      reason: null,
+    };
+  }
 
   if (pact.entitled && !isBanned) {
     return {

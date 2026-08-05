@@ -303,6 +303,14 @@ export const APP_SURFACES: AppSurface[] = [
     maturity: "app-native",
   },
   {
+    href: "/app/upgrade",
+    label: "Plans and pricing",
+    placement: "more",
+    section: "Account",
+    note: "The whole ladder on one page: the Pact, the Consilium, what each opens, what each costs. Deliberately ungated; a member seeing their own plan laid out is reassurance, not a pitch.",
+    maturity: "app-native",
+  },
+  {
     href: "/app/profile",
     label: "Profile and settings",
     placement: "more",

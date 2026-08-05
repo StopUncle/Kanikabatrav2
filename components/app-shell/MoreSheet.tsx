@@ -9,7 +9,7 @@ import {
   type AppSurface,
   type ViewerTier,
 } from "@/lib/app/nav";
-import { Mail, Settings, X } from "lucide-react";
+import { Crown, Mail, Settings, X } from "lucide-react";
 
 /**
  * The More sheet, slimmed to what Home's explore rails do not carry: the
@@ -23,6 +23,7 @@ import { Mail, Settings, X } from "lucide-react";
  */
 const ICONS: Record<string, React.ReactNode> = {
   "/app/kanika": <Mail size={17} />,
+  "/app/upgrade": <Crown size={17} />,
   "/app/profile": <Settings size={17} />,
 };
 

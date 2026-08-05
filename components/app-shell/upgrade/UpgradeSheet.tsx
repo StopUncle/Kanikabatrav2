@@ -236,8 +236,19 @@ export default function UpgradeSheet({
 
           <button
             type="button"
+            onClick={() => {
+              onClose();
+              router.push("/app/upgrade");
+            }}
+            className="mt-2 w-full py-3 text-[12.5px] text-[var(--app-gold-soft)]"
+          >
+            Compare both plans
+          </button>
+
+          <button
+            type="button"
             onClick={onClose}
-            className="mt-2 w-full py-3 text-[12.5px] text-[var(--app-dim)]"
+            className="mt-1 w-full py-3 text-[12.5px] text-[var(--app-dim)]"
           >
             Not now
           </button>

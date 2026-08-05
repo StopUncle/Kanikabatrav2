@@ -266,7 +266,8 @@ export default async function Home() {
                 </h3>
                 <p className="text-text-gray text-sm font-light leading-relaxed mb-6">
                   {catalogueStats.scenarios} branching scenarios. {catalogueStats.scenes} scenes. {catalogueStats.tacticsTaught} manipulation tactics
-                  to spot. Plus voice notes, daily drops, and Ask Kanika.
+                  to spot. Daily drills, Receipts, and the Mark that tracks
+                  your read.
                 </p>
                 <div className="inline-flex items-center gap-2 text-warm-gold text-sm font-medium uppercase tracking-wider">
                   Get the app

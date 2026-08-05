@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 import { requireServerAuth } from "@/lib/auth/server-auth";
-import { getAccess } from "@/lib/access/tier";
+import { getAccess, canTrain } from "@/lib/access/tier";
 import { readPact } from "@/lib/pact/read";
 import { isPactCheckoutOpen } from "@/lib/stripe";
 import { PageShell } from "@/components/app-shell/ui";
@@ -23,7 +23,12 @@ export default async function PactDoorPage() {
     readPact(userId),
   ]);
 
-  if (read.pact) {
+  // Only a viewer who can actually train lands on the week. A live pact
+  // with a lapsed entitlement (expired membership, ended subscription)
+  // used to redirect here anyway, the week walled them, and the wall's
+  // CTA led back to this door: a perfect bounce loop. For them the door
+  // IS the right room; re-entitling is the way back to their week.
+  if (read.pact && canTrain(access)) {
     redirect("/app/pact/week");
   }
 

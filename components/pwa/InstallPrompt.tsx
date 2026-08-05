@@ -5,7 +5,10 @@ import { usePathname } from "next/navigation";
 import { ANALYTICS_EVENTS } from "@/lib/analytics/events";
 import { capture } from "@/lib/analytics/client";
 
-const DISMISS_KEY = "consilium-install-dismissed-v1";
+// v2: rotated at the public beta launch (2026-08-05). Everyone who
+// dismissed v1 during the testing months gets one fresh offer of the
+// launched app; their next dismissal sticks for 14 days as before.
+const DISMISS_KEY = "consilium-install-dismissed-v2";
 const DISMISS_DURATION_DAYS = 14; // Don't re-prompt for 2 weeks if dismissed.
 
 /**
