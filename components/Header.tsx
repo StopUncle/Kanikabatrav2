@@ -191,6 +191,12 @@ const Header = () => {
                   }`}
                 >
                   <span>Get the app</span>
+                  {/* Honest about the app's state, same word the app shell
+                      itself wears. border-current so it reads in both the
+                      idle (gold) and active (black-on-gold) pill states. */}
+                  <span className="rounded-full border border-current px-1.5 py-px text-[8px] tracking-[0.2em] opacity-80">
+                    Beta
+                  </span>
                   <ArrowUpRight
                     size={13}
                     strokeWidth={1.5}
@@ -317,8 +323,11 @@ const Header = () => {
                 : "text-warm-gold border-warm-gold/60 hover:border-warm-gold"
             }`}
           >
-            <span className="text-sm tracking-[0.25em] uppercase font-light">
+            <span className="flex items-center gap-2 text-sm tracking-[0.25em] uppercase font-light">
               Get the app
+              <span className="rounded-full border border-current px-1.5 py-px text-[9px] tracking-[0.2em] opacity-80">
+                Beta
+              </span>
             </span>
             <ArrowUpRight
               size={18}

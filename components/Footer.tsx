@@ -78,7 +78,7 @@ const Footer = () => {
       // rather than a demand one.
       { name: "Free Receipts", href: "/receipts" },
       { name: "Coaching", href: "/coaching" },
-      { name: "The App", href: "/start" },
+      { name: "The App (Beta)", href: "/start" },
       { name: "Content", href: "/content" },
       { name: "Blog", href: "/blog" },
       { name: "Contact", href: "/contact" },

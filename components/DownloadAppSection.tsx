@@ -16,7 +16,7 @@ export default function DownloadAppSection() {
           <div className="grid grid-cols-1 md:grid-cols-[1fr_auto] gap-6 md:gap-10 items-center">
             <div>
               <p className="text-accent-gold/90 uppercase tracking-[0.3em] text-[11px] mb-2">
-                The Consilium App
+                The Consilium App &middot; Beta
               </p>
               <h2 className="text-xl md:text-2xl font-extralight text-text-light mb-2 tracking-wide">
                 Download the app

@@ -52,9 +52,12 @@ export default function Hero() {
           </Link>
           <Link
             href="/start"
-            className="inline-flex items-center justify-center px-8 py-3.5 rounded-full border border-warm-gold/40 text-warm-gold font-medium text-sm tracking-[0.2em] uppercase transition-all hover:bg-warm-gold/10 hover:border-warm-gold/70"
+            className="inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-full border border-warm-gold/40 text-warm-gold font-medium text-sm tracking-[0.2em] uppercase transition-all hover:bg-warm-gold/10 hover:border-warm-gold/70"
           >
             Get the app
+            <span className="rounded-full border border-current px-1.5 py-px text-[8px] tracking-[0.2em] opacity-80">
+              Beta
+            </span>
           </Link>
         </div>
 

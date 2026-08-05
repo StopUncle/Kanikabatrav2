@@ -357,6 +357,23 @@ export default function LinksPage() {
         </p>
 
         <div className="space-y-2.5">
+          {/* The app. Highest-traffic surface on the site, and until the
+              beta launch it had no app entry at all. */}
+          <a
+            href={withUtm("/start", "app")}
+            onClick={() => trackEvent("app_click")}
+            className="group flex items-center justify-between p-4 rounded-xl border border-[#d4af37]/25 hover:border-[#d4af37]/50 active:scale-[0.98] transition-all"
+            style={{ background: "linear-gradient(135deg, rgba(212,175,55,0.10) 0%, #0f0d0c 100%)" }}
+          >
+            <div>
+              <p className="text-[#f5f0ed] text-sm font-medium group-hover:text-[#d4af37] transition-colors">Get the App</p>
+              <p className="text-[#6b7280] text-[11px] mt-0.5">Train daily &middot; Free to start &middot; Beta</p>
+            </div>
+            <svg className="w-4 h-4 text-[#6b7280]/40 shrink-0 group-hover:text-[#d4af37]/60 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+            </svg>
+          </a>
+
           {/* Coaching */}
           <a
             href={withUtm("/coaching", "coaching")}

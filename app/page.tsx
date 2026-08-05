@@ -64,14 +64,22 @@ export const metadata: Metadata = {
   },
 };
 
+// The testimonial pull made this page hit the database, and a fully
+// static page would bake one quote forever at build time. ISR keeps the
+// homepage cached and fast while refreshing the quote every 5 minutes.
+export const revalidate = 300;
+
 export default async function Home() {
   const latestPosts = getAllPosts().slice(0, 3);
   // Real social proof over the hardcoded anonymous quote. The admin-managed
   // testimonial pool already feeds /consilium; the homepage is where the
   // book and membership decision is made, so it gets the strongest quote.
-  const featuredTestimonial = (await getFeaturedTestimonials(3)).find(
-    (t) => t.quoteText,
-  );
+  // Failure-tolerant: a DB hiccup (or a build machine with no database)
+  // falls back to the component's built-in quote instead of failing the
+  // page.
+  const featuredTestimonial = await getFeaturedTestimonials(3)
+    .then((list) => list.find((t) => t.quoteText))
+    .catch(() => undefined);
 
   return (
     <>
@@ -250,7 +258,7 @@ export default async function Home() {
                     The Practice Ground
                   </p>
                   <p className="text-warm-gold text-sm font-light">
-                    Free to start
+                    Free to start &middot; Beta
                   </p>
                 </div>
                 <h3 className="text-2xl md:text-3xl font-extralight text-text-light mb-3 tracking-wide leading-tight">
