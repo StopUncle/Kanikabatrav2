@@ -97,7 +97,11 @@ export function middleware(request: NextRequest) {
       request.cookies.has("accessToken") ||
       request.cookies.has("refreshToken") ||
       request.cookies.has("admin_session");
-    if (!hasSession) {
+    // Local dev bypass: when page-level auth is stubbed out, a cookie-less
+    // browser must still reach /app, or the bypass only bypasses half the
+    // stack. Never true in production; the variable is not set there.
+    const devBypass = process.env.DEV_BYPASS_AUTH === "true";
+    if (!hasSession && !devBypass) {
       // Same host-string construction as the www redirect above: behind
       // Railway's proxy, nextUrl.clone() can leak the internal port.
       const proto = host.startsWith("localhost") || host.startsWith("127.")
