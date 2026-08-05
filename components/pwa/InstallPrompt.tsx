@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { usePathname } from "next/navigation";
 import { ANALYTICS_EVENTS } from "@/lib/analytics/events";
 import { capture } from "@/lib/analytics/client";
 
@@ -33,14 +34,25 @@ interface BeforeInstallPromptEvent extends Event {
  * standalone and bail out of rendering entirely.
  */
 export default function InstallPrompt() {
+  const pathname = usePathname();
   const [deferredPrompt, setDeferredPrompt] =
     useState<BeforeInstallPromptEvent | null>(null);
   const [isIOS, setIsIOS] = useState(false);
   const [isStandalone, setIsStandalone] = useState(false);
   const [dismissed, setDismissed] = useState(true); // start hidden, reveal after checks
 
+  // The Arrival owns its install moment (InstallSheet); stacking this
+  // banner on top of it left two overlapping offers fighting for the
+  // same taps and blocking the Begin button underneath.
+  const onArrival = pathname === "/app/welcome";
+
   useEffect(() => {
     if (typeof window === "undefined") return;
+
+    // 0. Phones only. Desktop Chromium fires beforeinstallprompt too,
+    // but the desktop offer is the handoff panel's QR code; a floating
+    // banner there just intercepts clicks meant for the app frame.
+    if (window.matchMedia("(min-width: 1024px)").matches) return;
 
     // 1. Already installed? Bail.
     const standaloneQuery = window.matchMedia("(display-mode: standalone)");
@@ -126,13 +138,18 @@ export default function InstallPrompt() {
     setDeferredPrompt(null);
   }
 
-  if (isStandalone || dismissed) return null;
+  if (isStandalone || dismissed || onArrival) return null;
   if (!isIOS && !deferredPrompt) return null;
+
+  // Inside the app shell the banner sits ABOVE the tab bar instead of on
+  // top of it; the marketing/consilium surfaces have no bottom chrome.
+  const inAppShell = pathname === "/app" || pathname?.startsWith("/app/");
+  const position = inAppShell ? "bottom-24" : "bottom-4 sm:bottom-6";
 
   // iOS path — manual instructions, no API call.
   if (isIOS) {
     return (
-      <div className="fixed bottom-4 left-4 right-4 z-50 mx-auto max-w-md rounded-2xl border border-warm-gold/30 bg-deep-black/95 p-4 shadow-2xl backdrop-blur sm:bottom-6 sm:left-1/2 sm:right-auto sm:-translate-x-1/2">
+      <div className={`fixed ${position} left-4 right-4 z-50 mx-auto max-w-md rounded-2xl border border-warm-gold/30 bg-deep-black/95 p-4 shadow-2xl backdrop-blur sm:left-1/2 sm:right-auto sm:-translate-x-1/2`}>
         <div className="flex items-start gap-3">
           <div className="flex-1">
             <p className="text-warm-gold text-[10px] uppercase tracking-[0.3em] mb-1.5">
@@ -180,7 +197,7 @@ export default function InstallPrompt() {
 
   // Android / Chromium path — native install button.
   return (
-    <div className="fixed bottom-4 left-4 right-4 z-50 mx-auto max-w-md rounded-2xl border border-warm-gold/30 bg-deep-black/95 p-4 shadow-2xl backdrop-blur sm:bottom-6 sm:left-1/2 sm:right-auto sm:-translate-x-1/2">
+    <div className={`fixed ${position} left-4 right-4 z-50 mx-auto max-w-md rounded-2xl border border-warm-gold/30 bg-deep-black/95 p-4 shadow-2xl backdrop-blur sm:left-1/2 sm:right-auto sm:-translate-x-1/2`}>
       <div className="flex items-start gap-3">
         <div className="flex-1">
           <p className="text-warm-gold text-[10px] uppercase tracking-[0.3em] mb-1.5">

@@ -84,9 +84,20 @@ export default function RegisterForm() {
       }
 
       // Registration successful. Explicit returnTo wins; otherwise a new
-      // account starts on the dashboard. The app is sealed.
-      router.push(returnTo || "/dashboard");
-      router.refresh();
+      // account starts on the dashboard. A returnTo aimed at the app is
+      // resolved all the way to its real first screen: a brand-new
+      // account can never be a member, so /start would hop to /app and
+      // /app would hop to the Arrival, three paints where one will do.
+      let destination = returnTo || "/dashboard";
+      if (destination === "/start" || destination === "/app") {
+        destination = "/app/welcome";
+      }
+      router.push(destination);
+      // See LoginForm: refresh is for the marketing chrome, and it makes
+      // the app's landing screen re-suspend right after it painted.
+      if (!destination.startsWith("/app")) {
+        router.refresh();
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : "Registration failed");
     } finally {

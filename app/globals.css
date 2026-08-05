@@ -550,6 +550,25 @@ body:has([data-app-shell]) footer {
   display: none;
 }
 
+/* Windows draws a chunky opaque scrollbar over the phone frame's edge
+   (macOS and phones overlay theirs invisibly). Thin it down and let it
+   fade into the shell so the frame reads as a device, not a web page. */
+[data-app-shell] * {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(236, 231, 222, 0.14) transparent;
+}
+[data-app-shell] *::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+[data-app-shell] *::-webkit-scrollbar-thumb {
+  background: rgba(236, 231, 222, 0.14);
+  border-radius: 3px;
+}
+[data-app-shell] *::-webkit-scrollbar-track {
+  background: transparent;
+}
+
 /* Arrival: the sigil draws itself ring by ring, then the copy rises. */
 @keyframes app-ring-in {
   from { opacity: 0; transform: scale(0.6); }

@@ -67,7 +67,10 @@ export default async function HomePage() {
     redirect("/app/welcome");
   }
 
-  const dailyMission = getDailyMissionFor(access.isMember);
+  const dailyMission = getDailyMissionFor(
+    access.isMember,
+    viewer?.gender ?? null,
+  );
   const startOfUtcToday = new Date();
   startOfUtcToday.setUTCHours(0, 0, 0, 0);
 
@@ -90,7 +93,10 @@ export default async function HomePage() {
       isMember: access.isMember,
     }),
     getTellStreak(userId),
-    isDailyMissionDoneToday(prisma, userId, { isMember: access.isMember }),
+    isDailyMissionDoneToday(prisma, userId, {
+      isMember: access.isMember,
+      gender: viewer?.gender ?? null,
+    }),
     readDailyStreak(prisma, userId),
     access.isMember ? getTodaysGeneratedDrop() : Promise.resolve(null),
     prisma.feedPost.findFirst({

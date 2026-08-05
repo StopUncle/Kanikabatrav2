@@ -32,6 +32,12 @@ export default function InstallSheet() {
   useEffect(() => {
     if (typeof window === "undefined") return;
 
+    // Phones only. Desktop Chromium fires beforeinstallprompt too, which
+    // slid this sheet (with its "Add to Home Screen" phone copy) over the
+    // Arrival's Begin button on PC. The desktop offer is the handoff
+    // panel's QR code, not this sheet.
+    if (window.matchMedia("(min-width: 1024px)").matches) return;
+
     const standalone =
       window.matchMedia("(display-mode: standalone)").matches ||
       (window.navigator as Navigator & { standalone?: boolean }).standalone ===
