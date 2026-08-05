@@ -232,7 +232,7 @@ export default async function UserProfilePage({ params }: PageParams) {
         <div className="max-w-4xl mx-auto px-4">
           <header className="text-center mb-10">
             <p className="text-accent-gold/70 text-[10px] uppercase tracking-[0.4em] mb-3">
-              The Consilium &middot; Player card
+              The app &middot; Player card
             </p>
             <h1 className="text-3xl sm:text-4xl font-extralight tracking-wider text-text-light mb-2">
               {displayName}

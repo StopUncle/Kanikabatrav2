@@ -2,7 +2,6 @@
 
 import { m } from "framer-motion";
 import Link from "next/link";
-import { MEMBERSHIP } from "@/lib/constants";
 import { ArrowRight } from "lucide-react";
 import {
   AXIS_CONSILIUM_TIES,
@@ -10,10 +9,10 @@ import {
 } from "@/lib/mini-quiz";
 
 /**
- * Axis-tailored Consilium tile. Surfaces below the clinical card
+ * Axis-tailored app tile. Surfaces below the clinical card
  * on the Mini Dark Mirror result page. Each of the 6 dominant
  * axes gets a different tile, different headline, different 3
- * bullets naming actual Consilium content relevant to that
+ * bullets naming actual app content relevant to that
  * pattern.
  *
  * Reveal: fades in 1.0s after the radar starts, so it's the last
@@ -50,8 +49,8 @@ export default function ConsiliumAxisTile({ result }: Props) {
           <p className="text-warm-gold uppercase tracking-[0.3em] text-[10px]">
             The next step
           </p>
-          <p className="text-warm-gold text-base font-light tabular-nums">
-            {MEMBERSHIP.priceDisplay}<span className="text-text-gray/70 text-xs">/mo</span>
+          <p className="text-warm-gold text-base font-light">
+            Free to start
           </p>
         </div>
 
@@ -77,7 +76,7 @@ export default function ConsiliumAxisTile({ result }: Props) {
         </ul>
 
         <Link
-          href="/consilium"
+          href="/start"
           className="inline-flex items-center justify-center gap-2 py-3.5 px-7 rounded-full bg-warm-gold text-deep-black font-medium text-sm tracking-wider uppercase transition-all hover:bg-warm-gold/90 hover:shadow-[0_8px_24px_-4px_rgba(212,175,55,0.45)] active:scale-95"
         >
           {tie.cta}
@@ -85,7 +84,7 @@ export default function ConsiliumAxisTile({ result }: Props) {
         </Link>
 
         <p className="text-text-gray/55 text-[11px] mt-5 leading-relaxed">
-          The book is bundled in. Cancel anytime, one click.
+          Install it from the browser. No app store, no card.
         </p>
       </div>
     </m.div>

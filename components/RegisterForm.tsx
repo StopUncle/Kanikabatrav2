@@ -10,6 +10,7 @@ import { Eye, EyeOff, Mail, Lock, UserPlus } from "lucide-react";
 import { getAttributionForSubmit } from "@/lib/attribution";
 import { migrateLocalStreakIfPresent } from "@/lib/tells/migrate-streak-client";
 import { identify } from "@/lib/analytics/client";
+import { readSafeRedirect } from "@/lib/auth/safe-redirect";
 
 const registerSchema = z
   .object({
@@ -30,8 +31,9 @@ export default function RegisterForm() {
   // Accept both ?returnTo and ?redirect so every entry point lands back
   // in the same place post-register. See LoginForm for why, server-auth
   // ships users here via ?redirect=…, other pages use ?returnTo=….
-  const returnTo =
-    searchParams.get("returnTo") || searchParams.get("redirect");
+  // Validated, same reason as LoginForm: an unchecked value reaches
+  // router.push and can navigate off-origin after a successful signup.
+  const returnTo = readSafeRedirect(searchParams);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -82,8 +84,8 @@ export default function RegisterForm() {
       }
 
       // Registration successful. Explicit returnTo wins; otherwise a new
-      // account starts on the dashboard. The app is sealed.
-      router.push(returnTo || "/dashboard");
+      // account starts in the app.
+      router.push(returnTo || "/app");
       router.refresh();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Registration failed");

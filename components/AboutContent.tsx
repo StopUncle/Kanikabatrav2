@@ -400,10 +400,10 @@ export default function AboutContent() {
               Get The Book
             </a>
             <a
-              href="/consilium"
+              href="/start"
               className="btn-secondary rounded-full px-8 py-4"
             >
-              The Consilium
+              Get The App
             </a>
             <a
               href="/coaching"

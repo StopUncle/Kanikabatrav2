@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { m } from "framer-motion";
 import Link from "next/link";
-import { MEMBERSHIP } from "@/lib/constants";
 import Header from "@/components/Header";
 import BackgroundEffects from "@/components/BackgroundEffects";
 import QuizResultGate from "@/components/quiz/QuizResultGate";
@@ -282,7 +281,7 @@ export default function CovertNarcissistResultsPage() {
             </p>
           </m.div>
 
-          {/* Consilium nudge for High + Very High */}
+          {/* App nudge for High + Very High */}
           {(diagnosis.tier === "high" || diagnosis.tier === "very-high") && (
             <m.div
               initial={{ opacity: 0, y: 20 }}
@@ -296,22 +295,22 @@ export default function CovertNarcissistResultsPage() {
                 </div>
                 <div className="flex-1">
                   <h3 className="text-white font-light text-lg mb-2">
-                    The Consilium has threads built for this configuration.
+                    The app is built for this configuration.
                   </h3>
                   <p className="text-text-gray text-sm leading-relaxed mb-4">
                     Vulnerable narcissism is the configuration most
                     likely to be misdiagnosed as anxiety or depression
                     and treated as those things, which entrenches it.
-                    The Consilium has, by deliberate design, threads
-                    dedicated to this exact pattern, run by an author
-                    with an adjacent diagnosis (ASPD, not NPD). {MEMBERSHIP.priceDisplay} a
-                    month. The first month is typically the most useful.
+                    The app has, by deliberate design, scenarios and
+                    drills built on this exact pattern, run by an author
+                    with an adjacent diagnosis (ASPD, not NPD). Free to
+                    start. The first week is typically the most useful.
                   </p>
                   <Link
-                    href="/consilium"
+                    href="/start"
                     className="inline-flex items-center gap-2 px-5 py-2.5 bg-accent-gold/15 hover:bg-accent-gold/25 text-accent-gold border border-accent-gold/40 rounded text-sm tracking-wider uppercase transition-all"
                   >
-                    See the Consilium
+                    Get the app
                     <ArrowRight size={14} />
                   </Link>
                 </div>

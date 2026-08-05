@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { m } from "framer-motion";
 import Link from "next/link";
-import { MEMBERSHIP } from "@/lib/constants";
 import Header from "@/components/Header";
 import BackgroundEffects from "@/components/BackgroundEffects";
 import QuizResultGate from "@/components/quiz/QuizResultGate";
@@ -281,7 +280,7 @@ export default function SociopathResultsPage() {
             </div>
           </m.div>
 
-          {/* Consilium nudge, only surfaces for the two configurations
+          {/* App nudge, only surfaces for the two configurations
               where the room is actually built for the result. The nudge
               is contextual, not a blanket pitch. */}
           {(diagnosis.quadrant === "the-calculator" ||
@@ -298,20 +297,20 @@ export default function SociopathResultsPage() {
                 </div>
                 <div className="flex-1">
                   <h3 className="text-white font-light text-lg mb-2">
-                    The Consilium is built for this result.
+                    The app is built for this result.
                   </h3>
                   <p className="text-text-gray text-sm leading-relaxed mb-4">
                     A higher concentration of the {profile.name} configuration
                     than the general population, by deliberate design. The room
                     is not safer because it&rsquo;s gentler. It&rsquo;s safer
-                    because it&rsquo;s read. {MEMBERSHIP.monthly}. The first month is
+                    because it&rsquo;s read. Free to start. The first week is
                     typically the most useful.
                   </p>
                   <Link
-                    href="/consilium"
+                    href="/start"
                     className="inline-flex items-center gap-2 px-5 py-2.5 bg-accent-gold/15 hover:bg-accent-gold/25 text-accent-gold border border-accent-gold/40 rounded text-sm tracking-wider uppercase transition-all"
                   >
-                    See the Consilium
+                    Get the app
                     <ArrowRight size={14} />
                   </Link>
                 </div>

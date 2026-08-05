@@ -94,7 +94,11 @@ export default function RootLayout({
           `}
         </Script>
       </head>
-      <body className={inter.className}>
+      {/* suppressHydrationWarning is attribute-level only: browser
+          extensions (Grammarly, password managers) inject attributes
+          into <body> before React hydrates, which React 19 reports as
+          a hydration error. Content mismatches still surface. */}
+      <body className={inter.className} suppressHydrationWarning>
         <AttributionTracker />
         <AnalyticsProvider />
         <ReferralCookieCapture />

@@ -19,8 +19,8 @@ type Props = {
  *
  * At the ending screen we swap the "Next Scenario" link for a conversion
  * CTA: the visitor just felt the loop click in; this is the highest-intent
- * moment to sell them on joining. The button sends them to the Consilium
- * apply flow with a subtle source tag so we can attribute conversions.
+ * moment to sell them on joining. The button sends them to the app
+ * with a subtle source tag so we can attribute conversions.
  *
  * The exit button (top-right X) is pointed back to the homepage instead
  * of /consilium/simulator, that path requires auth and would 404 / redirect

@@ -9,6 +9,7 @@ import { m } from "framer-motion";
 import { Eye, EyeOff, Mail, Lock, LogIn } from "lucide-react";
 import { migrateLocalStreakIfPresent } from "@/lib/tells/migrate-streak-client";
 import { identify } from "@/lib/analytics/client";
+import { readSafeRedirect } from "@/lib/auth/safe-redirect";
 
 const loginSchema = z.object({
   email: z.string().email("Invalid email address"),
@@ -26,8 +27,10 @@ export default function LoginForm() {
   // hitting a protected page while logged out landed on /dashboard
   // after login instead of being sent back to where they were going.
   // Prefer returnTo when both are present (explicit > implicit).
-  const returnTo =
-    searchParams.get("returnTo") || searchParams.get("redirect");
+  // Validated: the raw value used to reach router.push, which performs a
+  // hard navigation for an absolute URL, so ?returnTo=https://evil.example
+  // made this form a launcher for someone else's.
+  const returnTo = readSafeRedirect(searchParams);
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
@@ -69,10 +72,10 @@ export default function LoginForm() {
       }
 
       // Login successful. Explicit returnTo wins; otherwise active members
-      // land in the Consilium and everyone else on the dashboard. The app
-      // is sealed, so it is nobody's landing page.
+      // land in the Consilium and everyone else in the app, the same
+      // cohort split /start makes.
       router.push(
-        returnTo || (result.isActiveMember ? "/consilium/feed" : "/dashboard"),
+        returnTo || (result.isActiveMember ? "/consilium/feed" : "/app"),
       );
       router.refresh();
     } catch (err) {

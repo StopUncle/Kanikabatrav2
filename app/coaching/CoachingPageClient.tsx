@@ -7,7 +7,7 @@ import BackgroundEffects from "@/components/BackgroundEffects";
 import Header from "@/components/Header";
 import StripeButton from "@/components/StripeButton";
 import CoachingLeadCapture from "@/components/coaching/CoachingLeadCapture";
-import { COACHING_PACKAGES, MEMBERSHIP } from "@/lib/constants";
+import { COACHING_PACKAGES } from "@/lib/constants";
 import { Check, ArrowRight, ChevronDown } from "lucide-react";
 
 const COACHING_FAQ = [
@@ -498,10 +498,10 @@ export default function CoachingPage() {
                 Want the lower-commitment way in?
               </p>
               <Link
-                href="/consilium"
+                href="/start"
                 className="text-accent-gold hover:text-accent-gold/80 text-sm transition-colors"
               >
-                Start with The Consilium, {MEMBERSHIP.monthlyShort} →
+                Get the app, free to start →
               </Link>
             </div>
           </m.div>

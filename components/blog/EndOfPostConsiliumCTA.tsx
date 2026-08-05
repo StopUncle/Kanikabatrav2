@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import { MEMBERSHIP } from "@/lib/constants";
 
 interface Props {
   slug?: string;
@@ -11,7 +10,7 @@ export default function EndOfPostConsiliumCTA({ slug }: Props) {
   const params = new URLSearchParams({
     utm_source: "blog",
     utm_medium: "organic",
-    utm_campaign: "consilium-blog-2026",
+    utm_campaign: "app-blog-2026",
     utm_content: slug ? `end-of-post-${slug}` : "end-of-post",
   });
 
@@ -22,7 +21,7 @@ export default function EndOfPostConsiliumCTA({ slug }: Props) {
 
       <div className="relative">
         <p className="text-accent-gold uppercase tracking-[0.3em] text-[10px] font-medium mb-4">
-          The Consilium &middot; {MEMBERSHIP.monthlyShort}
+          The app &middot; Free to start
         </p>
 
         <h3 className="text-2xl sm:text-3xl font-extralight text-white leading-tight tracking-tight mb-4">
@@ -31,10 +30,10 @@ export default function EndOfPostConsiliumCTA({ slug }: Props) {
         </h3>
 
         <p className="text-text-gray text-sm sm:text-base font-light leading-relaxed mb-6 max-w-xl">
-          The Consilium is the council. Kanika&rsquo;s daily voice notes, the
-          live simulator, the forum where women run real situations through
-          each other before they make the move. The book is the prologue. This
-          is the work.
+          The app is where it gets practised. Kanika&rsquo;s daily voice notes,
+          the live simulator, Receipts reading the messages you actually got,
+          and The Mark tracking what you keep missing. The book is the
+          prologue. This is the work.
         </p>
 
         <ul className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-2 text-text-gray/90 text-sm font-light mb-7">
@@ -52,27 +51,27 @@ export default function EndOfPostConsiliumCTA({ slug }: Props) {
           </li>
           <li className="flex gap-2">
             <span className="text-accent-gold">&rsaquo;</span>
-            Members-only book pricing ($9.99)
+            Receipts. Paste a message, read it.
           </li>
           <li className="flex gap-2">
             <span className="text-accent-gold">&rsaquo;</span>
-            Forum. Chat rooms. The council.
+            Drills, streaks, and The Mark.
           </li>
           <li className="flex gap-2">
             <span className="text-accent-gold">&rsaquo;</span>
-            Cancel any time. No questions.
+            Free to start. No card.
           </li>
         </ul>
 
         <div className="flex flex-col sm:flex-row gap-3">
           <Link
-            href={`/consilium?${params.toString()}`}
+            href={`/start?${params.toString()}`}
             className="inline-flex items-center justify-center px-7 py-3.5 rounded-lg bg-accent-gold text-deep-black font-semibold text-[12px] tracking-[0.2em] uppercase hover:bg-accent-gold/90 transition"
           >
-            Join the Consilium &rsaquo;
+            Get the app &rsaquo;
           </Link>
           <Link
-            href={`/consilium?${new URLSearchParams({
+            href={`/start?${new URLSearchParams({
               ...Object.fromEntries(params),
               utm_content: slug
                 ? `end-of-post-secondary-${slug}`

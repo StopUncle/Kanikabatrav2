@@ -1,5 +1,4 @@
 "use client";
-import { MEMBERSHIP } from "@/lib/constants";
 
 import { m } from "framer-motion";
 import Link from "next/link";
@@ -43,11 +42,11 @@ const RELATED_LINKS = [
     type: "Sister quiz",
   },
   {
-    href: "/consilium",
-    title: "Join the Consilium",
+    href: "/start",
+    title: "Get the app",
     description:
-      `${MEMBERSHIP.monthly} members' room. Threads dedicated to the partner-detection territory this quiz covers, run by an author with adjacent personal experience. Not a substitute for therapy.`,
-    type: "Community",
+      "Free to start. Scenarios and drills built on the partner-detection territory this quiz covers, run by an author with adjacent personal experience. Not a substitute for therapy.",
+    type: "App",
   },
 ] as const;
 

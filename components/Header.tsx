@@ -16,12 +16,12 @@ import KanikaroseLogo from "./KanikaroseLogo";
  * Header, the main site chrome.
  *
  * Layout hierarchy (desktop):
- *   [Logo]   [primary nav]                [search] [Consilium CTA] [auth]
+ *   [Logo]   [primary nav]                [search] [app CTA] [auth]
  *
- * The Consilium is NOT inline in the primary nav, it's a standalone
+ * The app is NOT inline in the primary nav, it's a standalone
  * warm-gold CTA on the right. This frees up horizontal space (nav
- * doesn't wrap) and makes the paid destination visually distinct from
- * ordinary navigation.
+ * doesn't wrap) and makes the product destination visually distinct
+ * from ordinary navigation.
  *
  * Scroll-shrink: header collapses from 80px to 64px after scrolling
  * 24px. Smooth, pure CSS, nothing re-renders, just a class swap.
@@ -45,7 +45,7 @@ const Header = () => {
     pathname.startsWith("/consilium/chat");
 
   // Primary nav. Home is implicit in the logo click so it's not listed.
-  // The Consilium is explicitly NOT in this array, it's a standalone CTA
+  // The app is explicitly NOT in this array, it's a standalone CTA
   // on the right side.
   const navLinks: { href: string; label: string }[] = [
     { href: "/book", label: "Book" },
@@ -56,7 +56,8 @@ const Header = () => {
     { href: "/contact", label: "Contact" },
   ];
 
-  const isConsiliumActive = pathname.startsWith("/consilium");
+  const isAppActive =
+    pathname.startsWith("/app") || pathname.startsWith("/start");
 
   useEffect(() => {
     async function checkAuth() {
@@ -174,19 +175,19 @@ const Header = () => {
                   <SearchIcon size={16} strokeWidth={1.5} />
                 </Link>
 
-                {/* The Consilium, standalone CTA. Warm-gold metallic
-                    to match the logo. Small arrow-up-right reinforces
-                    "enter a separate space". Signed-in accounts go
-                    straight into the app; strangers get the sales page. */}
+                {/* The app, standalone CTA. Warm-gold metallic to match
+                    the logo. Small arrow-up-right reinforces "enter a
+                    separate space". /start routes each cohort into its
+                    own product, so one href serves everyone. */}
                 <Link
-                  href={isLoggedIn ? "/consilium/feed" : "/consilium"}
+                  href="/start"
                   className={`group relative inline-flex items-center gap-1.5 pl-4 pr-3 py-1.5 rounded-full border text-[11px] tracking-[0.22em] uppercase transition-all duration-300 whitespace-nowrap ${
-                    isConsiliumActive
+                    isAppActive
                       ? "text-deep-black bg-warm-gold border-warm-gold shadow-[0_0_20px_-4px_rgba(212,175,55,0.55)]"
                       : "text-warm-gold border-warm-gold/60 hover:border-warm-gold hover:bg-warm-gold/10 hover:shadow-[0_0_20px_-6px_rgba(212,175,55,0.5)]"
                   }`}
                 >
-                  <span>The Consilium</span>
+                  <span>Get the app</span>
                   <ArrowUpRight
                     size={13}
                     strokeWidth={1.5}
@@ -301,20 +302,20 @@ const Header = () => {
               : "-translate-y-4 opacity-0"
           }`}
         >
-          {/* Consilium lives at the TOP on mobile, it's the primary
+          {/* The app lives at the TOP on mobile, it's the primary
               commercial destination, so it shouldn't be buried under
               seven secondary links. */}
           <Link
-            href={isLoggedIn ? "/consilium/feed" : "/consilium"}
+            href="/start"
             onClick={() => setIsMenuOpen(false)}
             className={`group relative flex items-center justify-between px-5 py-4 rounded-full border transition-all duration-300 ${
-              isConsiliumActive
+              isAppActive
                 ? "text-deep-black bg-warm-gold border-warm-gold"
                 : "text-warm-gold border-warm-gold/60 hover:border-warm-gold"
             }`}
           >
             <span className="text-sm tracking-[0.25em] uppercase font-light">
-              The Consilium
+              Get the app
             </span>
             <ArrowUpRight
               size={18}

@@ -15,10 +15,27 @@ import { prisma } from "@/lib/prisma";
  */
 export const dynamic = "force-dynamic";
 
-export default async function StartPage() {
+export default async function StartPage({
+  searchParams,
+}: {
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
+}) {
   const userId = await optionalServerAuth();
   if (!userId) {
-    redirect(`/login?redirect=${encodeURIComponent("/start")}`);
+    // The app's own door. It defaults to create-account (every marketing
+    // CTA points here, so the logged-out visitor is almost always a
+    // stranger) with sign-in one tap away, and lands people by cohort
+    // the same way this page does. The query string rides along: blog
+    // CTAs tag utm params, and a bare redirect was stripping them before
+    // AttributionTracker ever saw them.
+    const params = await searchParams;
+    const qs = new URLSearchParams();
+    for (const [key, value] of Object.entries(params)) {
+      const v = Array.isArray(value) ? value[0] : value;
+      if (v) qs.set(key, v);
+    }
+    const suffix = qs.size > 0 ? `?${qs.toString()}` : "";
+    redirect(`/enter${suffix}`);
   }
 
   // Role first: checkMembership's admin-cookie bypass reports admins as

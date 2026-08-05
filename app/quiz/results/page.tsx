@@ -1,5 +1,4 @@
 "use client";
-import { MEMBERSHIP } from "@/lib/constants";
 
 import { useEffect, useState } from "react";
 import { m } from "framer-motion";
@@ -749,16 +748,16 @@ export default function QuizResultsPage() {
                     Where this gets practised
                   </p>
                   <p className="text-white font-light text-lg mb-3">
-                    The Consilium, {MEMBERSHIP.monthly}
+                    The app, free to start
                   </p>
                   <p className="text-text-gray text-xs mb-5 max-w-md mx-auto leading-relaxed">
-                    The Dark Mirror Simulator runs the patterns you just scored on as branching scenarios, in real-world artefacts. Plus the classroom, voice notes, and a moderated community. Cancel any time.
+                    The Dark Mirror Simulator runs the patterns you just scored on as branching scenarios, in real-world artefacts. Plus the drills, Receipts, and voice notes from Kanika.
                   </p>
                   <Link
-                    href="/consilium"
+                    href="/start"
                     className="inline-block px-8 py-3 text-sm font-medium uppercase tracking-wider text-deep-black bg-accent-gold rounded-full hover:bg-accent-gold/90 transition-all"
                   >
-                    Step Inside
+                    Get the app
                   </Link>
                   <SocialProofTickerClient className="mt-4" />
                 </div>
@@ -1034,13 +1033,13 @@ export default function QuizResultsPage() {
                     Want to practise spotting these patterns in the wild?
                   </p>
                   <p className="text-text-gray/70 text-xs mb-3 max-w-md mx-auto leading-relaxed">
-                    The Dark Mirror Simulator inside The Consilium, branching scenarios on the same axes you just scored on, in real-world artefacts. Plus courses, voice notes, and a moderated community.
+                    The Dark Mirror Simulator inside the app, branching scenarios on the same axes you just scored on, in real-world artefacts. Plus the drills, Receipts, and voice notes from Kanika.
                   </p>
                   <Link
-                    href="/consilium"
+                    href="/start"
                     className="inline-block px-6 py-2 text-sm font-medium text-accent-gold border border-accent-gold/20 rounded-full hover:bg-accent-gold/10 transition-all"
                   >
-                    Explore The Consilium, {MEMBERSHIP.monthlyShort}
+                    Get the app, free to start
                   </Link>
                 </div>
               )}
