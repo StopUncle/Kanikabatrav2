@@ -33,7 +33,10 @@ export const STRIPE_PRICES: Record<string, string> = {
   BOOK_MEMBER: "price_1TNS57Jv9vx5CHTw3Miq2KmS",
   QUIZ: "price_1TJug0Jv9vx5CHTwa9tjzDlu",
   /**
-   * The Consilium, monthly. $9 since the 2026-07-28 reset; it was $29.
+   * The Consilium, monthly. Still the original $29 price: the 2026-07-28
+   * reset briefly pointed this at the $9 price and was reverted before it
+   * reached customers, and the reset has since been repriced to $19.99,
+   * which needs a NEW price pair before launch.
    *
    * Stripe prices are immutable, so a reprice is always a new price plus a
    * pointer swap here. The old $29 price stays alive and active on purpose:

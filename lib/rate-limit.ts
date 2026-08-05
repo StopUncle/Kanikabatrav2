@@ -215,8 +215,13 @@ export async function enforceRateLimit(
 export const limits = {
   /** Login: 5 attempts per minute per IP */
   authLogin: { action: "auth:login", max: 5, windowMs: 60_000 },
-  /** Register: 3 per minute per IP */
-  authRegister: { action: "auth:register", max: 3, windowMs: 60_000 },
+  /**
+   * Register: 10 per minute per IP. Per-IP means per NAT egress: a
+   * launch wave puts many listeners behind one carrier-grade NAT
+   * address, so 3/min locked out real signups. 10/min still stops a
+   * scripted flood (email uniqueness catches the rest).
+   */
+  authRegister: { action: "auth:register", max: 10, windowMs: 60_000 },
   /** Forgot password: 3 per 10 min per email */
   authForgot: { action: "auth:forgot-password", max: 3, windowMs: 10 * 60_000 },
   /**
@@ -231,6 +236,21 @@ export const limits = {
   feedComment: { action: "feed:comment", max: 10, windowMs: 60 * 60_000 },
   /** Quiz submit: 10 per day per IP */
   quizSubmit: { action: "quiz:submit", max: 10, windowMs: 24 * 60 * 60_000 },
+  /**
+   * Unauthenticated email senders. Each of these fires a real email to
+   * an attacker-supplied address, so an unlimited loop burns Resend
+   * quota and, worse, domain reputation. A legit visitor does each of
+   * these once, maybe twice on a typo.
+   */
+  miniQuizSubmit: { action: "mini-quiz:submit", max: 5, windowMs: 60 * 60_000 },
+  starterPack: { action: "starter-pack:subscribe", max: 5, windowMs: 60 * 60_000 },
+  contactForm: { action: "contact:submit", max: 3, windowMs: 60 * 60_000 },
+  /**
+   * Pact journal saves: the entry is an update, so re-saving is legal,
+   * but every save runs the crisis classifier (an LLM call). Twelve an
+   * hour is a generous editing session and a hard wall for a loop.
+   */
+  pactEntrySave: { action: "pact:entry:save", max: 12, windowMs: 60 * 60_000 },
   /**
    * Receipts create: 4 per minute per user. Backstop against parallel
    * bursts that would otherwise fire 12 LLM calls before the weekly

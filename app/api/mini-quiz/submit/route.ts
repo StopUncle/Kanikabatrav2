@@ -8,6 +8,7 @@ import {
   type AttributionPayload,
 } from "@/lib/attribution";
 import { logger } from "@/lib/logger";
+import { enforceRateLimit, getClientIp, limits } from "@/lib/rate-limit";
 
 /**
  * POST /api/mini-quiz/submit
@@ -68,6 +69,9 @@ const RequestSchema = z.object({
 });
 
 export async function POST(req: NextRequest) {
+  const limited = await enforceRateLimit(limits.miniQuizSubmit, getClientIp(req));
+  if (limited) return limited;
+
   let body: unknown;
   try {
     body = await req.json();

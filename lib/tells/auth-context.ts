@@ -12,7 +12,7 @@
 
 import { cookies } from "next/headers";
 import { randomUUID } from "crypto";
-import { verifyAccessToken } from "@/lib/auth/jwt";
+import { verifyAccessToken, verifyRefreshToken } from "@/lib/auth/jwt";
 import { getAdminUserId } from "@/lib/auth/server-auth";
 
 export interface TellContext {
@@ -57,6 +57,25 @@ export async function resolveTellContext(): Promise<TellContext> {
     } catch {
       userId = null;
       stale = true;
+    }
+  }
+
+  // The 15-minute wall: an expired accessToken with a valid refreshToken
+  // is still a signed-in member, and the page they are on already
+  // rendered as one (requireServerAuth accepts the refresh token). API
+  // routes must agree, or Receipts and Instincts answer "Auth required"
+  // to someone the shell just greeted by name. Verification only; the
+  // cookie pair still rotates through /api/auth/refresh.
+  if (!userId) {
+    const refresh = store.get("refreshToken")?.value;
+    if (refresh) {
+      try {
+        const payload = verifyRefreshToken(refresh);
+        userId = payload?.userId ?? null;
+        if (userId) stale = false;
+      } catch {
+        // Both cookies dead: genuinely signed out, stay anonymous.
+      }
     }
   }
 

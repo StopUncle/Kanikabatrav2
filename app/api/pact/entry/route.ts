@@ -3,6 +3,7 @@ import { requireAuth } from "@/lib/auth/middleware";
 import { prisma } from "@/lib/prisma";
 import { readPact } from "@/lib/pact/read";
 import { classifyEntry, CRISIS_CARD } from "@/lib/program/ai/safety";
+import { enforceRateLimit, limits } from "@/lib/rate-limit";
 
 const MAX_JOURNAL_CHARS = 8000;
 const MAX_PUBLIC_CHARS = 2000;
@@ -17,6 +18,12 @@ const MAX_PUBLIC_CHARS = 2000;
  */
 export async function POST(request: NextRequest) {
   return requireAuth(request, async (req, user) => {
+    // Every save runs the crisis classifier (an LLM call) and the entry
+    // is an update, so without this a loop re-saves the same week
+    // endlessly at real cost.
+    const limited = await enforceRateLimit(limits.pactEntrySave, user.id);
+    if (limited) return limited;
+
     const body = (await req.json().catch(() => null)) as {
       journalBody?: unknown;
       publicBody?: unknown;

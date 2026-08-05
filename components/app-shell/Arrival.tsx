@@ -31,6 +31,9 @@ type Props = {
   freeTier?: boolean;
   /** Ask the two-option gender question (free accounts without one). */
   askGender?: boolean;
+  /** Gender the server already knows (when the ask is skipped), so a
+   *  returning male account is not routed down the female spine. */
+  knownGender?: "MALE" | "FEMALE" | null;
 };
 
 const FREE_BEGIN: Record<string, string> = {
@@ -44,23 +47,35 @@ export default function Arrival({
   firstName,
   freeTier = false,
   askGender = false,
+  knownGender = null,
 }: Props) {
   const router = useRouter();
   const [playing, setPlaying] = useState(false);
   const [gender, setGender] = useState<"MALE" | "FEMALE" | null>(null);
+  const [leaving, setLeaving] = useState(false);
 
-  function begin() {
+  async function begin() {
+    if (leaving) return;
+    setLeaving(true);
     try {
       window.localStorage.setItem(SEEN_KEY, String(Date.now()));
     } catch {
       /* private mode: the server stamp below still governs */
     }
-    void fetch("/api/arrival/complete", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(gender ? { gender } : {}),
-    }).catch(() => {});
-    const target = freeTier ? FREE_BEGIN[gender ?? "FEMALE"] : beginHref;
+    // Await the stamp: arrivalAt is what stops Home redirecting back
+    // here, so navigating before it lands turned a dropped request into
+    // an Arrival that reappears on every visit for seven days.
+    try {
+      await fetch("/api/arrival/complete", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(gender ? { gender } : {}),
+      });
+    } catch {
+      /* still navigate; the next Begin press retries the stamp */
+    }
+    const resolved = gender ?? knownGender ?? "FEMALE";
+    const target = freeTier ? FREE_BEGIN[resolved] : beginHref;
     router.push(target);
   }
 

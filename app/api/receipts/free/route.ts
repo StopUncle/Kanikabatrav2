@@ -30,6 +30,7 @@ import {
 import { RECEIPTS_PUBLIC_SYSTEM_PROMPT } from "@/lib/receipts/prompt";
 import { createPublicReceipt } from "@/lib/receipts/public";
 import { rateLimit, getClientIp, limits } from "@/lib/rate-limit";
+import { captureSubscriber } from "@/lib/newsletter/capture";
 import { logger } from "@/lib/logger";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -136,31 +137,17 @@ export async function POST(request: NextRequest) {
     }
   }
 
-  // Capture the email before producing the gated value, reusing the existing
-  // newsletter contract (it creates the Subscriber and enqueues the drip).
-  // A capture hiccup should not deny the read the user just earned.
+  // Capture the email before producing the gated value. Direct call, not
+  // a fetch to /api/newsletter: the internal hop put every visitor in one
+  // shared rate-limit bucket (the app's own egress IP), silently dropping
+  // leads in exactly the burst this tool exists to capture. The helper
+  // never throws, so a capture hiccup cannot deny the read.
   if (hasEmail) {
-    try {
-      const res = await fetch(`${request.nextUrl.origin}/api/newsletter`, {
-        method: "POST",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify({
-          email,
-          source: "receipts-free",
-          tags: ["receipts-free"],
-        }),
-      });
-      if (!res.ok) {
-        logger.warn("[receipts-free] newsletter capture non-ok", {
-          status: res.status,
-        });
-      }
-    } catch (err) {
-      logger.error(
-        "[receipts-free] newsletter capture failed",
-        err instanceof Error ? err : new Error(String(err)),
-      );
-    }
+    await captureSubscriber({
+      email,
+      source: "receipts-free",
+      tags: ["receipts-free"],
+    });
   }
 
   // LLM call: Haiku + the hardened public prompt. No label on the free tier.

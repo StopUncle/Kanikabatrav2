@@ -7,10 +7,12 @@ import { useEffect } from "react";
  * the registration, so re-running this on every page load is a
  * no-op after the first install.
  *
- * Mounted in the Consilium member layout so it only runs for
- * authenticated members. We don't register the SW for the marketing
- * site because there's no benefit yet (no push, no caching) and a
- * stray service worker interferes with debugging.
+ * Mounted in both app shells AND on the homepage: Chrome only fires
+ * beforeinstallprompt once a service worker is registered, and the
+ * homepage's "Download the app" button needs that event to offer the
+ * native install to a first-time visitor. The worker's fetch handler
+ * is a deliberate no-op, so registering site-wide caches nothing and
+ * cannot serve a stale shell.
  */
 export default function ServiceWorkerRegister() {
   useEffect(() => {

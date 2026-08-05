@@ -47,8 +47,8 @@ self.addEventListener("push", (event) => {
   const title = payload.title || "Consilium";
   const options = {
     body: payload.body || "",
-    icon: payload.icon || "/images/kanikarose-logo.png",
-    badge: payload.badge || "/images/kanikarose-logo.png",
+    icon: payload.icon || "/icons/icon-192.png",
+    badge: payload.badge || "/icons/icon-192.png",
     data: payload.data || {},
     tag: payload.tag,
     requireInteraction: payload.requireInteraction || false,
@@ -58,11 +58,10 @@ self.addEventListener("push", (event) => {
 
 self.addEventListener("notificationclick", (event) => {
   event.notification.close();
-  // Falls back into the app, not the old member skin. Every push that ships
-  // without an explicit url was landing on /consilium/feed, which is the
-  // surface members were moved off: the notification worked and then dropped
-  // them outside the thing it opened.
-  const targetUrl = (event.notification.data && event.notification.data.url) || "/app/feed";
+  // Falls back to /start, the cohort router: it lands members on the
+  // Consilium feed and everyone else in the app, so a push without an
+  // explicit url can never drop a free account on a sales page.
+  const targetUrl = (event.notification.data && event.notification.data.url) || "/start";
   event.waitUntil(
     self.clients
       .matchAll({ type: "window", includeUncontrolled: true })

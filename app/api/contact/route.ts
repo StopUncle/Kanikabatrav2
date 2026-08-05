@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { sendContactNotification } from "@/lib/email";
+import { enforceRateLimit, getClientIp, limits } from "@/lib/rate-limit";
 
 interface ContactFormData {
   name: string;
@@ -9,6 +10,12 @@ interface ContactFormData {
 }
 
 export async function POST(request: NextRequest) {
+  const limited = await enforceRateLimit(
+    limits.contactForm,
+    getClientIp(request),
+  );
+  if (limited) return limited;
+
   try {
     const body: ContactFormData = await request.json();
 

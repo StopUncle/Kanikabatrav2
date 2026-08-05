@@ -21,7 +21,12 @@ import { verifyCronSecret } from "@/lib/cron-auth";
 import { prisma } from "@/lib/prisma";
 import { sendPushToUser } from "@/lib/push";
 import { logger } from "@/lib/logger";
-import { currentWeekFor, cycleWeekFor, weekEndsAt } from "@/lib/pact/read";
+import {
+  currentWeekFor,
+  cycleWeekFor,
+  scarOverdueEntries,
+  weekEndsAt,
+} from "@/lib/pact/read";
 
 export const dynamic = "force-dynamic";
 
@@ -43,10 +48,10 @@ export async function POST(request: NextRequest) {
   try {
     const now = new Date();
 
-    const scarred = await prisma.pactEntry.updateMany({
-      where: { status: "open", weekEndsAt: { lt: now } },
-      data: { status: "scarred" },
-    });
+    // Content-aware: a week whose challenge was never published cannot
+    // scar (lib/pact/read.ts scarOverdueEntries, shared with the lazy
+    // read so the two passes agree).
+    const scarredCount = await scarOverdueEntries(null, now);
 
     const [pacts, published] = await Promise.all([
       prisma.pact.findMany({
@@ -139,7 +144,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       ok: true,
       pacts: pacts.length,
-      scarred: scarred.count,
+      scarred: scarredCount,
       advanced,
       pushed,
       dormantBilling,

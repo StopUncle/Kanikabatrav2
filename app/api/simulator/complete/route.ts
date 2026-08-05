@@ -423,8 +423,20 @@ export async function POST(request: NextRequest) {
         });
         if (scenarioGrant.rangUp) ringUp = scenarioGrant.rangUp;
       }
-      const mission = getDailyMissionFor(access.isMember);
-      if (mission && mission.scenarioId === body.scenarioId) {
+      // Free missions are gender-specific (spine-filtered pool), and this
+      // route does not know the caller's gender. Matching against both
+      // free picks is safe: the dateKey dedupe below already caps the
+      // bonus at one per day regardless of which mission was played.
+      const missionCandidates = access.isMember
+        ? [getDailyMissionFor(true)]
+        : [
+            getDailyMissionFor(false, "FEMALE"),
+            getDailyMissionFor(false, "MALE"),
+          ];
+      const mission = missionCandidates.find(
+        (m) => m && m.scenarioId === body.scenarioId,
+      );
+      if (mission) {
         const missionGrant = await grantStanding(prisma, {
           userId: user.id,
           source: "DAILY_MISSION",

@@ -6,7 +6,7 @@ import { PrismaUserDatabase } from "@/lib/auth/prisma-database";
 import { generateTokenPair } from "@/lib/auth/jwt";
 import { LoginCredentials } from "@/lib/auth/types";
 import { enforceRateLimit, getClientIp, limits } from "@/lib/rate-limit";
-import { prisma } from "@/lib/prisma";
+import { checkMembership } from "@/lib/community/membership";
 
 export async function POST(request: NextRequest) {
   try {
@@ -69,10 +69,10 @@ export async function POST(request: NextRequest) {
 
     // Membership state rides along so the login form can land ACTIVE
     // members in the Chamber (the member home) instead of the dashboard.
-    const membership = await prisma.communityMembership.findUnique({
-      where: { userId: user.id },
-      select: { status: true },
-    });
+    // checkMembership, not a raw status read: it counts a cancelled
+    // membership still inside its paid period as a member, and an ACTIVE
+    // row past its expiry as not one, matching what /consilium enforces.
+    const membershipCheck = await checkMembership(user.id);
 
     // Create response
     const response = NextResponse.json({
@@ -81,7 +81,7 @@ export async function POST(request: NextRequest) {
         id: user.id,
         email: user.email,
       },
-      isActiveMember: membership?.status === "ACTIVE",
+      isActiveMember: membershipCheck.isMember,
     });
 
     // Set cookies

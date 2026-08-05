@@ -42,7 +42,9 @@ export type PushCategory =
 export interface PushPayload {
   title: string;
   body: string;
-  /** Path to navigate to when tapped. Defaults to /app/feed. */
+  /** Path to navigate to when tapped. Defaults to /start, the cohort
+   *  router, so a tap always lands the user in THEIR shell rather than
+   *  sending a free account to the Consilium sales page. */
   url?: string;
   /** Optional small icon (defaults to /images/kanikarose-logo.png). */
   icon?: string;
@@ -175,11 +177,11 @@ export async function sendPushToUser(
   const json = JSON.stringify({
     title: payload.title,
     body: payload.body,
-    icon: payload.icon || "/images/kanikarose-logo.png",
-    badge: payload.icon || "/images/kanikarose-logo.png",
+    icon: payload.icon || "/icons/icon-192.png",
+    badge: payload.icon || "/icons/icon-192.png",
     tag: payload.tag,
     requireInteraction: payload.requireInteraction ?? false,
-    data: { url: payload.url || "/consilium/feed" },
+    data: { url: payload.url || "/start" },
   });
 
   let delivered = 0;

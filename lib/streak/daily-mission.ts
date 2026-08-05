@@ -11,8 +11,11 @@
  */
 
 import { ALL_SCENARIOS, getTrack } from "@/lib/simulator/scenarios";
+import { spineTracks } from "@/lib/simulator/track-gates";
 import type { Scenario, ScenarioTrack } from "@/lib/simulator/types";
 import type { PrismaClient } from "@prisma/client";
+
+export type MissionGender = "MALE" | "FEMALE" | null;
 
 function utcDateKey(d: Date): string {
   return d.toISOString().slice(0, 10);
@@ -82,22 +85,35 @@ export function getDailyMission(now: Date = new Date()): DailyMission | null {
 /**
  * The mission this account can actually play. Members always get the
  * shared mission. A free account gets it too on days it happens to be
- * free-tier (those days they join the council numbers); otherwise a
- * deterministic pick from the free pool, same label, same +50, so the
- * daily habit never leads with a wall.
+ * free-tier AND on their own spine (those days they join the council
+ * numbers); otherwise a deterministic pick from the free pool, same
+ * label, same +50, so the daily habit never leads with a wall.
+ *
+ * The free pool is filtered to the caller's spine tracks. A fresh
+ * account's track gate only opens their own gender's spine, so an
+ * unfiltered pick landed on a cross-gender scenario ~40% of days and
+ * the runner bounced them to /app/train with no explanation.
  */
 export function getDailyMissionFor(
   isMember: boolean,
+  gender: MissionGender = null,
   now: Date = new Date(),
 ): DailyMission | null {
   const shared = getDailyMission(now);
   if (!shared) return null;
   if (isMember) return shared;
+  const spine = spineTracks(gender);
   const sharedScenario = DAILY_POOL.find((s) => s.id === shared.scenarioId);
-  if (sharedScenario?.tier === "free") return shared;
-  if (FREE_POOL.length === 0) return null;
+  if (
+    sharedScenario?.tier === "free" &&
+    spine.includes(getTrack(sharedScenario))
+  ) {
+    return shared;
+  }
+  const pool = FREE_POOL.filter((s) => spine.includes(getTrack(s)));
+  if (pool.length === 0) return null;
   const dateKey = utcDateKey(now);
-  return toMission(FREE_POOL[hashStr(dateKey) % FREE_POOL.length], dateKey);
+  return toMission(pool[hashStr(dateKey) % pool.length], dateKey);
 }
 
 /**
@@ -109,10 +125,14 @@ export function getDailyMissionFor(
 export async function isDailyMissionDoneToday(
   prisma: PrismaClient,
   userId: string,
-  opts: { isMember?: boolean } = {},
+  opts: { isMember?: boolean; gender?: MissionGender } = {},
   now: Date = new Date(),
 ): Promise<boolean> {
-  const mission = getDailyMissionFor(opts.isMember ?? true, now);
+  const mission = getDailyMissionFor(
+    opts.isMember ?? true,
+    opts.gender ?? null,
+    now,
+  );
   if (!mission) return false;
   const progress = await prisma.simulatorProgress.findUnique({
     where: {

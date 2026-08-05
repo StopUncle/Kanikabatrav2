@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { sendStarterPack } from "@/lib/email";
 import { buildStarterPackDrip } from "@/lib/email-sequences";
 import { logger } from "@/lib/logger";
+import { enforceRateLimit, getClientIp, limits } from "@/lib/rate-limit";
 
 /**
  * POST /api/starter-pack/subscribe
@@ -39,6 +40,9 @@ const RequestSchema = z.object({
 });
 
 export async function POST(req: NextRequest) {
+  const limited = await enforceRateLimit(limits.starterPack, getClientIp(req));
+  if (limited) return limited;
+
   let body: unknown;
   try {
     body = await req.json();

@@ -24,6 +24,9 @@ import { prisma } from "@/lib/prisma";
  * toggles are still there).
  */
 
+// Every category lib/push sends. A category missing here is default-on
+// with no off switch: the PATCH silently drops it, so the user's only
+// escape is revoking browser permission entirely.
 const VALID_CATEGORIES = [
   "questionAnswered",
   "voiceNote",
@@ -32,9 +35,16 @@ const VALID_CATEGORIES = [
   "broadcast",
   "dailyTell",
   "dailyStreak",
+  "leagueResult",
+  "weeklyVerdict",
+  "rankUp",
+  "programUnlock",
+  "directMessage",
+  "pactWeek",
 ] as const;
 type Category = (typeof VALID_CATEGORIES)[number];
 
+// Mirrors DEFAULT_OPT_IN in lib/push/index.ts.
 const DEFAULTS: Record<Category, boolean> = {
   questionAnswered: true,
   voiceNote: true,
@@ -43,6 +53,12 @@ const DEFAULTS: Record<Category, boolean> = {
   broadcast: false,
   dailyTell: false,
   dailyStreak: true,
+  leagueResult: true,
+  weeklyVerdict: true,
+  rankUp: true,
+  programUnlock: true,
+  directMessage: true,
+  pactWeek: true,
 };
 
 const DEFAULT_DAILY_TELL_HOUR = 8; // 8am local default if user enables without picking

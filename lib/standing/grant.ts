@@ -1,6 +1,7 @@
 import type { Prisma, PrismaClient, StandingSource } from "@prisma/client";
 import { FREE_STANDING_CEILING, ringForStanding } from "./config";
 import { notifyRankUp } from "@/lib/push/rank-up";
+import { checkPactMembership } from "@/lib/pact/membership";
 
 /**
  * The ONE writer for Standing. Appends a StandingEvent, bumps the
@@ -113,6 +114,13 @@ export async function grantStanding(
             select: { status: true, expiresAt: true },
           });
           member = isLiveMembershipRow(row);
+          // A paying Blood Pact member has no CommunityMembership row at
+          // all; without this check every caller that omits isMember
+          // (drills, tells, receipts, program weeks) froze them at the
+          // free ceiling.
+          if (!member) {
+            member = (await checkPactMembership(userId)).entitled;
+          }
         } catch {
           member = true;
         }

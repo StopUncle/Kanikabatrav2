@@ -38,6 +38,7 @@ export default async function WelcomePage() {
       firstName={firstName}
       freeTier={freeTier}
       askGender={freeTier && !me?.gender}
+      knownGender={me?.gender ?? null}
     />
   );
 }

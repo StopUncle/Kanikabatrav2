@@ -64,10 +64,12 @@ export async function POST(request: NextRequest) {
     const yesterday = new Date(now);
     yesterday.setUTCDate(yesterday.getUTCDate() - 1);
     const yesterdayKey = utcDateKey(yesterday);
-    // The mission differs by tier on days the shared pick is premium, so
-    // both are resolved once and chosen per user below.
+    // The mission differs by tier on days the shared pick is premium,
+    // and by gender on the free tier (the free pool is spine-filtered),
+    // so all three are resolved once and chosen per user below.
     const memberMission = getDailyMission(now);
-    const freeMission = getDailyMissionFor(false, now);
+    const freeMissionFemale = getDailyMissionFor(false, "FEMALE", now);
+    const freeMissionMale = getDailyMissionFor(false, "MALE", now);
 
     // Cohort count is small; fetch humans and filter in code so the
     // "hasn't played today" check (including never-played nulls) is exact.
@@ -88,6 +90,7 @@ export async function POST(request: NextRequest) {
       },
       select: {
         id: true,
+        gender: true,
         dailyStreakCurrent: true,
         dailyStreakLastDate: true,
         lastSeenAt: true,
@@ -137,11 +140,20 @@ export async function POST(request: NextRequest) {
         m.dailyStreakCurrent > 0 && m.dailyStreakLastDate === yesterdayKey;
 
       // Free accounts are pointed at the mission they can actually play,
-      // so the nudge never leads with a wall.
-      const mission =
-        m.communityMembership?.status === "ACTIVE"
-          ? memberMission
-          : freeMission;
+      // so the nudge never leads with a wall. Their deep link goes to the
+      // APP shell: /consilium bounces non-members to the sales page, so a
+      // /consilium URL would turn the nudge into a pitch.
+      const isActive = m.communityMembership?.status === "ACTIVE";
+      const mission = isActive
+        ? memberMission
+        : m.gender === "MALE"
+          ? freeMissionMale
+          : freeMissionFemale;
+      const missionUrl = (id: string) =>
+        isActive
+          ? `/consilium/simulator/${id}?mission=1`
+          : `/app/train/${id}?mission=1`;
+      const catalogUrl = isActive ? "/consilium/simulator" : "/app/train/climb";
 
       const payload = atRisk
         ? {
@@ -149,13 +161,13 @@ export async function POST(request: NextRequest) {
             body: mission
               ? `Keep it alive. Today's mission: ${mission.title}`
               : "Play today before midnight to keep it alive.",
-            url: mission ? `/consilium/simulator/${mission.scenarioId}?mission=1` : "/consilium/simulator",
+            url: mission ? missionUrl(mission.scenarioId) : catalogUrl,
             tag: "daily-streak",
           }
         : {
             title: "Today's mission is ready",
             body: mission ? mission.title : "A fresh scenario is waiting.",
-            url: mission ? `/consilium/simulator/${mission.scenarioId}?mission=1` : "/consilium/simulator",
+            url: mission ? missionUrl(mission.scenarioId) : catalogUrl,
             tag: "daily-streak",
           };
 
