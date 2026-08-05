@@ -182,7 +182,7 @@ export async function createCheckoutSession(options: {
     mode: options.mode,
     success_url: options.successUrl,
     cancel_url: options.cancelUrl,
-    customer_email: options.customerEmail,
+    customer_email: options.customerEmail || undefined,
     metadata: options.metadata,
     // Abandoned checkout recovery.
     //
@@ -195,10 +195,13 @@ export async function createCheckoutSession(options: {
     // `enabled` makes Stripe attach a recovery URL to the session when it
     // expires. The email that carries that URL is OURS to send: the
     // checkout.session.expired webhook handler reads the URL and enqueues
-    // the recovery email. `consent_collection` is what makes the buyer's
-    // email usable for that follow-up (Stripe shows a consent checkbox only
-    // in jurisdictions that require one), and the expired handler skips
-    // anyone whose consent came back opt_out.
+    // the recovery email.
+    //
+    // No `consent_collection`: Stripe rejects `promotions` for accounts in
+    // countries where it is unavailable (this one included), and it took
+    // every payment-mode checkout down with a 400 on session create. The
+    // expired handler already treats absent consent as sendable and only
+    // skips an explicit opt_out, so nothing else changes.
     //
     // The one-hour `expires_at` (Stripe's default is 24h, floor is 30min)
     // is what makes recovery timely: the follow-up lands while the intent
@@ -209,7 +212,6 @@ export async function createCheckoutSession(options: {
     // to find out on production whether Stripe accepts the parameter there.
     ...(options.mode === "payment"
       ? {
-          consent_collection: { promotions: "auto" as const },
           expires_at: Math.floor(Date.now() / 1000) + 60 * 60,
           after_expiration: {
             recovery: {

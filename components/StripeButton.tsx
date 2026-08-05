@@ -77,6 +77,7 @@ export default function StripeButton({
   return (
     <div>
       <m.button
+        type="button"
         whileHover={{ scale: 1.02 }}
         whileTap={{ scale: 0.98 }}
         onClick={handleClick}

@@ -41,7 +41,7 @@ function clientMetadata(raw: unknown): Record<string, string> {
 
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json();
+    const body = await request.json().catch(() => ({}));
     const { priceKey, email, metadata, successUrl, cancelUrl } = body;
 
     if (!priceKey || !STRIPE_PRICES[priceKey]) {
