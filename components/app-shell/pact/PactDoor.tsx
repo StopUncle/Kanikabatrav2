@@ -17,10 +17,13 @@ import { haptic } from "@/lib/haptics";
 export default function PactDoor({
   entitled,
   rejoining,
+  checkoutOpen,
 }: {
   entitled: boolean;
   /** They broke a pact before. Changes the voice, not the flow. */
   rejoining: boolean;
+  /** Stripe has the two Pact prices, so the ceremony can end in a payment. */
+  checkoutOpen: boolean;
 }) {
   const router = useRouter();
   const [preset, setPreset] = useState<PactPresetKey | null>(null);
@@ -147,15 +150,17 @@ export default function PactDoor({
       <button
         type="button"
         onClick={proceed}
-        disabled={!preset}
-        aria-describedby={preset ? undefined : "pact-cta-hint"}
+        disabled={!preset || !checkoutOpen}
+        aria-describedby={
+          !checkoutOpen ? "pact-cta-closed" : preset ? undefined : "pact-cta-hint"
+        }
         className={`relative mt-6 w-full overflow-hidden rounded-full px-5 py-3.5 text-[13px] uppercase tracking-[0.16em] transition-transform ${
-          preset
+          preset && checkoutOpen
             ? "bg-[var(--pact-blood)] text-[var(--app-text)] active:scale-[0.97]"
             : "border border-[var(--app-line)] bg-transparent text-[var(--app-dim)]"
         }`}
       >
-        {preset && (
+        {preset && checkoutOpen && (
           <span
             aria-hidden
             className="pact-shimmer pointer-events-none absolute inset-0"
@@ -168,13 +173,25 @@ export default function PactDoor({
         {rejoining ? "Sign a new pact" : "Make the blood pact"}
       </button>
 
-      {!preset && (
+      {/* Closed beats broken. Until the two Stripe prices exist the ceremony
+          ends in a 503, and it ends there AFTER the oath and the signature.
+          Say it at the door instead. */}
+      {!checkoutOpen ? (
         <p
-          id="pact-cta-hint"
-          className="mt-2.5 text-center text-app-caption text-[var(--app-dim)]"
+          id="pact-cta-closed"
+          className="mt-2.5 text-center text-app-caption leading-relaxed text-[var(--app-dim)]"
         >
-          Pick one of the three tracks above first.
+          The Pact opens shortly. Nothing to do yet.
         </p>
+      ) : (
+        !preset && (
+          <p
+            id="pact-cta-hint"
+            className="mt-2.5 text-center text-app-caption text-[var(--app-dim)]"
+          >
+            Pick one of the three tracks above first.
+          </p>
+        )
       )}
 
       <p className="mt-4 text-app-micro leading-relaxed text-[var(--app-dim)]">

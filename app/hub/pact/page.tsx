@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { requireServerAuth } from "@/lib/auth/server-auth";
 import { getAccess } from "@/lib/access/tier";
 import { readPact } from "@/lib/pact/read";
+import { isPactCheckoutOpen } from "@/lib/stripe";
 import { PageShell } from "@/components/app-shell/ui";
 import PactDoor from "@/components/app-shell/pact/PactDoor";
 
@@ -31,6 +32,9 @@ export default async function PactDoorPage() {
       <PactDoor
         entitled={access.pactEntitled}
         rejoining={read.pastPacts.length > 0}
+        // An entitled member needs no checkout, so an unpriced Stripe does
+        // not close the door for them.
+        checkoutOpen={access.pactEntitled || isPactCheckoutOpen()}
       />
     </PageShell>
   );

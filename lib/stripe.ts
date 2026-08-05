@@ -91,14 +91,32 @@ export const STRIPE_PRICES: Record<string, string> = {
   /**
    * The Blood Pact. $4.99/week or $149/year, no monthly on purpose: weekly
    * matches the product's cadence and annual is the commitment move.
-   * IDs are empty until scripts/create-pact-product.ts is run against the
-   * live account (Sam runs it; it is a live Stripe write). The create route
-   * refuses checkout while these are unset, so shipping this file first is
-   * safe.
+   *
+   * These read from the environment, unlike every other price above, because
+   * they are the only two that do not exist yet. Hardcoding them empty meant
+   * that running scripts/create-pact-product.ts (a live Stripe write, Sam's
+   * to run) was only the first half of opening the product: the ids then had
+   * to be pasted into this file, committed, and waited out through a Railway
+   * build before anyone could pay. Reading them from Railway turns that into
+   * one paste. The create route still refuses checkout while they are unset,
+   * so an unconfigured deploy stays safe.
    */
-  PACT_WEEKLY: "",
-  PACT_ANNUAL: "",
+  PACT_WEEKLY: process.env.STRIPE_PRICE_PACT_WEEKLY ?? "",
+  PACT_ANNUAL: process.env.STRIPE_PRICE_PACT_ANNUAL ?? "",
 };
+
+/**
+ * Whether the Pact can actually be bought right now.
+ *
+ * The door sells a product whose checkout returns 503 until the two prices
+ * above exist. Zero pact memberships had ever been created when this was
+ * added, which is exactly what that looks like from the outside: a member
+ * picks a track, signs an oath, draws their signature, and only then meets
+ * the failure. Surfaces that lead into the ceremony check this first.
+ */
+export function isPactCheckoutOpen(): boolean {
+  return Boolean(STRIPE_PRICES.PACT_WEEKLY && STRIPE_PRICES.PACT_ANNUAL);
+}
 
 export const STRIPE_PUBLISHABLE_KEY = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!;
 

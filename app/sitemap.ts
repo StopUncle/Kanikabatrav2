@@ -67,6 +67,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     entry("/board", 0.95, "daily"),
     entry("/board/scale", 0.8, "monthly"),
     entry("/tells", 0.95, "weekly"),
+    // The free Receipts tool. A free, no-signup instrument is the most
+    // linkable and most searchable thing on the site, and it was missing
+    // from this list entirely, so Google was never told it exists.
+    entry("/receipts", 0.93, "weekly"),
     entry("/book", 0.95, "weekly"),
     entry("/coaching", 0.9, "weekly"),
     entry("/about", 0.9, "monthly"),

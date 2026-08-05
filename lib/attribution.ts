@@ -125,31 +125,66 @@ function hasMeaningfulSignal(p: AttributionPayload): boolean {
 }
 
 /**
- * Capture-and-persist on first meaningful touch. Idempotent — once a
- * non-trivial attribution is stored, later visits don't overwrite it
- * (first-touch wins). Stale attributions (>30d old) are evicted.
+ * Capture-and-persist on first touch. Idempotent: once an attribution is
+ * stored, later visits do not move the landing page (first-touch wins).
+ * Stale attributions (>30d old) are evicted.
+ *
+ * The landing page is recorded for EVERY first visit, campaign or not.
+ * It used to be recorded only when the visitor arrived carrying a UTM or
+ * an off-site referrer, and organic arrivals stored nothing at all. That
+ * looked harmless, because the field is only read at submit time, and at
+ * submit time the reader falls back to a fresh read of wherever the
+ * browser happens to be standing. So the majority of visitors, the ones
+ * with no campaign tag, had their landing page recorded as the page
+ * holding the form: /quiz/results and /register?returnTo=/quiz/results
+ * were the two most common "landing pages" in production, and nobody has
+ * ever arrived on either. The traffic report was measuring its own forms.
+ *
+ * A later campaign touch can still fill in campaign fields that the first
+ * touch did not have, without moving the landing page or the timestamp.
+ * That keeps a direct visitor who later clicks an ad attributable, which
+ * is the case the old signal check was really protecting.
  */
 export function captureAttribution(): void {
   if (typeof window === "undefined") return;
 
-  // Check existing stored attribution
+  const fresh = readClientAttribution();
+
   try {
     const raw = window.localStorage.getItem(STORAGE_KEY);
     if (raw) {
       const existing = JSON.parse(raw) as StoredAttribution;
       const age = Date.now() - new Date(existing.capturedAt).getTime();
       if (age < ATTRIBUTION_TTL_MS) {
-        // Honor first-touch: don't overwrite a fresh stored attribution
+        // First touch keeps the landing page. Only a campaign signal that
+        // the stored record lacks is allowed to write, and only into the
+        // campaign fields.
+        if (!hasMeaningfulSignal(existing) && hasMeaningfulSignal(fresh)) {
+          const merged: StoredAttribution = {
+            ...existing,
+            utmSource: fresh.utmSource ?? existing.utmSource,
+            utmMedium: fresh.utmMedium ?? existing.utmMedium,
+            utmCampaign: fresh.utmCampaign ?? existing.utmCampaign,
+            utmContent: fresh.utmContent ?? existing.utmContent,
+            utmTerm: fresh.utmTerm ?? existing.utmTerm,
+            gclid: fresh.gclid ?? existing.gclid,
+            fbclid: fresh.fbclid ?? existing.fbclid,
+            ttclid: fresh.ttclid ?? existing.ttclid,
+            referrer: existing.referrer ?? fresh.referrer,
+          };
+          try {
+            window.localStorage.setItem(STORAGE_KEY, JSON.stringify(merged));
+          } catch {
+            // Quota exceeded or storage disabled: skip silently
+          }
+        }
         return;
       }
-      // Otherwise it's stale — fall through and recapture
+      // Otherwise it is stale, so fall through and recapture.
     }
   } catch {
-    // Corrupted localStorage entry — ignore and overwrite
+    // Corrupted localStorage entry: ignore and overwrite
   }
-
-  const fresh = readClientAttribution();
-  if (!hasMeaningfulSignal(fresh)) return;
 
   const stored: StoredAttribution = {
     ...fresh,
@@ -158,7 +193,7 @@ export function captureAttribution(): void {
   try {
     window.localStorage.setItem(STORAGE_KEY, JSON.stringify(stored));
   } catch {
-    // Quota exceeded or storage disabled — skip silently
+    // Quota exceeded or storage disabled: skip silently
   }
 }
 

@@ -72,6 +72,11 @@ const Footer = () => {
       { name: "About", href: "/about" },
       { name: "The Book", href: "/#book" },
       { name: "Quiz", href: "/quiz" },
+      // Free Receipts shipped in June as the top-of-funnel lead magnet and
+      // was then linked from nowhere: not the header, not here, not the
+      // sitemap. Seven weeks, zero uses, which is a discoverability number
+      // rather than a demand one.
+      { name: "Free Receipts", href: "/receipts" },
       { name: "Coaching", href: "/coaching" },
       { name: "The Consilium", href: "/consilium" },
       { name: "Content", href: "/content" },
