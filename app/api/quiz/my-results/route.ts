@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { requireAuth } from "@/lib/auth/middleware";
+import { bookPurchaseWhere } from "@/lib/book/ownership";
 import { generateDiagnosis, PersonalityType } from "@/lib/quiz-data";
 import { logger } from "@/lib/logger";
 
@@ -15,15 +16,12 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: "No quiz results found" }, { status: 404 });
     }
 
-    // Case-insensitive match. Purchase rows carry whatever was entered
-    // at Stripe checkout (often mixed-case). User.email is lowercased at
-    // register time. Straight equality misses historical rows.
+    // bookPurchaseWhere: case-insensitive email match plus the variant
+    // filter, so a subscription or Ask row (also type "BOOK") does not
+    // permanently flip quizResult.paid for someone who never bought the
+    // book. Members get their unlock via the membership check below.
     const hasBookPurchase = await prisma.purchase.findFirst({
-      where: {
-        customerEmail: { equals: user.email, mode: "insensitive" },
-        type: "BOOK",
-        status: "COMPLETED",
-      },
+      where: bookPurchaseWhere(user.email),
     });
 
     // Consilium members get the quiz unlocked as a membership perk.

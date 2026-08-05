@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { REAL_BOOK_VARIANT_FILTER } from "@/lib/book/ownership";
 import { requireAdminSession } from "@/lib/admin/auth";
 
 export async function GET(_request: NextRequest) {
@@ -7,8 +8,10 @@ export async function GET(_request: NextRequest) {
   if (unauthorized) return unauthorized;
 
   try {
+    // Variant-filtered so the book-sales admin view lists book sales,
+    // not the subscription and Ask rows that share type "BOOK".
     const purchases = await prisma.purchase.findMany({
-      where: { type: "BOOK" },
+      where: { type: "BOOK", ...REAL_BOOK_VARIANT_FILTER },
       select: {
         id: true,
         customerEmail: true,

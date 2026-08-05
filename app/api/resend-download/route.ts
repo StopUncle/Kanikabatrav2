@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { bookPurchaseWhere } from "@/lib/book/ownership";
 import { sendBookDelivery } from "@/lib/email";
 import crypto from "crypto";
 
@@ -53,13 +54,13 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Find the most recent completed book purchase for this email
+    // Find the most recent completed REAL book purchase for this email.
+    // bookPurchaseWhere is load-bearing on this public endpoint: without
+    // its variant filter, a subscription row (which also carries type
+    // "BOOK") matched here, and anyone submitting a subscriber's email
+    // got the full book minted and mailed to that subscriber for free.
     const purchase = await prisma.purchase.findFirst({
-      where: {
-        customerEmail: { equals: normalizedEmail, mode: "insensitive" },
-        type: "BOOK",
-        status: "COMPLETED",
-      },
+      where: bookPurchaseWhere(normalizedEmail),
       orderBy: { createdAt: "desc" },
     });
 

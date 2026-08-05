@@ -3,6 +3,7 @@ import crypto from "crypto";
 import { optionalServerAuth } from "@/lib/auth/server-auth";
 import { getAccess, canAccessMemberOnly } from "@/lib/access/tier";
 import { prisma } from "@/lib/prisma";
+import { bookPurchaseWhere } from "@/lib/book/ownership";
 import { sendBookDelivery } from "@/lib/email";
 
 /**
@@ -53,12 +54,13 @@ export async function POST() {
   // any standalone BOOK purchases, including the new $9.99 member ones.
   // Case-insensitive. Purchase rows carry the email as entered at
   // checkout, often mixed-case. User.email is lowercased at register.
+  // bookPurchaseWhere, critically: a member's own SUBSCRIPTION row also
+  // carries type "BOOK", and this endpoint mints a fresh download token
+  // onto whatever row it finds. Without the variant filter, every active
+  // member could have the full book emailed to them without ever paying
+  // the $9.99 member price.
   const existing = await prisma.purchase.findFirst({
-    where: {
-      customerEmail: { equals: user.email, mode: "insensitive" },
-      type: "BOOK",
-      status: "COMPLETED",
-    },
+    where: bookPurchaseWhere(user.email),
     orderBy: { createdAt: "desc" },
   });
 

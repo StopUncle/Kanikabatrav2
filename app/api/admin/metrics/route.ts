@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { REAL_BOOK_VARIANT_FILTER } from "@/lib/book/ownership";
 import { requireAdminSession } from "@/lib/admin/auth";
 import { logger } from "@/lib/logger";
 
@@ -81,11 +82,14 @@ export async function GET(_request: NextRequest) {
     ).map(([status, count]) => ({ status, _count: count }));
 
     // ---------- 30d book sales ----------
+    // Variant-filtered: subscription and Ask rows also carry type "BOOK"
+    // and were inflating this count with sales that were not books.
     const bookSales30d = await prisma.purchase.count({
       where: {
         type: "BOOK",
         status: "COMPLETED",
         createdAt: { gte: thirtyDaysAgo },
+        ...REAL_BOOK_VARIANT_FILTER,
       },
     });
 

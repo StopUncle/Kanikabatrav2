@@ -1,6 +1,7 @@
 import { requireServerAuth } from "@/lib/auth/server-auth";
 import { getAccess } from "@/lib/access/tier";
 import { prisma } from "@/lib/prisma";
+import { bookPurchaseWhere } from "@/lib/book/ownership";
 import MemberBookClient from "@/app/consilium/(member)/book/MemberBookClient";
 
 export const metadata = {
@@ -31,12 +32,11 @@ export default async function AppBookPage() {
   ]);
   if (!user?.email) return null;
 
+  // bookPurchaseWhere, not a bare type filter: subscription and Ask rows
+  // also carry type "BOOK", and matching them showed subscribers a dead
+  // owned-state instead of the buy button.
   const existingBook = await prisma.purchase.findFirst({
-    where: {
-      customerEmail: { equals: user.email, mode: "insensitive" },
-      type: "BOOK",
-      status: "COMPLETED",
-    },
+    where: bookPurchaseWhere(user.email),
     orderBy: { createdAt: "desc" },
     select: {
       downloadToken: true,

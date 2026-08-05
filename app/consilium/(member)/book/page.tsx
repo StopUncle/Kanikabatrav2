@@ -1,5 +1,6 @@
 import { requireServerAuth } from "@/lib/auth/server-auth";
 import { prisma } from "@/lib/prisma";
+import { bookPurchaseWhere } from "@/lib/book/ownership";
 import MemberBookClient from "./MemberBookClient";
 
 export const metadata = {
@@ -49,11 +50,10 @@ export default async function MemberBookPage() {
   // purchase was under a different-cased email would see "you don't
   // own this yet" and be charged for a book they already bought.
   const existingBook = await prisma.purchase.findFirst({
-    where: {
-      customerEmail: { equals: user.email, mode: "insensitive" },
-      type: "BOOK",
-      status: "COMPLETED",
-    },
+    // bookPurchaseWhere adds the productVariant filter: the member's own
+    // subscription row also carries type "BOOK" and used to shadow this
+    // lookup, hiding both the $9.99 buy button and real older downloads.
+    where: bookPurchaseWhere(user.email),
     orderBy: { createdAt: "desc" },
     select: {
       id: true,
