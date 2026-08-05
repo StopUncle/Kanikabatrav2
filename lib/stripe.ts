@@ -169,6 +169,10 @@ export async function createCheckoutSession(options: {
     lineItems.push({ price: options.bundleAddOnPriceId, quantity: 1 });
   }
 
+  const hasExplicitDiscount = Boolean(
+    options.discountPromotionCodeId || options.discountCouponId,
+  );
+
   const session = await stripe.checkout.sessions.create({
     payment_method_types: ["card"],
     line_items: lineItems,
@@ -177,6 +181,34 @@ export async function createCheckoutSession(options: {
     cancel_url: options.cancelUrl,
     customer_email: options.customerEmail,
     metadata: options.metadata,
+    // Abandoned checkout recovery.
+    //
+    // A Purchase row is only written when a payment succeeds, so someone who
+    // reaches Stripe and leaves has never existed as far as this codebase is
+    // concerned. Stripe knows: over one sample of three days, eight sessions
+    // were opened and three were paid. The five that were not included a
+    // $4,997 coaching checkout, and nothing followed any of them up.
+    //
+    // `enabled` makes Stripe attach a recovery URL to the session when it
+    // expires. The email that carries that URL is a Dashboard setting
+    // (Settings, Checkout and Payment Links, abandoned cart emails), so this
+    // is the half that lives in code and the toggle is the other half.
+    //
+    // Payment mode only, on purpose. Subscription sessions are the Consilium
+    // and the book bundles, a live revenue path, and this is not the change
+    // to find out on production whether Stripe accepts the parameter there.
+    ...(options.mode === "payment"
+      ? {
+          after_expiration: {
+            recovery: {
+              enabled: true,
+              // A session that already carries a single-use promo code must
+              // not offer a second one on the recovered copy.
+              allow_promotion_codes: !hasExplicitDiscount,
+            },
+          },
+        }
+      : {}),
     ...(options.discountPromotionCodeId
       ? { discounts: [{ promotion_code: options.discountPromotionCodeId }] }
       : options.discountCouponId
