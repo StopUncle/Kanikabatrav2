@@ -10,25 +10,37 @@ import { checkPactMembership } from "@/lib/pact/membership";
  * Who is asking.
  *
  * - `anon`   no session at all. Send them to login.
- * - `free`   signed in, no live membership. Gets the free tier.
- * - `member` a live Consilium membership OR a live Blood Pact subscription,
- *            or an admin previewing one.
+ * - `free`   signed in, no live paid tier. Gets the free tier.
+ * - `pact`   a live Blood Pact subscription and nothing else. The training
+ *            rung: the full catalog, the Lab, the Mark, the program, the
+ *            Pact itself. NOT Kanika's rooms.
+ * - `member` a live Consilium membership, or an admin previewing one. The
+ *            top rung: everything `pact` opens PLUS Kanika herself (the
+ *            feed, Ask Kanika, voice notes, videos, DMs, the member book
+ *            price).
  *
- * This is the single predicate the app gates on. It wraps `checkMembership`
- * rather than replacing it: that function owns the consilium state machine
- * (lazy expiry, the CANCELLED-but-still-paid window, the APPROVED grace
- * period) and all of it still applies. The Blood Pact adds a second door to
- * the same tier via `checkPactMembership`, checked only when consilium says
- * no: an active $29 member is entitled to everything the Pact unlocks
- * without a second subscription (decided 2026-08-02), so consilium
- * membership short-circuits the pact query entirely.
+ * The ladder (decided 2026-08-05): the tiers are rungs, not doors to the
+ * same room. The Pact sells training; the Consilium sells Kanika. If both
+ * granted the same access, the cheaper one would cannibalise the $29 base
+ * the day its checkout opened.
+ *
+ * This wraps `checkMembership` rather than replacing it: that function owns
+ * the consilium state machine (lazy expiry, the CANCELLED-but-still-paid
+ * window, the APPROVED grace period) and all of it still applies. An active
+ * $29 member is entitled to everything the Pact unlocks without a second
+ * subscription (decided 2026-08-02), so consilium membership short-circuits
+ * the pact query entirely.
  */
-export type AccessTier = "anon" | "free" | "member";
+export type AccessTier = "anon" | "free" | "pact" | "member";
 
 export interface Access {
   tier: AccessTier;
   userId: string | null;
-  /** Shorthand for `tier === "member"`. */
+  /**
+   * Shorthand for `tier === "member"`: a live CONSILIUM membership. A
+   * pact-only subscriber is NOT a member; use `canTrain` for "any paid
+   * rung".
+   */
   isMember: boolean;
   /**
    * The account is banned.
@@ -124,9 +136,13 @@ export async function getAccess(userId: string | null): Promise<Access> {
 
   if (pact.entitled && !isBanned) {
     return {
-      tier: "member",
+      // The training rung, NOT "member". This line is the whole ladder:
+      // before it, a $4.99/wk pact subscriber was indistinguishable from
+      // a $29 consilium member, and the cheaper price would have hollowed
+      // out the membership the day pact checkout opened.
+      tier: "pact",
       userId,
-      isMember: true,
+      isMember: false,
       isBanned: false,
       status: check.status,
       membership: check.membership,
@@ -153,9 +169,23 @@ export function isSignedIn(access: Access): boolean {
 }
 
 /**
- * Whether a member-only surface should serve this caller. Banned accounts
- * fail here too, so a route that only asks this question cannot leak.
+ * Whether a CONSILIUM-only surface should serve this caller: Kanika's
+ * rooms (feed, Ask Kanika, voice notes, videos, DMs, member book price).
+ * Banned accounts fail here too, so a route that only asks this question
+ * cannot leak.
  */
 export function canAccessMemberOnly(access: Access): boolean {
   return access.isMember && !access.isBanned;
+}
+
+/**
+ * Whether a TRAINING surface should serve this caller: the full catalog,
+ * the Lab, the Mark, the program, the Pact journal. True for any paid
+ * rung, pact or consilium. This is what the pact subscriber buys; the
+ * consilium member has it included.
+ */
+export function canTrain(access: Access): boolean {
+  return (
+    (access.tier === "pact" || access.tier === "member") && !access.isBanned
+  );
 }

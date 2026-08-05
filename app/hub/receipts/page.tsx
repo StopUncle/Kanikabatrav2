@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { requireServerAuth } from "@/lib/auth/server-auth";
 import { getReceiptsQuota, listReceipts } from "@/lib/receipts/db";
 import AppReceiptsClient from "@/components/app-shell/receipts/AppReceiptsClient";
-import { memberGate } from "@/lib/access/guard";
+import { trainingGate } from "@/lib/access/guard";
 import { PageHeader, PageShell } from "@/components/app-shell/ui";
 
 export const dynamic = "force-dynamic";
@@ -18,7 +18,7 @@ export default async function ReceiptsPage() {
   // Member-only surface. The shell no longer gates for us (A2), and this
   // page reads its data straight from Prisma, so the gate has to be here
   // and above the queries.
-  const gate = await memberGate(userId, {
+  const gate = await trainingGate(userId, {
     trigger: "locked-nav",
     surfaceLabel: "Receipts",
   });

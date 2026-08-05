@@ -1,5 +1,5 @@
 import { requireServerAuth } from "@/lib/auth/server-auth";
-import { memberGate } from "@/lib/access/guard";
+import { trainingGate } from "@/lib/access/guard";
 import LabClient from "@/components/lab/LabClient";
 
 export const metadata = {
@@ -19,7 +19,7 @@ export const metadata = {
  */
 export default async function LabPage() {
   const userId = await requireServerAuth("/app/lab");
-  const gate = await memberGate(userId, {
+  const gate = await trainingGate(userId, {
     trigger: "locked-nav",
     surfaceLabel: "The Lab",
   });

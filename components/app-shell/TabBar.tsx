@@ -10,7 +10,10 @@ import {
   MORE_ACTIVE_PREFIXES,
   FULL_SCREEN_ROUTES,
   isTabActive,
+  surfaceLocked,
+  offerForSurface,
   type AppSurface,
+  type ViewerTier,
 } from "@/lib/app/nav";
 
 /**
@@ -59,7 +62,7 @@ const ICONS: Record<string, React.ReactNode> = {
   ),
 };
 
-export default function TabBar({ isMember }: { isMember: boolean }) {
+export default function TabBar({ viewerTier }: { viewerTier: ViewerTier }) {
   const pathname = usePathname();
   const [moreOpen, setMoreOpen] = useState(false);
   const [unread, setUnread] = useState(0);
@@ -69,8 +72,8 @@ export default function TabBar({ isMember }: { isMember: boolean }) {
   const [lockedSurface, setLockedSurface] = useState<AppSurface | null>(null);
 
   const isLocked = useCallback(
-    (s: AppSurface) => Boolean(s.memberOnly) && !isMember,
-    [isMember],
+    (s: AppSurface) => surfaceLocked(s, viewerTier),
+    [viewerTier],
   );
 
   const onKanika = pathname.startsWith("/app/kanika");
@@ -139,7 +142,11 @@ export default function TabBar({ isMember }: { isMember: boolean }) {
                     : undefined
                 }
                 aria-current={active ? "page" : undefined}
-                aria-label={locked ? `${tab.label}, members only` : tab.label}
+                aria-label={
+                  locked
+                    ? `${tab.label}, ${tab.requires === "member" ? "members" : "Pact"} only`
+                    : tab.label
+                }
                 className={`flex w-[62px] flex-col items-center gap-1.5 text-[11.5px] tracking-[0.06em] transition-colors ${
                   active ? "text-[var(--app-gold)]" : "text-[var(--app-dim)]"
                 } ${locked ? "opacity-60" : ""}`}
@@ -206,13 +213,14 @@ export default function TabBar({ isMember }: { isMember: boolean }) {
       <MoreSheet
         open={moreOpen}
         onClose={() => setMoreOpen(false)}
-        isMember={isMember}
+        viewerTier={viewerTier}
         onLockedTap={setLockedSurface}
       />
       <UpgradeSheet
         open={lockedSurface !== null}
         trigger="locked-nav"
         surfaceLabel={lockedSurface?.label}
+        offer={lockedSurface ? offerForSurface(lockedSurface) : undefined}
         onClose={() => setLockedSurface(null)}
       />
     </>

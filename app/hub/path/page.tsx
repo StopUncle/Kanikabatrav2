@@ -4,7 +4,7 @@ import { requireServerAuth } from "@/lib/auth/server-auth";
 import { prisma } from "@/lib/prisma";
 import { getPathState } from "@/lib/path/progress";
 import { appStepHref, effectiveStep } from "@/lib/path/curriculum";
-import { getAccess } from "@/lib/access/tier";
+import { getAccess, canTrain } from "@/lib/access/tier";
 import { ringByLevel } from "@/lib/standing/config";
 
 export const metadata = {
@@ -36,7 +36,7 @@ export default async function PathPage() {
   const state = await getPathState(prisma, userId, {
     gender: viewer?.gender ?? null,
     ringLevel: viewer?.ringLevel ?? 4,
-    isMember: access.isMember,
+    isMember: canTrain(access),
   });
 
   let lastAct: number | null = null;
@@ -126,15 +126,15 @@ export default async function PathPage() {
                   href={appStepHref(
                     isCurrent.step,
                     viewer?.gender ?? null,
-                    access.isMember,
+                    canTrain(access),
                   )}
                   className="mt-3 block rounded-2xl border border-[var(--app-line)] bg-[var(--app-card)] px-4 py-[15px]"
                 >
                   <span className="block text-app-lead font-medium">
-                    {effectiveStep(isCurrent.step, access.isMember).label}
+                    {effectiveStep(isCurrent.step, canTrain(access)).label}
                   </span>
                   <span className="mt-0.5 block text-xs text-[var(--app-dim)]">
-                    {effectiveStep(isCurrent.step, access.isMember).framing}
+                    {effectiveStep(isCurrent.step, canTrain(access)).framing}
                   </span>
                   <span className="mt-3 block h-[3px] overflow-hidden rounded-full bg-[var(--app-line)]">
                     <span

@@ -2,7 +2,7 @@ import Link from "next/link";
 import DailyCheckInCard from "@/components/consilium/DailyCheckInCard";
 import type { SituationKey } from "@/lib/checkin/situations";
 import { requireServerAuth } from "@/lib/auth/server-auth";
-import { getAccess } from "@/lib/access/tier";
+import { getAccess, canTrain } from "@/lib/access/tier";
 import { prisma } from "@/lib/prisma";
 import { getTrainData } from "@/lib/simulator/train-data";
 import TrackLadder from "@/components/app-shell/train/TrackLadder";
@@ -122,7 +122,7 @@ export default async function ClimbPage({
       <div className="mx-5">
         <TrackLadder
           tracks={tracks}
-          isMember={access.isMember}
+          isMember={canTrain(access)}
           initialOpenTrack={clearedTrack}
           celebrateScenarioId={clearedTrack ? (cleared ?? null) : null}
         />

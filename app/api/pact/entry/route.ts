@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { requireAuth } from "@/lib/auth/middleware";
 import { prisma } from "@/lib/prisma";
 import { readPact } from "@/lib/pact/read";
+import { getAccess } from "@/lib/access/tier";
 import { classifyEntry, CRISIS_CARD } from "@/lib/program/ai/safety";
 import { enforceRateLimit, limits } from "@/lib/rate-limit";
 
@@ -23,6 +24,16 @@ export async function POST(request: NextRequest) {
     // endlessly at real cost.
     const limited = await enforceRateLimit(limits.pactEntrySave, user.id);
     if (limited) return limited;
+
+    // A lapsed subscription keeps its record readable but not writable:
+    // journalling is the live product, and each save is an LLM call.
+    const access = await getAccess(user.id);
+    if (!access.pactEntitled) {
+      return NextResponse.json(
+        { error: "The Pact is not active on this account" },
+        { status: 403 },
+      );
+    }
 
     const body = (await req.json().catch(() => null)) as {
       journalBody?: unknown;

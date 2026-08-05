@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { requireAuth } from "@/lib/auth/middleware";
-import { getAccess, canAccessMemberOnly } from "@/lib/access/tier";
+import { getAccess, canTrain } from "@/lib/access/tier";
 import { generateRead } from "@/lib/program/ai/generate";
 import { logger } from "@/lib/logger";
 
@@ -27,7 +27,7 @@ export async function POST(request: NextRequest) {
     // above the membership; the payment wiring for standalone purchase is a
     // later lane, and until it exists membership is the gate.
     const access = await getAccess(user.id);
-    if (!canAccessMemberOnly(access)) {
+    if (!canTrain(access)) {
       return NextResponse.json({ error: "Membership required" }, { status: 403 });
     }
 

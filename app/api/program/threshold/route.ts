@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { requireAuth } from "@/lib/auth/middleware";
-import { getAccess, canAccessMemberOnly } from "@/lib/access/tier";
+import { getAccess, canTrain } from "@/lib/access/tier";
 import { readProgram } from "@/lib/program/read";
 import { isGauntletWeek } from "@/lib/program/ai/arcs";
 import {
@@ -32,7 +32,7 @@ async function gates(userId: string, weekNumber: number): Promise<GateResult> {
   });
   const access = await getAccess(userId);
   // A4 decision: MEMBER-ONLY, same gate as intake.
-  if (!canAccessMemberOnly(access)) return refuse("Membership required", 403);
+  if (!canTrain(access)) return refuse("Membership required", 403);
   const enrollment = await getEnrollment(prisma, userId);
   if (!enrollment) return refuse("Not enrolled", 409);
   if (enrollment.pausedAt) return refuse("Program paused", 409);

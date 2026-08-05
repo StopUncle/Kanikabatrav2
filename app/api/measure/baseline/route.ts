@@ -15,7 +15,7 @@ import { z } from "zod";
 import type { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import { requireAuth } from "@/lib/auth/middleware";
-import { getAccess, canAccessMemberOnly } from "@/lib/access/tier";
+import { getAccess, canTrain } from "@/lib/access/tier";
 import { gradeBaseline } from "@/lib/mark/baseline";
 import { BASELINE_ITEMS_VERSION } from "@/lib/mark/baseline-items";
 import { recordEncounters } from "@/lib/mark/encounters";
@@ -64,7 +64,7 @@ export async function POST(request: NextRequest) {
     // headline-only variant, which is RETENTION's surface, not ACCESS's.
     // So: left closed deliberately rather than half-opened. See A8.
     const access = await getAccess(user.id);
-    if (!canAccessMemberOnly(access)) {
+    if (!canTrain(access)) {
       return NextResponse.json(
         { error: "Membership required" },
         { status: 403 },

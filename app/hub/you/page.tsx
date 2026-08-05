@@ -1,6 +1,6 @@
 import { requireServerAuth } from "@/lib/auth/server-auth";
 import { prisma } from "@/lib/prisma";
-import { getAccess } from "@/lib/access/tier";
+import { getAccess, canTrain } from "@/lib/access/tier";
 import { FREE_STANDING_CEILING } from "@/lib/standing/config";
 import { readDailyStreak } from "@/lib/streak/daily";
 import { readMark } from "@/lib/mark/read";
@@ -60,7 +60,7 @@ export default async function YouPage() {
 
   const standing = viewer?.standing ?? 0;
   const ringLevel = viewer?.ringLevel ?? 4;
-  const atFreeCeiling = !access.isMember && standing >= FREE_STANDING_CEILING;
+  const atFreeCeiling = !canTrain(access) && standing >= FREE_STANDING_CEILING;
 
   const memberSince = viewer?.createdAt
     ? viewer.createdAt.toLocaleDateString("en-US", {

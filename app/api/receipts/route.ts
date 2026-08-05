@@ -17,7 +17,7 @@ import { NextResponse, type NextRequest } from "next/server";
 import { z } from "zod";
 import { Prisma } from "@prisma/client";
 import { resolveTellContext } from "@/lib/tells/auth-context";
-import { getAccess, canAccessMemberOnly } from "@/lib/access/tier";
+import { getAccess, canTrain } from "@/lib/access/tier";
 import { prisma } from "@/lib/prisma";
 import {
   callReceipts,
@@ -66,7 +66,7 @@ export async function POST(request: NextRequest) {
   // A4 decision: MEMBER-ONLY. This is the member edition; free accounts
   // have /api/receipts/free, the public tool on a smaller cap.
   const access = await getAccess(ctx.userId);
-  if (!canAccessMemberOnly(access)) {
+  if (!canTrain(access)) {
     return NextResponse.json(
       { error: "Receipts is a member feature. Activate Consilium." },
       { status: 403 },

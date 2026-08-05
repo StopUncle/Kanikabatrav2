@@ -2,7 +2,13 @@
 
 import { useEffect } from "react";
 import Link from "next/link";
-import { MORE_SECTIONS, type AppSurface } from "@/lib/app/nav";
+import {
+  MORE_SECTIONS,
+  surfaceLocked,
+  requiresLabel,
+  type AppSurface,
+  type ViewerTier,
+} from "@/lib/app/nav";
 import { Mail, Settings, X } from "lucide-react";
 
 /**
@@ -23,12 +29,12 @@ const ICONS: Record<string, React.ReactNode> = {
 export default function MoreSheet({
   open,
   onClose,
-  isMember,
+  viewerTier,
   onLockedTap,
 }: {
   open: boolean;
   onClose: () => void;
-  isMember: boolean;
+  viewerTier: ViewerTier;
   onLockedTap: (surface: AppSurface) => void;
 }) {
   useEffect(() => {
@@ -70,7 +76,7 @@ export default function MoreSheet({
             </p>
             <div className="overflow-hidden rounded-2xl border border-[var(--app-line-soft)] bg-[var(--app-card)]">
               {section.items.map((item, i) => {
-                const locked = Boolean(item.memberOnly) && !isMember;
+                const locked = surfaceLocked(item, viewerTier);
                 return (
                   <Link
                     key={item.href}
@@ -84,7 +90,11 @@ export default function MoreSheet({
                           }
                         : onClose
                     }
-                    aria-label={locked ? `${item.label}, members only` : undefined}
+                    aria-label={
+                      locked
+                        ? `${item.label}, ${requiresLabel(item)} only`
+                        : undefined
+                    }
                     className={`flex items-center gap-3.5 px-4 py-3.5 ${
                       i > 0 ? "border-t border-[var(--app-line-soft)]" : ""
                     }`}
@@ -98,7 +108,7 @@ export default function MoreSheet({
                     </span>
                     {locked ? (
                       <span className="rounded-full border border-[var(--app-gold-soft)] px-1.5 py-0.5 text-app-micro uppercase tracking-app-wide text-[var(--app-gold-soft)]">
-                        Members
+                        {requiresLabel(item)}
                       </span>
                     ) : (
                       <span className="text-[var(--app-dim)]">›</span>

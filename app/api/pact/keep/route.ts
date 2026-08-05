@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { requireAuth } from "@/lib/auth/middleware";
 import { prisma } from "@/lib/prisma";
 import { readPact } from "@/lib/pact/read";
+import { getAccess } from "@/lib/access/tier";
 
 /**
  * "I kept it." Self-reported on purpose: the signature is a commitment to
@@ -12,6 +13,15 @@ import { readPact } from "@/lib/pact/read";
  */
 export async function POST(request: NextRequest) {
   return requireAuth(request, async (_req, user) => {
+    // A lapsed subscription keeps its record readable but not writable.
+    const access = await getAccess(user.id);
+    if (!access.pactEntitled) {
+      return NextResponse.json(
+        { error: "The Pact is not active on this account" },
+        { status: 403 },
+      );
+    }
+
     const read = await readPact(user.id);
     if (!read.pact || !read.entry) {
       return NextResponse.json({ error: "No pact to keep" }, { status: 404 });

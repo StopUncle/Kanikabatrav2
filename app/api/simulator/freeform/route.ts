@@ -16,7 +16,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { requireAuth } from "@/lib/auth/middleware";
 import { resolveScenario } from "@/lib/simulator/resolve";
-import { getAccess, canAccessMemberOnly } from "@/lib/access/tier";
+import { getAccess, canTrain } from "@/lib/access/tier";
 import { judgeFreeformMove, JudgeInputError } from "@/lib/simulator/judge";
 import { enforceRateLimit, limits } from "@/lib/rate-limit";
 import { logger } from "@/lib/logger";
@@ -62,7 +62,7 @@ export async function POST(request: NextRequest) {
     // spends LLM budget per request, so an open version is a cost hole as
     // well as a product one.
     const access = await getAccess(user.id);
-    if (!canAccessMemberOnly(access)) {
+    if (!canTrain(access)) {
       return NextResponse.json(
         { error: "Freeform is part of the Consilium" },
         { status: 403 },

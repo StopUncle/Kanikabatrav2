@@ -7,7 +7,7 @@ import { isGauntletWeek, arcOf } from "@/lib/program/ai/arcs";
 import { getEnrollment } from "@/lib/program/ai/state";
 import WeekCard from "@/components/program/WeekCard";
 import ThresholdJournal from "@/components/program/ThresholdJournal";
-import { memberGate } from "@/lib/access/guard";
+import { trainingGate } from "@/lib/access/guard";
 import { EmptyState, PageHeader, PageShell } from "@/components/app-shell/ui";
 
 export const metadata = {
@@ -28,7 +28,7 @@ export default async function ProgramPage() {
   // Member-only surface. The shell no longer gates for us (A2), and this
   // page reads its data straight from Prisma, so the gate has to be here
   // and above the queries.
-  const gate = await memberGate(userId, {
+  const gate = await trainingGate(userId, {
     trigger: "locked-nav",
     surfaceLabel: "The Twelve",
   });

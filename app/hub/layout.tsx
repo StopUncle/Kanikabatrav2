@@ -2,7 +2,7 @@ import { redirect } from "next/navigation";
 import { headers } from "next/headers";
 import { Fraunces, Instrument_Sans } from "next/font/google";
 import { requireServerAuth } from "@/lib/auth/server-auth";
-import { getAccess, canAccessMemberOnly } from "@/lib/access/tier";
+import { getAccess, canTrain } from "@/lib/access/tier";
 import { prisma } from "@/lib/prisma";
 import TabBar from "@/components/app-shell/TabBar";
 import BackBar from "@/components/app-shell/BackBar";
@@ -122,10 +122,12 @@ export default async function AppShellLayout({
             <BackBar />
             {children}
           </div>
-          {/* Resolved server-side and passed as a plain boolean, so the
-              locked state is in the SSR HTML: a member never flashes locks
-              and a free account never flashes an open bar. */}
-          <TabBar isMember={canAccessMemberOnly(access)} />
+          {/* Resolved server-side and passed down, so the locked state is
+              in the SSR HTML: a member never flashes locks and a free
+              account never flashes an open bar. The tier, not a boolean:
+              a pact subscriber has Mark open and Feed locked, and only
+              the tier can say both. */}
+          <TabBar viewerTier={access.tier} />
           {/* Overlay host for ceremonies and floaters. It lives inside the
               column so portalled content keeps the [data-app-shell] tokens.
               Absolute against the shell now that the shell is a fixed-size
@@ -150,7 +152,7 @@ export default async function AppShellLayout({
           silently cut the whole free tier off from the streak nudge. */}
       <NotificationPrompt
         unlocked={
-          access.isMember ? baselineAttempts > 0 : completedRuns > 0
+          canTrain(access) ? baselineAttempts > 0 : completedRuns > 0
         }
       />
       {/* The install offer, on every visit until installed or dismissed.

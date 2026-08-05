@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 import { requireServerAuth } from "@/lib/auth/server-auth";
-import { memberGate } from "@/lib/access/guard";
+import { trainingGate } from "@/lib/access/guard";
 import { readPact } from "@/lib/pact/read";
 import { PageShell, PageHeader, EmptyState } from "@/components/app-shell/ui";
 
@@ -15,7 +15,7 @@ export const metadata = {
  */
 export default async function PactJournalPage() {
   const userId = await requireServerAuth("/app/pact/journal");
-  const wall = await memberGate(userId, {
+  const wall = await trainingGate(userId, {
     trigger: "locked-nav",
     returnHref: "/app/pact/journal",
     surfaceLabel: "The Pact",

@@ -41,6 +41,17 @@ export type UpgradeTrigger =
 // fully walled for free accounts, so no honest moment exists. Its home,
 // if one ever ships, is a free Baseline reveal.
 
+/**
+ * Which rung of the ladder this wall sells. The Pact buys TRAINING (the
+ * catalog, the Lab, the Mark, the program); the Consilium buys everything
+ * the Pact does plus Kanika herself. A wall in front of a training surface
+ * offers the Pact; a wall in front of one of Kanika's rooms offers the
+ * membership, whoever is looking at it. The two must never promise each
+ * other's goods: a Kanika promise on the Pact door is exactly the
+ * arbitrage that would hollow out the $29 base.
+ */
+export type UpgradeOffer = "pact" | "consilium";
+
 type Props = {
   open: boolean;
   onClose: () => void;
@@ -53,9 +64,12 @@ type Props = {
   nextChapterTitle?: string | null;
   /** The locked surface's label, when the trigger is locked-nav. */
   surfaceLabel?: string | null;
+  /** Which rung to sell. Defaults to the Pact while it is launched. */
+  offer?: UpgradeOffer;
 };
 
 function headlineFor(
+  offer: UpgradeOffer,
   trigger: UpgradeTrigger,
   next?: string | null,
   surface?: string | null,
@@ -66,10 +80,13 @@ function headlineFor(
   if (trigger === "standing-frozen") return "Your standing stops here.";
   if (trigger === "today-card") return "The whole thing is already built.";
   if (trigger === "gauntlet") return "The Gauntlet plays for keeps.";
+  if (offer === "consilium") {
+    return surface ? `${surface} is Kanika's room.` : "That room is Kanika's.";
+  }
   return surface ? `${surface} is open inside.` : "That room is open inside.";
 }
 
-function sublineFor(trigger: UpgradeTrigger): string {
+function sublineFor(offer: UpgradeOffer, trigger: UpgradeTrigger): string {
   if (trigger === "chapter-end") {
     return "You have finished the part everyone gets. The climb keeps going from here.";
   }
@@ -77,29 +94,38 @@ function sublineFor(trigger: UpgradeTrigger): string {
     return "Analyst is as far as the free tier counts. The ranks above it keep moving.";
   }
   if (trigger === "today-card") {
-    return PACT_LAUNCHED
-      ? "Every track, the Lab, Kanika's room, the Mark. The Pact opens all of it."
+    return offer === "pact"
+      ? "Every track, the Lab, the Mark, the whole climb. The Pact opens all of it."
       : "Every track, the Lab, Kanika's room, the Mark. Membership opens all of it.";
   }
   if (trigger === "gauntlet") {
-    return PACT_LAUNCHED
+    return offer === "pact"
       ? "You write your own moves. No options, no reads, a clock running, and bonus pay for holding your nerve. Pact only."
       : "You write your own moves. No options, no reads, a clock running, and bonus pay for holding your nerve. Members only.";
   }
-  return PACT_LAUNCHED
+  return offer === "pact"
     ? "Everything on this bar unlocks when you sign. Pick up where the free tier stops."
-    : "Everything on this bar unlocks with membership. Pick up where the free tier stops.";
+    : "Her rooms open with the membership, and the Pact comes included.";
 }
 
 /** What continues. Never a list of what is missing. */
-const CONTINUES = [
-  ...(PACT_LAUNCHED
-    ? ["One challenge a week, on your track, and a record that never forgets."]
-    : []),
-  "Every chapter of every track, not just the first.",
-  "The Room: say it in your own words, and find out what that costs you.",
-  "Kanika: the voice notes, the answers, the feed.",
-];
+function continuesFor(offer: UpgradeOffer): string[] {
+  if (offer === "pact" && PACT_LAUNCHED) {
+    return [
+      "One challenge a week, on your track, and a record that never forgets.",
+      "Every chapter of every track, not just the first.",
+      "The Room: say it in your own words, and find out what that costs you.",
+      "The Mark: your reads, measured, and a record that holds you to them.",
+    ];
+  }
+  return [
+    "The feed: her posts, drops, and prompts, every morning.",
+    "Ask Kanika: one question a day, answered by voice or video.",
+    "Voice notes and videos, for members only.",
+    "The book at $9.99 instead of $24.99.",
+    ...(PACT_LAUNCHED ? ["And the Blood Pact, included."] : []),
+  ];
+}
 
 export default function UpgradeSheet({
   open,
@@ -107,15 +133,21 @@ export default function UpgradeSheet({
   trigger,
   nextChapterTitle,
   surfaceLabel,
+  offer: offerProp,
 }: Props) {
   const router = useRouter();
+  // While the Pact is dark there is only one product to sell, whatever the
+  // caller asked for.
+  const offer: UpgradeOffer = PACT_LAUNCHED
+    ? (offerProp ?? "pact")
+    : "consilium";
 
   // Report the wall once per opening, with the trigger that caused it. This
   // is the number the free tier is judged on: which moment converts.
   useEffect(() => {
     if (!open) return;
-    capture(ANALYTICS_EVENTS.WALL_SHOWN, { trigger });
-  }, [open, trigger]);
+    capture(ANALYTICS_EVENTS.WALL_SHOWN, { trigger, offer });
+  }, [open, trigger, offer]);
 
   useEffect(() => {
     if (!open) return;
@@ -129,12 +161,12 @@ export default function UpgradeSheet({
   if (!open) return null;
 
   function goToDoor() {
-    // While the Pact is dark, the working membership is the Consilium and
-    // its one-click join page is the door. Same moment, older product.
-    const path = PACT_LAUNCHED ? "/app/pact" : "/consilium/apply";
+    // Each rung has its own door: the Pact's ceremony page, or the
+    // Consilium's one-click join.
+    const path = offer === "pact" ? "/app/pact" : "/consilium/apply";
     capture(ANALYTICS_EVENTS.UPGRADE_STARTED, {
       trigger,
-      path: PACT_LAUNCHED ? "pact-door" : "consilium-apply",
+      path: offer === "pact" ? "pact-door" : "consilium-apply",
     });
     onClose();
     router.push(path);
@@ -145,7 +177,7 @@ export default function UpgradeSheet({
       className="fixed inset-0 z-50"
       role="dialog"
       aria-modal="true"
-      aria-label={PACT_LAUNCHED ? "The Blood Pact" : "Membership"}
+      aria-label={offer === "pact" ? "The Blood Pact" : "The Consilium"}
     >
       <button
         type="button"
@@ -160,20 +192,20 @@ export default function UpgradeSheet({
 
         <div className="px-5 pt-3">
           <p className="text-[10.5px] uppercase tracking-[0.26em] text-[var(--app-gold)]">
-            {PACT_LAUNCHED ? "The Blood Pact" : "The Consilium"}
+            {offer === "pact" ? "The Blood Pact" : "The Consilium"}
           </p>
           <h2
             className="mt-2 text-[24px] leading-[1.15]"
             style={{ fontFamily: "var(--font-display)" }}
           >
-            {headlineFor(trigger, nextChapterTitle, surfaceLabel)}
+            {headlineFor(offer, trigger, nextChapterTitle, surfaceLabel)}
           </h2>
           <p className="mt-2 text-[13.5px] leading-relaxed text-[var(--app-muted)]">
-            {sublineFor(trigger)}
+            {sublineFor(offer, trigger)}
           </p>
 
           <ul className="mt-5 flex flex-col gap-2.5">
-            {CONTINUES.map((line) => (
+            {continuesFor(offer).map((line) => (
               <li key={line} className="flex gap-2.5 text-[13px] leading-snug">
                 <span className="mt-[7px] h-1 w-1 shrink-0 rounded-full bg-[var(--app-gold)]" />
                 <span>{line}</span>
@@ -182,7 +214,7 @@ export default function UpgradeSheet({
           </ul>
 
           <p className="mt-5 text-[12.5px] text-[var(--app-dim)]">
-            {PACT_LAUNCHED
+            {offer === "pact"
               ? `${PACT_PRICING.weeklyDisplay}, or ${PACT_PRICING.annualDisplay}. Signed, not subscribed: it starts with your name.`
               : "$29 a month. Cancel any time."}
           </p>
@@ -192,7 +224,7 @@ export default function UpgradeSheet({
             onClick={goToDoor}
             className="mt-5 w-full rounded-full bg-[var(--app-gold)] px-5 py-3.5 text-[13px] uppercase tracking-[0.16em] text-black"
           >
-            {PACT_LAUNCHED ? "See the Pact" : "Join the Consilium"}
+            {offer === "pact" ? "See the Pact" : "Join the Consilium"}
           </button>
 
           <button

@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { requireServerAuth } from "@/lib/auth/server-auth";
-import { memberGate } from "@/lib/access/guard";
+import { trainingGate } from "@/lib/access/guard";
 import { readPact } from "@/lib/pact/read";
 import { pactNoteMeta } from "@/lib/pact/note";
 import { PageShell } from "@/components/app-shell/ui";
@@ -14,7 +14,7 @@ export const metadata = {
 /** The live week. No pact means the door; the door means the sell. */
 export default async function PactWeekPage() {
   const userId = await requireServerAuth("/app/pact/week");
-  const wall = await memberGate(userId, {
+  const wall = await trainingGate(userId, {
     trigger: "locked-nav",
     returnHref: "/app/pact/week",
     surfaceLabel: "The Pact",

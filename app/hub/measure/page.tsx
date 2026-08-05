@@ -2,7 +2,7 @@ import { requireServerAuth } from "@/lib/auth/server-auth";
 import { prisma } from "@/lib/prisma";
 import { readMark } from "@/lib/mark/read";
 import { MARK_FRAME_LINE } from "@/lib/mark/verdicts";
-import { memberGate } from "@/lib/access/guard";
+import { trainingGate } from "@/lib/access/guard";
 import { EmptyState, PageHeader, PageShell } from "@/components/app-shell/ui";
 import {
   MarkLedger,
@@ -26,7 +26,7 @@ export default async function MeasurePage() {
   // Member-only surface. The shell no longer gates for us (A2), and this
   // page reads its data straight from Prisma, so the gate has to be here
   // and above the queries.
-  const gate = await memberGate(userId, {
+  const gate = await trainingGate(userId, {
     trigger: "locked-nav",
     surfaceLabel: "The Mark",
   });

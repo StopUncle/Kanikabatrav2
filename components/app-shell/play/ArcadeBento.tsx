@@ -1,6 +1,12 @@
 import Link from "next/link";
 import type { BentoData, BentoSquare } from "@/lib/games/bento";
-import { APP_SURFACES } from "@/lib/app/nav";
+import {
+  APP_SURFACES,
+  surfaceLocked,
+  requiresLabel,
+  type AppSurface,
+  type ViewerTier,
+} from "@/lib/app/nav";
 
 /**
  * The Arcade, laid out as a bento: one hero, a grid of squares, one strip.
@@ -25,16 +31,17 @@ import { APP_SURFACES } from "@/lib/app/nav";
  * not, so Receipts and the Lab looked exactly like the two free games and
  * the wall arrived only after the tap.
  */
-function isLocked(href: string, isMember: boolean): boolean {
-  if (isMember) return false;
-  return APP_SURFACES.some((s) => s.href === href && s.memberOnly);
+function lockFor(href: string, viewer: ViewerTier): AppSurface | null {
+  const s = APP_SURFACES.find((x) => x.href === href);
+  if (!s || !surfaceLocked(s, viewer)) return null;
+  return s;
 }
 
 /** The one lock treatment, matching MoreSheet's. */
-function MembersPill() {
+function LockPill({ surface }: { surface: AppSurface }) {
   return (
     <span className="rounded-full border border-[var(--app-gold-soft)] px-1.5 py-0.5 text-app-micro uppercase tracking-app-wide text-[var(--app-gold-soft)]">
-      Members
+      {requiresLabel(surface)}
     </span>
   );
 }
@@ -83,9 +90,9 @@ function Glyph({ k, color }: { k: string; color: string }) {
   );
 }
 
-function Square({ g, isMember }: { g: BentoSquare; isMember: boolean }) {
+function Square({ g, viewerTier }: { g: BentoSquare; viewerTier: ViewerTier }) {
   const accent = ACCENT[g.key];
-  const locked = isLocked(g.href, isMember);
+  const locked = lockFor(g.href, viewerTier);
   return (
     <Link
       href={g.href}
@@ -102,7 +109,7 @@ function Square({ g, isMember }: { g: BentoSquare; isMember: boolean }) {
 
       {locked ? (
         <span className="absolute left-4 top-4">
-          <MembersPill />
+          <LockPill surface={locked} />
         </span>
       ) : (
         g.popular && (
@@ -146,13 +153,13 @@ function Square({ g, isMember }: { g: BentoSquare; isMember: boolean }) {
 
 export default function ArcadeBento({
   data,
-  isMember,
+  viewerTier,
 }: {
   data: BentoData;
-  isMember: boolean;
+  viewerTier: ViewerTier;
 }) {
   const { hero, squares, strip } = data;
-  const stripLocked = isLocked(strip.href, isMember);
+  const stripLocked = lockFor(strip.href, viewerTier);
 
   return (
     <div className="grid grid-cols-2 gap-2.5">
@@ -197,7 +204,7 @@ export default function ArcadeBento({
           they fill the row and wrap onto the next by themselves however
           many games there are. */}
       {squares.map((g) => (
-        <Square key={g.key} g={g} isMember={isMember} />
+        <Square key={g.key} g={g} viewerTier={viewerTier} />
       ))}
 
       {/* The Lab: open-ended, so it sits under the timed games as a full
@@ -227,7 +234,7 @@ export default function ArcadeBento({
           </span>
         </span>
         {stripLocked ? (
-          <MembersPill />
+          <LockPill surface={stripLocked} />
         ) : (
           <span
             className="shrink-0 text-app-tiny uppercase tracking-app-label"

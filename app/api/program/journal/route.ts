@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { requireAuth } from "@/lib/auth/middleware";
-import { getAccess, canAccessMemberOnly } from "@/lib/access/tier";
+import { getAccess, canTrain } from "@/lib/access/tier";
 import { readProgram } from "@/lib/program/read";
 import { classifyEntry, CRISIS_CARD } from "@/lib/program/ai/safety";
 import { getEnrollment } from "@/lib/program/ai/state";
@@ -38,7 +38,7 @@ export async function POST(request: NextRequest) {
   return requireAuth(request, async (req, user) => {
     // A4 decision: MEMBER-ONLY, same gate as the rest of The Twelve.
     const access = await getAccess(user.id);
-    if (!canAccessMemberOnly(access)) {
+    if (!canTrain(access)) {
       return NextResponse.json({ error: "Membership required" }, { status: 403 });
     }
     const enrollment = await getEnrollment(prisma, user.id);

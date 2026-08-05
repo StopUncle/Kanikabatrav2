@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import { requireServerAuth } from "@/lib/auth/server-auth";
 import { prisma } from "@/lib/prisma";
-import { memberGate } from "@/lib/access/guard";
+import { trainingGate } from "@/lib/access/guard";
 import IntakeFlow from "@/components/program/IntakeFlow";
 
 export const metadata = {
@@ -14,7 +14,7 @@ export const metadata = {
 export default async function ProgramIntakePage() {
   const userId = await requireServerAuth("/app/program/intake");
   // Member-only surface, same tier decision as the rest of The Twelve.
-  const gate = await memberGate(userId);
+  const gate = await trainingGate(userId);
   if (gate) return gate;
 
   const enrolled = await prisma.programEnrollment.findUnique({

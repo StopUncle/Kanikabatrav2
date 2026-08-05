@@ -42,7 +42,7 @@ export default async function TrainPage() {
       <DailySetCard set={set} streak={streak} href={null} />
 
       <div className="mt-6">
-        <ArcadeBento data={bento} isMember={access.isMember} />
+        <ArcadeBento data={bento} viewerTier={access.tier} />
       </div>
     </PageShell>
   );

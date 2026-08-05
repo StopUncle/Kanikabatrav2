@@ -2,7 +2,10 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import UpgradeSheet, { type UpgradeTrigger } from "./UpgradeSheet";
+import UpgradeSheet, {
+  type UpgradeTrigger,
+  type UpgradeOffer,
+} from "./UpgradeSheet";
 import { EmptyState, PageHeader, PageShell } from "@/components/app-shell/ui";
 
 /**
@@ -20,25 +23,29 @@ export default function UpgradeWall({
   nextChapterTitle,
   surfaceLabel,
   returnHref = "/app/train",
+  offer,
 }: {
   trigger: UpgradeTrigger;
   nextChapterTitle?: string | null;
   surfaceLabel?: string | null;
   returnHref?: string;
+  /** Which rung the wall sells; see UpgradeSheet. */
+  offer?: UpgradeOffer;
 }) {
   const [open, setOpen] = useState(true);
+  const product = offer === "pact" ? "the Pact" : "the membership";
   return (
     <>
       <PageShell>
         <PageHeader
           title={surfaceLabel ?? "Members"}
-          lede="This room is part of the membership."
+          lede={`This room is part of ${product}.`}
         />
         <EmptyState
           line={
             surfaceLabel
-              ? `${surfaceLabel} opens with the membership.`
-              : "This room opens with the membership."
+              ? `${surfaceLabel} opens with ${product}.`
+              : `This room opens with ${product}.`
           }
           hint="Everything you have done on the free tier carries over."
         />
@@ -61,6 +68,7 @@ export default function UpgradeWall({
         trigger={trigger}
         nextChapterTitle={nextChapterTitle}
         surfaceLabel={surfaceLabel}
+        offer={offer}
         onClose={() => setOpen(false)}
       />
     </>

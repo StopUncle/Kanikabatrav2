@@ -8,7 +8,7 @@ import {
   scenariosForTrack,
 } from "@/lib/simulator/scenarios";
 import { readTodayCheckIn } from "@/lib/checkin/db";
-import { getAccess } from "@/lib/access/tier";
+import { getAccess, canTrain } from "@/lib/access/tier";
 import { canPlay } from "@/lib/simulator/access";
 import UpgradeWall from "@/components/app-shell/upgrade/UpgradeWall";
 import { trackAccess } from "@/lib/simulator/track-gates";
@@ -171,12 +171,12 @@ export default async function SimulatorPlay({
       previousBest={previousBest}
       nextScenarioHref={nextHref}
       seenEndingIds={seenEndingIds}
-      allowGauntlet={viewerAccess.isMember}
+      allowGauntlet={canTrain(viewerAccess)}
       // Resuming a run keeps the mode it was started in. A member who
       // lapsed mid-gauntlet resumes in story; the server would refuse
       // gauntlet pay anyway, so the UI should not promise it.
       initialMode={
-        initialState && row?.mode === "gauntlet" && viewerAccess.isMember
+        initialState && row?.mode === "gauntlet" && canTrain(viewerAccess)
           ? "gauntlet"
           : undefined
       }

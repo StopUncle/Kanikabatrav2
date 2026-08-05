@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { resolveActiveUserId } from "@/lib/auth/resolve-user";
+import { getAccess, canAccessMemberOnly } from "@/lib/access/tier";
 import { enforceMessagingGuard } from "@/lib/community/messaging-guard";
 import { triggerDirectMessage } from "@/lib/pusher/server";
 import { checkDmCooldown } from "@/lib/messages/cooldown";
@@ -80,6 +81,18 @@ export async function POST(req: NextRequest) {
   const userId = await resolveActiveUserId();
   if (!userId) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  // A direct line to Kanika is the membership, not the training tier.
+  // Reading an old thread stays open (GET above); starting or continuing
+  // one requires the Consilium. This route had no tier gate at all, so a
+  // free or pact account could open a thread the page never offered.
+  const access = await getAccess(userId);
+  if (!canAccessMemberOnly(access)) {
+    return NextResponse.json(
+      { error: "Messages open with the Consilium membership" },
+      { status: 403 },
+    );
   }
 
   const guard = await enforceMessagingGuard(userId);

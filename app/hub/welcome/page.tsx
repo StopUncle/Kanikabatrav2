@@ -1,6 +1,6 @@
 import { requireServerAuth } from "@/lib/auth/server-auth";
 import { prisma } from "@/lib/prisma";
-import { getAccess } from "@/lib/access/tier";
+import { getAccess, canTrain } from "@/lib/access/tier";
 import { getWelcomeVideoUrl } from "@/lib/welcome-video";
 import Arrival from "@/components/app-shell/Arrival";
 
@@ -25,7 +25,7 @@ export default async function WelcomePage() {
   const videoUrl = getWelcomeVideoUrl();
   const rawName = me?.displayName || me?.name || "";
   const firstName = rawName.trim().split(/\s+/)[0] || null;
-  const freeTier = !access.isMember;
+  const freeTier = !canTrain(access);
 
   // For a member, Begin goes to the Baseline Read: the before picture is
   // worth most on the one day they are guaranteed to be paying attention.

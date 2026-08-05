@@ -1,4 +1,9 @@
-import { getAccess, canAccessMemberOnly, isSignedIn } from "@/lib/access/tier";
+import {
+  getAccess,
+  canAccessMemberOnly,
+  canTrain,
+  isSignedIn,
+} from "@/lib/access/tier";
 import { checkMembership } from "@/lib/community/membership";
 import { prisma } from "@/lib/prisma";
 
@@ -113,7 +118,10 @@ describe("getAccess", () => {
     expect(canAccessMemberOnly(access)).toBe(false);
   });
 
-  it("returns member for a live Blood Pact with no consilium membership", async () => {
+  it("returns the pact tier, NOT member, for a live Blood Pact alone", async () => {
+    // The ladder: a pact subscriber trains but does not hold Kanika's
+    // rooms. If this ever reports "member" again, the $4.99 tier grants
+    // the $29 tier's access and the arbitrage reopens.
     mockCheck.mockResolvedValue(membershipCheck());
     mockPact.mockResolvedValue({
       entitled: true,
@@ -123,9 +131,11 @@ describe("getAccess", () => {
 
     const access = await getAccess("p1");
 
-    expect(access.tier).toBe("member");
-    expect(access.isMember).toBe(true);
+    expect(access.tier).toBe("pact");
+    expect(access.isMember).toBe(false);
     expect(access.pactEntitled).toBe(true);
+    expect(canTrain(access)).toBe(true);
+    expect(canAccessMemberOnly(access)).toBe(false);
   });
 
   it("marks a consilium member pact-entitled without querying the pact", async () => {
@@ -184,5 +194,25 @@ describe("guards", () => {
     mockCheck.mockResolvedValue(membershipCheck({ isMember: true, status: "ACTIVE" }));
 
     expect(canAccessMemberOnly(await getAccess("u9"))).toBe(true);
+  });
+
+  it("canTrain admits both paid rungs and excludes free", async () => {
+    mockCheck.mockResolvedValue(membershipCheck({ isMember: true, status: "ACTIVE" }));
+    expect(canTrain(await getAccess("t1"))).toBe(true);
+
+    mockCheck.mockResolvedValue(membershipCheck());
+    expect(canTrain(await getAccess("t2"))).toBe(false);
+  });
+
+  it("canTrain refuses a banned pact subscriber", async () => {
+    mockCheck.mockResolvedValue(membershipCheck({ status: "SUSPENDED" }));
+    mockUser.mockResolvedValue({ isBanned: true });
+    mockPact.mockResolvedValue({
+      entitled: true,
+      status: "ACTIVE",
+      membership: null,
+    });
+
+    expect(canTrain(await getAccess("t3"))).toBe(false);
   });
 });

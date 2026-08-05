@@ -1,6 +1,6 @@
 import UpgradeWall from "@/components/app-shell/upgrade/UpgradeWall";
 import type { UpgradeTrigger } from "@/components/app-shell/upgrade/UpgradeSheet";
-import { getAccess, canAccessMemberOnly } from "./tier";
+import { getAccess, canAccessMemberOnly, canTrain } from "./tier";
 
 /**
  * Page-level membership gate.
@@ -37,6 +37,33 @@ export async function memberGate(
       trigger={opts.trigger ?? "chapter-end"}
       returnHref={opts.returnHref ?? "/app"}
       surfaceLabel={opts.surfaceLabel}
+      offer="consilium"
+    />
+  );
+}
+
+/**
+ * Page-level TRAINING gate: same contract as `memberGate`, but any paid
+ * rung passes (pact or consilium) and the wall it renders sells the Pact,
+ * not the membership. Kanika's rooms keep `memberGate`; everything a pact
+ * subscriber is paying for uses this.
+ */
+export async function trainingGate(
+  userId: string,
+  opts: {
+    trigger?: UpgradeTrigger;
+    returnHref?: string;
+    surfaceLabel?: string;
+  } = {},
+): Promise<React.ReactNode | null> {
+  const access = await getAccess(userId);
+  if (canTrain(access)) return null;
+  return (
+    <UpgradeWall
+      trigger={opts.trigger ?? "chapter-end"}
+      returnHref={opts.returnHref ?? "/app"}
+      surfaceLabel={opts.surfaceLabel}
+      offer="pact"
     />
   );
 }

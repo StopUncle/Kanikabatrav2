@@ -1,4 +1,4 @@
-import type { Access } from "@/lib/access/tier";
+import { canTrain, type Access } from "@/lib/access/tier";
 import { SCENARIO_BY_ID } from "@/lib/simulator/scenarios";
 import type { Scenario } from "@/lib/simulator/types";
 
@@ -44,8 +44,10 @@ export function canPlay(
   // Banned and signed-out never play, whatever the scenario says.
   if (access.isBanned || access.tier === "anon") return false;
 
-  // One paid tier: a member plays the whole catalog and the dailies.
-  if (access.isMember) return true;
+  // The full catalog is what the training tier buys: any paid rung (the
+  // Pact or the Consilium, which includes it) plays everything and the
+  // dailies.
+  if (canTrain(access)) return true;
 
   if (!isCatalogScenario(scenario.id)) return false;
 

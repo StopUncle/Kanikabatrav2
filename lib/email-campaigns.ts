@@ -25,7 +25,8 @@ export type CampaignId =
   | "drip-simulator"
   | "drip-consilium"
   | "drip-coaching"
-  | "drip-ask-kanika";
+  | "drip-ask-kanika"
+  | "consilium-includes-the-app";
 
 interface RecipientCtx {
   userId: string;
@@ -41,6 +42,12 @@ interface CampaignDef {
   label: string;
   /** Headline for the admin UI. */
   hook: string;
+  /**
+   * Who receives it. "all" (default) is every registered human;
+   * "consilium-active" is only users with an ACTIVE CommunityMembership,
+   * for member communications like the ladder announcement.
+   */
+  audience?: "all" | "consilium-active";
   /** Returns the subject line. */
   subject: (r: RecipientCtx) => string;
   /** Returns the inner HTML body (footer is appended at send time). */
@@ -268,6 +275,38 @@ const askKanika: CampaignDef = {
     ),
 };
 
+// ---- Member announcement: the membership now includes the app ----
+// Retention, not acquisition: sent once to the ACTIVE $29 base so the
+// app's arrival reads as their membership growing, not as a cheaper
+// product appearing next to it. Tone rule: everything gained, nothing
+// changing, no action required.
+const consiliumIncludesApp: CampaignDef = {
+  id: "consilium-includes-the-app",
+  type: "marketing",
+  label: "Members. Your membership now includes the app",
+  hook: "Everything new is already yours.",
+  audience: "consilium-active",
+  subject: (r) => `${r.firstName}, your membership just got bigger`,
+  html: (r) =>
+    shell(
+      `${r.firstName}, everything I just built is already yours.`,
+      "The Consilium",
+      `
+        <p style="font-size:15.5px;line-height:1.7;color:#efe7d6;margin:0 0 18px 0;">
+          I have been building an app. Live scenarios, scored. A freeform room that pushes back. Your own record of what you catch and what you miss. And the Blood Pact: one challenge a week, signed in your own hand, kept or scarred.
+        </p>
+        <p style="font-size:15.5px;line-height:1.7;color:#efe7d6;margin:0 0 18px 0;">
+          New people will pay for that separately. <strong style="color:#f3d98a;">You will not.</strong> Your membership includes all of it: the training, the Pact, and the rooms only members hold, the feed, my voice notes, your question answered, the book at $9.99.
+        </p>
+        <p style="font-size:15.5px;line-height:1.7;color:#efe7d6;margin:0 0 28px 0;">
+          Nothing about your membership changes. Same price, more inside. Open it on your phone and sign the Pact whenever you are ready; it is covered.
+        </p>
+      `,
+      withUtm("/start", "consilium-includes-the-app"),
+      "Open the app",
+    ),
+};
+
 export const CAMPAIGNS: Record<CampaignId, CampaignDef> = {
   "drip-quiz": quiz,
   "drip-book": book,
@@ -275,6 +314,7 @@ export const CAMPAIGNS: Record<CampaignId, CampaignDef> = {
   "drip-consilium": consilium,
   "drip-coaching": coaching,
   "drip-ask-kanika": askKanika,
+  "consilium-includes-the-app": consiliumIncludesApp,
 };
 
 export function listCampaigns(): CampaignDef[] {
@@ -304,10 +344,18 @@ export async function enqueueCampaignToAllOptedIn(
   const def = CAMPAIGNS[campaignId];
   if (!def) throw new Error(`Unknown campaign: ${campaignId}`);
 
+  // The audience filter narrows WHO is considered; everything after it
+  // (dedupe, opt-out, stagger, footer) treats both audiences the same.
+  // ACTIVE-only is deliberate for member campaigns: a SUSPENDED or
+  // CANCELLED membership getting "everything is already yours" would be
+  // a lie the next paywall exposes.
   const candidates = await prisma.user.findMany({
     where: {
       isBanned: false,
       isBot: false,
+      ...(def.audience === "consilium-active"
+        ? { communityMembership: { status: "ACTIVE" } }
+        : {}),
     },
     select: {
       id: true,

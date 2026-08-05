@@ -22,7 +22,7 @@ import Move from "@/components/app-shell/Move";
 import DailySetCard from "@/components/app-shell/play/DailySetCard";
 import ChecklistCard from "@/components/day0/ChecklistCard";
 import MembershipTodayCard from "@/components/app-shell/upgrade/MembershipTodayCard";
-import { getAccess } from "@/lib/access/tier";
+import { getAccess, canTrain } from "@/lib/access/tier";
 import { FREE_STANDING_CEILING } from "@/lib/standing/config";
 import HomeExplore from "@/components/app-shell/home/HomeExplore";
 
@@ -68,7 +68,7 @@ export default async function HomePage() {
   }
 
   const dailyMission = getDailyMissionFor(
-    access.isMember,
+    canTrain(access),
     viewer?.gender ?? null,
   );
   const startOfUtcToday = new Date();
@@ -90,15 +90,15 @@ export default async function HomePage() {
     getPathState(prisma, userId, {
       gender: viewer?.gender ?? null,
       ringLevel: viewer?.ringLevel ?? 4,
-      isMember: access.isMember,
+      isMember: canTrain(access),
     }),
     getTellStreak(userId),
     isDailyMissionDoneToday(prisma, userId, {
-      isMember: access.isMember,
+      isMember: canTrain(access),
       gender: viewer?.gender ?? null,
     }),
     readDailyStreak(prisma, userId),
-    access.isMember ? getTodaysGeneratedDrop() : Promise.resolve(null),
+    canTrain(access) ? getTodaysGeneratedDrop() : Promise.resolve(null),
     prisma.feedPost.findFirst({
       where: { author: { role: "ADMIN" } },
       orderBy: { createdAt: "desc" },
@@ -118,7 +118,7 @@ export default async function HomePage() {
       },
     }),
     getTodaysTellRow(),
-    getDay0Checklist(prisma, userId, { isMember: access.isMember }),
+    getDay0Checklist(prisma, userId, { isMember: canTrain(access) }),
     readProgram(prisma, userId),
     readPact(userId),
   ]);
@@ -158,7 +158,7 @@ export default async function HomePage() {
           standing={viewer?.standing ?? 0}
           ringLevel={viewer?.ringLevel ?? 4}
           atCap={
-            !access.isMember &&
+            !canTrain(access) &&
             (viewer?.standing ?? 0) >= FREE_STANDING_CEILING
           }
         />
@@ -427,14 +427,14 @@ export default async function HomePage() {
       {/* The membership, pitched by invitation. Free accounts only. */}
       {!access.isMember && (
         <div className="mx-5 mt-4">
-          <MembershipTodayCard />
+          <MembershipTodayCard viewerTier={access.tier} />
         </div>
       )}
 
       {/* Path continue card */}
       {current && (
         <Link
-          href={appStepHref(current.step, viewer?.gender ?? null, access.isMember)}
+          href={appStepHref(current.step, viewer?.gender ?? null, canTrain(access))}
           className="mx-5 mt-4 flex items-center gap-3.5 rounded-[18px] border border-[var(--app-line)] px-[18px] py-[18px]"
           style={{
             background:

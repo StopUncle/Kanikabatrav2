@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { requireServerAuth } from "@/lib/auth/server-auth";
-import { memberGate } from "@/lib/access/guard";
+import { trainingGate } from "@/lib/access/guard";
 import { prisma } from "@/lib/prisma";
 import { readPact } from "@/lib/pact/read";
 import { presetLabel } from "@/lib/pact/presets";
@@ -57,7 +57,7 @@ function WeekMark({ status, index }: { status: string; index: number }) {
  */
 export default async function PactRecordPage() {
   const userId = await requireServerAuth("/app/pact/record");
-  const wall = await memberGate(userId, {
+  const wall = await trainingGate(userId, {
     trigger: "locked-nav",
     returnHref: "/app/pact/record",
     surfaceLabel: "The Pact",

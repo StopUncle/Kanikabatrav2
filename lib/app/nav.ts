@@ -77,12 +77,14 @@ export interface AppSurface {
   /** Renders an unread count (the Kanika thread). */
   badged?: boolean;
   /**
-   * Requires a live membership. This flag and the page's own memberGate()
-   * call travel as a pair: the chrome reads it to lock the entry before the
-   * tap, the page still gates the render for deep links. Setting one without
-   * the other means either an unlabelled wall or an unenforced lock.
+   * The paid rung this surface needs. "pact" is the training tier (any
+   * paid account passes); "member" is the Consilium, Kanika's rooms.
+   * This flag and the page's own trainingGate()/memberGate() call travel
+   * as a pair: the chrome reads it to lock the entry before the tap, the
+   * page still gates the render for deep links. Setting one without the
+   * other means either an unlabelled wall or an unenforced lock.
    */
-  memberOnly?: boolean;
+  requires?: "pact" | "member";
   /**
    * A tab root redirects here, so this is where the tab actually lands and
    * the shell treats it as a root: no back control. Without this, back on
@@ -103,7 +105,7 @@ export const APP_SURFACES: AppSurface[] = [
   },
   {
     href: "/app/feed",
-    memberOnly: true,
+    requires: "member",
     label: "Feed",
     placement: "tab",
     note: "Kanika's room. The only surface where she speaks to everyone at once.",
@@ -126,7 +128,7 @@ export const APP_SURFACES: AppSurface[] = [
 
   {
     href: "/app/measure",
-    memberOnly: true,
+    requires: "pact",
     label: "Mark",
     placement: "tab",
     note: "Took the slot Kanika vacated. The product's claim is measured progress, so the surface that carries the proof belongs on the bar rather than three taps down, where it sat until 2026-07-28.",
@@ -143,7 +145,7 @@ export const APP_SURFACES: AppSurface[] = [
   },
   {
     href: "/app/pact/week",
-    memberOnly: true,
+    requires: "pact",
     label: "This week",
     placement: "nested",
     parent: "/app/pact",
@@ -153,7 +155,7 @@ export const APP_SURFACES: AppSurface[] = [
   },
   {
     href: "/app/pact/record",
-    memberOnly: true,
+    requires: "pact",
     label: "The record",
     placement: "nested",
     parent: "/app/pact/week",
@@ -162,7 +164,7 @@ export const APP_SURFACES: AppSurface[] = [
   },
   {
     href: "/app/pact/journal",
-    memberOnly: true,
+    requires: "pact",
     label: "Pact journal",
     placement: "nested",
     parent: "/app/pact/week",
@@ -194,7 +196,7 @@ export const APP_SURFACES: AppSurface[] = [
   /* ------------------------------------------------------ the Home rails */
   {
     href: "/app/program",
-    memberOnly: true,
+    requires: "pact",
     label: "The Twelve",
     placement: "home",
     home: {
@@ -268,7 +270,7 @@ export const APP_SURFACES: AppSurface[] = [
   },
   {
     href: "/app/videos",
-    memberOnly: true,
+    requires: "member",
     label: "Videos",
     placement: "home",
     home: {
@@ -280,7 +282,7 @@ export const APP_SURFACES: AppSurface[] = [
   },
   {
     href: "/app/voice-notes",
-    memberOnly: true,
+    requires: "member",
     label: "Voice notes",
     placement: "home",
     home: {
@@ -292,7 +294,7 @@ export const APP_SURFACES: AppSurface[] = [
   },
   {
     href: "/app/kanika",
-    memberOnly: true,
+    requires: "member",
     label: "Kanika",
     placement: "more",
     section: "You",
@@ -368,7 +370,7 @@ export const APP_SURFACES: AppSurface[] = [
   },
   {
     href: "/app/lab",
-    memberOnly: true,
+    requires: "pact",
     label: "The Lab",
     placement: "nested",
     parent: "/app/train",
@@ -381,7 +383,7 @@ export const APP_SURFACES: AppSurface[] = [
   },
   {
     href: "/app/receipts",
-    memberOnly: true,
+    requires: "pact",
     label: "Receipts",
     placement: "nested",
     parent: "/app/train",
@@ -394,7 +396,7 @@ export const APP_SURFACES: AppSurface[] = [
   },
   {
     href: "/app/measure/baseline",
-    memberOnly: true,
+    requires: "pact",
     label: "The Baseline Read",
     placement: "nested",
     parent: "/app/measure",
@@ -427,7 +429,7 @@ export const APP_SURFACES: AppSurface[] = [
   },
   {
     href: "/app/previews",
-    memberOnly: true,
+    requires: "member",
     label: "Previews",
     placement: "nested",
     parent: "/app/feed",
@@ -452,7 +454,7 @@ export const APP_SURFACES: AppSurface[] = [
   },
   {
     href: "/app/feed/[postId]",
-    memberOnly: true,
+    requires: "member",
     label: "Post thread",
     placement: "unlisted",
     note: "Entered from the feed.",
@@ -467,7 +469,7 @@ export const APP_SURFACES: AppSurface[] = [
   },
   {
     href: "/app/previews/[slug]",
-    memberOnly: true,
+    requires: "member",
     label: "Preview post",
     placement: "unlisted",
     note: "Entered from previews.",
@@ -515,6 +517,43 @@ export const TAB_SURFACES = APP_SURFACES.filter(
   (s) =>
     s.placement === "tab" && (PACT_LAUNCHED || !s.href.startsWith("/app/pact")),
 );
+
+/**
+ * The viewer's rung, as the chrome sees it. Mirrors AccessTier in
+ * lib/access/tier.ts but is declared here so client components never
+ * import the server-side access module.
+ */
+export type ViewerTier = "anon" | "free" | "pact" | "member";
+
+const TIER_RANK: Record<ViewerTier, number> = {
+  anon: 0,
+  free: 0,
+  pact: 1,
+  member: 2,
+};
+const REQUIRE_RANK: Record<NonNullable<AppSurface["requires"]>, number> = {
+  pact: 1,
+  member: 2,
+};
+
+/** Whether this surface's entry should render locked for this viewer. */
+export function surfaceLocked(s: AppSurface, viewer: ViewerTier): boolean {
+  if (!s.requires) return false;
+  return TIER_RANK[viewer] < REQUIRE_RANK[s.requires];
+}
+
+/**
+ * Which rung the wall behind a locked entry sells. A "pact" surface sells
+ * the Pact; a "member" surface sells the Consilium, whoever is looking.
+ */
+export function offerForSurface(s: AppSurface): "pact" | "consilium" {
+  return s.requires === "member" ? "consilium" : "pact";
+}
+
+/** The lock pill's one-word label for a gated surface. */
+export function requiresLabel(s: AppSurface): string {
+  return s.requires === "member" ? "Members" : "Pact";
+}
 
 /**
  * Home's explore rails, grouped and ordered. A surface appears here by

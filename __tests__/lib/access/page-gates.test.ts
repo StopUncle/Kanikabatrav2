@@ -102,8 +102,14 @@ function sourceFor(route: string): string {
 }
 
 // A page states its tier by calling one of these. canPlay is the per-scenario
-// form; it is a tier decision too, just a finer one.
-const GATE = /\b(memberGate|canAccessMemberOnly|canPlay)\b/;
+// form; it is a tier decision too, just a finer one. trainingGate admits any
+// paid rung (pact or consilium); memberGate is consilium-only.
+const GATE = /\b(memberGate|trainingGate|canAccessMemberOnly|canTrain|canPlay)\b/;
+
+// The subset that renders a WALL. A free page may read canTrain to branch
+// its content (Home shades cards by tier); only these two make it "gated"
+// for the FREE-list contradiction check.
+const WALL = /\b(memberGate|trainingGate)\b/;
 
 const routes = pageRoutes(HUB);
 
@@ -130,8 +136,9 @@ describe("every /app page states its tier", () => {
       );
     }
 
-    // A gated page listed as free is a contradiction: one of the two is stale.
-    if (gated && route in FREE) {
+    // A walled page listed as free is a contradiction: one of the two is
+    // stale. Branching on canTrain does not count; walls do.
+    if (WALL.test(sourceFor(route)) && route in FREE) {
       throw new Error(
         `/app${route} gates on membership but is listed as FREE here. ` +
           `Remove it from FREE or remove the gate.`,
@@ -139,32 +146,55 @@ describe("every /app page states its tier", () => {
     }
   });
 
-  it("keeps the member surfaces gated", () => {
-    // The set A9 closed. Named explicitly so that removing a gate fails here
-    // rather than only failing in production.
-    const mustGate = [
+  it("keeps Kanika's rooms consilium-only", () => {
+    // The ladder's top rung. These pages must call memberGate, never
+    // trainingGate: a pact subscriber holding any of them is the arbitrage
+    // that would hollow out the $29 membership. Moving a route between the
+    // two lists below is a pricing decision, not a cleanup.
+    const mustGateConsilium = [
       "/feed",
       "/feed/[postId]",
       "/kanika",
       "/videos",
       "/voice-notes",
+      "/previews",
+      "/previews/[slug]",
+    ];
+
+    for (const route of mustGateConsilium) {
+      expect(routes).toContain(route);
+      const src = sourceFor(route);
+      expect(/\bmemberGate\b/.test(src)).toBe(true);
+      expect(/\btrainingGate\b/.test(src)).toBe(false);
+    }
+  });
+
+  it("keeps the training surfaces gated on the paid rungs", () => {
+    // What the Pact buys. These call trainingGate (or the per-scenario
+    // canPlay), so a pact subscriber passes and a free account walls.
+    const mustGateTraining = [
       "/lab",
       "/receipts",
       "/program",
-      "/previews",
-      "/previews/[slug]",
       "/measure",
       "/measure/baseline",
-      "/train/[scenarioId]",
-      // The second door into the same catalog scenarios. Gating only the
-      // standalone runner leaves the arc walking a free account through the
-      // member chapters.
-      "/adventures/[slug]/run",
+      "/pact/week",
+      "/pact/record",
+      "/pact/journal",
     ];
-
-    for (const route of mustGate) {
+    for (const route of mustGateTraining) {
       expect(routes).toContain(route);
-      expect(GATE.test(sourceFor(route))).toBe(true);
+      const src = sourceFor(route);
+      expect(/\b(trainingGate|canTrain)\b/.test(src)).toBe(true);
+      expect(/\bmemberGate\b/.test(src)).toBe(false);
+    }
+
+    // Per-scenario form: the runner and the arc runner decide with canPlay,
+    // which admits any paid rung. Gating only the standalone runner leaves
+    // the arc walking a free account through the paid chapters.
+    for (const route of ["/train/[scenarioId]", "/adventures/[slug]/run"]) {
+      expect(routes).toContain(route);
+      expect(/\bcanPlay\b/.test(sourceFor(route))).toBe(true);
     }
   });
 

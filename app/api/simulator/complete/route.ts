@@ -18,7 +18,7 @@ import { prisma } from "@/lib/prisma";
 import { z } from "zod";
 import { getScenario, ALL_SCENARIOS } from "@/lib/simulator/scenarios";
 import { resolveScenario } from "@/lib/simulator/resolve";
-import { getAccess } from "@/lib/access/tier";
+import { getAccess, canTrain } from "@/lib/access/tier";
 import { canPlay } from "@/lib/simulator/access";
 import {
   badgesEarnedFromState,
@@ -122,7 +122,7 @@ export async function POST(request: NextRequest) {
     // Gauntlet is a members' room, enforced here regardless of what the
     // client claims: a free account posting mode=gauntlet is silently
     // scored as story rather than rejected (their run was still real).
-    const isGauntlet = body.mode === "gauntlet" && access.isMember;
+    const isGauntlet = body.mode === "gauntlet" && canTrain(access);
 
     // Anti-cheat: recompute XP from the claimed choicesMade and clamp.
     // See /api/simulator/progress for the same rationale, the server
@@ -419,7 +419,7 @@ export async function POST(request: NextRequest) {
           amount: safeXp * STANDING.SCENARIO_XP_MULTIPLIER,
           refId: body.scenarioId,
           dedupe: true,
-          isMember: access.isMember,
+          isMember: canTrain(access),
         });
         if (scenarioGrant.rangUp) ringUp = scenarioGrant.rangUp;
       }
@@ -427,7 +427,7 @@ export async function POST(request: NextRequest) {
       // route does not know the caller's gender. Matching against both
       // free picks is safe: the dateKey dedupe below already caps the
       // bonus at one per day regardless of which mission was played.
-      const missionCandidates = access.isMember
+      const missionCandidates = canTrain(access)
         ? [getDailyMissionFor(true)]
         : [
             getDailyMissionFor(false, "FEMALE"),
@@ -443,7 +443,7 @@ export async function POST(request: NextRequest) {
           amount: STANDING.DAILY_MISSION_BONUS,
           refId: mission.dateKey,
           dedupe: true,
-          isMember: access.isMember,
+          isMember: canTrain(access),
         });
         if (missionGrant.rangUp) ringUp = missionGrant.rangUp;
       }
@@ -465,7 +465,7 @@ export async function POST(request: NextRequest) {
           amount: STANDING.ENDING_FOUND,
           refId: `ending:${body.scenarioId}:${body.currentSceneId}`,
           dedupe: true,
-          isMember: access.isMember,
+          isMember: canTrain(access),
         });
         if (bountyGrant.granted) {
           endingBounty = { amount: bountyGrant.amount };
