@@ -41,8 +41,10 @@ export default function Hero() {
 
         <HeroQuote />
 
-        {/* Two primary CTAs. Book first, Consilium second; sibling sizing
-            so they read as a pair, not primary + afterthought. */}
+        {/* Three CTAs, one row. Book and app carry the gold and stay the
+            primary pair; the quiz takes the palette's third colour
+            (burgundy) at the same size, so it is unmissable without
+            outshouting either sale. */}
         <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-stretch sm:items-center max-w-md sm:max-w-none mx-auto">
           <Link
             href="/book"
@@ -59,10 +61,16 @@ export default function Hero() {
               Beta
             </span>
           </Link>
+          <Link
+            href="/quiz"
+            className="inline-flex items-center justify-center px-8 py-3.5 rounded-full border border-accent-burgundy bg-accent-burgundy/20 text-text-light font-medium text-sm tracking-[0.2em] uppercase transition-all hover:bg-accent-burgundy/40 hover:shadow-[0_12px_40px_-12px_rgba(114,33,57,0.7)]"
+          >
+            Take the Quiz
+          </Link>
         </div>
 
         <p className="text-text-gray/60 text-xs sm:text-sm mt-6 font-light tracking-wide">
-          Read the playbook. Train in the app.
+          Read the playbook. Train in the app. Or meet your Dark Mirror first.
         </p>
       </div>
 
