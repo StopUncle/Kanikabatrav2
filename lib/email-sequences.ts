@@ -1529,7 +1529,7 @@ export function buildNewsletterDrip(
 // ============================================================
 // Coaching lead nurture.
 //
-// For high-intent visitors who looked at 1:1 coaching (${MEMBERSHIP.priceDisplay}7 to $4,997)
+// For high-intent visitors who looked at 1:1 coaching ($297 to $4,997)
 // but were not ready to checkout. Direct-checkout alone loses everyone
 // who needs a beat to decide. Three emails: what a session actually is,
 // the real hesitation (not price, but "will this change anything"), and
@@ -1607,7 +1607,7 @@ function buildCoachingStep3(name: string): string {
       Last one from me on this, then I leave you to it.
     </p>
     <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 20px 0; font-size: 15px;">
-      I take eight clients a month. Not a marketing line, a real ceiling, because attention does not scale and I will not pretend it does. If there is one situation that is genuinely keeping you up, a single session is ${MEMBERSHIP.priceDisplay}7 and you walk out with a move on it.
+      I take eight clients a month. Not a marketing line, a real ceiling, because attention does not scale and I will not pretend it does. If there is one situation that is genuinely keeping you up, a single session is $297 and you walk out with a move on it.
     </p>
     <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 24px 0; font-size: 15px;">
       If now is not the moment, that is a real answer too. The door stays open, and the Consilium is there in the meantime. Either way, stop circling the same thing. Pick one.
