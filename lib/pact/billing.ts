@@ -233,8 +233,13 @@ export async function handlePactInvoicePaid(
   }
   if (membership.status === "CANCELLED") return true;
 
+  // EXPIRED included for the same reason as the consilium renewal path: the
+  // lazy expiry is a page-read write racing the weekly invoice, and a paid
+  // invoice must always win over a stale local timestamp. Weekly billing
+  // makes this race 52 windows a year instead of 12.
   const shouldReactivate =
     membership.status === "ACTIVE" ||
+    membership.status === "EXPIRED" ||
     membership.suspendReason === "payment-failed";
   if (!shouldReactivate) return true;
 

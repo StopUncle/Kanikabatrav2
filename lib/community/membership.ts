@@ -167,7 +167,19 @@ export async function checkMembership(userId: string | null): Promise<Membership
   // Lazy expiry: active membership past expiresAt. Use an optimistic
   // WHERE guard so a concurrent webhook renewal (which may have just
   // set status=ACTIVE + future expiresAt) doesn't get stomped to EXPIRED.
-  if (membership.expiresAt && membership.expiresAt < new Date()) {
+  //
+  // The 24h grace exists because Stripe bills ON period end, not before:
+  // the renewal invoice lands minutes to hours after expiresAt passes
+  // (days, on a retry). Without the grace, a member who opened the app in
+  // that window was demoted by their own page view while their payment was
+  // in flight. The renewal webhook can reactivate an EXPIRED row (it
+  // includes EXPIRED in shouldReactivate), so this is belt and braces:
+  // don't demote a paying member during ordinary billing lag at all.
+  const EXPIRY_GRACE_MS = 24 * 60 * 60 * 1000;
+  if (
+    membership.expiresAt &&
+    membership.expiresAt.getTime() < Date.now() - EXPIRY_GRACE_MS
+  ) {
     await prisma.communityMembership.updateMany({
       where: { id: membership.id, status: "ACTIVE" },
       data: { status: "EXPIRED" },

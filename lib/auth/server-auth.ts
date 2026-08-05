@@ -61,8 +61,11 @@ export async function getAdminUserId(): Promise<string | null> {
     if (payload.role !== "admin") return null;
 
     // Find the real ADMIN user so actions are attributed correctly.
+    // Ordered, so the resolved identity is stable across requests rather
+    // than whichever row the database returns first today.
     const adminUser = await prisma.user.findFirst({
       where: { role: "ADMIN" },
+      orderBy: { createdAt: "asc" },
       select: { id: true },
     });
     return adminUser?.id || "admin-preview";

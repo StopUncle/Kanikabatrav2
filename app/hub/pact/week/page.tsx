@@ -16,7 +16,9 @@ export default async function PactWeekPage() {
   const userId = await requireServerAuth("/app/pact/week");
   const wall = await trainingGate(userId, {
     trigger: "locked-nav",
-    returnHref: "/app/pact/week",
+    // The door, not this page: a walled viewer pressing Back on a wall
+    // that links to itself goes nowhere.
+    returnHref: "/app/pact",
     surfaceLabel: "The Pact",
   });
   if (wall) return wall;

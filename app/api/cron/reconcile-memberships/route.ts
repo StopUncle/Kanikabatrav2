@@ -91,7 +91,11 @@ export async function POST(request: NextRequest) {
   // ordering by createdAt is fine at current scale.
   const candidates = await prisma.communityMembership.findMany({
     where: {
-      status: { in: ["ACTIVE", "CANCELLED", "SUSPENDED"] },
+      // EXPIRED is in the list because the lazy expiry can demote a row
+      // whose Stripe subscription is still live and billing (the one-way
+      // door bug, fixed 2026-08-05). Excluding it made this job blind to
+      // exactly the drift it exists to catch: local EXPIRED, Stripe active.
+      status: { in: ["ACTIVE", "CANCELLED", "SUSPENDED", "EXPIRED"] },
       paypalSubscriptionId: { startsWith: "ST-" },
     },
     select: {

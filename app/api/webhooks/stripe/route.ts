@@ -1331,12 +1331,20 @@ export async function POST(request: NextRequest) {
 
         const shouldReactivate =
           membership.status === "ACTIVE" ||
+          membership.status === "EXPIRED" ||
           membership.suspendReason === "payment-failed";
 
-        // Only extend paid-through for an ACTIVE member (normal renewal) or a
-        // payment-failed member whose card just recovered. A member-requested
-        // pause (or any other non-payment suspension) must NOT have its expiry
-        // pushed past the pause by a late or stray invoice event.
+        // Only extend paid-through for an ACTIVE member (normal renewal), a
+        // payment-failed member whose card just recovered, or a lazily
+        // EXPIRED row. EXPIRED is in the list because the lazy expiry is a
+        // page-read write racing the renewal invoice: a member who opened
+        // the app in the minutes between period end and Stripe's charge got
+        // flipped EXPIRED, and without this line the successful payment
+        // could never flip them back, leaving them charged forever on the
+        // free tier. A paid invoice is stronger evidence than a stale local
+        // timestamp. A member-requested pause (or any other non-payment
+        // suspension) must still NOT have its expiry pushed past the pause
+        // by a late or stray invoice event.
         if (!shouldReactivate) {
           console.log(
             `[stripe-webhook] invoice for non-reactivatable membership ${membership.id} (reason: ${membership.suspendReason}), not extending expiry`,

@@ -43,7 +43,16 @@ export async function checkPactMembership(
   }
 
   if (membership.status === "ACTIVE") {
-    if (membership.expiresAt && membership.expiresAt < now) {
+    // Same 24h grace as checkMembership: weekly billing means the
+    // expiresAt-passed-but-invoice-in-flight window recurs every single
+    // week, and a page view must not demote a paying subscriber during
+    // ordinary billing lag. The renewal webhook can reactivate an EXPIRED
+    // row regardless (shouldReactivate includes EXPIRED).
+    const EXPIRY_GRACE_MS = 24 * 60 * 60 * 1000;
+    if (
+      membership.expiresAt &&
+      membership.expiresAt.getTime() < now.getTime() - EXPIRY_GRACE_MS
+    ) {
       await prisma.pactMembership.updateMany({
         where: { id: membership.id, status: "ACTIVE" },
         data: { status: "EXPIRED" },
