@@ -53,10 +53,15 @@ export async function POST(req: NextRequest) {
       payment_method_types: ["card"],
       customer_email: body.email,
       // Same abandoned-checkout recovery the main checkout factory sets
-      // (lib/stripe.ts): consent so the address is usable for follow-up,
-      // a 1h expiry so the recovery lands while intent is warm, and the
-      // recovery URL the checkout.session.expired webhook emails out.
-      consent_collection: { promotions: "auto" },
+      // (lib/stripe.ts): a 1h expiry so the recovery lands while intent is
+      // warm, and the recovery URL the checkout.session.expired webhook
+      // emails out.
+      //
+      // No `consent_collection`: Stripe refuses `promotions` for this
+      // account's country and 400s the whole session. It was dropped from
+      // the shared factory in 1f6924d after it took every one-time
+      // checkout down for days; this route builds its session by hand and
+      // kept the parameter, so donations stayed broken after that fix.
       expires_at: Math.floor(Date.now() / 1000) + 60 * 60,
       after_expiration: {
         recovery: { enabled: true, allow_promotion_codes: false },

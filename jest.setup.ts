@@ -45,6 +45,10 @@ class MockResponse {
     return this.body;
   }
 
+  static json(body: unknown, init?: ResponseInit) {
+    return new MockResponse(body, init);
+  }
+
   get cookies() {
     return {
       set: (name: string, value: string) => {

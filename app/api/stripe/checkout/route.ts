@@ -3,6 +3,7 @@ import { createCheckoutSession, STRIPE_PRICES } from "@/lib/stripe";
 import { optionalServerAuth } from "@/lib/auth/server-auth";
 import { checkMembership } from "@/lib/community/membership";
 import { prisma } from "@/lib/prisma";
+import { logger } from "@/lib/logger";
 
 /**
  * The metadata keys a caller is allowed to influence, and nothing else.
@@ -40,9 +41,15 @@ function clientMetadata(raw: unknown): Record<string, string> {
 }
 
 export async function POST(request: NextRequest) {
+  // Hoisted so the catch below can name the product that failed. An alert
+  // that says only "checkout failed" costs an investigation; one that says
+  // which SKU died points straight at the cause.
+  const failureContext: Record<string, unknown> = {};
+
   try {
     const body = await request.json().catch(() => ({}));
     const { priceKey, email, metadata, successUrl, cancelUrl } = body;
+    failureContext.priceKey = priceKey;
 
     if (!priceKey || !STRIPE_PRICES[priceKey]) {
       return NextResponse.json({ error: "Invalid product" }, { status: 400 });
@@ -134,6 +141,9 @@ export async function POST(request: NextRequest) {
     const checkoutPriceId = isBundle ? STRIPE_PRICES.INNER_CIRCLE : priceId;
     const bundleAddOnPriceId = isBundle ? priceId : undefined;
 
+    failureContext.resolvedPriceKey = resolvedPriceKey;
+    failureContext.mode = mode;
+
     const baseUrl =
       process.env.NEXT_PUBLIC_BASE_URL || "https://kanikarose.com";
 
@@ -179,7 +189,17 @@ export async function POST(request: NextRequest) {
       memberDiscountApplied,
     });
   } catch (error) {
-    console.error("Stripe checkout error:", error);
+    // logger.error, not console.error, and the distinction is the whole
+    // reason the last outage lasted days rather than minutes. Sentry's
+    // automatic instrumentation only sees errors that escape a route
+    // handler; this one is caught and turned into a tidy 500, so a
+    // console.error here reaches Railway logs and nothing else. Every
+    // one-time checkout was dead and no alert existed to say so.
+    logger.error(
+      "Stripe checkout session create failed",
+      error as Error,
+      failureContext,
+    );
     return NextResponse.json(
       { error: "Failed to create checkout session" },
       { status: 500 },

@@ -31,9 +31,20 @@ export async function POST(request: NextRequest) {
         // expiresAt. Without this, a stale/past expiresAt left over from
         // the pause makes the lazy-expiry check in lib/community/
         // membership.ts immediately flip the row back to EXPIRED.
-        const sub = await stripe.subscriptions.retrieve(subscriptionId);
-        const periodEnd = (sub as { current_period_end?: number })
-          .current_period_end;
+        // The field moved from the subscription root onto the subscription
+        // items; on the API version this SDK pins it exists ONLY on the
+        // item. Reading the root alone left resumedExpiresAt null on every
+        // resume, so the row kept the fabricated pause deadline the pause
+        // route wrote instead of the real paid-through date. Check both
+        // shapes, same as the cancel and reactivate routes.
+        const sub = (await stripe.subscriptions.retrieve(
+          subscriptionId,
+        )) as unknown as {
+          current_period_end?: number;
+          items?: { data?: Array<{ current_period_end?: number }> };
+        };
+        const periodEnd =
+          sub.current_period_end ?? sub.items?.data?.[0]?.current_period_end;
         if (periodEnd) resumedExpiresAt = new Date(periodEnd * 1000);
       } catch (err) {
         console.error("[resume] failed to unpause Stripe subscription:", err);
