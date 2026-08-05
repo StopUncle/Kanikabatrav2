@@ -16,10 +16,16 @@ import { haptic } from "@/lib/haptics";
  */
 export default function PactDoor({
   entitled,
+  isMember,
   rejoining,
   checkoutOpen,
 }: {
   entitled: boolean;
+  /** Consilium member (entitlement via membership) vs a pact subscriber
+   *  whose billing period is still live after breaking a pact. The line
+   *  under the tracks must not tell the second group they have a
+   *  membership they never bought. */
+  isMember: boolean;
   /** They broke a pact before. Changes the voice, not the flow. */
   rejoining: boolean;
   /** Stripe has the two Pact prices, so the ceremony can end in a payment. */
@@ -135,8 +141,9 @@ export default function PactDoor({
 
       {entitled && (
         <p className="mt-6 text-app-caption leading-relaxed text-[var(--app-dim)]">
-          Your membership already covers the Pact. All that is missing is the
-          signature.
+          {isMember
+            ? "Your membership already covers the Pact. All that is missing is the signature."
+            : "Your subscription already covers the Pact. All that is missing is the signature."}
         </p>
       )}
 

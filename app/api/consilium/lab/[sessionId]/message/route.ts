@@ -24,6 +24,7 @@ import {
   type TranscriptMessage,
 } from "@/lib/lab/engine";
 import { enforceRateLimit, limits } from "@/lib/rate-limit";
+import { getAccess, canTrain } from "@/lib/access/tier";
 import { logger } from "@/lib/logger";
 
 const Body = z.object({
@@ -41,6 +42,17 @@ export async function POST(
       `user:${user.id}`,
     );
     if (rateLimited) return rateLimited;
+
+    // Same training gate as session creation. Without it, a lapsed
+    // subscriber could keep spending LLM budget on a session opened while
+    // their subscription was live.
+    const access = await getAccess(user.id);
+    if (!canTrain(access)) {
+      return NextResponse.json(
+        { error: "This needs an active subscription. The Pact opens it." },
+        { status: 403 },
+      );
+    }
 
     let body: z.infer<typeof Body>;
     try {

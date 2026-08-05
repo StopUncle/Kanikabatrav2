@@ -9,6 +9,7 @@
 
 import { NextResponse, type NextRequest } from "next/server";
 import { requireAuth } from "@/lib/auth/middleware";
+import { getAccess, canTrain } from "@/lib/access/tier";
 import { prisma } from "@/lib/prisma";
 
 export async function POST(
@@ -17,6 +18,14 @@ export async function POST(
 ) {
   return requireAuth(request, async (_req, user) => {
     const userId = user.id;
+    // Same training gate as the rest of The Twelve.
+    const access = await getAccess(userId);
+    if (!canTrain(access)) {
+      return NextResponse.json(
+        { error: "This needs an active subscription. The Pact opens it." },
+        { status: 403 },
+      );
+    }
     const { lessonId } = await params;
 
     const lesson = await prisma.transformationLesson.findUnique({

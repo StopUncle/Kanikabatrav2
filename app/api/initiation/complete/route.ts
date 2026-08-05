@@ -15,11 +15,14 @@ import { ringByLevel, standingToNextRing } from "@/lib/standing/config";
  */
 export async function POST(request: NextRequest) {
   return requireAuth(request, async (_req, user) => {
-    // Members only: without this, any logged-in account could stamp
+    // Training tier only: without this, any logged-in account could stamp
     // initiationAt ahead of joining and skip the flow on Day 0.
     const access = await getAccess(user.id);
     if (!canTrain(access)) {
-      return NextResponse.json({ error: "Membership required" }, { status: 403 });
+      return NextResponse.json(
+        { error: "This needs an active subscription. The Pact opens it." },
+        { status: 403 },
+      );
     }
 
     const row = await prisma.user.findUnique({

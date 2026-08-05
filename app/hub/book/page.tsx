@@ -1,4 +1,5 @@
 import { requireServerAuth } from "@/lib/auth/server-auth";
+import { getAccess } from "@/lib/access/tier";
 import { prisma } from "@/lib/prisma";
 import MemberBookClient from "@/app/consilium/(member)/book/MemberBookClient";
 
@@ -16,10 +17,18 @@ export const metadata = {
 export default async function AppBookPage() {
   const userId = await requireServerAuth("/app/book");
 
-  const user = await prisma.user.findUnique({
-    where: { id: userId },
-    select: { email: true },
-  });
+  // Tier-aware on purpose, never a wall: the book must stay buyable for
+  // free and pact accounts (book sales are the primary revenue goal), so
+  // the tier only decides which price is shown. The checkout route
+  // re-verifies membership before pricing, so a spoofed view cannot
+  // change what is charged.
+  const [user, access] = await Promise.all([
+    prisma.user.findUnique({
+      where: { id: userId },
+      select: { email: true },
+    }),
+    getAccess(userId),
+  ]);
   if (!user?.email) return null;
 
   const existingBook = await prisma.purchase.findFirst({
@@ -45,6 +54,7 @@ export default async function AppBookPage() {
         downloadToken={existingBook?.downloadToken ?? null}
         downloadExpired={!!downloadExpired}
         memberEmail={user.email}
+        isMember={access.isMember}
       />
     </div>
   );

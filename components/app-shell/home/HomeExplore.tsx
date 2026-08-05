@@ -1,5 +1,11 @@
 import Link from "next/link";
-import { HOME_SECTIONS, type AppSurface } from "@/lib/app/nav";
+import {
+  HOME_SECTIONS,
+  surfaceLocked,
+  requiresLabel,
+  type AppSurface,
+  type ViewerTier,
+} from "@/lib/app/nav";
 import {
   BookOpen,
   Brain,
@@ -67,7 +73,25 @@ const ACCENT: Record<string, string> = {
   "/app/ranks": "var(--app-gold)",
 };
 
-function FeatureCard({ surface }: { surface: AppSurface }) {
+/** The one lock treatment, matching MoreSheet's and ArcadeBento's. The card
+ *  still links: the page behind it renders the wall in place, which names
+ *  the surface and sells the right rung. The pill just makes the price of
+ *  the tap honest before it is spent. */
+function LockPill({ surface }: { surface: AppSurface }) {
+  return (
+    <span className="shrink-0 rounded-full border border-[var(--app-gold-soft)] px-1.5 py-0.5 text-app-micro uppercase tracking-app-wide text-[var(--app-gold-soft)]">
+      {requiresLabel(surface)}
+    </span>
+  );
+}
+
+function FeatureCard({
+  surface,
+  locked,
+}: {
+  surface: AppSurface;
+  locked: boolean;
+}) {
   return (
     <Link
       href={surface.href}
@@ -91,28 +115,41 @@ function FeatureCard({ surface }: { surface: AppSurface }) {
           {surface.home?.hook}
         </span>
       </span>
-      <span className="shrink-0 text-[13px] tracking-[0.1em] text-[var(--app-gold)]">
-        OPEN →
-      </span>
+      {locked ? (
+        <LockPill surface={surface} />
+      ) : (
+        <span className="shrink-0 text-[13px] tracking-[0.1em] text-[var(--app-gold)]">
+          OPEN →
+        </span>
+      )}
     </Link>
   );
 }
 
-function RailCard({ surface }: { surface: AppSurface }) {
+function RailCard({
+  surface,
+  locked,
+}: {
+  surface: AppSurface;
+  locked: boolean;
+}) {
   const accent = ACCENT[surface.href] ?? "var(--app-gold)";
   return (
     <Link
       href={surface.href}
       className="flex w-[152px] shrink-0 snap-start flex-col rounded-[18px] border border-[var(--app-line-soft)] bg-[var(--app-card)] p-4 transition-colors active:bg-[var(--app-card-2)]"
     >
-      <span
-        className="mb-3 flex h-[38px] w-[38px] items-center justify-center rounded-xl"
-        style={{
-          color: accent,
-          background: `color-mix(in srgb, ${accent} 9%, transparent)`,
-        }}
-      >
-        {ICONS[surface.href]}
+      <span className="mb-3 flex items-start justify-between">
+        <span
+          className="flex h-[38px] w-[38px] items-center justify-center rounded-xl"
+          style={{
+            color: accent,
+            background: `color-mix(in srgb, ${accent} 9%, transparent)`,
+          }}
+        >
+          {ICONS[surface.href]}
+        </span>
+        {locked && <LockPill surface={surface} />}
       </span>
       <span
         className="block text-[15.5px] leading-tight"
@@ -127,7 +164,11 @@ function RailCard({ surface }: { surface: AppSurface }) {
   );
 }
 
-export default function HomeExplore() {
+export default function HomeExplore({
+  viewerTier,
+}: {
+  viewerTier: ViewerTier;
+}) {
   return (
     <div className="mt-8 flex flex-col gap-7">
       {HOME_SECTIONS.map((section) => (
@@ -136,11 +177,18 @@ export default function HomeExplore() {
             {section.title}
           </p>
           {section.items.length === 1 ? (
-            <FeatureCard surface={section.items[0]} />
+            <FeatureCard
+              surface={section.items[0]}
+              locked={surfaceLocked(section.items[0], viewerTier)}
+            />
           ) : (
             <div className="scrollbar-hide flex snap-x gap-2.5 overflow-x-auto px-5">
               {section.items.map((surface) => (
-                <RailCard key={surface.href} surface={surface} />
+                <RailCard
+                  key={surface.href}
+                  surface={surface}
+                  locked={surfaceLocked(surface, viewerTier)}
+                />
               ))}
             </div>
           )}

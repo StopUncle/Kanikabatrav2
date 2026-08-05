@@ -26,6 +26,7 @@ import { grantStanding } from "@/lib/standing/grant";
 import { STANDING } from "@/lib/standing/config";
 import { recordEncounters } from "@/lib/mark/encounters";
 import { encountersFromLabScore } from "@/lib/mark/sources/lab";
+import { getAccess, canTrain } from "@/lib/access/tier";
 import { logger } from "@/lib/logger";
 
 export async function POST(
@@ -34,6 +35,16 @@ export async function POST(
 ) {
   const { sessionId } = await context.params;
   return requireAuth(request, async (_req, user) => {
+    // Same training gate as session creation: ending a session runs the
+    // judge, an LLM spend a lapsed subscriber should not command.
+    const access = await getAccess(user.id);
+    if (!canTrain(access)) {
+      return NextResponse.json(
+        { error: "This needs an active subscription. The Pact opens it." },
+        { status: 403 },
+      );
+    }
+
     const session = await prisma.labSession.findFirst({
       where: { id: sessionId, userId: user.id },
     });

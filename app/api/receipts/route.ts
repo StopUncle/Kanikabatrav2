@@ -63,12 +63,13 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Auth required" }, { status: 401 });
   }
 
-  // A4 decision: MEMBER-ONLY. This is the member edition; free accounts
-  // have /api/receipts/free, the public tool on a smaller cap.
+  // A4 decision: TRAINING TIER (Pact or Consilium). This is the paid
+  // edition; free accounts have /api/receipts/free, the public tool on a
+  // smaller cap.
   const access = await getAccess(ctx.userId);
   if (!canTrain(access)) {
     return NextResponse.json(
-      { error: "Receipts is a member feature. Activate Consilium." },
+      { error: "This needs an active subscription. The Pact opens it." },
       { status: 403 },
     );
   }

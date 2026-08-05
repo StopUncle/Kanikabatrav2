@@ -31,6 +31,7 @@ export default async function PactDoorPage() {
     <PageShell>
       <PactDoor
         entitled={access.pactEntitled}
+        isMember={access.isMember}
         rejoining={read.pastPacts.length > 0}
         // An entitled member needs no checkout, so an unpriced Stripe does
         // not close the door for them.

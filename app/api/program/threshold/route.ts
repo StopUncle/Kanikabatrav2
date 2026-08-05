@@ -31,8 +31,9 @@ async function gates(userId: string, weekNumber: number): Promise<GateResult> {
     res: NextResponse.json({ error }, { status }),
   });
   const access = await getAccess(userId);
-  // A4 decision: MEMBER-ONLY, same gate as intake.
-  if (!canTrain(access)) return refuse("Membership required", 403);
+  // A4 decision: TRAINING TIER, same gate as intake.
+  if (!canTrain(access))
+    return refuse("This needs an active subscription. The Pact opens it.", 403);
   const enrollment = await getEnrollment(prisma, userId);
   if (!enrollment) return refuse("Not enrolled", 409);
   if (enrollment.pausedAt) return refuse("Program paused", 409);

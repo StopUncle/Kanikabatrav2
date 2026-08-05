@@ -148,8 +148,8 @@ export default async function AppShellLayout({
           you one shot at this prompt, so it is spent on someone invested:
           members after their first Baseline Read, free accounts after their
           first completed scenario. Without the free branch a free account
-          could never grant push at all (the Baseline is member-only), which
-          silently cut the whole free tier off from the streak nudge. */}
+          could never grant push at all (the Baseline needs a paid tier),
+          which silently cut the whole free tier off from the streak nudge. */}
       <NotificationPrompt
         unlocked={
           canTrain(access) ? baselineAttempts > 0 : completedRuns > 0

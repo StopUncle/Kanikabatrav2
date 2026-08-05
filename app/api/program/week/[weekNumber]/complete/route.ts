@@ -17,6 +17,7 @@ import { grantStanding } from "@/lib/standing/grant";
 import { STANDING } from "@/lib/standing/config";
 import { programStartFor, unlockDateFor } from "@/lib/program/read";
 import { TOTAL_WEEKS } from "@/lib/program/curriculum";
+import { getAccess, canTrain } from "@/lib/access/tier";
 import { logger } from "@/lib/logger";
 
 const Body = z.object({
@@ -29,6 +30,15 @@ export async function POST(
 ) {
   return requireAuth(request, async (_req, user) => {
     const userId = user.id;
+    // Same training gate as the rest of The Twelve; completing a week is
+    // the program's core write and must lapse with the subscription.
+    const access = await getAccess(userId);
+    if (!canTrain(access)) {
+      return NextResponse.json(
+        { error: "This needs an active subscription. The Pact opens it." },
+        { status: 403 },
+      );
+    }
     const weekNumber = Number((await params).weekNumber);
     if (
       !Number.isInteger(weekNumber) ||

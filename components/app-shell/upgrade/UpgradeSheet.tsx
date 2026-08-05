@@ -78,7 +78,14 @@ function headlineFor(
     return next ? `${next} is already written.` : "The next chapter is already written.";
   }
   if (trigger === "standing-frozen") return "Your standing stops here.";
-  if (trigger === "today-card") return "The whole thing is already built.";
+  if (trigger === "today-card") {
+    // Offer-aware: a pact subscriber reaches this from a card that says
+    // "Kanika's rooms are open", and the headline must not answer with
+    // the pact pitch they already bought.
+    return offer === "consilium"
+      ? "The whole of it, including Kanika."
+      : "The whole thing is already built.";
+  }
   if (trigger === "gauntlet") return "The Gauntlet plays for keeps.";
   if (offer === "consilium") {
     return surface ? `${surface} is Kanika's room.` : "That room is Kanika's.";

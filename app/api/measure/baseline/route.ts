@@ -53,8 +53,9 @@ const Body = z.object({
 
 export async function POST(request: NextRequest) {
   return requireAuth(request, async (req, user) => {
-    // A4 decision: MEMBER-ONLY **for now, and this is the one route whose
-    // answer is not settled**. The plan wants the Baseline Read to be the
+    // A4 decision: TRAINING TIER (Pact or Consilium) **for now, and this is
+    // the one route whose answer is not settled**. The plan wants the
+    // Baseline Read to be the
     // free tier's strongest hook (one sitting, headline verdict only, with
     // the blind spot list inside), but that is open decision #4 and it is
     // not a gate change on its own: this route's response carries `reveal`,
@@ -66,7 +67,7 @@ export async function POST(request: NextRequest) {
     const access = await getAccess(user.id);
     if (!canTrain(access)) {
       return NextResponse.json(
-        { error: "Membership required" },
+        { error: "This needs an active subscription. The Pact opens it." },
         { status: 403 },
       );
     }

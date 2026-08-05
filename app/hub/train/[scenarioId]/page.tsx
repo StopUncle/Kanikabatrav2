@@ -62,7 +62,11 @@ export default async function SimulatorPlay({
   const viewerAccess = await getAccess(userId);
   if (!canPlay(scenario, viewerAccess)) {
     return (
-      <UpgradeWall trigger="chapter-end" nextChapterTitle={scenario.title} />
+      <UpgradeWall
+        trigger="chapter-end"
+        nextChapterTitle={scenario.title}
+        offer="pact"
+      />
     );
   }
 

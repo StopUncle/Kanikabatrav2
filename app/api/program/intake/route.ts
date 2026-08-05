@@ -23,12 +23,15 @@ const MAX_ANSWER = 2000;
 
 export async function POST(request: NextRequest) {
   return requireAuth(request, async (req, user) => {
-    // A4 decision: MEMBER-ONLY. The Twelve is the paid ladder's first rung
-    // above the membership; the payment wiring for standalone purchase is a
-    // later lane, and until it exists membership is the gate.
+    // A4 decision: TRAINING TIER (Pact or Consilium). The Twelve's
+    // standalone-purchase wiring is a later lane; until it exists, any paid
+    // rung is the gate.
     const access = await getAccess(user.id);
     if (!canTrain(access)) {
-      return NextResponse.json({ error: "Membership required" }, { status: 403 });
+      return NextResponse.json(
+        { error: "This needs an active subscription. The Pact opens it." },
+        { status: 403 },
+      );
     }
 
     const existing = await prisma.programEnrollment.findUnique({

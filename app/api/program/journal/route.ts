@@ -36,10 +36,13 @@ function replyDelayMs(userId: string, weekNumber: number): number {
 
 export async function POST(request: NextRequest) {
   return requireAuth(request, async (req, user) => {
-    // A4 decision: MEMBER-ONLY, same gate as the rest of The Twelve.
+    // A4 decision: TRAINING TIER, same gate as the rest of The Twelve.
     const access = await getAccess(user.id);
     if (!canTrain(access)) {
-      return NextResponse.json({ error: "Membership required" }, { status: 403 });
+      return NextResponse.json(
+        { error: "This needs an active subscription. The Pact opens it." },
+        { status: 403 },
+      );
     }
     const enrollment = await getEnrollment(prisma, user.id);
     if (!enrollment) {

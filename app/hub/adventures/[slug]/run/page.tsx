@@ -103,6 +103,7 @@ export default async function AdventureRun({
         trigger="chapter-end"
         nextChapterTitle={scenario.title}
         returnHref={`/app/adventures/${slug}`}
+        offer="pact"
       />
     );
   }

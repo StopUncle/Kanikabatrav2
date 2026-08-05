@@ -15,7 +15,7 @@ export const metadata: Metadata = {
 
 export default async function ReceiptsPage() {
   const userId = await requireServerAuth("/app/receipts");
-  // Member-only surface. The shell no longer gates for us (A2), and this
+  // Training-tier surface (Pact or Consilium). The shell no longer gates for us (A2), and this
   // page reads its data straight from Prisma, so the gate has to be here
   // and above the queries.
   const gate = await trainingGate(userId, {

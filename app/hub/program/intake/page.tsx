@@ -13,7 +13,7 @@ export const metadata = {
  */
 export default async function ProgramIntakePage() {
   const userId = await requireServerAuth("/app/program/intake");
-  // Member-only surface, same tier decision as the rest of The Twelve.
+  // Training-tier surface, same tier decision as the rest of The Twelve.
   const gate = await trainingGate(userId);
   if (gate) return gate;
 

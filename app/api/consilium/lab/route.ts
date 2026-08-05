@@ -33,12 +33,13 @@ async function labQuota(userId: string) {
 
 export async function GET(request: NextRequest) {
   return requireAuth(request, async (_req, user) => {
-    // A4 decision: MEMBER-ONLY. The Lab is the freeform half; a free
-    // account gets Rehearsal (picking a written line), never The Room.
+    // A4 decision: TRAINING TIER (Pact or Consilium). The Lab is the
+    // freeform half; a free account gets Rehearsal (picking a written
+    // line), never The Room.
     const access = await getAccess(user.id);
     if (!canTrain(access)) {
       return NextResponse.json(
-        { error: "The Lab is a member feature." },
+        { error: "This needs an active subscription. The Pact opens it." },
         { status: 403 },
       );
     }
@@ -95,7 +96,7 @@ export async function POST(request: NextRequest) {
     const access = await getAccess(user.id);
     if (!canTrain(access)) {
       return NextResponse.json(
-        { error: "The Lab is a member feature." },
+        { error: "This needs an active subscription. The Pact opens it." },
         { status: 403 },
       );
     }

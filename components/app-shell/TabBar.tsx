@@ -12,6 +12,7 @@ import {
   isTabActive,
   surfaceLocked,
   offerForSurface,
+  requiresLabel,
   type AppSurface,
   type ViewerTier,
 } from "@/lib/app/nav";
@@ -143,9 +144,7 @@ export default function TabBar({ viewerTier }: { viewerTier: ViewerTier }) {
                 }
                 aria-current={active ? "page" : undefined}
                 aria-label={
-                  locked
-                    ? `${tab.label}, ${tab.requires === "member" ? "members" : "Pact"} only`
-                    : tab.label
+                  locked ? `${tab.label}, ${requiresLabel(tab)} only` : tab.label
                 }
                 className={`flex w-[62px] flex-col items-center gap-1.5 text-[11.5px] tracking-[0.06em] transition-colors ${
                   active ? "text-[var(--app-gold)]" : "text-[var(--app-dim)]"

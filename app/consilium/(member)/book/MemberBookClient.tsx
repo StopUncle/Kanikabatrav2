@@ -10,6 +10,14 @@ interface Props {
   downloadToken: string | null;
   downloadExpired: boolean;
   memberEmail: string;
+  /**
+   * Consilium member ($9.99 claim) vs everyone else ($24.99 standalone).
+   * Defaults true because the original /consilium/book caller sits behind
+   * the member gate; the app shell passes the real tier. The server
+   * re-verifies membership at checkout either way, so this only decides
+   * which price is DISPLAYED, never which is charged.
+   */
+  isMember?: boolean;
 }
 
 export default function MemberBookClient({
@@ -17,6 +25,7 @@ export default function MemberBookClient({
   downloadToken,
   downloadExpired,
   memberEmail,
+  isMember = true,
 }: Props) {
   const [resending, setResending] = useState(false);
   const [resent, setResent] = useState(false);
@@ -62,7 +71,9 @@ export default function MemberBookClient({
         </h1>
         <div className="w-12 h-px bg-warm-gold/40 mb-3" />
         <p className="text-text-gray text-sm">
-          Member-exclusive access to the 70,000-word premium edition.
+          {isMember
+            ? "Member-exclusive access to the 70,000-word premium edition."
+            : "The 70,000-word premium edition, with both addendum chapters."}
         </p>
       </div>
 
@@ -196,18 +207,22 @@ export default function MemberBookClient({
           <div className="p-6 sm:p-8 rounded-xl border border-accent-gold/40 bg-gradient-to-br from-deep-burgundy/30 to-deep-black mb-6">
             <div className="mb-5">
               <p className="text-accent-gold/70 uppercase tracking-[0.35em] text-[10px] mb-2">
-                Member-exclusive price
+                {isMember ? "Member-exclusive price" : "The Sociopathic Dating Bible"}
               </p>
               <div className="flex items-baseline gap-3">
                 <span className="text-5xl font-extralight text-white">
-                  $9.99
+                  {isMember ? "$9.99" : "$24.99"}
                 </span>
-                <span className="text-text-gray/60 text-lg line-through">
-                  $24.99
-                </span>
+                {isMember && (
+                  <span className="text-text-gray/60 text-lg line-through">
+                    $24.99
+                  </span>
+                )}
               </div>
               <p className="text-accent-gold/80 text-sm font-light mt-1">
-                A $15 discount held for Consilium members only
+                {isMember
+                  ? "A $15 discount held for Consilium members only"
+                  : "Consilium members pay $9.99"}
               </p>
             </div>
 
@@ -233,13 +248,15 @@ export default function MemberBookClient({
             <StripeButton
               priceKey="BOOK"
               email={memberEmail}
-              label="Claim your member price"
-              price="$9.99"
+              label={isMember ? "Claim your member price" : "Get the book"}
+              price={isMember ? "$9.99" : "$24.99"}
               icon="cart"
             />
-            <p className="text-text-gray/60 text-xs text-center mt-3 italic">
-              Member discount applied automatically at checkout
-            </p>
+            {isMember && (
+              <p className="text-text-gray/60 text-xs text-center mt-3 italic">
+                Member discount applied automatically at checkout
+              </p>
+            )}
           </div>
 
           <p className="text-text-gray/60 text-xs text-center">

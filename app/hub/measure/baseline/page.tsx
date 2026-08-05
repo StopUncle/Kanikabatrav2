@@ -25,7 +25,7 @@ const RETAKE_COOLDOWN_DAYS = 21;
 
 export default async function BaselineReadPage() {
   const userId = await requireServerAuth("/app/measure/baseline");
-  // Member-only surface. The shell no longer gates for us (A2), and this
+  // Training-tier surface (Pact or Consilium). The shell no longer gates for us (A2), and this
   // page reads its data straight from Prisma, so the gate has to be here
   // and above the queries.
   const gate = await trainingGate(userId, {

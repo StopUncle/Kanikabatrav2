@@ -55,7 +55,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Unknown scenario" }, { status: 404 });
     }
 
-    // Member-only, and deliberately a stronger gate than canPlay: typing
+    // Training tier, and deliberately a stronger gate than canPlay: typing
     // your own line is The Room, which the plan puts on the paid side even
     // for a scenario the free tier can otherwise play (free gets Rehearsal,
     // picking from the written choices). It is also the one call here that
@@ -64,7 +64,7 @@ export async function POST(request: NextRequest) {
     const access = await getAccess(user.id);
     if (!canTrain(access)) {
       return NextResponse.json(
-        { error: "Freeform is part of the Consilium" },
+        { error: "This needs an active subscription. The Pact opens it." },
         { status: 403 },
       );
     }

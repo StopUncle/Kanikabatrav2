@@ -54,9 +54,11 @@ export default async function HomePage() {
     getAccess(userId),
   ]);
 
-  // A fresh free account gets the Arrival once. Members are handled by
-  // the layout's initiation redirect; this lives here rather than in the
-  // layout because the layout wraps /app/welcome and would loop.
+  // A fresh non-Consilium account gets the Arrival once: free accounts see
+  // the free welcome, pact subscribers the member variant (the welcome page
+  // branches on tier itself). Consilium members skip it because their
+  // arrival surface is /consilium, not the app. Lives here rather than in
+  // the layout because the layout wraps /app/welcome and would loop.
   const WEEK_MS = 7 * 24 * 60 * 60 * 1000;
   if (
     !access.isMember &&
@@ -464,7 +466,7 @@ export default async function HomePage() {
         </Link>
       )}
 
-      <HomeExplore />
+      <HomeExplore viewerTier={access.tier} />
     </div>
   );
 }

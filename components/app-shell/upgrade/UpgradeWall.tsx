@@ -6,6 +6,7 @@ import UpgradeSheet, {
   type UpgradeTrigger,
   type UpgradeOffer,
 } from "./UpgradeSheet";
+import { PACT_LAUNCHED } from "@/lib/pact/presets";
 import { EmptyState, PageHeader, PageShell } from "@/components/app-shell/ui";
 
 /**
@@ -33,7 +34,11 @@ export default function UpgradeWall({
   offer?: UpgradeOffer;
 }) {
   const [open, setOpen] = useState(true);
-  const product = offer === "pact" ? "the Pact" : "the membership";
+  // Same default the sheet resolves to: an unspecified offer sells the
+  // Pact while it is launched. The page copy and the sheet on top of it
+  // must name the same product.
+  const product =
+    !PACT_LAUNCHED || offer === "consilium" ? "the membership" : "the Pact";
   return (
     <>
       <PageShell>
