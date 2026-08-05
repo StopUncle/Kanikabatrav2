@@ -1117,7 +1117,7 @@ export const sendQuizResults = async (
             Your $${c.amount.toFixed(2)} is credited toward The Consilium
           </h3>
           <p style="color: #94a3b8; margin: 0 0 22px 0; font-size: 14px; line-height: 1.7; text-align: center;">
-            Inside: the Dark Mirror Simulator (branching scenarios on the same axes you just scored on), the classroom, voice notes, and a moderated community. The button below applies it for you, nothing to type in.
+            Inside: the Dark Mirror Simulator (branching scenarios on the same axes you just scored on), voice notes, daily psychology drops, and a moderated community. The button below applies it for you, nothing to type in.
           </p>
           <div style="background: #050511; border: 1px dashed #d4af37; border-radius: 8px; padding: 18px 20px; text-align: center; margin: 0 0 20px 0;">
             <p style="color: #94a3b8; margin: 0 0 6px 0; font-size: 10px; text-transform: uppercase; letter-spacing: 2px;">
@@ -1645,21 +1645,10 @@ export const sendWeeklyDigest = async (
   `
       : "";
 
-  const coursesBlock =
-    data.newCourses.length > 0
-      ? `
-    <h3 style="color: #d4af37; margin: 25px 0 12px 0; font-size: 14px; text-transform: uppercase; letter-spacing: 1px;">New in the classroom</h3>
-    <ul style="color: #f5f0ed; font-size: 14px; line-height: 1.8; margin: 0; padding-left: 20px;">
-      ${data.newCourses
-        .map(
-          (c) => `
-        <li><a href="${baseUrl}/consilium/classroom/${esc(c.slug)}" style="color: #d4af37; text-decoration: none;">${esc(c.title)}</a></li>
-      `,
-        )
-        .join("")}
-    </ul>
-  `
-      : "";
+  // The classroom is retired (its pages 302 to the feed since 2026-07-02),
+  // so the digest no longer links into it. Kept as a variable so the
+  // layout below stays untouched if course delivery ever returns.
+  const coursesBlock = "";
 
   const nudgeBlock = !hasContent
     ? `
@@ -1668,7 +1657,7 @@ export const sendWeeklyDigest = async (
         <td bgcolor="#1a0d11" style="padding: 22px; border-radius: 10px; border: 1px solid rgba(212,175,55,0.2); text-align: center;">
           <p style="color: #94a3b8; margin: 0; font-size: 14px; line-height: 1.6;">
             A quiet week inside. Still worth stopping by to catch up on
-            conversations in the feed and check on your classroom progress.
+            conversations in the feed and run a simulator scenario or two.
           </p>
         </td>
       </tr>
@@ -1877,7 +1866,7 @@ export const sendInnerCircleWelcomeNewUser = async (
       </tr>
     </table>
     <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 0 0; font-size: 13px; text-align: center;">
-      Once your password is set, log in at <a href="${baseUrl}/login" style="color: #d4af37;">${baseUrl}/login</a> to access the feed, voice notes, and classroom.
+      Once your password is set, log in at <a href="${baseUrl}/login" style="color: #d4af37;">${baseUrl}/login</a> to access the feed, voice notes, and simulator.
     </p>
   `;
 
@@ -1959,7 +1948,7 @@ export const sendMembershipRenewed = async (
       Your Consilium membership has been renewed. Your next billing date is <strong style="color: #d4af37;">${esc(nextBillingDate)}</strong>.
     </p>
     <p style="color: #94a3b8; line-height: 1.8; margin: 0; font-size: 14px;">
-      The feed, classroom, and community are waiting for you.
+      The feed, simulator, and community are waiting for you.
     </p>
   `;
 
@@ -2222,7 +2211,7 @@ export const sendTrialExpiringSoon = async (
       Your free trial of The Consilium ends in <strong style="color: #B76E79;">${daysLeft} day${daysLeft === 1 ? "" : "s"}</strong>.
     </p>
     <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 25px 0; font-size: 15px;">
-      After that, access to the feed, voice notes, classroom, and community goes away. If you&rsquo;ve found value in what&rsquo;s here, subscribe to keep it.
+      After that, access to the feed, voice notes, simulator, and community goes away. If you&rsquo;ve found value in what&rsquo;s here, subscribe to keep it.
     </p>
     <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="margin: 0 0 25px 0;">
       <tr>

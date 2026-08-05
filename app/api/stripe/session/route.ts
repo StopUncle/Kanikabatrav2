@@ -31,36 +31,31 @@ export async function GET(request: NextRequest) {
       type === "BOOK_CONSILIUM_3MO";
     const isCoaching = type.startsWith("COACHING");
 
-    // For book purchases, find the purchase record with download token
+    // For book purchases, find the purchase record with download token.
+    // Looked up by THIS session's idempotency key, never by email: the
+    // old most-recent-BOOK-purchase-for-this-email lookup meant any leaked
+    // session id (history, referrer, analytics) surrendered a live
+    // download token for a purchase it did not pay for.
     let downloadToken: string | null = null;
     if (isBook && email) {
-      // The webhook may or may not have fired yet, poll up to 20 seconds.
-      // Case-insensitive match because Stripe returns the email exactly
-      // as the buyer typed it at checkout, while the webhook normalises
-      // to lowercase before writing Purchase.customerEmail. A buyer who
-      // typed Alice@Gmail.com used to miss the token entirely and only
-      // get it from the email; now the success page can render the
-      // immediate-download button regardless of email casing.
-      for (let i = 0; i < 10; i++) {
-        const purchase = await prisma.purchase.findFirst({
-          where: {
-            customerEmail: { equals: email, mode: "insensitive" },
-            type: "BOOK",
-            status: "COMPLETED",
-            paypalOrderId: { startsWith: "ST-" },
-          },
-          orderBy: { createdAt: "desc" },
-          select: { downloadToken: true },
+      // The webhook may or may not have fired yet; poll briefly. Webhooks
+      // typically land within a second or two, and the delivery email is
+      // the backstop, so six seconds of spinner is the ceiling, not the
+      // twenty the old loop held the request open for.
+      for (let i = 0; i < 6; i++) {
+        const purchase = await prisma.purchase.findUnique({
+          where: { paypalOrderId: `ST-${sessionId}` },
+          select: { downloadToken: true, status: true },
         });
 
-        if (purchase?.downloadToken) {
+        if (purchase?.downloadToken && purchase.status === "COMPLETED") {
           downloadToken = purchase.downloadToken;
           break;
         }
 
-        // Wait 2 seconds before retrying
-        if (i < 9) {
-          await new Promise((resolve) => setTimeout(resolve, 2000));
+        // Wait 1 second before retrying
+        if (i < 5) {
+          await new Promise((resolve) => setTimeout(resolve, 1000));
         }
       }
     }
@@ -70,6 +65,7 @@ export async function GET(request: NextRequest) {
     if (isCoaching) {
       const coachingNames: Record<string, string> = {
         COACHING_SINGLE: "Single Session",
+        COACHING_CLARITY: "Clarity Pack (2 Sessions)",
         COACHING_INTENSIVE: "Intensive (3 Sessions)",
         COACHING_CAREER: "Career Coaching (4 Sessions)",
         COACHING_RETAINER: "Coaching Retainer",

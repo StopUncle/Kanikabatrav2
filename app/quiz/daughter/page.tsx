@@ -39,14 +39,14 @@ export const metadata: Metadata = {
     type: "website",
     url: `${BASE_URL}/quiz/daughter`,
     siteName: SITE_CONFIG.name,
-    images: ["/images/quiz-og.jpg"],
+    images: ["/api/og?title=The%20Daughter%20Pattern%20Assessment&subtitle=What%20twenty%20years%20built%20into%20you"],
   },
   twitter: {
     card: "summary_large_image",
     title: "The Daughter Pattern Assessment",
     description:
       "Six daughter-of-narcissist profiles. Twenty scenarios. Six minutes. Educational, not diagnostic.",
-    images: ["/images/quiz-og.jpg"],
+    images: ["/api/og?title=The%20Daughter%20Pattern%20Assessment&subtitle=What%20twenty%20years%20built%20into%20you"],
   },
 };
 

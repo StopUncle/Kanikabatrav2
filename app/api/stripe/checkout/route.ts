@@ -97,9 +97,12 @@ export async function POST(request: NextRequest) {
     }
 
     // Auto-fill the customer email from the authenticated user if the
-    // caller didn't provide one. Makes the member-book flow seamless.
+    // caller didn't provide one. Every product, not just the member book:
+    // a logged-in buyer retyping their address at Stripe is friction at
+    // the highest-intent moment, and a session with no email is one
+    // Stripe can never send a recovery URL for.
     let customerEmail = email as string | undefined;
-    if (!customerEmail && resolvedPriceKey === "BOOK_MEMBER") {
+    if (!customerEmail) {
       const userId = await optionalServerAuth();
       if (userId) {
         const u = await prisma.user.findUnique({
@@ -145,7 +148,20 @@ export async function POST(request: NextRequest) {
       successUrl:
         successUrl ||
         `${baseUrl}/success?session_id={CHECKOUT_SESSION_ID}&product=${priceKey}`,
-      cancelUrl: cancelUrl || `${baseUrl}/cancel`,
+      // A cancelled checkout lands back on the page that sells the thing
+      // they were buying, one click from retrying, instead of the generic
+      // /cancel dead end. Callers can still override.
+      cancelUrl:
+        cancelUrl ||
+        `${baseUrl}${
+          priceKey === "BOOK" ||
+          priceKey === "BOOK_CONSILIUM_1MO" ||
+          priceKey === "BOOK_CONSILIUM_3MO"
+            ? "/book"
+            : priceKey.startsWith("COACHING")
+              ? "/coaching"
+              : "/cancel"
+        }`,
       customerEmail,
       metadata: {
         ...clientMetadata(metadata),

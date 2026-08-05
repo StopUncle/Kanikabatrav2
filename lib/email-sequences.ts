@@ -1207,7 +1207,7 @@ function buildQuizDripStep2(name: string, args: QuizBuyerCreditArgs): string {
     </p>
 
     <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 20px 0; font-size: 15px;">
-      Plus voice notes, the classroom, daily psychology drops, and member pricing on the book ($9.99 instead of $24.99, separate purchase).
+      Plus voice notes, daily psychology drops, and member pricing on the book ($9.99 instead of $24.99, separate purchase).
     </p>
 
     <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 20px 0; font-size: 15px;">
@@ -1652,7 +1652,7 @@ function buildBookConsiliumPushStep2(name: string): string {
     </p>
 
     <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 25px 0; font-size: 15px;">
-      The simulator is one piece of <strong style="color: #d4af37;">the Consilium</strong>. ${MEMBERSHIP.priceDisplay} a month, cancel any time. Voice notes weekly, daily psychology drops, Ask Kanika, the forum where members run their actual situations through each other before they make the move. Members buy the book at $9.99 instead of $24.99 if you ever want a spare or a gift copy.
+      The simulator is one piece of <strong style="color: #d4af37;">the Consilium</strong>. ${MEMBERSHIP.priceDisplay} a month, cancel any time. Voice notes weekly, daily psychology drops, Ask Kanika, the community feed where members compare notes on the patterns they are living. Members buy the book at $9.99 instead of $24.99 if you ever want a spare or a gift copy.
     </p>
 
     <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 0 0; font-size: 15px;">
@@ -1705,7 +1705,7 @@ function buildBookConsiliumPushStep3(name: string): string {
             </tr>
             <tr>
               <td style="padding: 10px 0; color: #f5f0ed; font-size: 14px; line-height: 1.6; border-bottom: 1px solid #3d2030;">
-                <strong style="color: #d4af37;">The Council</strong>, the forum, the chat rooms, the women who think like this. Every comment human-reviewed.
+                <strong style="color: #d4af37;">The Council</strong>, the community feed, the women who think like this. Every comment human-reviewed.
               </td>
             </tr>
             <tr>
@@ -1874,7 +1874,7 @@ function buildNoAccountStep1(name: string, args: AccountlessGiftArgs): string {
     </p>
 
     <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 20px 0; font-size: 15px;">
-      I also started recording weekly voice notes, things I won't put on Instagram. Members ask me one question per day and I answer the best one on voice or video. There's a private forum where members run their actual situations through each other before they make the move.
+      I also started recording weekly voice notes, things I won't put on Instagram. Members ask me one question per day and I answer the best one on voice or video. There's a private feed where members compare notes on the situations they are actually living.
     </p>
 
     <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 25px 0; font-size: 15px;">
@@ -1974,7 +1974,7 @@ function buildNoAccountStep3(name: string, args: AccountlessGiftArgs): string {
             </tr>
             <tr>
               <td style="padding: 10px 0; color: #f5f0ed; font-size: 14px; line-height: 1.6;">
-                <strong style="color: #d4af37;">The Council</strong>, forum, chat, every comment human-reviewed.
+                <strong style="color: #d4af37;">The Council</strong>, the community feed, every comment human-reviewed.
               </td>
             </tr>
           </table>
@@ -3933,5 +3933,101 @@ export function buildPactWinbackEntry(
     ),
     scheduledAt: addDays(new Date(), 3),
     metadata: { ...MARKETING_META, type: "winback" },
+  };
+}
+
+function buildCheckoutRecoveryEmail(
+  name: string,
+  productLabel: string,
+  recoveryUrl: string,
+): string {
+  const body = `
+    <p style="color: #f5f0ed; font-size: 16px; margin: 0 0 20px 0; line-height: 1.7;">
+      ${esc(name)}, you were one step from ${esc(productLabel)}.
+    </p>
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 25px 0; font-size: 15px;">
+      Your checkout is saved exactly where you left it. Nothing to refill, nothing to redecide: the link below reopens the same page.
+    </p>
+    ${goldButton("Finish checkout", recoveryUrl)}
+    <p style="color: #666; line-height: 1.7; margin: 25px 0 0 0; font-size: 13px;">
+      If you decided against it, ignore this. Nothing else follows.
+    </p>
+  `;
+  return emailShell("You left something open", "Your checkout is saved", body);
+}
+
+/**
+ * The abandoned-checkout recovery email. Enqueued by the
+ * checkout.session.expired webhook handler with the recovery URL Stripe
+ * attaches to an expired payment-mode session. One entry per session,
+ * keyed by metadata.stripeSessionId.
+ */
+export function buildCheckoutRecoveryEntry(
+  recipientEmail: string,
+  recipientName: string,
+  productLabel: string,
+  recoveryUrl: string,
+  stripeSessionId: string,
+): EmailQueueEntry {
+  return {
+    recipientEmail,
+    recipientName,
+    sequence: "checkout-recovery",
+    step: 1,
+    subject: "Your checkout is still open",
+    htmlBody: withMarketingFooter(
+      buildCheckoutRecoveryEmail(recipientName, productLabel, recoveryUrl),
+      recipientEmail,
+    ),
+    scheduledAt: new Date(),
+    metadata: { ...MARKETING_META, type: "checkout-recovery", stripeSessionId },
+  };
+}
+
+/**
+ * Transactional purchase confirmation for coaching and Ask packs, the two
+ * paid products whose webhook branches previously sent nothing at all. The
+ * coaching variant links back into /success, whose BookingModal is the
+ * intake path; without the link, closing the success tab early orphaned a
+ * four-figure purchase.
+ */
+export function buildPurchaseConfirmationEmail(
+  name: string,
+  productLabel: string,
+  kind: "coaching" | "ask",
+  stripeSessionId: string,
+): { subject: string; html: string } {
+  if (kind === "coaching") {
+    const body = `
+      <p style="color: #f5f0ed; font-size: 16px; margin: 0 0 20px 0; line-height: 1.7;">
+        ${esc(name)}, it is confirmed.
+      </p>
+      <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 25px 0; font-size: 15px;">
+        ${esc(productLabel)} is paid and locked in. One step left: the intake questionnaire, so your first session starts with substance instead of introductions.
+      </p>
+      ${goldButton("Complete your intake", `${baseUrl}/success?session_id=${stripeSessionId}`)}
+      <p style="color: #94a3b8; line-height: 1.8; margin: 25px 0 0 0; font-size: 15px;">
+        Already filled it in? Then you are done. Kanika reviews every intake personally, and scheduling follows by email.
+      </p>
+    `;
+    return {
+      subject: "Your coaching is confirmed",
+      html: emailShell("Confirmed", "Your coaching with Kanika", body),
+    };
+  }
+  const body = `
+    <p style="color: #f5f0ed; font-size: 16px; margin: 0 0 20px 0; line-height: 1.7;">
+      ${esc(name)}, your questions are in.
+    </p>
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 20px 0; font-size: 15px;">
+      ${esc(productLabel)} is paid and your questions are with Kanika. The answer arrives in this inbox: no portal to check, nothing else to do.
+    </p>
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 25px 0; font-size: 15px;">
+      If you meant to add more context, reply to this email and it lands alongside your questions.
+    </p>
+  `;
+  return {
+    subject: "Received: your questions are with Kanika",
+    html: emailShell("Received", "Ask Kanika", body),
   };
 }

@@ -23,7 +23,9 @@ import {
   RefreshCw,
   BookOpen,
   Phone,
+  Crown,
 } from "lucide-react";
+import { MEMBERSHIP } from "@/lib/constants";
 
 interface StoredResult {
   scores: DatingScores;
@@ -413,6 +415,40 @@ export default function DatingSociopathResultsPage() {
                 the household. The upstream read.
               </p>
             </Link>
+          </m.div>
+
+          {/* Consilium CTA. Every other quiz results page routes its
+              highest-intent moment at the membership; this one used to
+              stop at the book and sibling quizzes. */}
+          <m.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.6 }}
+            className="mb-12 p-6 rounded-xl border border-accent-gold/25 bg-accent-gold/5"
+          >
+            <div className="flex items-start gap-4">
+              <div className="w-10 h-10 rounded-full flex items-center justify-center bg-accent-gold/15 shrink-0">
+                <Crown size={18} className="text-accent-gold" />
+              </div>
+              <div className="flex-1">
+                <h3 className="text-white font-light text-lg mb-2">
+                  Practice spotting this live, before the next one.
+                </h3>
+                <p className="text-text-gray text-sm leading-relaxed mb-4">
+                  The Consilium is the practice ground: branching simulator
+                  scenarios on exactly these dynamics, voice notes from
+                  Kanika, daily psychology drops. {MEMBERSHIP.monthly},
+                  cancel anytime.
+                </p>
+                <Link
+                  href="/consilium"
+                  className="inline-flex items-center gap-2 px-5 py-2.5 bg-accent-gold/15 hover:bg-accent-gold/25 text-accent-gold border border-accent-gold/40 rounded text-sm tracking-wider uppercase transition-all"
+                >
+                  See the Consilium
+                  <ArrowRight size={14} />
+                </Link>
+              </div>
+            </div>
           </m.div>
 
           <m.div

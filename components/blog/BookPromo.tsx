@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { m } from "framer-motion";
+import { BookOpen, Check } from "lucide-react";
 import { BOOK_INFO } from "@/lib/constants";
 
 interface BookPromoProps {
@@ -9,6 +10,14 @@ interface BookPromoProps {
   className?: string;
 }
 
+/**
+ * Blog-post book promo. The Premium edition leads and the gold CTA points
+ * at /book: the blog is the SEO top of the funnel, and a sale on our own
+ * checkout is worth ~$24 plus the buyer's email, the welcome sequence,
+ * and the quiz auto-unlock, against ~$3.50 in Kindle royalty. Amazon
+ * stays available as a quiet text link for Kindle loyalists, the same
+ * demotion the /book page uses.
+ */
 export default function BookPromo({
   variant = "full",
   className = "",
@@ -24,17 +33,15 @@ export default function BookPromo({
               Get the {BOOK_INFO.title}
             </p>
             <p className="text-text-gray text-sm">
-              Now available on Amazon for just ${BOOK_INFO.kdpPrice}
+              ${BOOK_INFO.price} with exclusive bonuses
             </p>
           </div>
-          <a
-            href={BOOK_INFO.kdpLink}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="px-6 py-2.5 bg-gradient-to-r from-[#FF9900] to-[#FF6600] text-white text-sm font-medium rounded-lg hover:opacity-90 transition-opacity whitespace-nowrap"
+          <Link
+            href="/book"
+            className="px-6 py-2.5 bg-gradient-to-r from-accent-gold to-accent-burgundy text-white text-sm font-medium rounded-lg hover:opacity-90 transition-opacity whitespace-nowrap"
           >
-            Buy on Amazon
-          </a>
+            Get the Book
+          </Link>
         </div>
       </div>
     );
@@ -49,7 +56,7 @@ export default function BookPromo({
       className={`bg-gradient-to-br from-deep-navy/50 to-accent-burgundy/20 rounded-2xl p-8 border border-white/10 ${className}`}
     >
       <div className="flex items-start gap-3 mb-4">
-        <span className="text-3xl">📖</span>
+        <BookOpen className="w-7 h-7 text-accent-gold shrink-0 mt-1" />
         <div>
           <h3 className="text-2xl font-light text-white">{BOOK_INFO.title}</h3>
           <p className="text-accent-gold text-sm uppercase tracking-wider">
@@ -62,65 +69,41 @@ export default function BookPromo({
         {BOOK_INFO.description}
       </p>
 
-      <div className="grid sm:grid-cols-2 gap-4 mb-6">
-        <div className="bg-white/5 rounded-xl p-4 border border-white/10">
-          <div className="flex items-center gap-2 mb-2">
-            <span className="text-lg">🛒</span>
-            <span className="text-white font-medium">Amazon Kindle</span>
-          </div>
-          <p className="text-3xl font-light text-accent-gold mb-1">
-            ${BOOK_INFO.kdpPrice}
+      <div className="bg-white/5 rounded-xl p-5 border border-accent-gold/20 mb-4">
+        <div className="flex items-baseline gap-2 mb-1">
+          <p className="text-3xl font-light text-accent-gold">
+            ${BOOK_INFO.price}
           </p>
-          <p className="text-text-gray text-sm mb-3">
-            Instant digital delivery
+          <p className="text-text-gray text-sm line-through">
+            ${BOOK_INFO.originalPrice}
           </p>
-          <a
-            href={BOOK_INFO.kdpLink}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="block w-full py-2.5 bg-gradient-to-r from-[#FF9900] to-[#FF6600] text-white text-sm font-medium rounded-lg text-center hover:opacity-90 transition-opacity"
-          >
-            Buy on Amazon
-          </a>
         </div>
-
-        <div className="bg-white/5 rounded-xl p-4 border border-accent-gold/20">
-          <div className="flex items-center gap-2 mb-2">
-            <span className="text-lg">⭐</span>
-            <span className="text-white font-medium">Premium Edition</span>
-          </div>
-          <div className="flex items-baseline gap-2 mb-1">
-            <p className="text-3xl font-light text-accent-gold">
-              ${BOOK_INFO.price}
-            </p>
-            <p className="text-text-gray text-sm line-through">
-              ${BOOK_INFO.originalPrice}
-            </p>
-          </div>
-          <p className="text-text-gray text-sm mb-3">
-            Includes exclusive bonuses
-          </p>
-          <Link
-            href="/book"
-            className="block w-full py-2.5 bg-gradient-to-r from-accent-gold to-accent-burgundy text-white text-sm font-medium rounded-lg text-center hover:opacity-90 transition-opacity"
-          >
-            Get Premium
-          </Link>
-        </div>
+        <p className="text-text-gray text-sm mb-4">
+          Premium edition with exclusive bonus chapters, instant download
+        </p>
+        <Link
+          href="/book"
+          className="block w-full py-3 bg-gradient-to-r from-accent-gold to-accent-burgundy text-white text-sm font-medium rounded-lg text-center hover:opacity-90 transition-opacity"
+        >
+          Get the Book
+        </Link>
       </div>
 
-      <div className="flex items-center gap-2 text-sm text-text-gray">
-        <svg
-          className="w-4 h-4 text-accent-gold"
-          fill="currentColor"
-          viewBox="0 0 20 20"
+      <p className="text-text-gray/70 text-sm mb-4 text-center">
+        Prefer Kindle?{" "}
+        <a
+          href={BOOK_INFO.kdpLink}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-text-gray underline underline-offset-2 hover:text-accent-gold transition-colors"
         >
-          <path
-            fillRule="evenodd"
-            d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-            clipRule="evenodd"
-          />
-        </svg>
+          Also on Amazon
+        </a>{" "}
+        (without the bonuses)
+      </p>
+
+      <div className="flex items-center gap-2 text-sm text-text-gray">
+        <Check className="w-4 h-4 text-accent-gold" />
         <span>Written by a clinically diagnosed sociopath</span>
       </div>
     </m.div>

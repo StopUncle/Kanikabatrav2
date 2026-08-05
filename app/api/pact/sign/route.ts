@@ -71,6 +71,39 @@ export async function POST(request: NextRequest) {
       },
     });
 
+    // Same welcome the paid path enqueues from lib/pact/billing.ts. This
+    // route is how every Consilium member signs (no checkout, so no
+    // webhook), and their ceremony used to end in total silence.
+    try {
+      const { buildPactWelcomeEntry } = await import("@/lib/email-sequences");
+      const recipientEmail = user.email.toLowerCase();
+      const alreadyWelcomed = await prisma.emailQueue.findFirst({
+        where: { recipientEmail, sequence: "pact-welcome" },
+        select: { id: true },
+      });
+      if (!alreadyWelcomed) {
+        // UserSession carries no name; look it up so the greeting isn't
+        // a generic "there" for every member.
+        const dbUser = await prisma.user.findUnique({
+          where: { id: user.id },
+          select: { name: true },
+        });
+        await prisma.emailQueue.create({
+          data: buildPactWelcomeEntry(recipientEmail, dbUser?.name || "there"),
+        });
+      }
+      await prisma.emailQueue.updateMany({
+        where: {
+          recipientEmail,
+          sequence: "pact-cart-abandonment",
+          status: "PENDING",
+        },
+        data: { status: "CANCELLED" },
+      });
+    } catch (err) {
+      console.error("[pact/sign] welcome enqueue failed:", err);
+    }
+
     return NextResponse.json({ success: true, pactId: pact.id });
   });
 }

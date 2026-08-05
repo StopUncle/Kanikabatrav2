@@ -42,14 +42,14 @@ export const metadata: Metadata = {
     type: "website",
     url: `${BASE_URL}/quiz/sociopath`,
     siteName: SITE_CONFIG.name,
-    images: ["/images/quiz-og.jpg"],
+    images: ["/api/og?title=The%20Sociopath%20Test&subtitle=LSRP%20calibrated.%20Written%20by%20a%20real%20one."],
   },
   twitter: {
     card: "summary_large_image",
     title: "The Sociopath Test · By a Real One",
     description:
       "LSRP-calibrated. Two subscales. Five minutes. Free. Educational, not diagnostic.",
-    images: ["/images/quiz-og.jpg"],
+    images: ["/api/og?title=The%20Sociopath%20Test&subtitle=LSRP%20calibrated.%20Written%20by%20a%20real%20one."],
   },
 };
 

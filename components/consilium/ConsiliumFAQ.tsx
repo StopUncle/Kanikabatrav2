@@ -24,7 +24,7 @@ export const CONSILIUM_FAQ: FaqItem[] = [
   },
   {
     q: "Is this only for women?",
-    a: "No. Most members are women navigating dating, family, and workplace dynamics, so the language often leans that way, but the framework names moves, not people. The simulator, the voice notes, the daily drops, the forum, all apply regardless of who's running the move on you and who you're running it against.",
+    a: "No. Most members are women navigating dating, family, and workplace dynamics, so the language often leans that way, but the framework names moves, not people. The simulator, the voice notes, the daily drops, the community feed, all apply regardless of who's running the move on you and who you're running it against.",
   },
   {
     q: "How is this different from the Sociopathic Dating Bible?",
@@ -40,7 +40,7 @@ export const CONSILIUM_FAQ: FaqItem[] = [
   },
   {
     q: "What if I just want to read, not post?",
-    a: "Lurking is encouraged. Many of our most active members never post in the feed; they watch voice notes, run simulator scenarios, and read the forum. The work happens inside you, not in a comment box. The Consilium is not a performance.",
+    a: "Lurking is encouraged. Many of our most active members never post in the feed; they watch voice notes, run simulator scenarios, and read the daily drops. The work happens inside you, not in a comment box. The Consilium is not a performance.",
   },
   {
     q: "How often does Kanika actually show up?",

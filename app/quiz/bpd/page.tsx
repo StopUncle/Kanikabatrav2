@@ -28,14 +28,14 @@ export const metadata: Metadata = {
     type: "website",
     url: `${BASE_URL}/quiz/bpd`,
     siteName: SITE_CONFIG.name,
-    images: ["/images/quiz-og.jpg"],
+    images: ["/api/og?title=The%20BPD%20Test&subtitle=MSI-BPD%20calibrated.%20Two%20minutes.%20Free."],
   },
   twitter: {
     card: "summary_large_image",
     title: "The BPD Test · MSI-BPD by Kanika Rose",
     description:
       "10 yes/no items, mapped to DSM-5 criteria. Two minutes.",
-    images: ["/images/quiz-og.jpg"],
+    images: ["/api/og?title=The%20BPD%20Test&subtitle=MSI-BPD%20calibrated.%20Two%20minutes.%20Free."],
   },
 };
 

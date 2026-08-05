@@ -59,9 +59,9 @@ export default function ConsiliumOverview({
       value: "Members only",
     },
     {
-      title: "Discussion Threads, Forum & Chat",
+      title: "Discussion Threads & Community Feed",
       detail:
-        "28 themed weekday prompts · 6 forum categories · live chat with members navigating the same patterns",
+        "28 themed weekday prompts · daily psychology drops · comment alongside members navigating the same patterns",
       value: "Community access",
     },
     {

@@ -1,7 +1,7 @@
 import { Metadata } from "next";
 import CoachingPageClient from "./CoachingPageClient";
 import JsonLd from "@/components/JsonLd";
-import { SITE_CONFIG } from "@/lib/constants";
+import { SITE_CONFIG, COACHING_PACKAGES } from "@/lib/constants";
 
 export const metadata: Metadata = {
   title: "Coaching with Kanika Batra. I Tell You What I See",
@@ -91,10 +91,39 @@ const faqSchema = {
   ],
 };
 
+// Service + Offer schema so the highest-ticket page is legible to
+// price-aware rich results and to AI assistants answering "what does
+// Kanika Batra's coaching cost". Prices come from COACHING_PACKAGES,
+// the same source the page renders, so the schema cannot drift.
+const coachingServiceSchema = {
+  "@context": "https://schema.org",
+  "@type": "Service",
+  name: "1:1 Coaching with Kanika Batra",
+  serviceType: "Strategic 1:1 coaching",
+  url: `${SITE_CONFIG.url}/coaching`,
+  description:
+    "1:1 strategic coaching for men and women. Single sessions, intensive programmes, career strategy, or ongoing retainer.",
+  provider: {
+    "@type": "Person",
+    name: "Kanika Batra",
+    url: SITE_CONFIG.url,
+  },
+  offers: COACHING_PACKAGES.map((pkg) => ({
+    "@type": "Offer",
+    name: pkg.name,
+    price: pkg.price,
+    priceCurrency: "USD",
+    url: `${SITE_CONFIG.url}/coaching`,
+    availability: "https://schema.org/InStock",
+    description: pkg.description,
+  })),
+};
+
 export default function CoachingPage() {
   return (
     <>
       <JsonLd data={faqSchema} />
+      <JsonLd data={coachingServiceSchema} />
       <CoachingPageClient />
     </>
   );

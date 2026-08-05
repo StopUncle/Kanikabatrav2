@@ -31,14 +31,14 @@ export const metadata: Metadata = {
     type: "website",
     url: `${BASE_URL}/quiz/covert-narcissist`,
     siteName: SITE_CONFIG.name,
-    images: ["/images/quiz-og.jpg"],
+    images: ["/api/og?title=The%20Covert%20Narcissist%20Test&subtitle=The%20quiet%20version%20of%20the%20loud%20disorder"],
   },
   twitter: {
     card: "summary_large_image",
     title: "The Covert Narcissist Test · HSNS by Kanika Rose",
     description:
       "Vulnerable narcissism. HSNS calibrated. Three minutes. Educational only.",
-    images: ["/images/quiz-og.jpg"],
+    images: ["/api/og?title=The%20Covert%20Narcissist%20Test&subtitle=The%20quiet%20version%20of%20the%20loud%20disorder"],
   },
 };
 

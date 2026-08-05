@@ -397,6 +397,57 @@ export async function POST(request: NextRequest) {
               },
             });
           });
+
+          // The buyer just paid. The "you looked at coaching, you did not
+          // book" nurture must stop now, or a $297-$4,997 customer keeps
+          // being pitched for not paying.
+          try {
+            await prisma.emailQueue.updateMany({
+              where: {
+                recipientEmail: email,
+                sequence: "coaching-lead-nurture",
+                status: "PENDING",
+              },
+              data: { status: "CANCELLED" },
+            });
+          } catch (err) {
+            console.error(
+              "[stripe-webhook] coaching nurture cancel failed:",
+              err,
+            );
+          }
+
+          // Confirmation with a link back into /success, where the
+          // BookingModal intake lives. Without this email, closing the
+          // success tab early left a four-figure purchase with no follow-up
+          // and no intake path.
+          try {
+            const { buildPurchaseConfirmationEmail } = await import(
+              "@/lib/email-sequences"
+            );
+            const { sendEmail } = await import("@/lib/email");
+            const confirmation = buildPurchaseConfirmationEmail(
+              name || "Customer",
+              packageNames[productKey] || "Coaching",
+              "coaching",
+              sessionId,
+            );
+            const sent = await sendEmail({
+              to: email,
+              subject: confirmation.subject,
+              html: confirmation.html,
+            });
+            if (!sent) {
+              console.error(
+                `[stripe-webhook] coaching confirmation email failed for ${email} (session ${sessionId})`,
+              );
+            }
+          } catch (err) {
+            console.error(
+              "[stripe-webhook] coaching confirmation email threw:",
+              err,
+            );
+          }
         } else if (
           ["ASK_WRITTEN_1Q", "ASK_WRITTEN_3Q", "ASK_VOICE_1Q", "ASK_VOICE_3Q"].includes(productKey)
         ) {
@@ -428,6 +479,42 @@ export async function POST(request: NextRequest) {
               },
             },
           });
+
+          // Confirm the purchase. Previously this branch wrote the row and
+          // went silent; the buyer had no proof their questions arrived.
+          try {
+            const askLabels: Record<string, string> = {
+              ASK_WRITTEN_1Q: "Your written answer (1 question)",
+              ASK_WRITTEN_3Q: "Your written answers (3 questions)",
+              ASK_VOICE_1Q: "Your voice answer (1 question)",
+              ASK_VOICE_3Q: "Your voice answers (3 questions)",
+            };
+            const { buildPurchaseConfirmationEmail } = await import(
+              "@/lib/email-sequences"
+            );
+            const { sendEmail } = await import("@/lib/email");
+            const confirmation = buildPurchaseConfirmationEmail(
+              name || "Customer",
+              askLabels[productKey] || "Your Ask Kanika pack",
+              "ask",
+              sessionId,
+            );
+            const sent = await sendEmail({
+              to: email,
+              subject: confirmation.subject,
+              html: confirmation.html,
+            });
+            if (!sent) {
+              console.error(
+                `[stripe-webhook] ask confirmation email failed for ${email} (session ${sessionId})`,
+              );
+            }
+          } catch (err) {
+            console.error(
+              "[stripe-webhook] ask confirmation email threw:",
+              err,
+            );
+          }
         } else if (
           productKey === "BOOK_CONSILIUM_1MO" ||
           productKey === "BOOK_CONSILIUM_3MO"
@@ -871,6 +958,56 @@ export async function POST(request: NextRequest) {
               },
             });
             isNewUser = true;
+          }
+
+          // Anti-double-billing guard, mirroring the bundle branch. Two
+          // checkout tabs opened before either paid both pass the create
+          // route's "already active" check; whichever webhook lands second
+          // would overwrite paypalSubscriptionId and leave the first
+          // subscription billing forever with nothing pointing at it.
+          // Cancel the newcomer instead, and write the Purchase row so a
+          // Stripe retry of this event stays idempotent.
+          const priorMembership = await prisma.communityMembership.findUnique({
+            where: { userId: user.id },
+            select: { status: true, paypalSubscriptionId: true },
+          });
+          if (
+            priorMembership?.status === "ACTIVE" &&
+            priorMembership.paypalSubscriptionId !== null &&
+            priorMembership.paypalSubscriptionId !== `ST-${subscriptionId}`
+          ) {
+            console.log(
+              `[stripe-webhook] ${productKey} buyer ${email} already has subscription ${priorMembership.paypalSubscriptionId}, cancelling duplicate sub ${subscriptionId} to prevent double-charge`,
+            );
+            try {
+              await stripe.subscriptions.cancel(subscriptionId);
+            } catch (err) {
+              console.error(
+                `[stripe-webhook] failed to cancel duplicate sub ${subscriptionId}:`,
+                err,
+              );
+            }
+            await prisma.purchase.create({
+              data: {
+                type: "BOOK",
+                productVariant: productKey,
+                userId: user.id,
+                customerEmail: email,
+                customerName: name || "Member",
+                amount,
+                status: "COMPLETED",
+                paypalOrderId: idempotencyKey,
+                metadata: {
+                  source: "stripe",
+                  sessionId,
+                  productKey,
+                  billingCycle,
+                  subscriptionId,
+                  duplicateSubscriptionCancelled: true,
+                },
+              },
+            });
+            break;
           }
 
           // Read the actual subscription period from Stripe rather than
@@ -1474,6 +1611,49 @@ export async function POST(request: NextRequest) {
         // email lookup if userId is null (e.g. auto-created accounts).
         const meta = purchase.metadata as Record<string, string> | null;
 
+        // A refunded purchase must not stay readable. Any purchase holding
+        // a book download token loses it here (BOOK, member-priced BOOK,
+        // bundles), and the quiz result the BOOK branch auto-unlocked is
+        // re-locked, unless the buyer has some other completed purchase or
+        // an active membership that would have unlocked it anyway.
+        if (purchase.downloadToken) {
+          await prisma.purchase.update({
+            where: { id: purchase.id },
+            data: { downloadToken: null },
+          });
+          try {
+            const otherPurchase = await prisma.purchase.findFirst({
+              where: {
+                customerEmail: purchase.customerEmail,
+                status: "COMPLETED",
+                id: { not: purchase.id },
+              },
+              select: { id: true },
+            });
+            const refundedUser = await prisma.user.findUnique({
+              where: { email: purchase.customerEmail },
+              select: { id: true },
+            });
+            const activeMembership = refundedUser
+              ? await prisma.communityMembership.findFirst({
+                  where: { userId: refundedUser.id, status: "ACTIVE" },
+                  select: { id: true },
+                })
+              : null;
+            if (!otherPurchase && !activeMembership) {
+              await prisma.quizResult.updateMany({
+                where: { email: purchase.customerEmail, paid: true },
+                data: { paid: false },
+              });
+            }
+          } catch (err) {
+            console.error(
+              "[stripe-webhook] quiz re-lock after refund failed:",
+              err,
+            );
+          }
+        }
+
         // A refunded pact ends the same way a deleted subscription does:
         // membership cancelled, scar stamped.
         if (meta?.productKey && isPactProductKey(meta.productKey)) {
@@ -1519,6 +1699,106 @@ export async function POST(request: NextRequest) {
               `[stripe-webhook] cancelled membership for refunded ${meta?.productKey} user ${user.email}`,
             );
           }
+        }
+        break;
+      }
+
+      case "checkout.session.expired": {
+        // The other half of abandoned-checkout recovery. Session creation
+        // (lib/stripe.ts) enables `after_expiration.recovery` on payment-
+        // mode sessions; Stripe attaches a recovery URL when the session
+        // expires and it is OURS to deliver. Without this case, that URL
+        // was generated and read by nothing.
+        const session = event.data.object;
+        const recoveryUrl = session.after_expiration?.recovery?.url;
+        if (!recoveryUrl) break;
+
+        const rawEmail =
+          session.customer_email || session.customer_details?.email;
+        const email = rawEmail?.toLowerCase();
+        // No address entered = nobody to recover. Consent opt_out = the
+        // buyer explicitly declined follow-up at checkout; respect it.
+        if (!email) break;
+        if (session.consent?.promotions === "opt_out") break;
+
+        // Whoever paid since this session was opened (a fresh checkout for
+        // the same thing, most likely) must not be told to come back.
+        const paidSince = await prisma.purchase.findFirst({
+          where: {
+            customerEmail: email,
+            status: "COMPLETED",
+            createdAt: { gte: new Date((session.created ?? 0) * 1000) },
+          },
+          select: { id: true },
+        });
+        if (paidSince) break;
+
+        // The internal abandonment drips (consilium, quiz, pact) already
+        // cover their own funnels with better copy. If one is pending for
+        // this address, stay out of the way rather than double-email.
+        const pendingDrip = await prisma.emailQueue.findFirst({
+          where: {
+            recipientEmail: email,
+            sequence: {
+              in: [
+                "consilium-cart-abandonment",
+                "quiz-unlock-abandonment",
+                "pact-cart-abandonment",
+              ],
+            },
+            status: "PENDING",
+          },
+          select: { id: true },
+        });
+        if (pendingDrip) break;
+
+        // One recovery email per session, ever. Stripe retries webhooks.
+        const alreadyQueued = await prisma.emailQueue.findFirst({
+          where: {
+            sequence: "checkout-recovery",
+            metadata: { path: ["stripeSessionId"], equals: session.id },
+          },
+          select: { id: true },
+        });
+        if (alreadyQueued) break;
+
+        const productLabels: Record<string, string> = {
+          BOOK: "the Sociopathic Dating Bible",
+          BOOK_MEMBER: "the Sociopathic Dating Bible",
+          COACHING_SINGLE: "your coaching session",
+          COACHING_CLARITY: "your Clarity Pack",
+          COACHING_INTENSIVE: "your coaching intensive",
+          COACHING_CAREER: "your career coaching",
+          COACHING_RETAINER: "your coaching retainer",
+          ASK_WRITTEN_1Q: "your question for Kanika",
+          ASK_WRITTEN_3Q: "your questions for Kanika",
+          ASK_VOICE_1Q: "your question for Kanika",
+          ASK_VOICE_3Q: "your questions for Kanika",
+        };
+        const productKey = session.metadata?.product_key ?? "";
+        const productLabel =
+          productLabels[productKey] || "what you picked out";
+
+        try {
+          const { buildCheckoutRecoveryEntry } = await import(
+            "@/lib/email-sequences"
+          );
+          const entry = buildCheckoutRecoveryEntry(
+            email,
+            session.customer_details?.name || email.split("@")[0] || "you",
+            productLabel,
+            recoveryUrl,
+            session.id,
+          );
+          await prisma.emailQueue.create({ data: entry });
+          console.log(
+            `[stripe-webhook] checkout recovery queued for ${email} (session ${session.id}, ${productKey || "unknown product"})`,
+          );
+        } catch (err) {
+          console.error(
+            "[stripe-webhook] checkout recovery enqueue failed:",
+            err,
+          );
         }
         break;
       }

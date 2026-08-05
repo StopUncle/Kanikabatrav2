@@ -67,13 +67,13 @@ export function middleware(request: NextRequest) {
   //   /community/*    -> /consilium/*   (community was merged in Apr 2026)
   //   /inner-circle/* -> /consilium/*   (rebrand in Apr 2026)
   const { pathname } = request.nextUrl;
-  if (pathname.startsWith("/community")) {
-    const newPath = pathname
-      .replace(/^\/community\/forum/, "/consilium/forum")
-      .replace(/^\/community\/chat/, "/consilium/chat")
-      .replace(/^\/community$/, "/consilium/feed");
+  if (pathname === "/community" || pathname.startsWith("/community/")) {
+    // Everything under the old prefix lands on the feed. Forum and chat are
+    // retired (their /consilium pages 302 to the feed anyway), and mapping
+    // only known paths left the rest 301-ing to themselves — an infinite
+    // redirect loop that browsers cache.
     const base = `https://${host}`;
-    return NextResponse.redirect(`${base}${newPath}${request.nextUrl.search}`, 301);
+    return NextResponse.redirect(`${base}/consilium/feed`, 301);
   }
   if (pathname.startsWith("/inner-circle")) {
     const newPath = pathname.replace(/^\/inner-circle/, "/consilium");
@@ -81,7 +81,52 @@ export function middleware(request: NextRequest) {
     return NextResponse.redirect(`${base}${newPath}${request.nextUrl.search}`, 301);
   }
 
-  const response = NextResponse.next();
+  // App entry fast path. A request for the app with no session cookie at
+  // all can only ever end in a bounce to /login, but that bounce used to
+  // be paid AFTER the page shell started streaming: the splash painted,
+  // then the client hopped. Deciding here makes it one instant redirect
+  // with nothing drawn in between. Cookie PRESENCE is not authentication,
+  // the server components still verify; a stale cookie just falls through
+  // to the old path.
+  if (
+    pathname === "/start" ||
+    pathname === "/app" ||
+    pathname.startsWith("/app/")
+  ) {
+    const hasSession =
+      request.cookies.has("accessToken") ||
+      request.cookies.has("refreshToken") ||
+      request.cookies.has("admin_session");
+    if (!hasSession) {
+      // Same host-string construction as the www redirect above: behind
+      // Railway's proxy, nextUrl.clone() can leak the internal port.
+      const proto = host.startsWith("localhost") || host.startsWith("127.")
+        ? "http"
+        : "https";
+      const target = encodeURIComponent(pathname + request.nextUrl.search);
+      // /start is the PWA front door (manifest start_url, QR scans, install
+      // links), so a cold visitor there has probably never had an account.
+      // Registration is the right first screen; a deep link into /app/* is
+      // far more likely an existing member with an expired jar, so login.
+      const entry = pathname === "/start" ? "register" : "login";
+      const param = entry === "register" ? "returnTo" : "redirect";
+      return NextResponse.redirect(
+        `${proto}://${host}/${entry}?${param}=${target}`,
+        307,
+      );
+    }
+  }
+
+  // Forward the public pathname to server components. Layouts cannot see
+  // the URL they are rendering for, so requireServerAuth used to hardcode
+  // "/app" as its post-login destination and a stale-cookie visitor lost
+  // their deep link. The rewrite (/app/* -> /hub/*) happens after
+  // middleware, so this is the URL the visitor actually typed.
+  const requestHeaders = new Headers(request.headers);
+  requestHeaders.set("x-pathname", pathname + request.nextUrl.search);
+  const response = NextResponse.next({
+    request: { headers: requestHeaders },
+  });
 
   // Report-only mode — violations will log to the browser console and to
   // any report-uri we configure later. Does NOT block anything.

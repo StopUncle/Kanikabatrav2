@@ -31,14 +31,14 @@ export const metadata: Metadata = {
     type: "website",
     url: `${BASE_URL}/quiz/narcissist`,
     siteName: SITE_CONFIG.name,
-    images: ["/images/quiz-og.jpg"],
+    images: ["/api/og?title=The%20Narcissist%20Test&subtitle=NPI-40%20calibrated.%20Read%20by%20a%20real%20one."],
   },
   twitter: {
     card: "summary_large_image",
     title: "The Narcissist Test · NPI-40 by Kanika Rose",
     description:
       "NPI-40 calibrated. Two subscales. Seven minutes. Educational only.",
-    images: ["/images/quiz-og.jpg"],
+    images: ["/api/og?title=The%20Narcissist%20Test&subtitle=NPI-40%20calibrated.%20Read%20by%20a%20real%20one."],
   },
 };
 

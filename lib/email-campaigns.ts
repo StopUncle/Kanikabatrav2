@@ -16,6 +16,7 @@
  */
 import { prisma } from "@/lib/prisma";
 import { marketingFooterHtml } from "@/lib/email-marketing";
+import { MEMBERSHIP } from "@/lib/constants";
 import type { UnsubscribeType } from "@/lib/unsubscribe-token";
 
 export type CampaignId =
@@ -181,7 +182,7 @@ const consilium: CampaignDef = {
           A private community for people who are done getting blindsided. Daily psychology drops. Voice notes from me — raw, unedited. The full simulator. The full course library. Live chat with people who think the way you've been afraid to admit you think.
         </p>
         <p style="font-size:15.5px;line-height:1.7;color:#efe7d6;margin:0 0 18px 0;">
-          Members get the Sociopathic Dating Bible at $9.99 (normally $24.99) as a separate purchase. Or grab the book + 1-month bundle for $39 from the book page if you want both at once. <strong style="color:#f3d98a;">$29/month, cancel anytime.</strong>
+          Members get the Sociopathic Dating Bible at $9.99 (normally $24.99) as a separate purchase. Or grab the book + 1-month bundle for $39 from the book page if you want both at once. <strong style="color:#f3d98a;">${MEMBERSHIP.priceDisplay}/month, cancel anytime.</strong>
         </p>
         <p style="font-size:15.5px;line-height:1.7;color:#efe7d6;margin:0 0 28px 0;">
           Twenty-nine people in there right now. The vibe is "smart, slightly feral, refuses to be polite about being lied to." If that's you, step inside.
@@ -259,7 +260,7 @@ const askKanika: CampaignDef = {
           This isn't a coaching call. It's not a course module. It's the closest thing to <strong style="color:#f3d98a;">unfiltered access</strong> I'm willing to give &mdash; and it lives inside the Consilium for the same reason the simulator does: the room has to stay tight.
         </p>
         <p style="font-size:15.5px;line-height:1.7;color:#efe7d6;margin:0 0 28px 0;">
-          <strong style="color:#f3d98a;">$29/month.</strong> Cancel anytime. The book comes free with it. The simulator, the courses, the daily psychology drops, and now this.
+          <strong style="color:#f3d98a;">${MEMBERSHIP.priceDisplay}/month.</strong> Cancel anytime. Member pricing on the book, $9.99 instead of $24.99. The simulator, the daily psychology drops, and now this.
         </p>
       `,
       withUtm("/consilium", "drip-ask-kanika"),

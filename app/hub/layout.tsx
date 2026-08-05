@@ -1,4 +1,5 @@
 import { redirect } from "next/navigation";
+import { headers } from "next/headers";
 import { Fraunces, Instrument_Sans } from "next/font/google";
 import { requireServerAuth } from "@/lib/auth/server-auth";
 import { getAccess, canAccessMemberOnly } from "@/lib/access/tier";
@@ -9,6 +10,7 @@ import PhoneHandoff from "@/components/app-shell/PhoneHandoff";
 import ServiceWorkerRegister from "@/components/pwa/ServiceWorkerRegister";
 import AnalyticsIdentify from "@/components/analytics/AnalyticsIdentify";
 import NotificationPrompt from "@/components/pwa/NotificationPrompt";
+import InstallPrompt from "@/components/pwa/InstallPrompt";
 
 /**
  * The app shell: the mobile-first member experience at /app. Phone-width
@@ -57,7 +59,13 @@ export default async function AppShellLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const userId = await requireServerAuth("/app");
+  // The real deep link, forwarded by middleware as x-pathname. With the
+  // literal "/app" here, a member holding a stale cookie who tapped an
+  // emailed /app/pact/week link logged in and landed on the app home
+  // instead of the week they were sent to.
+  const headerList = await headers();
+  const returnPath = headerList.get("x-pathname") || "/app";
+  const userId = await requireServerAuth(returnPath);
   const access = await getAccess(userId);
 
   const [baselineAttempts, completedRuns] = await Promise.all([
@@ -79,7 +87,7 @@ export default async function AppShellLayout({
   return (
     <div
       data-app-shell
-      className={`${fraunces.variable} ${instrument.variable} h-[100dvh] overflow-hidden bg-[var(--app-void)]`}
+      className={`${fraunces.variable} ${instrument.variable} h-[100dvh] overflow-hidden bg-[var(--app-void)] lg:overflow-y-auto`}
       style={{ fontFamily: "var(--font-ui)" }}
     >
       {/* On a wide screen the app sits in its phone column with the handoff
@@ -93,8 +101,21 @@ export default async function AppShellLayout({
           slides around as the address bar collapses and expands. As the
           last row of a container that is exactly one viewport tall, it
           cannot move, and the app stops feeling like a web page. */}
-      <div className="mx-auto flex h-[100dvh] w-full max-w-[430px] items-start justify-center lg:max-w-5xl lg:gap-14 lg:px-8 lg:py-10">
-        <div className="relative flex h-[100dvh] w-full max-w-[430px] shrink-0 flex-col overflow-hidden bg-[var(--app-black)] text-[var(--app-text)] lg:h-[844px] lg:rounded-[44px] lg:border lg:border-[var(--app-frame)] lg:shadow-[0_30px_80px_rgba(0,0,0,0.6)]">
+      {/* The desktop frame FITS the window instead of assuming 844px of
+          room: a fixed-height frame inside a non-scrolling viewport put
+          the bottom of the app (and every submit button) below the fold
+          on any screen shorter than ~925px, with no way to reach it.
+          clamp() shrinks the frame to the window (minus the py-10
+          breathing room) down to a 560px floor; below that the root
+          scrolls (lg:overflow-y-auto above) rather than clipping. */}
+      <div className="mx-auto flex h-[100dvh] w-full max-w-[430px] items-start justify-center lg:h-auto lg:min-h-[100dvh] lg:max-w-5xl lg:gap-14 lg:px-8 lg:py-10">
+        <div className="relative flex h-[100dvh] w-full max-w-[430px] shrink-0 flex-col overflow-hidden bg-[var(--app-black)] text-[var(--app-text)] lg:h-[clamp(560px,100dvh-5rem,844px)] lg:rounded-[44px] lg:border lg:border-[var(--app-frame)] lg:shadow-[0_30px_80px_rgba(0,0,0,0.6)]">
+          {/* Beta tag: honest about the app's state while testers are in.
+              Pinned to the frame, not a page, so every surface carries it.
+              pointer-events-none: it can never block a tap. */}
+          <div className="pointer-events-none absolute left-1/2 top-2 z-50 -translate-x-1/2 rounded-full border border-[var(--app-line)] bg-[var(--app-black)]/80 px-2.5 py-0.5 text-[9px] uppercase tracking-[0.24em] text-[var(--app-dim)]">
+            Beta
+          </div>
           {/* min-h-0 is load-bearing: without it a flex child refuses to
               shrink below its content and the scroll never engages. */}
           <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain">
@@ -132,6 +153,13 @@ export default async function AppShellLayout({
           access.isMember ? baselineAttempts > 0 : completedRuns > 0
         }
       />
+      {/* The install offer, on every visit until installed or dismissed.
+          A QR scan can only OPEN the app in the browser; no phone lets a
+          web page install itself. This banner is the step between the
+          scan and the home screen: Android gets the native install
+          dialog, iOS gets the Add to Home Screen walkthrough. Hides
+          itself once installed; a dismissal holds for 14 days. */}
+      <InstallPrompt />
     </div>
   );
 }

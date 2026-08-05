@@ -184,10 +184,22 @@ export async function handlePactCheckoutCompleted(opts: {
   // abandonment nags, which would read absurd arriving after a signature.
   try {
     const recipientEmail = email.toLowerCase();
+    // Same list the Consilium branch cancels: a paying Pact member must
+    // not keep receiving free-tier onboarding or dormancy nudges, and the
+    // winback pitch is moot the moment a subscription exists.
     await prisma.emailQueue.updateMany({
       where: {
         recipientEmail,
-        sequence: "pact-cart-abandonment",
+        sequence: {
+          in: [
+            "pact-cart-abandonment",
+            "consilium-cart-abandonment",
+            "quiz-unlock-abandonment",
+            "consilium-winback",
+            "free-onboarding",
+            "free-dormant-reengagement",
+          ],
+        },
         status: "PENDING",
       },
       data: { status: "CANCELLED" },

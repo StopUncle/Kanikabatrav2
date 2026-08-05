@@ -124,7 +124,7 @@ export default async function JoinPage({
           <div className="w-16 h-px bg-warm-gold/30 mx-auto mt-4 mb-5" />
           <p className="text-text-gray font-light max-w-md mx-auto">
             One subscription. Instant access to the simulator, voice
-            notes, the classroom, and the council.
+            notes, daily drops, and the council.
           </p>
         </div>
 

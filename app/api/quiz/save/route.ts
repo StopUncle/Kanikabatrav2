@@ -94,11 +94,13 @@ export async function POST(request: NextRequest) {
     if (!quizResult.paid) {
       try {
         const recipientEmail = user.email.toLowerCase();
+        // No status filter on purpose: once the drip has fully SENT, a
+        // retake used to re-enqueue the whole "no more reminders" close
+        // to the same address. One drip per email, ever.
         const existing = await prisma.emailQueue.findFirst({
           where: {
             recipientEmail,
             sequence: "quiz-unlock-abandonment",
-            status: "PENDING",
           },
           select: { id: true },
         });

@@ -13,7 +13,9 @@ import { readSafeRedirect } from "@/lib/auth/safe-redirect";
 
 const loginSchema = z.object({
   email: z.string().email("Invalid email address"),
-  password: z.string().min(8, "Password must be at least 8 characters"),
+  // No length rule on login: accounts created under older password policies
+  // must still be able to authenticate. The server decides if it matches.
+  password: z.string().min(1, "Enter your password"),
 });
 
 type LoginFormData = z.infer<typeof loginSchema>;
@@ -73,12 +75,23 @@ export default function LoginForm() {
       }
 
       // Login successful. Explicit returnTo wins; otherwise active members
-      // land in the Consilium and everyone else on the dashboard. The app
-      // is sealed, so it is nobody's landing page.
-      router.push(
-        returnTo || (result.isActiveMember ? "/consilium/feed" : "/dashboard"),
-      );
-      router.refresh();
+      // land in the Consilium and everyone else on the dashboard. A
+      // returnTo of /start is resolved HERE instead of pushed: /start
+      // would only look up the same membership state we already hold and
+      // hop again, and every hop paints.
+      let destination =
+        returnTo || (result.isActiveMember ? "/consilium/feed" : "/dashboard");
+      if (destination === "/start") {
+        destination = result.isActiveMember ? "/consilium/feed" : "/app";
+      }
+      router.push(destination);
+      // Refresh re-renders the server components of the CURRENT tree so
+      // the marketing header flips from Login to Profile. The app shell
+      // has no marketing chrome, and refreshing it re-suspends the screen
+      // that just landed: a visible double paint for nothing.
+      if (!destination.startsWith("/app")) {
+        router.refresh();
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : "Login failed");
     } finally {

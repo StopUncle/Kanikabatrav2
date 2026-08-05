@@ -8,10 +8,10 @@ import { QUIZ_INFO } from "@/lib/quiz-data";
 
 const includedLines = (stats: CatalogueStats) => [
   `The Dark Mirror Simulator, ${stats.scenarios} branching scenarios across ${stats.tracks} tracks`,
-  "Full course library, dark psychology, pattern recognition, career strategy",
+  "Ask Kanika, one question a day, top-voted answered by voice or video",
   "Voice notes from Kanika, raw, unfiltered, members-only",
   "Daily psychology drops + discussion prompts",
-  "Forum + live chat with the council",
+  "Receipts, AI message analysis, member edition",
   "Member price on the Sociopathic Dating Bible, $9.99 (vs $24.99)",
 ];
 

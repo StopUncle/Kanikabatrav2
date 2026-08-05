@@ -31,14 +31,14 @@ export const metadata: Metadata = {
     type: "website",
     url: `${BASE_URL}/quiz/dating-sociopath`,
     siteName: SITE_CONFIG.name,
-    images: ["/images/quiz-og.jpg"],
+    images: ["/api/og?title=Are%20You%20Dating%20a%20Sociopath%3F&subtitle=Twenty%20scenarios.%20Two%20axes.%20Free."],
   },
   twitter: {
     card: "summary_large_image",
     title: "Are You Dating a Sociopath? · By Kanika Rose",
     description:
       "20-scenario partner-detection quiz. Two axes. Six minutes. Free.",
-    images: ["/images/quiz-og.jpg"],
+    images: ["/api/og?title=Are%20You%20Dating%20a%20Sociopath%3F&subtitle=Twenty%20scenarios.%20Two%20axes.%20Free."],
   },
 };
 

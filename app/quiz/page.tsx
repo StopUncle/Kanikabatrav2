@@ -33,14 +33,14 @@ export const metadata: Metadata = {
     type: "website",
     url: `${BASE_URL}/quiz`,
     siteName: SITE_CONFIG.name,
-    images: ["/images/quiz-og.jpg"],
+    images: ["/api/og?title=The%20Dark%20Mirror%20Assessment&subtitle=Six%20types.%20Twenty%20scenarios.%20Free%20to%20take."],
   },
   twitter: {
     card: "summary_large_image",
     title: "The Dark Mirror Assessment",
     description:
       "Six personality types. Twenty scenarios. Five minutes. See what's really looking back.",
-    images: ["/images/quiz-og.jpg"],
+    images: ["/api/og?title=The%20Dark%20Mirror%20Assessment&subtitle=Six%20types.%20Twenty%20scenarios.%20Free%20to%20take."],
   },
 };
 

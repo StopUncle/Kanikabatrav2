@@ -13,6 +13,7 @@ import PostCard from "@/components/blog/PostCard";
 import ConsiliumSimulatorTeaser from "@/components/consilium/ConsiliumSimulatorTeaser";
 import ConsiliumOverview from "@/components/consilium/ConsiliumOverview";
 import { getAllPosts } from "@/lib/mdx";
+import { getFeaturedTestimonials } from "@/lib/testimonials";
 import { SITE_CONFIG, MEMBERSHIP } from "@/lib/constants";
 import { catalogueStats } from "@/lib/simulator/stats";
 import JsonLd from "@/components/JsonLd";
@@ -61,8 +62,14 @@ export const metadata: Metadata = {
   },
 };
 
-export default function Home() {
+export default async function Home() {
   const latestPosts = getAllPosts().slice(0, 3);
+  // Real social proof over the hardcoded anonymous quote. The admin-managed
+  // testimonial pool already feeds /consilium; the homepage is where the
+  // book and membership decision is made, so it gets the strongest quote.
+  const featuredTestimonial = (await getFeaturedTestimonials(3)).find(
+    (t) => t.quoteText,
+  );
 
   return (
     <>
@@ -121,7 +128,11 @@ export default function Home() {
         <ConsiliumSimulatorTeaser variant="homepage" />
 
         <section id="testimonials">
-          <Testimonial />
+          <Testimonial
+            quote={featuredTestimonial?.quoteText}
+            author={featuredTestimonial?.authorName}
+            role={featuredTestimonial?.authorRole}
+          />
         </section>
 
         {/* Premium tier */}
@@ -235,7 +246,7 @@ export default function Home() {
                 </h3>
                 <p className="text-text-gray text-sm font-light leading-relaxed mb-6">
                   {catalogueStats.scenarios} branching scenarios. {catalogueStats.scenes} scenes. {catalogueStats.tacticsTaught} manipulation tactics
-                  to spot. Plus voice notes, forum, and courses.
+                  to spot. Plus voice notes, daily drops, and Ask Kanika.
                 </p>
                 <div className="inline-flex items-center gap-2 text-warm-gold text-sm font-medium uppercase tracking-wider">
                   Step inside

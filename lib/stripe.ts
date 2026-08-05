@@ -60,10 +60,13 @@ export const STRIPE_PRICES: Record<string, string> = {
    */
   INNER_CIRCLE_NEW_9: "price_1TyFx2Jv9vx5CHTwBLpMLCze",
   /**
-   * Annual Consilium plan. $90/year = two months free against $9/mo. Same
-   * Stripe product as INNER_CIRCLE so members bill under one brand line.
-   * Annual subscribers churn ~51% less than monthly (Recurly benchmark).
-   * Nobody was on the old $290 annual price when it was replaced.
+   * Annual Consilium plan. Still the original $290/year price: like the
+   * monthly price above, the 2026-07-28 reset briefly pointed this at the
+   * $90 price and was reverted before it reached customers. The reset has
+   * since been repriced to $19.99/mo, which needs a NEW annual price
+   * before launch. Same Stripe product as INNER_CIRCLE so members bill
+   * under one brand line. Annual subscribers churn ~51% less than monthly
+   * (Recurly benchmark).
    */
   INNER_CIRCLE_ANNUAL: "price_1TY0ggJv9vx5CHTw87YoIcZn",
   /** The $90/yr price, created 2026-07-28. Unused until the reset ships. */
@@ -190,15 +193,24 @@ export async function createCheckoutSession(options: {
     // $4,997 coaching checkout, and nothing followed any of them up.
     //
     // `enabled` makes Stripe attach a recovery URL to the session when it
-    // expires. The email that carries that URL is a Dashboard setting
-    // (Settings, Checkout and Payment Links, abandoned cart emails), so this
-    // is the half that lives in code and the toggle is the other half.
+    // expires. The email that carries that URL is OURS to send: the
+    // checkout.session.expired webhook handler reads the URL and enqueues
+    // the recovery email. `consent_collection` is what makes the buyer's
+    // email usable for that follow-up (Stripe shows a consent checkbox only
+    // in jurisdictions that require one), and the expired handler skips
+    // anyone whose consent came back opt_out.
+    //
+    // The one-hour `expires_at` (Stripe's default is 24h, floor is 30min)
+    // is what makes recovery timely: the follow-up lands while the intent
+    // is still warm, not a day later.
     //
     // Payment mode only, on purpose. Subscription sessions are the Consilium
     // and the book bundles, a live revenue path, and this is not the change
     // to find out on production whether Stripe accepts the parameter there.
     ...(options.mode === "payment"
       ? {
+          consent_collection: { promotions: "auto" as const },
+          expires_at: Math.floor(Date.now() / 1000) + 60 * 60,
           after_expiration: {
             recovery: {
               enabled: true,

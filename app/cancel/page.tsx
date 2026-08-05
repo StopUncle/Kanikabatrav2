@@ -11,6 +11,7 @@ import Card from "@/components/ui/Card";
 import Button from "@/components/ui/Button";
 import KanikaroseLogo from "@/components/KanikaroseLogo";
 import { logger } from "@/lib/logger";
+import { BOOK_INFO } from "@/lib/constants";
 
 function CancelContent() {
   const searchParams = useSearchParams();
@@ -189,9 +190,9 @@ function CancelContent() {
                   Sociopathic Dating Bible
                 </h3>
                 <p className="text-text-muted text-sm mb-4">
-                  Psychology of Power - $34.99
+                  Psychology of Power - ${BOOK_INFO.price}
                 </p>
-                <Link href="/#book">
+                <Link href="/book">
                   <Button variant="primary" fullWidth>
                     Get the Book
                   </Button>

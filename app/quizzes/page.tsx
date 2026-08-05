@@ -51,14 +51,14 @@ export const metadata: Metadata = {
     type: "website",
     url: `${BASE_URL}/quizzes`,
     siteName: SITE_CONFIG.name,
-    images: ["/images/quiz-og.jpg"],
+    images: ["/api/og?title=The%20Quiz%20Suite&subtitle=Eight%20assessments%2C%20one%20author.%20All%20free."],
   },
   twitter: {
     card: "summary_large_image",
     title: "Eight Personality Quizzes by Kanika Batra",
     description:
       "Sociopath, Narcissist, Covert Narcissist, Dark Triad, BPD, plus partner-detection and the Daughter Pattern. All free.",
-    images: ["/images/quiz-og.jpg"],
+    images: ["/api/og?title=The%20Quiz%20Suite&subtitle=Eight%20assessments%2C%20one%20author.%20All%20free."],
   },
 };
 

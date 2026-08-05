@@ -31,14 +31,14 @@ export const metadata: Metadata = {
     type: "website",
     url: `${BASE_URL}/quiz/dark-triad`,
     siteName: SITE_CONFIG.name,
-    images: ["/images/quiz-og.jpg"],
+    images: ["/api/og?title=The%20Dark%20Triad%20Test&subtitle=SD3%20calibrated.%20Read%20by%20a%20real%20one."],
   },
   twitter: {
     card: "summary_large_image",
     title: "The Dark Triad Test · SD3 by Kanika Rose",
     description:
       "Three axes, wide map, calibrated norms. Five minutes.",
-    images: ["/images/quiz-og.jpg"],
+    images: ["/api/og?title=The%20Dark%20Triad%20Test&subtitle=SD3%20calibrated.%20Read%20by%20a%20real%20one."],
   },
 };
 

@@ -70,7 +70,7 @@ const Footer = () => {
   const footerLinks = {
     explore: [
       { name: "About", href: "/about" },
-      { name: "The Book", href: "/#book" },
+      { name: "The Book", href: "/book" },
       { name: "Quiz", href: "/quiz" },
       // Free Receipts shipped in June as the top-of-funnel lead magnet and
       // was then linked from nowhere: not the header, not here, not the

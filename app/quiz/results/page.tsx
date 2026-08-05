@@ -190,18 +190,35 @@ export default function QuizResultsPage() {
         }
       }
 
-      // Load results from DB
+      // Load results from DB. Returning from Stripe is a race: the
+      // redirect usually beats the webhook that flips paid=true, and a
+      // single fetch at that moment re-showed the paywall the buyer just
+      // paid to remove. When the URL carries a session_id (only Stripe's
+      // success redirect puts it there), poll briefly until the unlock
+      // lands instead of trusting the first answer.
       try {
-        const resultsRes = await fetch("/api/quiz/my-results");
-        if (resultsRes.status === 404) {
+        const cameFromCheckout =
+          typeof window !== "undefined" &&
+          new URLSearchParams(window.location.search).has("session_id");
+        const maxAttempts = cameFromCheckout ? 6 : 1;
+        let data: ApiQuizResult | null = null;
+        for (let attempt = 0; attempt < maxAttempts; attempt++) {
+          const resultsRes = await fetch("/api/quiz/my-results");
+          if (resultsRes.ok) {
+            data = (await resultsRes.json()) as ApiQuizResult;
+            if (data.unlocked) break;
+          } else if (!cameFromCheckout) {
+            setPageState("no-results");
+            return;
+          }
+          if (attempt < maxAttempts - 1) {
+            await new Promise((resolve) => setTimeout(resolve, 1500));
+          }
+        }
+        if (!data) {
           setPageState("no-results");
           return;
         }
-        if (!resultsRes.ok) {
-          setPageState("no-results");
-          return;
-        }
-        const data = (await resultsRes.json()) as ApiQuizResult;
         setApiData(data);
         setPageState(data.unlocked ? "unlocked" : "locked");
       } catch {
@@ -681,7 +698,7 @@ export default function QuizResultsPage() {
                     price="$9.99"
                     email={email}
                     metadata={{ quizResultId: apiData?.quizResultId || "" }}
-                    successUrl={`${typeof window !== "undefined" ? window.location.origin : ""}/quiz/results`}
+                    successUrl={`${typeof window !== "undefined" ? window.location.origin : ""}/quiz/results?session_id={CHECKOUT_SESSION_ID}`}
                   />
 
                   <button

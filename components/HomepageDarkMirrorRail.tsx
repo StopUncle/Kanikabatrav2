@@ -28,7 +28,7 @@ const PATHS = [
   },
   {
     href: "/quiz",
-    meta: "$9.99",
+    meta: "Free to take",
     title: "Full Assessment",
   },
 ];

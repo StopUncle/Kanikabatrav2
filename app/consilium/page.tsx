@@ -16,7 +16,7 @@ import { catalogueStats } from "@/lib/simulator/stats";
 
 export const metadata = {
   title: "The Consilium | Kanika Batra",
-  description: `Home of the Dark Mirror Simulator. Duolingo for dark psychology. ${catalogueStats.scenarios} branching scenarios, ${catalogueStats.scenes} scenes, ${catalogueStats.tacticsTaught} manipulation tactics to learn to spot. Plus courses, voice notes, and a private community.`,
+  description: `Home of the Dark Mirror Simulator. Duolingo for dark psychology. ${catalogueStats.scenarios} branching scenarios, ${catalogueStats.scenes} scenes, ${catalogueStats.tacticsTaught} manipulation tactics to learn to spot. Plus voice notes, daily drops, and a private community.`,
 };
 
 export default async function InnerCircleLanding({
@@ -49,13 +49,13 @@ export default async function InnerCircleLanding({
       heading: "Practice",
       items: [
         `The Dark Mirror Simulator, ${catalogueStats.scenarios} branching scenarios across ${catalogueStats.tracks} tracks, ${catalogueStats.tacticsTaught} manipulation tactics to learn to spot`,
-        "New scenarios, courses, and content added regularly",
+        "New scenarios and content added regularly",
       ],
     },
     {
       heading: "Access",
       items: [
-        "Full course library, dark psychology, pattern recognition, career strategy",
+        "Receipts, AI analysis of the messages you can't decode, member edition",
         "Voice notes from Kanika, raw insights you won't hear anywhere else",
         "Member-exclusive pricing on the Sociopathic Dating Bible, $9.99 (normally $24.99)",
       ],
@@ -64,7 +64,7 @@ export default async function InnerCircleLanding({
       heading: "People",
       items: [
         "Community feed, daily insights, discussion prompts, and posts from Kanika",
-        "Forum and live chat, connect with members who see what you see",
+        "Ask Kanika, one question a day, top-voted answered by voice or video",
       ],
     },
   ];
