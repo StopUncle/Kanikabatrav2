@@ -1384,6 +1384,99 @@ function buildNewsletterStep3(name: string): string {
   );
 }
 
+function buildTryDripStep1(name: string): string {
+  const body = `
+    <p style="color: #f5f0ed; font-size: 16px; margin: 0 0 20px 0; line-height: 1.7;">
+      ${esc(name)}, you finished the scenario. Most people close the tab at the first hard choice.
+    </p>
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 20px 0; font-size: 15px;">
+      That is your read: you stayed in the conversation while it was working on you, and you saw the ending your choices earned. The next scenario picks up where that instinct left off, and it is free. A free account is the whole price: no card, nothing to cancel.
+    </p>
+    ${goldButton("Play your next scenario", `${baseUrl}/start?src=try-drip-1`)}
+  `;
+  return emailShell("Your read", "And the next scenario", body);
+}
+
+function buildTryDripStep2(name: string): string {
+  const body = `
+    <p style="color: #f5f0ed; font-size: 16px; margin: 0 0 20px 0; line-height: 1.7;">
+      ${esc(name)}, the second scenario is the one that catches people.
+    </p>
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 20px 0; font-size: 15px;">
+      The first one you played on instinct. The second one names the tactics as they happen, and once a move has a name you start seeing it in your own messages. That is the whole method: recognition first, response second.
+    </p>
+    ${goldButton("Keep playing, free", `${baseUrl}/start?src=try-drip-2`)}
+  `;
+  return emailShell("The one that catches people", "Scenario two is waiting", body);
+}
+
+function buildTryDripStep3(name: string): string {
+  const body = `
+    <p style="color: #f5f0ed; font-size: 16px; margin: 0 0 20px 0; line-height: 1.7;">
+      ${esc(name)}, last nudge from me on this.
+    </p>
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 20px 0; font-size: 15px;">
+      Your third free scenario is on the board. Past it sits the full catalog: every track, the daily drills, voice notes, the community reading the same patterns you are. That half is ${MEMBERSHIP.priceDisplay} a month and cancels in one click, but the free half alone is worth your ten minutes.
+    </p>
+    ${goldButton("Play the third scenario", `${baseUrl}/start?src=try-drip-3`)}
+  `;
+  return emailShell("The last free one", "Then you decide", body);
+}
+
+/**
+ * Drip for /try demo finishers who left an email. The ending screen
+ * promises "your read plus three more scenarios, free"; this is what
+ * delivers on it. The scenarios live behind a free account in the app,
+ * so each step is one scenario framed as one email.
+ */
+export function buildTrySimulatorDrip(
+  recipientEmail: string,
+  recipientName: string,
+): EmailQueueEntry[] {
+  const now = new Date();
+  return [
+    {
+      recipientEmail,
+      recipientName,
+      sequence: "try-simulator-drip",
+      step: 1,
+      subject: "Your read, and the next scenario",
+      htmlBody: withMarketingFooter(
+        buildTryDripStep1(recipientName),
+        recipientEmail,
+      ),
+      scheduledAt: now,
+      metadata: { ...MARKETING_META, type: "try-drip" },
+    },
+    {
+      recipientEmail,
+      recipientName,
+      sequence: "try-simulator-drip",
+      step: 2,
+      subject: "The scenario that catches people",
+      htmlBody: withMarketingFooter(
+        buildTryDripStep2(recipientName),
+        recipientEmail,
+      ),
+      scheduledAt: addDays(now, 2),
+      metadata: { ...MARKETING_META, type: "try-drip" },
+    },
+    {
+      recipientEmail,
+      recipientName,
+      sequence: "try-simulator-drip",
+      step: 3,
+      subject: "The last free one",
+      htmlBody: withMarketingFooter(
+        buildTryDripStep3(recipientName),
+        recipientEmail,
+      ),
+      scheduledAt: addDays(now, 5),
+      metadata: { ...MARKETING_META, type: "try-drip" },
+    },
+  ];
+}
+
 export function buildNewsletterDrip(
   recipientEmail: string,
   recipientName: string,

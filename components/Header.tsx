@@ -47,13 +47,16 @@ const Header = () => {
   // Primary nav. Home is implicit in the logo click so it's not listed.
   // The app is explicitly NOT in this array, it's a standalone CTA
   // on the right side.
+  // Receipts replaced Contact (which stays in the footer): a free tool
+  // converts cold traffic to email far better than a mailto ever will,
+  // and nothing above the fold pointed at it.
   const navLinks: { href: string; label: string }[] = [
     { href: "/book", label: "Book" },
     { href: "/quiz", label: "Quiz" },
+    { href: "/receipts", label: "Receipts" },
     { href: "/coaching", label: "Coaching" },
     { href: "/about", label: "About" },
     { href: "/blog", label: "Blog" },
-    { href: "/contact", label: "Contact" },
   ];
 
   const isAppActive =

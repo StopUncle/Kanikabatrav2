@@ -71,6 +71,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     // linkable and most searchable thing on the site, and it was missing
     // from this list entirely, so Google was never told it exists.
     entry("/receipts", 0.93, "weekly"),
+    // The free playable simulator scenario, the other no-signup hook.
+    entry("/try", 0.9, "weekly"),
     entry("/book", 0.95, "weekly"),
     entry("/coaching", 0.9, "weekly"),
     entry("/about", 0.9, "monthly"),

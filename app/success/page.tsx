@@ -301,6 +301,41 @@ function SuccessContent() {
                   instructions within the next few minutes. Check your inbox and
                   spam folder.
                 </p>
+                <div className="space-y-4 text-left">
+                  <Link
+                    href="/start"
+                    className="block p-5 bg-deep-black/50 border border-accent-gold/20 rounded-xl hover:border-accent-gold/40 transition-all"
+                  >
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="text-text-light font-light">
+                          Get the app. Free to start
+                        </p>
+                        <p className="text-text-gray text-sm">
+                          The simulator, the drills, Receipts, voice notes
+                          from Kanika
+                        </p>
+                      </div>
+                      <ArrowRight size={18} className="text-accent-gold" />
+                    </div>
+                  </Link>
+                  <Link
+                    href="/quiz"
+                    className="block p-5 bg-deep-black/50 border border-accent-gold/10 rounded-xl hover:border-accent-gold/30 transition-all"
+                  >
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="text-text-light font-light">
+                          The Dark Mirror Assessment. Free to take
+                        </p>
+                        <p className="text-text-gray text-sm">
+                          Six personality axes, twenty scenarios, five minutes
+                        </p>
+                      </div>
+                      <ArrowRight size={18} className="text-accent-gold" />
+                    </div>
+                  </Link>
+                </div>
               </m.div>
             )}
           </div>

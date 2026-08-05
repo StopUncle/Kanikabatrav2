@@ -1774,6 +1774,7 @@ export async function POST(request: NextRequest) {
           ASK_WRITTEN_3Q: "your questions for Kanika",
           ASK_VOICE_1Q: "your question for Kanika",
           ASK_VOICE_3Q: "your questions for Kanika",
+          DONATION: "your donation",
         };
         const productKey = session.metadata?.product_key ?? "";
         const productLabel =

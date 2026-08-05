@@ -82,7 +82,7 @@ export default function TrySimulatorEnding() {
           >
             <p className="inline-flex items-center gap-2 text-accent-gold text-sm font-light">
               <Check size={15} strokeWidth={2} />
-              On its way. Three more scenarios are in your inbox.
+              On its way. Your first one lands within the hour.
             </p>
             {appLink}
           </m.div>

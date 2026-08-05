@@ -302,7 +302,7 @@ export default function LinksPage() {
             <div key={i} className="inline-flex items-center gap-2 shrink-0">
               <span className="text-[#d4af37] text-sm">&ldquo;</span>
               <span className="text-[#c4b5a0] text-sm italic">{t.quote}</span>
-              <span className="text-[#6b7280] text-xs">— {t.by}</span>
+              <span className="text-[#6b7280] text-xs">&middot; {t.by}</span>
               <span className="text-[#1e1915] mx-2">|</span>
             </div>
           ))}
@@ -312,9 +312,13 @@ export default function LinksPage() {
       {/* ━━━━━ VIDEO ━━━━━ */}
       <section className="px-5 py-10 max-w-md mx-auto" ref={landingVideoContainerRef}>
         <div className="relative rounded-xl overflow-hidden border border-[#d4af37]/10 bg-[#0f0d0c] aspect-video">
+          {/* Poster comes from the OG generator: the referenced webp never
+              existed, so 670K link-in-bio visitors saw a black rectangle
+              until they tapped play. (The captions track was removed for
+              the same reason; restore it when a real .vtt exists.) */}
           <video
             ref={landingVideoRef}
-            poster="/images/video-poster-landing.webp"
+            poster="/api/og?title=Kanika%20Batra&subtitle=Diagnosed.%20Documented.%20Unfiltered."
             preload="metadata"
             playsInline
             muted
@@ -324,7 +328,6 @@ export default function LinksPage() {
             onEnded={() => setLandingVideoPlaying(false)}
           >
             <source src="/videos/landing-intro.mp4" type="video/mp4" />
-            <track kind="captions" src="/videos/landing-captions.vtt" srcLang="en" label="English" />
           </video>
           {!landingVideoPlaying && (
             <button
@@ -363,7 +366,7 @@ export default function LinksPage() {
           >
             <div>
               <p className="text-[#f5f0ed] text-sm font-medium group-hover:text-[#d4af37] transition-colors">Private Coaching</p>
-              <p className="text-[#6b7280] text-[11px] mt-0.5">1:1 video call &middot; From $247</p>
+              <p className="text-[#6b7280] text-[11px] mt-0.5">1:1 video call &middot; From $297</p>
             </div>
             <svg className="w-4 h-4 text-[#6b7280]/40 shrink-0 group-hover:text-[#d4af37]/60 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />

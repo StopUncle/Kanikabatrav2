@@ -52,6 +52,15 @@ export async function POST(req: NextRequest) {
       submit_type: "donate",
       payment_method_types: ["card"],
       customer_email: body.email,
+      // Same abandoned-checkout recovery the main checkout factory sets
+      // (lib/stripe.ts): consent so the address is usable for follow-up,
+      // a 1h expiry so the recovery lands while intent is warm, and the
+      // recovery URL the checkout.session.expired webhook emails out.
+      consent_collection: { promotions: "auto" },
+      expires_at: Math.floor(Date.now() / 1000) + 60 * 60,
+      after_expiration: {
+        recovery: { enabled: true, allow_promotion_codes: false },
+      },
       success_url: `${baseUrl}/donate/thanks?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${baseUrl}/donate`,
       metadata: {

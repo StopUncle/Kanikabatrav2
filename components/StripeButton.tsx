@@ -90,7 +90,7 @@ export default function StripeButton({
           <>
             {IconComponent && <IconComponent className="w-5 h-5" />}
             <span>{label}</span>
-            {price && <span className="opacity-80">— {price}</span>}
+            {price && <span className="opacity-80">&middot; {price}</span>}
           </>
         )}
       </m.button>

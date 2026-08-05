@@ -17,6 +17,7 @@ import {
   Eye,
   UserCircle2,
   Newspaper,
+  Gift,
   type LucideIcon,
 } from "lucide-react";
 
@@ -152,6 +153,15 @@ const PROFILE: NavItem = {
   icon: UserCircle2,
   matchPrefix: "/consilium/profile",
 };
+// The two-sided referral. It shipped with Operation Dark Mirror Tier 2
+// and then lived at a URL no nav pointed at, so members could not find
+// the one growth loop that pays them to share.
+const INVITE: NavItem = {
+  href: "/consilium/invite",
+  label: "Invite",
+  icon: Gift,
+  matchPrefix: "/consilium/invite",
+};
 const BLOG: NavItem = {
   href: "/blog",
   label: "Blog",
@@ -174,7 +184,7 @@ export const NAV_SECTIONS: readonly NavSection[] = [
   },
   {
     title: "You",
-    items: [BADGES, DARK_MIRROR, PROFILE],
+    items: [BADGES, DARK_MIRROR, INVITE, PROFILE],
   },
 ];
 

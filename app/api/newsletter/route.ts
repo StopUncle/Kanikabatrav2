@@ -5,6 +5,7 @@ import {
   buildNewsletterDrip,
   buildQuizResultDrip,
   buildCoachingLeadDrip,
+  buildTrySimulatorDrip,
   QUIZ_DRIP_SLUGS,
 } from "@/lib/email-sequences";
 import { logger } from "@/lib/logger";
@@ -98,6 +99,19 @@ export async function POST(request: NextRequest) {
           if (!existingDrip) {
             await prisma.emailQueue.createMany({ data: entries });
           }
+        }
+      } else if (source === "try-simulator") {
+        // The /try ending screen promises "your read plus three more
+        // scenarios"; this drip is what delivers it. Fires for new AND
+        // returning subscribers, since the promise is made either way.
+        // Deduped on the sequence so it never double-enrolls.
+        const entries = buildTrySimulatorDrip(normalized, dripDisplayName);
+        const existingDrip = await prisma.emailQueue.findFirst({
+          where: { recipientEmail: normalized, sequence: entries[0]!.sequence },
+          select: { id: true },
+        });
+        if (!existingDrip) {
+          await prisma.emailQueue.createMany({ data: entries });
         }
       } else if (source === "coaching") {
         // Coaching lead nurture. Fires for new AND returning subscribers,
