@@ -328,7 +328,7 @@ export default function DarkTriadResultsPage() {
               className="mb-12 p-6 rounded-xl border border-accent-gold/40 bg-gradient-to-br from-accent-gold/5 to-deep-black/60"
             >
               <h3 className="text-white font-light text-lg mb-2">
-                The Consilium is built for this configuration.
+                The app is built for this configuration.
               </h3>
               <p className="text-text-gray text-sm leading-relaxed mb-4">
                 Higher-than-population concentration of users with
@@ -337,10 +337,10 @@ export default function DarkTriadResultsPage() {
                 is safer because it has been read.
               </p>
               <Link
-                href="/consilium"
+                href="/start"
                 className="inline-flex items-center gap-2 px-5 py-2.5 bg-accent-gold/15 hover:bg-accent-gold/25 text-accent-gold border border-accent-gold/40 rounded text-sm tracking-wider uppercase transition-all"
               >
-                See the Consilium
+                Get the app
                 <ArrowRight size={14} />
               </Link>
             </m.div>

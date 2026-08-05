@@ -393,10 +393,10 @@ export default function FreeReceiptsClient() {
         <p className="text-text-gray/60 text-xs mt-5">
           Or go deeper:{" "}
           <Link
-            href="/consilium/apply"
+            href="/start"
             className="text-accent-gold hover:text-accent-gold/80 transition-colors"
           >
-            join Consilium &rarr;
+            get the app &rarr;
           </Link>
         </p>
       </div>

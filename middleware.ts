@@ -103,17 +103,17 @@ export function middleware(request: NextRequest) {
       const proto = host.startsWith("localhost") || host.startsWith("127.")
         ? "http"
         : "https";
-      const target = encodeURIComponent(pathname + request.nextUrl.search);
-      // /start is the PWA front door (manifest start_url, QR scans, install
-      // links), so a cold visitor there has probably never had an account.
-      // Registration is the right first screen; a deep link into /app/* is
-      // far more likely an existing member with an expired jar, so login.
-      const entry = pathname === "/start" ? "register" : "login";
-      const param = entry === "register" ? "returnTo" : "redirect";
-      return NextResponse.redirect(
-        `${proto}://${host}/${entry}?${param}=${target}`,
-        307,
-      );
+      // The app's own door. /start carries its raw query through (blog
+      // CTAs tag utm params; AttributionTracker reads them on the door);
+      // EnterClient defaults to create-account there, since a cold QR
+      // scan is almost always a stranger. A deep link into /app/* is far
+      // more likely an existing account with an expired cookie jar, so
+      // it rides in ?redirect=…, which flips the door to sign-in.
+      const suffix =
+        pathname === "/start"
+          ? request.nextUrl.search
+          : `?redirect=${encodeURIComponent(pathname + request.nextUrl.search)}`;
+      return NextResponse.redirect(`${proto}://${host}/enter${suffix}`, 307);
     }
   }
 

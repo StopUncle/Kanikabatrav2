@@ -1,5 +1,4 @@
 "use client";
-import { MEMBERSHIP } from "@/lib/constants";
 
 import Link from "next/link";
 import { m } from "framer-motion";
@@ -8,36 +7,66 @@ import FloatingConsiliumSeal from "@/components/consilium/FloatingConsiliumSeal"
 import type { CatalogueStats } from "@/lib/simulator/stats";
 
 /**
- * Homepage section that pitches The Consilium with the same energy the
- * book gets sold with: pre-headline credential, sharp headline, concrete
- * features in a value stack, real testimonial, anchor pricing, and a
- * matching guarantee.
+ * Homepage section that pitches the app with the same energy the book
+ * gets sold with: pre-headline credential, sharp headline, concrete
+ * features in a value stack, real testimonial, and a clear free door.
  *
  * Visual structure mirrors BookShowcase exactly:
  *   - LEFT column: a large floating animated brand object, for the
- *     book that's the 3D levitating cover. For the Consilium it's the
- *     ConsiliumSeal medallion, scaled up, with a slow rotation, a
- *     pulsing halo, and four cardinal-point orbiting particles. Same
- *     "this section has its own object" treatment so visitors know
- *     they've crossed into a new pillar at a glance.
+ *     book that's the 3D levitating cover. Here it's the seal
+ *     medallion, scaled up, with a slow rotation, a pulsing halo, and
+ *     four cardinal-point orbiting particles. Same "this section has
+ *     its own object" treatment so visitors know they've crossed into
+ *     a new pillar at a glance.
  *   - RIGHT column: entire pitch + offer card (credential, headline,
- *     body, feature blocks, testimonial, value stack, CTA, guarantee).
+ *     body, feature blocks, testimonial, value stack, CTA).
  *
- * Words "community" and "membership" appear front-and-centre so the
- * brand name "The Consilium" doesn't have to do the explaining alone.
+ * The word "app" carries the explaining, not a brand name. Pricing is
+ * deliberately absent: the door is free and the paid parts introduce
+ * themselves inside.
  */
 export default function ConsiliumOverview({
   stats,
 }: {
   stats: CatalogueStats;
 }) {
-  // What's inside, with concrete numbers and dollar anchors. Book is
-  // not bundled, that's a separate purchase. Member-only pricing on
-  // it is listed last as the discount benefit, not as inclusion.
+  // What's inside, with concrete numbers. The right-hand column says
+  // how each surface is reached, not what it costs, so nothing here
+  // needs rewriting when a price moves.
   const inside = [
     {
       title: "The Dark Mirror Simulator",
       detail: `${stats.scenarios} branching scenarios · ${stats.scenes} scenes · ${stats.tacticsTaught} manipulation tactics · ${stats.redFlagsTaught} red flags catalogued`,
+      value: "Free to start",
+    },
+    {
+      title: "Receipts",
+      detail:
+        "Paste a real conversation. Every tactic gets named, line by line, with what it is actually doing to you",
+      value: "Free tool",
+    },
+    {
+      title: "The Mark",
+      detail:
+        "Your training record. Plain sentences on what you read well and the blind spots you keep walking into",
+      value: "Tracked for you",
+    },
+    {
+      title: "Drills and Games",
+      detail:
+        "Speed Drill, daily tells, short reps that turn what you know into what you notice in the moment",
+      value: "Daily",
+    },
+    {
+      title: "Kanika's Feed",
+      detail:
+        "Psychology drops, discussion prompts, voice notes, and one question a day answered by Kanika herself",
+      value: "Every morning",
+    },
+    {
+      title: "The Lab",
+      detail:
+        "Freeform roleplay against an opponent that pushes back. No script, no multiple choice, no safety net",
       value: "Members only",
     },
     {
@@ -89,7 +118,7 @@ export default function ConsiliumOverview({
           <div className="flex items-center justify-center gap-4 mb-6">
             <span className="h-px w-16 sm:w-24 bg-gradient-to-r from-transparent to-warm-gold/50" />
             <span className="text-warm-gold/70 text-[10px] sm:text-xs uppercase tracking-[0.4em] font-light whitespace-nowrap">
-              Pillar Two · The Membership
+              Pillar Two · The App
             </span>
             <span className="h-px w-16 sm:w-24 bg-gradient-to-l from-transparent to-warm-gold/50" />
           </div>
@@ -121,8 +150,8 @@ export default function ConsiliumOverview({
             </span>
           </h2>
           <p className="text-text-gray/80 text-sm sm:text-base font-light italic mt-4 max-w-2xl mx-auto">
-            The book stays the book. This is the private community where
-            members go to use it.
+            The book stays the book. The app is where you put it to work,
+            every day, on your phone.
           </p>
         </div>
 
@@ -138,7 +167,7 @@ export default function ConsiliumOverview({
             viewport={{ once: true }}
             className="flex justify-center"
           >
-            <FloatingConsiliumSeal label="Private Membership" />
+            <FloatingConsiliumSeal label="Free to Start" />
           </m.div>
 
           {/* RIGHT, full pitch column. Single column containing every
@@ -154,7 +183,7 @@ export default function ConsiliumOverview({
           >
             <div>
               <p className="text-warm-gold uppercase tracking-[0.2em] text-xs sm:text-sm mb-3">
-                The Consilium · Private Community + Membership
+                The App · Free to Start
               </p>
               <h2 className="text-3xl sm:text-4xl lg:text-5xl font-light mb-4 sm:mb-6 leading-tight">
                 <span className="text-text-light">
@@ -174,12 +203,11 @@ export default function ConsiliumOverview({
                 </span>
               </h2>
               <p className="text-text-gray text-base sm:text-lg leading-relaxed">
-                The book teaches you the patterns. The Consilium is where
-                you{" "}
+                The book teaches you the patterns. The app is where you{" "}
                 <strong className="text-text-light">practice them</strong>.
-                Every day, with members navigating the same situations you
-                are. Private. Moderated. Built for women done being the ones
-                who get played.
+                Ten minutes a day, running the situations you keep losing,
+                until the read arrives before the damage does. Built for
+                women done being the ones who get played.
               </p>
             </div>
 
@@ -187,9 +215,9 @@ export default function ConsiliumOverview({
             <div className="space-y-3">
               {[
                 `${stats.scenes} branching scenes inside the Dark Mirror Simulator. Every choice has a consequence`,
-                "Ask Kanika, one question a day, answered by voice or video in your feed",
-                "60 daily psychology drops + 28 themed discussion prompts",
-                "Voice notes from Kanika, raw insights you won't hear anywhere else",
+                "Receipts. Paste a real conversation, get the tactics named line by line",
+                "The Mark, a record of what you catch and what you keep missing",
+                "Kanika in your feed daily. Psychology drops, voice notes, your question answered",
               ].map((feature, index) => (
                 <m.div
                   key={index}
@@ -221,7 +249,7 @@ export default function ConsiliumOverview({
             {/* Offer card, value stack with anchor pricing */}
             <div className="bg-gradient-to-r from-deep-burgundy/30 via-deep-black/70 to-deep-navy/40 p-4 sm:p-6 lg:p-8 rounded-lg border border-warm-gold/30">
               <p className="text-warm-gold uppercase tracking-[0.2em] text-xs mb-4">
-                What&apos;s Inside the Membership
+                What&apos;s Inside the App
               </p>
 
               <div className="space-y-3 mb-6">
@@ -254,51 +282,49 @@ export default function ConsiliumOverview({
               <div className="flex items-baseline justify-between mb-6 pt-4 border-t border-white/10">
                 <div>
                   <span className="text-text-gray text-sm">
-                    Premium edition value:{" "}
-                  </span>
-                  <span className="text-text-gray text-sm">
-                    $24.99 + community
+                    No card. No application. Make an account and it opens.
                   </span>
                 </div>
                 <div className="text-right">
-                  <span className="text-3xl font-light gradient-text-gold tabular-nums">
-                    {MEMBERSHIP.priceDisplay}
+                  <span className="text-3xl font-light gradient-text-gold">
+                    Free
                   </span>
                   <span className="text-text-gray/70 text-sm font-light ml-1">
-                    /mo
+                    to start
                   </span>
                 </div>
               </div>
 
               <div className="space-y-4">
                 <Link
-                  href="/consilium"
+                  href="/start"
                   className="w-full inline-flex items-center justify-center gap-2 py-3 sm:py-4 px-6 rounded-full bg-warm-gold text-deep-black text-sm sm:text-base font-semibold tracking-wide transition-all hover:bg-warm-gold/90 hover:shadow-[0_12px_40px_-12px_rgba(212,175,55,0.55)]"
                 >
-                  Join the Community, {MEMBERSHIP.monthlyShort}
+                  Get the app
                   <ArrowRight size={16} />
                 </Link>
 
                 <p className="text-[11px] text-text-gray/70 text-center leading-relaxed">
-                  Instant access · cancel anytime · no application required
+                  Free to start · works on your phone · install it from the
+                  browser
                 </p>
 
                 <div className="flex items-center justify-center gap-2 text-text-gray text-xs">
                   <ShieldCheck size={14} className="text-warm-gold" />
                   <span>
-                    Spend 7 days inside. If it&apos;s not the most useful{" "}
-                    {MEMBERSHIP.priceDisplay} you&apos;ve spent, full refund.
+                    Private by default. Nothing you write is public unless
+                    you post it.
                   </span>
                 </div>
 
                 <div className="text-center pt-2 border-t border-white/5">
                   <p className="text-[11px] text-text-gray/60">
-                    Or grab the{" "}
+                    Or start with the{" "}
                     <Link
                       href="/book"
                       className="text-warm-gold/90 hover:text-warm-gold transition-colors underline-offset-2 hover:underline"
                     >
-                      book + 1 month bundle for $39
+                      Sociopathic Dating Bible
                     </Link>
                     .
                   </p>

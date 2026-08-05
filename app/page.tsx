@@ -3,6 +3,8 @@ import Link from "next/link";
 import BackgroundEffects from "@/components/BackgroundEffects";
 import Header from "@/components/Header";
 import Hero from "@/components/Hero";
+import DownloadAppSection from "@/components/DownloadAppSection";
+import ServiceWorkerRegister from "@/components/pwa/ServiceWorkerRegister";
 import HomepageDarkMirrorRail from "@/components/HomepageDarkMirrorRail";
 import BookShowcase from "@/components/BookShowcase";
 import CoachingSection from "@/components/CoachingSection";
@@ -14,7 +16,7 @@ import ConsiliumSimulatorTeaser from "@/components/consilium/ConsiliumSimulatorT
 import ConsiliumOverview from "@/components/consilium/ConsiliumOverview";
 import { getAllPosts } from "@/lib/mdx";
 import { getFeaturedTestimonials } from "@/lib/testimonials";
-import { SITE_CONFIG, MEMBERSHIP } from "@/lib/constants";
+import { SITE_CONFIG } from "@/lib/constants";
 import { catalogueStats } from "@/lib/simulator/stats";
 import JsonLd from "@/components/JsonLd";
 import { generatePersonSchema } from "@/lib/schema";
@@ -76,6 +78,7 @@ export default async function Home() {
       {/* Person entity for the "Kanika Batra" knowledge panel. Organization
           + Website schema are already emitted globally in the root layout. */}
       <JsonLd data={generatePersonSchema()} />
+      <ServiceWorkerRegister />
       <BackgroundEffects />
       <Header />
 
@@ -86,8 +89,10 @@ export default async function Home() {
         matches how cold traffic actually converts: the book is the easy
         yes; the Consilium is the deeper commitment the demo earns.
 
-        1. Hero             , two primary CTAs, set the stakes
+        1. Hero             , two primary CTAs, set the stakes, small
+                               app-QR chip in the corner
         2. Book showcase    . PRIMARY #1. Concrete field guide.
+        2b. App download    . QR + install button, under the book.
         3. Consilium teaser . PRIMARY #2. Live SimulatorPreview with a
                                "Try it free" dual CTA hitting /try.
         4. Testimonial
@@ -114,6 +119,13 @@ export default async function Home() {
 
         {/* PRIMARY #1. Book (the tangible field guide) */}
         <BookShowcase />
+
+        {/* The app, installable. The hero carries a small QR chip that
+            links here; this is the full pitch. QR resolves to /start
+            (the cohort router), so a scan lands every account type in
+            its own version of the app; phones also get a direct
+            install button, nobody scans their own screen. */}
+        <DownloadAppSection />
 
         {/* PRIMARY #2. Consilium overview. Plain-English pitch of what
             the membership IS so cold traffic can answer "what does
@@ -193,8 +205,8 @@ export default async function Home() {
                 <span className="gradient-text">Behind the Mask?</span>
               </h2>
               <p className="text-text-gray text-lg max-w-2xl mx-auto font-light">
-                Read the book. Practice inside the Consilium. The two pair —
-                most members do both.
+                Read the book. Train in the app. The two pair, most members
+                do both.
               </p>
             </div>
 
@@ -228,28 +240,28 @@ export default async function Home() {
                 </div>
               </Link>
 
-              {/* Consilium card */}
+              {/* App card */}
               <Link
-                href="/consilium"
+                href="/start"
                 className="group relative overflow-hidden rounded-2xl border border-warm-gold/30 bg-gradient-to-br from-deep-burgundy/30 via-deep-navy/30 to-deep-black/80 p-8 hover:border-warm-gold/60 hover:shadow-[0_20px_60px_-20px_rgba(212,175,55,0.45)] transition-all duration-300"
               >
                 <div className="flex items-baseline justify-between mb-4">
                   <p className="text-warm-gold uppercase tracking-[0.3em] text-xs">
                     The Practice Ground
                   </p>
-                  <p className="text-warm-gold text-lg font-light tabular-nums">
-                    {MEMBERSHIP.priceDisplay}<span className="text-text-gray/70 text-xs">/mo</span>
+                  <p className="text-warm-gold text-sm font-light">
+                    Free to start
                   </p>
                 </div>
                 <h3 className="text-2xl md:text-3xl font-extralight text-text-light mb-3 tracking-wide leading-tight">
-                  The Consilium
+                  The App
                 </h3>
                 <p className="text-text-gray text-sm font-light leading-relaxed mb-6">
                   {catalogueStats.scenarios} branching scenarios. {catalogueStats.scenes} scenes. {catalogueStats.tacticsTaught} manipulation tactics
                   to spot. Plus voice notes, daily drops, and Ask Kanika.
                 </p>
                 <div className="inline-flex items-center gap-2 text-warm-gold text-sm font-medium uppercase tracking-wider">
-                  Step inside
+                  Get the app
                   <span className="transition-transform group-hover:translate-x-1">
                     &rarr;
                   </span>

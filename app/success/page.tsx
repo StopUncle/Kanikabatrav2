@@ -1,5 +1,4 @@
 "use client";
-import { MEMBERSHIP } from "@/lib/constants";
 
 import { useEffect, useState, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
@@ -330,13 +329,13 @@ function SuccessContent() {
               </Link>
 
               <Link
-                href="/consilium"
+                href="/start"
                 className="block p-5 bg-deep-black/50 border border-accent-gold/10 rounded-xl hover:border-accent-gold/30 transition-all"
               >
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-text-light font-light">Join The Consilium, {MEMBERSHIP.monthlyShort}</p>
-                    <p className="text-text-gray text-sm">Courses, voice notes, community of women who get it</p>
+                    <p className="text-text-light font-light">Get the app. Free to start</p>
+                    <p className="text-text-gray text-sm">The simulator, the drills, Receipts, voice notes from Kanika</p>
                   </div>
                   <ArrowRight size={18} className="text-accent-gold" />
                 </div>

@@ -310,7 +310,7 @@ export default function BPDResultsPage() {
             </m.div>
           )}
 
-          {/* Consilium nudge for High + Very High */}
+          {/* App nudge for High + Very High */}
           {(diagnosis.tier === "high" || diagnosis.tier === "very-high") && (
             <m.div
               initial={{ opacity: 0, y: 20 }}
@@ -324,23 +324,23 @@ export default function BPDResultsPage() {
                 </div>
                 <div className="flex-1">
                   <h3 className="text-white font-light text-lg mb-2">
-                    The Consilium has BPD-aware threads.
+                    The app is BPD-aware.
                   </h3>
                   <p className="text-text-gray text-sm leading-relaxed mb-4">
                     BPD is one of the most treatable Cluster B
                     disorders when treated by clinicians who actually
                     know the construct. Most therapy frames misread it.
-                    The Consilium is not a substitute for that
+                    The app is not a substitute for that
                     treatment, it is a room where the construct is
                     read accurately and the cultural shorthand
                     (&ldquo;BPD = manipulative woman&rdquo;) is not the
                     register.
                   </p>
                   <Link
-                    href="/consilium"
+                    href="/start"
                     className="inline-flex items-center gap-2 px-5 py-2.5 bg-accent-gold/15 hover:bg-accent-gold/25 text-accent-gold border border-accent-gold/40 rounded text-sm tracking-wider uppercase transition-all"
                   >
-                    See the Consilium
+                    Get the app
                     <ArrowRight size={14} />
                   </Link>
                 </div>

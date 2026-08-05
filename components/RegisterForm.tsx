@@ -31,8 +31,8 @@ export default function RegisterForm() {
   // Accept both ?returnTo and ?redirect so every entry point lands back
   // in the same place post-register. See LoginForm for why, server-auth
   // ships users here via ?redirect=…, other pages use ?returnTo=….
-  // Validated rather than read raw, for the reason spelled out in
-  // LoginForm: an absolute value here is a hard navigation off-site.
+  // Validated, same reason as LoginForm: an unchecked value reaches
+  // router.push and can navigate off-origin after a successful signup.
   const returnTo = readSafeRedirect(searchParams);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -84,11 +84,11 @@ export default function RegisterForm() {
       }
 
       // Registration successful. Explicit returnTo wins; otherwise a new
-      // account starts on the dashboard. A returnTo aimed at the app is
+      // account starts in the app. A destination aimed at the app is
       // resolved all the way to its real first screen: a brand-new
       // account can never be a member, so /start would hop to /app and
       // /app would hop to the Arrival, three paints where one will do.
-      let destination = returnTo || "/dashboard";
+      let destination = returnTo || "/app";
       if (destination === "/start" || destination === "/app") {
         destination = "/app/welcome";
       }

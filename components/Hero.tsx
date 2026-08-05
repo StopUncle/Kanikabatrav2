@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { SOCIAL_METRICS } from "@/lib/constants";
+import HeroAppQr from "./HeroAppQr";
 import HeroQuote from "./HeroQuote";
 
 /**
@@ -19,6 +20,7 @@ import HeroQuote from "./HeroQuote";
 export default function Hero() {
   return (
     <section className="hero-viewport relative min-h-[calc(100dvh-5rem)] flex items-center justify-center px-4 sm:px-6 lg:px-8 pt-4 pb-24 sm:pb-28">
+      <HeroAppQr />
       <div className="max-w-5xl mx-auto text-center w-full">
         {/* Audience signal, kept subtle. warm-gold (true #d4af37 gold)
             ties the hero CTAs visually to the Consilium surfaces below. */}
@@ -49,15 +51,15 @@ export default function Hero() {
             Read the Book
           </Link>
           <Link
-            href="/consilium"
+            href="/start"
             className="inline-flex items-center justify-center px-8 py-3.5 rounded-full border border-warm-gold/40 text-warm-gold font-medium text-sm tracking-[0.2em] uppercase transition-all hover:bg-warm-gold/10 hover:border-warm-gold/70"
           >
-            Join the Consilium
+            Get the app
           </Link>
         </div>
 
         <p className="text-text-gray/60 text-xs sm:text-sm mt-6 font-light tracking-wide">
-          Read the playbook. Practice it inside the community.
+          Read the playbook. Train in the app.
         </p>
       </div>
 

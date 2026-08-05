@@ -146,7 +146,13 @@ export async function requireServerAuth(redirectPath: string): Promise<string> {
     return "dev-admin";
   }
 
-  redirect(`/login?redirect=${encodeURIComponent(redirectPath)}`);
+  // App destinations get the app's own front door; the website keeps
+  // its login page. Same account either way, different clothes.
+  const door =
+    redirectPath.startsWith("/app") || redirectPath === "/start"
+      ? "/enter"
+      : "/login";
+  redirect(`${door}?redirect=${encodeURIComponent(redirectPath)}`);
 }
 
 /**

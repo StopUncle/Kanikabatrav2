@@ -29,10 +29,9 @@ export default function LoginForm() {
   // hitting a protected page while logged out landed on /dashboard
   // after login instead of being sent back to where they were going.
   // Prefer returnTo when both are present (explicit > implicit).
-  //
-  // Validated, never raw: router.push does a hard navigation for an
-  // absolute URL, so an unchecked param turned the real login form on
-  // the real domain into a launcher for somebody else's site.
+  // Validated: the raw value used to reach router.push, which performs a
+  // hard navigation for an absolute URL, so ?returnTo=https://evil.example
+  // made this form a launcher for someone else's.
   const returnTo = readSafeRedirect(searchParams);
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -75,12 +74,12 @@ export default function LoginForm() {
       }
 
       // Login successful. Explicit returnTo wins; otherwise active members
-      // land in the Consilium and everyone else on the dashboard. A
-      // returnTo of /start is resolved HERE instead of pushed: /start
-      // would only look up the same membership state we already hold and
-      // hop again, and every hop paints.
+      // land in the Consilium and everyone else in the app, the same
+      // cohort split /start makes. A returnTo of /start is resolved HERE
+      // instead of pushed: /start would only look up the same membership
+      // state we already hold and hop again, and every hop paints.
       let destination =
-        returnTo || (result.isActiveMember ? "/consilium/feed" : "/dashboard");
+        returnTo || (result.isActiveMember ? "/consilium/feed" : "/app");
       if (destination === "/start") {
         destination = result.isActiveMember ? "/consilium/feed" : "/app";
       }

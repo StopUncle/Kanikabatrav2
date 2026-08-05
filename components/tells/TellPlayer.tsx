@@ -1,6 +1,5 @@
 "use client";
 
-import { MEMBERSHIP } from "@/lib/constants";
 import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, m } from "framer-motion";
 import { Check, X } from "lucide-react";
@@ -513,9 +512,9 @@ function TellRevealView({
       </div>
 
       {/* Footer disclaimer + CTA. Surface-aware: members never see the
-          upsell because they already pay; cold visitors get the conversion
-          CTA, which is why it points at the join page rather than into the
-          app. */}
+          upsell because they are already in; cold visitors get the
+          conversion CTA, which is why it points at the app entry point
+          rather than deeper into the app. */}
       <div className="pt-6 border-t border-gray-800 space-y-6">
         <p className="text-text-gray/60 text-xs leading-relaxed">
           Pattern recognition training. Not medical or legal advice. Not a
@@ -535,10 +534,10 @@ function TellRevealView({
                 }
               />
               <a
-                href="/consilium/apply?src=tell"
+                href="/start?src=tell"
                 className="inline-flex items-center justify-center px-7 py-3 rounded-full bg-accent-gold text-deep-black font-medium tracking-wider uppercase text-sm hover:bg-accent-gold/90 transition-all"
               >
-                Train Your Instincts &middot; {MEMBERSHIP.monthlyShort}
+                Train Your Instincts &middot; Get the app
               </a>
               <a
                 href="/tells"
