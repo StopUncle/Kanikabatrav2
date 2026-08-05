@@ -1,4 +1,5 @@
 "use client";
+import { MEMBERSHIP } from "@/lib/constants";
 
 import { m } from "framer-motion";
 import Link from "next/link";
@@ -56,11 +57,11 @@ const RELATED_LINKS: Array<{
     type: "Book",
   },
   {
-    href: "/start",
-    title: "Get the app",
+    href: "/consilium",
+    title: "Join the Consilium",
     description:
-      "Free to start. Higher concentration of people with the Calculator and Full Pattern configurations than the general population, by deliberate design. The room is not safer because it's gentler. It's safer because it's read.",
-    type: "App",
+      `${MEMBERSHIP.monthly}. Higher concentration of people with the Calculator and Full Pattern configurations than the general population, by deliberate design. The room is not safer because it's gentler. It's safer because it's read.`,
+    type: "Community",
   },
 ];
 

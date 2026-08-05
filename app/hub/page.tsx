@@ -67,10 +67,7 @@ export default async function HomePage() {
     redirect("/app/welcome");
   }
 
-  const dailyMission = getDailyMissionFor(
-    access.isMember,
-    viewer?.gender ?? null,
-  );
+  const dailyMission = getDailyMissionFor(access.isMember);
   const startOfUtcToday = new Date();
   startOfUtcToday.setUTCHours(0, 0, 0, 0);
 
@@ -93,10 +90,7 @@ export default async function HomePage() {
       isMember: access.isMember,
     }),
     getTellStreak(userId),
-    isDailyMissionDoneToday(prisma, userId, {
-      isMember: access.isMember,
-      gender: viewer?.gender ?? null,
-    }),
+    isDailyMissionDoneToday(prisma, userId, { isMember: access.isMember }),
     readDailyStreak(prisma, userId),
     access.isMember ? getTodaysGeneratedDrop() : Promise.resolve(null),
     prisma.feedPost.findFirst({
@@ -143,15 +137,6 @@ export default async function HomePage() {
 
   return (
     <div className="pb-8 pt-4">
-      {/* The way back out. The marketing site now funnels cold visitors
-          straight in here, and the shell has no other route back. */}
-      <Link
-        href="/"
-        className="mx-5 inline-flex items-center gap-1.5 text-app-tiny uppercase tracking-app-label text-[var(--app-dim)]"
-      >
-        <span aria-hidden>&larr;</span> kanikarose.com
-      </Link>
-
       {/* Header: identity left, streak right */}
       <div className="flex items-center justify-between px-5 pb-5 pt-2">
         <RankChip

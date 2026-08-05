@@ -1,4 +1,5 @@
 "use client";
+import { MEMBERSHIP } from "@/lib/constants";
 
 import { m } from "framer-motion";
 import Link from "next/link";
@@ -121,11 +122,11 @@ const RELATED_LINKS: Array<{
     type: "Book",
   },
   {
-    href: "/start",
-    title: "Get the app",
+    href: "/consilium",
+    title: "Join the Consilium",
     description:
-      "Free to start. The simulator runs the pc-child track scenarios, and Receipts reads the messages you actually got. Specifically the room I built for women in this assessment's audience.",
-    type: "App",
+      `The Inner Circle community, ${MEMBERSHIP.monthly}, threads private, members-only simulator with the pc-child track scenarios. Specifically the room I built for women in this assessment's audience.`,
+    type: "Community",
   },
 ];
 

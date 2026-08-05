@@ -73,7 +73,7 @@ const Footer = () => {
       { name: "The Book", href: "/#book" },
       { name: "Quiz", href: "/quiz" },
       { name: "Coaching", href: "/coaching" },
-      { name: "The App", href: "/start" },
+      { name: "The Consilium", href: "/consilium" },
       { name: "Content", href: "/content" },
       { name: "Blog", href: "/blog" },
       { name: "Contact", href: "/contact" },

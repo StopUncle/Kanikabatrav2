@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { MEMBERSHIP } from "@/lib/constants";
 import {
   Snowflake,
   Crown,
@@ -242,18 +243,19 @@ export default function QuizzesHubPage() {
               Where this gets practised
             </p>
             <h2 className="text-white text-2xl font-light mb-3">
-              The app, free to start
+              The Consilium, {MEMBERSHIP.monthly}
             </h2>
             <p className="text-text-gray font-light max-w-xl mx-auto leading-relaxed mb-6">
               The Dark Mirror Simulator runs the patterns these quizzes
               measure as branching scenarios you actually play through. Plus
-              the drills, Receipts, and voice notes from Kanika.
+              the classroom, voice notes, and a moderated community. Cancel
+              any time.
             </p>
             <Link
-              href="/start"
+              href="/consilium"
               className="inline-flex items-center gap-2 px-8 py-3 rounded-full bg-warm-gold text-deep-black font-medium tracking-wider uppercase text-sm transition-all hover:bg-warm-gold/90"
             >
-              Get the app
+              Step Inside
               <ArrowRight size={16} />
             </Link>
           </div>

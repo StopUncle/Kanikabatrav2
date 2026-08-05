@@ -623,7 +623,7 @@ export const AXIS_CONSILIUM_TIES: Record<PersonalityType, AxisConsiliumTie> = {
       "Voice notes on detection and exit, where Kanika's read of the pattern matches your own.",
       "Ask Kanika queue, your axis has the highest signal-to-noise of any cohort.",
     ],
-    cta: "Get the app",
+    cta: "Step inside the Consilium",
   },
   sociopathic: {
     headline: "Built for the high-velocity operator",
@@ -632,7 +632,7 @@ export const AXIS_CONSILIUM_TIES: Record<PersonalityType, AxisConsiliumTie> = {
       "Voice notes on the difference between authenticity and reactivity.",
       "The forum, where the Wildcard cohort talks about repair after the heat fades.",
     ],
-    cta: "Get the app",
+    cta: "Step inside the Consilium",
   },
   narcissistic: {
     headline: "For the centrality-reflex pattern",
@@ -641,7 +641,7 @@ export const AXIS_CONSILIUM_TIES: Record<PersonalityType, AxisConsiliumTie> = {
       "Voice notes on quiet intimacy and how the Emperor pattern tolerates it.",
       "Classroom modules on receiving small needs without the cost asymmetry.",
     ],
-    cta: "Get the app",
+    cta: "Step inside the Consilium",
   },
   borderline: {
     headline: "Built for the storm-pattern operator",
@@ -650,7 +650,7 @@ export const AXIS_CONSILIUM_TIES: Record<PersonalityType, AxisConsiliumTie> = {
       "Voice notes on Mirror-Bonding and Splitting (the two patterns most weaponised against you).",
       "Daily-insight feed weighted toward affective regulation and identity work.",
     ],
-    cta: "Get the app",
+    cta: "Step inside the Consilium",
   },
   histrionic: {
     headline: "For the attention-coordinative operator",
@@ -659,7 +659,7 @@ export const AXIS_CONSILIUM_TIES: Record<PersonalityType, AxisConsiliumTie> = {
       "Forum threads where the Siren cohort discusses intimacy without an audience.",
       "Track scenarios on the room-temperature you raise and the cost of always raising it.",
     ],
-    cta: "Get the app",
+    cta: "Step inside the Consilium",
   },
   neurotypical: {
     headline: "For the integrated baseline",
@@ -668,7 +668,7 @@ export const AXIS_CONSILIUM_TIES: Record<PersonalityType, AxisConsiliumTie> = {
       "Voice notes on calibrating good-faith assumptions to the actual person across from you.",
       "Ask Kanika queue, your axis tends to ask the cleanest questions about the others.",
     ],
-    cta: "Get the app",
+    cta: "Step inside the Consilium",
   },
 };
 

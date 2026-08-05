@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { m } from "framer-motion";
 import Link from "next/link";
+import { MEMBERSHIP } from "@/lib/constants";
 import {
   ShieldAlert,
   Eye,
@@ -412,12 +413,12 @@ export default function DaughterQuizResultsPage() {
               </Link>
 
               <Link
-                href="/start"
+                href="/consilium"
                 className="group block p-5 bg-deep-black/40 border border-accent-gold/30 rounded-xl hover:border-accent-gold/60 hover:bg-deep-black/60 transition-all"
               >
                 <div className="flex items-start justify-between gap-3 mb-2">
                   <span className="text-[10px] uppercase tracking-[0.25em] text-accent-gold">
-                    The App
+                    The Community
                   </span>
                   <ArrowRight
                     size={14}
@@ -426,10 +427,11 @@ export default function DaughterQuizResultsPage() {
                   />
                 </div>
                 <h3 className="text-base font-light text-white mb-2 group-hover:text-accent-gold transition-colors leading-snug">
-                  Get the app
+                  Join the Consilium
                 </h3>
                 <p className="text-text-gray text-sm leading-relaxed">
-                  Free to start. The simulator runs the pc-child track
+                  {MEMBERSHIP.priceDisplay} a month. Private threads for women in this exact niche.
+                  The members-only simulator runs the pc-child track
                   scenarios, practice reps for the conversations you&apos;ve
                   spent years rehearsing alone.
                 </p>

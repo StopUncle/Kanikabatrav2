@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowRight, Sparkles, Target } from "lucide-react";
+import { ArrowRight, Sparkles, Target, PlayCircle } from "lucide-react";
 import SimulatorPreview from "./SimulatorPreview";
 import { catalogueStats, PUBLIC_TRACK_CHIPS } from "@/lib/simulator/stats";
 
@@ -33,66 +33,6 @@ export default function ConsiliumSimulatorTeaser({
 }: Props) {
   const isHomepage = variant === "homepage";
 
-  // Homepage: a compact card that sells the one-liner and hands over to
-  // the app, where the simulator actually lives. The full surface with
-  // the live preview stays on /consilium for warm traffic.
-  if (isHomepage) {
-    return (
-      <section className="px-4 py-10 sm:py-12">
-        <div className="max-w-4xl mx-auto">
-          <div className="rounded-2xl border border-warm-gold/25 bg-deep-black/60 p-6 sm:p-8 text-center">
-            <div className="flex items-center justify-center gap-2 mb-3">
-              <Sparkles className="w-3.5 h-3.5 text-warm-gold" strokeWidth={1.6} />
-              <p className="text-warm-gold text-[11px] uppercase tracking-[0.3em]">
-                Inside the app
-              </p>
-            </div>
-
-            <h2 className="text-2xl sm:text-3xl font-extralight tracking-wider text-text-light mb-3">
-              Duolingo for{" "}
-              <span
-                style={{
-                  background:
-                    "linear-gradient(135deg, #f3d98a 0%, #d4af37 50%, #9c7a1f 100%)",
-                  WebkitBackgroundClip: "text",
-                  WebkitTextFillColor: "transparent",
-                  backgroundClip: "text",
-                }}
-              >
-                dark psychology
-              </span>
-            </h2>
-
-            <p className="text-text-gray text-sm sm:text-base font-light leading-relaxed mb-4 max-w-xl mx-auto">
-              Books tell you what manipulation looks like. The simulator
-              drops you inside it: every scene is a choice, every choice
-              branches, every ending shows you what a trained eye would
-              have caught.
-            </p>
-
-            <p className="text-text-gray/70 text-xs sm:text-sm font-light mb-6">
-              <span className="text-warm-gold tabular-nums">{catalogueStats.scenarios}</span> scenarios ·{" "}
-              <span className="text-warm-gold tabular-nums">{catalogueStats.scenes}</span> branching scenes ·{" "}
-              <span className="text-warm-gold tabular-nums">{catalogueStats.tacticsTaught}</span> tactics to spot
-            </p>
-
-            <Link
-              href="/start"
-              className="inline-flex items-center justify-center gap-2 py-3 px-8 bg-warm-gold text-deep-black font-medium text-sm tracking-wider uppercase rounded-full transition-all hover:bg-warm-gold/90"
-            >
-              Get the app
-              <ArrowRight size={16} />
-            </Link>
-
-            <p className="text-text-gray/50 text-xs mt-3">
-              Free to start · train before you spend a dollar
-            </p>
-          </div>
-        </div>
-      </section>
-    );
-  }
-
   return (
     <section className="py-20 sm:py-24 px-4 relative">
       <div className="max-w-5xl mx-auto">
@@ -118,7 +58,9 @@ export default function ConsiliumSimulatorTeaser({
                   strokeWidth={1.6}
                 />
                 <p className="text-warm-gold text-xs uppercase tracking-[0.3em]">
-                  The only place you can practice this
+                  {isHomepage
+                    ? "Inside the membership · flagship feature"
+                    : "The only place you can practice this"}
                 </p>
               </div>
 
@@ -143,6 +85,19 @@ export default function ConsiliumSimulatorTeaser({
                 choice branches. Every ending shows you what a trained eye
                 would have caught and what it costs you if you missed it.
               </p>
+
+              {/* Free-demo affordance chip, only on homepage. Signals that
+                  there's a zero-friction way to actually feel the product
+                  before any paywall. The chip is quiet so it doesn't
+                  compete with the headline. */}
+              {isHomepage && (
+                <div className="inline-flex items-center gap-2 mb-8 px-4 py-1.5 rounded-full border border-warm-gold/25 bg-warm-gold/5 text-warm-gold/90">
+                  <PlayCircle className="w-3.5 h-3.5" strokeWidth={1.8} />
+                  <span className="text-[11px] uppercase tracking-[0.25em] font-light">
+                    Free demo · 10 min · no signup
+                  </span>
+                </div>
+              )}
 
               {/* Live preview. Three real scenes auto-playing on a loop.
                   The viewer watches the optimal choice get picked, sees the
@@ -189,16 +144,42 @@ export default function ConsiliumSimulatorTeaser({
                 ))}
               </div>
 
-              <Link
-                href="/consilium/apply"
-                className="inline-flex items-center justify-center gap-2 py-3.5 px-8 bg-warm-gold text-deep-black font-medium text-sm tracking-wider uppercase rounded-full transition-all hover:bg-warm-gold/90 hover:shadow-[0_8px_24px_-4px_rgba(212,175,55,0.45)]"
-              >
-                Start Practicing
-                <ArrowRight size={16} />
-              </Link>
+              {/* Dual CTA on homepage, lowers the barrier by giving cold
+                  traffic a no-commit entry (Try Free) alongside the
+                  conversion button. On the landing page, the single
+                  "Step Inside" CTA wins because the visitor is already
+                  mid-funnel. */}
+              {isHomepage ? (
+                <div className="flex flex-col sm:flex-row gap-3 w-full max-w-md">
+                  <Link
+                    href="/try"
+                    className="flex-1 inline-flex items-center justify-center gap-2 py-3.5 px-6 bg-warm-gold text-deep-black font-medium text-sm tracking-wider uppercase rounded-full transition-all hover:bg-warm-gold/90 hover:shadow-[0_8px_24px_-4px_rgba(212,175,55,0.45)]"
+                  >
+                    Try it free
+                    <ArrowRight size={16} />
+                  </Link>
+                  <Link
+                    href="/consilium"
+                    className="flex-1 inline-flex items-center justify-center gap-2 py-3.5 px-6 border border-warm-gold/40 text-warm-gold font-medium text-sm tracking-wider uppercase rounded-full transition-all hover:bg-warm-gold/10"
+                  >
+                    Step inside
+                    <ArrowRight size={16} />
+                  </Link>
+                </div>
+              ) : (
+                <Link
+                  href="/consilium/apply"
+                  className="inline-flex items-center justify-center gap-2 py-3.5 px-8 bg-warm-gold text-deep-black font-medium text-sm tracking-wider uppercase rounded-full transition-all hover:bg-warm-gold/90 hover:shadow-[0_8px_24px_-4px_rgba(212,175,55,0.45)]"
+                >
+                  Start Practicing
+                  <ArrowRight size={16} />
+                </Link>
+              )}
 
               <p className="text-text-gray/50 text-xs mt-4">
-                Included with every Consilium membership.
+                {isHomepage
+                  ? "Plays in your browser · nothing to install · full Level 1 scenario"
+                  : "Included with every Consilium membership."}
               </p>
             </div>
           </div>

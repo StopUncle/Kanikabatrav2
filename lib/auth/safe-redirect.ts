@@ -1,7 +1,7 @@
 /**
  * Where a login form is allowed to send you.
  *
- * All three doors (/enter, /login, /register) read a ?redirect= or
+ * Both doors (/login, /register) read a ?redirect= or
  * ?returnTo= param and hand it to router.push. Next performs a HARD
  * navigation for an absolute URL, so an unvalidated param turns the real
  * sign-in page on the real domain into a launcher for somebody else's:

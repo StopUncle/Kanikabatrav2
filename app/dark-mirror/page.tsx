@@ -188,7 +188,7 @@ export default function DarkMirrorHubPage() {
             <p className="text-text-gray/60 font-light text-xs mt-4">
               Built by Kanika Batra. Drawn from the same clinical
               framework used in The Sociopathic Dating Bible and the
-              simulator in the app.
+              Consilium simulator.
             </p>
           </div>
 
