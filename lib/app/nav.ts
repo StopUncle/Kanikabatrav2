@@ -67,6 +67,11 @@ export interface AppSurface {
   /**
    * Extra paths that should light this entry up. The games live under
    * /app/play but are launched from Train, so Train stays lit inside them.
+   *
+   * Every nested child needs listing here, not just the ones sharing a URL
+   * prefix. A surface that matches no tab leaves the whole bar unlit, which
+   * is worse than lighting the wrong one: the member is somewhere real with
+   * nothing telling them where.
    */
   also?: string[];
   /** Renders an unread count (the Kanika thread). */
@@ -110,7 +115,13 @@ export const APP_SURFACES: AppSurface[] = [
     placement: "tab",
     note: "Every way to practise, one room. Absorbed the old Arcade.",
     maturity: "app-native",
-    also: ["/app/play"],
+    also: [
+      "/app/play",
+      "/app/adventures",
+      "/app/lab",
+      "/app/receipts",
+      "/app/instincts",
+    ],
   },
 
   {

@@ -192,8 +192,14 @@ export default function Arrival({
                     Man
                   </button>
                 </div>
-                <p className="mt-2 text-app-micro text-[var(--app-dim)]">
-                  Decides the content track. Skipping keeps the default.
+                {/* "The default" told the reader there was one without
+                    saying which, on the one screen where the choice is
+                    actually being made. Name it, and say what the choice
+                    changes, because the answer shows up later as a bare
+                    FEMININE stamped on the Simulator. */}
+                <p className="mt-2 text-app-micro leading-relaxed text-[var(--app-dim)]">
+                  Sets which version of each scenario you get. Skip and you
+                  get the feminine track.
                 </p>
               </div>
             )}

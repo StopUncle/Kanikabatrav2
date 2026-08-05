@@ -29,7 +29,10 @@ export const RINGS: readonly RingDef[] = [
   { level: 4, name: "Initiate", threshold: 0 },
   { level: 3, name: "Analyst", threshold: 250 },
   { level: 2, name: "Profiler", threshold: 2500 },
-  { level: 1, name: "IC", threshold: 10000 },
+  // Spelled out, not initialled. This name is rendered at the point of use
+  // ("Opens at IC") on the climb and the path, where there is no ladder
+  // beside it to decode the abbreviation and no page that expands it.
+  { level: 1, name: "Inner Circle", threshold: 10000 },
 ];
 
 /** Standing granted per action. One place, so amounts never drift. */

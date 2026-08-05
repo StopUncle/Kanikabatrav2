@@ -40,9 +40,14 @@ const CATEGORIES: Array<{
     blurb: "A new voice note drops in the feed.",
   },
   {
+    // The id stays "forumReply" because that is the stored preference key
+    // and the category the feed reply sender already passes. The Forum it
+    // was named for has been dormant and redirected since July, so the row
+    // was offering a switch for a room nobody can enter while quietly
+    // governing the feed replies that do still fire.
     id: "forumReply",
-    label: "Forum replies",
-    blurb: "Someone replies to your forum thread.",
+    label: "Replies to your comments",
+    blurb: "Someone replies to your comment in the feed.",
   },
   {
     id: "mention",
@@ -52,7 +57,8 @@ const CATEGORIES: Array<{
   {
     id: "broadcast",
     label: "Broadcast announcements",
-    blurb: "Big-deal announcements from Kanika. Off by default — opt in if you want them.",
+    blurb:
+      "Big-deal announcements from Kanika. Off by default, so opt in if you want them.",
   },
   {
     id: "pactWeek",
@@ -79,14 +85,14 @@ const HOUR_OPTIONS: Array<{ value: number; label: string }> = [
  * Client component for the Notifications card in /consilium/profile.
  *
  * Lazy-loads the current preferences on mount, then PATCHes a single
- * category at a time as the member toggles. No global save button —
+ * category at a time as the member toggles. No global save button, because
  * each toggle is its own optimistic round-trip, which matches the
  * settings-app-on-iOS feel the rest of the member surface is going
  * for. On error, the toggle reverts and a small inline warning shows.
  *
  * Renders an explanatory note when the browser doesn't support push
  * (Notification API missing, or VAPID env not configured) so members
- * understand why the toggles still exist but won't fire — the row is
+ * understand why the toggles still exist but won't fire. The row is
  * still useful for shaping their stored preferences if/when they
  * later install the PWA on a supported device.
  */
@@ -202,8 +208,8 @@ export default function NotificationPreferences() {
         <p className="text-xs text-text-gray/60 leading-relaxed pb-3 border-b border-warm-gold/10">
           Push notifications aren&apos;t enabled in this browser.
           Toggles below still save your preferences for the next time
-          you open the Consilium on a device that supports them, for
-          example installing the home-screen app on iPhone or Android.
+          you open this on a device that supports them, for example
+          installing the home-screen app on iPhone or Android.
         </p>
       )}
 

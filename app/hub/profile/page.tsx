@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { requireServerAuth } from "@/lib/auth/server-auth";
 import { PageHeader, PageShell } from "@/components/app-shell/ui";
 import { prisma } from "@/lib/prisma";
@@ -68,7 +69,7 @@ export default async function AppProfilePage() {
     <PageShell>
       <PageHeader
         title="Profile"
-        lede="Your identity, your seat, your settings."
+        lede="Your identity, your membership, your settings."
       />
 
       {/* Identity */}
@@ -81,25 +82,50 @@ export default async function AppProfilePage() {
         {user?.gender && (
           <IdentityRow label="Chamber" value={user.gender.toLowerCase()} />
         )}
-        <p className="mt-3 border-t border-[var(--app-line-soft)] pt-3 text-app-eyebrow text-[var(--app-dim)]">
-          To change your email or display name, open the{" "}
+        {/* Still the old dashboard, because that is where the edit form
+            lives and inventing a second one here would give the account two
+            places to disagree about a name. Say where it goes and that it
+            leaves the app, rather than naming a surface this reader has
+            never seen and letting the tap explain itself. */}
+        <p className="mt-3 border-t border-[var(--app-line-soft)] pt-3 text-app-eyebrow leading-relaxed text-[var(--app-dim)]">
+          Changing your email or display name still happens on the website.{" "}
           <a href="/dashboard" className="text-[var(--app-gold)]">
-            Dashboard
+            Open account settings
           </a>
-          .
+          , then come back.
         </p>
       </section>
 
-      {/* The seat */}
+      {/* Membership.
+          This block used to read "YOUR SEAT / INACTIVE" and stop there. Two
+          pieces of in-house vocabulary and a status word that sounds like a
+          fault, offered to the one reader who by definition has not bought
+          anything yet: the free account cannot tell whether it is looking at
+          a tier or at something broken. Say which tier they are on, in the
+          words the rest of the app uses, and give them the door. */}
       <section className="mb-4 rounded-[18px] border border-[var(--app-line)] bg-[var(--app-card)] p-[18px]">
         <p className="mb-3 text-app-eyebrow uppercase tracking-app-label text-[var(--app-gold-soft)]">
-          Your seat
+          Your membership
         </p>
         <p
           className={`text-app-body uppercase tracking-app-wide ${statusColor}`}
         >
-          {membership?.status ?? "Inactive"}
+          {membership?.status ?? "Free account"}
         </p>
+        {!membership && (
+          <>
+            <p className="mt-2 text-app-caption leading-relaxed text-[var(--app-muted)]">
+              You have the free tier: the Simulator, the games, the quizzes and
+              your standing. The Pact opens the rest.
+            </p>
+            <Link
+              href="/app/pact"
+              className="mt-3 inline-block rounded-full border border-[var(--app-gold-soft)] px-4 py-2 text-app-tiny uppercase tracking-app-label text-[var(--app-gold)] transition-colors active:bg-[var(--app-card-2)]"
+            >
+              See the Pact
+            </Link>
+          </>
+        )}
         {joinedLabel && (
           <p className="mt-2 text-app-body text-[var(--app-muted)]">
             Joined {joinedLabel}

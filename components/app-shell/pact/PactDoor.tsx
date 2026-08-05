@@ -137,11 +137,23 @@ export default function PactDoor({
         </p>
       )}
 
+      {/* The CTA needs a track before it can go anywhere, and until 2026-08-05
+          it just sat there disabled at 40% of a filled burgundy pill: still
+          the biggest, reddest thing on the screen, so it read as the button
+          you press rather than as one that is waiting for you. The first tap
+          on the app's only paid product did nothing and said nothing.
+          Now the waiting state is drawn as an outline, and the reason sits
+          under it where it is read before the tap rather than after. */}
       <button
         type="button"
         onClick={proceed}
         disabled={!preset}
-        className="relative mt-6 w-full overflow-hidden rounded-full bg-[var(--pact-blood)] px-5 py-3.5 text-[13px] uppercase tracking-[0.16em] text-[var(--app-text)] transition-transform active:scale-[0.97] disabled:opacity-40"
+        aria-describedby={preset ? undefined : "pact-cta-hint"}
+        className={`relative mt-6 w-full overflow-hidden rounded-full px-5 py-3.5 text-[13px] uppercase tracking-[0.16em] transition-transform ${
+          preset
+            ? "bg-[var(--pact-blood)] text-[var(--app-text)] active:scale-[0.97]"
+            : "border border-[var(--app-line)] bg-transparent text-[var(--app-dim)]"
+        }`}
       >
         {preset && (
           <span
@@ -155,6 +167,15 @@ export default function PactDoor({
         )}
         {rejoining ? "Sign a new pact" : "Make the blood pact"}
       </button>
+
+      {!preset && (
+        <p
+          id="pact-cta-hint"
+          className="mt-2.5 text-center text-app-caption text-[var(--app-dim)]"
+        >
+          Pick one of the three tracks above first.
+        </p>
+      )}
 
       <p className="mt-4 text-app-micro leading-relaxed text-[var(--app-dim)]">
         The Pact is a self-improvement practice, not medical care, and no

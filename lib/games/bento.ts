@@ -26,9 +26,18 @@ export interface BentoHero {
 export interface BentoSquare {
   key: PopularKey;
   name: string;
-  /** The numeral that carries the tile. */
+  /**
+   * The numeral that carries the tile, and the unit it is counted in.
+   *
+   * These are set together and rendered together for a reason. Four big
+   * numerals in one grid, drawn identically, read as one scale: 60 next to
+   * 01 next to 06 looks like a score, a rank, or a count of the same thing.
+   * They were seconds, a daily allowance, a hardcoded 6 that did not match
+   * the 3 published arcs, and a number nobody could name. A numeral without
+   * its unit is decoration pretending to be information.
+   */
   numeral: string;
-  duration: string;
+  unit: string;
   meta: string;
   href: string;
   doneToday: boolean;
@@ -61,23 +70,35 @@ export async function getBentoData(
 ): Promise<BentoData> {
   const since = startOfUtcToday();
 
-  const [train, popularity, drillToday, tellToday, drillBest, adventures, receipts] =
-    await Promise.all([
-      getTrainData(db, userId),
-      readPopularity(db),
-      db.gameSession.count({
-        where: { userId, gameKey: "speed-drill", playedAt: { gte: since } },
-      }),
-      db.tellResponse.count({
-        where: { userId, answeredAt: { gte: since } },
-      }),
-      db.gameSession.aggregate({
-        where: { userId, gameKey: "speed-drill" },
-        _max: { score: true },
-      }),
-      db.adventureProgress.count({ where: { userId } }),
-      db.receipt.count({ where: { userId } }),
-    ]);
+  const [
+    train,
+    popularity,
+    drillToday,
+    tellToday,
+    drillBest,
+    adventures,
+    publishedAdventures,
+    receipts,
+  ] = await Promise.all([
+    getTrainData(db, userId),
+    readPopularity(db),
+    db.gameSession.count({
+      where: { userId, gameKey: "speed-drill", playedAt: { gte: since } },
+    }),
+    db.tellResponse.count({
+      where: { userId, answeredAt: { gte: since } },
+    }),
+    db.gameSession.aggregate({
+      where: { userId, gameKey: "speed-drill" },
+      _max: { score: true },
+    }),
+    db.adventureProgress.count({ where: { userId } }),
+    // Counted rather than hardcoded: the tile said 06 while three arcs were
+    // published, and a number on a menu that disagrees with the room behind
+    // it costs more trust than no number would.
+    db.adventure.count({ where: { publishedAt: { not: null } } }),
+    db.receipt.count({ where: { userId } }),
+  ]);
 
   const nextUp = train.nextUp;
 
@@ -108,7 +129,7 @@ export async function getBentoData(
       key: "speed-drill",
       name: "Speed Drill",
       numeral: "60",
-      duration: "60s",
+      unit: "seconds",
       meta: best !== null ? `${best}/10 best` : "Never played",
       href: "/app/play/drill",
       doneToday: drillToday > 0,
@@ -118,7 +139,7 @@ export async function getBentoData(
       key: "daily-tell",
       name: "Daily Tell",
       numeral: "01",
-      duration: "Daily",
+      unit: "a day",
       meta: "One a day",
       href: "/app/play/tell",
       doneToday: tellToday > 0,
@@ -127,8 +148,8 @@ export async function getBentoData(
     {
       key: "adventures",
       name: "Adventures",
-      numeral: "06",
-      duration: "Chapters",
+      numeral: String(publishedAdventures).padStart(2, "0"),
+      unit: publishedAdventures === 1 ? "arc" : "arcs",
       meta: adventures > 0 ? `${adventures} started` : "Multi-night arcs",
       href: "/app/adventures",
       // No daily reset, so it is never "done today" and sorts on plays.
@@ -138,8 +159,8 @@ export async function getBentoData(
     {
       key: "receipts",
       name: "Receipts",
-      numeral: "01",
-      duration: "2 min",
+      numeral: "02",
+      unit: "minutes",
       meta: receipts > 0 ? `${receipts} read` : "Paste what they sent",
       href: "/app/receipts",
       doneToday: false,

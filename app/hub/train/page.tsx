@@ -1,5 +1,6 @@
 import { requireServerAuth } from "@/lib/auth/server-auth";
 import { prisma } from "@/lib/prisma";
+import { getAccess } from "@/lib/access/tier";
 import { getArcadeData } from "@/lib/games/arcade";
 import { getBentoData } from "@/lib/games/bento";
 import DailySetCard from "@/components/app-shell/play/DailySetCard";
@@ -25,9 +26,10 @@ export const metadata = {
 export default async function TrainPage() {
   const userId = await requireServerAuth("/app/train");
 
-  const [{ set, streak }, bento] = await Promise.all([
+  const [{ set, streak }, bento, access] = await Promise.all([
     getArcadeData(prisma, userId),
     getBentoData(prisma, userId),
+    getAccess(userId),
   ]);
 
   return (
@@ -40,7 +42,7 @@ export default async function TrainPage() {
       <DailySetCard set={set} streak={streak} href={null} />
 
       <div className="mt-6">
-        <ArcadeBento data={bento} />
+        <ArcadeBento data={bento} isMember={access.isMember} />
       </div>
     </PageShell>
   );

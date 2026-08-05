@@ -1,5 +1,6 @@
 import Link from "next/link";
 import type { BentoData, BentoSquare } from "@/lib/games/bento";
+import { APP_SURFACES } from "@/lib/app/nav";
 
 /**
  * The Arcade, laid out as a bento: one hero, a grid of squares, one strip.
@@ -13,6 +14,30 @@ import type { BentoData, BentoSquare } from "@/lib/games/bento";
  * tile is the same size nothing is important, and a screen where nothing
  * is important reads as a menu rather than a place.
  */
+
+/**
+ * Which doors in this room need a membership, read off the surface map so
+ * the tile and the page it opens cannot disagree.
+ *
+ * nav.ts says the `memberOnly` flag and the page's own gate travel as a
+ * pair: the chrome locks the entry before the tap, the page gates the
+ * render for deep links. The More sheet held up its half; this grid did
+ * not, so Receipts and the Lab looked exactly like the two free games and
+ * the wall arrived only after the tap.
+ */
+function isLocked(href: string, isMember: boolean): boolean {
+  if (isMember) return false;
+  return APP_SURFACES.some((s) => s.href === href && s.memberOnly);
+}
+
+/** The one lock treatment, matching MoreSheet's. */
+function MembersPill() {
+  return (
+    <span className="rounded-full border border-[var(--app-gold-soft)] px-1.5 py-0.5 text-app-micro uppercase tracking-app-wide text-[var(--app-gold-soft)]">
+      Members
+    </span>
+  );
+}
 
 const ACCENT: Record<string, string> = {
   "speed-drill": "var(--game-drill)",
@@ -58,8 +83,9 @@ function Glyph({ k, color }: { k: string; color: string }) {
   );
 }
 
-function Square({ g }: { g: BentoSquare }) {
+function Square({ g, isMember }: { g: BentoSquare; isMember: boolean }) {
   const accent = ACCENT[g.key];
+  const locked = isLocked(g.href, isMember);
   return (
     <Link
       href={g.href}
@@ -74,25 +100,38 @@ function Square({ g }: { g: BentoSquare }) {
         <Glyph k={g.key} color={accent} />
       </span>
 
-      {g.popular && (
-        <span
-          className="absolute left-4 top-4 text-app-micro uppercase tracking-app-label"
-          style={{ color: accent }}
-        >
-          Most played
+      {locked ? (
+        <span className="absolute left-4 top-4">
+          <MembersPill />
         </span>
+      ) : (
+        g.popular && (
+          <span
+            className="absolute left-4 top-4 text-app-micro uppercase tracking-app-label"
+            style={{ color: accent }}
+          >
+            Most played
+          </span>
+        )
       )}
 
       <span className="flex h-full flex-col justify-end">
-        <span
-          className="text-app-hero leading-none"
-          style={{
-            fontFamily: "var(--font-display)",
-            color: accent,
-            opacity: 0.9,
-          }}
-        >
-          {g.doneToday ? "✓" : g.numeral}
+        <span className="flex items-baseline gap-1.5">
+          <span
+            className="text-app-hero leading-none"
+            style={{
+              fontFamily: "var(--font-display)",
+              color: accent,
+              opacity: 0.9,
+            }}
+          >
+            {g.doneToday ? "✓" : g.numeral}
+          </span>
+          {!g.doneToday && (
+            <span className="text-app-micro uppercase tracking-app-label text-[var(--app-dim)]">
+              {g.unit}
+            </span>
+          )}
         </span>
         <span className="mt-2 block text-app-body font-medium leading-tight">
           {g.name}
@@ -105,8 +144,15 @@ function Square({ g }: { g: BentoSquare }) {
   );
 }
 
-export default function ArcadeBento({ data }: { data: BentoData }) {
+export default function ArcadeBento({
+  data,
+  isMember,
+}: {
+  data: BentoData;
+  isMember: boolean;
+}) {
   const { hero, squares, strip } = data;
+  const stripLocked = isLocked(strip.href, isMember);
 
   return (
     <div className="grid grid-cols-2 gap-2.5">
@@ -151,7 +197,7 @@ export default function ArcadeBento({ data }: { data: BentoData }) {
           they fill the row and wrap onto the next by themselves however
           many games there are. */}
       {squares.map((g) => (
-        <Square key={g.key} g={g} />
+        <Square key={g.key} g={g} isMember={isMember} />
       ))}
 
       {/* The Lab: open-ended, so it sits under the timed games as a full
@@ -180,12 +226,16 @@ export default function ArcadeBento({ data }: { data: BentoData }) {
             {strip.line}
           </span>
         </span>
-        <span
-          className="shrink-0 text-app-tiny uppercase tracking-app-label"
-          style={{ color: "var(--game-lab)" }}
-        >
-          {strip.cta}
-        </span>
+        {stripLocked ? (
+          <MembersPill />
+        ) : (
+          <span
+            className="shrink-0 text-app-tiny uppercase tracking-app-label"
+            style={{ color: "var(--game-lab)" }}
+          >
+            {strip.cta}
+          </span>
+        )}
       </Link>
     </div>
   );

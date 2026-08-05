@@ -7,7 +7,7 @@ import { EmptyState, PageHeader, PageShell } from "@/components/app-shell/ui";
 export const metadata = {
   title: "Adventures | Consilium",
   description:
-    "Multi-scenario arcs. One narrative thread, played across five to seven chapters. Pick a journey.",
+    "Multi-scenario arcs. One narrative thread, played a chapter at a time. Pick a journey.",
 };
 
 /** The adventure index in the app skin: one column of doors, app tokens. */
@@ -24,11 +24,24 @@ export default async function AdventuresIndex() {
 
   const progressByAdventure = new Map(progresses.map((p) => [p.adventureId, p]));
 
+  // Counted, not claimed. The lede said "five to seven" while the cards
+  // underneath it read 8, 5 and 9, and a page that disagrees with itself in
+  // the space of one scroll teaches the reader to stop believing the copy.
+  const lengths = adventures.map((a) => a.scenarioIds.length).filter((n) => n > 0);
+  const shortest = lengths.length ? Math.min(...lengths) : 0;
+  const longest = lengths.length ? Math.max(...lengths) : 0;
+  const span =
+    lengths.length === 0
+      ? "A single story told across several chapters."
+      : shortest === longest
+        ? `A single story told across ${longest} chapters.`
+        : `A single story told across ${shortest} to ${longest} chapters.`;
+
   return (
     <PageShell>
       <PageHeader
         title="Adventures"
-        lede="Five to seven scenarios as one continuous story. Progress saves between chapters: step in once a day, finish across a week."
+        lede={`${span} Progress saves between chapters: step in once a day, finish across a week.`}
       />
 
       {adventures.length === 0 ? (
