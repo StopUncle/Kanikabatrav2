@@ -3,6 +3,8 @@ import { requireAuth } from "@/lib/auth/middleware";
 import { prisma } from "@/lib/prisma";
 import { readPact } from "@/lib/pact/read";
 import { getAccess } from "@/lib/access/tier";
+import { captureServerAsync } from "@/lib/analytics/server";
+import { ANALYTICS_EVENTS } from "@/lib/analytics/events";
 
 /**
  * "I kept it." Self-reported on purpose: the signature is a commitment to
@@ -48,6 +50,14 @@ export async function POST(request: NextRequest) {
         { status: 409 },
       );
     }
+
+    // The retention metric. Week one kept is the number that says whether
+    // the product works; the same event at week five says whether it lasts.
+    captureServerAsync(user.id, ANALYTICS_EVENTS.PACT_WEEK_KEPT, {
+      pact_preset: read.pact.preset,
+      week_number: read.weekNumber,
+    });
+
     return NextResponse.json({ success: true, status: "kept" });
   });
 }

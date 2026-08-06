@@ -1,5 +1,7 @@
 import type { Pact, PactEntry, PactWeek } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
+import { captureServerAsync } from "@/lib/analytics/server";
+import { ANALYTICS_EVENTS } from "@/lib/analytics/events";
 import { PACT_CYCLE_WEEKS } from "@/lib/pact/presets";
 
 /**
@@ -65,6 +67,7 @@ export async function scarOverdueEntries(
     },
     select: {
       id: true,
+      userId: true,
       weekNumber: true,
       weekEndsAt: true,
       pact: { select: { preset: true } },
@@ -80,14 +83,13 @@ export async function scarOverdueEntries(
     published.map((w) => [`${w.preset}:${w.cycleWeek}`, w.publishedAt as Date]),
   );
 
-  const ids = overdue
-    .filter((e) => {
-      const liveSince = publishedAtFor.get(
-        `${e.pact.preset}:${cycleWeekFor(e.weekNumber)}`,
-      );
-      return liveSince !== undefined && liveSince < e.weekEndsAt;
-    })
-    .map((e) => e.id);
+  const scarring = overdue.filter((e) => {
+    const liveSince = publishedAtFor.get(
+      `${e.pact.preset}:${cycleWeekFor(e.weekNumber)}`,
+    );
+    return liveSince !== undefined && liveSince < e.weekEndsAt;
+  });
+  const ids = scarring.map((e) => e.id);
   if (ids.length === 0) return 0;
 
   // Status re-checked in the write so a concurrent keep wins cleanly.
@@ -95,6 +97,19 @@ export async function scarOverdueEntries(
     where: { id: { in: ids }, status: "open" },
     data: { status: "scarred" },
   });
+
+  // The churn leading indicator, reported from the write itself so it
+  // covers the members this pass exists for: the ones who did not look.
+  // Only when the count agrees with the list, so a concurrent keep never
+  // shows up as a scar in the funnel.
+  if (res.count === scarring.length) {
+    for (const e of scarring) {
+      captureServerAsync(e.userId, ANALYTICS_EVENTS.PACT_WEEK_SCARRED, {
+        pact_preset: e.pact.preset,
+        week_number: e.weekNumber,
+      });
+    }
+  }
   return res.count;
 }
 

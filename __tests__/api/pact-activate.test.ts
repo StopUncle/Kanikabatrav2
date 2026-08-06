@@ -58,6 +58,9 @@ beforeEach(() => {
   db.pact.findFirst.mockResolvedValue({
     id: "pact_1",
     userId: "user_1",
+    number: 1,
+    preset: "confidence",
+    signedAt: new Date("2026-08-01T00:00:00Z"),
     startedAt: null,
   });
   db.pact.update.mockResolvedValue({ id: "pact_1" });

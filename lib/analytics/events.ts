@@ -48,6 +48,45 @@ export const ANALYTICS_EVENTS = {
   INSTALL_PROMPT_SHOWN: "install_prompt_shown",
   /** They accepted it. */
   INSTALL_PROMPT_ACCEPTED: "install_prompt_accepted",
+
+  /**
+   * The Blood Pact funnel, step by step.
+   *
+   * The pact is the app's one paid product, so this is the only funnel
+   * where a missing step means paid traffic cannot be judged. Each event
+   * is one screen or one irreversible act, in the order a buyer meets
+   * them, and every one carries `pact_preset` once a track is chosen so
+   * the whole funnel can be split by track.
+   *
+   * The ceremony steps matter individually because the ceremony is long
+   * for a $4.99 product: four oath lines, three written goals, and a
+   * drawn signature stand between the door and the money. Knowing WHICH
+   * of those loses people is the difference between shortening the right
+   * step and guessing.
+   */
+  /** The door rendered: the top of the paid funnel. */
+  PACT_DOOR_VIEWED: "pact_door_viewed",
+  /** A track was chosen on the door. First real intent. */
+  PACT_TRACK_PICKED: "pact_track_picked",
+  /** The ceremony opened, carrying track and billing cycle. */
+  PACT_CEREMONY_STARTED: "pact_ceremony_started",
+  /** All four oath lines ticked; moving to the goals. */
+  PACT_OATH_TAKEN: "pact_oath_taken",
+  /** All three goals written; moving to the signature. */
+  PACT_GOALS_WRITTEN: "pact_goals_written",
+  /** Seal pressed with ink on the canvas. The conversion attempt. */
+  PACT_SEALED: "pact_sealed",
+  /** The covenant row exists. Entitled path only; paid arrives via the
+   *  webhook as member_activated. */
+  PACT_SIGNED: "pact_signed",
+  /** Activate pressed: the weekly clock starts. The activation metric. */
+  PACT_ACTIVATED: "pact_activated",
+  /** A week was marked kept. The retention metric, carries the week. */
+  PACT_WEEK_KEPT: "pact_week_kept",
+  /** A week lapsed unkept and scarred. The churn leading indicator. */
+  PACT_WEEK_SCARRED: "pact_week_scarred",
+  /** The pact was broken by the member. Churn, with what it cost them. */
+  PACT_BROKEN: "pact_broken",
 } as const;
 
 export type AnalyticsEvent =

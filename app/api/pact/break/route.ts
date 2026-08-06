@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { requireAuth } from "@/lib/auth/middleware";
 import { prisma } from "@/lib/prisma";
 import { cancelStripeSubscription } from "@/lib/stripe";
+import { captureServerAsync } from "@/lib/analytics/server";
+import { ANALYTICS_EVENTS } from "@/lib/analytics/events";
 
 /**
  * Breaking the pact. The interstitial at /app/pact/break makes the member
@@ -29,7 +31,7 @@ export async function POST(request: NextRequest) {
 
     const pact = await prisma.pact.findFirst({
       where: { userId: user.id, brokenAt: null },
-      select: { id: true },
+      select: { id: true, number: true, preset: true, startedAt: true },
     });
     if (!pact) {
       return NextResponse.json({ error: "No pact to break" }, { status: 404 });
@@ -63,6 +65,22 @@ export async function POST(request: NextRequest) {
     await prisma.pact.update({
       where: { id: pact.id },
       data: { brokenAt: new Date() },
+    });
+
+    // Churn, with the shape of it: how far they got and what the record
+    // said when they walked. A pact broken at week one with no scars is a
+    // different problem from one broken at week six with four.
+    const [kept, scarred] = await Promise.all([
+      prisma.pactEntry.count({ where: { pactId: pact.id, status: "kept" } }),
+      prisma.pactEntry.count({ where: { pactId: pact.id, status: "scarred" } }),
+    ]);
+    captureServerAsync(user.id, ANALYTICS_EVENTS.PACT_BROKEN, {
+      pact_preset: pact.preset,
+      pact_number: pact.number,
+      weeks_kept: kept,
+      weeks_scarred: scarred,
+      ever_activated: pact.startedAt !== null,
+      had_subscription: !!membership?.stripeSubscriptionId,
     });
 
     return NextResponse.json({ success: true });

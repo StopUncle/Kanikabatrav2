@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import SignatureCanvas from "./SignatureCanvas";
 import {
@@ -59,11 +59,32 @@ export default function SignCeremony({
   const allTicked = ticked.every(Boolean);
   const allGoals = goals.every((g) => g.trim().length > 0);
 
+  // Entering the ceremony. The door is the step before; the gap between
+  // the two is people who picked a track and then thought better of it.
+  const reportedStart = useRef(false);
+  useEffect(() => {
+    if (reportedStart.current) return;
+    reportedStart.current = true;
+    capture(ANALYTICS_EVENTS.PACT_CEREMONY_STARTED, {
+      pact_preset: preset,
+      billing_cycle: cycle,
+      entitled,
+    });
+  }, [preset, cycle, entitled]);
+
   async function seal() {
     if (strokes.length === 0 || busy) return;
     setBusy(true);
     setError(null);
     haptic("moment");
+    // The conversion attempt, fired before either branch: the entitled
+    // path never reaches checkout_started, so without this the two
+    // cohorts could not be compared at the same point in the flow.
+    capture(ANALYTICS_EVENTS.PACT_SEALED, {
+      pact_preset: preset,
+      billing_cycle: cycle,
+      entitled,
+    });
     const trimmedGoals = goals.map((g) => g.trim());
     // Both paths stash: the paid path needs it to attach after the webhook,
     // and the sealed ceremony replays the hand from it either way. On the
@@ -174,6 +195,9 @@ export default function SignCeremony({
               type="button"
               onClick={() => {
                 haptic("select");
+                capture(ANALYTICS_EVENTS.PACT_OATH_TAKEN, {
+                  pact_preset: preset,
+                });
                 setStep("goals");
               }}
               disabled={!allTicked}
@@ -234,6 +258,9 @@ export default function SignCeremony({
               type="button"
               onClick={() => {
                 haptic("select");
+                capture(ANALYTICS_EVENTS.PACT_GOALS_WRITTEN, {
+                  pact_preset: preset,
+                });
                 setStep("sign");
               }}
               disabled={!allGoals}

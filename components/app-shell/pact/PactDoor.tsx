@@ -1,9 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { PACT_PRESETS, PACT_PRICING, type PactPresetKey } from "@/lib/pact/presets";
 import { haptic } from "@/lib/haptics";
+import { capture } from "@/lib/analytics/client";
+import { ANALYTICS_EVENTS } from "@/lib/analytics/events";
 
 /**
  * The door. Everything before the oath: what the Pact is, which track, and
@@ -34,6 +36,33 @@ export default function PactDoor({
   const router = useRouter();
   const [preset, setPreset] = useState<PactPresetKey | null>(null);
   const [cycle, setCycle] = useState<"weekly" | "annual">("weekly");
+
+  // Top of the paid funnel. Once per mount, and carrying the shape of the
+  // door the viewer actually saw: a rejoining member and a first-timer
+  // read different copy, and a closed checkout is a different offer.
+  const reportedView = useRef(false);
+  useEffect(() => {
+    if (reportedView.current) return;
+    reportedView.current = true;
+    capture(ANALYTICS_EVENTS.PACT_DOOR_VIEWED, {
+      entitled,
+      is_member: isMember,
+      rejoining,
+      checkout_open: checkoutOpen,
+    });
+  }, [entitled, isMember, rejoining, checkoutOpen]);
+
+  // The first track tap only. Changing your mind is not new intent, and
+  // counting it would inflate the step against the door above it.
+  const reportedPick = useRef(false);
+  const pickTrack = (key: PactPresetKey) => {
+    setPreset(key);
+    haptic("tick");
+    if (!reportedPick.current) {
+      reportedPick.current = true;
+      capture(ANALYTICS_EVENTS.PACT_TRACK_PICKED, { pact_preset: key });
+    }
+  };
 
   const proceed = () => {
     if (!preset) return;
@@ -75,10 +104,7 @@ export default function PactDoor({
           <button
             key={p.key}
             type="button"
-            onClick={() => {
-              setPreset(p.key);
-              haptic("tick");
-            }}
+            onClick={() => pickTrack(p.key)}
             aria-pressed={preset === p.key}
             className={`rounded-2xl border px-4 py-3.5 text-left transition-colors ${
               preset === p.key

@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { requireAuth } from "@/lib/auth/middleware";
 import { prisma } from "@/lib/prisma";
 import { getAccess } from "@/lib/access/tier";
+import { captureServerAsync } from "@/lib/analytics/server";
+import { ANALYTICS_EVENTS } from "@/lib/analytics/events";
 import { isPactPreset, parsePactGoals } from "@/lib/pact/presets";
 import { parseSignatureData } from "@/lib/pact/signature";
 
@@ -69,6 +71,14 @@ export async function POST(request: NextRequest) {
         goals,
         ...(signatureData ? { signatureData } : {}),
       },
+    });
+
+    // The covenant exists. Only the entitled path reaches this route; a
+    // paid signer's equivalent is member_activated from the webhook.
+    captureServerAsync(user.id, ANALYTICS_EVENTS.PACT_SIGNED, {
+      pact_preset: preset,
+      pact_number: pact.number,
+      entitled_free: true,
     });
 
     // Same welcome the paid path enqueues from lib/pact/billing.ts. This

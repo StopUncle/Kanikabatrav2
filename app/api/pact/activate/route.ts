@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { requireAuth } from "@/lib/auth/middleware";
 import { prisma } from "@/lib/prisma";
 import { getAccess } from "@/lib/access/tier";
+import { captureServerAsync } from "@/lib/analytics/server";
+import { ANALYTICS_EVENTS } from "@/lib/analytics/events";
 import { weekEndsAt } from "@/lib/pact/read";
 import { sendPushToUser } from "@/lib/push";
 
@@ -73,6 +75,21 @@ export async function POST(request: NextRequest) {
           },
         });
       }
+    });
+
+    // Activation, not signing, is when the product actually starts. The
+    // lag between the two is the number that says whether the sealed
+    // screen hands people onward or leaves them parked.
+    captureServerAsync(user.id, ANALYTICS_EVENTS.PACT_ACTIVATED, {
+      pact_preset: pact.preset,
+      pact_number: pact.number,
+      // Null-guarded: an analytics property must never be the thing that
+      // throws inside the one route that starts the product.
+      hours_since_signing: pact.signedAt
+        ? Math.round(
+            (startedAt.getTime() - pact.signedAt.getTime()) / 3_600_000,
+          )
+        : null,
     });
 
     // The first notification of the pact, at the moment of most intent.
