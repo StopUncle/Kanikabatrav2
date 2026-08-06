@@ -5,14 +5,21 @@ import { ArrowRight, Loader2, CheckCircle, BadgeCheck } from "lucide-react";
 import type { CatalogueStats } from "@/lib/simulator/stats";
 import { MEMBERSHIP } from "@/lib/constants";
 import { QUIZ_INFO } from "@/lib/quiz-data";
+import { CONSILIUM_ROOMS, TRUST_LINE } from "@/lib/upgrade/benefits";
+import { PACT_LAUNCHED } from "@/lib/pact/presets";
 
+/**
+ * The room list is shared with the app's ladder page and UpgradeSheet
+ * (lib/upgrade/benefits) so the surfaces cannot promise different
+ * products. The simulator line stays local: it carries live catalogue
+ * counts the shared list cannot know.
+ */
 const includedLines = (stats: CatalogueStats) => [
   `The Dark Mirror Simulator, ${stats.scenarios} branching scenarios across ${stats.tracks} tracks`,
-  "Ask Kanika, one question a day, top-voted answered by voice or video",
-  "Voice notes from Kanika, raw, unfiltered, members-only",
-  "Daily psychology drops + discussion prompts",
-  "Receipts, AI message analysis, member edition",
-  "Member price on the Sociopathic Dating Bible, $9.99 (vs $24.99)",
+  ...CONSILIUM_ROOMS,
+  ...(PACT_LAUNCHED
+    ? ["And the Blood Pact, the app's training tier, included."]
+    : []),
 ];
 
 type BillingCycle = "monthly" | "annual";
@@ -208,8 +215,7 @@ export default function JoinPanel({
           anxiety peaks. The guarantee already exists on the sell page; it
           belongs here too, right under the button. */}
       <p className="text-text-gray/55 text-[11px] text-center mt-4 font-light leading-relaxed">
-        7-day money-back guarantee · Cancel anytime · Secure checkout via
-        Stripe
+        {TRUST_LINE}
       </p>
     </div>
   );

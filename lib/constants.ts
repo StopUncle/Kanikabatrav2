@@ -76,23 +76,18 @@ export const BOOK_INFO = {
  */
 export const MEMBERSHIP = {
   /**
-   * Monthly, the standard price.
+   * Monthly, the standard price. $29 is what production has always charged,
+   * and on 2026-08-06 Sam confirmed it as the price going forward: the
+   * monetisation reset (briefly $9, then retargeted at $19.99) is SHELVED.
+   * At $29/$290 the two-rung ladder reads correctly against the Pact
+   * ($4.99/wk ~ $21.60/mo below it, $149/yr below $290/yr); at $19.99 it
+   * inverted, which is part of why the reset died. History and knock-ons in
+   * docs/LEDGER.md.
    *
-   * This is $29, which is what production has always charged. It was briefly
-   * moved to $9 on 2026-07-28 as part of the monetisation reset and reverted
-   * on 2026-07-29, before the deploy carrying it reached customers: the reset
-   * is agreed in principle but was never signed off to go live, and it needs
-   * Kanika's yes before it does.
-   *
-   * The reset itself is not undone, only its numbers. Everything that made
-   * repricing safe stays: this constant, the coaching deduplication, and the
-   * legacy Stripe ids kept alongside the new ones. Launching the reset is
-   * now an edit to this block and the two price ids in lib/stripe.ts, not
-   * another hunt through 55 strings.
-   *
-   * Reset target REPRICED 2026-08-03 (Sam): the reset lands at $19.99/mo,
-   * not $9. The live Stripe prices created for $9/$90 are obsolete; a new
-   * monthly/annual pair is needed at the new price before the reset ships.
+   * The repricing MACHINERY stays: this constant, the coaching
+   * deduplication, the legacy Stripe ids. Any future reprice is an edit to
+   * this block and the price ids in lib/stripe.ts, not a hunt through 55
+   * strings.
    */
   price: 29,
   priceDisplay: "$29",
@@ -113,10 +108,6 @@ export const MEMBERSHIP = {
    * Quiz buyers' first month, after the $9.99 credit their purchase earns
    * them. The credit is the difference between this and the standard price,
    * derived in lib/stripe-credits rather than typed twice.
-   *
-   * Open decision for the $19.99 reset (see LEDGER 2026-08-03): the $9.99
-   * credit works again at that tier ($10 first month), or a new $15.00-off
-   * coupon keeps the $4.99 first month. Sam picks when the reset ships.
    */
   quizFirstMonthPrice: 19.01,
   quizFirstMonthDisplay: "$19.01",

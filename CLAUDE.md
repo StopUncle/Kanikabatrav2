@@ -84,43 +84,39 @@ Next.js 15 (App Router) + React 19 + TypeScript. Personal brand site for Kanika 
 - **Deployment:** Railway (Nixpacks, `npx prisma generate && npm run build`). Domain `kanikarose.com`. Push to `master` auto-deploys.
 - **Storage:** `private/books/` for book files (gitignored, deployed via Railway separately, must NOT be committed). Voice notes + member avatars on Cloudflare R2 (`kanika-media` bucket, S3-compatible, via `lib/storage/r2.ts`).
 
-## 🚧 PLANNED: the monetisation reset (decided 2026-07-28, NOT SHIPPED)
+## 💰 Pricing: $29 CONFIRMED, the monetisation reset is SHELVED (2026-08-06)
 
-Everything in the pricing sections below still describes production. This block
-describes what is agreed and coming, so no session ships against the old model
-by accident. **Nothing here deploys without Sam's explicit go.**
+**Sam's call, 2026-08-06, on podcast day 1's 50x sales day: the Consilium stays
+at $29/mo, $290/yr. The reset (one $19.99 tier replacing $29) does NOT ship.**
+The model it assumed is gone: the two-rung ladder is live in prod (Pact
+$4.99/wk = training below, Consilium $29 = Kanika's rooms above), and $29 is
+the price at which the rungs read correctly ($19.99 inverted them against Pact
+annual $149). Full history and closed knock-ons: `docs/LEDGER.md`
+(2026-08-06 entry). **Do not ship $19.99 or resurrect the reset without a new
+explicit call from Sam.**
 
-- **$29/mo is being removed.** One paid membership at **$19.99/mo** plus a
-  **free tier**. (Was $9/mo; Sam repriced the reset to $19.99 on 2026-08-03.
-  The M5 live Stripe prices created at $9/$90 are now obsolete: a NEW pair
-  is needed at $19.99/annual before launch.) Existing subscribers all move
-  DOWN to $19.99 with an email; nobody is grandfathered at $29.
-- **Gift memberships land on the free tier when they expire**, not on the paid
-  entry price.
-- **Quiz buyers' first month: decision needed at $19.99.** The old $9.99
-  credit now works again ($10 first month); keeping the $4.99 first month
-  instead needs a new $15.00-off coupon (the $4.01 `quiz-first-month-499`
-  coupon is sized for the $9 tier and immutable).
-- **One paid tier only.** Above it everything is one-time: the 12 Week
-  Transformation ($149, or $199 with the book), Ask packs, coaching.
+Still true from the reset era:
+- **Gift memberships land on the free tier when they expire**, not on a paid
+  price.
 - **Book sales are the primary revenue goal.** The program assigns the book as
   required reading, so selling the program sells books.
 
-**Traps that bite anyone touching pricing** (full list in the plan file):
-- The $29 price has **no constant**. It is ~55 hardcoded strings, including
-  `app/terms/page.tsx:133` and `app/refund/page.tsx:75` (legal copy) and two
-  `content/posts/*.mdx`. Introduce a constant before changing anything.
-- `quiz-credit-999` (`lib/stripe-credits.ts:8`) is a Stripe coupon and
+**Traps that bite anyone touching pricing:**
+- Display prices live in `MEMBERSHIP` (`lib/constants.ts`); if you are about
+  to type a dollar sign next to the word Consilium, import it. Legal copy
+  (`app/terms/page.tsx`, `app/refund/page.tsx`) and two `content/posts/*.mdx`
+  still carry literals.
+- Display and Stripe are **decoupled**: `MEMBERSHIP` is display only, the
+  charge is the price id in `lib/stripe.ts`. Change one without the other and
+  the page advertises a number checkout does not honour.
+- `quiz-credit-999` (`lib/stripe-credits.ts`) is a Stripe coupon and
   **`amount_off` is immutable**. A reprice needs a NEW coupon id.
-- The $39/$79 book bundles are subscriptions whose trial **auto-renews into the
-  $29 INNER_CIRCLE line**. Changing the membership price changes what they
-  renew into.
-- Coaching amounts live in three hardcoded places and are **decoupled from
-  Stripe**, so the amount shown and the amount charged can drift.
+- The $39/$79 book bundles are subscriptions whose trial **auto-renews into
+  the $29 INNER_CIRCLE line**.
+- Coaching amounts live in three hardcoded places, also decoupled from Stripe.
 - `REFERRER_REWARD_CENTS = 2900` is the $29 price as a number.
-
-Reasoning: `docs/WHY-29-A-MONTH.md`. Free/paid design: `docs/FREE-TIER-PLAN.md`.
-Execution ledger and lane ownership: `docs/LEDGER.md` — **read it first**.
+- `INNER_CIRCLE_NEW_9` / `_ANNUAL_NEW_90` in `STRIPE_PRICES` are orphaned $9
+  reset prices, pointed at by nothing; the webhook fulfils nothing for them.
 
 ## 💳 Stripe (live mode)
 

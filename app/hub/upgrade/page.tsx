@@ -3,6 +3,11 @@ import { requireServerAuth } from "@/lib/auth/server-auth";
 import { getAccess } from "@/lib/access/tier";
 import { PACT_PRICING, PACT_LAUNCHED } from "@/lib/pact/presets";
 import { MEMBERSHIP } from "@/lib/constants";
+import {
+  PACT_OPENS,
+  CONSILIUM_ROOMS,
+  TRUST_LINE,
+} from "@/lib/upgrade/benefits";
 import { PageShell, PageHeader } from "@/components/app-shell/ui";
 
 export const metadata = {
@@ -14,24 +19,14 @@ export const metadata = {
  * The ladder on one page. Two rungs, their prices, and what each opens,
  * with the viewer's own rung named. Deliberately ungated: a member seeing
  * their plan laid out is reassurance; a free account seeing both is the
- * clearest pitch the app can make. Every claim here mirrors the
- * UpgradeSheet's lists so the two surfaces can never promise different
- * products.
+ * clearest pitch the app can make. Both rungs render from
+ * lib/upgrade/benefits, the same source the UpgradeSheet and the marketing
+ * JoinPanel read, so no two surfaces can promise different products.
  */
 
-const PACT_OPENS = [
-  "One challenge a week, on your track, and a record that never forgets.",
-  "Every chapter of every track, not just the first.",
-  "The Room: say it in your own words, and find out what that costs you.",
-  "The Mark: your reads, measured, and a record that holds you to them.",
-];
-
 const CONSILIUM_OPENS = [
-  "Everything the Pact opens, included.",
-  "The feed: her posts, drops, and prompts, every morning.",
-  "Ask Kanika: one question a day, answered by voice or video.",
-  "Voice notes and videos, for members only.",
-  "The book at $9.99 instead of $24.99.",
+  ...(PACT_LAUNCHED ? ["Everything the Pact opens, included."] : []),
+  ...CONSILIUM_ROOMS,
 ];
 
 function BenefitList({ items }: { items: string[] }) {
@@ -139,6 +134,11 @@ export default async function PlansPage() {
           >
             Join the Consilium
           </Link>
+        )}
+        {!onConsilium && (
+          <p className="mt-3 text-center text-[11px] leading-relaxed text-[var(--app-dim)]">
+            {TRUST_LINE}
+          </p>
         )}
       </section>
 

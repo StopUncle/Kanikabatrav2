@@ -3,6 +3,12 @@
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { PACT_LAUNCHED, PACT_PRICING } from "@/lib/pact/presets";
+import { MEMBERSHIP } from "@/lib/constants";
+import {
+  PACT_OPENS,
+  CONSILIUM_ROOMS,
+  TRUST_LINE,
+} from "@/lib/upgrade/benefits";
 import { capture } from "@/lib/analytics/client";
 import { ANALYTICS_EVENTS } from "@/lib/analytics/events";
 
@@ -115,21 +121,17 @@ function sublineFor(offer: UpgradeOffer, trigger: UpgradeTrigger): string {
     : "Her rooms open with the membership, and the Pact comes included.";
 }
 
-/** What continues. Never a list of what is missing. */
+/**
+ * What continues. Never a list of what is missing. The lists live in
+ * lib/upgrade/benefits, shared with the ladder page and the marketing
+ * JoinPanel.
+ */
 function continuesFor(offer: UpgradeOffer): string[] {
   if (offer === "pact" && PACT_LAUNCHED) {
-    return [
-      "One challenge a week, on your track, and a record that never forgets.",
-      "Every chapter of every track, not just the first.",
-      "The Room: say it in your own words, and find out what that costs you.",
-      "The Mark: your reads, measured, and a record that holds you to them.",
-    ];
+    return PACT_OPENS;
   }
   return [
-    "The feed: her posts, drops, and prompts, every morning.",
-    "Ask Kanika: one question a day, answered by voice or video.",
-    "Voice notes and videos, for members only.",
-    "The book at $9.99 instead of $24.99.",
+    ...CONSILIUM_ROOMS,
     ...(PACT_LAUNCHED ? ["And the Blood Pact, included."] : []),
   ];
 }
@@ -223,7 +225,7 @@ export default function UpgradeSheet({
           <p className="mt-5 text-[12.5px] text-[var(--app-dim)]">
             {offer === "pact"
               ? `${PACT_PRICING.weeklyDisplay}, or ${PACT_PRICING.annualDisplay}. Signed, not subscribed: it starts with your name.`
-              : "$29 a month. Cancel any time."}
+              : `${MEMBERSHIP.priceDisplay} a month, or ${MEMBERSHIP.annualDisplay} a year. Cancel any time.`}
           </p>
 
           <button
@@ -233,6 +235,12 @@ export default function UpgradeSheet({
           >
             {offer === "pact" ? "See the Pact" : "Join the Consilium"}
           </button>
+
+          {offer === "consilium" && (
+            <p className="mt-3 text-center text-[11px] leading-relaxed text-[var(--app-dim)]">
+              {TRUST_LINE}
+            </p>
+          )}
 
           <button
             type="button"

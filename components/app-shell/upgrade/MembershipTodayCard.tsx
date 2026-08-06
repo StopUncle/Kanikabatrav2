@@ -1,14 +1,23 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import UpgradeSheet, { type UpgradeOffer } from "./UpgradeSheet";
 import type { ViewerTier } from "@/lib/app/nav";
+import { PACT_PRICING } from "@/lib/pact/presets";
+import { MEMBERSHIP } from "@/lib/constants";
 
 /**
  * The one place on Today that pitches the next rung by invitation rather
  * than by wall. The caller gates it to non-consilium viewers; WHICH rung
  * it pitches depends on where the viewer stands. A free account is sold
  * the Pact (training); a pact subscriber is sold the Consilium (Kanika).
+ *
+ * The price is on the card, not one tap deeper: hiding it behind the
+ * sheet read as evasive, and a visitor who will not pay $29 is not made
+ * more likely to by discovering the number later. The compare link is a
+ * sibling of the card, not a child, because the card is a button and a
+ * link cannot legally nest inside it.
  */
 export default function MembershipTodayCard({
   viewerTier,
@@ -40,7 +49,18 @@ export default function MembershipTodayCard({
             ? "Every track, the Lab, the Mark, the whole climb. See what continues."
             : "The feed, Ask Kanika, voice notes, videos, the book at member price. See what is inside."}
         </span>
+        <span className="mt-2 block text-[12.5px] text-[var(--app-dim)]">
+          {offer === "pact"
+            ? `${PACT_PRICING.weeklyDisplay}, or ${PACT_PRICING.annualDisplay}.`
+            : `${MEMBERSHIP.priceDisplay} a month, or ${MEMBERSHIP.annualDisplay} a year.`}
+        </span>
       </button>
+      <Link
+        href="/app/upgrade"
+        className="mt-2 block w-full py-1.5 text-center text-[12px] text-[var(--app-gold-soft)]"
+      >
+        Compare both plans
+      </Link>
       <UpgradeSheet
         open={open}
         trigger="today-card"
