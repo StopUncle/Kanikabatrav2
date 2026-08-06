@@ -158,27 +158,67 @@ Video program that pairs each week's lessons with assigned reading from the book
 - Part II lesson and module names are deliberately plain and clinical. Nothing in a title or thumbnail should be quotable out of context.
 - Chapter titles in the seed cards (`prisma/seeds/book-insights.ts`) are marketing names and **two do not match the book**: real Ch. 5 is "The Predator's Gaze" (weakness detection, not scarcity), real Ch. 6 is "The Architecture of Control". Trust the EPUB, not the cards.
 
-## 🎯 Consilium / Inner Circle ($29/mo)
+## 🎯 Consilium / Inner Circle ($29/mo) — one membership, TWO member skins
 
 > Full ops manual: `docs/INNER-CIRCLE.md` (gitignored).
 
-**Application gate removed (2026-04-19).** No PENDING / APPROVED gating, no admin review queue. `/consilium/apply` is now a one-click join page that POSTs to `/api/consilium/subscription/create` and redirects to Stripe. Legacy PENDING / APPROVED rows from before the cutover are treated as "finish joining" via the same checkout path.
+**The membership is one thing; it renders in two places. Know which one you
+are editing before you touch anything member-facing.**
+
+**THE APP (new, canonical — build member features HERE):**
+- Routes `/app/**`, code in `app/hub/**` (next.config.js rewrites map the
+  two; a direct `/hub` hit canonicalizes back to `/app`). Components in
+  `components/app-shell/**`. Nav source of truth: `lib/app/nav.ts`.
+- Serves EVERY tier, not just members: free accounts (first chapter of
+  every track, the quiz), Pact subscribers (all training), Consilium
+  members (everything + Kanika's rooms). Tier logic lives in
+  `lib/access/tier.ts`: `canTrain` = any paid rung; `memberGate` /
+  `canAccessMemberOnly` = consilium only. The ladder rules are in the
+  Blood Pact section below.
+- Pitch surfaces: `/app/upgrade` (both rungs side by side), the
+  UpgradeSheet (walls + today card). Benefit lists come from
+  `lib/upgrade/benefits.ts`, shared with the marketing JoinPanel;
+  `__tests__/lib/pricing-drift.test.ts` fails any price typed in place.
+
+**OLD CONSILIUM (legacy — maintenance only, do NOT build new features here):**
+- Routes `/consilium/**`. Nav source of truth `lib/consilium/nav.ts`
+  (InnerCircleSidebar + MemberPillNav both render from it).
+- Still the daily home of EXISTING active members: `/start` cohort-routes
+  active Consilium → `/consilium/feed`, everyone else → `/app`; login and
+  register do the same. It retires at the eventual app cutover
+  (re-point manifest/login/register), which is Sam's call, not made yet.
+- Surfaces: Feed (Kanika posts + cron-driven daily insights/prompts,
+  members comment + react but cannot post), Simulator (the old skin of the
+  same engine the app's Train serves), Receipts, Library (Book, Videos,
+  Voice Notes, Previews). Forum/Chat/Classroom are dormant and 302 to feed.
+- Traps: its five feed serializers must route authors through
+  `lib/pact/note.ts` `maskPactAuthor` (anonymous pact notes leak names
+  otherwise), and its feed EXCLUDES `PACT_NOTE` posts by type filter.
+  Anything shared between skins routes through `lib/shell-routes.ts`,
+  never a hardcoded shell path.
+
+**What the $29 buys** (`lib/upgrade/benefits.ts` is the copy source):
+everything the Pact opens (all training), plus Kanika's rooms: the feed,
+Ask Kanika, voice notes + videos, admin DMs, the book at $9.99 instead of
+$24.99, and quiz results unlocked. The book is NOT bundled into the
+subscription; the only book-inclusive SKUs are the one-time
+`BOOK_CONSILIUM_1MO` ($39) and `BOOK_CONSILIUM_3MO` ($79), plus every
+COACHING package (webhook delivers it since 2026-08-06).
+
+**Joining:** `/consilium/apply` is a one-click join page (application gate
+removed 2026-04-19) that POSTs to `/api/consilium/subscription/create` and
+redirects to Stripe. Monthly/annual toggle in
+`components/consilium/JoinPanel.tsx`, annual default. The app hands off to
+this page from its CTAs; there is no app-native consilium checkout yet
+(the Pact has one; parity is a known gap).
 
 **Membership state machine:** ACTIVE → SUSPENDED / CANCELLED / EXPIRED.
 - ACTIVE on Stripe `checkout.session.completed` (creates the row if missing).
 - SUSPENDED on `subscription.paused`, `payment_failed`, or member-requested pause.
 - CANCELLED on `subscription.deleted` or `charge.refunded` (INNER_CIRCLE).
 - EXPIRED set lazily on read by `lib/community/membership.ts` when `expiresAt < now`.
-
-Legacy PENDING / APPROVED rows survive in the DB but are not produced by any current code path. `lib/community/membership.ts` redirects them to `/consilium`.
-
-**What's inside** (all member surfaces live under `/consilium/*`; **nav source of truth is `lib/consilium/nav.ts`** — both `InnerCircleSidebar` and `MemberPillNav` render from it; adding a surface = add it to one section there):
-- **Feed** (`/consilium/feed`): Kanika posts + cron-driven daily insights / discussion prompts. Members comment + react (markdown renders via react-markdown, cursor pagination), cannot create top-level posts.
-- **Simulator** (`/consilium/simulator`): the engagement engine — scenario runs, XP, streaks, leaderboard, plus Adventures (multi-chapter arcs), The Lab (freeform AI roleplay), Games (Speed Drill), Instincts/Tells, daily generated scenarios.
-- **Receipts** (`/consilium/receipts`): AI message analysis, member edition.
-- **Library surfaces:** The Book, Videos, Voice Notes (admin-only uploads), Previews.
-- **Dormant, hidden AND redirected** (2026-04-30 audit; pages 302 to feed since 2026-07-02, APIs/schema intact): Forum, Chat, Classroom.
-- **Member-exclusive book pricing** ($9.99 for active members, $24.99 standalone). The Sociopathic Dating Bible is NOT bundled into the $29/mo Consilium; the only bundles that include the book are the one-time `BOOK_CONSILIUM_1MO` ($39, 30 days access) and `BOOK_CONSILIUM_3MO` ($79, 90 days access) SKUs sold from the book page.
+- Legacy PENDING / APPROVED rows survive in the DB, produced by no current
+  code path; `lib/community/membership.ts` redirects them to `/consilium`.
 
 **Daily auto-content:** 60 psychology cards + 28 discussion prompts + 15 book chapter cards + 6 viral quote prompts (seeded 2026-04-24 to prod, 109 rows total via `scripts/seed-insights.ts`, idempotent). Crons at `/api/cron/daily-insight` (09:00 UTC) and `/api/cron/discussion-prompt` (10:00 UTC) create FeedPosts. Pool auto-resets when exhausted.
 
