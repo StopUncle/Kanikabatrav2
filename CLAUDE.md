@@ -385,15 +385,43 @@ creates pact number+1 beside the scars.
 
 **Architecture:** `PactMembership` (billing, mirrors CommunityMembership),
 `Pact` (covenant, survives re-signing), `PactWeek` (authored challenges per
-preset per 4-week cycle slot, ALL content still unwritten, ships
-unpublished), `PactEntry` (member-week: status open/kept/scarred, journal).
-Drip is derived (`lib/pact/read.ts`, same pattern as `lib/program/read.ts`),
-lazily materialised: read scars overdue weeks + opens the current entry, the
+preset per cycle slot; **weeks 1-4 x 3 presets PUBLISHED to prod
+2026-08-06**, weeks 5-12 of the 12-week cycle still unwritten and render
+the graceful "being written" fallback, which cannot scar), `PactEntry`
+(member-week: status open/kept/scarred, journal). Drip is derived
+(`lib/pact/read.ts`, same pattern as `lib/program/read.ts`), lazily
+materialised: read scars overdue weeks + opens the current entry, the
 daily cron (`/api/cron/pact-week`, 08:20 UTC) does the same for members who
 did not look and sends the `pactWeek` push. Crisis classifier
 (`lib/program/ai/safety.ts`) runs on every journal write, fails closed.
 Webhook lifecycle lives in `lib/pact/billing.ts` (thin fallthrough call
 sites in the Stripe webhook when no CommunityMembership matches the sub).
+
+**Pact invariants hardened 2026-08-06 (audit pass; tests pin all of these):**
+- `readPact(userId, { entitled })` is **entitlement-passive when false**: no
+  scar pass, no entry mint. Every page call site passes
+  `access.pactEntitled`; only the already-gated keep/entry API routes use
+  the default. A lapsed member browsing must never accumulate scars for
+  weeks the write routes 403 them out of.
+- **Retro-scar guard:** `PactWeek.publishedAt` (migration 20260806230000)
+  and a week only scars if its slot was published BEFORE that member's
+  `weekEndsAt`. Publishing weeks 5-12 later is therefore safe forever. The
+  seed script stamps publishedAt on `--publish`.
+- `/app/pact/record`, `/journal`, `/break` are **auth-only, not
+  trainingGated**: the member's own history stays readable after a lapse or
+  break (page-gates test records the reasons). `/app/pact/week` stays gated.
+- Record wall renders **by week number** (missing rows = unmarked week with
+  the number shown), never positionally.
+- Billing: `handlePactSubscriptionDeleted` skips the pact break when the
+  membership is already CANCELLED (the member's own break cancels Stripe
+  and the deletion echo must not kill a re-signed pact);
+  `handlePactRefund(userId, purchasedAt)` only breaks covenants signed
+  before the refunded purchase (+1h slack).
+- Activation never reopens a kept/scarred legacy week 1; migration
+  backfilled `startedAt = signedAt` for pre-activation pacts with entries.
+- Voice-note UI renders only when `voiceNoteUrl` is set (nothing seeded, so
+  nothing shows); the pact-side `aiReply` UI was removed until phase 6
+  actually writes replies.
 
 **The app is OPEN again** (Sam's explicit call, supersedes the 2026-08-02
 seal): any signed-in account enters `/app`, banned users are refused at the
