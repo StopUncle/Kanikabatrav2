@@ -14,6 +14,7 @@ import {
 } from "@/lib/streak/daily-mission";
 import { utcDateKey } from "@/lib/tells/streak";
 import { getDay0Checklist } from "@/lib/day0/checklist";
+import { getScenario } from "@/lib/simulator/scenarios";
 import { readProgram } from "@/lib/program/read";
 import { readPact } from "@/lib/pact/read";
 import { presetLabel, PACT_LAUNCHED } from "@/lib/pact/presets";
@@ -88,6 +89,7 @@ export default async function HomePage() {
     day0,
     program,
     pact,
+    unfinishedRun,
   ] = await Promise.all([
     getPathState(prisma, userId, {
       gender: viewer?.gender ?? null,
@@ -123,7 +125,32 @@ export default async function HomePage() {
     getDay0Checklist(prisma, userId, { isMember: canTrain(access) }),
     readProgram(prisma, userId),
     readPact(userId),
+    prisma.simulatorProgress.findFirst({
+      where: {
+        userId,
+        completedAt: null,
+        startedAt: { gte: new Date(Date.now() - 14 * 24 * 60 * 60 * 1000) },
+      },
+      orderBy: { startedAt: "desc" },
+      select: { scenarioId: true, choicesMade: true },
+    }),
   ]);
+
+  // A run someone actually started (made at least one choice) and never
+  // finished. Day one measured the entry scenario completing at 40%
+  // while resume itself worked fine; the mechanism existed but nothing
+  // on Home said "your half-finished run is still here". Rows with zero
+  // choices are just an opened page, not a stranded run.
+  const resumeRun = (() => {
+    if (!unfinishedRun) return null;
+    const choices = Array.isArray(unfinishedRun.choicesMade)
+      ? unfinishedRun.choicesMade.length
+      : 0;
+    if (choices === 0) return null;
+    const scenario = getScenario(unfinishedRun.scenarioId);
+    if (!scenario) return null;
+    return { scenarioId: unfinishedRun.scenarioId, title: scenario.title };
+  })();
 
   const tellDoneToday = tellStreak?.lastTellDate === utcDateKey();
   const dailySet = buildDailySet({
@@ -394,6 +421,19 @@ export default async function HomePage() {
         Today
       </p>
       <div className="mx-5 flex flex-col gap-2.5">
+        {resumeRun && resumeRun.scenarioId !== dailyMission?.scenarioId && (
+          <Move
+            href={`/app/train/${resumeRun.scenarioId}`}
+            title="Pick up where you left off"
+            sub={resumeRun.title}
+            cta="RESUME"
+            icon={
+              <svg viewBox="0 0 24 24">
+                <path d="M8 5v14l11-7z" />
+              </svg>
+            }
+          />
+        )}
         {dailyMission && (
           <Move
             href={`/app/train/${dailyMission.scenarioId}`}
