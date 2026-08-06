@@ -161,6 +161,57 @@ function buildWelcomeHtml(name: string): string {
   return emailShell("Welcome to the Dark Side", "Your journey begins now", body);
 }
 
+function buildAppIntroHtml(name: string): string {
+  const appUrl = `${baseUrl}/app?utm_source=email&utm_medium=email&utm_campaign=book-buyer-ladder&utm_content=app-intro`;
+
+  const body = `
+    <p style="color: #f5f0ed; font-size: 18px; margin: 0 0 20px 0; line-height: 1.6;">
+      ${esc(name)},
+    </p>
+
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 20px 0; font-size: 15px;">
+      The book teaches you to see it. The app makes you practise it.
+    </p>
+
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 25px 0; font-size: 15px;">
+      Everything in the Sociopathic Dating Bible is built into a training app: branching scenarios where you play the conversations the book dissects, and a record that shows you exactly where your reads fail. Entering is free.
+    </p>
+
+    ${goldButton("Enter the App", appUrl)}
+
+    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="margin: 0 0 25px 0;">
+      <tr>
+        <td bgcolor="#1a0d11" style="padding: 25px; border-radius: 10px; border: 1px solid #d4af37;">
+          <h3 style="color: #d4af37; margin: 0 0 20px 0; font-size: 18px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; text-align: center;">
+            Two Ways Deeper
+          </h3>
+          <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0">
+            <tr>
+              <td style="padding: 12px 0; color: #f5f0ed; font-size: 14px; line-height: 1.6; border-bottom: 1px solid #3d2030;">
+                <strong style="color: #d4af37;">The Blood Pact</strong>, $4.99 a week: one challenge a week on your track, every chapter of every training arc, and a record that never forgets.
+              </td>
+            </tr>
+            <tr>
+              <td style="padding: 12px 0; color: #f5f0ed; font-size: 14px; line-height: 1.6;">
+                <strong style="color: #d4af37;">The Consilium</strong>, $29 a month: everything the Pact opens, plus me. My feed, voice notes, and videos.
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 0 0; font-size: 15px;">
+      Start free. The first chapter of every track is open, and the quiz will tell you which one you need.
+    </p>`;
+
+  return emailShell(
+    "The Book Has an App",
+    "Reading is recognition. Training is reflex.",
+    body,
+  );
+}
+
 function buildTrialOfferHtml(name: string, trialToken: string): string {
   const claimUrl = `${baseUrl}/api/consilium/claim-trial?token=${trialToken}`;
 
@@ -1051,6 +1102,21 @@ export function buildBookBuyerSequence(
       ),
       scheduledAt: now,
       metadata: { ...MARKETING_META, type: "welcome", trialToken },
+    },
+    {
+      // Step 4 by number, day 1 by clock: appended after the trial pair
+      // shipped, and the step field is an identifier, not an ordering.
+      recipientEmail,
+      recipientName,
+      sequence: "book-buyer-welcome",
+      step: 4,
+      subject: "The book you're reading has an app",
+      htmlBody: withMarketingFooter(
+        buildAppIntroHtml(recipientName),
+        recipientEmail,
+      ),
+      scheduledAt: addDays(now, 1),
+      metadata: { ...MARKETING_META, type: "app-intro", trialToken },
     },
     {
       recipientEmail,
