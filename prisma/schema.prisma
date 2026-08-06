@@ -966,6 +966,11 @@ model PactWeek {
   voiceNoteUrl  String?
   voiceNoteDurationSeconds Int?
   isPublished   Boolean  @default(false)
+  // When the slot went live to members. The scar pass only marks a week
+  // whose content was published before that member's weekEndsAt, so a
+  // slot published late can never scar the cohorts who lived through it
+  // unwritten.
+  publishedAt   DateTime?
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 
