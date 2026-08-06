@@ -154,6 +154,7 @@ export default async function AppShellLayout({
         unlocked={
           canTrain(access) ? baselineAttempts > 0 : completedRuns > 0
         }
+        message="Keep the streak alive. One quiet tap when tomorrow's drill is ready, nothing else."
       />
       {/* The install offer, on every visit until installed or dismissed.
           A QR scan can only OPEN the app in the browser; no phone lets a

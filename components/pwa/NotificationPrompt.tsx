@@ -1,10 +1,20 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
 
 const DISMISS_KEY = "consilium-push-dismissed-v1";
 const DISMISS_DURATION_DAYS = 14;
 const SUBSCRIBED_KEY = "consilium-push-subscribed-v1";
+
+/**
+ * Fired by training surfaces the moment a first completion lands
+ * (SimulatorPageClient dispatches it on a successful /complete POST).
+ * The server-computed `unlocked` prop covers every later page load;
+ * this event covers the load the moment actually happens on, without
+ * betting the one permission prompt on router.refresh timing.
+ */
+export const PUSH_MOMENT_EVENT = "kb:push-moment";
 
 /**
  * Notification permission + subscription prompt for the Consilium PWA.
@@ -41,17 +51,32 @@ const SUBSCRIBED_KEY = "consilium-push-subscribed-v1";
  */
 export default function NotificationPrompt({
   unlocked = false,
+  message = "Get a tap on the shoulder when Kanika answers your question or posts a new voice note.",
 }: {
   unlocked?: boolean;
+  message?: string;
 }) {
+  const pathname = usePathname();
   const [shouldShow, setShouldShow] = useState(false);
   const [busy, setBusy] = useState(false);
+  const [earnedNow, setEarnedNow] = useState(false);
+
+  // The moment can arrive mid-session: the layout computed `unlocked`
+  // before the first completion existed. Training surfaces announce it.
+  useEffect(() => {
+    if (unlocked) return;
+    const onMoment = () => setEarnedNow(true);
+    window.addEventListener(PUSH_MOMENT_EVENT, onMoment);
+    return () => window.removeEventListener(PUSH_MOMENT_EVENT, onMoment);
+  }, [unlocked]);
+
+  const earned = unlocked || earnedNow;
 
   useEffect(() => {
     if (typeof window === "undefined") return;
 
     // 0. Has this member reached the moment worth asking at?
-    if (!unlocked) return;
+    if (!earned) return;
 
     // 1. API support gate.
     if (!("Notification" in window)) return;
@@ -106,13 +131,31 @@ export default function NotificationPrompt({
       if (!standalone) return;
     }
 
-    // Show the prompt after a small delay so it doesn't crash into
-    // the install banner if both are eligible. Install banner is
-    // higher priority — once the PWA is installed, push prompts on
-    // the next visit.
-    const handle = window.setTimeout(() => setShouldShow(true), 4500);
-    return () => window.clearTimeout(handle);
-  }, [unlocked]);
+    // Show the prompt after a small delay, and only once the install
+    // banner is out of the way. Install is higher priority (on iOS it
+    // is the only road to push at all), and two gold banners at once
+    // read as nagging. Poll cheaply until the install banner resolves;
+    // an install flips us to standalone, a dismissal clears the floor.
+    let interval: number | undefined;
+    const handle = window.setTimeout(() => {
+      const installBannerUp = () =>
+        document.querySelector('[data-pwa-banner="install"]') !== null;
+      if (!installBannerUp()) {
+        setShouldShow(true);
+        return;
+      }
+      interval = window.setInterval(() => {
+        if (!installBannerUp()) {
+          window.clearInterval(interval);
+          setShouldShow(true);
+        }
+      }, 3000);
+    }, 4500);
+    return () => {
+      window.clearTimeout(handle);
+      if (interval) window.clearInterval(interval);
+    };
+  }, [earned]);
 
   function dismiss() {
     setShouldShow(false);
@@ -146,16 +189,20 @@ export default function NotificationPrompt({
 
   if (!shouldShow) return null;
 
+  // Inside the app shell the tab bar owns the bottom edge; sit above it
+  // (same rule as InstallPrompt) instead of covering the tabs.
+  const inAppShell = pathname === "/app" || pathname?.startsWith("/app/");
+  const position = inAppShell ? "bottom-24" : "bottom-4 sm:bottom-6";
+
   return (
-    <div className="fixed bottom-4 left-4 right-4 z-40 mx-auto max-w-md rounded-2xl border border-warm-gold/30 bg-deep-black/95 p-4 shadow-2xl backdrop-blur sm:bottom-6 sm:left-1/2 sm:right-auto sm:-translate-x-1/2">
+    <div className={`fixed ${position} left-4 right-4 z-40 mx-auto max-w-md rounded-2xl border border-warm-gold/30 bg-deep-black/95 p-4 shadow-2xl backdrop-blur sm:left-1/2 sm:right-auto sm:-translate-x-1/2`}>
       <div className="flex items-start gap-3">
         <div className="flex-1">
           <p className="text-warm-gold text-[10px] uppercase tracking-[0.3em] mb-1.5">
             Notifications
           </p>
           <p className="text-text-light text-sm font-light leading-relaxed mb-3">
-            Get a tap on the shoulder when Kanika answers your question
-            or posts a new voice note.
+            {message}
           </p>
           <div className="flex gap-2">
             <button

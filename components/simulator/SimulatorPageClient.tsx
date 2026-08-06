@@ -12,6 +12,7 @@ import type {
 import SimulatorRunner from "./SimulatorRunner";
 import AchievementToast from "./AchievementToast";
 import SimulatorErrorBoundary from "./SimulatorErrorBoundary";
+import { PUSH_MOMENT_EVENT } from "@/components/pwa/NotificationPrompt";
 import { useShellRoutes } from "@/lib/shell-routes";
 import RingUpCeremony, {
   type RingUpPayload,
@@ -263,6 +264,11 @@ export default function SimulatorPageClient({
         setXpBreakdown(data.xpBreakdown ?? null);
         setEndingBounty(data.endingBounty ?? null);
         setGauntletPay(data.gauntletPay ?? null);
+        // A completion is the push prompt's earned moment. Announced as
+        // an event because the layout that computes `unlocked` rendered
+        // before this run existed; NotificationPrompt self-guards, so
+        // repeat completions are harmless.
+        window.dispatchEvent(new Event(PUSH_MOMENT_EVENT));
         // Refresh server components so the index page reflects new state
         // when the user returns.
         router.refresh();

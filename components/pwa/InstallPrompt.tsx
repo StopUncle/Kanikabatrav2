@@ -152,7 +152,10 @@ export default function InstallPrompt() {
   // iOS path — manual instructions, no API call.
   if (isIOS) {
     return (
-      <div className={`fixed ${position} left-4 right-4 z-50 mx-auto max-w-md rounded-2xl border border-warm-gold/30 bg-deep-black/95 p-4 shadow-2xl backdrop-blur sm:left-1/2 sm:right-auto sm:-translate-x-1/2`}>
+      <div
+        data-pwa-banner="install"
+        className={`fixed ${position} left-4 right-4 z-50 mx-auto max-w-md rounded-2xl border border-warm-gold/30 bg-deep-black/95 p-4 shadow-2xl backdrop-blur sm:left-1/2 sm:right-auto sm:-translate-x-1/2`}
+      >
         <div className="flex items-start gap-3">
           <div className="flex-1">
             <p className="text-warm-gold text-[10px] uppercase tracking-[0.3em] mb-1.5">
@@ -200,7 +203,10 @@ export default function InstallPrompt() {
 
   // Android / Chromium path — native install button.
   return (
-    <div className={`fixed ${position} left-4 right-4 z-50 mx-auto max-w-md rounded-2xl border border-warm-gold/30 bg-deep-black/95 p-4 shadow-2xl backdrop-blur sm:left-1/2 sm:right-auto sm:-translate-x-1/2`}>
+    <div
+      data-pwa-banner="install"
+      className={`fixed ${position} left-4 right-4 z-50 mx-auto max-w-md rounded-2xl border border-warm-gold/30 bg-deep-black/95 p-4 shadow-2xl backdrop-blur sm:left-1/2 sm:right-auto sm:-translate-x-1/2`}
+    >
       <div className="flex items-start gap-3">
         <div className="flex-1">
           <p className="text-warm-gold text-[10px] uppercase tracking-[0.3em] mb-1.5">
