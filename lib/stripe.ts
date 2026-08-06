@@ -118,7 +118,12 @@ export const STRIPE_PRICES: Record<string, string> = {
  * the failure. Surfaces that lead into the ceremony check this first.
  */
 export function isPactCheckoutOpen(): boolean {
-  return Boolean(STRIPE_PRICES.PACT_WEEKLY && STRIPE_PRICES.PACT_ANNUAL);
+  // Same test the create route applies (a "price_" id), so a malformed
+  // env var cannot open the door onto a checkout that then 503s.
+  return (
+    STRIPE_PRICES.PACT_WEEKLY.startsWith("price_") &&
+    STRIPE_PRICES.PACT_ANNUAL.startsWith("price_")
+  );
 }
 
 export const STRIPE_PUBLISHABLE_KEY = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!;

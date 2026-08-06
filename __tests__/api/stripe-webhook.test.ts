@@ -1055,18 +1055,22 @@ describe("refunds", () => {
   });
 
   it("breaks the pact when a pact purchase is refunded", async () => {
+    const purchasedAt = new Date("2026-08-01T00:00:00Z");
     db.purchase.findUnique.mockResolvedValue({
       id: "pur_1",
       status: "COMPLETED",
       userId: "user_1",
       customerEmail: "buyer@example.com",
       downloadToken: null,
+      createdAt: purchasedAt,
       metadata: { productKey: "PACT_WEEKLY" },
     });
 
     await fire(refundEvent({ amount: 499, amount_refunded: 499 }));
 
-    expect(handlePactRefund).toHaveBeenCalledWith("user_1");
+    // The purchase date rides along so the handler can scope the break
+    // to the covenant that purchase paid for, never a later re-sign.
+    expect(handlePactRefund).toHaveBeenCalledWith("user_1", purchasedAt);
     expect(db.communityMembership.updateMany).not.toHaveBeenCalled();
   });
 

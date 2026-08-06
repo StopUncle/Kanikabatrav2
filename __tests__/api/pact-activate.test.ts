@@ -10,7 +10,12 @@
 jest.mock("@/lib/prisma", () => ({
   prisma: {
     pact: { findFirst: jest.fn(), update: jest.fn() },
-    pactEntry: { deleteMany: jest.fn(), upsert: jest.fn() },
+    pactEntry: {
+      deleteMany: jest.fn(),
+      updateMany: jest.fn(),
+      findUnique: jest.fn(),
+      create: jest.fn(),
+    },
     $transaction: jest.fn(),
   },
 }));
@@ -57,9 +62,13 @@ beforeEach(() => {
   });
   db.pact.update.mockResolvedValue({ id: "pact_1" });
   db.pactEntry.deleteMany.mockResolvedValue({ count: 0 });
-  db.pactEntry.upsert.mockResolvedValue({ id: "entry_1" });
-  db.$transaction.mockImplementation(async (ops: Promise<unknown>[]) =>
-    Promise.all(ops),
+  db.pactEntry.updateMany.mockResolvedValue({ count: 0 });
+  db.pactEntry.findUnique.mockResolvedValue(null);
+  db.pactEntry.create.mockResolvedValue({ id: "entry_1" });
+  // Interactive transaction: the route's callback runs against tx; the
+  // mock hands it the same client so the assertions below see the calls.
+  db.$transaction.mockImplementation(
+    async (fn: (tx: unknown) => Promise<unknown>) => fn(db),
   );
   mockPush.mockResolvedValue(undefined);
 });
@@ -124,17 +133,34 @@ describe("POST /api/pact/activate", () => {
     expect(startedAt.getTime()).toBeLessThanOrEqual(after);
 
     // Week one ends exactly seven days after the moment of activation.
-    const upsert = db.pactEntry.upsert.mock.calls[0][0];
-    expect(upsert.where).toEqual({
-      pactId_weekNumber: { pactId: "pact_1", weekNumber: 1 },
-    });
-    expect(upsert.create.weekEndsAt.getTime()).toBe(
+    const create = db.pactEntry.create.mock.calls[0][0];
+    expect(create.data.pactId).toBe("pact_1");
+    expect(create.data.weekNumber).toBe(1);
+    expect(create.data.weekEndsAt.getTime()).toBe(
       startedAt.getTime() + 7 * 24 * 60 * 60 * 1000,
     );
 
-    // All three writes ride one transaction: a crash mid-way must not
-    // leave a started clock with no week-one row.
+    // The writes ride one transaction: a crash mid-way must not leave a
+    // started clock with no week-one row.
     expect(db.$transaction).toHaveBeenCalledTimes(1);
+  });
+
+  it("never reopens a kept or scarred legacy week one", async () => {
+    // A legacy pact whose week one was already resolved under the old
+    // clock: activation must move the clock without touching that mark.
+    db.pactEntry.findUnique.mockResolvedValue({ id: "entry_legacy" });
+
+    const res = await POST(req());
+
+    expect(res.status).toBe(200);
+    expect(db.pactEntry.create).not.toHaveBeenCalled();
+    // The refresh write is scoped to status "open"; a kept or scarred
+    // row falls outside it by construction.
+    expect(db.pactEntry.updateMany).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: expect.objectContaining({ status: "open" }),
+      }),
+    );
   });
 
   it("fires the week-one push on the pactWeek category", async () => {

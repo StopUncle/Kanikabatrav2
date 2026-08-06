@@ -203,11 +203,18 @@ async function main() {
       },
       select: { id: true },
     });
+    // publishedAt drives the retro-scar guard (a week only scars if its
+    // content was live before that member's deadline), so it is stamped
+    // at publish and never moved by a later copy re-seed.
     await prisma.pactWeek.upsert({
       where: {
         preset_cycleWeek: { preset: w.preset, cycleWeek: w.cycleWeek },
       },
-      create: { ...w, isPublished: publish },
+      create: {
+        ...w,
+        isPublished: publish,
+        publishedAt: publish ? new Date() : null,
+      },
       update: {
         title: w.title,
         challenge: w.challenge,
@@ -218,6 +225,16 @@ async function main() {
         ...(publish ? { isPublished: true } : {}),
       },
     });
+    if (publish) {
+      await prisma.pactWeek.updateMany({
+        where: {
+          preset: w.preset,
+          cycleWeek: w.cycleWeek,
+          publishedAt: null,
+        },
+        data: { publishedAt: new Date() },
+      });
+    }
     if (existing) updated += 1;
     else created += 1;
   }

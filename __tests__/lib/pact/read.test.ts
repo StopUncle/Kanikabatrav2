@@ -15,6 +15,7 @@ jest.mock("@/lib/prisma", () => ({
     pact: { findMany: jest.fn() },
     pactEntry: {
       findMany: jest.fn(),
+      findUnique: jest.fn(),
       upsert: jest.fn(),
       updateMany: jest.fn(),
     },
@@ -46,6 +47,7 @@ beforeEach(() => {
   jest.clearAllMocks();
   db.pact.findMany.mockResolvedValue([]);
   db.pactEntry.findMany.mockResolvedValue([]);
+  db.pactEntry.findUnique.mockResolvedValue({ id: "entry_1", status: "open" });
   db.pactEntry.upsert.mockResolvedValue({ id: "entry_1" });
   db.pactEntry.updateMany.mockResolvedValue({ count: 0 });
   db.pactWeek.findUnique.mockResolvedValue(null);
@@ -85,12 +87,17 @@ describe("scarOverdueEntries", () => {
     expect(db.pactEntry.updateMany).not.toHaveBeenCalled();
   });
 
-  it("scars a lapsed week whose challenge was published", async () => {
+  it("scars a lapsed week whose challenge was live during the week", async () => {
     db.pactEntry.findMany.mockResolvedValue([
-      { id: "e1", weekNumber: 1, pact: { preset: "confidence" } },
+      {
+        id: "e1",
+        weekNumber: 1,
+        weekEndsAt: daysAfter(-1),
+        pact: { preset: "confidence" },
+      },
     ]);
     db.pactWeek.findMany.mockResolvedValue([
-      { preset: "confidence", cycleWeek: 1 },
+      { preset: "confidence", cycleWeek: 1, publishedAt: daysAfter(-30) },
     ]);
     db.pactEntry.updateMany.mockResolvedValue({ count: 1 });
 
@@ -104,11 +111,35 @@ describe("scarOverdueEntries", () => {
 
   it("cannot scar a week whose challenge was never published", async () => {
     db.pactEntry.findMany.mockResolvedValue([
-      { id: "e1", weekNumber: 1, pact: { preset: "confidence" } },
+      {
+        id: "e1",
+        weekNumber: 1,
+        weekEndsAt: daysAfter(-1),
+        pact: { preset: "confidence" },
+      },
     ]);
     db.pactWeek.findMany.mockResolvedValue([
       // Content exists for a different preset only.
-      { preset: "relationships", cycleWeek: 1 },
+      { preset: "relationships", cycleWeek: 1, publishedAt: daysAfter(-30) },
+    ]);
+
+    expect(await scarOverdueEntries("pact_1", T0)).toBe(0);
+    expect(db.pactEntry.updateMany).not.toHaveBeenCalled();
+  });
+
+  it("cannot retro-scar a week published after that member's deadline", async () => {
+    db.pactEntry.findMany.mockResolvedValue([
+      {
+        id: "e1",
+        weekNumber: 1,
+        // The member lived through week one while the slot was unwritten.
+        weekEndsAt: daysAfter(-10),
+        pact: { preset: "confidence" },
+      },
+    ]);
+    db.pactWeek.findMany.mockResolvedValue([
+      // The slot went live AFTER their week closed.
+      { preset: "confidence", cycleWeek: 1, publishedAt: daysAfter(-2) },
     ]);
 
     expect(await scarOverdueEntries("pact_1", T0)).toBe(0);
@@ -236,6 +267,53 @@ describe("readPact", () => {
       });
 
       expect((await readPact("user_1")).challenge).toBeNull();
+    });
+
+    it("makes no writes for a viewer whose entitlement has lapsed", async () => {
+      db.pact.findMany.mockResolvedValue([
+        {
+          id: "pact_1",
+          number: 1,
+          brokenAt: null,
+          startedAt: new Date(Date.now() - 8 * DAY_MS),
+          preset: "confidence",
+        },
+      ]);
+      db.pactEntry.findMany.mockResolvedValue([
+        { id: "e1", weekNumber: 1, status: "kept" },
+      ]);
+
+      const read = await readPact("user_1", { entitled: false });
+
+      // The record stays readable; the lapse makes the read passive. A
+      // lapsed member opening the hub must not mint an entry the keep
+      // route will 403 them out of, nor scar it later.
+      expect(read.weekNumber).toBe(2);
+      expect(read.entries.map((e: { id: string }) => e.id)).toEqual(["e1"]);
+      expect(db.pactEntry.upsert).not.toHaveBeenCalled();
+      expect(db.pactEntry.updateMany).not.toHaveBeenCalled();
+    });
+
+    it("mints nothing for a clock that has not reached week one", async () => {
+      db.pact.findMany.mockResolvedValue([
+        {
+          id: "pact_1",
+          number: 1,
+          brokenAt: null,
+          // Future-dated startedAt: only reachable via manual data, and
+          // cycleWeekFor(0) is 0 under JS remainder, matching no slot.
+          startedAt: new Date(Date.now() + 3 * DAY_MS),
+          preset: "confidence",
+        },
+      ]);
+
+      const read = await readPact("user_1");
+
+      expect(read.weekNumber).toBe(0);
+      expect(read.weekEndsAt).toBeNull();
+      expect(read.challenge).toBeNull();
+      expect(db.pactEntry.upsert).not.toHaveBeenCalled();
+      expect(db.pactEntry.updateMany).not.toHaveBeenCalled();
     });
   });
 });

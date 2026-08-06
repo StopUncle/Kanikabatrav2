@@ -41,28 +41,39 @@ export async function POST(request: NextRequest) {
 
     const startedAt = new Date();
 
-    await prisma.$transaction([
+    await prisma.$transaction(async (tx) => {
       // Entries minted under the old signedAt-anchored clock carry wrong
       // deadlines; journalless open ones are safe to clear so week one
       // starts clean. Anything written survives.
-      prisma.pactEntry.deleteMany({
+      await tx.pactEntry.deleteMany({
         where: { pactId: pact.id, status: "open", journalBody: null },
-      }),
-      prisma.pact.update({
+      });
+      await tx.pact.update({
         where: { id: pact.id },
         data: { startedAt },
-      }),
-      prisma.pactEntry.upsert({
+      });
+      // A surviving OPEN week one (legacy, journaled) moves onto the new
+      // clock. A kept or scarred week one is history and is never
+      // reopened by pressing Activate.
+      await tx.pactEntry.updateMany({
+        where: { pactId: pact.id, weekNumber: 1, status: "open" },
+        data: { weekEndsAt: weekEndsAt({ startedAt }, 1) },
+      });
+      const existing = await tx.pactEntry.findUnique({
         where: { pactId_weekNumber: { pactId: pact.id, weekNumber: 1 } },
-        create: {
-          pactId: pact.id,
-          userId: user.id,
-          weekNumber: 1,
-          weekEndsAt: weekEndsAt({ startedAt }, 1),
-        },
-        update: { weekEndsAt: weekEndsAt({ startedAt }, 1), status: "open" },
-      }),
-    ]);
+        select: { id: true },
+      });
+      if (!existing) {
+        await tx.pactEntry.create({
+          data: {
+            pactId: pact.id,
+            userId: user.id,
+            weekNumber: 1,
+            weekEndsAt: weekEndsAt({ startedAt }, 1),
+          },
+        });
+      }
+    });
 
     // The first notification of the pact, at the moment of most intent.
     // Also proves to the member that pact notifications reach them.

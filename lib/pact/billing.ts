@@ -287,11 +287,25 @@ export async function handlePactSubscriptionDeleted(
     where: { stripeSubscriptionId: subscriptionId },
   });
   if (!membership) return false;
+
+  // Already CANCELLED means the break happened before this event landed:
+  // the member's own break (which cancels the Stripe sub and then hears
+  // its deletion echo here) or a refund. Their pact was broken THEN. A
+  // consilium-entitled member can have re-signed a fresh pact in the
+  // window before the echo arrives, and stamping brokenAt now would kill
+  // the new covenant over the old subscription's corpse.
+  const alreadyCancelled = membership.status === "CANCELLED";
+
   await prisma.pactMembership.update({
     where: { id: membership.id },
-    data: { status: "CANCELLED", cancelledAt: new Date() },
+    data: {
+      status: "CANCELLED",
+      cancelledAt: membership.cancelledAt ?? new Date(),
+    },
   });
-  await breakActivePact(membership.userId);
+  if (!alreadyCancelled) {
+    await breakActivePact(membership.userId);
+  }
 
   // Winback, voluntary breaks only. A refund or a dunning death is not a
   // decision to come back from, and the copy would read wrong.
@@ -381,15 +395,31 @@ export async function handlePactSubscriptionUpdated(
  * charge.refunded, called by the webhook after it marks the Purchase
  * REFUNDED and recognises a PACT productVariant. Full refund = the pact
  * ends and the scar lands, same as a deletion.
+ *
+ * Scoped to the purchase being refunded: if the member has re-purchased
+ * or re-signed since (membership re-activated, newer pact row), the
+ * newer covenant is not the thing being refunded and survives. The hour
+ * of slack covers webhook ordering around the original checkout.
  */
-export async function handlePactRefund(userId: string): Promise<void> {
+export async function handlePactRefund(
+  userId: string,
+  purchasedAt: Date,
+): Promise<void> {
+  const cutoff = new Date(purchasedAt.getTime() + 60 * 60 * 1000);
   await prisma.pactMembership.updateMany({
-    where: { userId, status: { not: "CANCELLED" } },
+    where: {
+      userId,
+      status: { not: "CANCELLED" },
+      OR: [{ activatedAt: null }, { activatedAt: { lt: cutoff } }],
+    },
     data: {
       status: "CANCELLED",
       cancelledAt: new Date(),
       suspendReason: "refunded",
     },
   });
-  await breakActivePact(userId);
+  await prisma.pact.updateMany({
+    where: { userId, brokenAt: null, signedAt: { lt: cutoff } },
+    data: { brokenAt: new Date() },
+  });
 }

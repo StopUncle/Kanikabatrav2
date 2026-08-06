@@ -30,12 +30,24 @@ import {
 
 export const dynamic = "force-dynamic";
 
+// Same 24h ACTIVE grace as checkPactMembership (lib/pact/membership.ts):
+// weekly billing means expiresAt-passed-but-invoice-in-flight recurs every
+// week, and the daily cron must not skip a paying member's week over
+// ordinary billing lag. Without the grace, a member who also did not
+// visit that day simply never got a row for the week.
+const EXPIRY_GRACE_MS = 24 * 60 * 60 * 1000;
+
 function isLive(
   m: { status: string; expiresAt: Date | null } | null,
   now: Date,
 ): boolean {
   if (!m) return false;
-  if (m.status === "ACTIVE") return !m.expiresAt || m.expiresAt > now;
+  if (m.status === "ACTIVE") {
+    return (
+      !m.expiresAt ||
+      m.expiresAt.getTime() > now.getTime() - EXPIRY_GRACE_MS
+    );
+  }
   if (m.status === "CANCELLED") return !!m.expiresAt && m.expiresAt > now;
   return false;
 }
@@ -85,64 +97,87 @@ export async function POST(request: NextRequest) {
     let advanced = 0;
     let pushed = 0;
     let dormantBilling = 0;
+    let errored = 0;
 
     for (const p of pacts) {
-      // A pact whose billing has lapsed stops advancing rather than
-      // stacking silent scars: SUSPENDED and EXPIRED members find their
-      // week where they left it. The pact only BREAKS via the webhook.
-      const entitled =
-        isLive(p.user.pactMembership, now) ||
-        isLive(p.user.communityMembership, now);
-      if (!entitled) {
-        dormantBilling++;
-        continue;
-      }
+      // One member's bad row must not silence every pact after theirs in
+      // the loop: the failure is logged and the sweep moves on.
+      try {
+        // A pact whose billing has lapsed stops advancing rather than
+        // stacking silent scars: SUSPENDED and EXPIRED members find their
+        // week where they left it. The pact only BREAKS via the webhook.
+        const entitled =
+          isLive(p.user.pactMembership, now) ||
+          isLive(p.user.communityMembership, now);
+        if (!entitled) {
+          dormantBilling++;
+          continue;
+        }
 
-      if (!p.startedAt) continue;
-      const started = { startedAt: p.startedAt };
-      const weekNumber = currentWeekFor(started, now);
-      if (weekNumber < 1) continue;
+        if (!p.startedAt) continue;
+        const started = { startedAt: p.startedAt };
+        const weekNumber = currentWeekFor(started, now);
+        if (weekNumber < 1) continue;
 
-      const existing = await prisma.pactEntry.findUnique({
-        where: { pactId_weekNumber: { pactId: p.id, weekNumber } },
-        select: { id: true },
-      });
-      if (existing) continue;
+        const existing = await prisma.pactEntry.findUnique({
+          where: { pactId_weekNumber: { pactId: p.id, weekNumber } },
+          select: { id: true },
+        });
+        if (existing) continue;
 
-      // Claim first, push second: a repeated push is worse than a lost one.
-      await prisma.pactEntry.create({
-        data: {
-          pactId: p.id,
-          userId: p.userId,
-          weekNumber,
-          weekEndsAt: weekEndsAt(started, weekNumber),
-        },
-      });
-      advanced++;
-
-      const prev = weekNumber > 1
-        ? await prisma.pactEntry.findUnique({
-            where: {
-              pactId_weekNumber: { pactId: p.id, weekNumber: weekNumber - 1 },
+        // Claim first, push second: a repeated push is worse than a lost
+        // one. A P2002 here means the lazy read created the row between
+        // the check and the write, i.e. the member is looking at the week
+        // right now, and there is nothing to announce.
+        try {
+          await prisma.pactEntry.create({
+            data: {
+              pactId: p.id,
+              userId: p.userId,
+              weekNumber,
+              weekEndsAt: weekEndsAt(started, weekNumber),
             },
-            select: { status: true },
-          })
-        : null;
-      const title =
-        challengeTitle.get(`${p.preset}:${cycleWeekFor(weekNumber)}`) ??
-        "This week's challenge is waiting.";
-      const body =
-        prev?.status === "scarred"
-          ? `Last week scarred. ${title}`
-          : title;
+          });
+        } catch (err) {
+          const raced =
+            typeof err === "object" &&
+            err !== null &&
+            (err as { code?: string }).code === "P2002";
+          if (raced) continue;
+          throw err;
+        }
+        advanced++;
 
-      const delivered = await sendPushToUser(p.userId, "pactWeek", {
-        title: `Week ${weekNumber} is open`,
-        body,
-        url: "/app/pact/week",
-        tag: `pact-week-${weekNumber}`,
-      }).catch(() => 0);
-      if (delivered > 0) pushed++;
+        const prev = weekNumber > 1
+          ? await prisma.pactEntry.findUnique({
+              where: {
+                pactId_weekNumber: { pactId: p.id, weekNumber: weekNumber - 1 },
+              },
+              select: { status: true },
+            })
+          : null;
+        const title =
+          challengeTitle.get(`${p.preset}:${cycleWeekFor(weekNumber)}`) ??
+          "This week is open. The challenge is still being written.";
+        const body =
+          prev?.status === "scarred"
+            ? `Last week scarred. ${title}`
+            : title;
+
+        const delivered = await sendPushToUser(p.userId, "pactWeek", {
+          title: `Week ${weekNumber} is open`,
+          body,
+          url: "/app/pact/week",
+          tag: `pact-week-${weekNumber}`,
+        }).catch(() => 0);
+        if (delivered > 0) pushed++;
+      } catch (err) {
+        errored++;
+        logger.error(
+          `[pact-week] pact ${p.id} failed`,
+          err instanceof Error ? err : new Error(String(err)),
+        );
+      }
     }
 
     return NextResponse.json({
@@ -152,6 +187,7 @@ export async function POST(request: NextRequest) {
       advanced,
       pushed,
       dormantBilling,
+      errored,
     });
   } catch (err) {
     logger.error(

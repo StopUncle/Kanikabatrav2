@@ -1737,7 +1737,7 @@ export async function POST(request: NextRequest) {
                 where: { email: purchase.customerEmail },
               });
           if (pactUser) {
-            await handlePactRefund(pactUser.id);
+            await handlePactRefund(pactUser.id, purchase.createdAt);
             console.log(
               `[stripe-webhook] cancelled pact for refunded ${meta.productKey} user ${pactUser.email}`,
             );

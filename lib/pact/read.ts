@@ -44,9 +44,11 @@ export function cycleWeekFor(weekNumber: number): number {
  * permanent scar for our own missing content would be the product lying
  * about them. Those weeks stay open and consequence-free.
  *
- * Caveat, deliberate: publishing a slot's content AFTER a cohort's week
- * already lapsed makes those stale open entries scar on the next pass.
- * Seed each preset's content before its first cohort reaches that week.
+ * "Asked something" is judged against the member's own deadline: the
+ * slot must have been published BEFORE that entry's weekEndsAt, i.e.
+ * the challenge was on their screen during the week being marked.
+ * Publishing a slot months later can therefore never scar the cohorts
+ * who lived through it unwritten.
  *
  * Shared by the daily cron (all pacts) and the lazy read (one pact), so
  * the two paths can never disagree about what a scar means.
@@ -64,23 +66,27 @@ export async function scarOverdueEntries(
     select: {
       id: true,
       weekNumber: true,
+      weekEndsAt: true,
       pact: { select: { preset: true } },
     },
   });
   if (overdue.length === 0) return 0;
 
   const published = await prisma.pactWeek.findMany({
-    where: { isPublished: true },
-    select: { preset: true, cycleWeek: true },
+    where: { isPublished: true, publishedAt: { not: null } },
+    select: { preset: true, cycleWeek: true, publishedAt: true },
   });
-  const hasContent = new Set(
-    published.map((w) => `${w.preset}:${w.cycleWeek}`),
+  const publishedAtFor = new Map(
+    published.map((w) => [`${w.preset}:${w.cycleWeek}`, w.publishedAt as Date]),
   );
 
   const ids = overdue
-    .filter((e) =>
-      hasContent.has(`${e.pact.preset}:${cycleWeekFor(e.weekNumber)}`),
-    )
+    .filter((e) => {
+      const liveSince = publishedAtFor.get(
+        `${e.pact.preset}:${cycleWeekFor(e.weekNumber)}`,
+      );
+      return liveSince !== undefined && liveSince < e.weekEndsAt;
+    })
     .map((e) => e.id);
   if (ids.length === 0) return 0;
 
@@ -119,8 +125,19 @@ export interface PactRead {
  * overdue open weeks get scarred, and the current week's entry row is
  * created if the daily cron has not run yet. Both are idempotent, so the
  * cron and this read can race without harm.
+ *
+ * `entitled` mirrors the cron's dormant-billing rule: a lapsed or
+ * suspended member gets a read-only view (their record, their derived
+ * week number) with NEITHER lazy write. Without this, a lapsed member
+ * opening the hub minted fresh entries and scarred weeks the entry and
+ * keep routes 403'd them out of writing. Defaults to true so the gated
+ * write paths (which already verified entitlement) stay unchanged.
  */
-export async function readPact(userId: string): Promise<PactRead> {
+export async function readPact(
+  userId: string,
+  opts: { entitled?: boolean } = {},
+): Promise<PactRead> {
+  const entitled = opts.entitled ?? true;
   const pacts = await prisma.pact.findMany({
     where: { userId },
     orderBy: { number: "desc" },
@@ -166,24 +183,50 @@ export async function readPact(userId: string): Promise<PactRead> {
   const weekNumber = currentWeekFor(started, now);
   const endsAt = weekEndsAt(started, weekNumber);
 
-  // Lazy scar: any week that ended while still open is a broken promise,
-  // whether or not the cron has said so yet. Content-aware: a week with
-  // no published challenge cannot scar (see scarOverdueEntries).
-  await scarOverdueEntries(pact.id, now);
+  // A clock that has not reached week one (future startedAt, only
+  // reachable via manual data) must not mint week-zero rows:
+  // cycleWeekFor(0) is 0 under JS remainder and matches nothing.
+  if (weekNumber < 1) {
+    const entries = await prisma.pactEntry.findMany({
+      where: { pactId: pact.id },
+      orderBy: { weekNumber: "asc" },
+    });
+    return {
+      pact,
+      pastPacts,
+      awaitingActivation: false,
+      weekNumber: 0,
+      weekEndsAt: null,
+      challenge: null,
+      entry: null,
+      entries,
+    };
+  }
 
-  // Lazy open: the current week's row, if the cron has not created it.
-  const entry = await prisma.pactEntry.upsert({
-    where: { pactId_weekNumber: { pactId: pact.id, weekNumber } },
-    create: {
-      pactId: pact.id,
-      userId,
-      weekNumber,
-      weekEndsAt: endsAt,
-    },
-    update: {},
-  });
+  if (entitled) {
+    // Lazy scar: any week that ended while still open is a broken
+    // promise, whether or not the cron has said so yet. Content-aware:
+    // a week with no published challenge cannot scar (see
+    // scarOverdueEntries).
+    await scarOverdueEntries(pact.id, now);
 
-  const [entries, challenge] = await Promise.all([
+    // Lazy open: the current week's row, if the cron has not created it.
+    await prisma.pactEntry.upsert({
+      where: { pactId_weekNumber: { pactId: pact.id, weekNumber } },
+      create: {
+        pactId: pact.id,
+        userId,
+        weekNumber,
+        weekEndsAt: endsAt,
+      },
+      update: {},
+    });
+  }
+
+  const [entry, entries, challenge] = await Promise.all([
+    prisma.pactEntry.findUnique({
+      where: { pactId_weekNumber: { pactId: pact.id, weekNumber } },
+    }),
     prisma.pactEntry.findMany({
       where: { pactId: pact.id },
       orderBy: { weekNumber: "asc" },
