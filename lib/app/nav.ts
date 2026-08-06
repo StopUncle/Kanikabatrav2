@@ -45,14 +45,45 @@ export const HOME_SECTION_ORDER = [
 
 export type HomeSection = (typeof HOME_SECTION_ORDER)[number];
 
+/**
+ * The More sheet's groups, in render order.
+ *
+ * The sheet used to hold three rows (the Kanika thread, plans, settings)
+ * because everything else was "on Home". That made Home's rails the only
+ * road to Quizzes, Leaderboards, the Lab and the rest: a member who did
+ * not scroll never learned they existed, and there was no index of the
+ * app anywhere. The sheet is now that index, so it carries EVERY listed
+ * surface the tab bar does not.
+ *
+ * The first four names are the Home rails' own sections, reused on
+ * purpose: one taxonomy for the whole app rather than two that drift.
+ */
+export const MORE_SECTION_ORDER = [
+  "Train",
+  "Test yourself",
+  "The Pact",
+  "From Kanika",
+  "Your standing",
+  "Account",
+] as const;
+
+export type MoreSection = (typeof MORE_SECTION_ORDER)[number];
+
 export type Maturity = "app-native" | "ported" | "stub" | "dev";
 
 export interface AppSurface {
   href: string;
   label: string;
   placement: Placement;
-  /** Which group in the More sheet. Only meaningful when placement is "more". */
-  section?: "You" | "Library" | "Account";
+  /**
+   * Which group this sits in inside the More sheet. Surfaces that carry a
+   * Home card inherit that card's section instead, so only the ones with
+   * no Home card need to say it here. Every listed non-tab surface must
+   * resolve to a section one way or the other, which the nav test
+   * enforces: an unsectioned surface would vanish from the only index of
+   * the app there is.
+   */
+  section?: MoreSection;
   /**
    * A card on Home's explore rails. Surfaces placed "home" live here and
    * nowhere else; nested surfaces (the Train toys) can carry it as well,
@@ -145,6 +176,7 @@ export const APP_SURFACES: AppSurface[] = [
   },
   {
     href: "/app/pact/week",
+    section: "The Pact",
     requires: "pact",
     label: "This week",
     placement: "nested",
@@ -155,6 +187,7 @@ export const APP_SURFACES: AppSurface[] = [
   },
   {
     href: "/app/pact/record",
+    section: "The Pact",
     requires: "pact",
     label: "The record",
     placement: "nested",
@@ -164,6 +197,7 @@ export const APP_SURFACES: AppSurface[] = [
   },
   {
     href: "/app/pact/journal",
+    section: "The Pact",
     requires: "pact",
     label: "Pact journal",
     placement: "nested",
@@ -208,6 +242,7 @@ export const APP_SURFACES: AppSurface[] = [
   },
   {
     href: "/app/program/intake",
+    section: "Your standing",
     label: "The Twelve: intake",
     placement: "nested",
     note: "Four questions, then the Read. Reached from /app/program only; redirects out once enrolled.",
@@ -297,7 +332,7 @@ export const APP_SURFACES: AppSurface[] = [
     requires: "member",
     label: "Kanika",
     placement: "more",
-    section: "You",
+    section: "From Kanika",
     badged: true,
     note: "Off the bar as of 2026-07-28. The channel is dying and the tier that replaces it is a separate premium product, so it no longer earns a permanent slot. Still reachable, because members with a live thread should not lose it, and the unread count moved to the More button.",
     maturity: "app-native",
@@ -334,6 +369,7 @@ export const APP_SURFACES: AppSurface[] = [
   },
   {
     href: "/app/train/achievements",
+    section: "Your standing",
     label: "Achievements",
     placement: "nested",
     parent: "/app/you",
@@ -404,6 +440,7 @@ export const APP_SURFACES: AppSurface[] = [
   },
   {
     href: "/app/measure/baseline",
+    section: "Test yourself",
     requires: "pact",
     label: "The Baseline Read",
     placement: "nested",
@@ -413,6 +450,7 @@ export const APP_SURFACES: AppSurface[] = [
   },
   {
     href: "/app/instincts/today",
+    section: "Test yourself",
     label: "Today's Tell",
     placement: "nested",
     parent: "/app/train",
@@ -421,6 +459,7 @@ export const APP_SURFACES: AppSurface[] = [
   },
   {
     href: "/app/instincts/score",
+    section: "Test yourself",
     label: "Your Instinct Hex",
     placement: "nested",
     parent: "/app/instincts/today",
@@ -429,6 +468,7 @@ export const APP_SURFACES: AppSurface[] = [
   },
   {
     href: "/app/instincts/history",
+    section: "Test yourself",
     label: "Tell history",
     placement: "nested",
     parent: "/app/instincts/score",
@@ -437,6 +477,7 @@ export const APP_SURFACES: AppSurface[] = [
   },
   {
     href: "/app/previews",
+    section: "From Kanika",
     requires: "member",
     label: "Previews",
     placement: "nested",
@@ -584,18 +625,35 @@ export const HOME_ACTIVE_PREFIXES = APP_SURFACES.filter(
   (s) => s.placement === "home",
 ).map((s) => s.href);
 
-/** The More sheet, grouped, in section order. */
+/**
+ * Which More group a surface belongs to. An explicit `section` wins; a
+ * Home card's section is inherited so the two indexes cannot disagree
+ * about where something lives. Null means the surface is not in the
+ * sheet, which is only correct for tabs and unlisted routes.
+ */
+export function moreSectionFor(surface: AppSurface): MoreSection | null {
+  if (surface.placement === "tab" || surface.placement === "unlisted") {
+    return null;
+  }
+  return surface.section ?? surface.home?.section ?? null;
+}
+
+/**
+ * The More sheet: every listed surface the tab bar does not carry,
+ * grouped, in section order.
+ *
+ * Deliberately NOT limited to placement "more" any more. Home's rails and
+ * the nested Train toys were unreachable except by scrolling Home or
+ * already being inside their parent, so the app had no index and surfaces
+ * like the Pact journal had no inbound link at all.
+ */
 export const MORE_SECTIONS: {
-  title: NonNullable<AppSurface["section"]>;
+  title: MoreSection;
   items: AppSurface[];
-}[] = (["You", "Library", "Account"] as const)
-  .map((title) => ({
-    title,
-    items: APP_SURFACES.filter(
-      (s) => s.placement === "more" && s.section === title,
-    ),
-  }))
-  .filter((group) => group.items.length > 0);
+}[] = MORE_SECTION_ORDER.map((title) => ({
+  title,
+  items: APP_SURFACES.filter((s) => moreSectionFor(s) === title),
+})).filter((group) => group.items.length > 0);
 
 /**
  * Paths that should light the More button. Derived, so a surface moving

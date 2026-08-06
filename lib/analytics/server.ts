@@ -1,22 +1,19 @@
+import { after } from "next/server";
 import type { AnalyticsEvent, AnalyticsProperties } from "./events";
 
 /**
  * Server-side PostHog capture.
  *
- * A direct POST to the capture endpoint rather than posthog-node, on
- * purpose. The Node SDK keeps a background flush timer and an in-process
- * queue, which is a real source of hung shutdowns and lost events in a
- * long-lived server; at this volume a single fetch per event is both
- * simpler and more predictable.
+ * A direct POST keeps each event independent of an in-process queue.
+ * Next.js after() keeps the request alive until the send settles without
+ * delaying the response.
  *
  * Silent no-op when unconfigured, so local and dev environments never
  * emit anything and nobody has to remember to guard a call site. Failures
  * are swallowed: analytics must never take down the thing it measures.
  */
 
-const HOST =
-  process.env.NEXT_PUBLIC_POSTHOG_HOST?.replace(/\/$/, "") ||
-  "https://us.i.posthog.com";
+const HOST = process.env.NEXT_PUBLIC_POSTHOG_HOST?.replace(/\/$/, "");
 
 /**
  * Server key falls back to the public one. A PostHog project key is
@@ -25,7 +22,11 @@ const HOST =
  * prefer to keep the two configurable apart.
  */
 function apiKey(): string | null {
-  return process.env.POSTHOG_KEY || process.env.NEXT_PUBLIC_POSTHOG_KEY || null;
+  return (
+    process.env.POSTHOG_KEY ||
+    process.env.NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN ||
+    null
+  );
 }
 
 export function analyticsEnabled(): boolean {
@@ -45,7 +46,7 @@ export async function captureServer(
   properties: AnalyticsProperties = {},
 ): Promise<void> {
   const key = apiKey();
-  if (!key) return;
+  if (!key || !HOST) return;
 
   try {
     await fetch(`${HOST}/i/v0/e/`, {
@@ -67,14 +68,23 @@ export async function captureServer(
 }
 
 /**
- * Fire and forget. The normal way to call this from a route handler:
- * the member is waiting on a response and an event is not worth a
- * millisecond of it.
+ * Schedule capture after the response without risking serverless teardown.
+ *
+ * `after` only exists inside a request scope and THROWS outside one, so a
+ * bare call here would put an analytics crash inside whatever it measures:
+ * a cron sweep, a script, or a helper that a page happens to share with
+ * one. The fallback keeps the event and drops the guarantee, which is the
+ * right way round for something this file already promises is never worth
+ * an error path.
  */
 export function captureServerAsync(
   distinctId: string,
   event: AnalyticsEvent,
   properties: AnalyticsProperties = {},
 ): void {
-  void captureServer(distinctId, event, properties);
+  try {
+    after(() => captureServer(distinctId, event, properties));
+  } catch {
+    void captureServer(distinctId, event, properties);
+  }
 }

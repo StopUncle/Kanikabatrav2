@@ -22,6 +22,7 @@ import ConsiliumSeal from "@/components/ConsiliumSeal";
 import MemberBadge, { getBadge } from "@/components/consilium/MemberBadge";
 import type { ActivityItem, ActivityKind } from "@/lib/community/activity";
 import { NAV_SECTIONS, activeNavHref } from "@/lib/consilium/nav";
+import { reset } from "@/lib/analytics/client";
 
 // Nav structure lives in lib/consilium/nav.ts (shared with MemberPillNav).
 // Forum, Chat and Classroom stay out per the 2026-04-30 multimillion-
@@ -121,6 +122,7 @@ export default function InnerCircleSidebar({
     setLoggingOut(true);
     try {
       await fetch("/api/auth/logout", { method: "POST" });
+      reset();
       router.push("/login");
     } catch {
       setLoggingOut(false);

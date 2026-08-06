@@ -11,10 +11,16 @@ import { identify } from "@/lib/analytics/client";
  * browser events (arrival, install) describe two different people and
  * every funnel reads as though nobody ever completes it.
  */
-export default function AnalyticsIdentify({ userId }: { userId: string }) {
+export default function AnalyticsIdentify({
+  userId,
+  email,
+}: {
+  userId: string;
+  email?: string;
+}) {
   useEffect(() => {
-    identify(userId);
-  }, [userId]);
+    identify(userId, email ? { email } : {});
+  }, [email, userId]);
 
   return null;
 }

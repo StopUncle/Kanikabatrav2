@@ -3,10 +3,10 @@
 import { Suspense, useEffect, useRef } from "react";
 import { usePathname, useSearchParams } from "next/navigation";
 import { ANALYTICS_EVENTS } from "@/lib/analytics/events";
-import { capture, capturePageview, initAnalytics } from "@/lib/analytics/client";
+import { capture, capturePageview } from "@/lib/analytics/client";
 
 /**
- * Boots PostHog and reports route changes.
+ * Reports route changes through the singleton initialized at browser startup.
  *
  * App Router does full client-side navigation, so the library's own
  * pageview listener would see the first load and nothing after it. We
@@ -21,10 +21,6 @@ function AnalyticsRouteReporter() {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const lastPath = useRef<string | null>(null);
-
-  useEffect(() => {
-    void initAnalytics();
-  }, []);
 
   useEffect(() => {
     if (!pathname || pathname === lastPath.current) return;

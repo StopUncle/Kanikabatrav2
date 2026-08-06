@@ -83,7 +83,9 @@ export default function EnterClient() {
       // Carry an anonymous Tells streak onto the account, and merge the
       // browser's anonymous analytics person. Neither blocks the redirect.
       migrateLocalStreakIfPresent();
-      if (result.user?.id) identify(result.user.id);
+      if (result.user?.id) {
+        identify(result.user.id, { email: result.user.email });
+      }
 
       // Resolve the destination to its real first screen so the landing
       // is one paint: a fresh create can never be a member, and /app

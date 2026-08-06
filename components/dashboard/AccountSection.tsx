@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 import DashboardCard from "./DashboardCard";
 import SettingsModal from "./SettingsModal";
+import { reset } from "@/lib/analytics/client";
 
 interface AccountSectionProps {
   email: string;
@@ -42,6 +43,10 @@ export default function AccountSection({
   ) => {
     setActiveSettingsTab(tab);
     setShowSettingsModal(true);
+  };
+
+  const handleLogout = () => {
+    reset();
   };
 
   const menuItems = [
@@ -143,7 +148,7 @@ export default function AccountSection({
               </div>
             </button>
 
-            <form action="/api/auth/logout" method="POST">
+            <form action="/api/auth/logout" method="POST" onSubmit={handleLogout}>
               <button
                 type="submit"
                 className="w-full flex items-center gap-3 p-3 rounded-lg hover:bg-gray-800/50 transition-colors group"

@@ -15,6 +15,7 @@ import {
 import { resolveActiveUserId } from "@/lib/auth/resolve-user";
 import { prisma } from "@/lib/prisma";
 import DashboardHeader from "@/components/dashboard/DashboardHeader";
+import AnalyticsIdentify from "@/components/analytics/AnalyticsIdentify";
 import DashboardSessionsCard from "@/components/dashboard/DashboardSessionsCard";
 import InnerCircleDashboardCard from "@/components/dashboard/InnerCircleDashboardCard";
 import ProgressBar from "@/components/course/ProgressBar";
@@ -279,6 +280,7 @@ export default async function DashboardPage() {
 
   return (
     <>
+      <AnalyticsIdentify userId={user.id} email={user.email} />
       <DashboardHeader userEmail={user.email} userName={user.name} />
 
       <main className="min-h-screen bg-deep-black pt-28 pb-24">

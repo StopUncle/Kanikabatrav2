@@ -30,14 +30,29 @@ import { NextRequest, NextResponse } from "next/server";
  * <style> — real but out of scope for this commit.
  */
 
+const posthogHost = process.env.NEXT_PUBLIC_POSTHOG_HOST;
+const posthogAssetsHost = posthogHost
+  ? posthogHost.replace(/^([a-z]+):\/\/([^.]+)\.i\./, "$1://$2-assets.i.")
+  : undefined;
+const posthogCspSources = [posthogHost, posthogAssetsHost].filter(
+  (source): source is string => Boolean(source),
+);
+
 const CSP_DIRECTIVES = [
   "default-src 'self'",
-  "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://www.google-analytics.com https://js.stripe.com https://*.pusher.com https://*.pusherapp.com",
+  [
+    "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://www.google-analytics.com https://js.stripe.com https://*.pusher.com https://*.pusherapp.com",
+    ...posthogCspSources,
+  ].join(" "),
   "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
   "img-src 'self' data: blob: https: https://*.r2.dev https://*.r2.cloudflarestorage.com https://i.ytimg.com https://img.youtube.com",
   "font-src 'self' data: https://fonts.gstatic.com",
   "media-src 'self' blob: https://*.r2.dev https://*.r2.cloudflarestorage.com",
-  "connect-src 'self' https://www.google-analytics.com https://api.stripe.com https://*.pusher.com wss://*.pusher.com https://*.pusherapp.com wss://*.pusherapp.com https://*.r2.dev https://*.r2.cloudflarestorage.com",
+  [
+    "connect-src 'self' https://www.google-analytics.com https://api.stripe.com https://*.pusher.com wss://*.pusher.com https://*.pusherapp.com wss://*.pusherapp.com https://*.r2.dev https://*.r2.cloudflarestorage.com",
+    ...posthogCspSources,
+  ].join(" "),
+  "worker-src 'self' blob:",
   "frame-src 'self' https://js.stripe.com https://hooks.stripe.com https://www.youtube.com https://www.youtube-nocookie.com",
   "frame-ancestors 'self'",
   "form-action 'self' https://checkout.stripe.com",

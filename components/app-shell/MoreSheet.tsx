@@ -9,23 +9,92 @@ import {
   type AppSurface,
   type ViewerTier,
 } from "@/lib/app/nav";
-import { Crown, Mail, Settings, X } from "lucide-react";
+import {
+  Activity,
+  BookOpen,
+  CalendarCheck,
+  ClipboardList,
+  Compass,
+  Crown,
+  Ear,
+  Eye,
+  FlaskConical,
+  GraduationCap,
+  HelpCircle,
+  Hexagon,
+  History,
+  Mail,
+  Map,
+  Medal,
+  Mic,
+  PenLine,
+  Route,
+  ScanLine,
+  ScrollText,
+  Settings,
+  Sparkles,
+  TrendingUp,
+  Trophy,
+  User,
+  Video,
+  X,
+  Zap,
+} from "lucide-react";
 
 /**
- * The More sheet, slimmed to what Home's explore rails do not carry: the
- * Kanika thread and account surfaces. Slides up from the bottom, closes on
- * backdrop, Escape, or any navigation.
+ * The More sheet: the index of the app.
+ *
+ * It used to hold three rows, because everything else "was on Home". That
+ * left Home's rails as the only road to Quizzes, Leaderboards, the Lab and
+ * the rest, so a member who did not scroll never found them. It now lists
+ * every surface the tab bar does not carry, grouped by the same sections
+ * Home uses. Slides up from the bottom, closes on backdrop, Escape, or any
+ * navigation.
  */
 
 /**
  * Icons keyed by route. The nav config owns what is in this sheet and which
- * group it sits in; this owns how each row looks.
+ * group it sits in; this owns how each row looks. A surface with no icon
+ * still renders: the fallback keeps the row's alignment rather than letting
+ * the label jump left.
  */
 const ICONS: Record<string, React.ReactNode> = {
+  // Train
+  "/app/train/climb": <TrendingUp size={17} />,
+  "/app/play/drill": <Zap size={17} />,
+  "/app/play/tell": <Ear size={17} />,
+  "/app/adventures": <Map size={17} />,
+  "/app/lab": <FlaskConical size={17} />,
+  "/app/receipts": <ScanLine size={17} />,
+  // Test yourself
+  "/app/quizzes": <HelpCircle size={17} />,
+  "/app/measure/baseline": <Activity size={17} />,
+  "/app/instincts/today": <Eye size={17} />,
+  "/app/instincts/score": <Hexagon size={17} />,
+  "/app/instincts/history": <History size={17} />,
+  // The Pact
+  "/app/pact/week": <CalendarCheck size={17} />,
+  "/app/pact/record": <ScrollText size={17} />,
+  "/app/pact/journal": <PenLine size={17} />,
+  // From Kanika
   "/app/kanika": <Mail size={17} />,
+  "/app/book": <BookOpen size={17} />,
+  "/app/videos": <Video size={17} />,
+  "/app/voice-notes": <Mic size={17} />,
+  "/app/previews": <Sparkles size={17} />,
+  // Your standing
+  "/app/you": <User size={17} />,
+  "/app/ranks": <Trophy size={17} />,
+  "/app/path": <Route size={17} />,
+  "/app/program": <GraduationCap size={17} />,
+  "/app/program/intake": <ClipboardList size={17} />,
+  "/app/train/achievements": <Medal size={17} />,
+  // Account
   "/app/upgrade": <Crown size={17} />,
   "/app/profile": <Settings size={17} />,
 };
+
+const FALLBACK_ICON = <Compass size={17} />;
 
 export default function MoreSheet({
   open,
@@ -103,7 +172,9 @@ export default function MoreSheet({
                     {/* The icon keeps its gold on a locked row. The lock is
                         information, not a punishment; the row should still
                         look worth wanting. */}
-                    <span className="text-[var(--app-gold)]">{ICONS[item.href]}</span>
+                    <span className="text-[var(--app-gold)]">
+                      {ICONS[item.href] ?? FALLBACK_ICON}
+                    </span>
                     <span className={`flex-1 text-app-lead ${locked ? "opacity-60" : ""}`}>
                       {item.label}
                     </span>

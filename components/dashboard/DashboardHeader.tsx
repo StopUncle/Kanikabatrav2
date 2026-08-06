@@ -17,6 +17,7 @@ import {
   ArrowUpRight,
 } from "lucide-react";
 import SettingsModal from "./SettingsModal";
+import { reset } from "@/lib/analytics/client";
 
 interface DashboardHeaderProps {
   userEmail: string;
@@ -86,6 +87,7 @@ const DashboardHeader = ({ userEmail, userName = null }: DashboardHeaderProps) =
   const handleLogout = async () => {
     const response = await fetch("/api/auth/logout", { method: "POST" });
     if (response.ok) {
+      reset();
       window.location.href = "/login";
     }
   };

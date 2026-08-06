@@ -70,7 +70,7 @@ export default function LoginForm() {
 
       // Merge this browser's anonymous analytics person into the account.
       if (result.user?.id) {
-        identify(result.user.id);
+        identify(result.user.id, { email: result.user.email });
       }
 
       // Login successful. Explicit returnTo wins; otherwise active members

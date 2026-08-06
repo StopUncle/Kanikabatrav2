@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { resolveActiveUserId } from "@/lib/auth/resolve-user";
 import { prisma } from "@/lib/prisma";
 import ProfilePageClient from "@/components/profile/ProfilePageClient";
+import AnalyticsIdentify from "@/components/analytics/AnalyticsIdentify";
 
 export default async function ProfilePage() {
   const userId = await resolveActiveUserId();
@@ -15,7 +16,12 @@ export default async function ProfilePage() {
   if (!user) {
     redirect("/login?returnTo=/profile");
   }
-  return <ProfilePageClient userId={user.id} email={user.email} />;
+  return (
+    <>
+      <AnalyticsIdentify userId={user.id} email={user.email} />
+      <ProfilePageClient userId={user.id} email={user.email} />
+    </>
+  );
 }
 
 export const metadata = {

@@ -11,6 +11,7 @@ import {
   LogOut,
 } from "lucide-react";
 import KanikaroseLogo from "./KanikaroseLogo";
+import { identify, reset } from "@/lib/analytics/client";
 
 /**
  * Header, the main site chrome.
@@ -96,6 +97,12 @@ const Header = () => {
       try {
         const response = await fetch("/api/auth/me");
         setIsLoggedIn(response.ok);
+        if (response.ok) {
+          const { user } = await response.json();
+          if (user?.id) {
+            identify(user.id, { email: user.email });
+          }
+        }
       } catch {
         setIsLoggedIn(false);
       } finally {
@@ -161,6 +168,7 @@ const Header = () => {
 
   const handleLogout = async () => {
     await fetch("/api/auth/logout", { method: "POST" });
+    reset();
     setIsLoggedIn(false);
     setIsMenuOpen(false);
     router.push("/");

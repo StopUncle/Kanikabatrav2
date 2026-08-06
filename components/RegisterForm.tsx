@@ -80,7 +80,7 @@ export default function RegisterForm() {
       // Merge this browser's anonymous analytics person into the account
       // the server-side signup event was recorded against.
       if (result.user?.id) {
-        identify(result.user.id);
+        identify(result.user.id, { email: result.user.email });
       }
 
       // Registration successful. Explicit returnTo wins; otherwise a new
