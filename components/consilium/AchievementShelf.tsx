@@ -312,8 +312,7 @@ export default async function AchievementShelf({
   const extraEarned: AchievementMeta[] = [];
   // Array.from(...) instead of spread/iterator for-of. Railway's TS target
   // doesn't enable downlevelIteration, so `for (const k of map.keys())`
-  // errors in build even though it runs locally. Same gotcha that tripped
-  // `measure-path-lengths.ts` recently.
+  // errors in build even though it runs locally.
   const earnedKeys = Array.from(earnedMap.keys());
   for (const key of earnedKeys) {
     if (!SIMULATOR_ACHIEVEMENT_CATALOGUE.some((m) => m.slug === key)) {

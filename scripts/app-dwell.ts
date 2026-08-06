@@ -9,7 +9,7 @@
  *      week card and leaves writes nothing, so they do not exist here. Every
  *      dwell figure is a FLOOR.
  *   2. Session spans are inferred by clustering a person's events with a
- *      30-minute gap rule, the same convention scripts/dwell-time.ts uses.
+ *      30-minute gap rule, the convention every dwell report here uses.
  *      A session with one event has no span, so it is reported separately
  *      rather than counted as zero and dragging the median down.
  *

@@ -2,9 +2,8 @@
  * Comp a copy of the book to an address: create a COMPLETED BOOK purchase with a
  * real download token, then send the standard delivery email.
  *
- * This is the manual equivalent of the BOOK branch of the Stripe webhook. Unlike
- * scripts/send-book-success-email.ts (which fakes the token and whose links 404),
- * the links this sends actually resolve.
+ * This is the manual equivalent of the BOOK branch of the Stripe webhook: the
+ * token is real, so the links in the email actually resolve.
  *
  * Idempotent: paypalOrderId is COMP-BOOK-<email>, so a second run for the same
  * address fails on the unique constraint instead of granting twice.
