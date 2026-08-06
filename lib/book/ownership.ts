@@ -26,6 +26,10 @@ const BOOK_DELIVERING_VARIANTS = [
   "KDP",
   "BOOK_CONSILIUM_1MO",
   "BOOK_CONSILIUM_3MO",
+  // Every coaching package includes the book. The webhook's COACHING
+  // branch writes a zero-amount BOOK row with this variant alongside
+  // the coaching Purchase.
+  "COACHING",
 ] as const;
 
 export const REAL_BOOK_VARIANT_FILTER: Prisma.PurchaseWhereInput = {

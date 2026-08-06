@@ -43,6 +43,7 @@ async function main() {
 
   const { prisma } = await import("../lib/prisma");
   const { sendBookDelivery } = await import("../lib/email");
+  const { bookPurchaseWhere } = await import("../lib/book/ownership");
 
   const name = nameArg || "there";
   const variant = (variantArg || "PREMIUM").toUpperCase();
@@ -57,12 +58,12 @@ async function main() {
   console.log(`Target:   ${email} ("${name}", ${variant})`);
   console.log("");
 
+  // Variant-aware on purpose: `type: "BOOK"` alone also matches the
+  // subscription rows the webhook writes for idempotency (Consilium,
+  // Pact, Ask packs), which would refuse a comp to anyone who merely
+  // subscribed. bookPurchaseWhere is the canonical "owns the book" test.
   const existing = await prisma.purchase.findFirst({
-    where: {
-      customerEmail: { equals: email, mode: "insensitive" },
-      type: "BOOK",
-      status: "COMPLETED",
-    },
+    where: bookPurchaseWhere(email),
     orderBy: { createdAt: "desc" },
     select: { id: true, createdAt: true, amount: true, expiresAt: true },
   });

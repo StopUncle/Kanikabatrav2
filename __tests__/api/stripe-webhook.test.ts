@@ -105,6 +105,10 @@ jest.mock("@/lib/pact/billing", () => ({
 
 jest.mock("@/lib/analytics/server", () => ({ captureServerAsync: jest.fn() }));
 
+jest.mock("@/lib/logger", () => ({
+  logger: { error: jest.fn(), warn: jest.fn(), info: jest.fn() },
+}));
+
 jest.mock("@/lib/email-sequences", () => ({
   buildBookBuyerSequence: jest.fn(() => [{ id: "seq" }]),
   buildQuizBuyerSequence: jest.fn(() => [{ id: "seq" }]),
@@ -309,7 +313,10 @@ describe("productKey fulfilment coverage", () => {
     const res = await fire(checkoutEvent(productKey));
 
     expect(res.status).toBe(200);
-    expect(db.purchase.create).toHaveBeenCalledTimes(1);
+    // Coaching writes a second row: the included book (variant COACHING).
+    expect(db.purchase.create).toHaveBeenCalledTimes(
+      productKey.startsWith("COACHING") ? 2 : 1,
+    );
     expect(db.purchase.create).toHaveBeenCalledWith(
       expect.objectContaining({
         data: expect.objectContaining({
@@ -409,6 +416,45 @@ describe("idempotency on replay", () => {
     await fire(checkoutEvent("COACHING_INTENSIVE"));
 
     expect(db.coachingSession.create).not.toHaveBeenCalled();
+    expect(sendBookDelivery).not.toHaveBeenCalled();
+  });
+
+  it("a coaching purchase delivers the included book", async () => {
+    await fire(checkoutEvent("COACHING_SINGLE"));
+
+    expect(db.purchase.create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({
+          type: "BOOK",
+          productVariant: "COACHING",
+          amount: 0,
+          paypalOrderId: "ST-cs_test_1-BOOK",
+          downloadToken: expect.any(String),
+        }),
+      }),
+    );
+    expect(sendBookDelivery).toHaveBeenCalledWith(
+      "buyer@example.com",
+      "Buyer",
+      expect.any(String),
+      null,
+      expect.any(Date),
+    );
+  });
+
+  it("flags the coaching book row when the delivery email fails", async () => {
+    (sendBookDelivery as jest.Mock).mockResolvedValue(false);
+
+    await fire(checkoutEvent("COACHING_SINGLE"));
+
+    expect(db.purchase.update).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: { paypalOrderId: "ST-cs_test_1-BOOK" },
+        data: expect.objectContaining({
+          metadata: expect.objectContaining({ emailDeliveryFailed: true }),
+        }),
+      }),
+    );
   });
 
   it("writes the coaching Purchase and session in one transaction", async () => {

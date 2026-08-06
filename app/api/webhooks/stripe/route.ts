@@ -5,6 +5,7 @@ import { stripe } from "@/lib/stripe";
 import { prisma } from "@/lib/prisma";
 import { sendBookDelivery, sendInnerCircleWelcomeNewUser, sendMembershipRenewed, sendMembershipSuspended, sendMembershipCancelled } from "@/lib/email";
 import { createQuizConsiliumCredit } from "@/lib/stripe-credits";
+import { logger } from "@/lib/logger";
 import {
   handlePactCheckoutCompleted,
   handlePactInvoiceFailed,
@@ -374,6 +375,17 @@ export async function POST(request: NextRequest) {
             COACHING_RETAINER: 4,
           };
 
+          // Every coaching package promises "Includes the Sociopathic
+          // Dating Bible". The book ships as its own BOOK Purchase row
+          // (variant COACHING, amount 0) so ownership, resend, and the
+          // download route all work unchanged: they only recognise
+          // type BOOK rows, and the zero amount keeps revenue reporting
+          // from counting the inclusion twice.
+          const bookToken = crypto.randomBytes(32).toString("hex");
+          const bookExpiresAt = new Date();
+          bookExpiresAt.setDate(bookExpiresAt.getDate() + 30);
+          const bookIdempotencyKey = `${idempotencyKey}-BOOK`;
+
           // Wrap purchase + coaching session creation in a transaction so a
           // failure halfway through doesn't leave an orphaned Purchase row.
           await prisma.$transaction(async (tx) => {
@@ -396,7 +408,61 @@ export async function POST(request: NextRequest) {
                 sessionCount: sessionCounts[productKey] || 1,
               },
             });
+
+            await tx.purchase.create({
+              data: {
+                type: "BOOK",
+                productVariant: "COACHING",
+                customerEmail: email,
+                customerName: name || "Customer",
+                amount: 0,
+                status: "COMPLETED",
+                paypalOrderId: bookIdempotencyKey,
+                downloadToken: bookToken,
+                expiresAt: bookExpiresAt,
+                maxDownloads: 10,
+                metadata: { source: "stripe", sessionId, productKey },
+              },
+            });
           });
+
+          const bookEmailSent = await sendBookDelivery(
+            email,
+            name || "Customer",
+            bookToken,
+            null,
+            bookExpiresAt,
+          );
+
+          if (!bookEmailSent) {
+            await prisma.purchase.update({
+              where: { paypalOrderId: bookIdempotencyKey },
+              data: {
+                metadata: {
+                  source: "stripe",
+                  sessionId,
+                  productKey,
+                  emailDeliveryFailed: true,
+                },
+              },
+            });
+            logger.error(
+              `[stripe-webhook] coaching book delivery email failed for ${email} (session ${sessionId}), flagged for retry`,
+            );
+          }
+
+          // Owning the book unlocks the quiz, same as a direct book buy.
+          try {
+            await prisma.quizResult.updateMany({
+              where: { email, paid: false },
+              data: { paid: true },
+            });
+          } catch (err) {
+            logger.error(
+              "[stripe-webhook] quiz auto-unlock for coaching buyer failed",
+              err instanceof Error ? err : undefined,
+            );
+          }
 
           // The buyer just paid. The "you looked at coaching, you did not
           // book" nurture must stop now, or a $297-$4,997 customer keeps
