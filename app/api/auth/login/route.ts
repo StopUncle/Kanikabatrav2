@@ -7,6 +7,7 @@ import { generateTokenPair } from "@/lib/auth/jwt";
 import { LoginCredentials } from "@/lib/auth/types";
 import { enforceRateLimit, getClientIp, limits } from "@/lib/rate-limit";
 import { checkMembership } from "@/lib/community/membership";
+import { claimGuestPurchases } from "@/lib/purchases/claim";
 
 export async function POST(request: NextRequest) {
   try {
@@ -108,6 +109,10 @@ export async function POST(request: NextRequest) {
     // first return on or after day 7 and reports it once.
     void markSeen(user.id);
     captureServerAsync(user.id, ANALYTICS_EVENTS.LOGIN);
+
+    // Sweep up guest purchases made under this email while signed out.
+    // Idempotent, only touches rows with no userId yet.
+    void claimGuestPurchases(user.id, user.email);
 
     return response;
   } catch (error: unknown) {

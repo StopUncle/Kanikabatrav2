@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { markSeen } from "@/lib/analytics/seen";
 import { captureServerAsync } from "@/lib/analytics/server";
 import { ANALYTICS_EVENTS } from "@/lib/analytics/events";
 import { PrismaUserDatabase } from "@/lib/auth/prisma-database";
@@ -12,6 +13,7 @@ import {
   buildAttributionRecord,
   type AttributionPayload,
 } from "@/lib/attribution";
+import { claimGuestPurchases } from "@/lib/purchases/claim";
 
 export async function POST(request: NextRequest) {
   try {
@@ -57,6 +59,17 @@ export async function POST(request: NextRequest) {
     // Top of the funnel. Fire and forget: a stranger just became an
     // account, and nothing about that is worth delaying the response for.
     captureServerAsync(user.id, ANALYTICS_EVENTS.SIGNUP);
+
+    // A fresh account has, by definition, just been seen. Login and
+    // refresh stamp lastSeenAt but register never did, so brand-new
+    // users read as inactive in every liveness query until their first
+    // token refresh.
+    void markSeen(user.id);
+
+    // Anything this email bought as a guest (the book, coaching) gets
+    // linked to the new account. Access already works by email; this
+    // repairs the row linkage so purchase history and analytics see it.
+    void claimGuestPurchases(user.id, user.email);
 
     // Stamp acquisition attribution. Done as a follow-up update so the
     // legacy createUser signature stays clean. Errors here are
