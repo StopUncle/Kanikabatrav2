@@ -43,6 +43,9 @@ const FREE: Record<string, string> = {
   "/pact": "The Pact's door IS the sell. Signed members are redirected to /pact/week, which gates.",
   "/pact/sign": "The oath and the signature come BEFORE payment by design; the seal action is what charges.",
   "/pact/sealed": "Stripe's return URL. Gating it would wall the ceremony over a webhook race.",
+  "/pact/record": "The member's own history, readable after a lapse or a break by contract (keep/entry routes: 'readable but not writable'). The winback email lands here; readPact runs entitlement-passive.",
+  "/pact/journal": "The member's own words, same read-after-lapse contract as the record.",
+  "/pact/break": "Sealing the record is a right that survives a lapse; the API needs only a pact to break.",
   "/upgrade": "The plans page. Showing both rungs and their prices IS the pitch; a member sees their own plan named.",
 };
 
@@ -173,6 +176,9 @@ describe("every /app page states its tier", () => {
   it("keeps the training surfaces gated on the paid rungs", () => {
     // What the Pact buys. These call trainingGate (or the per-scenario
     // canPlay), so a pact subscriber passes and a free account walls.
+    // /pact/record and /pact/journal moved to FREE 2026-08-06: the
+    // member's own history stays readable after a lapse (the read is
+    // entitlement-passive; writing still gates in the API routes).
     const mustGateTraining = [
       "/lab",
       "/receipts",
@@ -180,8 +186,6 @@ describe("every /app page states its tier", () => {
       "/measure",
       "/measure/baseline",
       "/pact/week",
-      "/pact/record",
-      "/pact/journal",
     ];
     for (const route of mustGateTraining) {
       expect(routes).toContain(route);

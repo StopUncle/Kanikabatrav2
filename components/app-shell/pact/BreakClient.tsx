@@ -69,19 +69,21 @@ export default function BreakClient({
         Look at it first.
       </h1>
       <p className="mt-2 text-app-body leading-relaxed text-[var(--app-muted)]">
-        {kept} {kept === 1 ? "week" : "weeks"} kept, {scars}{" "}
-        {scars === 1 ? "scar" : "scars"}, {weekNumber}{" "}
-        {weekNumber === 1 ? "week" : "weeks"} in. Breaking it ends the
-        billing and seals this record as broken, permanently. The record
-        stays visible. A new pact can be signed, but it will always stand
-        beside this one.
+        {weekNumber < 1
+          ? "Signed, never started."
+          : `${kept} ${kept === 1 ? "week" : "weeks"} kept, ${scars} ${
+              scars === 1 ? "scar" : "scars"
+            }, ${weekNumber} ${weekNumber === 1 ? "week" : "weeks"} in.`}{" "}
+        Breaking it ends the billing and seals this record as broken,
+        permanently. The record stays visible. A new pact can be signed,
+        but it will always stand beside this one.
       </p>
 
       {goals.length > 0 && (
         <ul className="mt-5 flex flex-col gap-1.5">
-          {goals.map((g) => (
+          {goals.map((g, i) => (
             <li
-              key={g}
+              key={i}
               className="flex gap-2.5 text-[13.5px] leading-snug text-[var(--app-muted)]"
             >
               <span className="mt-[7px] h-1 w-1 shrink-0 rounded-full bg-[var(--pact-blood)]" />

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import Ceremony from "@/components/app-shell/juice/Ceremony";
 import BloodVeil from "./BloodVeil";
 import SignatureView from "./SignatureView";
@@ -58,6 +59,7 @@ function readStash(): { raw: string | null; strokes: SignatureStrokes | null } {
 }
 
 export default function SealedCeremony() {
+  const router = useRouter();
   const [open, setOpen] = useState(false);
   // Read the stash once, during first render, BEFORE the attach loop can
   // remove it: the strokes feed the replay even after the attach succeeds.
@@ -102,6 +104,17 @@ export default function SealedCeremony() {
       }
       if (!cancelled && attempt < 6) {
         window.setTimeout(send, attempt * 2000);
+        return;
+      }
+      // Out of attempts: drop the stash. Left behind, it would attach
+      // THIS pact's signature and goals to whatever pact is open the
+      // next time this tab session sees the sealed screen.
+      if (!cancelled) {
+        try {
+          window.sessionStorage.removeItem(SIGNATURE_STASH_KEY);
+        } catch {
+          /* fine */
+        }
       }
     };
     send();
@@ -114,13 +127,19 @@ export default function SealedCeremony() {
     <div className="flex min-h-[100dvh] items-center justify-center bg-[var(--app-void)]">
       <Ceremony
         open={open}
-        onDismiss={() => setOpen(false)}
+        // A dismissal (Escape, backdrop tap) used to just close the
+        // overlay, leaving a bare void with no tab bar on a full-screen
+        // route. Every exit from the seal leads to the week.
+        onDismiss={() => router.push("/app/pact/week")}
         backdrop={<BloodVeil />}
         eyebrow="The Blood Pact"
         headline={<StaggeredHeadline />}
-        subline="Week one is already running. The first challenge is waiting, and the record has opened with your name on it."
+        // Activation-honest: the clock does not run until they press
+        // Activate on the week screen, and the old copy promised a week
+        // that the very next screen said had not started.
+        subline="The record has opened with your name on it. The clock starts when you do."
         voice="Most people never sign anything. Watch what that difference does."
-        action={{ label: "Begin week one", href: "/app/pact/week" }}
+        action={{ label: "Open week one", href: "/app/pact/week" }}
         haptic="moment"
       >
         {stash.strokes && stash.strokes.length > 0 && (

@@ -124,7 +124,9 @@ export default async function HomePage() {
     getTodaysTellRow(),
     getDay0Checklist(prisma, userId, { isMember: canTrain(access) }),
     readProgram(prisma, userId),
-    readPact(userId),
+    // Entitlement-gated: a lapsed pact member's Home visit must not mint
+    // entries or scar weeks their lapse locked them out of.
+    readPact(userId, { entitled: access.pactEntitled }),
     prisma.simulatorProgress.findFirst({
       where: {
         userId,

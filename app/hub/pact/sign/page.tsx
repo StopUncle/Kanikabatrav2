@@ -30,10 +30,8 @@ export default async function PactSignPage({
   }
   const cycle = params.cycle === "annual" ? "annual" : "weekly";
 
-  const [access, read] = await Promise.all([
-    getAccess(userId),
-    readPact(userId),
-  ]);
+  const access = await getAccess(userId);
+  const read = await readPact(userId, { entitled: access.pactEntitled });
   if (read.pact) {
     redirect("/app/pact/week");
   }

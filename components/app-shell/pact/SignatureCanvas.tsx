@@ -125,7 +125,10 @@ export default function SignatureCanvas({
         }}
         onPointerUp={() => {
           if (!liveRef.current) return;
-          if (liveRef.current.length > 1) {
+          // A single tap is ink too: some signatures are initials and a
+          // dot, and discarding taps left those members with a disabled
+          // Seal button and no visible reason.
+          if (liveRef.current.length >= 1) {
             strokesRef.current.push(liveRef.current);
             setHasInk(true);
             haptic("tick");

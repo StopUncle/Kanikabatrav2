@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 import { requireServerAuth } from "@/lib/auth/server-auth";
-import { trainingGate } from "@/lib/access/guard";
+import { getAccess } from "@/lib/access/tier";
 import { readPact } from "@/lib/pact/read";
 import { PageShell } from "@/components/app-shell/ui";
 import BreakClient from "@/components/app-shell/pact/BreakClient";
@@ -13,14 +13,10 @@ export const metadata = {
 /** The cancel interstitial. Reached from the record only, on purpose. */
 export default async function PactBreakPage() {
   const userId = await requireServerAuth("/app/pact/break");
-  const wall = await trainingGate(userId, {
-    trigger: "locked-nav",
-    returnHref: "/app/pact/record",
-    surfaceLabel: "The Pact",
-  });
-  if (wall) return wall;
-
-  const read = await readPact(userId);
+  // No training wall: sealing the record is a right that survives a
+  // lapse. Breaking needs no entitlement, only a pact to break.
+  const access = await getAccess(userId);
+  const read = await readPact(userId, { entitled: access.pactEntitled });
   if (!read.pact) {
     redirect("/app/pact");
   }

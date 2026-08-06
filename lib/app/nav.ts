@@ -168,7 +168,7 @@ export const APP_SURFACES: AppSurface[] = [
     label: "Pact journal",
     placement: "nested",
     parent: "/app/pact/week",
-    note: "Past private entries and replies. Private by definition; the wall only ever sees the separate share box. Up is the week for the same reason as the record.",
+    note: "Past private entries. Private by definition; the wall only ever sees the separate share box. Up is the week for the same reason as the record. Linked from the record page.",
     maturity: "app-native",
   },
   {

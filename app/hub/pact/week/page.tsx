@@ -83,8 +83,6 @@ export default async function PactWeekPage() {
           journalBody: read.entry.journalBody,
           publicBody: read.entry.publicBody,
           shared: read.entry.sharedAt !== null,
-          flagged: read.entry.flagged,
-          aiReply: read.entry.aiReply,
           feedPostId: notePost?.id ?? null,
           sharedAnonymously: noteMeta?.anonymous ?? false,
         }}

@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 import { requireServerAuth } from "@/lib/auth/server-auth";
-import { trainingGate } from "@/lib/access/guard";
+import { getAccess } from "@/lib/access/tier";
 import { readPact } from "@/lib/pact/read";
 import { PageShell, PageHeader, EmptyState } from "@/components/app-shell/ui";
 
@@ -15,14 +15,11 @@ export const metadata = {
  */
 export default async function PactJournalPage() {
   const userId = await requireServerAuth("/app/pact/journal");
-  const wall = await trainingGate(userId, {
-    trigger: "locked-nav",
-    returnHref: "/app/pact/journal",
-    surfaceLabel: "The Pact",
-  });
-  if (wall) return wall;
-
-  const read = await readPact(userId);
+  // No training wall: these are the member's own words, readable after a
+  // lapse the same way the record is. The entitled flag keeps the read
+  // passive for anyone who cannot currently write.
+  const access = await getAccess(userId);
+  const read = await readPact(userId, { entitled: access.pactEntitled });
   if (!read.pact) {
     redirect("/app/pact");
   }
@@ -70,14 +67,6 @@ export default async function PactJournalPage() {
               <p className="mt-2 whitespace-pre-line text-[13.5px] leading-relaxed text-[var(--app-text)]">
                 {e.journalBody}
               </p>
-              {e.aiReply && !e.flagged && (
-                <p
-                  className="mt-3 border-t border-[var(--app-line-soft)] pt-3 text-[13px] italic leading-relaxed text-[var(--app-muted)]"
-                  style={{ fontFamily: "var(--font-display)" }}
-                >
-                  {e.aiReply}
-                </p>
-              )}
             </article>
           ))}
         </div>

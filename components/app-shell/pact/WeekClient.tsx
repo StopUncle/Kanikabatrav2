@@ -22,8 +22,6 @@ export interface WeekEntryView {
   journalBody: string | null;
   publicBody: string | null;
   shared: boolean;
-  flagged: boolean;
-  aiReply: string | null;
   /** The shared note's own post on the feed, when it has one. */
   feedPostId: string | null;
   sharedAnonymously: boolean;
@@ -64,17 +62,21 @@ export default function WeekClient({
   const [crisisCard, setCrisisCard] = useState<string | null>(null);
   const [busy, setBusy] = useState<"keep" | "save" | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [now, setNow] = useState(() => Date.now());
+  // Clock starts on mount: seeding Date.now() into the SSR HTML made the
+  // server's countdown string race the client's across hour boundaries.
+  const [now, setNow] = useState<number | null>(null);
   const [justKept, setJustKept] = useState(false);
   const [justSaved, setJustSaved] = useState(false);
 
   useEffect(() => {
+    setNow(Date.now());
     const id = window.setInterval(() => setNow(Date.now()), 60_000);
     return () => window.clearInterval(id);
   }, []);
 
-  const msLeft = new Date(endsAtIso).getTime() - now;
+  const msLeft = now === null ? null : new Date(endsAtIso).getTime() - now;
   const remaining = useMemo(() => {
+    if (msLeft === null) return " ";
     if (msLeft <= 0) return "The week is closing";
     const days = Math.floor(msLeft / 86_400_000);
     const hours = Math.floor((msLeft % 86_400_000) / 3_600_000);
@@ -83,7 +85,13 @@ export default function WeekClient({
   }, [msLeft]);
   // The last day of an open week is the one place the information itself
   // gets a pulse. Kept weeks have nothing left to be pressed about.
-  const closing = status === "open" && msLeft > 0 && msLeft < 86_400_000;
+  const closing =
+    status === "open" && msLeft !== null && msLeft > 0 && msLeft < 86_400_000;
+  // Past the deadline the entry route refuses writes (409): the composer
+  // seals rather than offering a save that can only fail. Scarred weeks
+  // are closed by definition, whatever the clock says.
+  const composerLocked =
+    status === "scarred" || (msLeft !== null && msLeft <= 0);
 
   async function keep() {
     if (busy) return;
@@ -135,6 +143,11 @@ export default function WeekClient({
         setCrisisCard(data.card);
         setSaved(true);
         setEditing(false);
+        // The server suppressed the share and deleted any posted note;
+        // mirror that here so the saved view never claims a note is on
+        // the feed, or links a post that no longer exists.
+        setShare(false);
+        setFeedPostId(null);
       } else {
         setSaved(true);
         setEditing(false);
@@ -358,13 +371,24 @@ export default function WeekClient({
               </p>
             )
           )}
-          <button
-            type="button"
-            onClick={() => setEditing(true)}
-            className="mt-4 w-full rounded-full border border-[var(--app-line)] px-5 py-3 text-[12.5px] uppercase tracking-[0.16em] text-[var(--app-muted)] transition-transform active:scale-[0.97]"
-          >
-            Edit the entry
-          </button>
+          {!composerLocked && (
+            <button
+              type="button"
+              onClick={() => setEditing(true)}
+              className="mt-4 w-full rounded-full border border-[var(--app-line)] px-5 py-3 text-[12.5px] uppercase tracking-[0.16em] text-[var(--app-muted)] transition-transform active:scale-[0.97]"
+            >
+              Edit the entry
+            </button>
+          )}
+        </div>
+      ) : composerLocked ? (
+        /* The week has closed; the entry route would 409 any save. A
+           sealed line beats a live-looking form that can only fail. */
+        <div className="mt-3 rounded-2xl border border-[var(--app-line-soft)] bg-[var(--app-card)] px-4 py-4">
+          <p className="text-[13.5px] leading-relaxed text-[var(--app-muted)]">
+            This week has closed. What was written stands; the next week
+            gets its own page.
+          </p>
         </div>
       ) : (
         <>
@@ -377,7 +401,10 @@ export default function WeekClient({
             className="mt-2 w-full resize-none rounded-2xl border border-[var(--app-line)] bg-[var(--app-card)] px-4 py-3.5 text-[14px] leading-relaxed text-[var(--app-text)] outline-none placeholder:text-[var(--app-dim)] focus:border-[var(--app-gold-soft)]"
           />
 
-          {!crisisCard && saved && (
+          {/* Available from the first write: making a first-time writer
+              save, reopen Edit, and save again to share a line was three
+              steps for one thought. */}
+          {!crisisCard && (
             <div className="mt-5 rounded-2xl border border-[var(--app-line-soft)] px-4 py-4">
               <p className="text-app-eyebrow uppercase tracking-app-label text-[var(--app-dim)]">
                 Share a line · optional, public

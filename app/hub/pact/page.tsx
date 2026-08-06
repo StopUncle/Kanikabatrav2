@@ -18,10 +18,11 @@ export const metadata = {
  */
 export default async function PactDoorPage() {
   const userId = await requireServerAuth("/app/pact");
-  const [access, read] = await Promise.all([
-    getAccess(userId),
-    readPact(userId),
-  ]);
+  const access = await getAccess(userId);
+  // Entitlement rides into the read: this page is exactly where lapsed
+  // members land, and their look at the door must not mint entries or
+  // scar weeks they were locked out of writing.
+  const read = await readPact(userId, { entitled: access.pactEntitled });
 
   // Only a viewer who can actually train lands on the week. A live pact
   // with a lapsed entitlement (expired membership, ended subscription)
