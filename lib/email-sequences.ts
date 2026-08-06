@@ -2795,6 +2795,13 @@ function buildQuizUnlockStep3(name: string, quizResultId: string): string {
     utm_content: "step-3-3d",
   });
   const resultsUrl = `${baseUrl}/quiz/results/${quizResultId}?${params.toString()}`;
+  const appParams = new URLSearchParams({
+    utm_source: "email",
+    utm_medium: "email",
+    utm_campaign: "quiz-unlock-abandonment",
+    utm_content: "step-3-app",
+  });
+  const appUrl = `${baseUrl}/start?${appParams.toString()}`;
 
   const body = `
     <p style="color: #f5f0ed; font-size: 16px; margin: 0 0 20px 0; line-height: 1.7;">
@@ -2806,6 +2813,14 @@ function buildQuizUnlockStep3(name: string, quizResultId: string): string {
     </p>
 
     ${goldButton("Unlock my full results", resultsUrl)}
+
+    <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 20px 0; font-size: 15px;">
+      And if the unlock isn&rsquo;t for you, the practice half costs nothing: the same six axes you just scored on run as playable scenarios in the app. Free account, no card.
+    </p>
+
+    <p style="margin: 0 0 20px 0;">
+      <a href="${appUrl}" style="color: #d4af37; font-size: 15px; text-decoration: underline;">Open the app</a>
+    </p>
 
     <p style="color: #94a3b8; line-height: 1.8; margin: 0 0 0 0; font-size: 15px;">
       Either way, thanks for taking the quiz.
