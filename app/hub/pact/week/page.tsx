@@ -6,6 +6,7 @@ import { readPact } from "@/lib/pact/read";
 import { pactNoteMeta } from "@/lib/pact/note";
 import { PageShell } from "@/components/app-shell/ui";
 import WeekClient from "@/components/app-shell/pact/WeekClient";
+import ActivatePact from "@/components/app-shell/pact/ActivatePact";
 
 export const metadata = {
   title: "This week | Consilium",
@@ -24,6 +25,26 @@ export default async function PactWeekPage() {
   if (wall) return wall;
 
   const read = await readPact(userId);
+
+  // Signed, not yet activated: the clock is theirs to start. The
+  // challenge on `read` is the week-one preview.
+  if (read.pact && read.awaitingActivation) {
+    return (
+      <PageShell>
+        <p className="text-app-eyebrow uppercase tracking-app-label text-[var(--pact-blood)]">
+          The Blood Pact
+        </p>
+        <h1
+          className="mt-1 text-app-hero font-light"
+          style={{ fontFamily: "var(--font-display)" }}
+        >
+          It is signed.
+        </h1>
+        <ActivatePact challengeTitle={read.challenge?.title ?? null} />
+      </PageShell>
+    );
+  }
+
   if (!read.pact || !read.entry || !read.weekEndsAt) {
     redirect("/app/pact");
   }

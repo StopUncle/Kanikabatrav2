@@ -55,12 +55,14 @@ export async function POST(request: NextRequest) {
 
     const [pacts, published] = await Promise.all([
       prisma.pact.findMany({
-        where: { brokenAt: null },
+        // startedAt not null: a signed-but-unactivated pact has no clock
+        // to advance and nothing to announce. Activation starts the drip.
+        where: { brokenAt: null, startedAt: { not: null } },
         select: {
           id: true,
           userId: true,
           preset: true,
-          signedAt: true,
+          startedAt: true,
           user: {
             select: {
               pactMembership: { select: { status: true, expiresAt: true } },
@@ -96,7 +98,9 @@ export async function POST(request: NextRequest) {
         continue;
       }
 
-      const weekNumber = currentWeekFor(p, now);
+      if (!p.startedAt) continue;
+      const started = { startedAt: p.startedAt };
+      const weekNumber = currentWeekFor(started, now);
       if (weekNumber < 1) continue;
 
       const existing = await prisma.pactEntry.findUnique({
@@ -111,7 +115,7 @@ export async function POST(request: NextRequest) {
           pactId: p.id,
           userId: p.userId,
           weekNumber,
-          weekEndsAt: weekEndsAt(p, weekNumber),
+          weekEndsAt: weekEndsAt(started, weekNumber),
         },
       });
       advanced++;

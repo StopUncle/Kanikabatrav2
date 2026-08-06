@@ -196,25 +196,30 @@ export default async function HomePage() {
         >
           <div className="flex items-baseline justify-between gap-3">
             <p className="text-app-tiny uppercase tracking-app-label text-[var(--pact-blood)]">
-              The Pact · Week {pact.weekNumber} ·{" "}
-              {presetLabel(pact.pact.preset)}
+              {pact.awaitingActivation
+                ? `The Pact · Signed · ${presetLabel(pact.pact.preset)}`
+                : `The Pact · Week ${pact.weekNumber} · ${presetLabel(pact.pact.preset)}`}
             </p>
             <p className="shrink-0 text-[12.5px] tracking-app-wide text-[var(--app-gold)]">
-              OPEN →
+              {pact.awaitingActivation ? "ACTIVATE →" : "OPEN →"}
             </p>
           </div>
           <p
             className="mt-1.5 text-app-title leading-tight"
             style={{ fontFamily: "var(--font-display)" }}
           >
-            {pact.entry?.status === "kept"
-              ? "Kept. It is on the record."
-              : (pact.challenge?.title ?? "This week is open.")}
+            {pact.awaitingActivation
+              ? "Week one is waiting."
+              : pact.entry?.status === "kept"
+                ? "Kept. It is on the record."
+                : (pact.challenge?.title ?? "This week is open.")}
           </p>
           <p className="mt-1.5 text-app-caption leading-relaxed text-[var(--app-muted)]">
-            {pact.entry?.status === "kept"
-              ? "Write the week down while it is still warm."
-              : "For those committed to ruthless transformation."}
+            {pact.awaitingActivation
+              ? "Nothing counts against you yet. The seven days start when you do."
+              : pact.entry?.status === "kept"
+                ? "Write the week down while it is still warm."
+                : "For those committed to ruthless transformation."}
           </p>
         </Link>
       ) : PACT_LAUNCHED ? (

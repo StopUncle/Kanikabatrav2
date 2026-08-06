@@ -921,6 +921,12 @@ model Pact {
   number        Int
   preset        String // "confidence" | "fear-anxiety" | "relationships"
   signedAt      DateTime    @default(now())
+  // When the member pressed Activate and the weekly clock began. The
+  // ceremony (signedAt) and the commitment's first week are separate
+  // moments on purpose: signing happens in a rush of intent, and the
+  // seven days should start when the member is ready to spend them.
+  // Null = signed, not yet activated: no entries, no scars, no pushes.
+  startedAt     DateTime?
   // Stroke points from the signing canvas, kept small. The signature is
   // ceremony, not identity: never used for anything but drawing it back.
   signatureData Json?
