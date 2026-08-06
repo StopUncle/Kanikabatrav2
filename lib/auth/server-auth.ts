@@ -169,12 +169,12 @@ export async function requireServerAuth(redirectPath: string): Promise<string> {
  * even though those same admins can load the matching page just fine.
  */
 export async function optionalServerAuth(): Promise<string | null> {
-  if (process.env.DEV_BYPASS_AUTH === "true") {
-    return "dev-admin";
-  }
-
   const cookieStore = await cookies();
   const accessToken = cookieStore.get("accessToken")?.value;
+
+  if (process.env.DEV_BYPASS_AUTH === "true" && !accessToken) {
+    return "dev-admin";
+  }
 
   if (accessToken) {
     try {
@@ -202,5 +202,12 @@ export async function optionalServerAuth(): Promise<string | null> {
     }
   }
 
-  return getAdminUserId();
+  const adminId = await getAdminUserId();
+  if (adminId) return adminId;
+
+  if (process.env.DEV_BYPASS_AUTH === "true") {
+    return "dev-admin";
+  }
+
+  return null;
 }
