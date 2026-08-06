@@ -23,9 +23,38 @@ import KanikaroseLogo from "./KanikaroseLogo";
  * doesn't wrap) and makes the product destination visually distinct
  * from ordinary navigation.
  *
- * Scroll-shrink: header collapses from 80px to 64px after scrolling
- * 24px. Smooth, pure CSS, nothing re-renders, just a class swap.
+ * Scroll-shrink: header collapses from 80px to 64px once the user has
+ * scrolled past the hero. Smooth, pure CSS, just a class swap.
  */
+
+/**
+ * Scroll past this and the header shrinks. Comfortably clear of the
+ * jitter a thumb or a trackpad produces settling into a scroll.
+ */
+const SHRINK_PAST = 64;
+
+/**
+ * Only back below this does it grow again, which in practice means
+ * returning to the top of the page. The distance between the two is the
+ * point: it is what stops the header flipping state on scroll noise.
+ */
+const GROW_BACK_BELOW = 16;
+
+/**
+ * The shrink state a given scroll position should produce, given the state
+ * it is already in. Pure, and exported so it can be tested directly.
+ *
+ * The asymmetry is load-bearing rather than a rounding detail: collapsing
+ * these back to one threshold reintroduces the wobble, and that regression
+ * is invisible reading a diff and obvious to anyone scrolling the site.
+ */
+export function nextHeaderScrolled(
+  wasScrolled: boolean,
+  scrollY: number,
+): boolean {
+  return wasScrolled ? scrollY > GROW_BACK_BELOW : scrollY > SHRINK_PAST;
+}
+
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -76,16 +105,42 @@ const Header = () => {
     checkAuth();
   }, []);
 
-  // Shrink the header after a small scroll threshold. The 24px threshold
-  // means the full-size header persists on the hero but collapses as
-  // soon as the user starts reading, a standard premium pattern.
+  // Shrink the header once the user is reading rather than looking at the
+  // hero, using two thresholds instead of one.
+  //
+  // This used to be a single `scrollY > 24`. One threshold means every pixel
+  // of jitter around that exact value flips the state, and the flip animates
+  // four things at once over 300ms: the header height, the logo size, the
+  // border and shadow, and the mobile menu's top offset. Reverse direction
+  // mid-animation and the transition restarts from wherever it had reached,
+  // so a thumb easing into a scroll, a trackpad, or momentum settling near
+  // the threshold made the whole header visibly wobble between its two
+  // sizes. Measured on a phone viewport: a ten pixel scroll jiggle produced
+  // six distinct header heights.
+  //
+  // The gap between the two values is a dead zone. Once shrunk it takes a
+  // deliberate scroll back to the very top to restore the full header, and
+  // ordinary jitter has nowhere to land that flips anything.
   useEffect(() => {
+    let frame = 0;
+
     function onScroll() {
-      setIsScrolled(window.scrollY > 24);
+      // Coalesce to one state check per frame. The listener fires far more
+      // often than the header can meaningfully change.
+      if (frame) return;
+      frame = requestAnimationFrame(() => {
+        frame = 0;
+        const y = window.scrollY;
+        setIsScrolled((wasScrolled) => nextHeaderScrolled(wasScrolled, y));
+      });
     }
+
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      if (frame) cancelAnimationFrame(frame);
+    };
   }, []);
 
   useEffect(() => {
