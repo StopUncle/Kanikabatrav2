@@ -53,7 +53,22 @@ self.addEventListener("push", (event) => {
     tag: payload.tag,
     requireInteraction: payload.requireInteraction || false,
   };
-  event.waitUntil(self.registration.showNotification(title, options));
+
+  // Home-screen icon count, the Messages behaviour. This is the half of
+  // the badge that works while the app is CLOSED: nothing on the page is
+  // running then, so the number has to ride along on the push itself.
+  // `appBadge` is sent deliberately by the sender, so a push that is not
+  // about an inbox leaves the badge alone rather than clearing it.
+  const work = [self.registration.showNotification(title, options)];
+  const count = payload.data && payload.data.appBadge;
+  if (typeof count === "number" && self.navigator && self.navigator.setAppBadge) {
+    work.push(
+      count > 0
+        ? self.navigator.setAppBadge(count)
+        : self.navigator.clearAppBadge(),
+    );
+  }
+  event.waitUntil(Promise.all(work));
 });
 
 self.addEventListener("notificationclick", (event) => {

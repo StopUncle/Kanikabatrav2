@@ -3,6 +3,22 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 
+/**
+ * Where to land after a correct PIN. Studio sends `?next=/studio` so its
+ * installed icon does not dump her in the admin panel every morning.
+ *
+ * Read off window rather than useSearchParams so this page needs no
+ * Suspense boundary. Only same-origin absolute paths are honoured: a bare
+ * "/" prefix is not enough on its own, since "//evil.com" is a protocol
+ * relative URL the browser would happily follow off-site.
+ */
+function safeNext(): string {
+  if (typeof window === "undefined") return "/admin";
+  const raw = new URLSearchParams(window.location.search).get("next");
+  if (!raw || !raw.startsWith("/") || raw.startsWith("//")) return "/admin";
+  return raw;
+}
+
 export default function AdminLoginPage() {
   const router = useRouter();
   const [digits, setDigits] = useState<string[]>(["", "", "", "", "", ""]);
@@ -29,7 +45,7 @@ export default function AdminLoginPage() {
         });
 
         if (res.ok) {
-          router.push("/admin");
+          router.push(safeNext());
         } else {
           setError("Invalid code");
           setShaking(true);
