@@ -64,6 +64,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const staticPages: MetadataRoute.Sitemap = [
     entry("", 1.0, "weekly"),
     entry("/consilium", 0.98, "weekly"),
+    // The public page about the app. Every surface inside /app is behind a
+    // login, so this is the only crawlable description of the product that
+    // exists.
+    entry("/the-app", 0.96, "weekly"),
     entry("/board", 0.95, "daily"),
     entry("/board/scale", 0.8, "monthly"),
     entry("/tells", 0.95, "weekly"),

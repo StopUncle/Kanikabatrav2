@@ -78,7 +78,11 @@ const Footer = () => {
       // rather than a demand one.
       { name: "Free Receipts", href: "/receipts" },
       { name: "Coaching", href: "/coaching" },
-      { name: "The App (Beta)", href: "/start" },
+      // Points at the public description of the app rather than at /start.
+      // /start is a router: it redirects by cohort and shows a logged-out
+      // visitor nothing, and a crawler less than that. /the-app is the page
+      // that actually says what the product is, and it hands off to /start.
+      { name: "The App", href: "/the-app" },
       { name: "Content", href: "/content" },
       { name: "Blog", href: "/blog" },
       { name: "Contact", href: "/contact" },
