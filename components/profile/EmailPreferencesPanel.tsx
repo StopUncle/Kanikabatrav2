@@ -7,7 +7,7 @@ import { Mail, Check, Loader2 } from "lucide-react";
  * In-profile email-preferences panel.
  *
  * Reads + writes `User.emailPreferences` via /api/user/settings (the
- * existing endpoint). Renders four toggles — marketing first because
+ * existing endpoint). Renders five toggles, marketing first because
  * that's the one most users want to control. Saves on each change
  * with a small debounce so a flurry of toggles still hits the server
  * once per session-equivalent burst. No "Save" button — the toggle
@@ -22,6 +22,7 @@ interface Prefs {
   productUpdates: boolean;
   sessionReminders: boolean;
   weeklyDigest: boolean;
+  questionAnswered: boolean;
 }
 
 const DEFAULT: Prefs = {
@@ -29,6 +30,7 @@ const DEFAULT: Prefs = {
   productUpdates: true,
   sessionReminders: true,
   weeklyDigest: true,
+  questionAnswered: true,
 };
 
 const ROWS: Array<{
@@ -55,6 +57,11 @@ const ROWS: Array<{
     key: "sessionReminders",
     title: "Coaching session reminders",
     desc: "Pre-call prep + follow-ups for booked coaching.",
+  },
+  {
+    key: "questionAnswered",
+    title: "Your question gets answered",
+    desc: "One email when Kanika answers something you asked.",
   },
 ];
 

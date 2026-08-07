@@ -27,6 +27,7 @@ const TYPE_LABELS: Record<UnsubscribeType, string> = {
   productUpdates: "product update emails",
   sessionReminders: "session reminder emails",
   weeklyDigest: "the weekly digest",
+  questionAnswered: "answer notifications",
 };
 
 /**

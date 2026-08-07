@@ -1919,6 +1919,7 @@ export const sendFreeWelcome = async (userEmail: string): Promise<boolean> => {
     <p style="color: #f5f0ed; line-height: 1.8; margin: 0; font-size: 15px;">
       &mdash; Kanika
     </p>
+    ${marketingFooterByEmailHtml(userEmail.toLowerCase(), "marketing")}
   `;
 
   return await sendEmail({
@@ -2529,6 +2530,10 @@ export const sendQuestionAnswered = async (params: {
     <p style="color: #94a3b8; line-height: 1.8; margin: 0; font-size: 13px; text-align: center;">
       Have another question? Submit one anytime on the Consilium feed.
     </p>
+    ${marketingFooterByEmailHtml(
+      params.recipientEmail.toLowerCase(),
+      "questionAnswered",
+    )}
   `;
 
   return await sendEmail({
@@ -2823,6 +2828,7 @@ export const sendStarterPack = async (params: {
         </td>
       </tr>
     </table>
+    ${marketingFooterByEmailHtml(params.email.toLowerCase(), "marketing")}
   `;
 
   return await sendEmail({

@@ -30,13 +30,15 @@ export type UnsubscribeType =
   | "marketing"
   | "productUpdates"
   | "sessionReminders"
-  | "weeklyDigest";
+  | "weeklyDigest"
+  | "questionAnswered";
 
 const VALID_TYPES: ReadonlySet<string> = new Set([
   "marketing",
   "productUpdates",
   "sessionReminders",
   "weeklyDigest",
+  "questionAnswered",
 ]);
 
 /**

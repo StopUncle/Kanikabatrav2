@@ -14,6 +14,7 @@ const DEFAULT_PREFERENCES = {
   productUpdates: true,
   sessionReminders: true,
   weeklyDigest: true,
+  questionAnswered: true,
 };
 
 export async function GET() {

@@ -52,6 +52,7 @@ interface EmailPreferences {
   productUpdates?: boolean;
   sessionReminders?: boolean;
   weeklyDigest?: boolean;
+  questionAnswered?: boolean;
 }
 
 /** Default = opted-in (matches DEFAULT_PREFERENCES in /api/user/settings). */
