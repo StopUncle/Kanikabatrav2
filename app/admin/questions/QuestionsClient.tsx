@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useCallback } from "react";
-import { Eye, ChevronUp, Mic, Film, Check, X, Pause, MessageSquare, Reply, Send, Loader2 } from "lucide-react";
+import { Eye, ChevronUp, Mic, Film, Check, X, Pause, MessageSquare, Reply, Send, Loader2, Smartphone } from "lucide-react";
 
 type Question = {
   id: string;
@@ -225,6 +225,21 @@ export default function QuestionsClient({ initialQuestions, initialTabCounts }: 
         Member-submitted questions. Sorted by upvotes, top of the list is what the
         community wants to hear most.
       </p>
+
+      {/* The phone version of this page. A plain anchor because only a full
+          load of /studio puts its own manifest in front of the browser,
+          which is what makes the install offer there possible. */}
+      <a
+        href="/studio"
+        className="mb-6 flex items-center gap-3 rounded-xl border border-warm-gold/20 bg-deep-black/50 px-4 py-3 transition-colors hover:border-warm-gold/40"
+      >
+        <Smartphone size={18} className="shrink-0 text-warm-gold" />
+        <span className="min-w-0 flex-1 text-sm font-light text-text-gray">
+          <span className="text-text-light">Answer from your phone in Studio</span>
+          {" — "}questions and messages together, by voice or text. Install it
+          for the unread badge on your home screen.
+        </span>
+      </a>
 
       {/* Tabs */}
       <div className="flex gap-1 mb-5 border-b border-warm-gold/15 overflow-x-auto">

@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { getInbox } from "@/lib/studio/inbox";
+import StudioInstall from "@/components/studio/StudioInstall";
 
 /**
  * The inbox. One list, oldest-waiting first, nothing else on screen.
@@ -37,6 +38,8 @@ export default async function StudioPage() {
           </span>
         )}
       </header>
+
+      <StudioInstall />
 
       {waiting.length === 0 && (
         <div className="rounded-2xl border border-[#d4af37]/15 bg-[#4a1426]/10 px-5 py-10 text-center">

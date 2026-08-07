@@ -8,6 +8,7 @@ import {
   AlertTriangle,
   Check,
   Smartphone,
+  MessageSquare,
 } from "lucide-react";
 
 /**
@@ -104,6 +105,32 @@ export default function AdminDashboardPage() {
           <span className="mt-0.5 block text-sm font-light text-text-gray">
             The member app as you. Best on a phone, and installable from the
             browser share menu.
+          </span>
+        </span>
+        <ArrowRight
+          size={16}
+          className="shrink-0 text-text-gray opacity-0 transition-opacity duration-200 group-hover:opacity-100"
+        />
+      </a>
+
+      {/* Studio: Kanika's answering app.
+          A plain anchor for the same reason as above, and a more important
+          one: a browser only ever offers to install the app whose manifest
+          the CURRENT page links, and this page links the member one. Only a
+          full load of /studio puts its own manifest in front of the browser,
+          which is what makes the install offer there possible at all. */}
+      <a
+        href="/studio"
+        className="glass-card group mb-8 flex items-center gap-4 rounded-lg p-5 transition-all duration-300 hover:border-accent-gold/40"
+      >
+        <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-accent-gold/10 text-accent-gold">
+          <MessageSquare size={20} strokeWidth={1.5} />
+        </span>
+        <span className="min-w-0 flex-1">
+          <span className="block font-light text-text-light">Open Studio</span>
+          <span className="mt-0.5 block text-sm font-light text-text-gray">
+            Questions and messages in one list, answered by voice or text.
+            Install it for the badge on your home screen.
           </span>
         </span>
         <ArrowRight
