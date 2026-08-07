@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { BOOK_MAX_DOWNLOADS } from "@/lib/book/downloads";
 import { prisma } from "@/lib/prisma";
 import nodemailer from "nodemailer";
 import crypto from "crypto";
@@ -36,7 +37,7 @@ export async function POST(request: NextRequest) {
         paypalOrderId: `MANUAL-${Date.now()}`,
         downloadToken: token,
         downloadCount: 0,
-        maxDownloads: 10,
+        maxDownloads: BOOK_MAX_DOWNLOADS,
         expiresAt: expiryDate,
         metadata: {
           source: isUpdate ? "book-update" : "admin-panel",

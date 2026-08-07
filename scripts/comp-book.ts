@@ -17,6 +17,7 @@
 
 import * as dotenv from "dotenv";
 import crypto from "crypto";
+import { BOOK_MAX_DOWNLOADS } from "../lib/book/downloads";
 
 dotenv.config({ path: ".env.local" });
 dotenv.config();
@@ -97,7 +98,7 @@ async function main() {
           status: "COMPLETED",
           paypalOrderId: `COMP-BOOK-${email.toLowerCase()}`,
           downloadToken: `${downloadToken.slice(0, 8)}… (${downloadToken.length} chars)`,
-          maxDownloads: 10,
+          maxDownloads: BOOK_MAX_DOWNLOADS,
           expiresAt: expiresAt.toISOString(),
           metadata: { comped: true, grantedVia: "scripts/comp-book.ts" },
         },
@@ -121,7 +122,7 @@ async function main() {
       status: "COMPLETED",
       paypalOrderId: `COMP-BOOK-${email.toLowerCase()}`,
       downloadToken,
-      maxDownloads: 10,
+      maxDownloads: BOOK_MAX_DOWNLOADS,
       expiresAt,
       metadata: {
         comped: true,

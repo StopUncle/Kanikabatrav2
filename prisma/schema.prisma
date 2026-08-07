@@ -285,7 +285,7 @@ model Purchase {
   paypalCaptureId String?
   downloadToken   String?           @unique
   downloadCount   Int               @default(0)
-  maxDownloads    Int               @default(10)
+  maxDownloads    Int               @default(30)
   lastDownloadAt  DateTime?
   expiresAt       DateTime?
   metadata        Json?

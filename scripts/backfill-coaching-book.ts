@@ -16,6 +16,7 @@
 import * as dotenv from "dotenv";
 import crypto from "crypto";
 import { prisma } from "../lib/prisma";
+import { BOOK_MAX_DOWNLOADS } from "../lib/book/downloads";
 import { bookPurchaseWhere } from "../lib/book/ownership";
 import { sendBookDelivery } from "../lib/email";
 
@@ -89,7 +90,7 @@ async function main() {
         paypalOrderId: bookKey,
         downloadToken,
         expiresAt,
-        maxDownloads: 10,
+        maxDownloads: BOOK_MAX_DOWNLOADS,
         metadata: { source: "backfill-coaching-book", coachingPurchaseId: p.id },
       },
     });

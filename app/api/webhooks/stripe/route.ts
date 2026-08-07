@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { BOOK_MAX_DOWNLOADS } from "@/lib/book/downloads";
 import { captureServerAsync } from "@/lib/analytics/server";
 import { ANALYTICS_EVENTS } from "@/lib/analytics/events";
 import { stripe } from "@/lib/stripe";
@@ -100,7 +101,7 @@ export async function POST(request: NextRequest) {
               paypalOrderId: idempotencyKey,
               downloadToken,
               expiresAt,
-              maxDownloads: 10,
+              maxDownloads: BOOK_MAX_DOWNLOADS,
               metadata: { source: "stripe", sessionId, productKey },
             },
           });
@@ -420,7 +421,7 @@ export async function POST(request: NextRequest) {
                 paypalOrderId: bookIdempotencyKey,
                 downloadToken: bookToken,
                 expiresAt: bookExpiresAt,
-                maxDownloads: 10,
+                maxDownloads: BOOK_MAX_DOWNLOADS,
                 metadata: { source: "stripe", sessionId, productKey },
               },
             });
@@ -632,7 +633,7 @@ export async function POST(request: NextRequest) {
               paypalOrderId: idempotencyKey,
               downloadToken,
               expiresAt: bookExpiresAt,
-              maxDownloads: 10,
+              maxDownloads: BOOK_MAX_DOWNLOADS,
               metadata: { source: "stripe", sessionId, productKey, subscriptionId },
             },
           });

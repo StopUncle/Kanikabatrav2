@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { BOOK_MAX_DOWNLOADS } from "@/lib/book/downloads";
 import crypto from "crypto";
 import { prisma } from "@/lib/prisma";
 import { sendBookDelivery } from "@/lib/email";
@@ -54,7 +55,7 @@ export async function POST(request: NextRequest) {
               paypalOrderId: `PH-${transactionId}`,
               downloadToken,
               expiresAt,
-              maxDownloads: 10,
+              maxDownloads: BOOK_MAX_DOWNLOADS,
               metadata: { source: "payhip", transactionId, productId },
             },
           });
