@@ -4,6 +4,10 @@ import { useEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
 import { ANALYTICS_EVENTS } from "@/lib/analytics/events";
 import { capture } from "@/lib/analytics/client";
+import {
+  PUSH_PROMPT_OPEN_EVENT,
+  PUSH_PROMPT_CLOSED_EVENT,
+} from "@/components/pwa/NotificationPrompt";
 
 // v2: rotated at the public beta launch (2026-08-05). Everyone who
 // dismissed v1 during the testing months gets one fresh offer of the
@@ -43,6 +47,10 @@ export default function InstallPrompt() {
   const [isIOS, setIsIOS] = useState(false);
   const [isStandalone, setIsStandalone] = useState(false);
   const [dismissed, setDismissed] = useState(true); // start hidden, reveal after checks
+  // Stand down while the push prompt holds the same slot. Not a dismissal:
+  // the offer returns when that prompt resolves, so a member who says
+  // "not now" to notifications still gets asked to install.
+  const [yielding, setYielding] = useState(false);
 
   // The Arrival owns its install moment (InstallSheet); stacking this
   // banner on top of it left two overlapping offers fighting for the
@@ -105,6 +113,17 @@ export default function InstallPrompt() {
       window.removeEventListener("beforeinstallprompt", handleBeforeInstall);
   }, []);
 
+  useEffect(() => {
+    const open = () => setYielding(true);
+    const closed = () => setYielding(false);
+    window.addEventListener(PUSH_PROMPT_OPEN_EVENT, open);
+    window.addEventListener(PUSH_PROMPT_CLOSED_EVENT, closed);
+    return () => {
+      window.removeEventListener(PUSH_PROMPT_OPEN_EVENT, open);
+      window.removeEventListener(PUSH_PROMPT_CLOSED_EVENT, closed);
+    };
+  }, []);
+
   function handleDismiss() {
     setDismissed(true);
     try {
@@ -116,7 +135,8 @@ export default function InstallPrompt() {
 
   // One shot when the banner actually becomes visible. Firing in render
   // would count a re-render as another impression.
-  const visible = !isStandalone && !dismissed && (isIOS || Boolean(deferredPrompt));
+  const visible =
+    !isStandalone && !dismissed && !yielding && (isIOS || Boolean(deferredPrompt));
   const reportedShown = useRef(false);
   useEffect(() => {
     if (visible && !reportedShown.current) {
@@ -141,7 +161,7 @@ export default function InstallPrompt() {
     setDeferredPrompt(null);
   }
 
-  if (isStandalone || dismissed || onArrival) return null;
+  if (isStandalone || dismissed || onArrival || yielding) return null;
   if (!isIOS && !deferredPrompt) return null;
 
   // Inside the app shell the banner sits ABOVE the tab bar instead of on

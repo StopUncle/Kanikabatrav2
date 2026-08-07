@@ -17,6 +17,26 @@ const SUBSCRIBED_KEY = "consilium-push-subscribed-v1";
 export const PUSH_MOMENT_EVENT = "kb:push-moment";
 
 /**
+ * Raised while the push banner holds the bottom of the screen, so the
+ * install banner can step aside for it (InstallPrompt listens). The two
+ * occupy the same slot, and before this existed the install banner won
+ * by simply being there first: push waited for a banner that shows on
+ * every visit for fourteen days, which on Android meant it never showed
+ * at all. Install can be offered on any visit; the push prompt only has
+ * the one moment it was earned in, so that moment takes the floor.
+ */
+export const PUSH_PROMPT_OPEN_EVENT = "kb:push-prompt-open";
+export const PUSH_PROMPT_CLOSED_EVENT = "kb:push-prompt-closed";
+
+/**
+ * How long to let the install banner keep the floor before asking
+ * anyway. Long enough that someone actively reading the install offer
+ * is not interrupted, short enough that it resolves inside the session
+ * the moment happened in.
+ */
+const INSTALL_YIELD_MS = 12000;
+
+/**
  * Notification permission + subscription prompt for the Consilium PWA.
  *
  * Two-step UX:
@@ -131,11 +151,14 @@ export default function NotificationPrompt({
       if (!standalone) return;
     }
 
-    // Show the prompt after a small delay, and only once the install
-    // banner is out of the way. Install is higher priority (on iOS it
-    // is the only road to push at all), and two gold banners at once
-    // read as nagging. Poll cheaply until the install banner resolves;
-    // an install flips us to standalone, a dismissal clears the floor.
+    // Show the prompt after a small delay, preferring to let the install
+    // banner clear first so two gold banners never stack. That preference
+    // is now BOUNDED: any iOS visitor who could not grant push already
+    // returned at gate 7, so everyone still here (Android, desktop,
+    // installed PWA) can subscribe without installing anything. Waiting
+    // forever on a banner that reappears for fourteen days meant the
+    // earned moment expired unasked. Past the deadline we take the floor
+    // and the install banner yields (it listens for the open event).
     let interval: number | undefined;
     const handle = window.setTimeout(() => {
       const installBannerUp = () =>
@@ -144,18 +167,29 @@ export default function NotificationPrompt({
         setShouldShow(true);
         return;
       }
+      const deadline = Date.now() + INSTALL_YIELD_MS;
       interval = window.setInterval(() => {
-        if (!installBannerUp()) {
+        if (!installBannerUp() || Date.now() >= deadline) {
           window.clearInterval(interval);
           setShouldShow(true);
         }
-      }, 3000);
+      }, 1000);
     }, 4500);
     return () => {
       window.clearTimeout(handle);
       if (interval) window.clearInterval(interval);
     };
   }, [earned]);
+
+  // Tell the install banner to stand down while this one is up, and to
+  // come back when it resolves either way.
+  useEffect(() => {
+    if (!shouldShow) return;
+    window.dispatchEvent(new Event(PUSH_PROMPT_OPEN_EVENT));
+    return () => {
+      window.dispatchEvent(new Event(PUSH_PROMPT_CLOSED_EVENT));
+    };
+  }, [shouldShow]);
 
   function dismiss() {
     setShouldShow(false);
