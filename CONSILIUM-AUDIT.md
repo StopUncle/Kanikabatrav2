@@ -249,5 +249,5 @@ decision, not a bug.**
   targets before send
 - `npx tsx scripts/gift-consilium-to-book-buyers.ts --dry-run` — show
   who'd get emailed
-- `npx tsx scripts/send-test-gift-email.ts <email> [name]` — send a
-  single test invite
+- `npx tsx scripts/send-gift-invite.ts <email> [name]` — send a single
+  gift invite to one address

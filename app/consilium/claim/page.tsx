@@ -31,7 +31,7 @@ interface GiftPayload {
 
 function verifyGiftToken(token: string): GiftPayload {
   // Algorithm pinned to HS256 to prevent `alg: none` forgery. The
-  // backfill script + send-test-gift-email script both sign with HS256.
+  // backfill script + send-gift-invite script both sign with HS256.
   const payload = jwt.verify(token, process.env.JWT_SECRET!, {
     algorithms: ["HS256"],
   }) as GiftPayload;
