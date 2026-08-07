@@ -101,7 +101,7 @@ const TRAIN_SURFACES: Surface[] = [
     name: "The Simulator",
     icon: Swords,
     rung: "Free",
-    what: "Branching scenarios you play a line at a time. Every choice scores, optimal reads build a streak, and the debrief tells you what the other person was actually doing. Two modes: Story runs the authored options as tappable cards, Gauntlet hides them, takes your own words, puts a 30 second clock on every turn and pays 50% more XP. Free accounts get the first chapter of every track.",
+    what: "Branching scenarios you play a line at a time. Every choice scores, optimal reads build a streak, and the debrief tells you what the other person was actually doing. Free accounts play the opening levels of their main line; the nine themed tracks and the rest of the catalog are paid. Gauntlet mode is paid too: it hides the options, takes your own words instead, puts a 30 second clock on every turn and pays 50% more XP.",
   },
   {
     name: "Speed Drill",
@@ -247,7 +247,7 @@ const FAQS: Faq[] = [
   },
   {
     q: "Is the app free?",
-    a: "Yes, to start. A free account gets the first chapter of every training track, the Speed Drill, the Daily Tell, all eight quizzes, your progress and the leaderboards. Paid rungs open the rest: the Blood Pact at $4.99 a week for all training, and the Consilium at $29 a month for training plus Kanika herself.",
+    a: "Yes, to start. A free account plays the opening levels of its main line in the Simulator, runs the Speed Drill and the Daily Tell every day, takes all eight quizzes, and keeps a rank, streaks, badges and a place on the leaderboards, with Standing rising as far as Analyst. The rest of the scenario catalog, the nine themed tracks, Gauntlet mode, the Lab, Receipts, the Mark and the 12 week program are paid. The Blood Pact is $4.99 a week for all of that, and the Consilium is $29 a month for all of that plus Kanika herself.",
   },
   {
     q: "What is the Blood Pact?",
@@ -299,7 +299,7 @@ const softwareSchema = {
       price: 0,
       priceCurrency: "USD",
       description:
-        "The first chapter of every training track, the Speed Drill, the Daily Tell, all eight quizzes, progress and leaderboards.",
+        "The opening levels of your main line in the Simulator, the Speed Drill, the Daily Tell, all eight quizzes, and a rank on the leaderboards up to Analyst.",
     },
     {
       "@type": "Offer",
@@ -536,10 +536,13 @@ export default function TheAppPage() {
                 </p>
                 <p className="text-white text-3xl font-extralight mb-4">$0</p>
                 <ul className="space-y-2 text-text-gray text-sm font-light leading-relaxed">
-                  <li>The first chapter of every training track</li>
+                  <li>The opening levels of your main line in the Simulator</li>
                   <li>The Speed Drill and the Daily Tell, every day</li>
                   <li>All eight quizzes</li>
-                  <li>Your rank, streaks, badges and the leaderboards</li>
+                  <li>
+                    Your rank, streaks, badges and the leaderboards, with
+                    Standing rising as far as Analyst
+                  </li>
                 </ul>
               </div>
 
@@ -871,7 +874,7 @@ export default function TheAppPage() {
               Start where it is free
             </p>
             <h2 className="text-white text-2xl md:text-3xl font-light mb-3">
-              The first chapter of everything is open
+              Your opening levels are already open
             </h2>
             <p className="text-text-gray font-light max-w-xl mx-auto leading-relaxed mb-6">
               Take a quiz, play a scenario, run a drill, and see whether any of
