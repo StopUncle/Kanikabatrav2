@@ -1,9 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { requireAuth } from "@/lib/auth/middleware";
-import { stripe } from "@/lib/stripe";
+import { stripe, readSubscriptionPeriodEnd } from "@/lib/stripe";
 import { sendMembershipResumed } from "@/lib/email";
 import { logger } from "@/lib/logger";
+import {
+  MEMBER_PAUSE_REASON,
+  restoreExpiryAfterPause,
+} from "@/lib/community/pause";
 
 export async function POST(request: NextRequest) {
   return requireAuth(request, async (_req, user) => {
@@ -15,7 +19,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "No paused membership to resume" }, { status: 400 });
     }
 
-    if (membership.suspendReason !== "member-requested-pause") {
+    if (membership.suspendReason !== MEMBER_PAUSE_REASON) {
       return NextResponse.json({ error: "This suspension cannot be self-resumed" }, { status: 403 });
     }
 
@@ -28,24 +32,12 @@ export async function POST(request: NextRequest) {
           pause_collection: null,
         });
         // Re-read the live period end so the resumed row gets a future
-        // expiresAt. Without this, a stale/past expiresAt left over from
-        // the pause makes the lazy-expiry check in lib/community/
-        // membership.ts immediately flip the row back to EXPIRED.
-        // The field moved from the subscription root onto the subscription
-        // items; on the API version this SDK pins it exists ONLY on the
-        // item. Reading the root alone left resumedExpiresAt null on every
-        // resume, so the row kept the fabricated pause deadline the pause
-        // route wrote instead of the real paid-through date. Check both
-        // shapes, same as the cancel and reactivate routes.
-        const sub = (await stripe.subscriptions.retrieve(
-          subscriptionId,
-        )) as unknown as {
-          current_period_end?: number;
-          items?: { data?: Array<{ current_period_end?: number }> };
-        };
-        const periodEnd =
-          sub.current_period_end ?? sub.items?.data?.[0]?.current_period_end;
-        if (periodEnd) resumedExpiresAt = new Date(periodEnd * 1000);
+        // expiresAt. Without this, the stale pause deadline left in
+        // expiresAt makes the lazy expiry check in lib/community/
+        // membership.ts flip the row straight back to EXPIRED.
+        resumedExpiresAt = readSubscriptionPeriodEnd(
+          await stripe.subscriptions.retrieve(subscriptionId),
+        );
       } catch (err) {
         console.error("[resume] failed to unpause Stripe subscription:", err);
         return NextResponse.json(
@@ -53,6 +45,16 @@ export async function POST(request: NextRequest) {
           { status: 502 },
         );
       }
+    }
+
+    // No subscription to consult (a gift or comped row): give back the
+    // days the pause consumed, from the date stashed at pause time.
+    if (!resumedExpiresAt) {
+      resumedExpiresAt = restoreExpiryAfterPause(
+        membership.applicationData,
+        membership.suspendedAt,
+        new Date(),
+      );
     }
 
     await prisma.communityMembership.update({

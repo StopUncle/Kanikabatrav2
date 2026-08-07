@@ -1,8 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import { verifyCronSecret } from "@/lib/cron-auth";
 import { prisma } from "@/lib/prisma";
-import { getStripe } from "@/lib/stripe";
+import { getStripe, readSubscriptionPeriodEnd } from "@/lib/stripe";
 import { logger } from "@/lib/logger";
+import {
+  MEMBER_PAUSE_REASON,
+  restoreExpiryAfterPause,
+} from "@/lib/community/pause";
 
 /**
  * Cron: auto-resume member-requested pauses whose pause window has elapsed.
@@ -32,7 +36,7 @@ export async function POST(request: NextRequest) {
     const candidates = await prisma.communityMembership.findMany({
       where: {
         status: "SUSPENDED",
-        suspendReason: "member-requested-pause",
+        suspendReason: MEMBER_PAUSE_REASON,
         expiresAt: { lte: now },
       },
       include: {
@@ -43,10 +47,20 @@ export async function POST(request: NextRequest) {
     let scanned = 0;
     let resumed = 0;
     let stripeFailed = 0;
+    let unresolvedExpiry = 0;
     const errors: Array<{ membershipId: string; error: string }> = [];
 
     for (const m of candidates) {
       scanned++;
+
+      // Every row here has expiresAt <= now by definition of the query
+      // above, because the pause route parks the pause deadline in that
+      // field. Flipping status to ACTIVE without replacing it left the
+      // member ACTIVE with an expiry in the past, and the lazy expiry in
+      // lib/community/membership.ts then demoted them to EXPIRED on their
+      // next page load, locking them out while Stripe kept billing.
+      // Stripe is the source of truth when there is a subscription.
+      let resumedExpiresAt: Date | null = null;
 
       if (m.paypalSubscriptionId?.startsWith("ST-")) {
         const subscriptionId = m.paypalSubscriptionId.slice(3);
@@ -55,6 +69,9 @@ export async function POST(request: NextRequest) {
           await stripe.subscriptions.update(subscriptionId, {
             pause_collection: null,
           });
+          resumedExpiresAt = readSubscriptionPeriodEnd(
+            await stripe.subscriptions.retrieve(subscriptionId),
+          );
         } catch (err) {
           stripeFailed++;
           const message = err instanceof Error ? err.message : String(err);
@@ -70,6 +87,31 @@ export async function POST(request: NextRequest) {
         }
       }
 
+      // No subscription to consult (a gift or comped row): give back the
+      // days the pause consumed, from the date stashed at pause time.
+      if (!resumedExpiresAt) {
+        resumedExpiresAt = restoreExpiryAfterPause(
+          m.applicationData,
+          m.suspendedAt,
+          now,
+        );
+      }
+
+      // Resuming into an already-past date is the exact bug this cron
+      // used to ship. Leave the row paused and shout instead, so it
+      // retries tomorrow and an admin can see it, rather than silently
+      // handing the member an account that locks itself a day later.
+      if (!resumedExpiresAt || resumedExpiresAt <= now) {
+        unresolvedExpiry++;
+        errors.push({ membershipId: m.id, error: "no future expiry available" });
+        logger.error(
+          "[cron/auto-resume-pauses] cannot resolve a future expiry, leaving paused",
+          new Error("unresolved expiry on resume"),
+          { membershipId: m.id, userId: m.user?.id },
+        );
+        continue;
+      }
+
       await prisma.communityMembership.update({
         where: { id: m.id },
         data: {
@@ -77,6 +119,7 @@ export async function POST(request: NextRequest) {
           suspendedAt: null,
           suspendReason: null,
           activatedAt: now,
+          expiresAt: resumedExpiresAt,
         },
       });
       resumed++;
@@ -87,6 +130,7 @@ export async function POST(request: NextRequest) {
       scanned,
       resumed,
       stripeFailed,
+      unresolvedExpiry,
       errors: errors.slice(0, 10),
     });
   } catch (error) {

@@ -4,6 +4,7 @@ import { requireAuth } from "@/lib/auth/middleware";
 import { stripe } from "@/lib/stripe";
 import { sendMembershipPaused } from "@/lib/email";
 import { logger } from "@/lib/logger";
+import { MEMBER_PAUSE_REASON, withPreservedExpiry } from "@/lib/community/pause";
 
 const ALLOWED_PAUSE_DAYS = new Set([30, 60, 90]);
 
@@ -55,8 +56,15 @@ export async function POST(request: NextRequest) {
       data: {
         status: "SUSPENDED",
         suspendedAt: new Date(),
-        suspendReason: "member-requested-pause",
+        suspendReason: MEMBER_PAUSE_REASON,
+        // Overwriting expiresAt with the pause deadline is what lets the
+        // auto-resume cron find this row, but it also erases the real
+        // paid-through date. Stash it so resuming can put it back.
         expiresAt: pauseUntil,
+        applicationData: withPreservedExpiry(
+          membership.applicationData,
+          membership.expiresAt,
+        ),
       },
     });
 

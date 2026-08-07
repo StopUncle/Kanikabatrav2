@@ -262,3 +262,22 @@ export async function cancelStripeSubscription(subscriptionId: string) {
 export async function getStripeSubscription(subscriptionId: string) {
   return await stripe.subscriptions.retrieve(subscriptionId);
 }
+
+/**
+ * Read a subscription's paid-through date.
+ *
+ * The field moved from the subscription root onto its items, and which
+ * shape arrives depends on the API version a given call or webhook is
+ * pinned to. Callers that read only the root silently got `undefined`
+ * and fell back to a fabricated date, which is how resumed members ended
+ * up with an expiry already in the past. Check both shapes, always.
+ */
+export function readSubscriptionPeriodEnd(subscription: unknown): Date | null {
+  const sub = subscription as {
+    current_period_end?: number;
+    items?: { data?: Array<{ current_period_end?: number }> };
+  } | null;
+  const periodEnd =
+    sub?.current_period_end ?? sub?.items?.data?.[0]?.current_period_end;
+  return typeof periodEnd === "number" ? new Date(periodEnd * 1000) : null;
+}

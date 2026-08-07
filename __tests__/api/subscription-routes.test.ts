@@ -24,7 +24,11 @@ const FORBIDDEN_IN_SUBSCRIPTION_MODE = ["expires_at", "after_expiration"];
 jest.mock("@/lib/prisma", () => ({
   prisma: {
     user: { findUnique: jest.fn() },
-    communityMembership: { findUnique: jest.fn(), update: jest.fn() },
+    communityMembership: {
+      findUnique: jest.fn(),
+      findMany: jest.fn(),
+      update: jest.fn(),
+    },
     pactMembership: { findUnique: jest.fn() },
     pact: { findFirst: jest.fn(), create: jest.fn() },
     quizResult: { findFirst: jest.fn() },
@@ -65,6 +69,7 @@ jest.mock("@/lib/stripe", () => ({
   createCheckoutSession: jest.fn(),
 }));
 
+jest.mock("@/lib/cron-auth", () => ({ verifyCronSecret: jest.fn(() => true) }));
 jest.mock("@/lib/access/tier", () => ({ getAccess: jest.fn() }));
 jest.mock("@/lib/analytics/server", () => ({ captureServerAsync: jest.fn() }));
 jest.mock("@/lib/logger", () => ({
@@ -634,6 +639,98 @@ describe("Resume restores the real paid-through date", () => {
         }),
       }),
     );
+  });
+});
+
+describe("Auto-resume never hands back an already-expired membership", () => {
+  // The pause route parks the pause deadline in expiresAt, so every row the
+  // cron selects (expiresAt <= now) carries a date in the past by
+  // construction. It used to flip status to ACTIVE and leave that date
+  // alone, so the lazy expiry demoted the member to EXPIRED a day later
+  // while Stripe kept billing. One member was charged $29 while locked out.
+  const DAY = 24 * 60 * 60 * 1000;
+
+  function pausedRow(over: Record<string, unknown> = {}) {
+    return {
+      id: "cm_paused",
+      userId: CALLER.id,
+      status: "SUSPENDED",
+      suspendReason: "member-requested-pause",
+      paypalSubscriptionId: "ST-sub_live",
+      expiresAt: new Date(Date.now() - DAY),
+      suspendedAt: new Date(Date.now() - 30 * DAY),
+      applicationData: null,
+      user: { id: CALLER.id, email: CALLER.email },
+      ...over,
+    };
+  }
+
+  async function runCron() {
+    const { POST } = await import("@/app/api/cron/auto-resume-pauses/route");
+    return POST(req({}));
+  }
+
+  it("writes the live period end, not the stale pause deadline", async () => {
+    const periodEnd = 1790000000;
+    db.communityMembership.findMany.mockResolvedValue([pausedRow()]);
+    jest.requireMock("@/lib/stripe").getStripe.mockReturnValue({
+      subscriptions: {
+        update: jest.fn().mockResolvedValue(stripeSub(periodEnd)),
+        retrieve: jest.fn().mockResolvedValue(stripeSub(periodEnd)),
+      },
+    });
+    db.communityMembership.update.mockResolvedValue({});
+
+    const body = await (await runCron()).json();
+
+    expect(body.resumed).toBe(1);
+    expect(db.communityMembership.update).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({
+          status: "ACTIVE",
+          expiresAt: new Date(periodEnd * 1000),
+        }),
+      }),
+    );
+    // The whole point: the row leaves the cron with a future date.
+    const written = db.communityMembership.update.mock.calls[0][0].data
+      .expiresAt as Date;
+    expect(written.getTime()).toBeGreaterThan(Date.now());
+  });
+
+  it("gives a gift member back the days the pause consumed", async () => {
+    // No subscription to consult, so the date stashed at pause time is the
+    // only truth available. They had 10 days left and paused for 30.
+    db.communityMembership.findMany.mockResolvedValue([
+      pausedRow({
+        paypalSubscriptionId: null,
+        applicationData: {
+          pausedFromExpiresAt: new Date(Date.now() - 20 * DAY).toISOString(),
+        },
+      }),
+    ]);
+    db.communityMembership.update.mockResolvedValue({});
+
+    const body = await (await runCron()).json();
+
+    expect(body.resumed).toBe(1);
+    const written = db.communityMembership.update.mock.calls[0][0].data
+      .expiresAt as Date;
+    expect(written.getTime()).toBeGreaterThan(Date.now());
+  });
+
+  it("leaves the member paused when no future expiry can be resolved", async () => {
+    // Resuming into a past date is the bug. Staying paused is visible and
+    // retryable; ACTIVE-but-expired is silent and locks them out.
+    db.communityMembership.findMany.mockResolvedValue([
+      pausedRow({ paypalSubscriptionId: null, applicationData: null }),
+    ]);
+
+    const body = await (await runCron()).json();
+
+    expect(body.resumed).toBe(0);
+    expect(body.unresolvedExpiry).toBe(1);
+    expect(db.communityMembership.update).not.toHaveBeenCalled();
   });
 });
 
