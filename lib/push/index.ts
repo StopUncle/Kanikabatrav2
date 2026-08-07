@@ -37,7 +37,9 @@ export type PushCategory =
   | "rankUp"
   | "programUnlock"
   | "directMessage"
-  | "pactWeek";
+  | "pactWeek"
+  /** Kanika's own: something is waiting in the Studio inbox. */
+  | "studioInbox";
 
 export interface PushPayload {
   title: string;
@@ -56,6 +58,14 @@ export interface PushPayload {
   tag?: string;
   /** Keep notification on screen until tapped. Default false. */
   requireInteraction?: boolean;
+  /**
+   * Count to stamp on the installed app's home-screen icon, Messages
+   * style. Set it only for pushes that are ABOUT an inbox: the service
+   * worker leaves the badge untouched when this is absent, so an
+   * unrelated notification cannot wipe a count it knows nothing about.
+   * Zero is meaningful and clears the badge.
+   */
+  appBadge?: number;
 }
 
 /**
@@ -98,6 +108,10 @@ const DEFAULT_OPT_IN: Record<PushCategory, boolean> = {
   // it is the product's heartbeat, once a week, and a pact whose weeks
   // arrive silently is a subscription, not a commitment.
   pactWeek: true,
+  // Kanika's Studio inbox. Default-ON: it goes to exactly one person, who
+  // installed a dedicated app in order to receive it, and it is what
+  // carries the home-screen badge count.
+  studioInbox: true,
 };
 
 let configured = false;
@@ -181,7 +195,12 @@ export async function sendPushToUser(
     badge: payload.icon || "/icons/icon-192.png",
     tag: payload.tag,
     requireInteraction: payload.requireInteraction ?? false,
-    data: { url: payload.url || "/start" },
+    data: {
+      url: payload.url || "/start",
+      // Omitted entirely when unset, which is what lets the worker tell
+      // "badge should be 0" apart from "this push is not about a badge".
+      ...(payload.appBadge !== undefined ? { appBadge: payload.appBadge } : {}),
+    },
   });
 
   let delivered = 0;

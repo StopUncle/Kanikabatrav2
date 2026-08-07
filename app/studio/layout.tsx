@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { redirect } from "next/navigation";
 import { verifyAdminSession } from "@/lib/admin/auth";
 import ServiceWorkerRegister from "@/components/pwa/ServiceWorkerRegister";
+import NotificationPrompt from "@/components/pwa/NotificationPrompt";
 import StudioBadge from "@/components/studio/StudioBadge";
 
 /**
@@ -54,6 +55,16 @@ export default async function StudioLayout({
       <ServiceWorkerRegister />
       {/* Keeps the icon badge honest while the app is open and focused. */}
       <StudioBadge />
+      {/* Subscribes this device to push, which is what makes the badge move
+          while the app is closed. `unlocked` with no condition because the
+          earned moment already happened: she installed an app whose whole
+          purpose is being told. /api/push/subscribe resolves the admin
+          session through optionalServerAuth, so the PIN alone is enough
+          and no member login is involved. */}
+      <NotificationPrompt
+        unlocked
+        message="Turn on notifications so the unread count reaches your home screen when Studio is closed."
+      />
       <div className="mx-auto w-full max-w-2xl">{children}</div>
     </div>
   );

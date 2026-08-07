@@ -7,6 +7,7 @@ import { getAdminUserId } from "@/lib/auth/server-auth";
 import { getAccess, canAccessMemberOnly } from "@/lib/access/tier";
 import { checkAskCooldown } from "@/lib/questions/cooldown";
 import { getQuestionSettings } from "@/lib/questions/settings";
+import { notifyStudio } from "@/lib/studio/notify";
 import { logger } from "@/lib/logger";
 
 /** Thrown inside the submit transaction when the daily cap is hit. */
@@ -191,6 +192,15 @@ export async function POST(req: NextRequest) {
     questionId: question.id,
     userId,
     anonymous: payload.isAnonymous,
+  });
+
+  // Studio's badge and lock-screen note. Fire-and-forget on purpose: the
+  // member's question is already saved, and a push failure must never
+  // turn a successful submission into an error they see.
+  void notifyStudio({
+    title: "New question",
+    body: payload.content.slice(0, 120),
+    url: `/studio/q/${question.id}`,
   });
 
   // Fresh cooldown state for the client to drive the countdown.

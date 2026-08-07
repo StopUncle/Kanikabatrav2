@@ -6,6 +6,7 @@ import { enforceMessagingGuard } from "@/lib/community/messaging-guard";
 import { triggerDirectMessage } from "@/lib/pusher/server";
 import { checkDmCooldown } from "@/lib/messages/cooldown";
 import { notifyAdminOfNewThread } from "@/lib/messages/notify";
+import { notifyStudio } from "@/lib/studio/notify";
 import {
   DM_MESSAGE_EVENT,
   DM_MAX_LENGTH,
@@ -163,17 +164,26 @@ export async function POST(req: NextRequest) {
   const dto = serializeMessage(message);
   await triggerDirectMessage(conversationId, DM_MESSAGE_EVENT, { message: dto });
 
+  const member = await prisma.user.findUnique({
+    where: { id: userId },
+    select: { displayName: true, name: true },
+  });
+  const memberName = member?.displayName || member?.name || "A member";
+
   // First contact: email Kanika so a brand-new thread never sits unseen.
   if (isFirstContact) {
-    const member = await prisma.user.findUnique({
-      where: { id: userId },
-      select: { displayName: true, name: true },
-    });
-    await notifyAdminOfNewThread(
-      member?.displayName || member?.name || "A member",
-      content,
-    );
+    await notifyAdminOfNewThread(memberName, content);
   }
+
+  // Studio's badge and lock-screen note, on every message rather than only
+  // the first: a reply inside an existing thread is exactly as unread as a
+  // new one, and the badge counts threads either way. Fire-and-forget, so
+  // the member's message is never held up by a notification.
+  void notifyStudio({
+    title: memberName,
+    body: content.slice(0, 120),
+    url: `/studio/m/${userId}`,
+  });
 
   return NextResponse.json({ message: dto, conversationId });
 }
