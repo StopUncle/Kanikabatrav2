@@ -14,6 +14,58 @@ import { prisma } from "@/lib/prisma";
 import { tierForMember } from "@/components/consilium/badge-tiers";
 import { memberSafeName } from "@/lib/community/privacy";
 
+/** How long "recently" is when working out which way someone is moving. */
+export const MOVEMENT_WINDOW_DAYS = 7;
+
+/** Climbing this many places or more is worth marking on the row. */
+export const BIG_MOVE_SPOTS = 3;
+
+/**
+ * Where a row sat a week ago, and which way it has travelled since.
+ *
+ * Nothing stores a rank history, so this is reconstructed rather than
+ * read: both boards keep an append-only record of what they award
+ * (StandingEvent for Standing, per-scenario xpEarned for XP), so
+ * subtracting the last week's awards from today's total gives the score
+ * each member held a week ago, and re-sorting on that gives the board as
+ * it stood. Exact for Standing. For XP it attributes a scenario's points
+ * to its completion date, so replaying an old scenario reads as new
+ * movement, which is the honest answer anyway.
+ */
+export interface RankMovement {
+  /** Rank a week ago. Null when they were not on the board at all. */
+  previousRank: number | null;
+  /** Places gained; negative is places lost. Null for a new entry. */
+  change: number | null;
+}
+
+function assignMovement<T extends { id: string; rank: number }>(
+  entries: T[],
+  previousValueById: Map<string, number>,
+): Array<T & RankMovement> {
+  // Anyone whose prior score was zero was not on the board a week ago,
+  // so they are new rather than having climbed from the bottom.
+  const wereRanked = entries
+    .filter((e) => (previousValueById.get(e.id) ?? 0) > 0)
+    .sort(
+      (a, b) =>
+        (previousValueById.get(b.id) ?? 0) - (previousValueById.get(a.id) ?? 0),
+    );
+
+  const previousRankById = new Map<string, number>();
+  wereRanked.forEach((e, i) => previousRankById.set(e.id, i + 1));
+
+  return entries.map((e) => {
+    const previousRank = previousRankById.get(e.id) ?? null;
+    return {
+      ...e,
+      previousRank,
+      // A smaller number is a better rank, so the gain is previous minus now.
+      change: previousRank === null ? null : previousRank - e.rank,
+    };
+  });
+}
+
 export interface LeaderboardEntry {
   /** Stable id — userId for real entries, "mock-XXX" for seeded ones. */
   id: string;
@@ -114,10 +166,10 @@ function sortEntries(a: LeaderboardEntry, b: LeaderboardEntry): number {
 
 export interface LeaderboardSnapshot {
   /** Ranked top-N rows ready to render. */
-  top: LeaderboardEntry[];
+  top: Array<LeaderboardEntry & RankMovement>;
   /** The viewer's own row + rank, regardless of whether they're in `top`.
    *  null when the viewer has no simulator activity at all. */
-  viewer: LeaderboardEntry | null;
+  viewer: (LeaderboardEntry & RankMovement) | null;
 }
 
 /**
@@ -142,6 +194,21 @@ export async function getLeaderboard(
     _count: { _all: true },
     _max: { startedAt: true },
   });
+
+  const since = new Date(
+    Date.now() - MOVEMENT_WINDOW_DAYS * 24 * 60 * 60 * 1000,
+  );
+
+  // XP banked in the movement window, so today's total can be rewound to
+  // what each member held a week ago.
+  const recentXp = await prisma.simulatorProgress.groupBy({
+    by: ["userId"],
+    where: { completedAt: { gte: since } },
+    _sum: { xpEarned: true },
+  });
+  const recentXpByUser = new Map(
+    recentXp.map((r) => [r.userId, r._sum.xpEarned ?? 0]),
+  );
 
   const completedCounts = await prisma.simulatorProgress.groupBy({
     by: ["userId"],
@@ -220,8 +287,16 @@ export async function getLeaderboard(
     e.rank = i + 1;
   });
 
-  const top = merged.slice(0, limit);
-  const viewer = merged.find((e) => e.isViewer) ?? null;
+  // Mocks are static, so they carry their whole score into the past and
+  // simply hold still while real members climb past them, which is
+  // exactly how a seeded board should behave.
+  const previousXpById = new Map(
+    merged.map((e) => [e.id, e.xp - (recentXpByUser.get(e.id) ?? 0)]),
+  );
+  const withMovement = assignMovement(merged, previousXpById);
+
+  const top = withMovement.slice(0, limit);
+  const viewer = withMovement.find((e) => e.isViewer) ?? null;
 
   return { top, viewer };
 }
@@ -236,10 +311,18 @@ export interface StandingEntry {
 }
 
 export interface StandingBoard {
-  top: StandingEntry[];
+  top: Array<StandingEntry & RankMovement>;
   /** The viewer's row + rank even when outside `top`; null at 0 Standing. */
-  viewer: StandingEntry | null;
+  viewer: (StandingEntry & RankMovement) | null;
 }
+
+/**
+ * How many rows to pull before slicing to `limit`. Movement needs the
+ * whole board, not the visible window: someone entering the top ten came
+ * from outside it, and a query capped at ten can never see where from.
+ * Standing-holding members are in the dozens, so this is one cheap read.
+ */
+const STANDING_SCAN_LIMIT = 500;
 
 /**
  * The Standing board: lifetime Standing across members, no mocks. Standing
@@ -253,7 +336,7 @@ export async function getStandingBoard(
   const rows = await prisma.user.findMany({
     where: { isBot: false, role: { not: "ADMIN" }, standing: { gt: 0 } },
     orderBy: { standing: "desc" },
-    take: limit,
+    take: STANDING_SCAN_LIMIT,
     select: {
       id: true,
       name: true,
@@ -264,7 +347,22 @@ export async function getStandingBoard(
     },
   });
 
-  const top: StandingEntry[] = rows.map((u, i) => ({
+  // Standing is only ever written by appending a StandingEvent, so the
+  // sum of the last week's events is exactly what to subtract to recover
+  // the score each member held then.
+  const since = new Date(
+    Date.now() - MOVEMENT_WINDOW_DAYS * 24 * 60 * 60 * 1000,
+  );
+  const recent = await prisma.standingEvent.groupBy({
+    by: ["userId"],
+    where: { userId: { in: rows.map((u) => u.id) }, createdAt: { gte: since } },
+    _sum: { amount: true },
+  });
+  const recentByUser = new Map(
+    recent.map((r) => [r.userId, r._sum.amount ?? 0]),
+  );
+
+  const ranked: StandingEntry[] = rows.map((u, i) => ({
     id: u.id,
     rank: i + 1,
     name: memberSafeName(u),
@@ -273,7 +371,16 @@ export async function getStandingBoard(
     isViewer: u.id === viewerId,
   }));
 
-  let viewer = top.find((e) => e.isViewer) ?? null;
+  const previousStandingById = new Map(
+    rows.map((u) => [u.id, u.standing - (recentByUser.get(u.id) ?? 0)]),
+  );
+  const withMovement = assignMovement(ranked, previousStandingById);
+  const top = withMovement.slice(0, limit);
+
+  // Search the whole scan, not just the visible slice: a viewer at rank 30
+  // is already here with their movement worked out, and re-querying would
+  // hand them a row that claims they have never moved.
+  let viewer = withMovement.find((e) => e.isViewer) ?? null;
   if (!viewer) {
     const me = await prisma.user.findUnique({
       where: { id: viewerId },
@@ -301,6 +408,10 @@ export async function getStandingBoard(
         standing: me.standing,
         ringLevel: me.ringLevel,
         isViewer: true,
+        // Past the scan window, so there is no board to compare against.
+        // Better a row with no movement chip than an invented one.
+        previousRank: null,
+        change: null,
       };
     }
   }
