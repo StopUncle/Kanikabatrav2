@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import { AccessTier } from "@prisma/client";
+import { getAccess, canAccessMemberOnly } from "@/lib/access/tier";
 
 export interface AccessCheckResult {
   hasAccess: boolean;
@@ -8,16 +9,31 @@ export interface AccessCheckResult {
   upgradeUrl?: string;
 }
 
+/**
+ * Access to forum, chat and classroom content.
+ *
+ * This helper predates the Pact/Consilium ladder: its tiers are BOOK_OWNER,
+ * COACHING_CLIENT and PREMIUM, and it has no idea what a membership is. The
+ * `PUBLIC` branch returned `hasAccess: true` without so much as checking for
+ * a userId, and `PUBLIC` is the schema default for both `Category` and
+ * `ChatRoom` (prisma/schema.prisma:483, 582) — so any category created
+ * without an explicit tier was readable, and postable, by anyone at all.
+ *
+ * The pages for these surfaces redirect to the feed and have since
+ * 2026-07-02, which hid the problem without fixing it: a page redirect is
+ * not an API gate, and all twelve routes under `app/api/community/**` stayed
+ * live behind this function.
+ *
+ * Every caller is a Consilium-internal surface, so membership is now the
+ * baseline and the legacy tier can only narrow further from there. This is
+ * the change `task_plan.md` 2.4 recorded and never made.
+ */
 export async function checkAccessTier(
   userId: string | null,
   requiredTier: AccessTier,
 ): Promise<AccessCheckResult> {
-  // PUBLIC: No authentication required
-  if (requiredTier === "PUBLIC") {
-    return { hasAccess: true };
-  }
-
-  // All other tiers require login
+  // Membership first, for every tier including PUBLIC. Forum and chat live
+  // inside the Consilium; there is no such thing as a public one.
   if (!userId) {
     return {
       hasAccess: false,
@@ -27,8 +43,18 @@ export async function checkAccessTier(
     };
   }
 
-  // REGISTERED: Just needs to be logged in
-  if (requiredTier === "REGISTERED") {
+  const access = await getAccess(userId);
+  if (!canAccessMemberOnly(access)) {
+    return {
+      hasAccess: false,
+      reason: "Consilium membership required for access",
+      requiredTier,
+      upgradeUrl: "/consilium/apply",
+    };
+  }
+
+  // PUBLIC and REGISTERED add nothing beyond membership.
+  if (requiredTier === "PUBLIC" || requiredTier === "REGISTERED") {
     return { hasAccess: true };
   }
 

@@ -80,7 +80,12 @@ export default function AskKanikaClient({
   const routes = useShellRoutes();
 
   const [cooldown, setCooldown] = useState(initialCooldown);
-  const [mine, setMine] = useState(initialMine);
+  // Read straight from the prop rather than seeding state with it. This
+  // list only ever changes as a result of a submit, and a submit calls
+  // router.refresh(), which re-renders this component with a fresh server
+  // read. Copying it into state would mean holding a stale answer beside
+  // the fresh one and picking the wrong one.
+  const mine = initialMine;
   const [queue, setQueue] = useState(initialQueue);
   const [content, setContent] = useState("");
   const [isAnonymous, setIsAnonymous] = useState(false);

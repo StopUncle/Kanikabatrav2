@@ -10,7 +10,7 @@ import { XCircle } from "lucide-react";
 export const metadata = {
   title: "Join. The Consilium | Kanika Batra",
   description:
-    "Join The Consilium, instant access to the Dark Mirror Simulator, voice notes, courses, and community.",
+    "Join The Consilium, instant access to the Dark Mirror Simulator, Kanika's feed, voice notes, videos, and one question a day answered by her.",
 };
 
 /**
@@ -122,9 +122,14 @@ export default async function JoinPage({
             <span className="gradient-text-gold">Step Inside</span>
           </h1>
           <div className="w-16 h-px bg-warm-gold/30 mx-auto mt-4 mb-5" />
+          {/* "Courses" and "the council" named the Classroom and the
+              Forum, both dormant since 2026-07-02 and redirected to the
+              feed. Naming a room that no longer opens, directly above the
+              checkout button, is the version of this copy that produces a
+              refund request in week one. */}
           <p className="text-text-gray font-light max-w-md mx-auto">
-            One subscription. Instant access to the simulator, voice
-            notes, daily drops, and the council.
+            One subscription. Instant access to the simulator, the feed,
+            voice notes, and one question a day answered by Kanika.
           </p>
         </div>
 

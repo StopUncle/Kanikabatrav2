@@ -24,7 +24,7 @@
 import { PACT_LAUNCHED } from "@/lib/pact/presets";
 
 export type Placement =
-  /** Bottom tab bar. Five slots, no more. */
+  /** Bottom tab bar. Five route slots plus the More button, and it is full. */
   | "tab"
   /** A card on Home's explore rails. One scroll away, zero taps deep. */
   | "home"
@@ -38,6 +38,7 @@ export type Placement =
 /** The explore sections on Home, in render order. */
 export const HOME_SECTION_ORDER = [
   "Test yourself",
+  "Games",
   "Train",
   "From Kanika",
   "Your standing",
@@ -59,6 +60,7 @@ export type HomeSection = (typeof HOME_SECTION_ORDER)[number];
  * purpose: one taxonomy for the whole app rather than two that drift.
  */
 export const MORE_SECTION_ORDER = [
+  "Games",
   "Train",
   "Test yourself",
   "The Pact",
@@ -89,7 +91,26 @@ export interface AppSurface {
    * nowhere else; nested surfaces (the Train toys) can carry it as well,
    * appearing both inside their parent and on Home.
    */
-  home?: { section: HomeSection; hook: string };
+  /**
+   * A card on Home's explore rails. Surfaces placed "home" live here and
+   * nowhere else; nested surfaces (the Train toys) can carry it as well,
+   * appearing both inside their parent and on Home. A TAB may also carry
+   * one: HOME_SECTIONS reads `home.section` regardless of placement, while
+   * moreSectionFor returns null for tabs, so there is no duplicate row.
+   *
+   * `tier` sizes the card. Netflix without artwork is not posters, it is
+   * size difference plus live state, and ArcadeBento already proved both
+   * work here: "when every tile is the same size nothing is important".
+   *   hero    - full width, accent gradient. AT MOST THREE on the page.
+   *   default - the 164px rail card.
+   *   compact - glyph and label only, for destinations people navigate to
+   *             rather than browse.
+   */
+  home?: {
+    section: HomeSection;
+    hook: string;
+    tier?: "hero" | "default" | "compact";
+  };
   /** The surface this hangs off. Only meaningful when placement is "nested". */
   parent?: string;
   /** Why it lives where it lives. Required, including for "unlisted". */
@@ -139,7 +160,14 @@ export const APP_SURFACES: AppSurface[] = [
     requires: "member",
     label: "Feed",
     placement: "tab",
-    note: "Kanika's room. The only surface where she speaks to everyone at once.",
+    // A tab AND a Home card. HOME_SECTIONS filters on `home?.section`
+    // regardless of placement, while moreSectionFor returns null for a tab,
+    // so this earns a rail card without gaining a duplicate sheet row.
+    home: {
+      section: "From Kanika",
+      hook: "Her room. Posts, drops and prompts, every morning.",
+    },
+    note: "Kanika's room. The only surface where she speaks to everyone at once. Given a Home card 2026-08-08: a tab is an icon in a bar, and a free account browsing Home had no way to learn what the Feed even is. As the best desire card the app owns, it is named and shown rather than hidden behind a lock they never meet.",
     maturity: "app-native",
   },
   {
@@ -153,16 +181,24 @@ export const APP_SURFACES: AppSurface[] = [
       "/app/adventures",
       "/app/lab",
       "/app/receipts",
-      "/app/instincts",
+      // Was "/app/instincts", which is not a route: there is no
+      // app/hub/instincts/page.tsx, so typing it 404s and the tab it was
+      // meant to light never lit. The two real children instead.
+      "/app/instincts/score",
+      "/app/instincts/history",
     ],
   },
 
   {
     href: "/app/measure",
     requires: "pact",
-    label: "Mark",
+    label: "The Mark",
     placement: "tab",
-    note: "Took the slot Kanika vacated. The product's claim is measured progress, so the surface that carries the proof belongs on the bar rather than three taps down, where it sat until 2026-07-28.",
+    home: {
+      section: "Test yourself",
+      hook: "What you read well, and the blind spots you keep walking into.",
+    },
+    note: "Took the slot Kanika vacated. The product's claim is measured progress, so the surface that carries the proof belongs on the bar rather than three taps down, where it sat until 2026-07-28. Given a Home card 2026-08-08 for the same reason as the Feed: a bar icon labelled 'Mark' teaches nobody what it is, and this is the thing the whole product claims to do.",
     maturity: "app-native",
   },
 
@@ -188,7 +224,11 @@ export const APP_SURFACES: AppSurface[] = [
   {
     href: "/app/pact/record",
     section: "The Pact",
-    requires: "pact",
+    // No `requires`, deliberately. The page is auth-only by contract
+    // (2026-08-06): the member's own history stays readable after a lapse
+    // or a break, and the winback email lands here. Carrying requires:"pact"
+    // put a lock pill on the row for exactly the lapsed member the contract
+    // exists to serve, so the chrome was refusing what the page allows.
     label: "The record",
     placement: "nested",
     parent: "/app/pact/week",
@@ -198,7 +238,8 @@ export const APP_SURFACES: AppSurface[] = [
   {
     href: "/app/pact/journal",
     section: "The Pact",
-    requires: "pact",
+    // Same read-after-lapse contract as the record: these are the member's
+    // own words and the page never walls them.
     label: "Pact journal",
     placement: "nested",
     parent: "/app/pact/week",
@@ -236,6 +277,7 @@ export const APP_SURFACES: AppSurface[] = [
     home: {
       section: "Your standing",
       hook: "The 12 week transformation.",
+      tier: "compact",
     },
     note: "Becomes a paid upsell course rather than a membership benefit. AI layer live: the Read, Thresholds, journal. On Home twice when a week is live: the actionable card in zone 1 and this rail card; the rail card is the always-there front door.",
     maturity: "app-native",
@@ -243,9 +285,10 @@ export const APP_SURFACES: AppSurface[] = [
   {
     href: "/app/program/intake",
     section: "Your standing",
+    requires: "pact",
     label: "The Twelve: intake",
     placement: "nested",
-    note: "Four questions, then the Read. Reached from /app/program only; redirects out once enrolled.",
+    note: "Four questions, then the Read. Reached from /app/program only; redirects out once enrolled. requires:\"pact\" matches the page's own trainingGate, which was there without it: a free account tapping this row in the More sheet hit a wall with no lock shown first.",
     maturity: "app-native",
   },
   {
@@ -255,6 +298,7 @@ export const APP_SURFACES: AppSurface[] = [
     home: {
       section: "Your standing",
       hook: "The curriculum, chapter by chapter.",
+      tier: "compact",
     },
     note: "OVERLAPS with /app/you and /app/program: three surfaces all answering 'where am I up to'. Needs collapsing.",
     maturity: "app-native",
@@ -266,6 +310,7 @@ export const APP_SURFACES: AppSurface[] = [
     home: {
       section: "Your standing",
       hook: "Rank, streaks, badges, your Mark.",
+      tier: "compact",
     },
     note: "Rank, standing, streaks, badges, and the Mark panel.",
     maturity: "app-native",
@@ -277,6 +322,7 @@ export const APP_SURFACES: AppSurface[] = [
     home: {
       section: "Your standing",
       hook: "Where you sit against the room.",
+      tier: "compact",
     },
     note: "Standing and Simulator XP behind one toggle.",
     maturity: "app-native",
@@ -288,8 +334,21 @@ export const APP_SURFACES: AppSurface[] = [
     home: {
       section: "Test yourself",
       hook: "Calibrated instruments, not magazine filler. Find out where you actually sit.",
+      tier: "hero",
     },
-    note: "The instrument suite, plus the member's latest result. The only card in its Home section on purpose: it renders full width, because the quizzes are the most shareable thing the app owns.",
+    note: "The instrument suite, plus the member's latest result. Rendered full width because the quizzes are the most shareable thing the app owns, and open to everyone. That used to happen implicitly, because it was alone in its section; The Mark joined the section 2026-08-08, so the size is now stated rather than inferred.",
+    maturity: "app-native",
+  },
+  {
+    href: "/app/ask",
+    requires: "member",
+    label: "Ask Kanika",
+    placement: "home",
+    home: {
+      section: "From Kanika",
+      hook: "Ask in the open. The most-voted gets answered.",
+    },
+    note: "Ported from the consilium pill-and-modal. It gets a Home card rather than only a More row because it is the retention loop of the membership: the ask, the wait, and the answer landing are the reason to open the app on a day with nothing else in it. Sits one row from /app/kanika and the two are easily confused, so neither description may be a paraphrase of the other: this is the PUBLIC queue that members upvote and Kanika answers as a voice note or video for everyone; /app/kanika is the PRIVATE thread nobody else sees. The hooks carry that difference because the labels alone cannot. DECLARED BEFORE /app/book on purpose: rail order follows declaration order, and with Ask at the end of the section a free account met videos, voice notes and Ask as three consecutive locked cards, which reads as a wall rather than a catalogue. The book is the open card that breaks the run.",
     maturity: "app-native",
   },
   {
@@ -325,18 +384,6 @@ export const APP_SURFACES: AppSurface[] = [
       hook: "Her voice, members only.",
     },
     note: "",
-    maturity: "app-native",
-  },
-  {
-    href: "/app/ask",
-    requires: "member",
-    label: "Ask Kanika",
-    placement: "home",
-    home: {
-      section: "From Kanika",
-      hook: "Ask in the open. The most-voted gets answered.",
-    },
-    note: "Ported from the consilium pill-and-modal. It gets a Home card rather than only a More row because it is the retention loop of the membership: the ask, the wait, and the answer landing are the reason to open the app on a day with nothing else in it. Sits one row from /app/kanika and the two are easily confused, so neither description may be a paraphrase of the other: this is the PUBLIC queue that members upvote and Kanika answers as a voice note or video for everyone; /app/kanika is the PRIVATE thread nobody else sees. The hooks carry that difference because the labels alone cannot.",
     maturity: "app-native",
   },
   {
@@ -381,11 +428,10 @@ export const APP_SURFACES: AppSurface[] = [
   },
   {
     href: "/app/train/achievements",
-    section: "Your standing",
     label: "Achievements",
-    placement: "nested",
+    placement: "unlisted",
     parent: "/app/you",
-    note: "ORPHAN: nothing links here. Hardcoded golds, old skin.",
+    note: "UNLISTED 2026-08-08. Its own note said 'ORPHAN: nothing links here. Hardcoded golds, old skin.' BadgeWall on /app/you is the real one and it reads live data; this page shows hardcoded golds, which is worse than a dead row because a paying member reads invented achievements as their own. Route left in place pending a deletion sweep.",
     maturity: "ported",
   },
   {
@@ -394,10 +440,10 @@ export const APP_SURFACES: AppSurface[] = [
     placement: "nested",
     parent: "/app/train",
     home: {
-      section: "Train",
+      section: "Games",
       hook: "Ten reads against the clock.",
     },
-    note: "Owns the whole screen; the tab bar hides itself here.",
+    note: "Owns the whole screen; the tab bar hides itself here. Moved to Games 2026-08-08: a sixty-second drill and the deep Simulator sat in one undifferentiated six-card row, so neither read as what it is.",
     maturity: "app-native",
   },
   {
@@ -406,10 +452,10 @@ export const APP_SURFACES: AppSurface[] = [
     placement: "nested",
     parent: "/app/train",
     home: {
-      section: "Train",
+      section: "Games",
       hook: "One tell a day. Keep the streak.",
     },
-    note: "",
+    note: "THE door for the daily tell. /app/instincts/today was the same thing under another name in another section and was unlisted 2026-08-08; this is the one that stays, because it is the one on Home.",
     maturity: "app-native",
   },
   {
@@ -418,10 +464,10 @@ export const APP_SURFACES: AppSurface[] = [
     placement: "nested",
     parent: "/app/train",
     home: {
-      section: "Train",
+      section: "Games",
       hook: "Multi-chapter arcs.",
     },
-    note: "Multi-chapter arcs.",
+    note: "Moved to Games 2026-08-08 with the drill and the tell: played rather than trained, and the Train rail was carrying six unlike things.",
     maturity: "ported",
   },
   {
@@ -462,39 +508,36 @@ export const APP_SURFACES: AppSurface[] = [
   },
   {
     href: "/app/instincts/today",
-    section: "Test yourself",
     label: "Today's Tell",
-    placement: "nested",
+    placement: "unlisted",
     parent: "/app/train",
-    note: "Overlaps with /app/play/tell: two routes, one idea.",
+    note: "UNLISTED 2026-08-08. Its own note already said it: 'Overlaps with /app/play/tell: two routes, one idea.' /app/play/tell is the door, because that is the one on Home and in the Games rail. The route stays for anyone holding the link; the menu stops offering the same daily tell twice under two names in two different sections.",
     maturity: "ported",
   },
   {
     href: "/app/instincts/score",
     section: "Test yourself",
-    label: "Your Instinct Hex",
+    label: "Instinct Hex",
     placement: "nested",
-    parent: "/app/instincts/today",
-    note: "",
+    parent: "/app/play/tell",
+    note: "The one instincts row that survives the 2026-08-08 collapse, and the only one that was never a duplicate: the Hex is the artefact the daily tells accumulate into, not a second door to taking one. Reparented onto /app/play/tell now that /app/instincts/today is unlisted.",
     maturity: "ported",
   },
   {
     href: "/app/instincts/history",
-    section: "Test yourself",
     label: "Tell history",
-    placement: "nested",
+    placement: "unlisted",
     parent: "/app/instincts/score",
-    note: "",
+    note: "UNLISTED 2026-08-08. Nested three deep and reached from the Hex, which is where somebody wanting their history actually looks. Three menu rows for one feature's internals was three of the five Test-yourself rows.",
     maturity: "ported",
   },
   {
     href: "/app/previews",
-    section: "From Kanika",
     requires: "member",
     label: "Previews",
-    placement: "nested",
+    placement: "unlisted",
     parent: "/app/feed",
-    note: "ORPHAN: member-early blog posts that nothing links to.",
+    note: "UNLISTED 2026-08-08. Its own note said 'ORPHAN: member-early blog posts that nothing links to.' The route stays, because /app/previews/[slug] may be linked from an email; the index row goes, because nothing fills it.",
     maturity: "ported",
   },
 
@@ -551,6 +594,13 @@ export const APP_SURFACES: AppSurface[] = [
     maturity: "dev",
   },
   {
+    href: "/app/dev/logo",
+    label: "Dev: logo",
+    placement: "unlisted",
+    note: "Dev harness. Added 2026-08-08: the page existed with no row at all, which breaks this file's own first rule. Like the other dev pages it notFound()s in production, so it costs the sheet nothing.",
+    maturity: "dev",
+  },
+  {
     href: "/app/dev/map",
     label: "Dev: surface map",
     placement: "unlisted",
@@ -573,7 +623,9 @@ export const APP_SURFACES: AppSurface[] = [
   },
 ];
 
-/** The bottom bar, in order. Five slots including More; four are routes. */
+/** The bottom bar, in order. Five routes plus the More button: six controls,
+ *  and full. The comment here said "four are routes" until 2026-08-08, which
+ *  stopped being true when the Pact took a slot. */
 export const TAB_SURFACES = APP_SURFACES.filter(
   (s) =>
     s.placement === "tab" && (PACT_LAUNCHED || !s.href.startsWith("/app/pact")),

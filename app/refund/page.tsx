@@ -2,6 +2,7 @@
 
 import { m } from "framer-motion";
 import { MEMBERSHIP } from "@/lib/constants";
+import { PACT_PRICING } from "@/lib/pact/presets";
 import BackgroundEffects from "@/components/BackgroundEffects";
 import Header from "@/components/Header";
 
@@ -78,18 +79,43 @@ export default function RefundPage() {
               <ul className="text-text-gray space-y-3 list-disc list-inside">
                 <li><strong className="text-text-light">Auto-renewal:</strong> Billing is charged to your payment method on the same day each month. You&apos;ll receive a renewal confirmation email each time it renews successfully</li>
                 <li><strong className="text-text-light">Cancellation:</strong> Cancel anytime from your dashboard, or email Kanika@kanikarose.com. Access continues until the end of your current billing period</li>
-                <li><strong className="text-text-light">Pause:</strong> You may pause your membership for up to 30 days instead of cancelling</li>
+                <li><strong className="text-text-light">Pause:</strong> You may pause your membership for 30, 60 or 90 days instead of cancelling, and resume whenever you want</li>
                 <li><strong className="text-text-light">Refunds:</strong> We do not offer partial-month refunds for subscription cancellations. If you cancel mid-cycle, you retain access until the end of the period you&apos;ve already paid for</li>
-                <li><strong className="text-text-light">First month:</strong> If you cancel within 7 days of your first subscription payment and have not accessed community content, we will issue a full refund</li>
+                <li><strong className="text-text-light">First 7 days:</strong> If you cancel within 7 days of your first subscription payment, we will issue a full refund. This used to carry an &quot;and have not accessed community content&quot; condition, which was never measured and is not applied</li>
                 <li><strong className="text-text-light">Free trial (book buyers):</strong> If you received a 30-day free trial via the book purchase email sequence, no payment is taken during the trial. At the end of the 30 days your access expires unless you subscribe, nothing is auto-charged</li>
                 <li><strong className="text-text-light">Payment failures:</strong> If we can&apos;t charge your card on renewal, your membership is paused and you&apos;ll be emailed to update your payment method. No grace period access after suspension</li>
               </ul>
             </section>
 
+            {/* The Blood Pact went live in August 2026 and this page never
+                learned about it: a recurring subscription with no stated
+                terms, no refund policy and no cancellation statement, while
+                the public app page advertised a 7-day guarantee on it. The
+                guarantee below honours that advertised promise rather than
+                withdrawing something buyers may have relied on. */}
             <section className="bg-deep-black/50 border border-accent-gold/10 rounded-2xl p-8">
-              <h2 className="text-2xl font-light text-accent-gold mb-4">Ask Kanika</h2>
+              <h2 className="text-2xl font-light text-accent-gold mb-4">The Blood Pact (Subscription)</h2>
+              <p className="text-text-gray leading-relaxed mb-4">
+                The Blood Pact is a training subscription at {PACT_PRICING.weeklyDisplay} or {PACT_PRICING.annualDisplay}. <strong className="text-text-light">It renews automatically until you break the pact.</strong>
+              </p>
+              <ul className="text-text-gray space-y-3 list-disc list-inside">
+                <li><strong className="text-text-light">Auto-renewal:</strong> Weekly plans are charged every week, annual plans once a year, to the payment method you signed with</li>
+                <li><strong className="text-text-light">Cancellation:</strong> Break the pact from your profile in the app, or from the pact record. Breaking it stops the billing immediately, and your access runs to the end of the week or year you have already paid for</li>
+                <li><strong className="text-text-light">What breaking does:</strong> the pact is sealed as broken and that record is permanent. You may sign a new pact at any time, and it stands beside the old one rather than replacing it</li>
+                <li><strong className="text-text-light">First 7 days:</strong> If you break the pact within 7 days of your first payment, we will issue a full refund of that payment</li>
+                <li><strong className="text-text-light">Refunds:</strong> Beyond the first 7 days we do not offer partial-week or partial-year refunds. Breaking the pact stops the next charge rather than refunding the current one</li>
+                <li><strong className="text-text-light">Consilium members:</strong> The Pact is included with a Consilium membership at no extra charge. Breaking it does not touch your membership or its billing</li>
+                <li><strong className="text-text-light">Payment failures:</strong> If a renewal fails, the pact is suspended rather than broken, and your weeks are held while you update your card</li>
+              </ul>
+            </section>
+
+            <section className="bg-deep-black/50 border border-accent-gold/10 rounded-2xl p-8">
+              <h2 className="text-2xl font-light text-accent-gold mb-4">Ask Kanika question packs (paid)</h2>
               <p className="text-text-gray leading-relaxed">
-                Ask Kanika question responses (written or voice) are delivered within 48 hours of purchase. Due to the personalised nature of this service, refunds are only available if a response has not been delivered within 5 business days. If you experience delivery issues, contact us and we will either deliver your response or issue a full refund.
+                This covers the paid question packs bought as a one-off, not the question a day included with a Consilium membership. Paid pack responses (written or voice) are delivered within 48 hours of purchase. Due to the personalised nature of this service, refunds are only available if a response has not been delivered within 5 business days. If you experience delivery issues, contact us and we will either deliver your response or issue a full refund.
+              </p>
+              <p className="text-text-gray leading-relaxed mt-4">
+                The member question included with the Consilium works differently: you may submit one every 24 hours, members vote, and Kanika answers the most-voted by voice or video. There is no delivery guarantee on an individual member question, and it is part of the membership rather than a separate purchase.
               </p>
             </section>
 

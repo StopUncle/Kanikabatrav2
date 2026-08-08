@@ -30,6 +30,19 @@ export async function GET() {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
+  // POST has always been member-only; GET was not, so a cancelled member
+  // kept permanent read access to the thread, and every open of it wrote
+  // readAt on Kanika's messages for someone no longer entitled to them.
+  //
+  // Deliberately NOT following the pact-record precedent ("your own
+  // history stays readable after a lapse"). That contract covers the
+  // member's own writing. Half of this thread is Kanika answering
+  // personally, which is the most expensive thing the membership buys.
+  const access = await getAccess(userId);
+  if (!canAccessMemberOnly(access)) {
+    return NextResponse.json({ error: "Members only" }, { status: 403 });
+  }
+
   const conversation = await prisma.conversation.findUnique({
     where: { memberId: userId },
     select: {
