@@ -4,6 +4,7 @@ import { m } from "framer-motion";
 import BackgroundEffects from "@/components/BackgroundEffects";
 import Header from "@/components/Header";
 import { SITE_CONFIG, MEMBERSHIP } from "@/lib/constants";
+import { PACT_PRICING } from "@/lib/pact/presets";
 
 export default function TermsPage() {
   return (
@@ -126,14 +127,29 @@ export default function TermsPage() {
 
                   <div>
                     <h3 className="text-lg font-light text-accent-gold mb-3">
-                      Subscription Billing (The Consilium)
+                      Subscription Billing
                     </h3>
                     <p className="text-text-gray leading-relaxed mb-4">
                       The Consilium is a paid monthly subscription at{" "}
                       {MEMBERSHIP.monthly}. Your subscription will automatically renew each
                       month until you cancel. You can cancel anytime from your
-                      dashboard or by emailing Kanika@kanikarose.com, your
+                      profile or by emailing Kanika@kanikarose.com, your
                       access continues until the end of the paid period.
+                    </p>
+                    {/* The Pact has been billing since August 2026 and this
+                        page did not mention it. A recurring charge with no
+                        stated terms is the gap that turns a cancellation
+                        into a chargeback. */}
+                    <p className="text-text-gray leading-relaxed mb-4">
+                      The Blood Pact is a separate training subscription at{" "}
+                      {PACT_PRICING.weeklyDisplay} or {PACT_PRICING.annualDisplay}, and it
+                      renews automatically until you break the pact. Breaking it
+                      from your profile stops the billing immediately and your
+                      access runs to the end of the period you have paid for.
+                      Breaking a pact seals that record permanently; you can sign
+                      a new one at any time. A Consilium membership includes the
+                      Pact at no extra charge, and breaking the Pact does not
+                      affect that membership.
                     </p>
                     <p className="text-text-gray leading-relaxed mb-4">
                       Book purchasers may receive a 30-day free trial to The
@@ -179,7 +195,7 @@ export default function TermsPage() {
                       Community Rules & Content
                     </h3>
                     <p className="text-text-gray leading-relaxed mb-4">
-                      Posts, comments, forum threads, and chat messages you
+                      Posts, comments, and messages you
                       create in The Consilium remain your own content. By
                       posting, you grant us a license to display that content
                       within the community. We may remove content that
@@ -206,9 +222,21 @@ export default function TermsPage() {
                       not satisfied. After 24 hours, no refunds will be
                       provided.
                     </p>
+                    {/* This said all digital sales were final "unless
+                        otherwise specified", while the book carries a
+                        30-day guarantee and both subscriptions carry a
+                        7-day one. The exception was the rule, so the
+                        sentence read as a denial of rights the refund
+                        policy actually grants. */}
                     <p className="text-text-gray leading-relaxed">
-                      For digital products: Due to the nature of digital
-                      products, all sales are final unless otherwise specified.
+                      For digital products: the Sociopathic Dating Bible carries
+                      a 30-day money-back guarantee, and The Consilium and The
+                      Blood Pact each carry a 7-day money-back guarantee on your
+                      first payment. Our{" "}
+                      <a href="/refund" className="text-accent-gold underline">
+                        refund policy
+                      </a>{" "}
+                      sets out the terms for every product, and it governs.
                     </p>
                   </div>
                 </div>

@@ -68,7 +68,14 @@ export async function getAdminUserId(): Promise<string | null> {
       orderBy: { createdAt: "asc" },
       select: { id: true },
     });
-    return adminUser?.id || "admin-preview";
+    // Null, not a placeholder string. This used to fall back to the
+    // literal "admin-preview", which then travelled into feed post and
+    // comment routes as an authorId / userId. Those columns are foreign
+    // keys to User, so the write either violated the constraint or
+    // orphaned a row pointing at an account that has never existed, and
+    // the doc comment above promises the opposite. Callers already treat
+    // null as "not an admin" and answer 401.
+    return adminUser?.id ?? null;
   } catch {
     return null;
   }

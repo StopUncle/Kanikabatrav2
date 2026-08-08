@@ -49,7 +49,9 @@ export default function ConsiliumOverview({
       title: "The Mark",
       detail:
         "Your training record. Plain sentences on what you read well and the blind spots you keep walking into",
-      value: "Tracked for you",
+      // trainingGate, same as the Lab. "Tracked for you" read as though it
+      // came with the free account.
+      value: "Any paid tier",
     },
     {
       title: "Drills and Games",
@@ -60,14 +62,17 @@ export default function ConsiliumOverview({
     {
       title: "Kanika's Feed",
       detail:
-        "Psychology drops, discussion prompts, voice notes, and one question a day answered by Kanika herself",
+        "Psychology drops, discussion prompts, and voice notes, straight from Kanika",
       value: "Every morning",
     },
     {
       title: "The Lab",
       detail:
         "Freeform roleplay against an opponent that pushes back. No script, no multiple choice, no safety net",
-      value: "Members only",
+      // The Lab gates on canTrain (app/api/consilium/lab/route.ts:40), so
+      // the Pact opens it. Labelling it members-only both misstated the
+      // tier and quietly undersold the cheaper rung.
+      value: "Any paid tier",
     },
     {
       title: "Ask Kanika",
@@ -79,7 +84,10 @@ export default function ConsiliumOverview({
       title: "Daily Psychology Drops",
       detail:
         "60-card rotating bank, fresh insight every morning. New tactics, power dynamics, real patterns",
-      value: "$19/mo elsewhere",
+      // Was "$19/mo elsewhere": a competitor price comparison with no
+      // source behind it, on a page that states two lines above that it
+      // describes how a surface is reached rather than what it costs.
+      value: "Members only",
     },
     {
       title: "Voice Notes from Kanika",
@@ -88,10 +96,13 @@ export default function ConsiliumOverview({
       value: "Members only",
     },
     {
-      title: "Discussion Threads & Community Feed",
+      // "Discussion Threads" named the Forum, dormant since 2026-07-02.
+      // The detail was always describing the feed's prompts and comments,
+      // so only the title was writing a cheque the product cannot cash.
+      title: "Discussion Prompts",
       detail:
         "28 themed weekday prompts · daily psychology drops · comment alongside members navigating the same patterns",
-      value: "Community access",
+      value: "Members only",
     },
     {
       title: "Member-Only Book Pricing",

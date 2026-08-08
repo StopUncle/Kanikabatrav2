@@ -201,10 +201,35 @@ export async function checkMembership(userId: string | null): Promise<Membership
   };
 }
 
+/**
+ * Moderation privilege: ADMIN or MODERATOR.
+ *
+ * Deliberately broad. Hiding a comment and handling a report is what the
+ * MODERATOR role exists for, and narrowing this would leave moderation to
+ * one person.
+ */
 export async function isAdmin(userId: string): Promise<boolean> {
   const user = await prisma.user.findUnique({
     where: { id: userId },
     select: { role: true },
   });
   return user?.role === "ADMIN" || user?.role === "MODERATOR";
+}
+
+/**
+ * May this account PUBLISH into Kanika's rooms (voice notes, videos)?
+ *
+ * ADMIN only, and separate from `isAdmin` on purpose. The upload routes
+ * used the moderation predicate, which meant any MODERATOR could put a
+ * voice note out under Kanika's name to every paying member, while the
+ * same account was refused by every `/api/admin/**` route because those
+ * use `requireAdminSession`. Moderating what members write and speaking
+ * as Kanika are not the same privilege and should not share a check.
+ */
+export async function canPublishAsKanika(userId: string): Promise<boolean> {
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+    select: { role: true },
+  });
+  return user?.role === "ADMIN";
 }

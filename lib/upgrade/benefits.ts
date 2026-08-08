@@ -17,7 +17,9 @@
 export const PACT_OPENS = [
   "One challenge a week, on your track, and a record that never forgets.",
   "Every chapter of every track, not just the first.",
-  "The Room: say it in your own words, and find out what that costs you.",
+  // Called "The Room" here and "the Lab" on every other surface, which
+  // left the buyer unable to match the promise to the thing they opened.
+  "The Lab: say it in your own words, and find out what that costs you.",
   "Receipts: paste the message, get the read.",
   "The Mark: your reads, measured, and a record that holds you to them.",
 ];
@@ -29,7 +31,10 @@ export const PACT_OPENS = [
  */
 export const CONSILIUM_ROOMS = [
   "The feed: her posts, daily drops, and prompts, every morning.",
-  "Ask Kanika: one question a day, answered by voice or video.",
+  // "one question a day, answered" read as a guaranteed daily reply. The
+  // right to ask is daily; the answer goes to the most-voted, which is
+  // what the product actually does and what the feature page says.
+  "Ask Kanika: ask one a day, and the most-voted get answered by voice or video.",
   "Voice notes and videos, for members only.",
   "The book at $9.99 instead of $24.99.",
 ];
