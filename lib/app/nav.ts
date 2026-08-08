@@ -328,6 +328,18 @@ export const APP_SURFACES: AppSurface[] = [
     maturity: "app-native",
   },
   {
+    href: "/app/ask",
+    requires: "member",
+    label: "Ask Kanika",
+    placement: "home",
+    home: {
+      section: "From Kanika",
+      hook: "Ask in the open. The most-voted gets answered.",
+    },
+    note: "Ported from the consilium pill-and-modal. It gets a Home card rather than only a More row because it is the retention loop of the membership: the ask, the wait, and the answer landing are the reason to open the app on a day with nothing else in it. Sits one row from /app/kanika and the two are easily confused, so neither description may be a paraphrase of the other: this is the PUBLIC queue that members upvote and Kanika answers as a voice note or video for everyone; /app/kanika is the PRIVATE thread nobody else sees. The hooks carry that difference because the labels alone cannot.",
+    maturity: "app-native",
+  },
+  {
     href: "/app/kanika",
     requires: "member",
     label: "Kanika",
