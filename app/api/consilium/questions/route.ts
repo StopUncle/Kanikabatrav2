@@ -7,6 +7,7 @@ import { getAdminUserId } from "@/lib/auth/server-auth";
 import { getAccess, canAccessMemberOnly } from "@/lib/access/tier";
 import { checkAskCooldown } from "@/lib/questions/cooldown";
 import { getQuestionSettings } from "@/lib/questions/settings";
+import { readAskQueue } from "@/lib/questions/read";
 import { notifyStudio } from "@/lib/studio/notify";
 import { logger } from "@/lib/logger";
 
@@ -50,33 +51,9 @@ export async function GET() {
   const access = await getAccess(userId);
   if (!canAccessMemberOnly(access)) return NextResponse.json({ error: "Members only" }, { status: 403 });
 
-  const questions = await prisma.memberQuestion.findMany({
-    where: { status: "PENDING" },
-    orderBy: [{ upvoteCount: "desc" }, { createdAt: "desc" }],
-    take: 50,
-    select: {
-      id: true,
-      content: true,
-      isAnonymous: true,
-      upvoteCount: true,
-      createdAt: true,
-      userId: true,
-      user: { select: { displayName: true, name: true } },
-      upvotes: { where: { userId }, select: { id: true } },
-    },
-  });
-
-  return NextResponse.json({
-    questions: questions.map((q) => ({
-      id: q.id,
-      content: q.content,
-      upvoteCount: q.upvoteCount,
-      createdAt: q.createdAt,
-      hasUpvoted: q.upvotes.length > 0,
-      isMine: q.userId === userId,
-      author: q.isAnonymous ? null : (q.user.displayName ?? q.user.name ?? "Member"),
-    })),
-  });
+  // Shared with the app's /app/ask page, which server-renders the same
+  // list rather than fetching it. One definition of the shape.
+  return NextResponse.json({ questions: await readAskQueue(userId) });
 }
 
 const submitSchema = z.object({

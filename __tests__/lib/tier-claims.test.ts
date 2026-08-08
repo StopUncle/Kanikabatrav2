@@ -30,19 +30,17 @@ const read = (p: string) => fs.readFileSync(path.join(ROOT, p), "utf8");
  */
 const DORMANT = ["classroom", "forum", "the council", "live chat"];
 
-/**
- * Surfaces we sell, and the rung each one actually needs.
- *
- * `/app/ask` is deliberately absent: Ask Kanika is not in the app shell
- * yet. Add it here as "member" in the same commit that adds its nav row,
- * so the claim and the gate arrive together.
- */
+/** Surfaces we sell, and the rung each one actually needs. */
 const SOLD_AS: Record<string, "pact" | "member"> = {
   "/app/lab": "pact",
   "/app/receipts": "pact",
   "/app/measure": "pact",
   "/app/program": "pact",
   "/app/feed": "member",
+  // Ask Kanika landed in the app 2026-08-08. Direct access to Kanika is
+  // the one thing in the product that cannot scale, so it is the one thing
+  // most worth pinning to the member rung.
+  "/app/ask": "member",
   "/app/kanika": "member",
   "/app/voice-notes": "member",
   "/app/videos": "member",

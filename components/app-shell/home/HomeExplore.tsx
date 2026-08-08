@@ -13,6 +13,7 @@ import {
   Eye,
   FlaskConical,
   Map,
+  Hand,
   MessageSquare,
   Mic,
   Mountain,
@@ -60,6 +61,7 @@ const ICONS: Record<string, React.ReactNode> = {
   "/app/lab": <FlaskConical size={19} />,
   "/app/receipts": <Receipt size={19} />,
   "/app/feed": <MessageSquare size={19} />,
+  "/app/ask": <Hand size={19} />,
   "/app/videos": <Video size={19} />,
   "/app/voice-notes": <Mic size={19} />,
   "/app/book": <BookOpen size={19} />,
@@ -85,6 +87,9 @@ const ACCENT: Record<string, string> = {
   "/app/lab": "var(--game-lab)",
   "/app/receipts": "var(--game-receipts)",
   "/app/feed": "var(--app-rose)",
+  // Gold, not rose: Ask Kanika sits beside the Feed and the two are the
+  // easiest pair in the app to confuse. Different colour, different glyph.
+  "/app/ask": "var(--app-gold)",
   "/app/videos": "var(--app-rose)",
   "/app/voice-notes": "var(--game-lab)",
   "/app/book": "var(--game-adventures)",

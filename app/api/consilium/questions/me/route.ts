@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { resolveActiveUserId } from "@/lib/auth/resolve-user";
 import { getAdminUserId } from "@/lib/auth/server-auth";
 import { checkAskCooldown } from "@/lib/questions/cooldown";
+import { hasUnreadAnswer, readMyQuestions } from "@/lib/questions/read";
 import { getAccess, canAccessMemberOnly } from "@/lib/access/tier";
 
 // Same dual-session resolver as the submit + upvote endpoints.
@@ -56,45 +57,19 @@ export async function GET() {
 
   const [cooldown, mine, viewer] = await Promise.all([
     checkAskCooldown(userId),
-    prisma.memberQuestion.findMany({
-      where: { userId },
-      orderBy: { createdAt: "desc" },
-      take: 20,
-      select: {
-        id: true,
-        content: true,
-        status: true,
-        answeredAt: true,
-        createdAt: true,
-        answerPost: {
-          select: {
-            id: true,
-            title: true,
-            type: true,
-            voiceNoteUrl: true,
-            videoUrl: true,
-          },
-        },
-      },
-    }),
+    readMyQuestions(userId),
     prisma.user.findUnique({
       where: { id: userId },
       select: { role: true },
     }),
   ]);
-  const isAdmin = viewer?.role === "ADMIN";
-
-  // "Unread" = answered in the last 14 days. Members can dismiss the
-  // green-dot state explicitly later; for now the timer expires it.
-  const fourteenDaysAgo = new Date(Date.now() - 14 * 24 * 60 * 60 * 1000);
-  const hasUnreadAnswer = mine.some(
-    (q) => q.status === "ANSWERED" && q.answeredAt && q.answeredAt > fourteenDaysAgo,
-  );
 
   return NextResponse.json({
     cooldown,
     questions: mine,
-    hasUnreadAnswer,
-    isAdmin,
+    // "Unread" = answered in the last 14 days. The timer expires it; there
+    // is no explicit dismissal yet.
+    hasUnreadAnswer: hasUnreadAnswer(mine),
+    isAdmin: viewer?.role === "ADMIN",
   });
 }
