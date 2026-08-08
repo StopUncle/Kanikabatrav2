@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { requireServerAuth } from "@/lib/auth/server-auth";
 import { getAccess } from "@/lib/access/tier";
 import { readPact } from "@/lib/pact/read";
+import { prisma } from "@/lib/prisma";
 import { PageShell } from "@/components/app-shell/ui";
 import BreakClient from "@/components/app-shell/pact/BreakClient";
 import type { SignatureStrokes } from "@/lib/pact/signature";
@@ -21,6 +22,13 @@ export default async function PactBreakPage() {
     redirect("/app/pact");
   }
 
+  // No pact subscription means the Consilium is carrying it, and breaking
+  // the pact must not be described as ending a payment that will carry on.
+  const pactMembership = await prisma.pactMembership.findUnique({
+    where: { userId },
+    select: { stripeSubscriptionId: true },
+  });
+
   return (
     <PageShell>
       <BreakClient
@@ -30,6 +38,7 @@ export default async function PactBreakPage() {
         weekNumber={read.weekNumber}
         signature={(read.pact.signatureData as SignatureStrokes | null) ?? null}
         goals={Array.isArray(read.pact.goals) ? (read.pact.goals as string[]) : []}
+        entitledFree={!pactMembership?.stripeSubscriptionId}
       />
     </PageShell>
   );

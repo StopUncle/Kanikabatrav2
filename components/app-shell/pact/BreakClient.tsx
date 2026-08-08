@@ -19,6 +19,7 @@ export default function BreakClient({
   weekNumber,
   signature,
   goals,
+  entitledFree = false,
 }: {
   pactNumber: number;
   kept: number;
@@ -26,6 +27,8 @@ export default function BreakClient({
   weekNumber: number;
   signature: SignatureStrokes | null;
   goals: string[];
+  /** Signed under a Consilium membership, so no pact billing exists. */
+  entitledFree?: boolean;
 }) {
   const router = useRouter();
   const [word, setWord] = useState("");
@@ -74,9 +77,15 @@ export default function BreakClient({
           : `${kept} ${kept === 1 ? "week" : "weeks"} kept, ${scars} ${
               scars === 1 ? "scar" : "scars"
             }, ${weekNumber} ${weekNumber === 1 ? "week" : "weeks"} in.`}{" "}
-        Breaking it ends the billing and seals this record as broken,
-        permanently. The record stays visible. A new pact can be signed,
-        but it will always stand beside this one.
+        {/* A Consilium signer pays nothing for the Pact, so telling them
+            this "ends the billing" is both wrong and alarming: it reads as
+            though the membership charge stops too. Say what actually
+            happens to each. */}
+        {entitledFree
+          ? "Breaking it seals this record as broken, permanently. Your Consilium membership is untouched and keeps billing as normal."
+          : "Breaking it ends the billing and seals this record as broken, permanently."}{" "}
+        The record stays visible. A new pact can be signed, but it will
+        always stand beside this one.
       </p>
 
       {goals.length > 0 && (

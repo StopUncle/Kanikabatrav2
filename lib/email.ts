@@ -14,7 +14,11 @@ import {
   pickSecondaryType,
 } from "@/lib/mini-quiz";
 import { STARTER_PATTERNS } from "@/lib/starter-pack-content";
-import { marketingFooterByEmailHtml } from "@/lib/email-footer";
+import {
+  marketingFooterByEmailHtml,
+  marketingEmailExtras,
+  marketingUnsubscribeHeaders,
+} from "@/lib/email-footer";
 
 const logger = {
   info: (message: string) => console.log(`[EMAIL INFO] ${message}`),
@@ -1034,6 +1038,16 @@ export const sendQuizResults = async (
 ): Promise<boolean> => {
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://kanikarose.com";
 
+  // Requested content, so the email itself is legitimate. It also carries
+  // a full Consilium pitch, which is what puts it on the marketing side of
+  // the line and means it needs the opt-out like everything else.
+  const { footerHtml: quizFooterHtml, headers: quizHeaders } =
+    marketingEmailExtras({
+      email: data.email.toLowerCase(),
+      type: "marketing",
+      campaign: "quiz-results",
+    });
+
   const getFunctioningColor = (level: string) => {
     switch (level) {
       case "high":
@@ -1392,6 +1406,7 @@ export const sendQuizResults = async (
           </td>
         </tr>
       </table>
+      ${quizFooterHtml}
     </body>
     </html>
   `;
@@ -1400,6 +1415,7 @@ export const sendQuizResults = async (
     to: data.email,
     subject: `Your Dark Mirror Results: ${data.primaryProfile.name}`,
     html,
+    headers: quizHeaders,
   });
 };
 
@@ -1571,16 +1587,24 @@ interface WeeklyDigestData {
   newCourses: DigestCourse[];
   newCommentsOnYourPosts: number;
   verdict?: DigestVerdict;
-  // One-click unsubscribe URL (signed token, no login required). Built
-  // by lib/unsubscribe-token.ts buildUnsubscribeUrl. Optional only so
-  // existing test fixtures don't have to construct it.
-  unsubscribeUrl?: string;
 }
 
 export const sendWeeklyDigest = async (
   data: WeeklyDigestData,
 ): Promise<boolean> => {
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://kanikarose.com";
+
+  // The digest used to render its own footer: 11px on #888, and the
+  // unsubscribe half of it only appeared when the caller remembered to
+  // pass a URL, so the one email that goes to every active member weekly
+  // could ship with no opt-out at all. It builds its own now, from the
+  // recipient, keyed to the weeklyDigest preference rather than marketing.
+  const { footerHtml: digestFooterHtml, headers: digestHeaders } =
+    marketingEmailExtras({
+      email: data.memberEmail.toLowerCase(),
+      type: "weeklyDigest",
+      campaign: "weekly-digest",
+    });
 
   // If there's nothing new this week, send a lightweight nudge instead of
   // a full digest, still valuable for retention but doesn't pretend
@@ -1785,17 +1809,7 @@ export const sendWeeklyDigest = async (
       </tr>
     </table>
 
-    <p style="color: #666; line-height: 1.6; margin: 30px 0 0 0; font-size: 11px; text-align: center;">
-      You're receiving this because you're an active member of The Consilium.
-      <br>
-      <a href="${baseUrl}/profile" style="color: #888; text-decoration: underline;">Manage preferences</a>${
-        data.unsubscribeUrl
-          ? `
-      &nbsp;·&nbsp;
-      <a href="${data.unsubscribeUrl}" style="color: #888; text-decoration: underline;">Unsubscribe from weekly digest</a>`
-          : ""
-      }
-    </p>
+    ${digestFooterHtml}
   `;
 
   return await sendEmail({
@@ -1810,6 +1824,7 @@ export const sendWeeklyDigest = async (
       data.verdict ? "The Week's Verdict" : "Weekly Digest",
       weekRange,
     ),
+    headers: digestHeaders,
   });
 };
 
@@ -1931,6 +1946,11 @@ export const sendFreeWelcome = async (userEmail: string): Promise<boolean> => {
       "The Consilium, free tier",
       "The Simulator, the Speed Drill and the Daily Tell are open. Here is where.",
     ),
+    headers: marketingUnsubscribeHeaders({
+      email: userEmail.toLowerCase(),
+      type: "marketing",
+      campaign: "free-welcome",
+    }),
   });
 };
 
@@ -2303,6 +2323,11 @@ export const sendMembershipEndingSoon = async (
     to: memberEmail,
     subject: `Your free month inside The Consilium ends in ${daysLeft} day${daysLeft === 1 ? "" : "s"}`,
     html: luxuryEmailShell(inner, "Your access is ending", "The Consilium"),
+    headers: marketingUnsubscribeHeaders({
+      email: memberEmail.toLowerCase(),
+      type: "marketing",
+      campaign: "membership-ending-soon",
+    }),
   });
 };
 
@@ -2320,6 +2345,13 @@ export const sendConsiliumGiftInvite = async (
 ): Promise<boolean> => {
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://kanikarose.com";
   const claimUrl = `${baseUrl}/consilium/claim?token=${claimToken}`;
+  // An unsolicited membership offer is marketing however warm the wording,
+  // and this one carried no opt-out of any kind.
+  const { footerHtml, headers } = marketingEmailExtras({
+    email: recipientEmail.toLowerCase(),
+    type: "marketing",
+    campaign: "consilium-gift-invite",
+  });
 
   const inner = `
     <p class="lux-text" style="color: #f5efe2; font-size: 19px; margin: 0 0 22px 0; line-height: 1.55; font-weight: 400;">
@@ -2361,12 +2393,14 @@ export const sendConsiliumGiftInvite = async (
     <p class="lux-muted" style="color: #b8a89a; line-height: 1.7; margin: 0; font-size: 12px; text-align: center;">
       Button not working? Paste this: <a href="${claimUrl}" style="color: #d4af37; word-break: break-all;">${claimUrl}</a>
     </p>
+    ${footerHtml}
   `;
 
   return await sendEmail({
     to: recipientEmail,
     subject: "A month inside The Consilium, my thank-you to you",
     html: luxuryEmailShell(inner, "Thank You", "One month on me"),
+    headers,
   });
 };
 
@@ -2383,6 +2417,12 @@ export const sendConsiliumBonusMonth = async (
 ): Promise<boolean> => {
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://kanikarose.com";
   const claimUrl = `${baseUrl}/consilium/claim?token=${claimToken}`;
+  // Same reasoning as the first-time gift: warm, unsolicited, marketing.
+  const { footerHtml, headers } = marketingEmailExtras({
+    email: recipientEmail.toLowerCase(),
+    type: "marketing",
+    campaign: "consilium-bonus-month",
+  });
 
   const inner = `
     <p class="lux-text" style="color: #f5efe2; font-size: 19px; margin: 0 0 22px 0; line-height: 1.55; font-weight: 400;">
@@ -2419,12 +2459,14 @@ export const sendConsiliumBonusMonth = async (
     <p class="lux-muted" style="color: #b8a89a; line-height: 1.7; margin: 0; font-size: 12px; text-align: center;">
       Button not working? Paste this: <a href="${claimUrl}" style="color: #d4af37; word-break: break-all;">${claimUrl}</a>
     </p>
+    ${footerHtml}
   `;
 
   return await sendEmail({
     to: recipientEmail,
     subject: "Another month inside The Consilium, on me",
     html: luxuryEmailShell(inner, "A Bonus Month", "Another 30 days, on me"),
+    headers,
   });
 };
 
@@ -2540,6 +2582,14 @@ export const sendQuestionAnswered = async (params: {
     to: params.recipientEmail,
     subject: "Kanika answered your question",
     html: luxuryEmailShell(inner, "Answered", "Kanika replied"),
+    // Keyed to questionAnswered, not marketing: switching off answer
+    // notifications must not switch off everything else, and the inbox
+    // Unsubscribe button has to target the same key the body link does.
+    headers: marketingUnsubscribeHeaders({
+      email: params.recipientEmail.toLowerCase(),
+      type: "questionAnswered",
+      campaign: "question-answered",
+    }),
   });
 };
 
@@ -2567,6 +2617,14 @@ export const sendMiniDarkMirrorResult = async (params: {
   const primaryClinical = AXIS_CLINICAL[params.dominantType];
   const secondaryClinical = AXIS_CLINICAL[secondaryType];
   const consiliumTie = AXIS_CONSILIUM_TIES[params.dominantType];
+  // This is the highest-volume cold send in the product, and its own copy
+  // told the reader they could "unsubscribe at the bottom of any of them"
+  // while shipping no link at all. The promise now has something behind it.
+  const { footerHtml, headers } = marketingEmailExtras({
+    email: params.email.toLowerCase(),
+    type: "marketing",
+    campaign: "mini-dark-mirror-result",
+  });
 
   // Score rows sorted descending. Dominant gold, secondary muted gold,
   // others grey. Neurotypical green when not the dominant.
@@ -2717,6 +2775,7 @@ export const sendMiniDarkMirrorResult = async (params: {
     <p class="lux-muted" style="color: rgba(214,207,196,0.7); font-size: 13px; line-height: 1.75; margin: 26px 0 0 0; text-align: center;">
      , Kanika
     </p>
+    ${footerHtml}
   `;
 
   return await sendEmail({
@@ -2727,6 +2786,7 @@ export const sendMiniDarkMirrorResult = async (params: {
       profile.name,
       "Mini Dark Mirror, clinical synthesis",
     ),
+    headers,
   });
 };
 
@@ -2839,5 +2899,10 @@ export const sendStarterPack = async (params: {
       "Starter Pack",
       "Five named tactics",
     ),
+    headers: marketingUnsubscribeHeaders({
+      email: params.email.toLowerCase(),
+      type: "marketing",
+      campaign: "starter-pack",
+    }),
   });
 };

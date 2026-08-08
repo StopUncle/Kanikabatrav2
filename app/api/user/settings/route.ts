@@ -4,18 +4,26 @@ import {
   resolveActiveUserIdFromRequest,
 } from "@/lib/auth/resolve-user";
 import { prisma } from "@/lib/prisma";
+import {
+  mergeEmailPreferences,
+  normalizeEmailPreferences,
+} from "@/lib/email-preferences";
+import { logger } from "@/lib/logger";
 
-// Defaults applied when a user has never saved their preferences. The
-// weekly digest is opt-OUT (default true), active members are auto-
-// enrolled when the cron lands, and can opt out from settings or via the
-// one-click unsubscribe link in the digest email itself.
-const DEFAULT_PREFERENCES = {
-  marketing: true,
-  productUpdates: true,
-  sessionReminders: true,
-  weeklyDigest: true,
-  questionAnswered: true,
-};
+/**
+ * Email preferences, read and write.
+ *
+ * PUT used to replace the stored object wholesale with whatever the client
+ * sent, unvalidated. Any client that knew fewer keys than the server
+ * deleted the rest, and since every gate in the codebase reads an absent
+ * key as opted-IN, a deletion silently re-subscribed people. It now MERGES
+ * over what is stored and whitelists to the known keys, so a partial or
+ * stale client can only change what it actually knows about.
+ *
+ * Both handlers resolve the user through `resolve-user`, which accepts the
+ * refreshToken fallback. That matters: preferences are often opened from a
+ * link in an email hours after the 15 minute access token expired.
+ */
 
 export async function GET() {
   try {
@@ -26,22 +34,21 @@ export async function GET() {
 
     const user = await prisma.user.findUnique({
       where: { id: userId },
+      select: { emailPreferences: true },
     });
 
     if (!user) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
-    const rawPreferences = (user as Record<string, unknown>).emailPreferences;
-    const emailPreferences = rawPreferences
-      ? typeof rawPreferences === "string"
-        ? JSON.parse(rawPreferences)
-        : rawPreferences
-      : DEFAULT_PREFERENCES;
-
-    return NextResponse.json({ emailPreferences });
+    // Always hand back all five keys. A client that renders straight from
+    // this response can then write back exactly what it read without
+    // having to know the defaults.
+    return NextResponse.json({
+      emailPreferences: normalizeEmailPreferences(user.emailPreferences),
+    });
   } catch (error) {
-    console.error("Error fetching settings:", error);
+    logger.error("[user/settings] failed to read preferences", error as Error);
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 },
@@ -57,25 +64,50 @@ export async function PUT(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { emailPreferences } = body;
+    const { emailPreferences } = body ?? {};
 
-    if (!emailPreferences || typeof emailPreferences !== "object") {
+    if (
+      !emailPreferences ||
+      typeof emailPreferences !== "object" ||
+      Array.isArray(emailPreferences)
+    ) {
       return NextResponse.json(
         { error: "Invalid preferences" },
         { status: 400 },
       );
     }
 
-    await prisma.$executeRaw`
-      UPDATE "User"
-      SET "emailPreferences" = ${JSON.stringify(emailPreferences)}::jsonb,
-          "updatedAt" = NOW()
-      WHERE id = ${userId}
-    `;
+    // Read-then-merge. The read and the write are not in a transaction
+    // because the only writer is the account owner and the loss window is
+    // one toggle, but the merge means a concurrent write from a second tab
+    // loses at most the key it was itself changing rather than all five.
+    const existing = await prisma.user.findUnique({
+      where: { id: userId },
+      select: { emailPreferences: true },
+    });
 
-    return NextResponse.json({ success: true });
+    if (!existing) {
+      return NextResponse.json({ error: "User not found" }, { status: 404 });
+    }
+
+    const merged = mergeEmailPreferences(
+      existing.emailPreferences,
+      emailPreferences,
+    );
+
+    await prisma.user.update({
+      where: { id: userId },
+      data: { emailPreferences: merged },
+    });
+
+    // Echo the stored result so the client can settle on the truth rather
+    // than on its own optimistic guess.
+    return NextResponse.json({ success: true, emailPreferences: merged });
   } catch (error) {
-    console.error("Error updating settings:", error);
+    logger.error(
+      "[user/settings] failed to update preferences",
+      error as Error,
+    );
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 },

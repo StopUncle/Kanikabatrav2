@@ -1,4 +1,8 @@
 import jwt from "jsonwebtoken";
+import {
+  isEmailPreferenceKey,
+  type EmailPreferenceKey,
+} from "@/lib/email-preferences";
 
 /**
  * One-click email unsubscribe tokens.
@@ -23,23 +27,10 @@ import jwt from "jsonwebtoken";
 const UNSUBSCRIBE_AUDIENCE = "unsubscribe";
 const UNSUBSCRIBE_TTL = "365d";
 
-// The keys an unsubscribe token can target. Must match keys in
-// `User.emailPreferences`. Keep this list in sync with
-// `app/api/user/settings/route.ts` DEFAULT_PREFERENCES.
-export type UnsubscribeType =
-  | "marketing"
-  | "productUpdates"
-  | "sessionReminders"
-  | "weeklyDigest"
-  | "questionAnswered";
-
-const VALID_TYPES: ReadonlySet<string> = new Set([
-  "marketing",
-  "productUpdates",
-  "sessionReminders",
-  "weeklyDigest",
-  "questionAnswered",
-]);
+// The keys an unsubscribe token can target are exactly the keys of
+// `User.emailPreferences`. Both now come from one module, so a new
+// preference cannot ship with no way to unsubscribe from it.
+export type UnsubscribeType = EmailPreferenceKey;
 
 /**
  * A token addresses its target by either `userId` (logged-in members)
@@ -103,7 +94,7 @@ export function verifyUnsubscribeToken(
       audience: UNSUBSCRIBE_AUDIENCE,
     }) as DecodedUnsubscribePayload;
 
-    if (typeof decoded.type !== "string" || !VALID_TYPES.has(decoded.type)) {
+    if (!isEmailPreferenceKey(decoded.type)) {
       return null;
     }
 

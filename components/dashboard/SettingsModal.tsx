@@ -4,7 +4,7 @@ import { useState } from "react";
 import { X, User, Shield, Bell, AlertTriangle, Loader2 } from "lucide-react";
 import ProfileSettings from "./settings/ProfileSettings";
 import SecuritySettings from "./settings/SecuritySettings";
-import PreferencesSettings from "./settings/PreferencesSettings";
+import EmailPreferencesPanel from "@/components/profile/EmailPreferencesPanel";
 import DangerZone from "./settings/DangerZone";
 
 interface SettingsModalProps {
@@ -120,15 +120,12 @@ export default function SettingsModal({
             />
           )}
 
-          {activeTab === "preferences" && (
-            <PreferencesSettings
-              onSave={() => {
-                onSuccess("Preferences saved!");
-                onClose();
-              }}
-              setLoading={setIsLoading}
-            />
-          )}
+          {/* The canonical panel, shared with /profile and the app. The
+              modal-only copy that used to live here knew four of the five
+              keys and wrote the object wholesale, so saving it deleted
+              questionAnswered and re-subscribed the user. It saves on
+              toggle, so the modal no longer needs onSave or setLoading. */}
+          {activeTab === "preferences" && <EmailPreferencesPanel />}
 
           {activeTab === "danger" && (
             <DangerZone email={email} setLoading={setIsLoading} />

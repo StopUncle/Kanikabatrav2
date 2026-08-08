@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 import { sendMiniDarkMirrorResult } from "@/lib/email";
+import { canSendMarketingTo } from "@/lib/email-gate";
 import { buildMiniDarkMirrorDrip } from "@/lib/email-sequences";
 import {
   buildAttributionRecord,
@@ -147,11 +148,17 @@ export async function POST(req: NextRequest) {
       });
     }
 
-    const sent = await sendMiniDarkMirrorResult({
-      email: normalised,
-      dominantType,
-      scores,
-    });
+    // Someone who unsubscribed and later fills the form in again used to
+    // be mailed regardless: the opt-out was recorded and then never
+    // consulted, because this send never goes near the queue that checks.
+    const mayEmail = await canSendMarketingTo(normalised);
+    const sent = mayEmail
+      ? await sendMiniDarkMirrorResult({
+          email: normalised,
+          dominantType,
+          scores,
+        })
+      : true;
     if (!sent) {
       logger.error(
         "mini-quiz submit: subscriber created but email send failed",

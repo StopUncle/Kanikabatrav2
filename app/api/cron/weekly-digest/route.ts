@@ -3,7 +3,6 @@ import { verifyCronSecret } from "@/lib/cron-auth";
 import { prisma } from "@/lib/prisma";
 import { sendWeeklyDigest } from "@/lib/email";
 import { feedPostGenderWhere } from "@/lib/community/gender-filter";
-import { buildUnsubscribeUrl } from "@/lib/unsubscribe-token";
 import { logger } from "@/lib/logger";
 import { sendPushToUser } from "@/lib/push";
 import { prunePushSendLog } from "@/lib/push/policy";
@@ -266,11 +265,10 @@ export async function POST(request: NextRequest) {
             : null,
         };
 
-        const unsubscribeUrl = buildUnsubscribeUrl({
-          userId: user.id,
-          type: "weeklyDigest",
-        });
-
+        // The unsubscribe link is no longer built here and passed in.
+        // It was optional on the way through, which meant a caller that
+        // forgot it produced a digest with no opt-out; the sender now
+        // builds its own from the recipient and cannot omit it.
         const ok = await sendWeeklyDigest({
           memberEmail: user.email,
           memberName: user.displayName || user.name || "Member",
@@ -293,7 +291,6 @@ export async function POST(request: NextRequest) {
           newCourses,
           newCommentsOnYourPosts,
           verdict,
-          unsubscribeUrl,
         });
 
         if (ok) {
