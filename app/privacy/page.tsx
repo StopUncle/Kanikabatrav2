@@ -47,6 +47,10 @@ export default function PrivacyPage() {
                 <li>Community posts, comments, and messages (when you participate in The Consilium)</li>
                 <li>Coaching session notes and questionnaire responses</li>
                 <li>Contact form submissions</li>
+                <li><strong className="text-text-light">The Blood Pact</strong>. The track you choose, the signature you draw, the three goals you write when you sign, and every weekly journal entry you make afterwards. If you choose to share a note publicly it is posted to the member feed; you may post it under your name or anonymously, and where you choose anonymously we still store the link between you and the note so that we can moderate it and so that you can edit or retract it later</li>
+                <li><strong className="text-text-light">The 12 Week Transformation</strong>. Your intake answers and your journal entries for each week</li>
+                <li><strong className="text-text-light">Receipts</strong>. Any conversation you paste in for analysis. This usually contains messages written by somebody else, so please remove names and identifying details before you paste if you would rather they were not sent</li>
+                <li><strong className="text-text-light">Training you write in your own words</strong>. Your answers in Gauntlet mode and your side of a roleplay in The Lab</li>
               </ul>
 
               <h3 className="text-lg font-light text-text-light mt-6 mb-3">Information Collected Automatically</h3>
@@ -74,7 +78,7 @@ export default function PrivacyPage() {
             </section>
 
             <section className="bg-deep-black/50 border border-accent-gold/10 rounded-2xl p-8">
-              <h2 className="text-2xl font-light text-accent-gold mb-4">4. How We Share Your Information</h2>
+              <h2 className="text-2xl font-light text-accent-gold mb-4">5. How We Share Your Information</h2>
               <p className="text-text-gray leading-relaxed mb-4">
                 We do not sell your personal information. We share your data only with:
               </p>
@@ -91,7 +95,7 @@ export default function PrivacyPage() {
             </section>
 
             <section className="bg-deep-black/50 border border-accent-gold/10 rounded-2xl p-8">
-              <h2 className="text-2xl font-light text-accent-gold mb-4">5. Data Retention</h2>
+              <h2 className="text-2xl font-light text-accent-gold mb-4">6. Data Retention</h2>
               <p className="text-text-gray leading-relaxed mb-4">
                 We retain your personal information for as long as your account is active or as needed to provide services. Purchase records are retained for 7 years for accounting and tax compliance. You may request deletion of your account and associated data at any time by emailing Kanika@kanikarose.com.
               </p>
@@ -101,7 +105,7 @@ export default function PrivacyPage() {
             </section>
 
             <section className="bg-deep-black/50 border border-accent-gold/10 rounded-2xl p-8">
-              <h2 className="text-2xl font-light text-accent-gold mb-4">6. Cookies and Tracking</h2>
+              <h2 className="text-2xl font-light text-accent-gold mb-4">7. Cookies and Tracking</h2>
               <p className="text-text-gray leading-relaxed mb-4">
                 We use cookies and similar technologies for:
               </p>
@@ -116,7 +120,7 @@ export default function PrivacyPage() {
             </section>
 
             <section className="bg-deep-black/50 border border-accent-gold/10 rounded-2xl p-8">
-              <h2 className="text-2xl font-light text-accent-gold mb-4">7. Your Rights</h2>
+              <h2 className="text-2xl font-light text-accent-gold mb-4">8. Your Rights</h2>
               <p className="text-text-gray leading-relaxed mb-4">
                 Depending on your jurisdiction, you may have the right to:
               </p>
@@ -135,28 +139,28 @@ export default function PrivacyPage() {
             </section>
 
             <section className="bg-deep-black/50 border border-accent-gold/10 rounded-2xl p-8">
-              <h2 className="text-2xl font-light text-accent-gold mb-4">8. Security</h2>
+              <h2 className="text-2xl font-light text-accent-gold mb-4">9. Security</h2>
               <p className="text-text-gray leading-relaxed">
                 We implement appropriate technical and organisational measures to protect your personal information, including encrypted data transmission (SSL/TLS), secure password hashing, and access controls. However, no method of transmission over the internet is 100% secure, and we cannot guarantee absolute security.
               </p>
             </section>
 
             <section className="bg-deep-black/50 border border-accent-gold/10 rounded-2xl p-8">
-              <h2 className="text-2xl font-light text-accent-gold mb-4">9. Children&apos;s Privacy</h2>
+              <h2 className="text-2xl font-light text-accent-gold mb-4">10. Children&apos;s Privacy</h2>
               <p className="text-text-gray leading-relaxed">
                 Our Site is not intended for individuals under the age of 18. We do not knowingly collect personal information from children. If you believe we have collected information from a child, please contact us immediately at Kanika@kanikarose.com.
               </p>
             </section>
 
             <section className="bg-deep-black/50 border border-accent-gold/10 rounded-2xl p-8">
-              <h2 className="text-2xl font-light text-accent-gold mb-4">10. Changes to This Policy</h2>
+              <h2 className="text-2xl font-light text-accent-gold mb-4">11. Changes to This Policy</h2>
               <p className="text-text-gray leading-relaxed">
                 We may update this Privacy Policy from time to time. Changes will be posted on this page with an updated &quot;Last updated&quot; date. Your continued use of the Site after changes are posted constitutes acceptance of the revised policy.
               </p>
             </section>
 
             <section className="bg-deep-black/50 border border-accent-gold/10 rounded-2xl p-8">
-              <h2 className="text-2xl font-light text-accent-gold mb-4">11. Contact Us</h2>
+              <h2 className="text-2xl font-light text-accent-gold mb-4">12. Contact Us</h2>
               <p className="text-text-gray leading-relaxed">
                 For questions about this Privacy Policy or your personal data, contact us at:
               </p>
