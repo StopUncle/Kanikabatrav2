@@ -1,10 +1,10 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { haptic } from "@/lib/haptics";
 import { presetLabel } from "@/lib/pact/presets";
+import WeekOutcome from "./WeekOutcome";
 
 /**
  * The live week: the challenge, the keep, the journal. One screen because
@@ -25,6 +25,11 @@ export interface WeekEntryView {
   /** The shared note's own post on the feed, when it has one. */
   feedPostId: string | null;
   sharedAnonymously: boolean;
+  /** 1-10 on the CHALLENGE, not the member. Null until they rate it. */
+  difficulty: number | null;
+  /** They owned the miss rather than letting the week lapse. */
+  claimed: boolean;
+  missReason: string | null;
 }
 
 export default function WeekClient({
@@ -48,7 +53,6 @@ export default function WeekClient({
   } | null;
   entry: WeekEntryView;
 }) {
-  const router = useRouter();
   const [status, setStatus] = useState(entry.status);
   const [journal, setJournal] = useState(entry.journalBody ?? "");
   const [publicNote, setPublicNote] = useState(entry.publicBody ?? "");
@@ -65,7 +69,6 @@ export default function WeekClient({
   // Clock starts on mount: seeding Date.now() into the SSR HTML made the
   // server's countdown string race the client's across hour boundaries.
   const [now, setNow] = useState<number | null>(null);
-  const [justKept, setJustKept] = useState(false);
   const [justSaved, setJustSaved] = useState(false);
 
   useEffect(() => {
@@ -93,28 +96,9 @@ export default function WeekClient({
   const composerLocked =
     status === "scarred" || (msLeft !== null && msLeft <= 0);
 
-  async function keep() {
-    if (busy) return;
-    setBusy("keep");
-    setError(null);
-    try {
-      const res = await fetch("/api/pact/keep", { method: "POST" });
-      const data = (await res.json()) as { error?: string };
-      if (!res.ok) {
-        setError(data.error || "That did not go through.");
-      } else {
-        setStatus("kept");
-        setJustKept(true);
-        // The haptic lands with the stamp, not with the network.
-        window.setTimeout(() => haptic("success"), 350);
-        router.refresh();
-      }
-    } catch {
-      setError("That did not go through.");
-    } finally {
-      setBusy(null);
-    }
-  }
+  // Keeping, undoing a keep, owning a miss and rating the week all moved
+  // to WeekOutcome, which owns that whole decision and its states. This
+  // component keeps the challenge, the clock and the journal.
 
   async function save() {
     if (busy || !journal.trim()) return;
@@ -251,65 +235,17 @@ export default function WeekClient({
           </p>
         )}
 
-        {status === "kept" ? (
-          <div className="mt-4 flex items-center gap-3">
-            <span
-              className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-[var(--app-gold-soft)] ${
-                justKept ? "pact-mark-in" : ""
-              }`}
-            >
-              <svg
-                viewBox="0 0 24 24"
-                className="h-5 w-5 fill-none stroke-[var(--app-gold)] [stroke-width:2]"
-                aria-hidden
-              >
-                <path
-                  d="M5 12.5l4.5 4.5L19 7.5"
-                  pathLength={1}
-                  className={justKept ? "pact-draw" : undefined}
-                  style={justKept ? { animationDelay: "150ms" } : undefined}
-                />
-              </svg>
-            </span>
-            <p
-              className={`text-[13px] uppercase tracking-[0.16em] text-[var(--app-gold)] ${
-                justKept ? "app-rise" : ""
-              }`}
-              style={justKept ? { animationDelay: "350ms" } : undefined}
-            >
-              Kept. It is on the record.
-            </p>
-          </div>
-        ) : status === "scarred" ? (
-          <div className="mt-4 flex items-center gap-3">
-            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-[var(--pact-blood-dried)]">
-              <svg
-                viewBox="0 0 24 24"
-                className="h-5 w-5 fill-none stroke-[var(--pact-blood)] [stroke-width:2]"
-                aria-hidden
-              >
-                <path
-                  d="M6 6l12 12M18 6L6 18"
-                  pathLength={1}
-                  className="pact-draw"
-                  style={{ animationDelay: "200ms", animationDuration: "0.8s" }}
-                />
-              </svg>
-            </span>
-            <p className="text-[13px] uppercase tracking-[0.16em] text-[var(--pact-blood)]">
-              This week scarred.
-            </p>
-          </div>
-        ) : (
-          <button
-            type="button"
-            onClick={keep}
-            disabled={busy === "keep"}
-            className="mt-4 w-full rounded-full bg-[var(--pact-blood)] px-5 py-3 text-[12.5px] uppercase tracking-[0.16em] text-[var(--app-text)] transition-transform active:scale-[0.97] disabled:opacity-50"
-          >
-            {busy === "keep" ? "One moment" : "I kept it"}
-          </button>
-        )}
+        <WeekOutcome
+          entry={{
+            status: entry.status,
+            difficulty: entry.difficulty,
+            claimed: entry.claimed,
+            missReason: entry.missReason,
+          }}
+          weekEndsAtIso={endsAtIso}
+          status={status}
+          onStatusChange={setStatus}
+        />
       </div>
 
       <p className="mt-8 text-app-eyebrow uppercase tracking-app-label text-[var(--app-dim)]">

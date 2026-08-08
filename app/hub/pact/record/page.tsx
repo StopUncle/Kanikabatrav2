@@ -17,17 +17,26 @@ function WeekMark({
   status,
   weekNumber,
   index,
+  claimed = false,
 }: {
   status: string;
   weekNumber: number;
   index: number;
+  /** The member marked the miss themselves rather than letting it lapse. */
+  claimed?: boolean;
 }) {
   // The wall arrives left to right, and each mark's stroke draws itself a
   // beat after its tile lands. All CSS; reduced motion collapses to static.
   const tileDelay = { animationDelay: `${index * 45}ms` };
   const strokeDelay = { animationDelay: `${index * 45 + 180}ms` };
   const label = `Week ${weekNumber}: ${
-    status === "kept" ? "kept" : status === "scarred" ? "scarred" : "open"
+    status === "kept"
+      ? "kept"
+      : status === "scarred"
+        ? claimed
+          ? "scarred, you marked it yourself"
+          : "scarred"
+        : "open"
   }`;
   if (status === "kept") {
     return (
@@ -45,9 +54,17 @@ function WeekMark({
     );
   }
   if (status === "scarred") {
+    // The mark itself is identical whether they owned it or it happened to
+    // them: the scar weighs the same, and softening the claimed one would
+    // make honesty the cheaper option. Only the edge differs, so the wall
+    // still shows at a glance which ones they faced.
     return (
       <span
-        className="pact-mark-in flex h-9 w-9 items-center justify-center rounded-lg border border-[var(--pact-blood-dried)] bg-[var(--app-card)] text-[var(--pact-blood)]"
+        className={`pact-mark-in flex h-9 w-9 items-center justify-center rounded-lg bg-[var(--app-card)] text-[var(--pact-blood)] ${
+          claimed
+            ? "border-2 border-[var(--pact-blood)]"
+            : "border border-[var(--pact-blood-dried)]"
+        }`}
         style={tileDelay}
         role="img"
         aria-label={label}
@@ -109,12 +126,19 @@ export default async function PactRecordPage() {
   // row (billing lapse, cron gap) renders as an unmarked week instead of
   // silently compressing the wall so week 7 reads as week 5.
   const statusByWeek = new Map(read.entries.map((e) => [e.weekNumber, e.status]));
+  const claimedByWeek = new Map(
+    read.entries.map((e) => [e.weekNumber, e.claimedAt !== null]),
+  );
   const lastEntryWeek = read.entries[read.entries.length - 1]?.weekNumber ?? 0;
   const wallLength = Math.max(read.weekNumber, lastEntryWeek);
   const wallWeeks = Array.from({ length: wallLength }, (_, i) => ({
     weekNumber: i + 1,
     status: statusByWeek.get(i + 1) ?? "open",
+    claimed: claimedByWeek.get(i + 1) ?? false,
   }));
+  const ownedScars = read.entries.filter(
+    (e) => e.status === "scarred" && e.claimedAt !== null,
+  ).length;
 
   return (
     <PageShell>
@@ -165,6 +189,13 @@ export default async function PactRecordPage() {
               <span className="text-[var(--pact-blood)]">{scars}</span>{" "}
               {scars === 1 ? "scar" : "scars"}
             </span>
+            {/* The one line where owning it shows. Not a lighter scar, a
+                separate fact: the mark counts the same and this counts too. */}
+            {ownedScars > 0 && (
+              <span className="text-[var(--app-dim)]">
+                {ownedScars} faced
+              </span>
+            )}
           </div>
 
           <div className="mt-3 flex flex-wrap gap-2">
@@ -174,6 +205,7 @@ export default async function PactRecordPage() {
                 status={w.status}
                 weekNumber={w.weekNumber}
                 index={i}
+                claimed={w.claimed}
               />
             ))}
           </div>

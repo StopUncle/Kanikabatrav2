@@ -85,6 +85,9 @@ export default async function PactWeekPage() {
           shared: read.entry.sharedAt !== null,
           feedPostId: notePost?.id ?? null,
           sharedAnonymously: noteMeta?.anonymous ?? false,
+          difficulty: read.entry.difficulty,
+          claimed: read.entry.claimedAt !== null,
+          missReason: read.entry.missReason,
         }}
       />
     </PageShell>

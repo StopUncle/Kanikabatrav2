@@ -85,6 +85,16 @@ export const ANALYTICS_EVENTS = {
   PACT_WEEK_KEPT: "pact_week_kept",
   /** A week lapsed unkept and scarred. The churn leading indicator. */
   PACT_WEEK_SCARRED: "pact_week_scarred",
+  /**
+   * The member owned a miss rather than letting it lapse, and said why.
+   * Carries the reason, so the funnel can separate "forgot" (fixable with
+   * a nudge) from "lost my nerve" (a content problem) from "life happened"
+   * (neither). Fires alongside PACT_WEEK_SCARRED, never instead of it: the
+   * scar is the same scar and the churn metric must not miss it.
+   */
+  PACT_WEEK_MISSED_OWNED: "pact_week_missed_owned",
+  /** A keep was taken back inside the live week. Watch for abuse. */
+  PACT_KEEP_UNDONE: "pact_keep_undone",
   /** The pact was broken by the member. Churn, with what it cost them. */
   PACT_BROKEN: "pact_broken",
 } as const;

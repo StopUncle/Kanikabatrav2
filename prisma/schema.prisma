@@ -992,6 +992,22 @@ model PactEntry {
   aiReply     String?   @db.Text
   replyDueAt  DateTime?
   flagged     Boolean   @default(false)
+  // How hard the week was, 1-10, in the member's own judgement. Asked on
+  // BOTH outcomes on purpose: the weeks people miss are the ones worth
+  // knowing the difficulty of, and asking only on a keep would sample
+  // exactly the weeks that went well. Rates the CHALLENGE, never the
+  // member: a self-score on performance would turn a binary commitment
+  // into a feeling, which is the one thing the Pact cannot afford.
+  difficulty  Int?
+  // A miss the member owned rather than let lapse. The scar weighs the
+  // same either way (see /api/pact/miss) so honesty is never cheaper
+  // than silence; this only records that they faced it.
+  claimedAt   DateTime?
+  // Why it did not happen. A key from PACT_MISS_REASONS, for aggregation.
+  missReason  String?
+  // Their own words about the miss. Crisis-classified like journalBody:
+  // "what was hard" is exactly where a serious disclosure lands.
+  missNote    String?   @db.Text
   // The shared note's post on the feed (type PACT_NOTE). Tracked so an
   // edited share updates the same post and a retracted share removes it.
   // SetNull, not cascade: an admin deleting the post moderates the feed
