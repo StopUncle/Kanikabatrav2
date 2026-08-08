@@ -26,6 +26,8 @@ import MembershipTodayCard from "@/components/app-shell/upgrade/MembershipTodayC
 import { getAccess, canTrain } from "@/lib/access/tier";
 import { FREE_STANDING_CEILING } from "@/lib/standing/config";
 import HomeExplore from "@/components/app-shell/home/HomeExplore";
+import RoomRail from "@/components/app-shell/home/RoomRail";
+import { getRoomState } from "@/lib/app/room";
 
 export const metadata = {
   title: "Home | Consilium",
@@ -90,6 +92,7 @@ export default async function HomePage() {
     program,
     pact,
     unfinishedRun,
+    room,
   ] = await Promise.all([
     getPathState(prisma, userId, {
       gender: viewer?.gender ?? null,
@@ -136,6 +139,12 @@ export default async function HomePage() {
       orderBy: { startedAt: "desc" },
       select: { scenarioId: true, choicesMade: true },
     }),
+    // Viewer-independent and cached for five minutes, so for almost every
+    // request this resolves without touching the database at all. It rides
+    // in this Promise.all rather than a second wave so that on the one
+    // request in five minutes that does miss, it is parallel with the rest
+    // rather than added to the page's critical path.
+    getRoomState(),
   ]);
 
   // A run someone actually started (made at least one choice) and never
@@ -396,10 +405,22 @@ export default async function HomePage() {
             </span>
           )}
           <span className="relative p-5">
-            <span className="mb-2 block text-app-eyebrow uppercase tracking-app-wide text-[var(--app-gold-soft)]">
-              {latestFromKanika.voiceNoteUrl
-                ? "New voice note"
-                : "New from Kanika"}
+            <span className="mb-2 flex items-center gap-2">
+              <span className="block text-app-eyebrow uppercase tracking-app-wide text-[var(--app-gold-soft)]">
+                {latestFromKanika.voiceNoteUrl
+                  ? "New voice note"
+                  : "New from Kanika"}
+              </span>
+              {/* The feed is member-only and this billboard links straight
+                  into a post, so a free account tapped the largest, most
+                  inviting thing on Home and met a wall with no warning.
+                  Every other locked surface names its price before the tap;
+                  this one did not, and it is the one people tap first. */}
+              {!access.isMember && (
+                <span className="rounded-full border border-[var(--app-gold-soft)] px-1.5 py-0.5 text-app-micro uppercase tracking-app-wide text-[var(--app-gold-soft)]">
+                  Members
+                </span>
+              )}
             </span>
             <span
               className="block text-app-display font-normal leading-tight"
@@ -514,6 +535,13 @@ export default async function HomePage() {
       )}
 
       <HomeExplore viewerTier={access.tier} />
+
+      {/* Last, after the catalogue: "here is the place" then "here is who
+          is in it". The reverse order sells a room before saying what
+          happens in it. */}
+      <div className="mt-7">
+        <RoomRail room={room} />
+      </div>
     </div>
   );
 }
