@@ -1,12 +1,12 @@
 import Link from "next/link";
-import { Mail, CheckCircle2, AlertTriangle } from "lucide-react";
+import { Mail, CheckCircle2, AlertTriangle, Undo2 } from "lucide-react";
 import Header from "@/components/Header";
 import BackgroundEffects from "@/components/BackgroundEffects";
-import { prisma } from "@/lib/prisma";
 import {
   verifyUnsubscribeToken,
   type UnsubscribeType,
 } from "@/lib/unsubscribe-token";
+import { applyUnsubscribe } from "@/lib/unsubscribe-apply";
 import { logger } from "@/lib/logger";
 
 export const metadata = {
@@ -19,7 +19,7 @@ export const metadata = {
 export const dynamic = "force-dynamic";
 
 interface PageProps {
-  searchParams: Promise<{ token?: string }>;
+  searchParams: Promise<{ token?: string; undo?: string }>;
 }
 
 const TYPE_LABELS: Record<UnsubscribeType, string> = {
@@ -32,20 +32,22 @@ const TYPE_LABELS: Record<UnsubscribeType, string> = {
 
 /**
  * Public unsubscribe page. Reads ?token=<jwt>, verifies the signature
- * server-side, and flips the corresponding `User.emailPreferences` key
- * to false. No login required, the signed token is the auth.
+ * server-side, and flips the corresponding `User.emailPreferences` key to
+ * false. No login required, the signed token is the auth.
  *
- * Three render states:
- *   1. Success, token verified, pref updated
- *   2. Invalid, bad/expired/forged token
- *   3. Missing, no token in URL (someone hit /unsubscribe directly)
+ * `?undo=1` on the same token puts it back. One-click unsubscribe means
+ * one-click MISCLICK, and the person who hit it by accident used to have
+ * no route back that did not involve remembering a password.
+ *
+ * Four render states: success, undone, invalid, missing.
  */
 export default async function UnsubscribePage({ searchParams }: PageProps) {
   const params = await searchParams;
   const token = params.token;
+  const undo = params.undo === "1";
 
-  let state: "success" | "invalid" | "missing" = "missing";
-  let unsubscribedFrom: UnsubscribeType | null = null;
+  let state: "success" | "undone" | "invalid" | "missing" = "missing";
+  let affectedType: UnsubscribeType | null = null;
 
   if (token) {
     const payload = verifyUnsubscribeToken(token);
@@ -53,56 +55,16 @@ export default async function UnsubscribePage({ searchParams }: PageProps) {
       state = "invalid";
     } else {
       try {
-        // Look up the user by id OR email — drips for mini-quiz
-        // subscribers and book buyers carry email-keyed tokens because
-        // those recipients often don't have a User row yet.
-        const user = payload.userId
-          ? await prisma.user.findUnique({
-              where: { id: payload.userId },
-              select: { id: true, emailPreferences: true },
-            })
-          : await prisma.user.findUnique({
-              where: { email: payload.email! },
-              select: { id: true, emailPreferences: true },
-            });
-
-        if (user) {
-          const existing =
-            user.emailPreferences && typeof user.emailPreferences === "object"
-              ? (user.emailPreferences as Record<string, unknown>)
-              : {};
-          const next = { ...existing, [payload.type]: false };
-
-          await prisma.$executeRaw`
-            UPDATE "User"
-            SET "emailPreferences" = ${JSON.stringify(next)}::jsonb,
-                "updatedAt" = NOW()
-            WHERE id = ${user.id}
-          `;
-        }
-
-        // Also tag the matching Subscriber row (if any) with an
-        // unsubscribe marker. Future drip enrollments check this tag
-        // and skip. Safe to no-op when the email isn't on the list.
-        if (payload.email) {
-          await prisma.subscriber.updateMany({
-            where: { email: payload.email },
-            data: { tags: { push: `unsubscribed:${payload.type}` } },
-          });
-        }
-
-        state = "success";
-        unsubscribedFrom = payload.type;
+        await applyUnsubscribe(payload, undo);
+        state = undo ? "undone" : "success";
+        affectedType = payload.type;
       } catch (err) {
-        logger.error(
-          "[unsubscribe] failed to update preferences",
-          err as Error,
-          {
-            userId: payload.userId,
-            email: payload.email,
-            type: payload.type,
-          },
-        );
+        logger.error("[unsubscribe] failed to update preferences", err as Error, {
+          userId: payload.userId,
+          email: payload.email,
+          type: payload.type,
+          undo,
+        });
         state = "invalid";
       }
     }
@@ -114,7 +76,7 @@ export default async function UnsubscribePage({ searchParams }: PageProps) {
       <Header />
 
       <main className="relative z-10 max-w-xl mx-auto px-4 pt-32 pb-20">
-        {state === "success" && unsubscribedFrom && (
+        {state === "success" && affectedType && (
           <div className="text-center">
             <div className="w-16 h-16 mx-auto mb-6 rounded-full bg-accent-gold/10 border border-accent-gold/30 flex items-center justify-center">
               <CheckCircle2 size={28} className="text-accent-gold" />
@@ -127,7 +89,7 @@ export default async function UnsubscribePage({ searchParams }: PageProps) {
             </h1>
             <div className="w-16 h-px bg-accent-gold/40 mx-auto mb-6" />
             <p className="text-text-gray leading-relaxed mb-2">
-              You&apos;ve been removed from {TYPE_LABELS[unsubscribedFrom]}.
+              You&apos;ve been removed from {TYPE_LABELS[affectedType]}.
             </p>
             <p className="text-text-gray/70 text-sm mb-8">
               Transactional emails (purchases, password resets, application
@@ -135,18 +97,44 @@ export default async function UnsubscribePage({ searchParams }: PageProps) {
             </p>
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
               <Link
-                href="/dashboard"
+                href="/preferences"
                 className="px-6 py-3 text-sm tracking-[0.1em] uppercase border border-accent-gold/40 text-accent-gold hover:bg-accent-gold/10 hover:border-accent-gold/60 transition-all duration-300 rounded"
               >
-                Manage all preferences
+                Choose which emails you get
               </Link>
               <Link
-                href="/"
-                className="px-6 py-3 text-sm tracking-[0.1em] uppercase text-text-gray/80 hover:text-accent-gold transition-colors"
+                href={`/unsubscribe?token=${encodeURIComponent(token!)}&undo=1`}
+                className="inline-flex items-center justify-center gap-2 px-6 py-3 text-sm tracking-[0.1em] uppercase text-text-gray/80 hover:text-accent-gold transition-colors"
               >
-                Back to home
+                <Undo2 size={14} />
+                Undo, that was a mistake
               </Link>
             </div>
+          </div>
+        )}
+
+        {state === "undone" && affectedType && (
+          <div className="text-center">
+            <div className="w-16 h-16 mx-auto mb-6 rounded-full bg-accent-gold/10 border border-accent-gold/30 flex items-center justify-center">
+              <Undo2 size={26} className="text-accent-gold" />
+            </div>
+            <p className="text-accent-gold text-xs uppercase tracking-[0.3em] mb-2">
+              Back on
+            </p>
+            <h1 className="text-3xl sm:text-4xl font-extralight tracking-wider uppercase gradient-text-gold mb-4">
+              Nothing changed
+            </h1>
+            <div className="w-16 h-px bg-accent-gold/40 mx-auto mb-6" />
+            <p className="text-text-gray leading-relaxed mb-8">
+              You&apos;re still subscribed to {TYPE_LABELS[affectedType]}. If
+              you meant to leave, the link in any email will do it.
+            </p>
+            <Link
+              href="/preferences"
+              className="inline-block px-6 py-3 text-sm tracking-[0.1em] uppercase border border-accent-gold/40 text-accent-gold hover:bg-accent-gold/10 hover:border-accent-gold/60 transition-all duration-300 rounded"
+            >
+              Choose which emails you get
+            </Link>
           </div>
         )}
 
@@ -164,13 +152,13 @@ export default async function UnsubscribePage({ searchParams }: PageProps) {
             <div className="w-16 h-px bg-accent-gold/40 mx-auto mb-6" />
             <p className="text-text-gray leading-relaxed mb-8">
               The unsubscribe link is invalid or has expired. You can still
-              manage your email preferences from your dashboard.
+              turn any email off from your preferences.
             </p>
             <Link
-              href="/dashboard"
+              href="/preferences"
               className="inline-block px-6 py-3 text-sm tracking-[0.1em] uppercase border border-accent-gold/40 text-accent-gold hover:bg-accent-gold/10 hover:border-accent-gold/60 transition-all duration-300 rounded"
             >
-              Manage preferences
+              Choose which emails you get
             </Link>
           </div>
         )}
@@ -188,13 +176,13 @@ export default async function UnsubscribePage({ searchParams }: PageProps) {
             </h1>
             <div className="w-16 h-px bg-accent-gold/40 mx-auto mb-6" />
             <p className="text-text-gray leading-relaxed mb-8">
-              Sign in to your dashboard to choose which emails you receive.
+              Sign in to choose which emails you receive.
             </p>
             <Link
-              href="/dashboard"
+              href="/preferences"
               className="inline-block px-6 py-3 text-sm tracking-[0.1em] uppercase border border-accent-gold/40 text-accent-gold hover:bg-accent-gold/10 hover:border-accent-gold/60 transition-all duration-300 rounded"
             >
-              Go to dashboard
+              Choose which emails you get
             </Link>
           </div>
         )}

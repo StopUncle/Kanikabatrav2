@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { sendEmail } from "@/lib/email";
 import { requireAdminSession } from "@/lib/admin/auth";
 import { buildUnsubscribeUrl } from "@/lib/unsubscribe-token";
+import type { EmailPreferenceKey } from "@/lib/email-preferences";
 import { instrumentMarketingHtml } from "@/lib/email-tracking";
 import crypto from "crypto";
 
@@ -30,7 +31,11 @@ function nextAttemptAt(attempts: number): Date {
 
 interface QueueMetadata {
   isMarketing?: boolean;
-  unsubscribeType?: "marketing" | "productUpdates" | "sessionReminders" | "weeklyDigest";
+  // Sourced from the canonical key list rather than restated. This union
+  // used to omit questionAnswered, so a row targeting it would have
+  // silently fallen back to the marketing preference and unsubscribed
+  // people from the wrong thing.
+  unsubscribeType?: EmailPreferenceKey;
   campaign?: string;
 }
 

@@ -28,6 +28,8 @@ import { PERSONALITY_PROFILES, PersonalityType, QuizScores } from "@/lib/quiz-da
 interface ProfilePageClientProps {
   userId: string;
   email: string;
+  /** Arrived from an unsubscribe link. Draws the eye to the email switches. */
+  highlightEmails?: boolean;
 }
 
 interface QuizData {
@@ -60,7 +62,11 @@ const TYPE_ICONS: Record<string, typeof Crosshair> = {
   neurotypical: Scale,
 };
 
-export default function ProfilePageClient({ userId: _userId, email }: ProfilePageClientProps) {
+export default function ProfilePageClient({
+  userId: _userId,
+  email,
+  highlightEmails = false,
+}: ProfilePageClientProps) {
   const [quiz, setQuiz] = useState<QuizData | null>(null);
   const [user, setUser] = useState<UserData | null>(null);
   const [loading, setLoading] = useState(true);
@@ -495,7 +501,7 @@ export default function ProfilePageClient({ userId: _userId, email }: ProfilePag
                   weekly digest, session reminders) so users can leave
                   any one channel without losing the others. Saves
                   immediately on toggle; no extra Save button. */}
-              <EmailPreferencesPanel />
+              <EmailPreferencesPanel highlight={highlightEmails} />
 
               {/* Privacy & data. GDPR export.
                   Hits /api/user/export which builds a JSON of everything

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
 import { verifyUnsubscribeToken } from "@/lib/unsubscribe-token";
+import { applyUnsubscribe } from "@/lib/unsubscribe-apply";
 import { logger } from "@/lib/logger";
 
 /**
@@ -26,37 +26,9 @@ async function handle(token: string | null): Promise<{ ok: boolean }> {
   if (!payload) return { ok: false };
 
   try {
-    const user = payload.userId
-      ? await prisma.user.findUnique({
-          where: { id: payload.userId },
-          select: { id: true, emailPreferences: true },
-        })
-      : await prisma.user.findUnique({
-          where: { email: payload.email! },
-          select: { id: true, emailPreferences: true },
-        });
-
-    if (user) {
-      const existing =
-        user.emailPreferences && typeof user.emailPreferences === "object"
-          ? (user.emailPreferences as Record<string, unknown>)
-          : {};
-      const next = { ...existing, [payload.type]: false };
-      await prisma.$executeRaw`
-        UPDATE "User"
-        SET "emailPreferences" = ${JSON.stringify(next)}::jsonb,
-            "updatedAt" = NOW()
-        WHERE id = ${user.id}
-      `;
-    }
-
-    if (payload.email) {
-      await prisma.subscriber.updateMany({
-        where: { email: payload.email },
-        data: { tags: { push: `unsubscribed:${payload.type}` } },
-      });
-    }
-
+    // Shared with the /unsubscribe page, so the header button and the
+    // body link cannot end up writing the preference two different ways.
+    await applyUnsubscribe(payload);
     return { ok: true };
   } catch (err) {
     logger.error("[unsubscribe-oneclick] failed", err as Error, {

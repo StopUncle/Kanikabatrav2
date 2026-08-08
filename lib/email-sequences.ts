@@ -4010,7 +4010,12 @@ export function buildPactWelcomeEntry(
     subject: "It is signed. Week one is running.",
     htmlBody: buildPactWelcomeEmail(recipientName),
     scheduledAt: new Date(),
-    metadata: { type: "pact-welcome" },
+    // Transactional, and stated rather than implied. This is the
+    // confirmation of a signing someone just paid for, so it must reach
+    // them even if they have opted out of marketing. It was the only one
+    // of the sequence builders whose classification was implicit, which
+    // meant it read as an oversight rather than a decision.
+    metadata: { type: "pact-welcome", isMarketing: false },
   };
 }
 

@@ -12,14 +12,32 @@ import {
 import { Lock, CheckCircle2, Calendar, MessageSquare, Heart, BookOpen, type LucideIcon } from "lucide-react";
 import ManageSubscriptionButton from "./ManageSubscriptionButton";
 import NotificationPreferences from "./NotificationPreferences";
+import EmailPreferencesPanel from "@/components/profile/EmailPreferencesPanel";
 
 export const metadata = {
   title: "Your Rank. The Consilium | Kanika Batra",
   description: "Your tenure, rank, and membership inside the Consilium.",
 };
 
-export default async function ConsiliumProfilePage() {
-  const userId = await requireServerAuth("/consilium/profile");
+/**
+ * `?section=emails` arrives from the unsubscribe link in an email, routed
+ * here by /preferences for members whose home is still this shell. A query
+ * param rather than a fragment, because a fragment never reaches a server
+ * and so could not survive the login bounce.
+ */
+export default async function ConsiliumProfilePage({
+  searchParams,
+}: {
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
+}) {
+  const params = await searchParams;
+  const rawSection = params.section;
+  const section = Array.isArray(rawSection) ? rawSection[0] : rawSection;
+  const wantsEmails = section === "emails";
+
+  const userId = await requireServerAuth(
+    wantsEmails ? "/consilium/profile?section=emails" : "/consilium/profile",
+  );
 
   const [user, membership, commentCount, forumPostCount, likeCount] =
     await Promise.all([
@@ -374,6 +392,23 @@ export default async function ConsiliumProfilePage() {
         </div>
 
         <NotificationPreferences />
+      </section>
+
+      {/* Email. A separate channel from push, with a same-named category
+          (questionAnswered) in each, so they stay separate sections. */}
+      <section className="mb-12">
+        <div className="text-center mb-6">
+          <p className="text-warm-gold text-xs uppercase tracking-[0.3em] mb-2">
+            Email
+          </p>
+          <h2 className="text-2xl font-extralight tracking-wider uppercase text-text-light">
+            What lands in your inbox
+          </h2>
+        </div>
+
+        <div className="max-w-2xl mx-auto">
+          <EmailPreferencesPanel highlight={wantsEmails} />
+        </div>
       </section>
 
       {/* Account */}

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 import { sendStarterPack } from "@/lib/email";
+import { canSendMarketingTo } from "@/lib/email-gate";
 import { buildStarterPackDrip } from "@/lib/email-sequences";
 import { logger } from "@/lib/logger";
 import { enforceRateLimit, getClientIp, limits } from "@/lib/rate-limit";
@@ -93,7 +94,10 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    const sent = await sendStarterPack({ email: normalised });
+    // Same reasoning as the mini-quiz: a previously unsubscribed address
+    // that re-submits must not be mailed just because the form was filled.
+    const mayEmail = await canSendMarketingTo(normalised);
+    const sent = mayEmail ? await sendStarterPack({ email: normalised }) : true;
     if (!sent) {
       logger.error(
         "starter-pack subscribe: subscriber created but email send failed",
