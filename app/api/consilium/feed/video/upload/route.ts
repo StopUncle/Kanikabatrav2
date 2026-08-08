@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { requireAuth } from "@/lib/auth/middleware";
-import { isAdmin } from "@/lib/community/membership";
+import { canPublishAsKanika } from "@/lib/community/membership";
 import { isR2Configured, uploadToR2 } from "@/lib/storage/r2";
 import { logger } from "@/lib/logger";
 import crypto from "crypto";
@@ -83,7 +83,7 @@ function baseMime(mime: string): string {
 
 export async function POST(request: NextRequest) {
   return requireAuth(request, async (_req, user) => {
-    const admin = await isAdmin(user.id);
+    const admin = await canPublishAsKanika(user.id);
     if (!admin) {
       return NextResponse.json({ error: "Admin access required" }, { status: 403 });
     }

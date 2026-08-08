@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { resolveActiveUserId } from "@/lib/auth/resolve-user";
 import { getAdminUserId } from "@/lib/auth/server-auth";
 import { checkAskCooldown } from "@/lib/questions/cooldown";
+import { getAccess, canAccessMemberOnly } from "@/lib/access/tier";
 
 // Same dual-session resolver as the submit + upvote endpoints.
 async function resolveActor(): Promise<string | null> {
@@ -28,6 +29,23 @@ export async function GET() {
     // Soft-fail: if the pill mounts on a logged-out page (race condition
     // during logout, or admin previewing as anon), don't 401-spam the
     // browser console. Return an empty state and let the pill show idle.
+    return NextResponse.json({
+      cooldown: null,
+      questions: [],
+      hasUnreadAnswer: false,
+      isAdmin: false,
+    });
+  }
+
+  // The only Ask Kanika route without a tier check. It returns the
+  // caller's own rows only, so it never leaked another member's question,
+  // but it handed cooldown state and the isAdmin flag to any signed-in
+  // account and broke the pattern its two siblings follow. Soft-fails to
+  // the empty shape for the same reason the logged-out branch does: this
+  // drives a nav pill, and a lapsed member should see it vanish rather
+  // than watch the console fill with 403s.
+  const access = await getAccess(userId);
+  if (!canAccessMemberOnly(access)) {
     return NextResponse.json({
       cooldown: null,
       questions: [],

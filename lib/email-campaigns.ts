@@ -138,7 +138,7 @@ const book: CampaignDef = {
           You learn the moves they use on you. The tells you've been missing. How to stop being the person who gets played and start being the person who controls the frame.
         </p>
         <p style="font-size:15.5px;line-height:1.7;color:#efe7d6;margin:0 0 28px 0;">
-          <strong style="color:#f3d98a;">$24.99.</strong> EPUB + PDF, instant download. Members of the Consilium read it for free.
+          <strong style="color:#f3d98a;">$24.99.</strong> EPUB + PDF, instant download. Members of the Consilium pay $9.99.
         </p>
       `,
       withUtm("/book", "drip-book"),
@@ -186,7 +186,7 @@ const consilium: CampaignDef = {
       "The Consilium",
       `
         <p style="font-size:15.5px;line-height:1.7;color:#efe7d6;margin:0 0 18px 0;">
-          A private community for people who are done getting blindsided. Daily psychology drops. Voice notes from me — raw, unedited. The full simulator. The full course library. Live chat with people who think the way you've been afraid to admit you think.
+          A private room for people who are done getting blindsided. Daily psychology drops. Voice notes from me, raw and unedited. The full simulator. Ask me a question every day and the most-wanted ones get answered, by voice or on video.
         </p>
         <p style="font-size:15.5px;line-height:1.7;color:#efe7d6;margin:0 0 18px 0;">
           Members get the Sociopathic Dating Bible at $9.99 (normally $24.99) as a separate purchase. Or grab the book + 1-month bundle for $39 from the book page if you want both at once. <strong style="color:#f3d98a;">${MEMBERSHIP.priceDisplay}/month, cancel anytime.</strong>

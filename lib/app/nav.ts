@@ -188,7 +188,11 @@ export const APP_SURFACES: AppSurface[] = [
   {
     href: "/app/pact/record",
     section: "The Pact",
-    requires: "pact",
+    // No `requires`, deliberately. The page is auth-only by contract
+    // (2026-08-06): the member's own history stays readable after a lapse
+    // or a break, and the winback email lands here. Carrying requires:"pact"
+    // put a lock pill on the row for exactly the lapsed member the contract
+    // exists to serve, so the chrome was refusing what the page allows.
     label: "The record",
     placement: "nested",
     parent: "/app/pact/week",
@@ -198,7 +202,8 @@ export const APP_SURFACES: AppSurface[] = [
   {
     href: "/app/pact/journal",
     section: "The Pact",
-    requires: "pact",
+    // Same read-after-lapse contract as the record: these are the member's
+    // own words and the page never walls them.
     label: "Pact journal",
     placement: "nested",
     parent: "/app/pact/week",
@@ -243,9 +248,10 @@ export const APP_SURFACES: AppSurface[] = [
   {
     href: "/app/program/intake",
     section: "Your standing",
+    requires: "pact",
     label: "The Twelve: intake",
     placement: "nested",
-    note: "Four questions, then the Read. Reached from /app/program only; redirects out once enrolled.",
+    note: "Four questions, then the Read. Reached from /app/program only; redirects out once enrolled. requires:\"pact\" matches the page's own trainingGate, which was there without it: a free account tapping this row in the More sheet hit a wall with no lock shown first.",
     maturity: "app-native",
   },
   {
